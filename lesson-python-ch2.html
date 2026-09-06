@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲: متغیرها و انواع داده — دوره جامع Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Python</span>
+      <span>فصل ۲</span>
+    </div>
+    <h1>مبانی پایتون - متغیرها و انواع داده</h1>
+  </div>
+
+  <article class="lesson-content">
+    <div class="chapter-banner" id="chapter-2">
+      <p class="kicker">فصل ۰۲</p>
+      <h2>مبانی پایتون - متغیرها و انواع داده</h2>
+    </div>
+
+    <div class="meta-box">
+      <div class="row"><span class="label">زمان مطالعه:</span><span class="value">۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</span></div>
+      <div class="row"><span class="label">سطح دشواری:</span><span class="value">مبتدی (نیازمند آشنایی با فصل ۱)</span></div>
+      <div class="row"><span class="label">شامل:</span><span class="value">۷ درس + تمرین عملی</span></div>
+    </div>
+
+    <h3>پیش‌نیازها</h3>
+    <ul class="checklist">
+      <li>تسلط بر مباحث فصل ۱ (نصب پایتون، اجرای کد، input و print)</li>
+      <li>توانایی کار با VS Code یا یک ویرایشگر کد</li>
+      <li>آشنایی اولیه با محیط خط فرمان</li>
+    </ul>
+
+    <h3>اهداف آموزشی</h3>
+    <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+    <ul class="checklist">
+      <li>متغیرها را در پایتون تعریف و مقداردهی کنید</li>
+      <li>انواع داده‌ی اصلی (int, float, str, bool, None) را بشناسید</li>
+      <li>نوع داده‌ی یک متغیر را با ()type تشخیص دهید</li>
+      <li>تبدیل نوع (Type Casting) را با ()int, ()float, ()str انجام دهید</li>
+      <li>از ()input برای دریافت ورودی کاربر استفاده کنید</li>
+      <li>از f-strings برای فرمت‌دهی خروجی استفاده کنید</li>
+      <li>تفاوت بین متغیرهای قابل تغییر (Mutable) و غیرقابل تغییر (Immutable) را درک کنید</li>
+    </ul>
+
+    <h3>مقدمه و انگیزه‌بخشی</h3>
+    <p>در فصل قبل با پایتون و نحوه‌ی نصب و اجرای آن آشنا شدید. حالا وقت آن است که با قلب تپنده‌ی هر برنامه یعنی متغیرها و انواع داده آشنا شوید.</p>
+    <p>متغیرها مانند جعبه‌هایی هستند که اطلاعات را در خود ذخیره می‌کنند. هر جعبه یک نوع داده مشخص دارد که مشخص می‌کند چه نوع اطلاعاتی می‌تواند در آن ذخیره شود.</p>
+    <p>در این فصل با همه‌ی انواع داده‌ی اصلی پایتون آشنا می‌شوید: اعداد صحیح و اعشاری، رشته‌ها، مقادیر بولی و مقدار خاص None. همچنین یاد می‌گیرید که چگونه با ()input از کاربر ورودی بگیرید و با ()print و f-strings خروجی‌های زیبا و خوانا تولید کنید.</p>
+    <p>تسلط بر متغیرها و انواع داده، پایه‌ی تمام مباحث بعدی است. اگر این مفاهیم را به خوبی درک کنید، یادگیری بقیه‌ی پایتون برای شما بسیار آسان‌تر خواهد شد.</p>
+
+    <h3>۲.۱ متغیرها در پایتون و قوانین نام‌گذاری</h3>
+    <p>در پایتون برای تعریف متغیر، فقط کافی است یک نام انتخاب کنید و به آن مقدار بدهید. نیازی به اعلام نوع داده نیست (زبان Dynamically Typed).</p>
+    <p><strong>قوانین نام‌گذاری:</strong></p>
+    <ul>
+      <li>با حرف یا _ شروع شود (نه عدد)</li>
+      <li>فقط شامل حروف، اعداد و _ باشد</li>
+      <li>به حروف بزرگ و کوچک حساس است (Age و age متفاوتند)</li>
+      <li>از کلمات کلیدی پایتون (مثل if, for, class) استفاده نشود</li>
+    </ul>
+    <p><strong>کنوانسیون نام‌گذاری:</strong> از snake_case استفاده کنید (مثل user_age).</p>
+
+    <pre><code># تعریف متغیرها
+name = "علی"
+age = 25
+height = 1.78
+is_student = True
+
+# چاپ متغیرها
+print(name)      # "علی"
+print(age)       # 25
+print(height)    # 1.78
+print(is_student) # True
+
+# تغییر مقدار متغیر
+age = 26
+print(age)       # 26
+
+# تعریف چند متغیر در یک خط
+x, y, z = 10, 20, 30
+print(x, y, z)   # 10 20 30
+
+# مقدار یکسان برای چند متغیر
+a = b = c = 0
+print(a, b, c)   # 0 0 0</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      در پایتون، متغیرها به صورت پویا (Dynamic) نوع‌دهی می‌شوند. یعنی یک متغیر می‌تواند در طول برنامه نوع خود را تغییر دهد، اما این کار معمولاً توصیه نمی‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      سه متغیر با نام‌های birth_year، first_name، salary تعریف کنید و مقادیر مناسب به آن‌ها بدهید. سپس آن‌ها را با ()print نمایش دهید.
+    </div>
+
+    <h3>۲.۲ انواع داده‌های اصلی در پایتون</h3>
+    <table>
+      <tr><th>نوع داده</th><th>توضیح</th><th>مثال</th></tr>
+      <tr><td>int</td><td>اعداد صحیح</td><td>10, -5, 0</td></tr>
+      <tr><td>float</td><td>اعداد اعشاری</td><td>3.14, 2.0, -0.5</td></tr>
+      <tr><td>str</td><td>رشته‌ها (متن)</td><td>"سلام", 'Python'</td></tr>
+      <tr><td>bool</td><td>مقادیر بولی</td><td>True, False</td></tr>
+      <tr><td>NoneType</td><td>مقدار خالی</td><td>None</td></tr>
+    </table>
+
+    <pre><code># int - اعداد صحیح
+age = 30
+temperature = -5
+count = 0
+
+# float - اعداد اعشاری
+pi = 3.14159
+price = 19.99
+weight = 0.5
+
+# str - رشته‌ها (با ' یا ")
+name = "علی رضایی"
+message = 'سلام دنیا'
+multi_line = """این یک رشته
+چند خطی است"""
+
+# bool - مقادیر بولی
+is_logged_in = True
+is_admin = False
+
+# None - مقدار خالی
+result = None
+user = None</code></pre>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک متغیر از هر نوع داده‌ی اصلی تعریف کنید و با ()type نوع آن‌ها را در کنسول چاپ کنید.
+    </div>
+
+    <h3>۲.۳ تشخیص نوع داده با ()type</h3>
+    <p>تابع ()type نوع داده‌ی یک متغیر را برمی‌گرداند. این تابع برای دیباگ و درک بهتر کد بسیار مفید است.</p>
+
+    <pre><code># تشخیص نوع داده
+print(type(10))      # <class 'int'>
+print(type(3.14))    # <class 'float'>
+print(type("سلام"))  # <class 'str'>
+print(type(True))    # <class 'bool'>
+print(type(None))    # <class 'NoneType'>
+
+# تشخیص نوع متغیرها
+x = 42
+y = 3.14
+z = "Python"
+print(type(x))  # <class 'int'>
+print(type(y))  # <class 'float'>
+print(type(z))  # <class 'str'>
+
+# استفاده در شرط‌ها
+value = 10
+if type(value) == int:
+    print("این یک عدد صحیح است")</code></pre>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک متغیر data = "123" تعریف کنید. با ()type نوع آن را ببینید. سپس آن را با ()int به عدد تبدیل کنید و دوباره نوع آن را بررسی کنید.
+    </div>
+
+    <h3>۲.۴ تبدیل نوع (Type Casting)</h3>
+    <p>در پایتون می‌توانید با استفاده از توابع زیر، نوع داده‌ی یک متغیر را تغییر دهید:</p>
+    <ul>
+      <li>()int ← تبدیل به عدد صحیح</li>
+      <li>()float ← تبدیل به عدد اعشاری</li>
+      <li>()str ← تبدیل به رشته</li>
+      <li>()bool ← تبدیل به مقدار بولی</li>
+    </ul>
+
+    <pre><code># تبدیل به int
+print(int(3.14))     # 3
+print(int("123"))    # 123
+print(int(True))     # 1
+print(int(False))    # 0
+
+# تبدیل به float
+print(float(5))      # 5.0
+print(float("3.14")) # 3.14
+print(float(True))   # 1.0
+
+# تبدیل به str
+print(str(123))      # "123"
+print(str(3.14))     # "3.14"
+print(str(True))     # "True"
+
+# تبدیل به bool
+print(bool(0))       # False
+print(bool(1))       # True
+print(bool(""))      # False (رشته خالی)
+print(bool("سلام"))  # True (رشته غیرخالی)
+print(bool(None))    # False
+
+# نکته: تبدیل رشته‌ی غیرعددی به int
+# int("abc")  # ValueError</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      در پایتون، هر متغیر را می‌توان به نوع دیگری تبدیل کرد، اما اگر تبدیل معنی‌دار نباشد (مثل تبدیل "abc" به عدد)، خطای ValueError رخ می‌دهد.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک رشته‌ی عددی مثل "42.5" را به float تبدیل کنید، سپس به int و در نهایت به str تبدیل کنید و هر مرحله را چاپ کنید.
+    </div>
+
+    <h3>۲.۵ دریافت ورودی با ()input</h3>
+    <p>تابع ()input از کاربر ورودی می‌گیرد و آن را به صورت رشته برمی‌گرداند. برای دریافت اعداد، باید آن‌ها را با ()int یا ()float تبدیل کنید.</p>
+
+    <pre><code># دریافت نام
+name = input("نام خود را وارد کنید: ")
+print("سلام", name)
+
+# دریافت عدد و تبدیل به int
+age = int(input("سن خود را وارد کنید: "))
+print("شما", age, "ساله هستید")
+
+# دریافت عدد اعشاری
+height = float(input("قد خود را به متر وارد کنید: "))
+print("قد شما", height, "متر")
+
+# محاسبه با ورودی
+num1 = int(input("عدد اول: "))
+num2 = int(input("عدد دوم: "))
+print("مجموع:", num1 + num2)</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      فراموش نکنید که ورودی ()input همیشه رشته است. اگر بخواهید محاسبات ریاضی انجام دهید، حتماً آن را به int یا float تبدیل کنید.
+    </div>
+
+    <h3>۲.۶ فرمت‌دهی خروجی با f-strings</h3>
+    <p>f-strings (رشته‌های f) یک روش مدرن و ساده برای فرمت‌دهی رشته‌ها در پایتون هستند. با قرار دادن f قبل از رشته و استفاده از {} برای متغیرها، می‌توانید خروجی‌های زیبا و خوانا تولید کنید.</p>
+
+    <pre><code>name = "علی"
+age = 25
+height = 1.78
+
+# f-string ساده
+print(f"نام: {name}, سن: {age}")
+
+# محاسبه درون f-string
+print(f"آینده {age + 1} ساله می‌شوید")
+
+# فرمت‌دهی اعداد
+pi = 3.14159265
+print(f"pi با ۲ رقم اعشار: {pi:.2f}")   # 3.14
+print(f"pi با ۴ رقم اعشار: {pi:.4f}")   # 3.1416
+
+# فرمت‌دهی با فاصله
+score = 95
+print(f"امتیاز: {score:>5}")  # چپ‌چین با ۵ فاصله
+
+# استفاده از متغیرها درون f-string
+price = 19900
+discount = 0.15
+final_price = price * (1 - discount)
+print(f"قیمت با {discount * 100:.0f}% تخفیف: {final_price:,.0f} تومان")
+# خروجی: قیمت با ۱۵% تخفیف: ۱۶,۹۱۵ تومان</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      f-strings از Python 3.6 به بعد در دسترس هستند و بهترین روش برای فرمت‌دهی رشته‌ها محسوب می‌شوند. اگر از نسخه‌های قدیمی‌تر استفاده می‌کنید، از ()format استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      برنامه‌ای بنویسید که نام، سن و شهر کاربر را دریافت کند و با f-string یک پیام خوش‌آمدگویی کامل نمایش دهد.
+    </div>
+
+    <h3>۲.۷ متغیرهای قابل تغییر (Mutable) و غیرقابل تغییر (Immutable)</h3>
+    <p>در پایتون، برخی از انواع داده غیرقابل تغییر (Immutable) هستند و برخی قابل تغییر (Mutable):</p>
+    <ul>
+      <li>Immutable (غیرقابل تغییر): int, float, str, bool, tuple</li>
+      <li>Mutable (قابل تغییر): list, dict, set</li>
+    </ul>
+
+    <pre><code># Immutable: رشته‌ها
+text = "سلام"
+print(id(text))  # آدرس حافظه
+text = text + " دنیا"  # رشته‌ی جدید ایجاد می‌شود
+print(id(text))  # آدرس حافظه تغییر کرده است
+
+# Immutable: اعداد
+x = 10
+print(id(x))
+x = x + 5  # عدد جدید ایجاد می‌شود
+print(id(x))  # آدرس تغییر کرده است
+
+# Mutable: لیست‌ها (در فصل بعد)
+my_list = [1, 2, 3]
+print(id(my_list))
+my_list.append(4)  # لیست تغییر می‌کند
+print(id(my_list))  # آدرس ثابت می‌ماند</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      درک تفاوت بین انواع Immutable و Mutable برای جلوگیری از باگ‌های عجیب در برنامه‌های پیچیده بسیار مهم است. مخصوصاً وقتی که متغیرها را به توابع ارسال می‌کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک رشته تعریف کنید و آن را تغییر دهید. با ()id آدرس حافظه را قبل و بعد از تغییر بررسی کنید. سپس یک لیست (با []) تعریف کنید و با ()append به آن عنصر اضافه کنید و دوباره آدرس را بررسی کنید.
+    </div>
+
+    <h3>کارگاه عملی</h3>
+    <p><strong>گام‌به‌گام: برنامه‌ای برای محاسبه‌ی BMI</strong></p>
+    <ol class="step-list">
+      <li>یک فایل bmi_calculator.py ایجاد کنید.</li>
+      <li>از کاربر وزن خود را به کیلوگرم (عدد اعشاری) با ()input دریافت کنید و به float تبدیل کنید.</li>
+      <li>از کاربر قد خود را به متر (عدد اعشاری) دریافت کنید و به float تبدیل کنید.</li>
+      <li>BMI را با فرمول <code>weight / (height ** 2)</code> محاسبه کنید.</li>
+      <li>نتیجه را با f-string با ۲ رقم اعشار نمایش دهید.</li>
+      <li>با ()type نوع داده‌ی هر متغیر را در کنسول چاپ کنید.</li>
+    </ol>
+
+    <p><strong>چالش نهایی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>نام، سن، قد و وزن کاربر را دریافت کند</li>
+      <li>با f-string یک کارت شناسایی (ID Card) ساده نمایش دهد</li>
+      <li>BMI را محاسبه و در کارت نمایش دهد</li>
+      <li>نوع همه‌ی متغیرها را با ()type چاپ کند</li>
+    </ul>
+
+    <h3>پرسش‌ها و تمرینات</h3>
+    <p><strong>سوالات تشریحی:</strong></p>
+    <ol>
+      <li>قوانین نام‌گذاری متغیرها در پایتون چیست؟</li>
+      <li>تفاوت بین int و float چیست؟</li>
+      <li>()input چه نوع داده‌ای برمی‌گرداند و چرا باید آن را تبدیل کنیم؟</li>
+      <li>f-strings چه مزیتی نسبت به روش‌های قدیمی فرمت‌دهی دارند؟</li>
+      <li>تفاوت بین انواع Mutable و Immutable چیست؟</li>
+    </ol>
+
+    <p><strong>سوالات چهارگزینه‌ای:</strong></p>
+    <ol>
+      <li>کدام یک از موارد زیر یک نام متغیر معتبر در پایتون است؟
+        <br>الف) 2name &nbsp; ب) name-2 &nbsp; ج) name_2 &nbsp; د) name 2</li>
+      <li>خروجی <code>print(type(3.14))</code> چیست؟
+        <br>الف) &lt;class 'int'&gt; &nbsp; ب) &lt;class 'float'&gt; &nbsp; ج) &lt;class 'str'&gt; &nbsp; د) &lt;class 'bool'&gt;</li>
+      <li>برای تبدیل یک رشته به عدد صحیح از کدام تابع استفاده می‌شود؟
+        <br>الف) ()str &nbsp; ب) ()float &nbsp; ج) ()int &nbsp; د) ()bool</li>
+    </ol>
+
+    <p><strong>تمرین عملی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>از کاربر سه عدد دریافت کند</li>
+      <li>مجموع، میانگین و حاصل‌ضرب آن‌ها را محاسبه کند</li>
+      <li>همه‌ی نتایج را با f-string به‌صورت زیبا نمایش دهد</li>
+      <li>نوع داده‌ی هر متغیر را با ()type چاپ کند</li>
+    </ul>
+
+    <h3>جمع‌بندی و خلاصه</h3>
+    <div class="callout callout-key">
+      <span class="callout-title">نکات طلایی</span>
+      متغیرها با نام snake_case تعریف می‌شوند. انواع داده‌ی اصلی: int, float, str, bool, None. ()type نوع داده‌ی متغیر را تشخیص می‌دهد. ()int, ()float, ()str برای تبدیل نوع استفاده می‌شوند. ()input ورودی را به صورت رشته دریافت می‌کند. f-strings بهترین روش برای فرمت‌دهی خروجی است. int, float, str → Immutable (غیرقابل تغییر). list, dict, set → Mutable (قابل تغییر).
+    </div>
+
+    <p class="code-label">برگه تقلب</p>
+    <pre><code># تعریف متغیر
+name = "علی"
+age = 25
+height = 1.78
+
+# تشخیص نوع
+type(name)  # <class 'str'>
+
+# تبدیل نوع
+int("123")    # 123
+float("3.14") # 3.14
+str(123)      # "123"
+
+# ورودی
+name = input("نام: ")
+age = int(input("سن: "))
+
+# f-string
+print(f"نام: {name}, سن: {age}")</code></pre>
+
+    <h3>واژه‌نامه تخصصی</h3>
+    <ul>
+      <li>Variable (متغیر): نامی برای ذخیره‌سازی یک مقدار.</li>
+      <li>int: عدد صحیح (مثل ۱۰، ۵-).</li>
+      <li>float: عدد اعشاری (مثل ۳.۱۴).</li>
+      <li>str: رشته (متن) — با ' یا " مشخص می‌شود.</li>
+      <li>bool: مقدار بولی (True یا False).</li>
+      <li>None: مقدار خالی یا عدم وجود مقدار.</li>
+      <li>Type Casting: تبدیل یک نوع داده به نوع دیگر.</li>
+      <li>f-string: روش مدرن برای فرمت‌دهی رشته‌ها.</li>
+      <li>Mutable: قابل تغییر (لیست‌ها، دیکشنری‌ها).</li>
+      <li>Immutable: غیرقابل تغییر (اعداد، رشته‌ها، تاپل‌ها).</li>
+    </ul>
+
+    <h3>منابع و ارجاعات</h3>
+    <ul>
+      <li>Python Tutorial: Variables</li>
+      <li>Python: Built-in Types</li>
+      <li>Real Python: Data Types</li>
+      <li>W3Schools: Variables</li>
+    </ul>
+
+    <h3>نقشه راه و نمای کلی فصل</h3>
+    <ul>
+      <li>گام ۱: متغیرها و قوانین نام‌گذاری — ۱۵ دقیقه</li>
+      <li>گام ۲: انواع داده‌ی اصلی — ۱۵ دقیقه</li>
+      <li>گام ۳: تشخیص نوع با type() — ۱۰ دقیقه</li>
+      <li>گام ۴: تبدیل نوع (Type Casting) — ۱۵ دقیقه</li>
+      <li>گام ۵: دریافت ورودی با input() — ۱۵ دقیقه</li>
+      <li>گام ۶: f-strings و فرمت‌دهی — ۱۵ دقیقه</li>
+      <li>گام ۷: Mutable vs Immutable — ۱۰ دقیقه</li>
+    </ul>
+
+    <h3>سوالات محرک (برای درگیری ذهن)</h3>
+    <ul>
+      <li>چرا پایتون یک زبان «Dynamically Typed» است؟</li>
+      <li>چه اتفاقی می‌افتد اگر int("abc") را اجرا کنیم؟ چرا؟</li>
+      <li>تفاوت بین ()input و ()print چیست؟</li>
+      <li>چرا f-strings بهتر از + برای ترکیب رشته‌ها هستند؟</li>
+      <li>اگر یک رشته را تغییر دهیم، آیا یک رشته‌ی جدید ساخته می‌شود یا همان رشته تغییر می‌کند؟</li>
+    </ul>
+
+    <h3>خطاهای رایج و عیب‌یابی</h3>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن تبدیل ورودی ()input به عدد که باعث خطا در محاسبات می‌شود.
+      <br><strong>راه‌حل:</strong> همیشه ورودی‌های عددی را با ()int یا ()float تبدیل کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از نام متغیرهای غیرمعتبر (مثل شروع با عدد یا استفاده از فاصله).
+      <br><strong>راه‌حل:</strong> از snake_case و شروع با حرف یا _ استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن f قبل از رشته که باعث می‌شود {} به عنوان متن معمولی نمایش داده شود.
+      <br><strong>راه‌حل:</strong> همیشه قبل از رشته‌ی خود f قرار دهید: <code>f"متغیر: {var}"</code>
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      تغییر یک متغیر Immutable و انتظار تغییر همان شیء.
+      <br><strong>راه‌حل:</strong> بدانید که رشته‌ها و اعداد غیرقابل تغییر هستند و هر تغییر یک شیء جدید ایجاد می‌کند.
+    </div>
+
+    <h3>پروژه نهایی فصل</h3>
+    <p><strong>عنوان پروژه:</strong> ساخت یک ماشین حساب پیشرفته با ورودی کاربر</p>
+    <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان بسازید که مانند یک ماشین حساب عمل کند و شامل موارد زیر باشد:</p>
+    <ul>
+      <li>از کاربر دو عدد (با ()input) دریافت کند.</li>
+      <li>یک عملگر (+, -, *, /) را از کاربر دریافت کند.</li>
+      <li>بر اساس عملگر، عملیات ریاضی را انجام دهد و نتیجه را با f-string نمایش دهد.</li>
+      <li>در صورت تقسیم بر صفر، پیام «تقسیم بر صفر مجاز نیست» را نمایش دهد (با شرط).</li>
+      <li>با ()type نوع داده‌ی ورودی‌ها را در کنسول چاپ کند.</li>
+      <li>از f-strings برای نمایش نتایج با ۲ رقم اعشار استفاده کند.</li>
+      <li>یک پیام خوش‌آمدگویی با نام کاربر (دریافت شده از ()input) نمایش دهد.</li>
+    </ul>
+    <p>کد خود را در VS Code بنویسید و با python3 اجرا کنید.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">چالش بیشتر</span>
+      پشتیبانی از عملگرهای توان (**) و باقی‌مانده (%). اجازه‌ی ادامه‌ی محاسبه با نتیجه‌ی قبلی (مثل یک ماشین حساب واقعی). ذخیره‌ی تاریخچه‌ی عملیات در یک لیست (با نمایش در انتها).
+    </div>
+  </article>
+
+  <div class="chapter-nav">
+    <a href="lesson-python-ch1.html">→ فصل قبلی: آشنایی با پایتون</a>
+    <a href="lesson-python-ch3.html">فصل بعدی: عملگرها و عبارات ←</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
