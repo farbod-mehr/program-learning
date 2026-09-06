@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۵: حلقه‌ها — دوره جامع Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Python</span>
+      <span>فصل ۵</span>
+    </div>
+    <h1>حلقه‌ها</h1>
+  </div>
+
+  <article class="lesson-content">
+    <div class="chapter-banner" id="chapter-1">
+      <p class="kicker">فصل ۰۵</p>
+      <h2>حلقه‌ها</h2>
+    </div>
+    <div class="meta-box">
+      <div class="row"><span class="label">زمان مطالعه:</span><span class="value">۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</span></div>
+      <div class="row"><span class="label">سطح دشواری:</span><span class="value">مبتدی (نیازمند آشنایی با شرط‌ها)</span></div>
+      <div class="row"><span class="label">شامل:</span><span class="value">۷ درس + تمرین عملی</span></div>
+    </div>
+
+    <h3>پیش‌نیازها</h3>
+    <ul class="checklist">
+      <li>تسلط بر متغیرها و انواع داده (فصل ۲)</li>
+      <li>آشنایی با عملگرها (فصل ۳)</li>
+      <li>درک ساختارهای شرطی (فصل ۴)</li>
+      <li>توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+    </ul>
+
+    <h3>اهداف آموزشی</h3>
+    <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+    <ul class="checklist">
+      <li>از for برای پیمایش مجموعه‌ها استفاده کنید</li>
+      <li>از while برای تکرار با شرط استفاده کنید</li>
+      <li>از ()range برای تولید دنباله‌های عددی استفاده کنید</li>
+      <li>از break و continue برای کنترل جریان حلقه استفاده کنید</li>
+      <li>از pass به‌عنوان placeholder استفاده کنید</li>
+      <li>از ()enumerate برای دسترسی به اندیس و مقدار استفاده کنید</li>
+      <li>از ()zip برای پیمایش هم‌زمان چند مجموعه استفاده کنید</li>
+      <li>List Comprehension را برای ایجاد لیست‌های فشرده بنویسید</li>
+    </ul>
+
+    <h3>مقدمه و انگیزه‌بخشی</h3>
+    <p>تصور کنید می‌خواهید اعداد ۱ تا ۱۰۰ را چاپ کنید. آیا ۱۰۰ بار ()print می‌نویسید؟ یا می‌خواهید تمام آیتم‌های یک لیست خرید را پردازش کنید. اینجاست که حلقه‌ها (Loops) وارد می‌شوند. حلقه‌ها به شما اجازه می‌دهند یک بلوک کد را تکرار کنید بدون اینکه مجبور باشید آن را چندین بار بنویسید.</p>
+    <p>در این فصل با همه‌ی انواع حلقه‌ها در پایتون آشنا می‌شوید: for برای پیمایش مجموعه‌ها، while برای تکرار با شرط، ()range برای تولید دنباله‌های عددی، و ابزارهای کنترلی مثل break، continue و pass. همچنین با ()enumerate، ()zip و List Comprehension آشنا می‌شوید که کدنویسی را بسیار ساده‌تر می‌کنند.</p>
+    <p>تسلط بر حلقه‌ها یکی از مهارت‌های اساسی برنامه‌نویسی است که در تمام پروژه‌ها به آن نیاز خواهید داشت.</p>
+
+    <h3>۵.۱ حلقه‌ی for (پیمایش مجموعه‌ها)</h3>
+    <p>حلقه‌ی for در پایتون برای پیمایش مجموعه‌ها (لیست، رشته، دیکشنری، تاپل، مجموعه) استفاده می‌شود.</p>
+
+    <pre><code># پیمایش لیست
+fruits = ["سیب", "موز", "پرتقال"]
+for fruit in fruits:
+    print(fruit, end="، ")
+# خروجی: سیب، موز، پرتقال
+
+# پیمایش رشته
+text = "سلام"
+for char in text:
+    print(char, end="، ")
+# خروجی: س، ل، ا، م
+
+# پیمایش دیکشنری
+person = {"name": "علی", "age": 25}
+for key in person:
+    print(f"{key}: {person[key]}")
+# name: علی
+# age: 25
+
+# پیمایش دیکشنری با items()
+for key, value in person.items():
+    print(f"{key} → {value}")
+
+# پیمایش مجموعه (Set)
+numbers = {1, 2, 3, 4, 5}
+for num in numbers:
+    print(num, end=" ")  # 1 2 3 4 5</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      حلقه‌ی for در پایتون شبیه به foreach در زبان‌های دیگر است. به‌جای پیمایش با اندیس، مستقیماً عناصر مجموعه را دریافت می‌کند.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست از ۵ اسم حیوان ایجاد کنید و با for آن‌ها را چاپ کنید. سپس یک دیکشنری از اطلاعات یک کتاب (عنوان، نویسنده، سال) ایجاد کنید و با for کلیدها و مقادیر را چاپ کنید.
+    </div>
+
+    <h3>۵.۲ تابع ()range و حلقه‌ی for</h3>
+    <p>()range یک دنباله‌ی عددی تولید می‌کند و برای حلقه‌های با تعداد مشخص بسیار مفید است.</p>
+    <p><strong>ساختارها:</strong></p>
+    <ul>
+      <li>range(stop) ← ۰ تا stop-1</li>
+      <li>range(start, stop) ← start تا stop-1</li>
+      <li>range(start, stop, step) ← start تا stop-1 با گام step</li>
+    </ul>
+
+    <pre><code># range(stop)
+for i in range(5):
+    print(i, end=" ")  # 0 1 2 3 4
+
+# range(start, stop)
+for i in range(1, 6):
+    print(i, end=" ")  # 1 2 3 4 5
+
+# range(start, stop, step)
+for i in range(0, 10, 2):
+    print(i, end=" ")  # 0 2 4 6 8
+
+# گام منفی
+for i in range(5, 0, -1):
+    print(i, end=" ")  # 5 4 3 2 1
+
+# محاسبه مجموع اعداد 1 تا 10
+total = 0
+for i in range(1, 11):
+    total += i
+print(f"مجموع: {total}")  # مجموع: 55
+
+# تبدیل به لیست
+numbers = list(range(5))  # [0, 1, 2, 3, 4]
+print(numbers)</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      ()range یک شیء از نوع range برمی‌گرداند که مصرف حافظه کمی دارد. برای تبدیل به لیست از list(range()) استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      با استفاده از ()range و حلقه‌ی for، مجموع اعداد زوج بین ۱ تا ۲۰ را محاسبه کنید و چاپ کنید.
+    </div>
+
+    <h3>۵.۳ حلقه‌ی while (تکرار با شرط)</h3>
+    <p>while تا زمانی که شرط True باشد، بلوک کد را تکرار می‌کند. تعداد تکرارها از قبل مشخص نیست.</p>
+
+    <pre><code># ساده: چاپ اعداد ۱ تا ۵
+i = 1
+while i <= 5:
+    print(i, end=" ")
+    i += 1
+# 1 2 3 4 5
+
+# دریافت ورودی تا زمانی که عدد مثبت وارد شود
+num = -1
+while num < 0:
+    num = int(input("یک عدد مثبت وارد کنید: "))
+print(f"شما وارد کردید: {num}")
+
+# while با break
+i = 0
+while True:
+    print(i, end=" ")
+    i += 1
+    if i >= 5:
+        break
+# 0 1 2 3 4
+
+# محاسبه فاکتوریل با while
+n = 5
+factorial = 1
+while n > 0:
+    factorial *= n
+    n -= 1
+print(f"فاکتوریل: {factorial}")  # 120</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      در while باید شرط پایان را به خوبی مدیریت کنید تا از حلقه‌ی بی‌نهایت (Infinite Loop) جلوگیری شود. همیشه مطمئن شوید که شرط در نهایت False می‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه با while بنویسید که از کاربر اعداد دریافت کند و تا زمانی که عدد ۰ وارد نشود، ادامه دهد. سپس مجموع اعداد را چاپ کند.
+    </div>
+
+    <h3>۵.۴ کنترل جریان حلقه: break، continue، pass</h3>
+    <table>
+      <tr><th>دستور</th><th>توضیح</th></tr>
+      <tr><td>break</td><td>حلقه را فوراً متوقف می‌کند و از آن خارج می‌شود</td></tr>
+      <tr><td>continue</td><td>تکرار فعلی را متوقف می‌کند و به تکرار بعدی می‌رود</td></tr>
+      <tr><td>pass</td><td>هیچ کاری نمی‌کند؛ به‌عنوان placeholder در جاهایی که نیاز به یک دستور خالی داریم استفاده می‌شود</td></tr>
+    </table>
+
+    <pre><code># break - خروج از حلقه وقتی به ۵ رسید
+for i in range(1, 11):
+    if i == 5:
+        break
+    print(i, end=" ")
+# 1 2 3 4
+
+# continue - رد کردن اعداد زوج
+for i in range(1, 11):
+    if i % 2 == 0:
+        continue
+    print(i, end=" ")
+# 1 3 5 7 9
+
+# pass - placeholder
+for i in range(5):
+    if i == 2:
+        pass  # بعداً کد اینجا نوشته می‌شود
+    print(i, end=" ")
+# 0 1 2 3 4
+
+# ترکیب break و continue
+numbers = [1, 2, -3, 4, -5, 6, 0]
+for num in numbers:
+    if num == 0:
+        break
+    if num < 0:
+        continue
+    print(num, end=" ")
+# 1 2 4 6</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      از break برای خروج از حلقه زمانی که شرط مورد نظر پیدا شد استفاده کنید (بهینه‌سازی عملکرد). از continue برای رد کردن موارد خاص استفاده کنید. از pass برای ساختارهای خالی در حین توسعه استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک حلقه بنویسید که اعداد ۱ تا ۲۰ را چاپ کند، اما وقتی به عدد ۱۳ رسید، حلقه را متوقف کند (با break). سپس با continue اعداد بخش‌پذیر بر ۳ را رد کند.
+    </div>
+
+    <h3>۵.۵ ()enumerate و ()zip</h3>
+    <p><strong>()enumerate:</strong> به شما اجازه می‌دهد در حلقه‌ی for به اندیس و مقدار عناصر دسترسی داشته باشید.</p>
+    <p><strong>()zip:</strong> چندین مجموعه را هم‌زمان پیمایش می‌کند.</p>
+
+    <pre><code># enumerate - دسترسی به اندیس و مقدار
+fruits = ["سیب", "موز", "پرتقال"]
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")
+# 0: سیب
+# 1: موز
+# 2: پرتقال
+
+# enumerate با start
+for index, fruit in enumerate(fruits, start=1):
+    print(f"{index}: {fruit}")
+# 1: سیب
+# 2: موز
+# 3: پرتقال
+
+# zip - پیمایش همزمان چند مجموعه
+names = ["رضا", "سارا", "علی"]
+ages = [25, 30, 28]
+cities = ["شیراز", "اصفهان", "تهران"]
+
+for name, age, city in zip(names, ages, cities):
+    print(f"{name} - {age} - {city}")
+# رضا - 25 - شیراز
+# سارا - 30 - اصفهان
+# علی - 28 - تهران
+
+# zip با لیست‌های با طول متفاوت (تا کوتاه‌ترین)
+list1 = [1, 2, 3]
+list2 = ['a', 'b']
+for x, y in zip(list1, list2):
+    print(x, y)
+# 1 a
+# 2 b</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      ()enumerate و ()zip کد را خواناتر و پایتونیک‌تر می‌کنند. از آن‌ها به جای استفاده از اندیس‌های دستی در حلقه‌ها استفاده کنید.
+    </div>
+
+    <h3>۵.۶ List Comprehension (درک لیست)</h3>
+    <p>List Comprehension یک روش فشرده و خوانا برای ایجاد لیست‌ها با استفاده از حلقه‌ی for است.</p>
+    <p><strong>ساختار:</strong> <code>[expression for item in iterable if condition]</code></p>
+
+    <pre><code># ایجاد لیست مربع‌های اعداد ۱ تا ۵
+squares = [x**2 for x in range(1, 6)]
+print(squares)  # [1, 4, 9, 16, 25]
+
+# معادل با حلقه‌ی معمولی
+squares2 = []
+for x in range(1, 6):
+    squares2.append(x**2)
+print(squares2)  # [1, 4, 9, 16, 25]
+
+# فیلتر کردن با شرط
+evens = [x for x in range(1, 11) if x % 2 == 0]
+print(evens)  # [2, 4, 6, 8, 10]
+
+# تبدیل رشته‌ها به بزرگ
+words = ["hello", "world", "python"]
+upper_words = [word.upper() for word in words]
+print(upper_words)  # ['HELLO', 'WORLD', 'PYTHON']
+
+# ترکیب چند حلقه
+pairs = [(x, y) for x in range(3) for y in range(3)]
+print(pairs)  # [(0,0), (0,1), (0,2), (1,0), ...]
+
+# شرط‌های پیچیده
+numbers = [x for x in range(20) if x % 2 == 0 and x % 3 == 0]
+print(numbers)  # [0, 6, 12, 18]
+
+# استفاده از if/else در عبارت
+results = ["زوج" if x % 2 == 0 else "فرد" for x in range(5)]
+print(results)  # ['زوج', 'فرد', 'زوج', 'فرد', 'زوج']</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      List Comprehension کد را کوتاه‌تر و خواناتر می‌کند، اما برای حلقه‌های بسیار پیچیده، از حلقه‌های معمولی استفاده کنید تا خوانایی حفظ شود. همچنین می‌توانید از Set Comprehension و Dictionary Comprehension نیز استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      با استفاده از List Comprehension، یک لیست از اعداد ۱ تا ۲۰ که بر ۳ بخش‌پذیر هستند ایجاد کنید. همچنین یک لیست از طول رشته‌های یک لیست از کلمات ایجاد کنید.
+    </div>
+
+    <h3>۵.۷ حلقه‌های تو در تو (Nested Loops)</h3>
+    <p>حلقه‌های تو در تو زمانی استفاده می‌شوند که نیاز به کار با ساختارهای دو‌بعدی مانند ماتریس‌ها، جدول‌ها یا ترکیب‌ها داریم.</p>
+
+    <pre><code># جدول ضرب ۳×۳
+for i in range(1, 4):
+    for j in range(1, 4):
+        print(f"{i}×{j}={i*j}", end=" ")
+    print()  # خط جدید
+# 1×1=1 1×2=2 1×3=3
+# 2×1=2 2×2=4 2×3=6
+# 3×1=3 3×2=6 3×3=9
+
+# پیمایش یک ماتریس دو بعدی
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+for i in range(len(matrix)):
+    for j in range(len(matrix[i])):
+        print(f"matrix[{i}][{j}] = {matrix[i][j]}")
+
+# ایجاد ماتریس با List Comprehension تو در تو
+matrix2 = [[i * j for j in range(1, 4)] for i in range(1, 4)]
+print(matrix2)  # [[1, 2, 3], [2, 4, 6], [3, 6, 9]]
+
+# ترکیب‌های کاراکتری
+letters = "ABC"
+numbers = "123"
+for letter in letters:
+    for number in numbers:
+        print(letter + number, end=" ")
+# A1 A2 A3 B1 B2 B3 C1 C2 C3</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      حلقه‌های تو در تو می‌توانند عملکرد را کاهش دهند (پیچیدگی زمانی O(n²)). از آن‌ها فقط در صورت نیاز استفاده کنید و به دنبال بهینه‌سازی باشید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      با استفاده از حلقه‌های تو در تو، یک مثلث ستاره‌ای با ۵ ردیف رسم کنید. همچنین یک جدول ضرب ۱۰×۱۰ با فرمت زیبا ایجاد کنید.
+    </div>
+
+    <h3>کارگاه عملی</h3>
+    <p><strong>گام‌به‌گام: ساخت یک جدول ضرب تعاملی با حلقه‌ها</strong></p>
+    <ol class="step-list">
+      <li>یک فایل loops_workshop.py ایجاد کنید.</li>
+      <li>از کاربر عدد n (مثلاً ۵) با ()input دریافت کنید.</li>
+      <li>با حلقه‌ی for و ()range جدول ضرب را تولید کنید.</li>
+      <li>با حلقه‌های تو در تو، سطرها و ستون‌ها را بسازید.</li>
+      <li>با ()zip و ()enumerate سطرها را به صورت خوانا نمایش دهید.</li>
+      <li>با List Comprehension یک جدول ضرب به صورت لیست‌های تو در تو ایجاد کنید.</li>
+      <li>با continue و break اعداد زوج یا فرد را در جدول علامت‌گذاری کنید.</li>
+      <li>با while از کاربر بخواهید که دوباره بازی کند یا خروج کند.</li>
+    </ol>
+
+    <p><strong>چالش کدنویسی:</strong> یک برنامه بنویسید که با استفاده از حلقه‌ها، اعداد اول بین ۱ تا ۱۰۰ را پیدا کند و در یک لیست ذخیره کند. سپس با ()enumerate آن‌ها را به صورت شماره‌دار چاپ کند.</p>
+
+    <h3>پرسش‌ها و تمرینات</h3>
+    <p><strong>سوالات تشریحی:</strong></p>
+    <ol>
+      <li>تفاوت بین حلقه‌های while و for چیست؟</li>
+      <li>()range چگونه کار می‌کند و چه آرگومان‌هایی می‌گیرد؟</li>
+      <li>break و continue چه تأثیری روی حلقه می‌گذارند؟</li>
+      <li>()enumerate و ()zip چه مزیتی نسبت به حلقه‌های معمولی دارند؟</li>
+      <li>List Comprehension چه مزیتی دارد؟</li>
+    </ol>
+
+    <p><strong>سوالات چهارگزینه‌ای:</strong></p>
+    <ol>
+      <li>خروجی <code>list(range(3, 10, 2))</code> چیست؟
+        <br>الف) [3, 5, 7, 9] &nbsp; ب) [3, 4, 5, 6, 7, 8, 9] &nbsp; ج) [5, 7, 9, 11] &nbsp; د) [2, 4, 6, 8]</li>
+      <li>کدام یک از موارد زیر یک List Comprehension صحیح است؟
+        <br>الف) [x*2 for x in range(5)] &nbsp; ب) [x*2 for x in range(5) if x &gt; 2] &nbsp; ج) هر دو &nbsp; د) هیچ‌کدام</li>
+      <li>برای خروج از یک حلقه از کدام دستور استفاده می‌شود؟
+        <br>الف) break &nbsp; ب) continue &nbsp; ج) pass &nbsp; د) exit</li>
+    </ol>
+
+    <p><strong>تمرین عملی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>یک لیست از ۱۰ عدد تصادفی (با استفاده از ()random.randint) تولید کند</li>
+      <li>با for مجموع اعداد را محاسبه کند</li>
+      <li>بزرگ‌ترین عدد را پیدا کند</li>
+      <li>اندیس بزرگ‌ترین عدد را چاپ کند</li>
+      <li>اعداد زوج را با List Comprehension فیلتر کند</li>
+      <li>با ()zip دو لیست از اعداد و رشته‌ها را ترکیب کند</li>
+    </ul>
+
+    <h3>جمع‌بندی و خلاصه</h3>
+    <div class="callout callout-key">
+      <span class="callout-title">نکات طلایی</span>
+      for برای پیمایش مجموعه‌ها و تکرار با تعداد مشخص. while برای تکرار بر اساس شرط. ()range برای تولید دنباله‌های عددی. break برای خروج از حلقه. continue برای رد کردن یک تکرار. pass به‌عنوان placeholder. ()enumerate برای دسترسی به اندیس و مقدار. ()zip برای پیمایش هم‌زمان چند مجموعه. List Comprehension برای ایجاد لیست‌های فشرده و خوانا.
+    </div>
+
+    <p class="code-label">برگه تقلب</p>
+    <pre><code># for
+for item in iterable:
+    # code
+
+# while
+while condition:
+    # code
+
+# range
+range(start, stop, step)
+
+# break / continue / pass
+if condition:
+    break
+if condition:
+    continue
+# pass
+
+# enumerate
+for idx, val in enumerate(list):
+    # code
+
+# zip
+for a, b in zip(list1, list2):
+    # code
+
+# List Comprehension
+[expression for item in iterable if condition]</code></pre>
+
+    <h3>واژه‌نامه تخصصی</h3>
+    <ul>
+      <li>Loop (حلقه): ساختاری برای تکرار یک بلوک کد.</li>
+      <li>for: حلقه برای پیمایش مجموعه.</li>
+      <li>while: حلقه برای تکرار با شرط.</li>
+      <li>range(): تابع برای تولید دنباله‌های عددی.</li>
+      <li>break: خروج از حلقه.</li>
+      <li>continue: رد کردن تکرار فعلی.</li>
+      <li>pass: دستور خالی.</li>
+      <li>enumerate(): دسترسی به اندیس و مقدار.</li>
+      <li>zip(): پیمایش هم‌زمان چند مجموعه.</li>
+      <li>List Comprehension: روش فشرده برای ایجاد لیست.</li>
+      <li>Nested Loop: حلقه‌ای داخل حلقه‌ی دیگر.</li>
+    </ul>
+
+    <h3>منابع و ارجاعات</h3>
+    <ul>
+      <li>Python: for Statements</li>
+      <li>Python: range</li>
+      <li>Python: break/continue</li>
+      <li>Real Python: Python for Loop</li>
+      <li>W3Schools: Python Loops</li>
+    </ul>
+
+    <h3>نقشه راه و نمای کلی فصل</h3>
+    <ul>
+      <li>گام ۱: حلقه‌ی for — ۱۵ دقیقه</li>
+      <li>گام ۲: range() — ۱۵ دقیقه</li>
+      <li>گام ۳: حلقه‌ی while — ۱۵ دقیقه</li>
+      <li>گام ۴: break/continue/pass — ۱۰ دقیقه</li>
+      <li>گام ۵: enumerate() و zip() — ۱۵ دقیقه</li>
+      <li>گام ۶: List Comprehension — ۱۵ دقیقه</li>
+      <li>گام ۷: حلقه‌های تو در تو — ۱۰ دقیقه</li>
+      <li>گام ۸: کارگاه عملی — ۳۰ دقیقه</li>
+    </ul>
+
+    <h3>سوالات محرک (برای درگیری ذهن)</h3>
+    <ul>
+      <li>چه تفاوتی بین <code>for i in [0,1,2,3,4]</code> و <code>for i in range(5)</code> وجود دارد؟</li>
+      <li>چه زمانی استفاده از for بهتر از while است؟</li>
+      <li>List Comprehension با حلقه‌ی معمولی چه تفاوتی از نظر عملکرد دارد؟</li>
+      <li>چگونه می‌توان با ()enumerate و ()zip کد را خواناتر کرد؟</li>
+      <li>اگر در یک حلقه break و continue را اشتباه بگیریم، چه اتفاقی می‌افتد؟</li>
+    </ul>
+
+    <h3>خطاهای رایج و عیب‌یابی</h3>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      حلقه‌ی بی‌نهایت در while به‌دلیل فراموش کردن تغییر شرط.
+      <br><strong>راه‌حل:</strong> همیشه مطمئن شوید که شرط در نهایت False می‌شود (مثلاً با افزایش شمارنده).
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن : در انتهای خط for یا while.
+      <br><strong>راه‌حل:</strong> همیشه از : بعد از حلقه استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      تغییر یک مجموعه در حین پیمایش با for که باعث خطا می‌شود.
+      <br><strong>راه‌حل:</strong> از کپی مجموعه استفاده کنید یا با اندیس while استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از ()range با آرگومان‌های اشتباه (مثل range(1, 10, -1)) که خالی است.
+      <br><strong>راه‌حل:</strong> آرگومان‌های ()range را به‌درستی تنظیم کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از pass به‌جای continue که باعث می‌شود کد اجرا شود.
+      <br><strong>راه‌حل:</strong> pass هیچ کاری نمی‌کند، از continue برای رد کردن استفاده کنید.
+    </div>
+
+    <h3>پروژه نهایی فصل ۵</h3>
+    <p><strong>عنوان پروژه:</strong> ساخت یک بازی حدس اعداد با حلقه‌ها</p>
+    <p><strong>شرح:</strong> یک بازی تعاملی با پایتون بسازید که در آن کاربر باید یک عدد تصادفی را حدس بزند. از حلقه‌ها برای مدیریت دورهای بازی استفاده کنید.</p>
+    <ul>
+      <li>با ()random.randint یک عدد تصادفی بین ۱ تا ۱۰۰ تولید کنید.</li>
+      <li>با ()input از کاربر بارها عددی دریافت کنید.</li>
+      <li>با استفاده از حلقه‌ی while تا زمانی که عدد را درست حدس بزند، ادامه دهید.</li>
+      <li>هر بار پیام «بزرگ‌تر است» یا «کوچک‌تر است» نمایش دهید.</li>
+      <li>تعداد تلاش‌ها را بشمارید و در پایان نمایش دهید.</li>
+      <li>اگر کاربر عدد ۰ را وارد کرد، با break بازی را متوقف کنید.</li>
+      <li>اگر کاربر عدد نامعتبر وارد کرد، با continue آن تلاش را نادیده بگیرید و دوباره درخواست کنید.</li>
+      <li>پس از حدس درست، از کاربر بپرسید آیا دوباره بازی کند؟ (با while بیرونی)</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">چالش بیشتر</span>
+      با ()range و for یک لیست از حدس‌های قبلی کاربر ذخیره کنید و با ()enumerate نمایش دهید. با List Comprehension حدس‌های زوج و فرد را جدا کنید. با ()zip حدس‌ها و شماره‌های تلاش را با هم نمایش دهید.
+    </div>
+
+  </article>
+
+  <div class="chapter-nav">
+    <a href="lesson-python-ch4.html">→ فصل قبلی: ساختارهای شرطی</a>
+    <span></span>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
