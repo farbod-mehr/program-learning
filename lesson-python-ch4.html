@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۴: ساختارهای شرطی — دوره جامع Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Python</span>
+      <span>فصل ۴</span>
+    </div>
+    <h1>ساختارهای شرطی</h1>
+  </div>
+
+  <article class="lesson-content">
+    <div class="chapter-banner" id="chapter-1">
+      <p class="kicker">فصل ۰۴</p>
+      <h2>ساختارهای شرطی</h2>
+    </div>
+    <div class="meta-box">
+      <div class="row"><span class="label">زمان مطالعه:</span><span class="value">۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</span></div>
+      <div class="row"><span class="label">سطح دشواری:</span><span class="value">مبتدی (نیازمند آشنایی با عملگرها)</span></div>
+      <div class="row"><span class="label">شامل:</span><span class="value">۶ درس + تمرین عملی</span></div>
+    </div>
+
+    <h3>پیش‌نیازها</h3>
+    <ul class="checklist">
+      <li>تسلط بر متغیرها و انواع داده (فصل ۲)</li>
+      <li>آشنایی با عملگرها (فصل ۳)</li>
+      <li>توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+    </ul>
+
+    <h3>اهداف آموزشی</h3>
+    <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+    <ul class="checklist">
+      <li>از if و else برای تصمیم‌گیری استفاده کنید</li>
+      <li>از elif برای بررسی چند شرط استفاده کنید</li>
+      <li>از match-case (Python 3.10+) برای مقایسه‌ی الگو استفاده کنید</li>
+      <li>از عملگر شرطی (Ternary) برای نوشتن شرط‌های کوتاه استفاده کنید</li>
+      <li>مفهوم Falsy و Truthy را درک کنید</li>
+      <li>شرط‌های تو در تو (Nested) را مدیریت کنید</li>
+    </ul>
+
+    <h3>مقدمه و انگیزه‌بخشی</h3>
+    <p>در دنیای واقعی، هر روز با تصمیم‌گیری‌های مختلف روبرو هستیم: «اگر باران بیاید، چتر برمی‌دارم» یا «اگر گرسنه باشم، غذا می‌خورم». در برنامه‌نویسی هم همین‌طور است. ساختارهای شرطی به برنامه اجازه می‌دهند بر اساس شرایط مختلف، تصمیم‌گیری کند و مسیرهای مختلفی را طی کند.</p>
+    <p>در این فصل با همه‌ی ابزارهای تصمیم‌گیری در پایتون آشنا می‌شوید: از if و else ساده گرفته تا elif، match-case و عملگر شرطی (Ternary). همچنین با مفهوم Falsy و Truthy آشنا می‌شوید که یکی از مفاهیم کلیدی در شرط‌های پایتون است.</p>
+    <p>تسلط بر ساختارهای شرطی، یکی از مهم‌ترین مهارت‌های هر برنامه‌نویسی است. با این فصل، می‌توانید برنامه‌هایی بنویسید که هوشمندانه رفتار کنند و به ورودی‌های کاربر پاسخ مناسب بدهند.</p>
+
+    <h3>۴.۱ دستور if و else</h3>
+    <p>ساده‌ترین ساختار شرطی است. اگر شرط True باشد، بلوک کد اجرا می‌شود. else زمانی اجرا می‌شود که شرط False باشد.</p>
+    <ul>
+      <li>در پایتون، تورفتگی (Indentation) برای مشخص کردن بلوک کد استفاده می‌شود.</li>
+      <li>از : در انتهای خط شرط استفاده کنید.</li>
+    </ul>
+
+    <pre><code># if ساده
+age = 18
+if age >= 18:
+    print("شما بزرگسال هستید.")
+
+# if/else
+temperature = 30
+if temperature > 25:
+    print("هوا گرم است")
+else:
+    print("هوا خنک است")
+
+# شرط با ورودی
+score = int(input("امتیاز خود را وارد کنید: "))
+if score >= 50:
+    print("قبول شدید")
+else:
+    print("رد شدید")
+
+# تورفتگی مهم است!
+if True:
+    print("این خط اجرا می‌شود")
+    print("این خط هم اجرا می‌شود")
+print("این خط همیشه اجرا می‌شود")</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      در پایتون، تورفتگی (Indentation) بسیار مهم است. معمولاً از ۴ فاصله (Space) یا یک Tab برای تورفتگی استفاده می‌شود. عدم رعایت تورفتگی باعث خطای IndentationError می‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که عددی را از کاربر دریافت کند و با if/else مشخص کند که عدد زوج است یا فرد.
+    </div>
+
+    <h3>۴.۲ دستور elif (چندین شرط)</h3>
+    <p>وقتی بیش از دو حالت داریم، از elif (مخفف else if) استفاده می‌کنیم. این ساختار به شما اجازه می‌دهد چندین شرط را پشت سر هم بررسی کنید.</p>
+
+    <pre><code># سیستم نمره‌دهی
+score = int(input("نمره را وارد کنید: "))
+
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+
+print(f"نمره: {score} → {grade}")
+
+# وضعیت آب و هوا
+temp = int(input("دمای امروز را وارد کنید: "))
+
+if temp > 35:
+    status = "بسیار گرم"
+elif temp > 25:
+    status = "گرم"
+elif temp > 15:
+    status = "معتدل"
+elif temp > 5:
+    status = "خنک"
+else:
+    status = "سرد"
+
+print(f"وضعیت آب و هوا: {status}")</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      ترتیب شرط‌ها در elif مهم است. پایتون از بالا به پایین شرط‌ها را بررسی می‌کند و به محض پیدا کردن شرط True، بقیه را نادیده می‌گیرد. شرط‌های خاص‌تر را بالاتر قرار دهید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که سن کاربر را دریافت کند و بر اساس آن، گروه سنی را مشخص کند: زیر ۱۲ سال (کودک)، ۱۲ تا ۱۷ (نوجوان)، ۱۸ تا ۶۴ (بزرگسال)، ۶۵ به بالا (سالمند).
+    </div>
+
+    <h3>۴.۳ match-case (Python 3.10+)</h3>
+    <p>match-case یک ساختار شرطی جدید در پایتون ۳.۱۰ است که مشابه switch در زبان‌های دیگر عمل می‌کند. برای مقایسه‌ی یک مقدار با چندین الگو استفاده می‌شود.</p>
+
+    <pre><code># مثال ساده: روزهای هفته
+day = 3
+
+match day:
+    case 1:
+        name = "شنبه"
+    case 2:
+        name = "یکشنبه"
+    case 3:
+        name = "دوشنبه"
+    case 4:
+        name = "سه‌شنبه"
+    case 5:
+        name = "چهارشنبه"
+    case 6:
+        name = "پنجشنبه"
+    case 7:
+        name = "جمعه"
+    case _:
+        name = "روز نامعتبر"
+
+print(f"روز شماره {day}: {name}")  # روز شماره 3: دوشنبه
+
+# match-case با مقادیر مختلف
+command = "start"
+
+match command:
+    case "start":
+        print("شروع برنامه")
+    case "stop":
+        print("توقف برنامه")
+    case "restart":
+        print("راه‌اندازی مجدد")
+    case _:
+        print("دستور نامعتبر")
+
+# match-case با چند مقدار
+number = 5
+
+match number:
+    case 0:
+        print("صفر")
+    case 1 | 2 | 3:
+        print("یک تا سه")
+    case 4 | 5 | 6:
+        print("چهار تا شش")
+    case _:
+        print("بیشتر از شش")</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      match-case از Python 3.10 به بعد در دسترس است. اگر از نسخه‌های قدیمی‌تر استفاده می‌کنید، از if/elif/else استفاده کنید. case _ مانند default در switch عمل می‌کند.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      با استفاده از match-case یک برنامه بنویسید که نام ماه (به انگلیسی) را دریافت کند و تعداد روزهای آن ماه را چاپ کند. (استفاده از | برای ترکیب چند مقدار).
+    </div>
+
+    <h3>۴.۴ عملگر شرطی (Ternary Operator)</h3>
+    <p>عملگر شرطی (Ternary) یک روش کوتاه برای نوشتن if/else ساده است.</p>
+    <p><strong>ساختار:</strong> <code>مقدار_درست if شرط else مقدار_نادرست</code></p>
+
+    <pre><code># Ternary ساده
+age = 20
+status = "بزرگسال" if age >= 18 else "نوجوان"
+print(status)  # "بزرگسال"
+
+# مثال دیگر
+score = 85
+result = "قبول" if score >= 60 else "رد"
+print(result)  # "قبول"
+
+# استفاده در چاپ
+x = 10
+y = 20
+print("x بزرگتر است" if x > y else "y بزرگتر است")  # y بزرگتر است
+
+# Ternary تو در تو (توصیه نمی‌شود)
+num = 0
+result = "مثبت" if num > 0 else ("منفی" if num < 0 else "صفر")
+print(result)  # صفر</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      از Ternary فقط برای شرط‌های ساده و کوتاه استفاده کنید. برای شرط‌های پیچیده، از if/elif/else استفاده کنید تا کد خوانا باشد. از Ternary تو در تو خودداری کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      با استفاده از Ternary، یک متغیر is_even تعریف کنید که اگر عددی زوج بود True و اگر فرد بود False برگرداند.
+    </div>
+
+    <h3>۴.۵ مفهوم Falsy و Truthy در پایتون</h3>
+    <p>در پایتون، هر مقدار می‌تواند در یک شرط به صورت True (معادل Truthy) یا False (معادل Falsy) رفتار کند.</p>
+
+    <p><strong>مقادیر Falsy در پایتون:</strong></p>
+    <table>
+      <tr><th>مقدار</th><th>توضیح</th></tr>
+      <tr><td>None</td><td>مقدار خالی</td></tr>
+      <tr><td>False</td><td>مقدار بولی False</td></tr>
+      <tr><td>0</td><td>عدد صفر</td></tr>
+      <tr><td>0.0</td><td>عدد اعشاری صفر</td></tr>
+      <tr><td>""</td><td>رشته خالی</td></tr>
+      <tr><td>[]</td><td>لیست خالی</td></tr>
+      <tr><td>{}</td><td>دیکشنری خالی</td></tr>
+      <tr><td>()</td><td>تاپل خالی</td></tr>
+      <tr><td>set()</td><td>مجموعه خالی</td></tr>
+    </table>
+    <p>همه‌ی مقادیر دیگر Truthy هستند.</p>
+
+    <pre><code># Falsy values
+if False:
+    print("اجرا نمی‌شود")
+
+if 0:
+    print("اجرا نمی‌شود")
+
+if "":
+    print("اجرا نمی‌شود")
+
+if []:
+    print("اجرا نمی‌شود")
+
+if None:
+    print("اجرا نمی‌شود")
+
+# Truthy values
+if True:
+    print("اجرا می‌شود")
+
+if 1:
+    print("اجرا می‌شود")
+
+if "سلام":
+    print("اجرا می‌شود")
+
+if [1, 2]:
+    print("اجرا می‌شود")
+
+if {"key": "value"}:
+    print("اجرا می‌شود")
+
+# استفاده عملی: بررسی وجود داده
+user_input = input("ورودی: ")
+if user_input:  # اگر رشته خالی نباشد
+    print(f"شما وارد کردید: {user_input}")
+else:
+    print("ورودی خالی است")
+
+# بررسی لیست
+items = []
+if items:  # اگر لیست خالی نباشد
+    print("آیتم‌ها وجود دارند")
+else:
+    print("لیست خالی است")</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      این ویژگی در پایتون بسیار قدرتمند است و به شما اجازه می‌دهد شرط‌ها را به‌صورت مختصر بنویسید. مثلاً <code>if name:</code> به معنای «اگر نام وجود دارد» است.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست از چند عنصر تعریف کنید و با if بررسی کنید که آیا لیست خالی است یا نه. سپس با استفاده از Truthy/Falsy، یک برنامه بنویسید که یک رشته را از کاربر دریافت کند و اگر خالی بود پیام «ورودی خالی» نمایش دهد.
+    </div>
+
+    <h3>۴.۶ شرط‌های تو در تو (Nested Conditions)</h3>
+    <p>گاهی اوقات نیاز داریم شرطی را داخل شرط دیگری قرار دهیم. به این کار شرط تو در تو (Nested) می‌گویند.</p>
+
+    <pre><code># بررسی احراز هویت
+username = "admin"
+password = "12345"
+
+if username == "admin":
+    if password == "12345":
+        print("ورود موفق")
+    else:
+        print("رمز عبور اشتباه است")
+else:
+    print("نام کاربری اشتباه است")
+
+# مثال: بررسی وام
+age = 25
+income = 6000000  # درآمد ماهانه
+credit_score = 720
+
+if age >= 18:
+    if income >= 5000000:
+        if credit_score >= 700:
+            print("✔ وام تایید شد")
+        else:
+            print("✘ امتیاز اعتباری پایین است")
+    else:
+        print("✘ درآمد کافی نیست")
+else:
+    print("✘ سن کافی نیست")
+
+# بهتر: ترکیب شرط‌ها با and
+if age >= 18 and income >= 5000000 and credit_score >= 700:
+    print("✔ وام تایید شد")
+else:
+    print("✘ شرایط را ندارید")</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      شرط‌های تو در تو را تا حد ممکن ساده کنید. اگر بیش از ۲-۳ سطح تو در تو دارید، بهتر است از and یا or برای ترکیب شرط‌ها استفاده کنید یا کد را با توابع جداگانه بازنویسی کنید تا خوانایی افزایش یابد.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که وضعیت یک کاربر را بررسی کند: اگر کاربر وارد شده باشد (logged_in = True) و ادمین باشد (is_admin = True) «خوش آمدید ادمین» را چاپ کند. اگر وارد شده باشد ولی ادمین نباشد، «خوش آمدید کاربر» را چاپ کند. در غیر این صورت «لطفاً وارد شوید» را چاپ کند.
+    </div>
+
+    <h3>کارگاه عملی</h3>
+    <p><strong>گام‌به‌گام: ساخت یک سیستم امتیازدهی با شرط‌ها</strong></p>
+    <ol class="step-list">
+      <li>یک فایل conditions_workshop.py ایجاد کنید.</li>
+      <li>از کاربر امتیاز (۰ تا ۱۰۰) با ()input دریافت کنید.</li>
+      <li>با if/elif/else سطح امتیاز را مشخص کنید: ۹۰ تا ۱۰۰ عالی، ۷۰ تا ۸۹ خوب، ۵۰ تا ۶۹ متوسط، کمتر از ۵۰ ضعیف.</li>
+      <li>با match-case یک پیام تشویقی مناسب بر اساس سطح نمایش دهید.</li>
+      <li>با Ternary Operator یک پیام اضافی نمایش دهید که آیا کاربر قبول شده است یا نه (امتیاز &gt;= ۶۰).</li>
+      <li>با شرط‌های تو در تو بررسی کنید که آیا کاربر شرایط افتخار (امتیاز &gt;= ۹۰ و سن &gt; ۲۵) را دارد یا نه.</li>
+      <li>همه‌ی نتایج را با f-string نمایش دهید.</li>
+    </ol>
+
+    <p><strong>چالش کدنویسی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>از کاربر یک عدد دریافت کند</li>
+      <li>با if/elif/else بررسی کند که عدد مثبت، منفی یا صفر است</li>
+      <li>با match-case بررسی کند که عدد در کدام بازه است (۱-۱۰، ۱۱-۲۰، ۲۱-۳۰ و ...)</li>
+      <li>با Ternary Operator مشخص کند که عدد زوج است یا فرد</li>
+      <li>با شرط‌های تو در تو بررسی کند که آیا عدد بخش‌پذیر بر ۳ و ۵ است</li>
+    </ul>
+
+    <h3>پرسش‌ها و تمرینات</h3>
+    <p><strong>سوالات تشریحی:</strong></p>
+    <ol>
+      <li>تفاوت بین match-case و if/elif/else چیست؟ هرکدام چه زمانی مناسب هستند؟</li>
+      <li>مقادیر Falsy در پایتون کدام‌ها هستند؟</li>
+      <li>عملگر Ternary چه زمانی استفاده می‌شود و چه مزیتی نسبت به if/else دارد؟</li>
+      <li>چرا تورفتگی (Indentation) در پایتون مهم است؟</li>
+      <li>چه زمانی باید از شرط‌های تو در تو استفاده کنیم و چه زمانی نه؟</li>
+    </ol>
+
+    <p><strong>سوالات چهارگزینه‌ای:</strong></p>
+    <ol>
+      <li>کدام یک از موارد زیر یک مقدار Falsy است؟
+        <br>الف) [] &nbsp; ب) 0 &nbsp; ج) "False" &nbsp; د) همه‌ی موارد</li>
+      <li>خروجی کد زیر چیست؟
+        <pre><code>x = 5
+result = "بزرگ" if x > 3 else "کوچک"
+print(result)</code></pre>
+        الف) "بزرگ" &nbsp; ب) "کوچک" &nbsp; ج) None &nbsp; د) خطا</li>
+      <li>در match-case برای مقدار پیش‌فرض از کدام case استفاده می‌شود؟
+        <br>الف) case default &nbsp; ب) case _ &nbsp; ج) case any &nbsp; د) case *</li>
+    </ol>
+
+    <p><strong>تمرین عملی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>نام، سن و امتیاز یک دانش‌آموز را دریافت کند</li>
+      <li>با if/elif/else نمره را به حرف تبدیل کند (A, B, C, D, F)</li>
+      <li>با match-case یک پیام تشویقی بر اساس نمره نمایش دهد</li>
+      <li>با Ternary Operator مشخص کند که آیا دانش‌آموز قبول شده است یا نه</li>
+      <li>با شرط‌های تو در تو بررسی کند که آیا دانش‌آموز می‌تواند در المپیاد شرکت کند (شرط: نمره &gt;= ۸۰ و سن &gt;= ۱۸)</li>
+      <li>همه‌ی نتایج را با f-string نمایش دهد</li>
+    </ul>
+
+    <h3>جمع‌بندی و خلاصه</h3>
+    <div class="callout callout-key">
+      <span class="callout-title">نکات طلایی</span>
+      if و else برای تصمیم‌گیری‌های ساده. elif برای بررسی چندین شرط. match-case (Python 3.10+) برای مقایسه‌ی یک مقدار با چندین الگو. Ternary Operator (... if ... else ...) برای شرط‌های کوتاه و ساده. Falsy: None, False, 0, 0.0, '', [], {}, (), set(). همه‌ی مقادیر دیگر Truthy هستند. از شرط‌های تو در تو با احتیاط استفاده کنید و تا حد ممکن از and/or استفاده کنید. تورفتگی در پایتون ضروری است و مشخص‌کننده‌ی بلوک‌های کد است.
+    </div>
+
+    <p class="code-label">برگه تقلب</p>
+    <pre><code># if/elif/else
+if condition:
+    # code
+elif condition2:
+    # code
+else:
+    # code
+
+# match-case (Python 3.10+)
+match value:
+    case 1:
+        # code
+    case 2 | 3:
+        # code
+    case _:
+        # code
+
+# Ternary
+result = value_if_true if condition else value_if_false
+
+# Truthy/Falsy
+if value:  # اگر value Truthy باشد
+    print("True")</code></pre>
+
+    <h3>واژه‌نامه تخصصی</h3>
+    <ul>
+      <li>Conditional (شرطی): ساختاری که بر اساس یک شرط تصمیم‌گیری می‌کند.</li>
+      <li>if: دستور شرطی پایه.</li>
+      <li>else: بخشی که در صورت False بودن شرط اجرا می‌شود.</li>
+      <li>elif: ترکیبی از else و if برای بررسی شرط‌های اضافی.</li>
+      <li>match-case: ساختار شرطی برای مقایسه‌ی الگو (Python 3.10+).</li>
+      <li>Ternary Operator: عملگر شرطی سه‌تایی.</li>
+      <li>Truthy: مقداری که در شرط معادل True است.</li>
+      <li>Falsy: مقداری که در شرط معادل False است.</li>
+      <li>Indentation: فاصله‌ی ابتدای خط برای مشخص کردن بلوک کد.</li>
+      <li>Nested Condition: شرطی که داخل شرط دیگری قرار دارد.</li>
+    </ul>
+
+    <h3>منابع و ارجاعات</h3>
+    <ul>
+      <li>Python: Control Flow</li>
+      <li>Python: if Statement</li>
+      <li>Python: match Statement</li>
+      <li>Real Python: Conditional Statements</li>
+      <li>W3Schools: Python Conditions</li>
+    </ul>
+
+    <h3>نقشه راه و نمای کلی فصل</h3>
+    <ul>
+      <li>گام ۱: if و else — ۱۵ دقیقه</li>
+      <li>گام ۲: elif — ۱۵ دقیقه</li>
+      <li>گام ۳: match-case — ۱۵ دقیقه</li>
+      <li>گام ۴: Ternary Operator — ۱۰ دقیقه</li>
+      <li>گام ۵: Truthy و Falsy — ۱۵ دقیقه</li>
+      <li>گام ۶: شرط‌های تو در تو — ۱۰ دقیقه</li>
+      <li>گام ۷: کارگاه عملی — ۳۰ دقیقه</li>
+    </ul>
+
+    <h3>سوالات محرک (برای درگیری ذهن)</h3>
+    <ul>
+      <li>چرا در پایتون [] (لیست خالی) False است اما "False" True است؟</li>
+      <li>چه تفاوتی بین if not x و if x == 0 وجود دارد؟</li>
+      <li>چه زمانی استفاده از match-case بهتر از if/elif است؟</li>
+      <li>آیا می‌توان از Ternary Operator به‌جای if/else برای شرط‌های پیچیده استفاده کرد؟ چرا؟</li>
+      <li>چرا تورفتگی در پایتون باعث می‌شود کد خواناتر باشد؟</li>
+    </ul>
+
+    <h3>خطاهای رایج و عیب‌یابی</h3>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن : در انتهای خط (if, elif, else, match).
+      <br><strong>راه‌حل:</strong> همیشه از : بعد از شرط استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از = (انتساب) به‌جای == (مقایسه) در شرط‌ها.
+      <br><strong>راه‌حل:</strong> برای مقایسه از == استفاده کنید. <code>if x == 5:</code> درست است.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن تورفتگی که باعث خطای IndentationError می‌شود.
+      <br><strong>راه‌حل:</strong> از ۴ فاصله برای تورفتگی استفاده کنید و همیشه یکنواخت باشید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از match بدون case.
+      <br><strong>راه‌حل:</strong> case همیشه باید بعد از match بیاید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن case _ در match-case که باعث می‌شود مقادیر پیش‌بینی‌نشده مدیریت نشوند.
+      <br><strong>راه‌حل:</strong> همیشه یک case _ برای مقدار پیش‌فرض قرار دهید.
+    </div>
+
+    <h3>پروژه نهایی فصل ۴</h3>
+    <p><strong>عنوان پروژه:</strong> ساخت یک سیستم تشخیص وضعیت آب و هوا</p>
+    <p><strong>شرح:</strong> یک برنامه بنویسید که با دریافت اطلاعات از کاربر، وضعیت آب و هوا را تحلیل کند:</p>
+    <ul>
+      <li>از کاربر دمای فعلی را دریافت کند.</li>
+      <li>از کاربر وضعیت بارش (باران، برف، آفتابی، ابری) را دریافت کند.</li>
+      <li>از کاربر سرعت باد را دریافت کند.</li>
+      <li>با if/elif/else بر اساس دما، یک توصیه‌ی لباس (سبک، معمولی، گرم، بسیار گرم) ارائه دهد.</li>
+      <li>با match-case بر اساس وضعیت بارش، یک توصیه‌ی فعالیت (پیاده‌روی، بمان در خانه، ورزش indoor) ارائه دهد.</li>
+      <li>با Ternary Operator مشخص کند که آیا هوا برای سفر مناسب است (دمای بین ۱۵ تا ۳۰ و بدون باران).</li>
+      <li>با شرط‌های تو در تو بررسی کند که آیا شرایط خطرناک (باد شدید و باران) وجود دارد.</li>
+      <li>با استفاده از Truthy/Falsy، بررسی کند که آیا کاربر داده‌های معتبر وارد کرده است (مثلاً دما معتبر و بارش از لیست مجاز).</li>
+      <li>همه‌ی نتایج را به صورت یک گزارش کامل با f-string نمایش دهد.</li>
+    </ul>
+    <p>کد خود را در VS Code بنویسید و با python3 اجرا کنید.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">چالش بیشتر</span>
+      یک سیستم پیشنهاد سفر بر اساس آب و هوا اضافه کنید (با match-case). با and و or شرط‌های پیچیده‌تری برای تشخیص شرایط اضطراری بسازید. از ifهای تو در تو برای تحلیل دقیق‌تر (مثل ترکیب دما و بارش) استفاده کنید.
+    </div>
+
+  </article>
+
+  <div class="chapter-nav">
+    <a href="lesson-python-ch3.html">→ فصل قبلی: عملگرها و عبارات</a>
+    <a href="lesson-python-ch5.html">فصل بعدی: حلقه‌ها ←</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
