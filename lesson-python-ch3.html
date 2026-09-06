@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۳: عملگرها و عبارات — دوره جامع Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Python</span>
+      <span>فصل ۳</span>
+    </div>
+    <h1>عملگرها و عبارات</h1>
+  </div>
+
+  <article class="lesson-content">
+    <div class="chapter-banner" id="chapter-1">
+      <p class="kicker">فصل ۰۳</p>
+      <h2>عملگرها و عبارات</h2>
+    </div>
+    <div class="meta-box">
+      <div class="row"><span class="label">زمان مطالعه:</span><span class="value">۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</span></div>
+      <div class="row"><span class="label">سطح دشواری:</span><span class="value">مبتدی (نیازمند آشنایی با فصل‌های ۱ و ۲)</span></div>
+      <div class="row"><span class="label">شامل:</span><span class="value">۷ درس + تمرین عملی</span></div>
+    </div>
+
+    <h3>پیش‌نیازها</h3>
+    <ul class="checklist">
+      <li>تسلط بر مباحث متغیرها و انواع داده (فصل ۲)</li>
+      <li>آشنایی با ()input و ()print</li>
+      <li>توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+    </ul>
+
+    <h3>اهداف آموزشی</h3>
+    <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+    <ul class="checklist">
+      <li>از عملگرهای حسابی (+, -, *, /, //, %, **) استفاده کنید</li>
+      <li>از عملگرهای مقایسه‌ای (==, !=, &lt;, &gt;, &lt;=, &gt;=) استفاده کنید</li>
+      <li>از عملگرهای منطقی (and, or, not) استفاده کنید</li>
+      <li>از عملگرهای انتساب (=, +=, -=, *=, /=, //=, %=, **=) استفاده کنید</li>
+      <li>از عملگرهای هویتی (is, is not) استفاده کنید</li>
+      <li>از عملگرهای عضویت (in, not in) استفاده کنید</li>
+      <li>اولویت عملگرها را در عبارات پیچیده رعایت کنید</li>
+    </ul>
+
+    <h3>مقدمه و انگیزه‌بخشی</h3>
+    <p>در فصل قبل با متغیرها و انواع داده آشنا شدید. حالا وقت آن است که با عملگرها آشنا شوید. عملگرها به شما اجازه می‌دهند روی داده‌ها عملیات انجام دهید: جمع و تفریق، مقایسه، ترکیب شرط‌ها و خیلی چیزهای دیگر. بدون عملگرها، برنامه‌نویسی عملاً غیرممکن است.</p>
+    <p>در این فصل با همه‌ی عملگرهای اصلی پایتون آشنا می‌شوید: عملگرهای حسابی برای محاسبات ریاضی، عملگرهای مقایسه‌ای برای مقایسه‌ی مقادیر، عملگرهای منطقی برای ترکیب شرط‌ها، عملگرهای انتساب برای تغییر متغیرها، عملگرهای هویتی برای مقایسه‌ی هویت اشیاء و عملگرهای عضویت برای بررسی وجود یک عنصر در یک مجموعه.</p>
+    <p>تسلط بر عملگرها، کلید اصلی نوشتن برنامه‌های کاربردی است. با این فصل، می‌توانید برنامه‌هایی بنویسید که محاسبات، مقایسه‌ها و تصمیم‌گیری‌های پیچیده را انجام دهند.</p>
+
+    <h3>۳.۱ عملگرهای حسابی (Arithmetic Operators)</h3>
+    <p>عملگرهای حسابی برای انجام محاسبات ریاضی استفاده می‌شوند.</p>
+
+    <table>
+      <tr><th>عملگر</th><th>نام</th><th>مثال</th><th>نتیجه</th></tr>
+      <tr><td>+</td><td>جمع</td><td>5 + 3</td><td>8</td></tr>
+      <tr><td>-</td><td>تفریق</td><td>10 - 4</td><td>6</td></tr>
+      <tr><td>*</td><td>ضرب</td><td>6 * 7</td><td>42</td></tr>
+      <tr><td>/</td><td>تقسیم اعشاری</td><td>15 / 4</td><td>3.75</td></tr>
+      <tr><td>//</td><td>تقسیم صحیح</td><td>15 // 4</td><td>3</td></tr>
+      <tr><td>%</td><td>باقی‌مانده</td><td>15 % 4</td><td>3</td></tr>
+      <tr><td>**</td><td>توان</td><td>2 ** 5</td><td>32</td></tr>
+    </table>
+
+    <pre><code># جمع
+print(5 + 3)        # 8
+
+# تفریق
+print(10 - 4)       # 6
+
+# ضرب
+print(6 * 7)        # 42
+
+# تقسیم اعشاری
+print(15 / 4)       # 3.75
+
+# تقسیم صحیح
+print(15 // 4)      # 3
+
+# باقی‌مانده
+print(15 % 4)       # 3
+
+# توان
+print(2 ** 5)       # 32
+
+# ترکیب عملگرها
+result = (10 + 5) * 2 - 4
+print(result)       # 26
+
+# کار با متغیرها
+a = 10
+b = 3
+print(a + b)        # 13
+print(a / b)        # 3.333...
+print(a // b)       # 3
+print(a % b)        # 1</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      عملگر / همیشه یک عدد اعشاری (float) برمی‌گرداند، حتی اگر نتیجه‌ی تقسیم دقیق باشد (مثل 4 / 2 = 2.0). برای تقسیم صحیح از // استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که شعاع یک دایره را از کاربر دریافت کند و محیط و مساحت آن را محاسبه کند. (فرمول‌ها: محیط = 2 * π * r، مساحت = π * r²). از pi = 3.14159 استفاده کنید.
+    </div>
+
+    <h3>۳.۲ عملگرهای مقایسه‌ای (Comparison Operators)</h3>
+    <p>عملگرهای مقایسه‌ای دو مقدار را مقایسه می‌کنند و یک مقدار بولی (True یا False) برمی‌گردانند.</p>
+
+    <table>
+      <tr><th>عملگر</th><th>نام</th><th>مثال</th><th>نتیجه</th></tr>
+      <tr><td>==</td><td>برابری</td><td>5 == 5</td><td>True</td></tr>
+      <tr><td>!=</td><td>نابرابری</td><td>5 != 3</td><td>True</td></tr>
+      <tr><td>&gt;</td><td>بزرگ‌تر</td><td>8 &gt; 5</td><td>True</td></tr>
+      <tr><td>&lt;</td><td>کوچک‌تر</td><td>3 &lt; 5</td><td>True</td></tr>
+      <tr><td>&gt;=</td><td>بزرگ‌تر یا مساوی</td><td>5 &gt;= 3</td><td>True</td></tr>
+      <tr><td>&lt;=</td><td>کوچک‌تر یا مساوی</td><td>5 &lt;= 5</td><td>True</td></tr>
+    </table>
+
+    <pre><code>x = 10
+y = 20
+
+print(x == y)       # False
+print(x != y)       # True
+print(x > y)        # False
+print(x < y)        # True
+print(x >= 10)      # True
+print(y <= 20)      # True
+
+# مقایسه‌ی رشته‌ها (بر اساس ترتیب حروف)
+print("apple" == "apple")       # True
+print("apple" != "orange")      # True
+print("banana" > "apple")       # True (b > a)
+
+# ترکیب با متغیرها
+age = 18
+is_adult = age >= 18
+print(is_adult)     # True</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      از == برای مقایسه‌ی برابری استفاده کنید. = عملگر انتساب است و برای مقداردهی استفاده می‌شود. اشتباه گرفتن این دو یکی از رایج‌ترین خطاهاست!
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که دو عدد از کاربر دریافت کند و با عملگرهای مقایسه‌ای مشخص کند که آیا عدد اول بزرگ‌تر، کوچک‌تر یا مساوی عدد دوم است.
+    </div>
+
+    <h3>۳.۳ عملگرهای منطقی (Logical Operators)</h3>
+    <p>عملگرهای منطقی برای ترکیب شرط‌ها و ایجاد منطق پیچیده استفاده می‌شوند.</p>
+
+    <table>
+      <tr><th>عملگر</th><th>توضیح</th><th>مثال</th><th>نتیجه</th></tr>
+      <tr><td>and</td><td>هر دو شرط باید True باشند</td><td>True and True</td><td>True</td></tr>
+      <tr><td>or</td><td>حداقل یکی از شرط‌ها True باشد</td><td>True or False</td><td>True</td></tr>
+      <tr><td>not</td><td>برعکس کردن مقدار بولی</td><td>not True</td><td>False</td></tr>
+    </table>
+
+    <pre><code># and - هر دو شرط باید True باشد
+age = 25
+has_license = True
+can_drive = age >= 18 and has_license
+print(can_drive)        # True
+
+# or - حداقل یکی از شرط‌ها True باشد
+is_weekend = True
+is_holiday = False
+can_rest = is_weekend or is_holiday
+print(can_rest)         # True
+
+# not - برعکس کردن
+is_raining = False
+is_sunny = not is_raining
+print(is_sunny)         # True
+
+# ترکیب چند عملگر منطقی
+score = 85
+is_passed = score >= 60 and score <= 100
+print(is_passed)        # True
+
+# عملگرهای منطقی با مقادیر Truthy/Falsy
+name = "Ali"
+if name:                # نام نباید خالی باشد
+    print("نام وجود دارد")  # خروجی: "نام وجود دارد"
+
+# عملگرهای منطقی در رشته‌ها
+user_input = ""
+if not user_input:
+    print("ورودی خالی است")</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      عملگرهای منطقی در پایتون هم‌چین (Short-circuit) هستند. یعنی اگر نتیجه‌ی عبارت از اول مشخص باشد، بقیه‌ی عبارت بررسی نمی‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که سن و وضعیت تحصیلی کاربر را دریافت کند و مشخص کند که آیا او واجد شرایط دریافت وام تحصیلی است یا نه (شرط: سن بین ۱۸ تا ۳۰ و دانشجو بودن).
+    </div>
+
+    <h3>۳.۴ عملگرهای انتساب (Assignment Operators)</h3>
+    <p>عملگرهای انتساب برای مقداردهی و تغییر متغیرها استفاده می‌شوند.</p>
+
+    <table>
+      <tr><th>عملگر</th><th>معادل</th><th>نام</th></tr>
+      <tr><td>=</td><td>x = 10</td><td>مقداردهی ساده</td></tr>
+      <tr><td>+=</td><td>x += 5 → x = x + 5</td><td>افزایش</td></tr>
+      <tr><td>-=</td><td>x -= 3 → x = x - 3</td><td>کاهش</td></tr>
+      <tr><td>*=</td><td>x *= 2 → x = x * 2</td><td>ضرب</td></tr>
+      <tr><td>/=</td><td>x /= 4 → x = x / 4</td><td>تقسیم</td></tr>
+      <tr><td>//=</td><td>x //= 3 → x = x // 3</td><td>تقسیم صحیح</td></tr>
+      <tr><td>%=</td><td>x %= 5 → x = x % 5</td><td>باقی‌مانده</td></tr>
+      <tr><td>**=</td><td>x **= 2 → x = x ** 2</td><td>توان</td></tr>
+    </table>
+
+    <pre><code># مقداردهی اولیه
+x = 10
+print(x)        # 10
+
+# افزایش
+x += 5
+print(x)        # 15
+
+# کاهش
+x -= 3
+print(x)        # 12
+
+# ضرب
+x *= 2
+print(x)        # 24
+
+# تقسیم
+x /= 4
+print(x)        # 6.0
+
+# تقسیم صحیح
+x //= 2
+print(x)        # 3.0
+
+# باقی‌مانده
+x %= 2
+print(x)        # 1.0
+
+# توان
+x **= 3
+print(x)        # 1.0
+
+# مثال عملی: شمارنده
+counter = 0
+counter += 1    # 1
+counter += 1    # 2
+counter += 1    # 3
+print(counter)  # 3</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      عملگرهای انتساب ترکیبی کد را کوتاه‌تر و خواناتر می‌کنند. به‌جای x = x + 1 از x += 1 استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که یک متغیر total را با مقدار 0 داشته باشد. سپس از کاربر ۵ عدد دریافت کند و آن‌ها را با += به total اضافه کند. در نهایت مجموع را چاپ کند.
+    </div>
+
+    <h3>۳.۵ عملگرهای هویتی (Identity Operators)</h3>
+    <p>عملگرهای هویتی برای بررسی اینکه آیا دو متغیر به همان شیء (Object) در حافظه اشاره می‌کنند یا نه، استفاده می‌شوند.</p>
+    <ul>
+      <li>is: اگر دو متغیر به یک شیء اشاره کنند، True است.</li>
+      <li>is not: اگر دو متغیر به اشیاء متفاوتی اشاره کنند، True است.</li>
+    </ul>
+
+    <pre><code># اعداد صحیح کوچک (cached)
+a = 10
+b = 10
+print(a is b)       # True (هر دو به یک شیء در حافظه اشاره می‌کنند)
+
+# رشته‌ها (cached)
+x = "hello"
+y = "hello"
+print(x is y)       # True
+
+# لیست‌ها
+list1 = [1, 2, 3]
+list2 = [1, 2, 3]
+print(list1 is list2)       # False (اشاره به اشیاء متفاوت)
+print(list1 == list2)       # True (مقادیر برابر هستند)
+
+# is not
+print(list1 is not list2)   # True
+
+# بررسی None
+value = None
+if value is None:
+    print("مقدار None است")</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      برای مقایسه‌ی مقادیر از == استفاده کنید. برای بررسی اینکه آیا دو متغیر به یک شیء اشاره می‌کنند، از is استفاده کنید. معمولاً برای بررسی None از is استفاده می‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست بسازید و آن را به متغیر دیگری اختصاص دهید. با is بررسی کنید که آیا هر دو به یک شیء اشاره می‌کنند یا خیر. سپس با == مقادیر را مقایسه کنید.
+    </div>
+
+    <h3>۳.۶ عملگرهای عضویت (Membership Operators)</h3>
+    <p>عملگرهای عضویت برای بررسی وجود یک عنصر در یک مجموعه (لیست، رشته، تاپل، دیکشنری و ...) استفاده می‌شوند.</p>
+    <ul>
+      <li>in: اگر عنصر در مجموعه وجود داشته باشد، True است.</li>
+      <li>not in: اگر عنصر در مجموعه وجود نداشته باشد، True است.</li>
+    </ul>
+
+    <pre><code># لیست
+fruits = ["apple", "banana", "orange"]
+print("banana" in fruits)       # True
+print("grape" in fruits)        # False
+print("grape" not in fruits)    # True
+
+# رشته
+text = "Hello, World!"
+print("World" in text)          # True
+print("Python" in text)         # False
+
+# دیکشنری (بررسی کلیدها)
+person = {"name": "Ali", "age": 25}
+print("name" in person)         # True (کلید وجود دارد)
+print("Ali" in person)          # False (مقدار بررسی نمی‌شود)
+
+# استفاده در حلقه
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    print(num, end=" ")         # 1 2 3 4 5</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      عملگرهای عضویت برای بررسی وجود یک عنصر در لیست‌ها، رشته‌ها و دیکشنری‌ها بسیار مفید هستند. در حلقه‌ها نیز برای پیمایش عناصر استفاده می‌شوند.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک برنامه بنویسید که از کاربر یک حرف دریافت کند و با عملگر in بررسی کند که آیا آن حرف در یک رشته‌ی از پیش تعریف شده (مثل "python") وجود دارد یا نه.
+    </div>
+
+    <h3>۳.۷ اولویت عملگرها (Operator Precedence)</h3>
+    <p>در عبارات پیچیده، عملگرها بر اساس اولویت اجرا می‌شوند. ترتیب اولویت از بالا به پایین:</p>
+
+    <table>
+      <tr><th>اولویت</th><th>عملگرها</th><th>توضیح</th></tr>
+      <tr><td>۱</td><td>()</td><td>پرانتز (بالاترین اولویت)</td></tr>
+      <tr><td>۲</td><td>**</td><td>توان</td></tr>
+      <tr><td>۳</td><td>-x</td><td>منفی یکانی</td></tr>
+      <tr><td>۴</td><td>*, /, //, %</td><td>ضرب، تقسیم، تقسیم صحیح، باقی‌مانده</td></tr>
+      <tr><td>۵</td><td>+, -</td><td>جمع و تفریق</td></tr>
+      <tr><td>۶</td><td>==, !=, &lt;, &gt;, &lt;=, &gt;=</td><td>مقایسه‌ای</td></tr>
+      <tr><td>۷</td><td>is, is not</td><td>هویتی</td></tr>
+      <tr><td>۸</td><td>in, not in</td><td>عضویت</td></tr>
+      <tr><td>۹</td><td>not, and, or</td><td>منطقی (به ترتیب)</td></tr>
+    </table>
+
+    <pre><code># اولویت عملگرها
+result = 10 + 5 * 2
+print(result)       # 20 (ضرب اولویت دارد)
+
+# با پرانتز اولویت را تغییر می‌دهیم
+result = (10 + 5) * 2
+print(result)       # 30
+
+# ترکیب عملگرها
+a = 5
+b = 10
+c = 3
+result = a + b * c - 2 ** 3
+# 2**3 = 8 (توان)
+# b * c = 30 (ضرب)
+# 5 + 30 - 8 = 27 (جمع و تفریق)
+print(result)       # 27
+
+# منطقی با مقایسه‌ای
+x = 10
+y = 20
+z = 30
+is_true = x < y and y < z     # True and True = True
+print(is_true)      # True
+
+# استفاده از پرانتز برای خوانایی
+# is_valid = (age >= 18) and (has_license or is_learner)</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      برای خوانایی بیشتر و جلوگیری از اشتباه، همیشه از پرانتز برای مشخص کردن اولویت در عبارات پیچیده استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      عبارت زیر را بدون اجرا، مقدار آن را حدس بزنید. سپس با پایتون محاسبه کنید و نتیجه را بررسی کنید.
+      <pre><code>result = 8 + 2 * 3 ** 2 - 4 / 2</code></pre>
+    </div>
+
+    <h3>کارگاه عملی</h3>
+    <p><strong>گام‌به‌گام: ساخت یک ماشین حساب پیشرفته با عملگرها</strong></p>
+    <ol class="step-list">
+      <li>یک فایل calculator_operators.py ایجاد کنید.</li>
+      <li>از کاربر دو عدد و یک عملگر (+, -, *, /, //, %, **) دریافت کنید.</li>
+      <li>با استفاده از عملگرهای حسابی، عملیات مورد نظر را انجام دهید.</li>
+      <li>نتیجه را با f-string نمایش دهید.</li>
+      <li>با عملگرهای مقایسه‌ای بررسی کنید که آیا نتیجه مثبت است یا منفی.</li>
+      <li>با عملگرهای منطقی بررسی کنید که آیا هر دو عدد زوج هستند یا خیر.</li>
+      <li>با عملگرهای عضویت بررسی کنید که آیا عملگر مورد نظر در لیست عملگرهای مجاز وجود دارد.</li>
+    </ol>
+
+    <p><strong>چالش نهایی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>سه عدد از کاربر دریافت کند</li>
+      <li>با عملگرهای مقایسه‌ای بزرگ‌ترین عدد را پیدا کند (بدون استفاده از ()max)</li>
+      <li>با عملگرهای منطقی بررسی کند که آیا سه عدد تشکیل یک مثلث می‌دهند یا نه</li>
+      <li>با عملگرهای هویتی بررسی کند که آیا دو عدد اول به یک شیء اشاره می‌کنند (با استفاده از اعداد کوچک)</li>
+    </ul>
+
+    <h3>پرسش‌ها و تمرینات</h3>
+    <p><strong>سوالات تشریحی:</strong></p>
+    <ol>
+      <li>تفاوت بین عملگرهای / و // چیست؟</li>
+      <li>== و is چه تفاوتی دارند؟</li>
+      <li>عملگرهای and و or چگونه کار می‌کنند و چه تفاوتی دارند؟</li>
+      <li>چرا باید از عملگرهای انتساب ترکیبی (مثل +=) استفاده کنیم؟</li>
+      <li>عملگرهای عضویت چه کاربردی دارند؟</li>
+    </ol>
+
+    <p><strong>سوالات چهارگزینه‌ای:</strong></p>
+    <ol>
+      <li>خروجی 15 / 4 چیست؟
+        <br>الف) 3.75 &nbsp; ب) 3 &nbsp; ج) 4 &nbsp; د) 0.3</li>
+      <li>خروجی 10 % 6 چیست؟
+        <br>الف) 4 &nbsp; ب) 1.66 &nbsp; ج) 1 &nbsp; د) 6</li>
+      <li>کدام یک از موارد زیر برای بررسی برابری دو مقدار استفاده می‌شود؟
+        <br>الف) = &nbsp; ب) == &nbsp; ج) === &nbsp; د) !=</li>
+    </ol>
+
+    <p><strong>تمرین عملی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>از کاربر دو عدد دریافت کند</li>
+      <li>با عملگرهای حسابی همه‌ی عملیات (جمع، تفریق، ضرب، تقسیم، تقسیم صحیح، باقی‌مانده، توان) را محاسبه و نمایش دهد</li>
+      <li>با عملگرهای مقایسه‌ای مشخص کند که آیا دو عدد با هم برابرند، اولی بزرگ‌تر است یا دومی</li>
+      <li>با عملگرهای منطقی بررسی کند که آیا هر دو عدد مثبت هستند یا خیر</li>
+      <li>با عملگرهای عضویت بررسی کند که آیا عدد اول در یک بازه (مثلاً ۱ تا ۱۰۰) قرار دارد</li>
+    </ul>
+
+    <h3>جمع‌بندی و خلاصه</h3>
+    <div class="callout callout-key">
+      <span class="callout-title">نکات طلایی</span>
+      عملگرهای حسابی: +, -, *, /, //, %, **. عملگرهای مقایسه‌ای: ==, !=, &lt;, &gt;, &lt;=, &gt;=. عملگرهای منطقی: and, or, not. عملگرهای انتساب: =, +=, -=, *=, /=, //=, %=, **=. عملگرهای هویتی: is, is not (مقایسه‌ی اشیاء). عملگرهای عضویت: in, not in (بررسی وجود عنصر). اولویت عملگرها: با پرانتز اولویت را کنترل کنید.
+    </div>
+
+    <p class="code-label">برگه تقلب</p>
+    <pre><code># حسابی
+5 + 3   # 8
+5 - 3   # 2
+5 * 3   # 15
+5 / 3   # 1.666
+5 // 3  # 1
+5 % 3   # 2
+5 ** 3  # 125
+
+# مقایسه‌ای
+5 == 5  # True
+5 != 3  # True
+5 > 3   # True
+5 < 8   # True
+
+# منطقی
+True and True   # True
+True or False   # True
+not True        # False
+
+# انتساب
+x = 10
+x += 5          # x = 15
+
+# هویتی
+x is y
+x is not y
+
+# عضویت
+"a" in "apple"      # True
+"x" not in "apple"  # True</code></pre>
+
+    <h3>واژه‌نامه تخصصی</h3>
+    <ul>
+      <li>Operator (عملگر): نمادی که یک عملیات را روی یک یا چند مقدار انجام می‌دهد.</li>
+      <li>Arithmetic Operator: عملگرهای ریاضی برای محاسبات.</li>
+      <li>Comparison Operator: عملگر برای مقایسه‌ی دو مقدار.</li>
+      <li>Logical Operator: عملگر برای ترکیب شرط‌ها.</li>
+      <li>Assignment Operator: عملگر برای مقداردهی به متغیرها.</li>
+      <li>Identity Operator: عملگر برای مقایسه‌ی هویت اشیاء.</li>
+      <li>Membership Operator: عملگر برای بررسی وجود یک عنصر در مجموعه.</li>
+      <li>Precedence (اولویت): ترتیب اجرای عملگرها در یک عبارت.</li>
+      <li>Short-circuit: توقف ارزیابی عبارت در زمانی که نتیجه مشخص است.</li>
+    </ul>
+
+    <h3>منابع و ارجاعات</h3>
+    <ul>
+      <li>Python: Operator Precedence</li>
+      <li>Python: Comparisons</li>
+      <li>W3Schools: Python Operators</li>
+      <li>Real Python: Operators and Expressions</li>
+    </ul>
+
+    <h3>نقشه راه و نمای کلی فصل</h3>
+    <ul>
+      <li>گام ۱: عملگرهای حسابی — ۱۵ دقیقه</li>
+      <li>گام ۲: عملگرهای مقایسه‌ای — ۱۵ دقیقه</li>
+      <li>گام ۳: عملگرهای منطقی — ۱۵ دقیقه</li>
+      <li>گام ۴: عملگرهای انتساب — ۱۰ دقیقه</li>
+      <li>گام ۵: عملگرهای هویتی — ۱۰ دقیقه</li>
+      <li>گام ۶: عملگرهای عضویت — ۱۰ دقیقه</li>
+      <li>گام ۷: اولویت عملگرها — ۱۵ دقیقه</li>
+      <li>گام ۸: کارگاه عملی — ۳۰ دقیقه</li>
+    </ul>
+
+    <h3>سوالات محرک (برای درگیری ذهن)</h3>
+    <ul>
+      <li>چرا 0.1 + 0.2 در پایتون دقیقاً برابر 0.3 نیست؟</li>
+      <li>تفاوت بین is و == در مقایسه‌ی اعداد کوچک و بزرگ چیست؟</li>
+      <li>عملگرهای منطقی چگونه از Short-circuit استفاده می‌کنند؟</li>
+      <li>چرا استفاده از پرانتز در عبارات پیچیده توصیه می‌شود؟</li>
+      <li>آیا می‌توان از عملگرهای عضویت روی دیکشنری‌ها استفاده کرد؟ چگونه؟</li>
+    </ul>
+
+    <h3>خطاهای رایج و عیب‌یابی</h3>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از = به‌جای == در شرط‌ها (انتساب به‌جای مقایسه).
+      <br><strong>راه‌حل:</strong> برای مقایسه از == استفاده کنید. <code>if x == 5:</code> درست است، <code>if x = 5:</code> خطا می‌دهد.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن پرانتز در شرط‌های پیچیده با and, or, not.
+      <br><strong>راه‌حل:</strong> از پرانتز برای شفافیت بیشتر استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      انتظار اینکه is برای مقایسه‌ی مقادیر کار کند.
+      <br><strong>راه‌حل:</strong> برای مقادیر از == و برای هویت اشیاء از is استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن پرانتز در عبارات با عملگرهای مختلف که باعث محاسبه‌ی اشتباه می‌شود.
+      <br><strong>راه‌حل:</strong> با پرانتز اولویت را مشخص کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از in روی دیکشنری بدون در نظر گرفتن اینکه فقط کلیدها را بررسی می‌کند.
+      <br><strong>راه‌حل:</strong> برای بررسی مقادیر از <code>in dict.values()</code> استفاده کنید.
+    </div>
+
+    <h3>پروژه نهایی فصل</h3>
+    <p><strong>عنوان پروژه:</strong> ساخت یک تحلیل‌گر عددی پیشرفته</p>
+    <p><strong>شرح:</strong> یک برنامه بنویسید که یک عدد از کاربر دریافت کند و تحلیل‌های زیر را روی آن انجام دهد:</p>
+    <ul>
+      <li>با عملگرهای حسابی: جذر، مربع، مکعب و فاکتوریل (با حلقه) عدد را محاسبه کند.</li>
+      <li>با عملگرهای مقایسه‌ای: مشخص کند که عدد مثبت است، منفی است یا صفر.</li>
+      <li>با عملگرهای منطقی: بررسی کند که آیا عدد بین ۰ تا ۱۰۰ است و آیا زوج است یا خیر.</li>
+      <li>با عملگرهای عضویت: بررسی کند که آیا عدد در یک لیست از اعداد اول (مثل [2, 3, 5, 7, 11, 13]) وجود دارد.</li>
+      <li>با عملگرهای هویتی: یک متغیر دیگر با همان مقدار تعریف کند و بررسی کند که آیا به یک شیء اشاره می‌کنند.</li>
+      <li>با عملگرهای انتساب: عدد را به‌طور متوالی تغییر دهد (مثلاً ۵ بار به آن ۲ اضافه کند).</li>
+      <li>همه‌ی نتایج را با f-string به‌صورت زیبا نمایش دهد.</li>
+    </ul>
+    <p>کد خود را در VS Code بنویسید و با python3 اجرا کنید.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">چالش بیشتر</span>
+      قابلیت دریافت چندین عدد و مقایسه‌ی آن‌ها با هم را اضافه کنید. با عملگرهای منطقی، یک سیستم امتیازدهی ساده بسازید. با عملگرهای عضویت، یک جستجوگر کلمات در یک جمله پیاده‌سازی کنید.
+    </div>
+
+  </article>
+
+  <div class="chapter-nav">
+    <a href="lesson-python-ch2.html">→ فصل قبلی: متغیرها و انواع داده</a>
+    <a href="lesson-python-ch4.html">فصل بعدی: ساختارهای شرطی ←</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
