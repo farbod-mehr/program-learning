@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۶: لیست‌ها و تاپل‌ها — دوره جامع Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Python</span>
+      <span>فصل ۶</span>
+    </div>
+    <h1>لیست‌ها و تاپل‌ها</h1>
+  </div>
+
+  <article class="lesson-content">
+    <div class="chapter-banner" id="chapter-1">
+      <p class="kicker">فصل ۰۶</p>
+      <h2>لیست‌ها و تاپل‌ها</h2>
+    </div>
+    <div class="meta-box">
+      <div class="row"><span class="label">زمان مطالعه:</span><span class="value">۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</span></div>
+      <div class="row"><span class="label">سطح دشواری:</span><span class="value">مبتدی (نیازمند آشنایی با حلقه‌ها و متغیرها)</span></div>
+      <div class="row"><span class="label">شامل:</span><span class="value">۷ درس + تمرین عملی</span></div>
+    </div>
+
+    <h3>پیش‌نیازها</h3>
+    <ul class="checklist">
+      <li>تسلط بر متغیرها و انواع داده (فصل ۲)</li>
+      <li>آشنایی با حلقه‌ها (فصل ۵)</li>
+      <li>توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+    </ul>
+
+    <h3>اهداف آموزشی</h3>
+    <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+    <ul class="checklist">
+      <li>لیست‌ها را با [] ایجاد و مقداردهی کنید</li>
+      <li>از متدهای لیست مانند ()append، ()insert، ()remove و ... استفاده کنید</li>
+      <li>تاپل‌ها را با () ایجاد کنید و تفاوت آن‌ها با لیست‌ها را توضیح دهید</li>
+      <li>از Slicing برای برش لیست‌ها و تاپل‌ها استفاده کنید</li>
+      <li>از List Comprehension برای ایجاد لیست‌های فشرده استفاده کنید</li>
+      <li>از Unpacking برای استخراج مقادیر از لیست‌ها و تاپل‌ها استفاده کنید</li>
+      <li>تفاوت بین Mutable و Immutable را در لیست‌ها و تاپل‌ها درک کنید</li>
+    </ul>
+
+    <h3>مقدمه و انگیزه‌بخشی</h3>
+    <p>در دنیای برنامه‌نویسی، اغلب با مجموعه‌ای از داده‌ها سر و کار داریم: لیست کاربران، محصولات، نمرات دانش‌آموزان، و غیره. در پایتون، دو ساختار داده‌ی اصلی برای ذخیره‌سازی مجموعه‌ها وجود دارد: لیست‌ها (Lists) و تاپل‌ها (Tuples).</p>
+    <p>لیست‌ها ساختارهای قابل تغییری هستند که می‌توانید عناصر را به آن‌ها اضافه یا از آن‌ها حذف کنید. تاپل‌ها اما غیرقابل تغییر هستند و برای داده‌هایی که نباید تغییر کنند، ایده‌آل‌اند.</p>
+    <p>در این فصل با همه‌ی مبانی لیست‌ها و تاپل‌ها آشنا می‌شوید: ایجاد، دسترسی، متدها، برش، List Comprehension و Unpacking. این ساختارها در تمام برنامه‌های پایتون کاربرد دارند و تسلط بر آن‌ها ضروری است.</p>
+
+    <h3>۶.۱ ایجاد لیست و دسترسی به عناصر</h3>
+    <p>لیست‌ها با کروشه ([]) ایجاد می‌شوند و می‌توانند عناصر با انواع مختلف را در خود ذخیره کنند. دسترسی به عناصر با اندیس (Index) از ۰ شروع می‌شود.</p>
+
+    <pre><code># ایجاد لیست
+fruits = ["سیب", "موز", "پرتقال"]
+numbers = [1, 2, 3, 4, 5]
+mixed = [1, "سلام", True, 3.14]
+
+# دسترسی به عناصر
+print(fruits[0])    # "سیب"
+print(fruits[2])    # "پرتقال"
+print(fruits[-1])   # "پرتقال" (آخرین عنصر)
+
+# تغییر عنصر
+fruits[1] = "کیوی"
+print(fruits)       # ["سیب", "کیوی", "پرتقال"]
+
+# اندیس نامعتبر → IndexError
+# print(fruits[5])  # خطا</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      اندیس‌های منفی از انتهای لیست شروع می‌شوند. -1 آخرین عنصر، -2 یکی‌مانده به آخر و ... است.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست از ۵ شهر ایجاد کنید. اولین، سومین و آخرین شهر را با اندیس مثبت و منفی چاپ کنید. سپس شهر دوم را به شهر دیگری تغییر دهید.
+    </div>
+
+    <h3>۶.۲ متدهای لیست</h3>
+    <table>
+      <tr><th>متد</th><th>توضیح</th><th>مثال</th></tr>
+      <tr><td>append()</td><td>افزودن عنصر به انتها</td><td>list.append(4)</td></tr>
+      <tr><td>insert()</td><td>افزودن عنصر در جایگاه مشخص</td><td>list.insert(1, 99)</td></tr>
+      <tr><td>pop()</td><td>حذف و بازگرداندن آخرین عنصر (یا با اندیس)</td><td>list.pop()</td></tr>
+      <tr><td>remove()</td><td>حذف اولین عنصر با مقدار مشخص</td><td>list.remove(2)</td></tr>
+      <tr><td>index()</td><td>پیدا کردن اندیس یک عنصر</td><td>list.index(3)</td></tr>
+      <tr><td>count()</td><td>تعداد تکرار یک عنصر</td><td>list.count(2)</td></tr>
+      <tr><td>sort()</td><td>مرتب‌سازی صعودی</td><td>list.sort()</td></tr>
+      <tr><td>reverse()</td><td>معکوس کردن</td><td>list.reverse()</td></tr>
+      <tr><td>copy()</td><td>کپی کردن</td><td>new = list.copy()</td></tr>
+      <tr><td>extend()</td><td>افزودن چند عنصر به انتها</td><td>list.extend([5, 6])</td></tr>
+    </table>
+
+    <pre><code>numbers = [1, 2, 3]
+
+# append - افزودن به انتها
+numbers.append(4)           # [1, 2, 3, 4]
+
+# insert - افزودن در جایگاه مشخص
+numbers.insert(1, 99)       # [1, 99, 2, 3, 4]
+
+# pop - حذف از انتها (یا با اندیس)
+last = numbers.pop()        # last = 4, numbers = [1, 99, 2, 3]
+second = numbers.pop(1)     # second = 99, numbers = [1, 2, 3]
+
+# remove - حذف اولین مقدار مشخص
+numbers.remove(2)           # [1, 3]
+
+# index - پیدا کردن اندیس
+print(numbers.index(3))     # 1
+
+# count - تعداد تکرار
+print([1, 2, 2, 3].count(2)) # 2
+
+# reverse - معکوس کردن
+numbers.reverse()           # [3, 1]
+
+# copy - کپی کردن
+new_list = numbers.copy()
+
+# extend - افزودن چند عنصر
+numbers.extend([5, 6])      # [3, 1, 5, 6]
+
+# sort - مرتب‌سازی
+numbers.sort()              # [1, 3, 5, 6]</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      ()append یک عنصر به انتها اضافه می‌کند، اما ()extend چندین عنصر را به انتها اضافه می‌کند. برای ترکیب دو لیست از ()extend استفاده کنید.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست خالی ایجاد کنید. با ()append سه عدد به آن اضافه کنید، سپس با ()insert یک عدد در جایگاه دوم قرار دهید. یک عنصر حذف کنید و لیست نهایی را چاپ کنید.
+    </div>
+
+    <h3>۶.۳ Slicing (برش) در لیست‌ها</h3>
+    <p>Slicing به شما اجازه می‌دهد بخشی از یک لیست را استخراج کنید.</p>
+    <p><strong>سینتکس:</strong> <code>list[start:stop:step]</code></p>
+
+    <pre><code>numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# برش از اندیس 2 تا 5 (قبل از 5)
+print(numbers[2:5])     # [2, 3, 4]
+
+# برش از ابتدا تا اندیس 5
+print(numbers[:5])      # [0, 1, 2, 3, 4]
+
+# برش از اندیس 5 تا انتها
+print(numbers[5:])      # [5, 6, 7, 8, 9]
+
+# برش با گام (step)
+print(numbers[::2])     # [0, 2, 4, 6, 8] (اعداد زوج)
+print(numbers[1::2])    # [1, 3, 5, 7, 9] (اعداد فرد)
+
+# برش معکوس
+print(numbers[::-1])    # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+# کپی کامل با [:]
+copy = numbers[:]       # لیست جدید</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      Slicing یک لیست جدید برمی‌گرداند و لیست اصلی را تغییر نمی‌دهد. برای کپی کردن کامل یک لیست، از list[:] یا ()list.copy استفاده کنید.
+    </div>
+
+    <h3>۶.۴ تاپل‌ها (Tuples)</h3>
+    <p>تاپل‌ها با پرانتز (()) ایجاد می‌شوند و غیرقابل تغییر (Immutable) هستند.</p>
+
+    <pre><code># ایجاد تاپل
+colors = ("قرمز", "سبز", "آبی")
+numbers = (1, 2, 3, 4, 5)
+mixed = (1, "سلام", True, 3.14)
+single = (5,)  # تاپل با یک عنصر (کاما ضروری است)
+
+# دسترسی به عناصر (مثل لیست)
+print(colors[0])    # "قرمز"
+print(colors[-1])   # "آبی"
+
+# تاپل‌ها غیرقابل تغییر هستند
+# colors[0] = "زرد"  # TypeError
+
+# تبدیل لیست به تاپل
+my_list = [1, 2, 3]
+my_tuple = tuple(my_list)
+print(my_tuple)     # (1, 2, 3)
+
+# تبدیل تاپل به لیست
+my_list2 = list(my_tuple)
+print(my_list2)     # [1, 2, 3]
+
+# پیمایش تاپل
+for color in colors:
+    print(color)</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      تاپل‌ها برای داده‌هایی که نباید تغییر کنند (مثل ثابت‌ها، مختصات، تاریخ) بسیار مناسب هستند. همچنین از لیست‌ها سریع‌تر و کم‌حجم‌تر هستند.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک تاپل از ۳ عدد ایجاد کنید و سعی کنید یکی از عناصر آن را تغییر دهید. ببینید چه خطایی دریافت می‌کنید. سپس تاپل را به لیست تبدیل کنید و تغییر را اعمال کنید.
+    </div>
+
+    <h3>۶.۵ متدهای تاپل</h3>
+    <p>تاپل‌ها متدهای کمی دارند چون غیرقابل تغییر هستند:</p>
+    <table>
+      <tr><th>متد</th><th>توضیح</th></tr>
+      <tr><td>count()</td><td>تعداد تکرار یک عنصر</td></tr>
+      <tr><td>index()</td><td>پیدا کردن اندیس یک عنصر</td></tr>
+    </table>
+
+    <pre><code>my_tuple = (1, 2, 3, 2, 4, 2)
+
+print(my_tuple.count(2))    # 3
+print(my_tuple.index(3))    # 2</code></pre>
+
+    <h3>۶.۶ Unpacking (باز کردن) در لیست‌ها و تاپل‌ها</h3>
+    <p>Unpacking به شما اجازه می‌دهد مقادیر یک لیست یا تاپل را به‌صورت جداگانه به متغیرها اختصاص دهید.</p>
+
+    <pre><code># Unpacking در تاپل
+coordinates = (10, 20)
+x, y = coordinates
+print(f"x: {x}, y: {y}")    # x: 10, y: 20
+
+# Unpacking در لیست
+colors = ["آبی", "سبز", "قرمز"]
+first, second, third = colors
+print(first)    # "آبی"
+
+# Unpacking با * (باقیمانده)
+numbers = [1, 2, 3, 4, 5]
+first, *middle, last = numbers
+print(first)    # 1
+print(middle)   # [2, 3, 4]
+print(last)     # 5
+
+# Unpacking در حلقه‌ها
+pairs = [(1, 2), (3, 4), (5, 6)]
+for a, b in pairs:
+    print(f"a: {a}, b: {b}")
+
+# تبادل مقادیر با Unpacking
+a, b = 5, 10
+a, b = b, a
+print(a, b)     # 10, 5
+
+# Unpacking در توابع
+def get_coordinates():
+    return (10, 20)
+
+x, y = get_coordinates()
+print(x, y)     # 10, 20</code></pre>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته طلایی</span>
+      Unpacking با * (ستاره) بسیار قدرتمند است و به شما اجازه می‌دهد بخش‌های مختلف یک مجموعه را به‌راحتی استخراج کنید. در توابع نیز برای آرگومان‌های متغیر استفاده می‌شود.
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست از ۶ عدد ایجاد کنید. با استفاده از Unpacking، دو عدد اول را به دو متغیر، دو عدد آخر را به دو متغیر دیگر و بقیه را به یک لیست اختصاص دهید.
+    </div>
+
+    <h3>۶.۷ Mutable vs Immutable – تفاوت لیست و تاپل</h3>
+    <p>مهم‌ترین تفاوت بین لیست‌ها و تاپل‌ها در قابل‌تغییر بودن (Mutability) است:</p>
+
+    <table>
+      <tr><th>ویژگی</th><th>لیست (List)</th><th>تاپل (Tuple)</th></tr>
+      <tr><td>قابلیت تغییر</td><td>✅ قابل تغییر (Mutable)</td><td>❌ غیرقابل تغییر (Immutable)</td></tr>
+      <tr><td>سینتکس</td><td>[]</td><td>()</td></tr>
+      <tr><td>سرعت</td><td>کمتر (به دلیل انعطاف‌پذیری)</td><td>بیشتر (به دلیل سادگی)</td></tr>
+      <tr><td>مصرف حافظه</td><td>بیشتر</td><td>کمتر</td></tr>
+      <tr><td>متدها</td><td>زیاد (append, remove, ...)</td><td>کم (count, index)</td></tr>
+      <tr><td>کاربرد</td><td>داده‌های پویا و متغیر</td><td>داده‌های ثابت و غیرقابل تغییر</td></tr>
+    </table>
+
+    <pre><code># لیست - قابل تغییر
+my_list = [1, 2, 3]
+my_list.append(4)    # ✅ مجاز است
+my_list[0] = 99      # ✅ مجاز است
+
+# تاپل - غیرقابل تغییر
+my_tuple = (1, 2, 3)
+# my_tuple.append(4)  # ❌ AttributeError
+# my_tuple[0] = 99    # ❌ TypeError
+
+# تاپل می‌تواند شامل لیست باشد (لیست داخل تاپل قابل تغییر است)
+nested = (1, [2, 3], 4)
+nested[1].append(5)  # ✅ مجاز است (لیست داخل تاپل تغییر می‌کند)</code></pre>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      اگر داده‌های شما در طول برنامه تغییر می‌کنند، از لیست استفاده کنید. اگر داده‌ها ثابت هستند و نباید تغییر کنند، از تاپل استفاده کنید. تاپل‌ها همچنین به‌عنوان کلید در دیکشنری‌ها قابل استفاده هستند (لیست‌ها نمی‌توانند).
+    </div>
+
+    <div class="practice">
+      <strong>✏ تمرین</strong>
+      یک لیست و یک تاپل با داده‌های مشابه ایجاد کنید. سعی کنید هر دو را تغییر دهید و تفاوت رفتار را مشاهده کنید. سپس توضیح دهید که کدام یک برای ذخیره‌سازی تاریخ تولد کاربران مناسب‌تر است و چرا.
+    </div>
+
+    <h3>کارگاه عملی</h3>
+    <p><strong>گام‌به‌گام: ساخت یک مدیریت لیست خرید با لیست‌ها</strong></p>
+    <ol class="step-list">
+      <li>یک فایل shopping_list.py ایجاد کنید.</li>
+      <li>یک لیست خالی shopping_list ایجاد کنید.</li>
+      <li>توابع زیر را پیاده‌سازی کنید: add_item(item) با ()append، remove_item(item) با ()remove، ()show_list با شماره‌گذاری، ()clear_list با ()clear، ()sort_list با ()sort.</li>
+      <li>با استفاده از حلقه‌ی while، یک منوی تعاملی برای کاربر ایجاد کنید.</li>
+      <li>از List Comprehension برای ایجاد یک لیست از قیمت‌ها با تخفیف استفاده کنید.</li>
+      <li>از Unpacking برای نمایش سه قلم اول لیست استفاده کنید.</li>
+      <li>همه‌ی نتایج را در کنسول چاپ کنید.</li>
+    </ol>
+
+    <pre><code>مدیریت لیست خرید
+1. افزودن قلم
+2. حذف قلم
+3. نمایش لیست
+4. مرتب‌سازی
+5. پاک کردن
+6. خروج</code></pre>
+
+    <p><strong>چالش کدنویسی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>یک لیست از ۱۰ عدد تصادفی (با ()random.randint) تولید کند</li>
+      <li>با List Comprehension، اعداد زوج را فیلتر کند</li>
+      <li>با Slicing، سه عدد اول و سه عدد آخر را استخراج کند</li>
+      <li>با Unpacking، دو عدد اول را به متغیرهای جداگانه اختصاص دهد</li>
+      <li>با تاپل، مختصات یک نقطه را ذخیره و Unpacking کند</li>
+    </ul>
+
+    <h3>پرسش‌ها و تمرینات</h3>
+    <p><strong>سوالات تشریحی:</strong></p>
+    <ol>
+      <li>تفاوت بین لیست و تاپل چیست؟ هرکدام چه زمانی مناسب هستند؟</li>
+      <li>()extend و ()append چه تفاوتی دارند؟</li>
+      <li>List Comprehension چیست و چه مزیتی نسبت به حلقه‌های معمولی دارد؟</li>
+      <li>Unpacking چگونه کار می‌کند و چه کاربردی دارد؟</li>
+      <li>چرا تاپل‌ها سریع‌تر از لیست‌ها هستند؟</li>
+    </ol>
+
+    <p><strong>سوالات چهارگزینه‌ای:</strong></p>
+    <ol>
+      <li>کدام یک از موارد زیر یک لیست با ۳ عنصر ایجاد می‌کند؟
+        <br>الف) list(1, 2, 3) &nbsp; ب) [1, 2, 3] &nbsp; ج) (1, 2, 3) &nbsp; د) {1, 2, 3}</li>
+      <li>خروجی <code>[1, 2, 3, 4][1:3]</code> چیست؟
+        <br>الف) [1, 2] &nbsp; ب) [2, 3] &nbsp; ج) [1, 2, 3] &nbsp; د) [2, 3, 4]</li>
+      <li>کدام یک از موارد زیر یک تاپل با یک عنصر ایجاد می‌کند؟
+        <br>الف) (5) &nbsp; ب) (5,) &nbsp; ج) [5] &nbsp; د) {5}</li>
+    </ol>
+
+    <p><strong>تمرین عملی:</strong> یک برنامه بنویسید که:</p>
+    <ul>
+      <li>یک لیست از ۵ نام کاربر ایجاد کند</li>
+      <li>با ()append یک نام جدید اضافه کند</li>
+      <li>با ()insert یک نام در جایگاه دوم قرار دهد</li>
+      <li>با ()remove یک نام خاص را حذف کند</li>
+      <li>با ()sort لیست را مرتب کند</li>
+      <li>با Slicing، سه نام اول را استخراج کند</li>
+      <li>با List Comprehension، نام‌هایی که با حرف «الف» شروع می‌شوند را فیلتر کند</li>
+      <li>با Unpacking، دو نام اول را به متغیرهای جداگانه اختصاص دهد</li>
+    </ul>
+
+    <h3>جمع‌بندی و خلاصه</h3>
+    <div class="callout callout-key">
+      <span class="callout-title">نکات طلایی</span>
+      لیست‌ها با [] ایجاد می‌شوند و قابل تغییر (Mutable) هستند. تاپل‌ها با () ایجاد می‌شوند و غیرقابل تغییر (Immutable) هستند. متدهای اصلی لیست: append(), insert(), pop(), remove(), sort(), reverse(), index(), count(). با Slicing بخشی از لیست را استخراج می‌کند. List Comprehension روشی فشرده برای ایجاد لیست‌ها با حلقه و شرط است. Unpacking به شما اجازه می‌دهد مقدار یک لیست یا تاپل را به متغیرها اختصاص دهید. تاپل‌ها برای داده‌های ثابت و غیرقابل تغییر مناسب‌تر هستند و سرعت و حافظه بهتری دارند.
+    </div>
+
+    <p class="code-label">برگه تقلب</p>
+    <pre><code># لیست
+my_list = [1, 2, 3]
+my_list.append(4)        # [1, 2, 3, 4]
+my_list.insert(1, 99)    # [1, 99, 2, 3, 4]
+my_list.pop()            # 4, [1, 99, 2, 3]
+my_list.remove(99)       # [1, 2, 3]
+my_list.sort()           # [1, 2, 3]
+
+# تاپل
+my_tuple = (1, 2, 3)     # غیرقابل تغییر
+
+# Slicing
+numbers[2:5]             # [2, 3, 4]
+numbers[::-1]            # معکوس
+
+# List Comprehension
+[x**2 for x in range(5)] # [0, 1, 4, 9, 16]
+
+# Unpacking
+a, b, c = [1, 2, 3]      # a=1, b=2, c=3
+first, *rest = [1,2,3,4] # first=1, rest=[2,3,4]</code></pre>
+
+    <h3>واژه‌نامه تخصصی</h3>
+    <ul>
+      <li>List (لیست): ساختار داده قابل تغییر با [].</li>
+      <li>Tuple (تاپل): ساختار داده غیرقابل تغییر با ().</li>
+      <li>Index (اندیس): شماره‌ی موقعیت یک عنصر در لیست یا تاپل.</li>
+      <li>Slicing (برش): استخراج بخشی از یک لیست یا تاپل.</li>
+      <li>List Comprehension: روش فشرده برای ایجاد لیست.</li>
+      <li>Unpacking: اختصاص مقادیر یک مجموعه به متغیرهای جداگانه.</li>
+      <li>Mutable: قابل تغییر.</li>
+      <li>Immutable: غیرقابل تغییر.</li>
+    </ul>
+
+    <h3>منابع و ارجاعات</h3>
+    <ul>
+      <li>Python: Data Structures</li>
+      <li>Python: List</li>
+      <li>Python: Tuple</li>
+      <li>Real Python: Lists and Tuples</li>
+      <li>W3Schools: Python Lists</li>
+    </ul>
+
+    <h3>نقشه راه و نمای کلی فصل</h3>
+    <ul>
+      <li>گام ۱: ایجاد لیست و دسترسی — ۱۵ دقیقه</li>
+      <li>گام ۲: متدهای لیست — ۱۵ دقیقه</li>
+      <li>گام ۳: Slicing — ۱۰ دقیقه</li>
+      <li>گام ۴: تاپل‌ها — ۱۵ دقیقه</li>
+      <li>گام ۵: Unpacking — ۱۵ دقیقه</li>
+      <li>گام ۶: Mutable vs Immutable — ۱۰ دقیقه</li>
+      <li>گام ۷: کارگاه عملی — ۳۰ دقیقه</li>
+    </ul>
+
+    <h3>سوالات محرک (برای درگیری ذهن)</h3>
+    <ul>
+      <li>چرا تاپل‌ها سریع‌تر از لیست‌ها هستند؟</li>
+      <li>چه زمانی باید از تاپل به جای لیست استفاده کنیم؟</li>
+      <li>آیا می‌توان یک لیست را به‌عنوان کلید دیکشنری استفاده کرد؟ چرا؟</li>
+      <li>تفاوت بین کپی عمیق (Deep Copy) و کپی سطحی (Shallow Copy) چیست؟</li>
+      <li>چگونه می‌توان یک لیست را بدون استفاده از ()reverse معکوس کرد؟</li>
+    </ul>
+
+    <h3>خطاهای رایج و عیب‌یابی</h3>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      دسترسی به اندیس خارج از محدوده (IndexError).
+      <br><strong>راه‌حل:</strong> قبل از دسترسی، طول لیست را با ()len بررسی کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      تغییر تاپل (TypeError).
+      <br><strong>راه‌حل:</strong> از لیست به جای تاپل استفاده کنید یا یک تاپل جدید بسازید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      فراموش کردن کاما در تاپل یک‌عنصری.
+      <br><strong>راه‌حل:</strong> از (5,) به جای (5) استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      استفاده از = به جای == در شرط‌ها.
+      <br><strong>راه‌حل:</strong> برای مقایسه از == استفاده کنید.
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-title">اشتباه</span>
+      تغییر لیست در حین پیمایش با for.
+      <br><strong>راه‌حل:</strong> از کپی لیست استفاده کنید یا با while پیمایش کنید.
+    </div>
+
+    <h3>پروژه نهایی فصل ۶</h3>
+    <p><strong>عنوان پروژه:</strong> ساخت یک برنامه مدیریت وظایف (To-Do List)</p>
+    <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت لیست کارها با استفاده از لیست‌ها بسازید:</p>
+    <ul>
+      <li>add_task(task, priority) - افزودن وظیفه با اولویت (۱ تا ۵)</li>
+      <li>remove_task(index) - حذف وظیفه با اندیس</li>
+      <li>()show_tasks - نمایش همه‌ی وظایف با شماره‌گذاری</li>
+      <li>()sort_by_priority - مرتب‌سازی وظایف بر اساس اولویت (با sort و zip)</li>
+      <li>()filter_high_priority - استخراج وظایف با اولویت ۱ و ۲ (با List Comprehension)</li>
+      <li>mark_done(index) - علامت‌گذاری یک وظیفه به عنوان انجام شده (با حذف از لیست یا تغییر وضعیت)</li>
+      <li>از Unpacking برای نمایش سه وظیفه‌ی اول استفاده کنید.</li>
+      <li>از Slicing برای نمایش وظایف بین دو اندیس مشخص استفاده کنید.</li>
+      <li>با حلقه‌ی while یک منوی تعاملی برای کاربر ایجاد کنید.</li>
+      <li>وظایف انجام‌شده را در یک تاپل ذخیره کنید (تاپل قابل تغییر نیست، پس فقط برای نمایش).</li>
+    </ul>
+    <p>کد خود را در VS Code بنویسید و با python3 اجرا کنید.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">چالش بیشتر</span>
+      از تاپل برای ذخیره‌سازی تاریخ و زمان افزودن هر وظیفه استفاده کنید. با List Comprehension و ()zip یک گزارش از وظایف و اولویت‌ها تهیه کنید. قابلیت ذخیره‌سازی لیست وظایف در یک فایل (با استفاده از ()open که در فصل‌های بعدی یاد می‌گیرید) را اضافه کنید.
+    </div>
+
+  </article>
+
+  <div class="chapter-nav">
+    <a href="lesson-python-ch5.html">→ فصل قبلی: حلقه‌ها</a>
+    <span></span>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
