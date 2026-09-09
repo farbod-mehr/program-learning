@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جزوه تخصصی پردازنده (CPU) — یادداشت‌های من</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">A+</span>
+      <span>تخصصی</span>
+    </div>
+    <h1>جزوه تخصصی پردازنده (CPU) - از ۰ تا ۱۰۰</h1>
+  </div>
+
+  <article class="lesson-content">
+
+    <div class="callout callout-tip">
+      <span class="callout-title">پیش‌گفتار و سطح‌بندی</span>
+      این جزوه برای کسانی طراحی شده که دانش پایه (سطح +A) را دارند و می‌خواهند درک عمیق‌تری از معماری و عملکرد پردازنده‌ها پیدا کنند. مطالب از مفاهیم پایه تا مباحث پیشرفته سازمان‌دهی شده‌اند.
+    </div>
+
+    <hr>
+
+    <h2>بخش ۱: مفاهیم پایه و بنیادین</h2>
+
+    <h3>۱-۱. معماری (ISA) در برابر ریزمعماری (Microarchitecture)</h3>
+    <p>این مهم‌ترین تفاوتی است که باید درک کنید:</p>
+
+    <table>
+      <tr><th>مفهوم</th><th>تعریف</th><th>مثال</th></tr>
+      <tr><td>معماری (ISA - Instruction Set Architecture)</td><td>جنبه قراردادی و قابل مشاهده برای برنامه‌نویس. مشخص می‌کند پردازنده از چه دستوراتی پشتیبانی می‌کند و چه رجیسترهایی در اختیار دارد. مانند «قوانین جاده» که همه خودروها باید از آن تبعیت کنند.</td><td>x86-64, ARM, RISC-V</td></tr>
+      <tr><td>ریزمعماری (Microarchitecture)</td><td>پیاده‌سازی فیزیکی و مهندسی از آن قوانین درون تراشه. نحوه چیدمان حافظه‌های کش، سرعت کلاک، و نحوه اجرای دستورات را مشخص می‌کند. مانند «طراحی بدنه و موتور خودرو».</td><td>Intel's Golden Cove, AMD's Zen, Apple's M-series</td></tr>
+    </table>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته مهم</span>
+      پردازنده‌های مختلف (مثلاً Intel Core i9 و AMD Ryzen 9) هر دو از ISA x86-64 پیروی می‌کنند، اما ریزمعماری‌هایشان کاملاً متفاوت است. این تفاوت باعث می‌شود عملکرد و مصرف انرژی یکسانی نداشته باشند.
+    </div>
+
+    <h3>۱-۲. مقایسه دو رویکرد اصلی: RISC در برابر CISC</h3>
+    <p>دو فلسفه طراحی اصلی در دنیای پردازنده‌ها وجود دارد که هر کدام مزایا و معایب خاص خود را دارند:</p>
+
+    <p><strong>🔹 CISC (Complex Instruction Set Computer) — مثل x86 اینتل/AMD</strong></p>
+    <table>
+      <tr><th>ویژگی</th><th>توضیح</th></tr>
+      <tr><td>دستورات</td><td>پیچیده و با سایز متغیر (۱ تا ۱۵ بایت)</td></tr>
+      <tr><td>هدف</td><td>انجام کار با کمترین تعداد دستور ممکن</td></tr>
+      <tr><td>مثال</td><td>یک دستور MULT می‌تواند دو عدد را از حافظه بخواند، ضرب کند و نتیجه را در حافظه ذخیره کند</td></tr>
+      <tr><td>مزیت</td><td>برنامه‌های کوتاه‌تر، سازگاری با نرم‌افزارهای قدیمی</td></tr>
+      <tr><td>عیب</td><td>سخت‌افزار پیچیده‌تر، مصرف انرژی بیشتر، نیاز به ترانزیستورهای بیشتر</td></tr>
+    </table>
+
+    <p><strong>🔹 RISC (Reduced Instruction Set Computer) — مثل ARM</strong></p>
+    <table>
+      <tr><th>ویژگی</th><th>توضیح</th></tr>
+      <tr><td>دستورات</td><td>ساده و با سایز ثابت (معمولاً ۴ بایت)</td></tr>
+      <tr><td>هدف</td><td>هر دستور یک کار ساده را در یک سیکل کلاک انجام دهد</td></tr>
+      <tr><td>مثال</td><td>نیاز به چند دستور جداگانه: LOAD (خواندن از حافظه)، PROD (ضرب)، STORE (ذخیره در حافظه)</td></tr>
+      <tr><td>مزیت</td><td>سخت‌افزار ساده‌تر، مصرف انرژی کمتر، قابلیت لوله‌سازی (Pipelining) بهتر</td></tr>
+      <tr><td>عیب</td><td>برنامه‌های طولانی‌تر، نیاز به کامپایلر هوشمندتر</td></tr>
+    </table>
+
+    <p><strong>مقایسه‌ی عملکردی:</strong></p>
+    <table>
+      <tr><th>معیار</th><th>CISC (x86)</th><th>RISC (ARM)</th></tr>
+      <tr><td>طول دستورات</td><td>متغیر (۱-۱۵ بایت)</td><td>ثابت (معمولاً ۴ بایت)</td></tr>
+      <tr><td>مصرف انرژی (TDP)</td><td>۱۵ تا ۳۵۰ وات</td><td>۰.۰۰۱ تا ۱۵ وات</td></tr>
+      <tr><td>پیچیدگی دیکود کردن</td><td>بالا (نیاز به ترجمه به µOP)</td><td>پایین (دیکود مستقیم)</td></tr>
+      <tr><td>کارایی به ازای هر وات</td><td>پایین‌تر</td><td>۳ تا ۱۰ برابر بهتر</td></tr>
+      <tr><td>بازار غالب</td><td>دسکتاپ، سرور (بیش از ۸۰٪)</td><td>موبایل، IoT (بیش از ۹۵٪)</td></tr>
+    </table>
+
+    <div class="callout callout-key">
+      <span class="callout-title">نکته جالب</span>
+      پردازنده‌های مدرن x86، درون خود، دستورات پیچیده CISC را به عملیات‌های ساده‌تر (شبیه RISC) به نام µOP (micro-operations) ترجمه می‌کنند تا از مزایای هر دو دنیا بهره ببرند. به همین دلیل است که مرز بین RISC و CISC امروزه کم‌رنگ شده است.
+    </div>
+
+    <hr>
+
+    <h2>بخش ۲: آناتومی یک پردازنده (اجزای داخلی)</h2>
+
+    <h3>۲-۱. واحدهای اصلی و عملکرد آن‌ها</h3>
+    <p>پردازنده‌های مدرن از بخش‌های مختلفی تشکیل شده‌اند که با هم کار می‌کنند:</p>
+
+    <p><strong>🔹 هسته‌های پردازشی (Cores)</strong></p>
+    <ul>
+      <li>هسته (Core): واحد پردازش اصلی که قادر به اجرای یک رشته (Thread) از دستورات است.</li>
+      <li>هایپرتردینگ (Hyper-Threading) / SMT: فناوری که به یک هسته فیزیکی اجازه می‌دهد دو رشته را به‌صورت هم‌زمان مدیریت کند.</li>
+    </ul>
+
+    <p><strong>🔹 حافظه‌های کش (Cache Memory)</strong></p>
+    <p>حافظه‌های کش، داده‌های پرکاربرد را نزدیک به پردازنده نگهداری می‌کنند تا دسترسی سریع‌تر باشد:</p>
+    <table>
+      <tr><th>سطح کش</th><th>اندازه معمول</th><th>تأخیر تقریبی</th><th>کاربرد</th></tr>
+      <tr><td>L1 (سطح ۱)</td><td>۳۲-۶۴ KB هر هسته</td><td>~۱-۲ سیکل</td><td>داده/دستورات کاملاً حیاتی</td></tr>
+      <tr><td>L2 (سطح ۲)</td><td>۲۵۶-۵۱۲ KB هر هسته</td><td>~۱۰-۱۵ سیکل</td><td>داده‌های پرکاربرد</td></tr>
+      <tr><td>L3 (سطح ۳)</td><td>۲-۴ MB هر هسته</td><td>~۴۰-۵۰ سیکل</td><td>اشتراکی بین همه هسته‌ها</td></tr>
+    </table>
+
+    <p><strong>مقایسه‌ی کش در ریزمعماری‌های مختلف:</strong></p>
+    <table>
+      <tr><th>مشخصه</th><th>AMD Zen (2017)</th><th>Intel Skylake (2015)</th></tr>
+      <tr><td>L1-I (دستورات)</td><td>64 KB/core</td><td>32 KB/core</td></tr>
+      <tr><td>L1-D (داده)</td><td>32 KB/core</td><td>32 KB/core</td></tr>
+      <tr><td>L2</td><td>512 KB/core</td><td>256 KB/core</td></tr>
+      <tr><td>L3</td><td>2 MB/core</td><td>2 MB/core</td></tr>
+    </table>
+
+    <p><strong>🔹 واحدهای اجرایی (Execution Units)</strong></p>
+    <p>واحدهای صحیح (Integer Units):</p>
+    <ul>
+      <li>ALU (Arithmetic Logic Unit): جمع، تفریق، عملیات منطقی (AND, OR, NOT)</li>
+      <li>AGU (Address Generation Unit): محاسبه آدرس‌های حافظه</li>
+    </ul>
+    <p>واحدهای ممیز شناور (Floating Point Units - FPU):</p>
+    <ul>
+      <li>عملیات روی اعداد اعشاری (مثل ۳.۱۴)</li>
+      <li>پشتیبانی از SIMD (که بعداً توضیح داده می‌شود)</li>
+    </ul>
+    <p>در ریزمعماری AMD Zen، بخش‌های صحیح و ممیز شناور کاملاً جدا هستند و هر کدام واحدهای زمان‌بندی و صف‌های مخصوص خود را دارند.</p>
+
+    <p><strong>🔹 واحدهای کنترل جریان</strong></p>
+    <ul>
+      <li>Branch Predictor: پیش‌بینی می‌کند که برنامه از کدام مسیر می‌رود تا بتواند دستورات را از قبل آماده کند.</li>
+      <li>Out-of-Order Execution: اجرای دستورات نه به ترتیب نوشته شدن، بلکه به ترتیب آماده بودن داده‌ها.</li>
+    </ul>
+
+    <h3>۲-۲. لوله‌سازی (Pipelining)</h3>
+    <p>پردازنده‌های مدرن دستورات را به‌صورت لوله‌ای (Pipeline) اجرا می‌کنند. هر دستور چند مرحله را طی می‌کند:</p>
+    <ol class="step-list">
+      <li>Fetch (خواندن دستور از حافظه)</li>
+      <li>Decode (ترجمه دستور به µOP)</li>
+      <li>Execute (اجرا)</li>
+      <li>Memory (دسترسی به حافظه در صورت نیاز)</li>
+      <li>Writeback (نوشتن نتیجه)</li>
+    </ol>
+
+    <div class="callout callout-key">
+      <span class="callout-title">مهم</span>
+      در یک لوله‌ی کامل، هر سیکل کلاک یک دستور از هر مرحله خارج می‌شود. یعنی اگر ۵ مرحله باشد، ۵ دستور به‌صورت هم‌زمان در حال پردازش هستند.
+    </div>
+
+    <hr>
+
+    <h2>بخش ۳: دستورات و پردازش موازی</h2>
+
+    <h3>۳-۱. SIMD (Single Instruction, Multiple Data)</h3>
+    <p>SIMD یک تکنیک قدرتمند است که به پردازنده اجازه می‌دهد یک دستور را روی چندین داده به‌صورت هم‌زمان اجرا کند. این فناوری در برنامه‌های سنگین مثل پردازش ویدیو، بازی، یادگیری ماشین و محاسبات علمی نقش حیاتی دارد.</p>
+
+    <p><strong>تکامل دستورات SIMD در پردازنده‌های x86:</strong></p>
+    <table>
+      <tr><th>نسل</th><th>نام</th><th>عرض ثبات</th><th>تعداد داده‌های float</th><th>نسخه‌ها</th></tr>
+      <tr><td>۱</td><td>MMX</td><td>۶۴ بیت</td><td>۲ (اعداد صحیح)</td><td>۱۹۹۶</td></tr>
+      <tr><td>۲</td><td>SSE</td><td>۱۲۸ بیت</td><td>۴</td><td>SSE, SSE2, SSE3, SSE4</td></tr>
+      <tr><td>۳</td><td>AVX</td><td>۲۵۶ بیت</td><td>۸</td><td>AVX, AVX2</td></tr>
+      <tr><td>۴</td><td>AVX-512</td><td>۵۱۲ بیت</td><td>۱۶</td><td>AVX-512F, AVX-512CD, ...</td></tr>
+    </table>
+
+    <p><strong>افزایش عملکرد با SIMD:</strong></p>
+    <table>
+      <tr><th>ریزمعماری</th><th>دستورات SIMD</th><th>عملیات ممیز شناور در هر سیکل (هر هسته)</th></tr>
+      <tr><td>Nehalem (SSE)</td><td>۴ عنصر</td><td>۸</td></tr>
+      <tr><td>Sandy Bridge (AVX)</td><td>۸ عنصر</td><td>۱۶</td></tr>
+      <tr><td>Haswell (AVX2)</td><td>۸ عنصر + FMA</td><td>۳۲</td></tr>
+      <tr><td>Ice Lake (AVX-512)</td><td>۱۶ عنصر + FMA</td><td>۶۴</td></tr>
+    </table>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نتیجه</span>
+      از SSE تا AVX-512، قدرت محاسباتی هر هسته ۸ برابر شده است!
+    </div>
+
+    <h3>۳-۲. دستورات FMA (Fused Multiply-Add)</h3>
+    <p>دستورات FMA دو عمل ضرب و جمع را در یک دستور و با یک بار گرد کردن انجام می‌دهند. این کار هم دقت محاسبات را افزایش می‌دهد و هم سرعت را بالا می‌برد.</p>
+    <pre><code>a = a × b + c  →  در یک دستور: vfmadd132ps</code></pre>
+    <p><strong>مزایا:</strong></p>
+    <ul>
+      <li>دقت بالاتر (یک بار گرد کردن به جای دو بار)</li>
+      <li>سرعت بیشتر (اجرای دو عملیات در یک سیکل)</li>
+      <li>مصرف انرژی کمتر</li>
+    </ul>
+
+    <hr>
+
+    <h2>بخش ۴: مطالعه‌ی موردی - ریزمعماری AMD Zen</h2>
+    <p>برای درک بهتر مفاهیم، بیایید یک ریزمعماری واقعی را بررسی کنیم.</p>
+
+    <h3>۴-۱. ویژگی‌های کلیدی Zen (نسل اول، ۲۰۱۷)</h3>
+    <table>
+      <tr><th>مشخصه</th><th>مقدار</th></tr>
+      <tr><td>هسته‌ها</td><td>تا ۸ هسته / ۱۶ رشته</td></tr>
+      <tr><td>حافظه کش L1 دستورات</td><td>۶۴ KB به ازای هر هسته</td></tr>
+      <tr><td>حافظه کش L1 داده</td><td>۳۲ KB به ازای هر هسته</td></tr>
+      <tr><td>حافظه کش L2</td><td>۵۱۲ KB به ازای هر هسته</td></tr>
+      <tr><td>حافظه کش L3</td><td>۲ MB به ازای هر هسته</td></tr>
+      <tr><td>پهنای دیکود (Decode)</td><td>۴ µOP در هر سیکل</td></tr>
+      <tr><td>پهنای خروج (Dispatch)</td><td>۶ µOP در هر سیکل</td></tr>
+      <tr><td>عمق صف Retire</td><td>۱۹۲ ورودی</td></tr>
+      <tr><td>تعداد ثبات‌های صحیح</td><td>۱۶۸</td></tr>
+      <tr><td>تعداد ثبات‌های ممیز شناور</td><td>۱۶۰</td></tr>
+    </table>
+
+    <h3>۴-۲. اجرای دستورات در Zen</h3>
+    <p><strong>بخش صحیح (Integer Engine):</strong></p>
+    <ul>
+      <li>۴ واحد ALU (حسابی/منطقی)</li>
+      <li>۲ واحد AGU (تولید آدرس)</li>
+      <li>۴ واحد زمان‌بندی مجزا، هر کدام ۱۴ ورودی</li>
+      <li>پشتیبانی از Move Elimination: انتقال ثبت‌ها بدون مصرف منابع اجرایی</li>
+    </ul>
+    <p><strong>بخش ممیز شناور (Floating Point Engine):</strong></p>
+    <ul>
+      <li>۲ واحد FMAC (ضرب-جمع ترکیبی) با عرض ۱۲۸ بیت</li>
+      <li>۱۶۰ ثبات فیزیکی</li>
+      <li>پشتیبانی از AVX2 (۲۵۶ بیت) اما نه AVX-512</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      اگر نتیجه یک عملیات صحیح به یک عملیات ممیز شناور وابسته باشد، یک سیکل تأخیر ایجاد می‌شود.
+    </div>
+
+    <hr>
+
+    <h2>بخش ۵: بهینه‌سازی و محدودیت‌ها</h2>
+
+    <h3>۵-۱. پهنای باند حافظه به‌عنوان گلوگاه</h3>
+    <p>افزایش تعداد هسته‌ها، فشار بر روی پهنای باند حافظه (Memory Bandwidth) را افزایش می‌دهد. در برخی برنامه‌ها، اضافه کردن هسته‌های بیشتر نه تنها کمکی نمی‌کند، بلکه ممکن است کل سیستم را کندتر کند، چون همه هسته‌ها برای دسترسی به رم با هم رقابت می‌کنند.</p>
+
+    <h3>۵-۲. محدودیت فیزیکی فرکانس</h3>
+    <p>حداکثر فرکانس پردازنده‌های مدرن (حدود ۵-۶ گیگاهرتز) به دلیل محدودیت‌های فیزیکی و گرمایی به یک دیواره برخورد کرده است. از حدود سال ۲۰۰۶، افزایش فرکانس متوقف شد و به جای آن، افزایش تعداد هسته‌ها و بهینه‌سازی معماری در دستور کار قرار گرفت.</p>
+
+    <p><strong>معادله زمان اجرا:</strong></p>
+    <pre><code>T = N × CPI × R</code></pre>
+    <p>که در آن:</p>
+    <ul>
+      <li>T = زمان اجرا</li>
+      <li>N = تعداد دستورات</li>
+      <li>CPI = تعداد سیکل‌ها برای هر دستور</li>
+      <li>R = زمان هر سیکل کلاک</li>
+    </ul>
+    <p>برای کاهش زمان اجرا، باید یکی از این سه پارامتر را کاهش داد.</p>
+
+    <hr>
+
+    <h2>بخش ۶: منابع پیشنهادی برای مطالعه عمیق‌تر</h2>
+    <table>
+      <tr><th>منبع</th><th>توضیح</th></tr>
+      <tr><td>Computer Architecture: A Quantitative Approach (Hennessy &amp; Patterson)</td><td>کتاب مرجع کلاسیک، شامل مباحث پیشرفته از جمله RISC-V</td></tr>
+      <tr><td>Modern x86 Assembly Language Programming (Kusswurm)</td><td>آموزش عملی کدنویسی AVX, AVX2, AVX-512</td></tr>
+      <tr><td>WikiChip (en.wikichip.org)</td><td>مرجع تخصصی جزئیات فنی ریزمعماری‌ها</td></tr>
+      <tr><td>Agner Fog's Microarchitecture PDF</td><td>تحلیل‌های دقیق از عملکرد پردازنده‌ها</td></tr>
+      <tr><td>Intel/AMD Developer Manuals</td><td>مستندات رسمی شرکت‌های سازنده</td></tr>
+    </table>
+
+    <hr>
+
+    <h2>جمع‌بندی نهایی</h2>
+    <table>
+      <tr><th>مفهوم</th><th>خلاصه</th></tr>
+      <tr><td>ISA در برابر Microarchitecture</td><td>ISA = قرارداد / Microarchitecture = پیاده‌سازی</td></tr>
+      <tr><td>RISC در برابر CISC</td><td>RISC = ساده و کم‌مصرف (ARM) / CISC = پیچیده و قدرتمند (x86)</td></tr>
+      <tr><td>SIMD</td><td>یک دستور روی چند داده (AVX-512 = ۱۶ داده هم‌زمان)</td></tr>
+      <tr><td>حافظه کش</td><td>L1 (سریع و کوچک) ← L2 ← L3 (کند و بزرگ)</td></tr>
+      <tr><td>اجرای دستورات</td><td>لوله‌سازی، پیش‌بینی پرش، اجرای خارج از ترتیب</td></tr>
+    </table>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
