@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جزوه کامل LPIC-1 — یادداشت‌های من</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html">← بازگشت به لیست مطالب</a>
+
+  <div class="lesson-header">
+    <div class="meta">
+      <span class="category">Linux</span>
+      <span>LPIC-1</span>
+    </div>
+    <h1>جزوه کامل LPIC-1 — دستورات، فایل‌ها و مثال‌های عملی</h1>
+  </div>
+
+  <article class="lesson-content">
+
+    <p>برای توضیح عمیق‌تر، هر Topic با دستورات، فایل‌های کلیدی و مثال‌های عملی باز شده است.</p>
+
+    <div class="toc">
+      <strong>فهرست موضوعات</strong>
+      <ul>
+        <li><a href="#topic-101">Topic 101: معماری سیستم</a></li>
+        <li><a href="#topic-102">Topic 102: نصب لینوکس و مدیریت بسته‌ها</a></li>
+        <li><a href="#topic-103">Topic 103: دستورات GNU و یونیکس</a></li>
+        <li><a href="#topic-104">Topic 104: دستگاه‌ها، فایل‌سیستم‌ها و FHS</a></li>
+        <li><a href="#topic-105">Topic 105: شل و اسکریپت‌نویسی</a></li>
+        <li><a href="#topic-106">Topic 106: رابط‌های کاربری و دسکتاپ</a></li>
+        <li><a href="#topic-107">Topic 107: وظایف مدیریتی</a></li>
+        <li><a href="#topic-108">Topic 108: سرویس‌های ضروری سیستم</a></li>
+        <li><a href="#topic-109">Topic 109: مبانی شبکه</a></li>
+        <li><a href="#topic-110">Topic 110: امنیت</a></li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <h2 id="topic-101">Topic 101: معماری سیستم (System Architecture)</h2>
+
+    <h3>101.1 تعیین و پیکربندی تنظیمات سخت‌افزاری</h3>
+    <p><strong>شناسایی سخت‌افزار:</strong></p>
+    <ul>
+      <li>lspci: نمایش دستگاه‌های متصل به باس PCI (کارت گرافیک، شبکه، صدا)</li>
+      <li>lsusb: نمایش دستگاه‌های USB</li>
+      <li>lsmod: لیست ماژول‌های کرنل بارگذاری‌شده</li>
+      <li>modprobe: بارگذاری/حذف ماژول‌های کرنل (modprobe -r برای حذف)</li>
+      <li>lshw: نمایش کامل سخت‌افزار</li>
+      <li>/proc/: فایل‌سیستم مجازی حاوی اطلاعات سخت‌افزاری (مانند /proc/cpuinfo, /proc/meminfo)</li>
+      <li>/sys/: اطلاعات کرنل و دستگاه‌ها</li>
+      <li>/dev/: فایل‌های دستگاه (مانند /dev/sda, /dev/null)</li>
+    </ul>
+
+    <p><strong>مدیریت ماژول‌های کرنل:</strong></p>
+    <pre><code>lsmod | grep snd        # بررسی ماژول صدا
+modprobe snd_hda_intel  # بارگذاری ماژول
+modprobe -r snd_hda_intel # حذف ماژول</code></pre>
+
+    <h3>101.2 بوت کردن سیستم (Boot the System)</h3>
+    <p><strong>فرآیند بوت:</strong></p>
+    <ol class="step-list">
+      <li>BIOS/UEFI: POST (تست سخت‌افزار) و انتخاب دستگاه بوت</li>
+      <li>MBR/GPT: خواندن بوت‌لودر</li>
+      <li>GRUB2: بارگذاری کرنل و initrd</li>
+      <li>Kernel: راه‌اندازی سخت‌افزار و mount کردن root filesystem</li>
+      <li>init/systemd: اولین فرآیند (PID 1)</li>
+    </ol>
+
+    <p><strong>GRUB2 - دستورات کلیدی:</strong></p>
+    <pre><code>grub2-install /dev/sda              # نصب GRUB روی MBR (BIOS)
+grub2-mkconfig -o /boot/grub2/grub.cfg  # تولید فایل پیکربندی (BIOS)
+grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg  # برای UEFI</code></pre>
+
+    <p><strong>فایل‌های مهم GRUB2:</strong></p>
+    <ul>
+      <li>/boot/grub2/grub.cfg: فایل پیکربندی اصلی (به‌صورت خودکار تولید می‌شود)</li>
+      <li>/etc/default/grub: تنظیمات کاربر (مثل GRUB_TIMEOUT)</li>
+      <li>/etc/grub.d/: اسکریپت‌های تولید grub.cfg</li>
+    </ul>
+
+    <p><strong>بازیابی GRUB:</strong></p>
+    <pre><code># بوت از رسانه نجات
+chroot /mnt/sysroot
+grub2-install /dev/sda
+grub2-mkconfig -o /boot/grub2/grub.cfg</code></pre>
+
+    <h3>101.3 تغییر Runlevelها / اهداف بوت</h3>
+    <p><strong>Systemd (سیستم‌های مدرن):</strong></p>
+    <ul>
+      <li>poweroff.target: خاموش کردن</li>
+      <li>rescue.target: تک‌کاربره (نیازمند رمز root)</li>
+      <li>multi-user.target: چندکاربره با شبکه</li>
+      <li>graphical.target: چندکاربره با محیط گرافیکی</li>
+      <li>reboot.target: ری‌استارت</li>
+    </ul>
+    <pre><code>systemctl get-default                    # مشاهده هدف پیش‌فرض
+systemctl set-default multi-user.target  # تنظیم هدف پیش‌فرض
+systemctl isolate rescue.target          # تغییر به هدف rescue
+systemctl list-units --type=target       # لیست اهداف</code></pre>
+
+    <hr>
+
+    <h2 id="topic-102">Topic 102: نصب لینوکس و مدیریت بسته‌ها</h2>
+
+    <h3>102.1 طراحی چیدمان هارد دیسک</h3>
+    <p><strong>پارتیشن‌بندی:</strong></p>
+    <ul>
+      <li>/boot: ۵۰۰MB تا ۱GB (فایل‌های بوت)</li>
+      <li>/: ۱۵-۲۰GB (سیستم‌عامل)</li>
+      <li>swap: ۲-۴GB یا بیشتر (حافظه مجازی)</li>
+      <li>/home: فضای باقی‌مانده (داده‌های کاربران)</li>
+    </ul>
+    <pre><code>fdisk -l              # لیست دیسک‌ها و پارتیشن‌ها
+fdisk /dev/sda        # ویرایش پارتیشن‌ها (MBR)
+gdisk /dev/sda        # ویرایش پارتیشن‌ها (GPT)
+parted /dev/sda       # ابزار پیشرفته پارتیشن‌بندی</code></pre>
+
+    <h3>102.2 نصب بوت منیجر</h3>
+    <p><strong>GRUB2 (بوت‌لودر استاندارد لینوکس):</strong></p>
+    <ul>
+      <li>نصب روی MBR (BIOS): grub2-install /dev/sda</li>
+      <li>نصب روی ESP (UEFI): grub2-install --target=x86_64-efi --efi-directory=/boot/efi</li>
+      <li>تولید پیکربندی: grub2-mkconfig -o /boot/grub2/grub.cfg</li>
+    </ul>
+    <p><strong>فایل‌های پیکربندی:</strong> /etc/default/grub (تنظیمات ساده مثل timeout و kernel params)، /etc/grub.d/ (اسکریپت‌های تولیدکننده).</p>
+
+    <h3>102.3 مدیریت کتابخانه‌های اشتراکی</h3>
+    <p>کتابخانه‌های اشتراکی (*.so) کد مشترک بین برنامه‌ها هستند. مکان‌های استاندارد: /lib, /usr/lib.</p>
+    <pre><code>ldd /bin/ls              # نمایش کتابخانه‌های مورد نیاز ls
+ldconfig -p              # لیست کتابخانه‌های کش‌شده</code></pre>
+    <p>ldconfig برای به‌روزرسانی کش کتابخانه‌ها استفاده می‌شود و /etc/ld.so.conf مسیرهای جستجوی کتابخانه را نگه می‌دارد.</p>
+
+    <h3>102.4 مدیریت بسته Debian (apt, dpkg)</h3>
+    <p><strong>dpkg (سطح پایین):</strong></p>
+    <pre><code>dpkg -i package.deb       # نصب بسته
+dpkg -r package            # حذف بسته
+dpkg -l                   # لیست بسته‌های نصب‌شده
+dpkg -L package           # لیست فایل‌های یک بسته
+dpkg -S /path/to/file     # پیدا کردن بسته مالک یک فایل</code></pre>
+    <p><strong>apt (سطح بالا - مدیریت وابستگی‌ها):</strong></p>
+    <pre><code>apt update                # به‌روزرسانی لیست بسته‌ها
+apt upgrade               # ارتقاء بسته‌ها
+apt install package       # نصب بسته
+apt remove package        # حذف بسته (بدون تنظیمات)
+apt purge package         # حذف کامل (با تنظیمات)
+apt autoremove            # حذف وابستگی‌های بی‌استفاده
+apt search keyword        # جستجو
+apt-cache show package    # اطلاعات بسته</code></pre>
+    <p><strong>فایل‌های مهم:</strong> /etc/apt/sources.list (مخازن اصلی)، /etc/apt/sources.list.d/ (مخازن اضافی)، /etc/apt/trusted.gpg.d/ (کلیدهای GPG).</p>
+
+    <h3>102.5 مدیریت بسته RPM (rpm, yum, dnf, zypper)</h3>
+    <p><strong>rpm (سطح پایین):</strong></p>
+    <pre><code>rpm -ivh package.rpm      # نصب
+rpm -e package            # حذف
+rpm -qa                   # لیست همه بسته‌ها
+rpm -ql package           # لیست فایل‌های بسته
+rpm -qf /path/to/file     # بسته مالک فایل
+rpm -qp --requires pkg.rpm # وابستگی‌های یک فایل rpm</code></pre>
+    <p><strong>yum/dnf (سطح بالا):</strong></p>
+    <pre><code>yum install package       # نصب
+yum remove package        # حذف
+yum update                # به‌روزرسانی
+yum search keyword        # جستجو
+yum info package          # اطلاعات
+dnf install package       # جایگزین مدرن yum</code></pre>
+    <p><strong>zypper (openSUSE):</strong></p>
+    <pre><code>zypper install package
+zypper remove package
+zypper search keyword</code></pre>
+    <p><strong>فایل‌های مهم:</strong> /etc/yum.conf (پیکربندی yum)، /etc/yum.repos.d/ (فایل‌های مخزن).</p>
+
+    <h3>102.6 لینوکس به‌عنوان مهمان مجازی‌سازی</h3>
+    <ul>
+      <li>VM (Virtual Machine): ماشین مجازی کامل</li>
+      <li>Container: جداسازی سبک‌تر (Docker, LXC)</li>
+      <li>IaaS Cloud: زیرساخت ابری (AWS, Azure)</li>
+      <li>cloud-init: ابزار پیکربندی اولیه در ابر</li>
+    </ul>
+    <p><strong>تغییرات لازم در کلون:</strong></p>
+    <ul>
+      <li>SSH host keys: باید تولید مجدد شوند (ssh-keygen -A)</li>
+      <li>machine-id: باید پاک شود (/etc/machine-id, /var/lib/dbus/machine-id)</li>
+      <li>hostname: باید تغییر کند</li>
+    </ul>
+
+    <hr>
+
+    <h2 id="topic-103">Topic 103: دستورات GNU و یونیکس</h2>
+
+    <h3>103.1 کار در خط فرمان</h3>
+    <p><strong>Bash و محیط:</strong></p>
+    <pre><code>echo $PATH              # نمایش متغیر PATH
+export EDITOR=vim       # تعریف متغیر محیطی
+env                     # نمایش همه متغیرها
+set                     # نمایش متغیرهای شل
+unset VAR               # حذف متغیر
+history                 # تاریخچه دستورات
+!100                    # اجرای دستور 100 از تاریخچه
+!!                      # اجرای دستور قبلی
+Ctrl+R                  # جستجو در تاریخچه</code></pre>
+    <p><strong>راهنما:</strong></p>
+    <pre><code>man ls                  # راهنمای دستور
+ls --help               # کمک سریع
+type ls                 # نوع دستور (alias, builtin, file)
+which ls                # مسیر اجرایی</code></pre>
+
+    <h3>103.2 پردازش جریان‌های متنی با فیلترها</h3>
+    <pre><code>cat file.txt            # نمایش فایل
+cut -d: -f1 /etc/passwd # برش ستون 1 با جداکننده :
+sort file.txt           # مرتب‌سازی
+uniq                    # حذف خطوط تکراری (نیاز به sort)
+head -n 10 file         # 10 خط اول
+tail -n 10 file         # 10 خط آخر
+tail -f file            # دنبال کردن زنده
+wc -l file              # شمارش خطوط
+tr 'a-z' 'A-Z'          # تبدیل حروف
+sed 's/old/new/g'       # جایگزینی
+grep pattern file       # جستجو</code></pre>
+
+    <h3>103.3 مدیریت پایه فایل</h3>
+    <pre><code>cp source dest          # کپی
+cp -r dir1 dir2         # کپی بازگشتی
+mv source dest          # انتقال/تغییر نام
+rm file                 # حذف
+rm -r dir               # حذف بازگشتی
+mkdir -p /a/b/c         # ساخت مسیر تو در تو
+rmdir dir               # حذف پوشه خالی
+touch file              # ایجاد فایل خالی/به‌روزرسانی timestamp
+find / -name "*.conf"   # جستجو
+find / -size +10M       # فایل‌های بزرگ‌تر از 10MB
+tar -czvf archive.tar.gz dir/  # فشرده‌سازی
+tar -xzvf archive.tar.gz       # استخراج</code></pre>
+
+    <h3>103.4 جریان‌ها، لوله‌ها و تغییر مسیرها</h3>
+    <pre><code>command > file          # stdout به فایل (بازنویسی)
+command >> file         # stdout به فایل (افزودن)
+command 2> error.txt    # stderr به فایل
+command &> all.txt      # stdout و stderr
+command | grep pattern  # لوله (pipe)
+tee file                # نوشتن در فایل + نمایش
+xargs                   # تبدیل ورودی به آرگومان</code></pre>
+
+    <h3>103.5 ایجاد، نظارت و از بین بردن فرآیندها</h3>
+    <pre><code>command &               # اجرا در پس‌زمینه
+jobs                    # لیست jobها
+fg %1                   # آوردن job 1 به پیش‌زمینه
+bg %1                   # فرستادن job 1 به پس‌زمینه
+Ctrl+Z                  # توقف موقت
+ps aux                  # همه فرآیندها
+ps -ef                  # فرمت دیگر
+top                     # نمایش زنده
+htop                    # نسخه بهتر top
+pgrep sshd              # پیدا کردن PID با نام
+pkill sshd              # کشتن با نام
+kill -9 PID             # کشتن اجباری
+killall process         # کشتن همه با نام
+nohup command &         # اجرا پس از logout
+screen / tmux           # جلسات پایدار</code></pre>
+
+    <h3>103.6 تغییر اولویت اجرای فرآیند</h3>
+    <pre><code>nice -n 10 command      # اجرا با nice بالاتر (اولویت کمتر)
+renice -n 5 -p PID      # تغییر nice فرآیند در حال اجرا
+# مقادیر nice: -20 (بالاترین اولویت) تا 19 (پایین‌ترین)</code></pre>
+
+    <h3>103.7 جستجوی فایل‌های متنی با عبارات باقاعده</h3>
+    <pre><code>grep '^root' /etc/passwd    # شروع با root
+grep 'bash$' /etc/passwd    # پایان با bash
+grep '[0-9]' file           # شامل عدد
+grep 'a.*b' file            # a و b با هر چیزی بینشان
+grep -E 'pattern1|pattern2' # چند الگو</code></pre>
+
+    <h3>103.8 ویرایش پایه فایل با vi</h3>
+    <p><strong>حالت‌های vi:</strong></p>
+    <ul>
+      <li>Normal: ناوبری (h j k l, w, b, gg, G)</li>
+      <li>Insert: تایپ (i, a, o, O)</li>
+      <li>Command: دستورات (:w, :q, :wq, :q!, :set nu)</li>
+    </ul>
+    <p><strong>جستجو و جایگزینی:</strong></p>
+    <pre><code>/pattern        # جستجو به جلو
+?pattern        # جستجو به عقب
+n               # بعدی
+N               # قبلی
+:%s/old/new/g   # جایگزینی همه</code></pre>
+
+    <hr>
+
+    <h2 id="topic-104">Topic 104: دستگاه‌ها، فایل‌سیستم‌ها و FHS</h2>
+
+    <h3>104.1 ایجاد پارتیشن‌ها و فایل‌سیستم‌ها</h3>
+    <pre><code>fdisk /dev/sdb          # ایجاد پارتیشن (MBR)
+gdisk /dev/sdb          # ایجاد پارتیشن (GPT)
+mkfs.ext4 /dev/sdb1     # ساخت فایل‌سیستم ext4
+mkfs.xfs /dev/sdb1      # ساخت فایل‌سیستم XFS
+mkswap /dev/sdb2        # ساخت swap
+blkid                   # نمایش UUID و نوع فایل‌سیستم</code></pre>
+
+    <h3>104.2 حفظ یکپارچگی فایل‌سیستم‌ها</h3>
+    <pre><code>fsck /dev/sdb1          # بررسی و تعمیر
+fsck -y /dev/sdb1       # پاسخ خودکار بله
+e2fsck -f /dev/sdb1     # بررسی اجباری ext</code></pre>
+
+    <h3>104.3 کنترل Mount و Unmount</h3>
+    <pre><code>mount /dev/sdb1 /mnt/data          # mount دستی
+umount /mnt/data                   # unmount
+mount -a                           # mount همه از fstab
+mount -t ext4 /dev/sdb1 /mnt       # تعیین نوع
+mount -o ro /dev/sdb1 /mnt         # فقط خواندنی</code></pre>
+    <p><strong>/etc/fstab - مثال:</strong></p>
+    <pre><code>UUID=xxxx-xxxx / ext4 defaults 0 1
+UUID=yyyy-yyyy /home ext4 defaults 0 2
+UUID=zzzz-zzzz none swap sw 0 0</code></pre>
+
+    <h3>104.4 مدیریت سهمیه دیسک</h3>
+    <pre><code>quotacheck -cug /home          # ایجاد فایل‌های سهمیه
+quotaon /home                  # فعال‌سازی
+edquota -u username            # ویرایش سهمیه کاربر
+repquota /home                 # گزارش</code></pre>
+
+    <h3>104.5 مدیریت مجوزها و مالکیت</h3>
+    <p><strong>مجوزهای پایه:</strong> r (4) خواندن، w (2) نوشتن، x (1) اجرا.</p>
+    <pre><code>chmod 755 file          # rwxr-xr-x
+chmod u+x file          # افزودن اجرا برای مالک
+chown user:group file   # تغییر مالک و گروه
+chgrp group file        # تغییر گروه
+umask 022               # مجوز پیش‌فرض فایل‌های جدید</code></pre>
+    <p><strong>مجوزهای ویژه:</strong></p>
+    <ul>
+      <li>SUID (chmod u+s): اجرا با مجوز مالک فایل (مثال: /usr/bin/passwd)</li>
+      <li>SGID (chmod g+s): روی فایل‌ها اجرا با گروه مالک؛ روی دایرکتوری‌ها فایل‌های جدید گروه دایرکتوری را به ارث می‌برند</li>
+      <li>Sticky Bit (chmod +t): فقط مالک می‌تواند فایل را حذف کند (مثال: /tmp)</li>
+    </ul>
+    <pre><code>-rwsr-xr-x  # SUID
+-rwxr-sr-x  # SGID
+drwxrwxrwt  # Sticky</code></pre>
+
+    <h3>104.6 لینک‌های سخت و نمادین</h3>
+    <pre><code>ln file1 file2          # لینک سخت (Hard Link)
+ln -s /path/to/file link # لینک نمادین (Symbolic/Soft Link)
+ls -li                  # نمایش inode (لینک‌های سخت inode یکسان دارند)
+ls -l                   # لینک نمادین با -> نمایش داده می‌شود</code></pre>
+    <p><strong>تفاوت‌ها:</strong> Hard Link فقط روی همان فایل‌سیستم است، inode یکسان دارد و اگر فایل اصلی حذف شود لینک باقی می‌ماند. Soft Link می‌تواند به هر جایی اشاره کند و اگر فایل اصلی حذف شود لینک شکسته می‌شود.</p>
+
+    <h3>104.7 پیدا کردن فایل‌های سیستمی و FHS</h3>
+    <table>
+      <tr><th>دایرکتوری</th><th>محتوا</th></tr>
+      <tr><td>/</td><td>ریشه، مینیمال</td></tr>
+      <tr><td>/bin</td><td>باینری‌های ضروری همه کاربران</td></tr>
+      <tr><td>/boot</td><td>فایل‌های بوت، کرنل</td></tr>
+      <tr><td>/dev</td><td>فایل‌های دستگاه</td></tr>
+      <tr><td>/etc</td><td>پیکربندی سیستم</td></tr>
+      <tr><td>/home</td><td>دایرکتوری‌های کاربران</td></tr>
+      <tr><td>/lib</td><td>کتابخانه‌های اشتراکی ضروری</td></tr>
+      <tr><td>/media</td><td>رسانه‌های قابل جابجایی</td></tr>
+      <tr><td>/mnt</td><td>mount موقت</td></tr>
+      <tr><td>/opt</td><td>بسته‌های نرم‌افزاری اضافی</td></tr>
+      <tr><td>/root</td><td>home کاربر root</td></tr>
+      <tr><td>/sbin</td><td>باینری‌های سیستمی</td></tr>
+      <tr><td>/srv</td><td>داده سرویس‌ها</td></tr>
+      <tr><td>/tmp</td><td>فایل‌های موقت</td></tr>
+      <tr><td>/usr</td><td>سلسله‌مراتب ثانویه (read-only)</td></tr>
+      <tr><td>/var</td><td>داده‌های متغیر (log، mail)</td></tr>
+    </table>
+
+    <hr>
+
+    <h2 id="topic-105">Topic 105: شل و اسکریپت‌نویسی</h2>
+
+    <h3>105.1 سفارشی‌سازی محیط شل</h3>
+    <p><strong>فایل‌های startup:</strong></p>
+    <ul>
+      <li>/etc/profile: برای همه کاربران (login shell)</li>
+      <li>~/.bash_profile یا ~/.profile: برای کاربر (login shell)</li>
+      <li>~/.bashrc: برای shell غیر-login تعاملی</li>
+      <li>/etc/bashrc یا /etc/bash.bashrc: system-wide</li>
+    </ul>
+    <pre><code># در ~/.bashrc
+export PATH=$PATH:/home/user/bin
+alias ll='ls -la'
+alias grep='grep --color=auto'</code></pre>
+
+    <h3>105.2 نوشتن اسکریپت‌های ساده</h3>
+    <p><strong>Shebang:</strong></p>
+    <pre><code>#!/bin/bash</code></pre>
+    <p><strong>متغیرها:</strong></p>
+    <pre><code>name="Ali"
+echo "Hello $name"
+echo "Hello ${name}"</code></pre>
+    <p><strong>شرط‌ها:</strong></p>
+    <pre><code>if [ $age -gt 18 ]; then
+    echo "Adult"
+elif [ $age -gt 12 ]; then
+    echo "Teen"
+else
+    echo "Child"
+fi</code></pre>
+    <p><strong>حلقه‌ها:</strong></p>
+    <pre><code>for i in {1..5}; do
+    echo "Number $i"
+done
+
+while [ $count -lt 10 ]; do
+    echo $count
+    ((count++))
+done</code></pre>
+    <p><strong>Command Substitution:</strong></p>
+    <pre><code>current_date=$(date +%Y-%m-%d)
+files=$(ls *.txt)</code></pre>
+    <p><strong>شرط‌های تست:</strong> -eq, -ne, -lt, -gt (مقایسه عددی)، -z, -n (خالی/غیرخالی بودن رشته)، -f, -d (وجود فایل/دایرکتوری).</p>
+
+    <hr>
+
+    <h2 id="topic-106">Topic 106: رابط‌های کاربری و دسکتاپ</h2>
+
+    <h3>106.1 نصب و پیکربندی X11</h3>
+    <p><strong>مفاهیم X11:</strong></p>
+    <ul>
+      <li>X Server: مدیریت نمایش و ورودی</li>
+      <li>X Client: برنامه‌های گرافیکی</li>
+      <li>Display Manager: صفحه ورود (GDM, LightDM)</li>
+      <li>Window Manager: مدیریت پنجره‌ها (Mutter, KWin)</li>
+    </ul>
+    <p><strong>فایل پیکربندی:</strong> /etc/X11/xorg.conf (پیکربندی اصلی، کمتر استفاده می‌شود)، /etc/X11/xorg.conf.d/ (قطعات پیکربندی).</p>
+    <pre><code>Xorg -configure         # تولید فایل پیکربندی
+startx                  # شروع X از خط فرمان
+xrandr                  # مدیریت نمایشگرها</code></pre>
+
+    <h3>106.2 دسکتاپ‌های گرافیکی</h3>
+    <p><strong>محیط‌های دسکتاپ:</strong> GNOME (مدرن، پیش‌فرض Fedora/Ubuntu)، KDE Plasma (قابل تنظیم، ویندوزمانند)، XFCE (سبک و سریع)، MATE (ادامه GNOME 2)، Cinnamon (شبیه ویندوز، Linux Mint).</p>
+    <p><strong>دسترسی از راه دور:</strong> VNC (پروتکل دسکتاپ از راه دور)، RDP (پروتکل مایکروسافت)، X11 Forwarding (ssh -X user@host).</p>
+
+    <h3>106.3 دسترسی‌پذیری</h3>
+    <p>Screen Reader (صفحه‌خوان — Orca)، Screen Magnifier (بزرگ‌نمایی)، On-Screen Keyboard (کیبورد مجازی)، High Contrast Themes (تم‌های کنتراست بالا).</p>
+
+    <hr>
+
+    <h2 id="topic-107">Topic 107: وظایف مدیریتی</h2>
+
+    <h3>107.1 مدیریت کاربران و گروه‌ها</h3>
+    <pre><code>useradd -m -s /bin/bash ali     # ایجاد کاربر با home
+useradd -m -G sudo,developers ali # با گروه‌های اضافی
+usermod -aG sudo ali            # افزودن به گروه
+usermod -L ali                  # قفل کردن
+usermod -U ali                  # باز کردن
+userdel -r ali                  # حذف با home
+passwd ali                      # تغییر رمز
+
+groupadd developers
+groupdel developers
+groupmod -n newname oldname
+
+chage -l ali                    # اطلاعات انقضای رمز
+chage -M 90 ali                 # حداکثر 90 روز
+chage -E 2026-12-31 ali         # تاریخ انقضا</code></pre>
+    <p><strong>فایل‌های مهم:</strong> /etc/passwd (اطلاعات کاربر: UID, GID, shell)، /etc/shadow (رمزهای هش‌شده)، /etc/group (گروه‌ها)، /etc/skel/ (فایل‌های پیش‌فرض home).</p>
+
+    <h3>107.2 خودکارسازی وظایف</h3>
+    <p><strong>Cron:</strong></p>
+    <pre><code>crontab -e              # ویرایش cron کاربر
+crontab -l              # لیست
+crontab -r              # حذف
+
+# فرمت: دقیقه ساعت روز ماه روزهفته دستور
+0 2 * * * /backup.sh    # هر روز 2 بامداد
+*/5 * * * * /check.sh   # هر 5 دقیقه</code></pre>
+    <p><strong>دایرکتوری‌های cron:</strong> /etc/cron.d/ (فایل‌های cron سفارشی)، /etc/cron.daily/, /etc/cron.hourly/, /etc/cron.weekly/, /etc/cron.monthly/ (اسکریپت‌های دوره‌ای).</p>
+    <p><strong>at:</strong></p>
+    <pre><code>echo "/backup.sh" | at 02:00
+atq                     # لیست کارهای at
+atrm 1                  # حذف کار 1</code></pre>
+    <p><strong>Systemd Timers:</strong></p>
+    <pre><code>systemctl list-timers
+systemd-run --on-calendar="*-*-* 02:00:00" /backup.sh</code></pre>
+
+    <h3>107.3 بومی‌سازی و بین‌المللی‌سازی</h3>
+    <pre><code>locale                  # نمایش locale فعلی
+locale -a               # لیست localeهای موجود
+localectl status        # وضعیت
+localectl set-locale LANG=en_US.UTF-8
+localectl set-keymap us
+
+timedatectl                              # وضعیت زمان
+timedatectl list-timezones               # لیست مناطق زمانی
+timedatectl set-timezone Asia/Tehran     # تنظیم منطقه
+timedatectl set-time "2026-01-01 12:00:00"</code></pre>
+    <p><strong>متغیرها:</strong> LANG (زبان اصلی)، LC_ALL (override همه)، LC_TIME (فرمت تاریخ/زمان)، LC_MESSAGES (زبان پیام‌ها)، TZ (منطقه زمانی).</p>
+    <div class="callout callout-tip">
+      <span class="callout-title">نکته</span>
+      LANG=C در اسکریپت‌ها خروجی استاندارد انگلیسی برای پردازش قابل‌پیش‌بینی ایجاد می‌کند.
+    </div>
+
+    <hr>
+
+    <h2 id="topic-108">Topic 108: سرویس‌های ضروری سیستم</h2>
+
+    <h3>108.1 نگهداری زمان سیستم</h3>
+    <pre><code>date                                    # نمایش زمان
+date -s "2026-01-01 12:00:00"           # تنظیم
+hwclock --show                          # ساعت سخت‌افزاری
+hwclock --systohc                       # سیستم به سخت‌افزار
+hwclock --hctosys                       # سخت‌افزار به سیستم
+timedatectl                             # نمایش کامل
+timedatectl set-ntp yes                 # فعال NTP</code></pre>
+    <p><strong>NTP با chrony:</strong></p>
+    <pre><code>/etc/chrony.conf                        # پیکربندی
+systemctl enable --now chronyd
+chronyc tracking                        # وضعیت همگام‌سازی
+chronyc sources                         # سرورهای NTP</code></pre>
+
+    <h3>108.2 ثبت لاگ سیستم</h3>
+    <p><strong>rsyslog:</strong> /etc/rsyslog.conf (پیکربندی)، فرمت facility.priority action، مثال: <code>authpriv.* /var/log/secure</code>.</p>
+    <p>Facilities: auth, authpriv, cron, daemon, kern, mail, user. Priorities: debug, info, notice, warning, err, crit, alert, emerg.</p>
+    <p><strong>systemd journal:</strong></p>
+    <pre><code>journalctl                              # همه لاگ‌ها
+journalctl -u sshd                      # لاگ سرویس
+journalctl --since "1 hour ago"         # بازه زمانی
+journalctl -p err                       # فقط خطاها
+journalctl -b                           # از بوت فعلی
+journalctl --disk-usage                 # فضای مصرفی
+journalctl --vacuum-time=7d             # حذف قدیمی‌تر از 7 روز</code></pre>
+    <p><strong>logrotate:</strong> /etc/logrotate.conf (پیکربندی اصلی)، /etc/logrotate.d/ (پیکربندی هر سرویس).</p>
+
+    <h3>108.3 مبانی MTA</h3>
+    <p>MTAها: postfix, sendmail, exim.</p>
+    <p><strong>پیکربندی ساده:</strong> ~/.forward (فوروارد ایمیل)، /etc/aliases (aliasها)، newaliases (به‌روزرسانی aliasها)، mailq (نمایش صف ایمیل).</p>
+
+    <h3>108.4 مدیریت پرینترها</h3>
+    <pre><code>lpadmin -p printer -E -v ipp://...      # افزودن پرینتر
+lpstat -p -d                            # وضعیت
+lp -d printer file.pdf                  # چاپ
+lpq                                     # صف چاپ
+lprm job_id                             # حذف از صف</code></pre>
+
+    <hr>
+
+    <h2 id="topic-109">Topic 109: مبانی شبکه</h2>
+
+    <h3>109.1 مبانی پروتکل‌های اینترنت</h3>
+    <p><strong>TCP/IP:</strong> IPv4 (32-bit، مثل 192.168.1.1)، IPv6 (128-bit، مثل 2001:db8::1)، Subnet Mask (تعیین شبکه/هاست)، Gateway (روتر خروجی).</p>
+    <table>
+      <tr><th>پورت</th><th>پروتکل</th></tr>
+      <tr><td>22</td><td>SSH</td></tr>
+      <tr><td>25</td><td>SMTP</td></tr>
+      <tr><td>53</td><td>DNS</td></tr>
+      <tr><td>80</td><td>HTTP</td></tr>
+      <tr><td>443</td><td>HTTPS</td></tr>
+      <tr><td>3306</td><td>MySQL</td></tr>
+    </table>
+
+    <h3>109.2 پیکربندی دائمی شبکه</h3>
+    <p><strong>NetworkManager:</strong></p>
+    <pre><code>nmcli connection show                   # لیست اتصالات
+nmcli connection up "eth0"              # فعال‌سازی
+nmcli connection modify "eth0" ipv4.addresses 192.168.1.100/24
+nmcli connection modify "eth0" ipv4.gateway 192.168.1.1
+nmcli connection modify "eth0" ipv4.dns "8.8.8.8"
+nmcli connection up "eth0"              # اعمال
+
+nmtui                                   # رابط متنی</code></pre>
+    <p><strong>فایل‌های پیکربندی:</strong> /etc/NetworkManager/system-connections/ (اتصالات)، /etc/sysconfig/network-scripts/ (RHEL قدیمی).</p>
+
+    <h3>109.3 عیب‌یابی پایه شبکه</h3>
+    <pre><code>ip addr show                            # نمایش IP
+ip route show                           # جدول مسیریابی
+ip link show                            # وضعیت لینک
+ss -tuln                                # پورت‌های باز
+ping -c 4 8.8.8.8                       # تست اتصال
+traceroute google.com                   # مسیر
+dig google.com                          # DNS lookup
+host google.com
+nslookup google.com</code></pre>
+
+    <h3>109.4 پیکربندی DNS در سمت کلاینت</h3>
+    <pre><code>/etc/resolv.conf                        # nameserver 8.8.8.8
+/etc/hosts                              # 127.0.0.1 localhost
+/etc/nsswitch.conf                      # ترتیب جستجو: files dns</code></pre>
+
+    <hr>
+
+    <h2 id="topic-110">Topic 110: امنیت</h2>
+
+    <h3>110.1 انجام وظایف مدیریت امنیت</h3>
+    <pre><code># بررسی امنیت
+last                                    # آخرین ورودها
+lastlog                                 # آخرین ورود هر کاربر
+who                                     # کاربران فعلی
+w                                       # جزئیات
+find / -perm -4000 -type f 2>/dev/null  # فایل‌های SUID
+find / -perm -2000 -type f 2>/dev/null  # فایل‌های SGID</code></pre>
+
+    <h3>110.2 راه‌اندازی امنیت هاست</h3>
+    <p><strong>sudo:</strong></p>
+    <pre><code>visudo                                  # ویرایش امن /etc/sudoers
+# user ALL=(ALL:ALL) ALL
+# %sudo ALL=(ALL:ALL) ALL
+# user ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx</code></pre>
+    <p><strong>محدودیت su:</strong> در /etc/pam.d/su با <code>auth required pam_wheel.so use_uid</code> (فقط گروه wheel اجازه su دارد).</p>
+    <p><strong>سیاست رمز عبور:</strong> /etc/security/pwquality.conf (حداقل طول، پیچیدگی)، pam_pwquality.so (ماژول PAM).</p>
+
+    <h3>110.3 ایمن‌سازی داده‌ها با رمزنگاری</h3>
+    <p><strong>GPG:</strong></p>
+    <pre><code>gpg --gen-key                           # تولید کلید
+gpg --encrypt -r recipient file         # رمزنگاری
+gpg --decrypt file.gpg                  # رمزگشایی
+gpg --sign file                         # امضا
+gpg --verify file.sig                   # تأیید</code></pre>
+    <p><strong>SSH:</strong></p>
+    <pre><code>ssh-keygen -t ed25519                   # تولید کلید
+ssh-copy-id user@host                   # کپی کلید عمومی
+ssh user@host                           # اتصال
+scp file user@host:/path/               # کپی امن
+sftp user@host                          # FTP امن
+ssh -L 8080:localhost:80 user@host      # تونل</code></pre>
+    <p><strong>فایل‌های SSH:</strong> ~/.ssh/id_ed25519 (کلید خصوصی)، ~/.ssh/id_ed25519.pub (کلید عمومی)، ~/.ssh/authorized_keys (کلیدهای مجاز سرور)، /etc/ssh/sshd_config (پیکربندی سرور).</p>
+
+    <hr>
+
+    <div class="callout callout-key">
+      <span class="callout-title">جمع‌بندی</span>
+      این جزوه تمام ۱۰ Topic و ۳۰ زیر-Topic LPIC-1 را با جزئیات عملی پوشش می‌دهد. برای تمرین، توصیه می‌شود یک ماشین مجازی لینوکس (Ubuntu یا CentOS) راه‌اندازی کنید و هر دستور را عملی اجرا کنید.
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">آرشیو شخصی مطالب آموزشی</div>
+</footer>
+
+</body>
+</html>
