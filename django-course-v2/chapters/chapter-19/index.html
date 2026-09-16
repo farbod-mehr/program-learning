@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۹: کش کردن (Cache) | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۹ دوره جامع جنگو: کش کردن (Cache) — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۹ از ۳۰ — کش کردن (Cache)</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🎨 بهینه‌سازی و API ← فصل ۱۹
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۹ از ۳۰</span>
+    <h1>⚡ کش کردن (Cache)</h1>
+    <p>چرا <span class="term" data-term="cache">کش</span>؟ بک‌اندهای کش (LocalMemory، پایگاه داده، فایل، <span class="term" data-term="redis">Redis</span>)، کش ویو با cache_page، تگ {% cache %}، کش دستی با cache.set/get و باطل‌سازی هوشمند.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۸۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>سریع‌ترین کوئری، کوئری‌ای است که اجرا نمی‌شود! کش یعنی «نتیجه آماده را نگه دار». ولی هر کشی یک قیمت دارد: داده ممکن است کهنه شود. این فصل هم شتاب را یاد می‌دهد هم مدیریت کهنگی را.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>بک‌اندهای کش را مقایسه و پیکربندی کنید.</li>
+          <li>با cache_page کل خروجی <span class="term" data-term="view">ویو</span> را کش کنید.</li>
+          <li>با cache.set/get منطق کش دستی بنویسید.</li>
+          <li>قطعه‌های قالب را با {% cache %} کش کنید.</li>
+          <li>استراتژی باطل‌سازی (Invalidation) برای داده تغییرپذیر طراحی کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> مکمل QuerySet (۱۵) و پایهٔ بهینه‌سازی فصل ۲۷؛ Redis اینجا دوباره در فصل ۲۴ (سلری) برمی‌گردد.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>بک‌اندها</h4><p>از LocMem تا Redis.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>کش ویو و قالب</h4><p>cache_page و {% cache %}.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>کش دستی</h4><p>set/get/delete و الگوهای کلید.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>باطل‌سازی</h4><p>هاردترین بخش کش!</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا LocalMemoryCache برای تولید چندکاربره بد است؟</summary>
+          <div class="answer-body"><p>چون هر پروسه ورکر کش <strong>خودش</strong> را دارد: داده در ورکر A کش شده، درخواست بعدی به ورکر B می‌رود و کش ندارد؛ حتی باطل‌سازی هم فقط همان ورکر را پاک می‌کند. برای تولید: کش <strong>مشترک</strong> (Redis/Memcached).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 کش ۵ دقیقه‌ای یعنی چه هزینه‌ای؟</summary>
+          <div class="answer-body"><p>داده تا ۵ دقیقه <strong>کهنه</strong> نمایش داده می‌شود. سوال طراحی: «کاربر چقدر تأخیر در دیدن تغییر را تحمل می‌کند؟» آمار بازدید: عالی برای کش. موجودی انبار: خطرناک!</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 سخت‌ترین مسئله علوم کامپیوتر در این فصل کدام است؟</summary>
+          <div class="answer-body"><p>نام‌گذاری و <strong>باطل‌سازی کش</strong> (شوخی معروف Phil Karlton که جدی است!). وقتی پست ویرایش شد، کدام کلیدهای کش باید پاک شوند؟ فهرست‌ها، صفحه جزئیات، آمار، صفحه نویسنده... طراحی کلید این را ممکن می‌کند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ با ویوهای فهرست/جزئیات/آمار (فصل ۱۵).</li>
+          <li>فصل ۱۵: درک هزینه کوئری‌ها و N+1.</li>
+          <li>اختیاری ولی توصیه‌شده: نصب Redis محلی یا داکر (<code class="inline-code">docker run -p 6379:6379 redis</code>).</li>
+          <li>ابزار اندازه‌گیری: هدر X-Request-Time میدلور فصل ۱۷!</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ بک‌اندهای کش و تنظیمات</h3>
+<div class="code-box">
+          <div class="code-head"><span>settings.py — سه پیکربندی رایج</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ۱) توسعه: حافظه محلی (ساده، ولی هر پروسه جدا)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+# ۲) تولید ساده: Redis (پیشنهاد ما)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+    }
+}
+
+# ۳) بدون زیرساخت اضافه: کش دیتابیسی
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "my_cache_table",   # ← python manage.py createcachetable
+    }
+}</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 انتخاب بک‌اند</b>
+          یادگیری/توسعه: LocMem کافی است. تولید: <span class="term" data-term="redis">Redis</span> (هم کش، هم بعداً <span class="term" data-term="broker">بروکر</span> <span class="term" data-term="celery">سلری</span> — یک تیر دو نشان). DatabaseCache وقتی Redis ندارید و حجم کم است.
+        </div>
+
+        <h3>۵.۲ کش سطح ویو: cache_page</h3>
+<div class="code-box">
+          <div class="code-head"><span>ساده‌ترین کش ممکن</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.views.decorators.cache import cache_page
+
+
+@cache_page(60 * 10)          # ۱۰ دقیقه
+def stats_dashboard(request):
+    # کوئری‌های سنگین فصل ۱۵...
+    return render(request, "blog/stats.html", context)</code></pre>
+        </div>
+          <p>یا در urls.py برای CBVها:</p>
+          <div class="code-box">
+          <div class="code-head"><span>urls.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">path("stats/", cache_page(600)(StatsView.as_view()), name="stats"),</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ هشدار شخصی‌سازی</b>
+          cache_page کل پاسخ را کش می‌کند — <strong>برای صفحه‌ای که محتوای کاربر-محور دارد خطرناک است</strong> (navbar «خوش آمدید سارا» به کاربر بعدی نشان داده می‌شود!). فقط برای صفحات کاملاً عمومی: آمار، درباره ما، فید.
+        </div>
+
+        <h3>۵.۳ کش دستی: API سطح پایین</h3>
+<div class="code-box">
+          <div class="code-head"><span>الگوی cache-aside (رایج‌ترین)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.core.cache import cache
+
+
+def get_popular_posts():
+    key = "blog:popular_posts:v1"
+    posts = cache.get(key)
+    if posts is None:                          # کش miss
+        posts = list(
+            Post.objects.filter(published=True)
+            .order_by("-views_count")
+            .values("id", "title", "slug")[:10]
+        )
+        cache.set(key, posts, timeout=300)     # ۵ دقیقه
+    return posts</code></pre>
+        </div>
+          <ul><li>کلیدها را <strong>ساختاریافته و نسخه‌دار</strong> نام بزنید: <code class="inline-code">app:entity:action:v1</code> — تغییر ساختار داده با bump نسخه حل می‌شود.</li><li>cache.add فقط اگر نبود؛ cache.get_or_set ترکیب آماده؛ cache.incr/decr شمارنده اتمی.</li><li>داده باید <strong>سریال‌شدنی</strong> باشد (pickle)؛ ویو/شیء زنده نگذارید — list(values()) عالی است.</li></ul>
+
+        <h3>۵.۴ کش قالب با {% cache %}</h3>
+<div class="code-box">
+          <div class="code-head"><span>کش قطعه پرهزینه در قالب</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load cache %}
+
+{# کش ۱۵ دقیقه‌ای، به‌ازای هر زبان جدا #}
+{% cache 900 sidebar_popular request.LANGUAGE_CODE %}
+  &lt;aside&gt;
+    {% for post in popular_posts %}
+      &lt;li&gt;&lt;a href="{{ post.get_absolute_url }}"&gt;{{ post.title }}&lt;/a&gt;&lt;/li&gt;
+    {% endfor %}
+  &lt;/aside&gt;
+{% endcache %}</code></pre>
+        </div>
+          <p>آرگومان‌های بعد از نام قطعه (request.LANGUAGE_CODE) بخشی از <strong>کلید</strong> می‌شوند — برای هر مقدار، کش جدا. می‌توانید post.pk هم بدهید تا قطعه هر پست جدا کش شود.</p>
+
+        <h3>۵.۵ باطل‌سازی: وقتی داده عوض شد</h3>
+<div class="code-box">
+          <div class="code-head"><span>باطل‌سازی هدفمند با سیگنال (فصل ۱۶!)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.core.cache import cache
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
+from .models import Post
+
+
+@receiver([post_save, post_delete], sender=Post)
+def clear_post_caches(sender, instance, **kwargs):
+    cache.delete(f"blog:post_detail:{instance.pk}:v1")
+    cache.delete("blog:popular_posts:v1")
+    # فهرست‌ها: نسخه را بالا ببر (ارزان‌تر از deleteهای زیاد)
+    cache.incr("blog:version", delta=1) if cache.get("blog:version") \
+        else cache.set("blog:version", 1)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>الگوی «کش نسخه‌دار»</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def popular_key():
+    version = cache.get_or_set("blog:version", 1, timeout=None)
+    return f"blog:popular_posts:v{version}"
+
+
+posts = cache.get_or_set(popular_key(), compute_popular, timeout=300)</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 سه استراتژی باطل‌سازی</b>
+          ① <strong>TTL</strong>: فقط زمان انقضا (ساده؛ کهنگی تا TTL). ② <strong>هدفمند</strong>: delete کلیدهای مرتبط در سیگنال/ویو (دقیق؛ نیازمند انضباط کلیدها). ③ <strong>نسخه‌دار</strong>: بالا بردن نسخه، کل دسته را بی‌اثر می‌کند (بی‌نیاز از حذف تک‌تک). ترکیب ①+③ متداول‌ترین است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>بهینه‌سازی واقعی صفحه آمار فصل ۱۵ — با اندازه‌گیری قبل/بعد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>قبل از کش (۴ کوئری سنگین)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def stats_dashboard(request):
+    totals = Post.objects.aggregate(...)
+    top_authors = Author.objects.annotate(...)[:5]
+    top_tags = Tag.objects.annotate(...)[:8]
+    popular = Post.objects.filter(...).select_related(...)[:10]
+    return render(request, "blog/stats.html", {...})</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>بعد: کش نسخه‌دار کل بافت</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def stats_dashboard(request):
+    version = cache.get_or_set("stats:version", 1, timeout=None)
+    key = f"stats:context:v{version}"
+    context = cache.get(key)
+    if context is None:
+        context = {
+            "totals": Post.objects.aggregate(...),
+            "top_authors": list(Author.objects.annotate(...)[:5]),
+            "top_tags": list(Tag.objects.annotate(...)[:8]),
+            "popular": list(Post.objects.filter(...).values(
+                "title", "slug", "views_count", "author__name")[:10]),
+        }
+        cache.set(key, context, timeout=600)
+    return render(request, "blog/stats.html", context)
+
+
+@receiver([post_save, post_delete], sender=Post)
+def bump_stats(sender, **kwargs):
+    cache.incr("stats:version") if cache.get("stats:version") else None</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اندازه‌گیری با میدلور فصل ۱۷</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">بدون کش:  X-Request-Time: 240ms  (۴ کوئری)
+با کش miss: 245ms
+با کش hit:   12ms   ← ۲۰ برابر سریع‌تر 🚀</code></pre>
+        </div>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>سه سناریوی کش روی وبلاگ پیاده کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> ویو آمار را با الگوی cache-aside کش کنید (TTL=۵ دقیقه) و با هدر زمان، تفاوت hit/miss را اندازه بگیرید.</li>
+          <li><strong>کارگاه ۲:</strong> باطل‌سازی هدفمند: با انتشار/ویرایش/حذف پست، کلیدهای آمار و popular پاک شوند (سیگنال).</li>
+          <li><strong>کارگاه ۳:</strong> سایدبار «مطالب محبوب» را در قالب با {% cache %} کش کنید و بررسی کنید که برای کاربران مختلف یک نتیجه کش‌شده می‌آید (چرا اینجا اشکالی ندارد؟).</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>cache-aside</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def stats_dashboard(request):
+    key = "blog:stats:v1"
+    context = cache.get(key)
+    if context is None:
+        context = build_stats_context()      # همان ۴ کوئری فصل ۱۵
+        cache.set(key, context, timeout=300)
+    return render(request, "blog/stats.html", context)</code></pre></div><p>دو بار پشت‌سرهم صفحه را باز کنید: اولی miss (کند)، دومی hit (سریع). مقدار QuerySet را مستقیم نکشید؛ list(values(...)) یا داده ساده سریال‌پذیر بگذارید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>باطل‌سازی با سیگنال</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">@receiver([post_save, post_delete], sender=Post)
+def clear_blog_caches(sender, instance=None, **kwargs):
+    cache.delete_many(["blog:stats:v1", "blog:popular_posts:v1"])
+    # برای کش قطعه قالب، کلیدش: "template.cache.sidebar_popular...."
+    # نسخه‌گذاری (کارگاه مفهوم ۵.۵) راه تمیزتر است.</code></pre></div><p>تله رایج: {% cache %} قالب کلید خودش را دارد؛ یا از استراتژی نسخه استفاده کنید یا TTL کوتاه برای قطعه قالب و delete برای داده‌های دستی.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><p><code class="inline-code">{% cache 600 sidebar_popular %}</code> بدون آرگومان کاربرمحور → یک کش برای همه. اشکالی ندارد چون «مطالب محبوب» <strong>شخصی‌سازی‌نشده</strong> است. اگر داخل قطعه چیزی مثل user.username بود، باید آرگانی مثل request.user.pk به کلید اضافه می‌کردید (و حجم کش ضرب‌در تعداد کاربران می‌شد — هزینه آگاهانه).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ کش کار می‌کند ولی داده قدیمی می‌بینم</b>
+          <p>باطل‌سازی ندارید! یا TTL را کوتاه کنید، یا در مسیرهای تغییر (save/delete ویوها یا سیگنال) delete/نسخه‌بump بگذارید. دیباگ: cache.get(key) را در شل چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ در production کش به نظر نمی‌رسد</b>
+          <p>LocMemCache با چند ورکر Gunicorn = هر ورکر کش خودش (missهای مداوم). بک‌اند مشترک (Redis) تنظیم کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ PicklingError هنگام cache.set</b>
+          <p>شیء غیرسریال‌شدنی (مثل QuerySet تنبل یا شیء با اتصال دیتابیس) گذاشته‌اید. به داده ساده تبدیل کنید: list(qs.values(...)).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ صفحه با cache_page محتوای کاربر دیگر را نشان می‌دهد</b>
+          <p>صفحه شخصی‌سازی‌شده را کش سراسری کرده‌اید — خطر امنیتی/UX! فقط صفحات عمومی cache_page شوند؛ بخش‌های خصوصی با {% cache %} جدا یا Vary.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ Redis وصل نمی‌شود: Connection refused</b>
+          <p>سرور Redis بالا نیست یا LOCATION اشتباه است (پورت/db). با redis-cli ping بررسی کنید → PONG. در داکر: نگاشت پورت 6379.</p>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 اول اندازه، بعد کش</b>
+          کش را فقط جایی بگذارید که <strong>اندازه‌گیری</strong> گلوگاه نشان داده (فصل ۲۷). کش بی‌مورد = پیچیدگی و باگ کهنگی بدون سود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب سطح کش</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر مورد کدام مکانیزم؟ (الف) صفحه «درباره ما» کاملاً ثابت (ب) فهرست پربازدیدها در سایدبار همه صفحات (ج) نتیجه یک محاسبه سنگین در یک ویو (د) کل صفحه آمار عمومی</p><p><strong>پاسخ:</strong> الف → cache_page با TTL بلند • ب → {% cache %} در قالب • ج → cache.get_or_set دستی • د → cache_page یا کش بافت دستی.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — طراحی کلید</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> کلیدهای مناسب برای «جزئیات پست ۵» و «فهرست پست‌های صفحه ۲ دسته python» طراحی کنید.</p><p><strong>پاسخ نمونه:</strong> <code class="inline-code">blog:post:5:v1</code> و <code class="inline-code">blog:list:cat=python:page=2:v1</code> — ساختار app:entity:params:version. از کلیدهای مبهم مثل "data1" بپرهیزید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — کهنگی قابل قبول</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر داده TTL پیشنهادی و چرا؟ (الف) آمار بازدید (ب) قیمت محصول در فروشگاه (ج) فهرست پست‌های منتشرشده</p><p><strong>پاسخ نمونه:</strong> الف → ۵-۱۵ دقیقه (کهنگی بی‌ضرر) • ب → بدون TTL + باطل‌سازی هدفمند فوری (کهنگی = ضرر مالی!) • ج → ۱ دقیقه + باطل‌سازی با سیگنال انتشار (تعادل تازگی/سرعت).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-19" data-title="آزمون فصل ۱۹ — کش کردن (Cache)" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) چرا LocMemCache برای تولید چندورکری مناسب نیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند است</button>
+              <button type="button" class="quiz-opt" data-key="b">کش هر پروسه جداست؛ اشتراک و باطل‌سازی سراسری ممکن نیست</button>
+              <button type="button" class="quiz-opt" data-key="c">داده را رمزنگاری نمی‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">ظرفیتش کم است</button>
+            </div>
+            <div class="quiz-explain">💡 Gunicorn چند ورکر دارد؛ کش درون‌حافظه‌ای هر ورکر مستقل است → miss زیاد و رفتار ناهمسان. Redis/Memcached مشترک است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) @cache_page(600) روی ویویی با navbar شخصی‌سازی‌شده چه خطری دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="b">محتوای کاربر A ممکن است به کاربر B نشان داده شود</button>
+              <button type="button" class="quiz-opt" data-key="c">هیچ — امن است</button>
+              <button type="button" class="quiz-opt" data-key="d">CSRF را می‌شکند</button>
+            </div>
+            <div class="quiz-explain">💡 cache_page کل پاسخ را فارغ از کاربر کش می‌کند؛ فقط برای صفحات کاملاً عمومی استفاده شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) الگوی cache-aside کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">همیشه اول کش پاک شود</button>
+              <button type="button" class="quiz-opt" data-key="b">بخوان از کش؛ اگر نبود، محاسبه کن، در کش بگذار، برگردان</button>
+              <button type="button" class="quiz-opt" data-key="c">کش توسط دیتابیس پر شود</button>
+              <button type="button" class="quiz-opt" data-key="d">هر نوشتن، کش را پر کند</button>
+            </div>
+            <div class="quiz-explain">💡 رایج‌ترین الگو: get → miss → compute → set. ساده و پیش‌بینی‌پذیر.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) آرگومان‌های اضافه تگ {% cache 900 name user.pk %} چه نقشی دارند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">زمان انقضا</button>
+              <button type="button" class="quiz-opt" data-key="b">بخشی از کلید کش — به‌ازای هر مقدار، کش جداگانه</button>
+              <button type="button" class="quiz-opt" data-key="c">نام قالب</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط مستندسازی</button>
+            </div>
+            <div class="quiz-explain">💡 کلید = نام قطعه + آرگومان‌ها؛ با user.pk هر کاربر کش خودش را می‌گیرد (دقت و هزینه بیشتر).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) ارزان‌ترین راه باطل‌سازی یک «دسته» کلید چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">delete تک‌تک کلیدها</button>
+              <button type="button" class="quiz-opt" data-key="b">بالا بردن نسخه در کلیدها (version bump)</button>
+              <button type="button" class="quiz-opt" data-key="c">flush کل Redis</button>
+              <button type="button" class="quiz-opt" data-key="d">TTL یک ثانیه</button>
+            </div>
+            <div class="quiz-explain">💡 تغییر شماره نسخه، همه کلیدهای قدیمی را بی‌مصرف می‌کند بدون حذف فیزیکی؛ کلیدهای جدید خودکار ساخته می‌شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کدام داده برای cache_page با TTL ده دقیقه مناسب‌تر است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">موجودی انبار</button>
+              <button type="button" class="quiz-opt" data-key="b">صفحه «درباره ما»</button>
+              <button type="button" class="quiz-opt" data-key="c">داشبورد شخصی کاربر</button>
+              <button type="button" class="quiz-opt" data-key="d">سبد خرید</button>
+            </div>
+            <div class="quiz-explain">💡 صفحه عمومی و کم‌تغییر؛ بقیه یا شخصی‌اند یا کهنگی‌شان پرهزینه است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «لایه کش وبلاگ»</strong> — استراتژی کش کامل و مستندشده برای وبلاگ طراحی و پیاده کنید.</p>
+        <ul class="checklist">
+          <li>انتخاب و پیکربندی بک‌اند (Redis یا DatabaseCache) + ایجاد جدول/سرویس.</li>
+          <li>کش بافت صفحه آمار با الگوی نسخه‌دار.</li>
+          <li>باطل‌سازی با سیگنال روی Post (save/delete) و Comment.</li>
+          <li>{% cache %} برای سایدبار محبوب‌ها.</li>
+          <li>گزارش اندازه‌گیری قبل/بعد (اسکرین‌شات هدر X-Request-Time) در یادداشت‌ها.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 سنجه موفقیت</b>
+          صفحه آمار از ~۲۰۰ms به زیر ۲۰ms برسد و بعد از انتشار پست جدید، حداکثر یک رفرش بعد تغییرات دیده شوند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>بک‌اند: توسعه LocMem، تولید <span class="term" data-term="redis">Redis</span> مشترک.</li>
+          <li>cache_page برای صفحات کاملاً عمومی؛ خطر شخصی‌سازی را بشناسید.</li>
+          <li>cache.get_or_set و کلیدهای ساختاریافته/نسخه‌دار.</li>
+          <li>{% cache %} برای قطعه‌های قالب با کلید پارامتری.</li>
+          <li>باطل‌سازی: TTL + هدفمند (سیگنال) + نسخه‌دار — و همیشه اول اندازه‌گیری.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «کش معامله است: سرعت در برابر تازگی. نرخ معامله را آگاهانه انتخاب کنید.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>Memcached یا Redis؟</summary><div class="faq-body"><p>برای کش خالص هر دو عالی‌اند. Redis را ترجیح می‌دهیم چون در فصل ۲۴ به‌عنوان بروکر <span class="term" data-term="celery">سلری</span> هم به کار می‌آید — یک سرویس، دو نقش.</p></div></details>
+        <details class="faq-item"><summary>کش را چطور در تست‌ها خنثی کنم؟</summary><div class="faq-body"><p>در تست از بک‌اند DummyCache استفاده کنید: override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}) — همیشه miss، نتایج قطعی.</p></div></details>
+        <details class="faq-item"><summary>فشار روی Redis زیاد شد چه کنم؟</summary><div class="faq-body"><p>maxmemory + سیاست eviction (allkeys-lru) تنظیم کنید، TTLهای نامحدود ندهید، کلیدهای حجیم را بشکنید و در فصل ۲۷ ابزارهای پایش (INFO، redis-cli --latency) را می‌بینیم.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          سرعت را دیدیم؛ حالا «درستی» را تضمین می‌کنیم. <strong>فصل ۲۰</strong>: <span class="term" data-term="test">تست‌نویسی</span> — جایی که کد فصل‌های قبل زیر ذره‌بین خودکار می‌رود.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-19" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-19">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-18/index.html">→ فصل قبلی<br><b>🍪 فصل ۱۸</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-20/index.html">فصل بعدی ←<br><b>🧪 فصل ۲۰: تست‌نویسی (Testing) در جنگو</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۹: کش کردن (Cache) | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
