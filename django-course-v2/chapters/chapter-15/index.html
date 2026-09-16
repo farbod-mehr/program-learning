@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۵: مدیریت پیشرفته پایگاه داده — QuerySetها | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۵ دوره جامع جنگو: مدیریت پیشرفته پایگاه داده — QuerySetها — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۵ از ۳۰ — مدیریت پیشرفته پایگاه داده — QuerySetها</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← ⚡ پیشرفته‌ها و ابزارها ← فصل ۱۵
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۵ از ۳۰</span>
+    <h1>🔍 مدیریت پیشرفته پایگاه داده — QuerySetها</h1>
+    <p><span class="term" data-term="queryset">QuerySet</span>های حرفه‌ای: filter و exclude، <span class="term" data-term="q-object">شیء Q</span>، order_by، برش، <span class="term" data-term="aggregate">aggregate</span> و <span class="term" data-term="annotate">annotate</span>، select_related و prefetch_related و حل مشکل <span class="term" data-term="n-plus-one">N+1</span>.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۰۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تفاوت یک توسعه‌دهنده جنگوی معمولی و حرفه‌ای، اغلب در تسلط بر QuerySetهاست. در این فصل از filter ساده به کوئری‌های آماری، ترکیبی و بهینه می‌رسیم.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>Lookups (icontains, gte, in, range و پیمایش رابطه با __) را مسلط شوید.</li>
+          <li>شرط‌های OR/NOT را با <span class="term" data-term="q-object">Q</span> بسازید.</li>
+          <li>با <span class="term" data-term="aggregate">aggregate</span> آمار و با <span class="term" data-term="annotate">annotate</span> ستون محاسباتی بسازید.</li>
+          <li>مشکل <span class="term" data-term="n-plus-one">N+1</span> را تشخیص و با <span class="term" data-term="select-related">select_related</span>/<span class="term" data-term="prefetch-related">prefetch_related</span> حل کنید.</li>
+          <li>از تنبلی QuerySet و کش نتایج آگاهانه استفاده کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> پایهٔ فصل ۱۹ (کش)، ۲۷ (کارایی) و همه پروژه‌های داده‌محور. مهم‌ترین فصل «عمق فنی» دوره.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>فیلتر پیشرفته</h4><p>lookups و Q.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>آمار و محاسبه</h4><p>aggregate/annotate/F.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>مشکل N+1</h4><p><span class="term" data-term="select-related">select_related</span> و <span class="term" data-term="prefetch-related">prefetch_related</span>.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>تنبلی و الگوها</h4><p>ارزیابی، کش و متدهای مفید.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 <code class="inline-code">Post.objects.filter(x)</code> فوراً به دیتابیس می‌رود؟</summary>
+          <div class="answer-body"><p>نه — QuerySet <strong>تنبل (Lazy)</strong> است. اولین «ارزیابی» (حلقه، len، ایندکس، list، if) کوئری را اجرا می‌کند و نتیجه <strong>کش</strong> می‌شود؛ ارزیابی دوم دیگر به دیتابیس نمی‌رود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت select_related و prefetch_related چیست؟</summary>
+          <div class="answer-body"><p><span class="term" data-term="select-related">select_related</span> با <strong>SQL JOIN</strong> رابطه‌های «یک» (FK/O2O) را در همان کوئری می‌آورد. <span class="term" data-term="prefetch-related">prefetch_related</span> برای «چند» (M2M و معکوس FK) است: یک کوئری جدا می‌زند و در پایتون به هم وصل می‌کند. هر دو N+1 را می‌کشند!</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 <code class="inline-code">.count()</code> یا <code class="inline-code">len(qs)</code>؟</summary>
+          <div class="answer-body"><p>اگر فقط تعداد لازم است: <code class="inline-code">count()</code> → SQL <code class="inline-code">SELECT COUNT(*)</code> سبک. <code class="inline-code">len()</code> همه رکوردها را به حافظه می‌آورد (سنگین) — مگر اینکه QuerySet قبلاً ارزیابی و کش شده باشد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>مدل‌های Post/Author/Tag/Comment با داده نمونه (<strong>حداقل ۲۰-۳۰ رکورد</strong> تا تفاوت‌ها حس شود).</li>
+          <li>فصل ۴: روابط و دسترسی معکوس (related_name).</li>
+          <li><span class="term" data-term="django-shell">شل جنگو</span> باز باشد — این فصل کاملاً آزمایشگاهی است!</li>
+          <li>برای دیدن SQL: تنظیم LOGGING (در ۵.۵ نشان می‌دهیم) یا DEBUG=True.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ Lookups: زبان فیلتر جنگو</h3>
+<div class="code-box">
+          <div class="code-head"><span>انواع lookup</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">Post.objects.filter(title__icontains="django")     # LIKE %django%
+Post.objects.filter(views_count__gte=100)          # &gt;= 100
+Post.objects.filter(views_count__lt=10)            # &lt; 10
+Post.objects.filter(id__in=[1, 2, 3])              # IN (...)
+Post.objects.filter(created_at__range=(d1, d2))    # BETWEEN
+Post.objects.filter(created_at__year=2026)         # بخش تاریخ
+Post.objects.filter(author__name="سارا")           # پیمایش رابطه (دو زیرخط)
+Post.objects.filter(author__name__startswith="س")  # ترکیبی!
+Post.objects.exclude(published=False)              # معکوس
+Post.objects.filter(tags__isnull=True)             # بدون برچسب</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ترکیب AND و زنجیره</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># همه شرایط AND هستند:
+Post.objects.filter(published=True, author__name="سارا")
+# زنجیره هم AND است:
+Post.objects.filter(published=True).filter(views_count__gt=50)</code></pre>
+        </div>
+
+        <h3>۵.۲ شیء Q: شرط‌های OR و NOT</h3>
+<div class="code-box">
+          <div class="code-head"><span>کار با Q</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models import Q
+
+# OR: عنوان یا متن شامل "django"
+Post.objects.filter(
+    Q(title__icontains="django") | Q(body__icontains="django")
+)
+
+# ترکیب پیچیده: منتشرشده AND (مال سارا OR پربازدید)
+Post.objects.filter(
+    Q(published=True),
+    Q(author__name="سارا") | Q(views_count__gte=1000),
+)
+
+# NOT:
+Post.objects.filter(~Q(author__name="سارا"))</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>جست‌وجوی چندفیلدی واقعی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def search(q):
+    query = Q()
+    for term in q.split():
+        query |= Q(title__icontains=term) | Q(body__icontains=term)
+    return Post.objects.filter(query, published=True)</code></pre>
+        </div>
+
+        <h3>۵.۳ aggregate و annotate: آمار و ستون محاسباتی</h3>
+<div class="code-box">
+          <div class="code-head"><span>aggregate — یک آمار برای کل مجموعه</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models import Avg, Count, Max, Sum
+
+Post.objects.aggregate(
+    total=Count("id"),
+    avg_views=Avg("views_count"),
+    max_views=Max("views_count"),
+)
+# → {"total": 42, "avg_views": 133.5, "max_views": 980}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>annotate — یک ستون به ازای هر رکورد</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">authors = Author.objects.annotate(
+    post_count=Count("posts"),
+    total_views=Sum("posts__views_count"),
+).order_by("-post_count")
+
+for a in authors:
+    print(a.name, a.post_count, a.total_views)   # همه در یک کوئری!
+
+# فیلتر روی ستون محاسباتی:
+Author.objects.annotate(pc=Count("posts")).filter(pc__gte=5)</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌  تفاوت کلیدی</b>
+          aggregate یک دیکشنری برمی‌گرداند (خودش ارزیابی می‌شود)؛ annotate یک QuerySet با فیلد(های) اضافه — هنوز تنبل و قابل فیلتر/مرتب‌سازی.
+        </div>
+
+        <h3>۵.۴ مشکل N+1 و دو سلاح آن</h3>
+<div class="code-box">
+          <div class="code-head"><span>سناریوی کلاسیک N+1</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ۱ کوئری برای پست‌ها + N کوئری برای author هر پست!
+for post in Post.objects.all():
+    print(post.title, post.author.name)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>حل با select_related (رابطه‌های «یک»)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">posts = Post.objects.select_related("author")      # JOIN در همان کوئری
+for post in posts:
+    print(post.title, post.author.name)            # صفر کوئری اضافه
+
+# زنجیره‌ای و چندتایی:
+Comment.objects.select_related("post__author")</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>حل با prefetch_related (رابطه‌های «چند»)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">posts = Post.objects.prefetch_related("tags", "comments")
+for post in posts:
+    for tag in post.tags.all():        # بدون کوئری اضافه
+        ...
+    post.comments.count()              # از کش prefetch (با care)
+
+# prefetch با کوئری سفارشی:
+from django.db.models import Prefetch
+Post.objects.prefetch_related(
+    Prefetch("comments", queryset=Comment.objects.filter(approved=True))
+)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>شمارش کوئری‌ها برای اثبات</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db import connection, reset_queries
+from django.conf import settings
+
+settings.DEBUG = True
+reset_queries()
+list(Post.objects.select_related("author"))
+print(len(connection.queries))     # → 1</code></pre>
+        </div>
+
+        <h3>۵.۵ تنبلی، ارزیابی و الگوهای مفید</h3>
+<div class="code-box">
+          <div class="code-head"><span>چه وقتی ارزیابی می‌شود؟</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">qs = Post.objects.filter(published=True)   # هنوز کوئری نرفته!
+
+list(qs)        # ارزیابی ۱: SELECT اجرا و نتیجه کش شد
+len(qs)         # از کش — کوئری جدید نیست
+for p in qs:    # از کش
+qs[0]           # ارزیابی (LIMIT 1)
+bool(qs)        # ارزیابی (EXISTS بهینه)
+qs.exists()     # سبک‌ترین بررسی وجود
+qs.count()      # SELECT COUNT(*)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>متدهای کاربردی دیگر</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">Post.objects.filter(...).order_by("-created_at")[:10]   # ۱۰ آخر
+Post.objects.values("title", "author__name")            # دیکشنری‌ها
+Post.objects.values_list("id", "title", flat=False)     # تاپل‌ها
+Post.objects.only("id", "title")                        # ستون‌های مشخص
+Post.objects.update(published=False)                    # به‌روزرسانی دسته‌ای (بدون save و سیگنال!)
+Post.objects.filter(x).distinct()
+Post.objects.filter(x).first() / .last()                # None اگر خالی</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ update() و سیگنال‌ها</b>
+          <code class="inline-code">queryset.update(...)</code> سریع است (یک کوئری UPDATE) ولی <code class="inline-code">save()</code> صدا نمی‌زند؛ پس <span class="term" data-term="signal">سیگنال</span> post_save اجرا نمی‌شود و متدهای سفارشی مدل هم. آگاهانه انتخاب کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>داشبورد آماری وبلاگ — ترکیب همهٔ ابزارهای فصل در یک ویو:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ویوی آمار</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models import Avg, Count, Q, Sum
+from django.shortcuts import render
+
+from .models import Author, Post, Tag
+
+
+def stats_dashboard(request):
+    totals = Post.objects.aggregate(
+        posts=Count("id"),
+        published=Count("id", filter=Q(published=True)),
+        avg_views=Avg("views_count"),
+    )
+
+    top_authors = Author.objects.annotate(
+        post_count=Count("posts"),
+        views=Sum("posts__views_count"),
+    ).order_by("-views")[:5]
+
+    top_tags = Tag.objects.annotate(
+        n=Count("posts", filter=Q(posts__published=True))
+    ).filter(n__gt=0).order_by("-n")[:8]
+
+    popular = (Post.objects.filter(published=True)
+               .select_related("author")
+               .prefetch_related("tags")
+               .order_by("-views_count")[:10])
+
+    return render(request, "blog/stats.html", {
+        "totals": totals, "top_authors": top_authors,
+        "top_tags": top_tags, "popular": popular,
+    })</code></pre>
+        </div>
+          <p>دقت کنید: <code class="inline-code">Count("id", filter=Q(...))</code> یعنی «شمارش مشروط» — ویژگی قدرتمندی که خیلی‌ها نمی‌شناسند. کل داشبورد با <strong>۴ کوئری</strong> اجرا می‌شود.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>کوئری‌های یک فروشگاه را بنویسید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> محصولات گران‌تر از ۵۰۰ هزار تومان از ناشر/دسته «X» که موجودی‌شان تمام نشده — با یک فیلتر ترکیبی.</li>
+          <li><strong>کارگاه ۲:</strong> برای هر دسته: نام، تعداد کتاب و میانگین قیمت — با annotate و مرتب‌سازی بر اساس تعداد.</li>
+          <li><strong>کارگاه ۳:</strong> صفحه فهرست کتاب‌ها را با select_related("publisher") و prefetch_related("tags") بهینه کنید و قبل/بعد را با شمارش کوئری مقایسه کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>فیلتر ترکیبی</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">Book.objects.filter(
+    price__gt=500_000,
+    category__slug="x",
+    stock__gt=0,
+)</code></pre></div><p>اگر شرط OR لازم بود (مثلاً دسته x یا y): <code class="inline-code">Q(category__slug="x") | Q(category__slug="y")</code> یا ساده‌تر <code class="inline-code">category__slug__in=["x","y"]</code>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>آمار دسته‌ها</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.db.models import Avg, Count
+
+Category.objects.annotate(
+    book_count=Count("books"),
+    avg_price=Avg("books__price"),
+).order_by("-book_count")</code></pre></div><p>در قالب: <code class="inline-code">{{ cat.book_count }}</code> و <code class="inline-code">{{ cat.avg_price|floatformat:0 }}</code>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>بهینه‌سازی و اندازه‌گیری</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.db import connection, reset_queries
+
+qs = Book.objects.select_related("publisher").prefetch_related("tags")
+reset_queries()
+for b in qs:
+    _ = b.publisher.name
+    _ = [t.name for t in b.tags.all()]
+print(len(connection.queries))
+# قبل از بهینه‌سازی با ۲۰ کتاب: ~۴۱ کوئری (1 + 20 publisher + 20 tags)
+# بعد: ۲ کوئری (یکی کتاب‌ها+JOIN ناشر، یکی تگ‌ها)</code></pre></div></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ صفحه با ۵۰ رکورد، ۱۰۱ کوئری می‌زند!</b>
+          <p>کلاسیک <span class="term" data-term="n-plus-one">N+1</span>: در حلقه به post.author یا post.tags.all() دسترسی دارید. select_related/prefetch_related اضافه کنید و با شمارش کوئری اثباتش کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ annotate + values + COUNT نتایج عجیب می‌دهد</b>
+          <p>JOIN با چند M2M هم‌زمان باعث ضرب کارتزین در شمارش می‌شود. راه‌حل: Count("x", distinct=True) یا جدا کردن annotateها در زیرکوئری (Subquery).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ کوئری کش‌شده داده قدیمی نشان می‌دهد</b>
+          <p>QuerySet ارزیابی‌شده نتیجه را کش می‌کند؛ اگر داده عوض شد، QuerySet جدید بسازید (filter روی QuerySet کپی جدید می‌دهد — ولی list کش‌شده همان می‌ماند).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ order_by روی فیلد annotate خطا می‌دهد یا ترتیب غلط است</b>
+          <p>نام annotate باید دقیق باشد و قبل از order_by تعریف شده باشد. در Meta.ordering هم اگر ستون annotate لازم دارید، در کوئری annotate‌اش کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ update() سیگنال post_save را اجرا نکرد</b>
+          <p>رفتار طراحی‌شده است: update() کوئری مستقیم SQL است. اگر منطق وابسته به save دارید (سیگنال/متد)، حلقه با save() یا بازطراحی منطق.</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — ترجمه به ORM</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> «پست‌های منتشرشدهٔ نویسنده‌ای که نامش با «س» شروع می‌شود، به‌ترتیب بازدید نزولی، ۵ تای اول» را با ORM بنویسید.</p><p><strong>پاسخ:</strong> <code class="inline-code">Post.objects.filter(published=True, author__name__startswith="س").order_by("-views_count")[:5]</code></p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — Q بسازید</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> «پست‌هایی که یا ویژه‌اند (featured=True) یا بیش از ۱۰۰۰ بازدید دارند، ولی منتشرنشده نباشند».</p><p><strong>پاسخ:</strong> <code class="inline-code">Post.objects.filter(Q(featured=True) | Q(views_count__gt=1000), published=True)</code></p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — select یا prefetch؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر دسترسی کدام بهینه‌ساز؟ (الف) post.author (ب) post.tags.all() (ج) post.comments.all() (د) comment.post</p><p><strong>پاسخ:</strong> الف → select_related("author") • ب → prefetch_related("tags") (M2M) • ج → prefetch_related("comments") (معکوس FK = «چند») • د → select_related("post") (FK = «یک»).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-15" data-title="آزمون فصل ۱۵ — مدیریت پیشرفته پایگاه داده — QuerySetها" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) QuerySet «تنبل» یعنی چه؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند اجرا می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="b">تا وقتی لازم نشود (ارزیابی) کوئری به دیتابیس نمی‌فرستد</button>
+              <button type="button" class="quiz-opt" data-key="c">نتایج را همیشه کش می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط یک‌بار مصرف است</button>
+            </div>
+            <div class="quiz-explain">💡 ساخت QuerySet رایگان است؛ اولین ارزیابی (حلقه/len/list/...) SQL را اجرا و نتیجه را کش می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) کدام عبارت شرط OR را می‌سازد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">filter(a=1, b=2)</button>
+              <button type="button" class="quiz-opt" data-key="b">filter(Q(a=1) | Q(b=2))</button>
+              <button type="button" class="quiz-opt" data-key="c">filter(a=1).or(b=2)</button>
+              <button type="button" class="quiz-opt" data-key="d">filter([a=1, b=2])</button>
+            </div>
+            <div class="quiz-explain">💡 آرگومان‌های filter با هم AND هستند؛ OR با عملگر | روی شیء‌های Q ساخته می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) برای «تعداد پست هر نویسنده» از چه استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">aggregate(Count("posts"))</button>
+              <button type="button" class="quiz-opt" data-key="b">Author.objects.annotate(post_count=Count("posts"))</button>
+              <button type="button" class="quiz-opt" data-key="c">len(author.posts)</button>
+              <button type="button" class="quiz-opt" data-key="d">Count.objects.filter(...)</button>
+            </div>
+            <div class="quiz-explain">💡 annotate به ازای هر رکورد یک ستون محاسباتی می‌سازد؛ aggregate یک آمار کلی برمی‌گرداند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) مشکل N+1 در کدام حالت رخ می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">وقتی ۱۰۱ فیلد داریم</button>
+              <button type="button" class="quiz-opt" data-key="b">یک کوئری فهرست + یک کوئری به ازای هر رکورد برای رابطه‌اش</button>
+              <button type="button" class="quiz-opt" data-key="c">وقتی paginate_by زیاد است</button>
+              <button type="button" class="quiz-opt" data-key="d">وقتی DEBUG=True است</button>
+            </div>
+            <div class="quiz-explain">💡 دسترسی به رابطه در حلقه بدون بهینه‌ساز؛ راه‌حل select_related (JOIN) یا prefetch_related (کوئری جدا + وصل در پایتون).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) select_related برای کدام روابط مناسب است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ManyToMany</button>
+              <button type="button" class="quiz-opt" data-key="b">ForeignKey و OneToOne (سمت «یک»)</button>
+              <button type="button" class="quiz-opt" data-key="c">همه روابط</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط معکوس FK</button>
+            </div>
+            <div class="quiz-explain">💡 select_related با SQL JOIN کار می‌کند و JOIN فقط برای روابط تک‌مقداری معنا دارد؛ «چند»ها با prefetch.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کدام برای «فقط تعداد» بهینه‌تر است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">len(qs)</button>
+              <button type="button" class="quiz-opt" data-key="b">qs.count()</button>
+              <button type="button" class="quiz-opt" data-key="c">list(qs).length</button>
+              <button type="button" class="quiz-opt" data-key="d">qs.aggregate(n=Count("id"))["n"] — فرقی ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 count() یک SELECT COUNT(*) سبک می‌زند؛ len() همه سطرها را به حافظه می‌آورد. (aggregate هم مثل count است ولی رایج‌تر count() است.)</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «گزارش‌ساز وبلاگ»</strong> — یک صفحه گزارش کامل با کوئری‌های بهینه بسازید.</p>
+        <ul class="checklist">
+          <li>کارت‌های آماری: کل پست‌ها، منتشرشده‌ها، میانگین/جمع بازدیدها (یک aggregate).</li>
+          <li>جدول ۵ نویسنده برتر با annotate (تعداد پست + جمع بازدید).</li>
+          <li>فهرست ۱۰ پست محبوب با <span class="term" data-term="select-related">select_related</span> + <span class="term" data-term="prefetch-related">prefetch_related</span>.</li>
+          <li>جست‌وجوی چندکلمه‌ای با Q (کارگاه فصل).</li>
+          <li>اثبات بهینگی: شمارش کوئری‌های صفحه ≤ ۵ (با connection.queries یا Debug Toolbar فصل ۲۱).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 عادت حرفه‌ای</b>
+          هر صفحه فهرستی که می‌سازید، یک سوال از خودتان بپرسید: «در حلقه به کدام رابطه‌ها دسترسی دارم؟» — همان‌ها را select/prefetch کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>Lookups با دو زیرخط: icontains، gte، in، range، year و پیمایش رابطه.</li>
+          <li>Q برای OR/NOT و جست‌وجوی چندفیلدی؛ آرگومان‌های filter با هم AND.</li>
+          <li>aggregate = آمار کلی؛ annotate = ستون به ازای رکورد؛ شمارش مشروط با filter=Q().</li>
+          <li><span class="term" data-term="n-plus-one">N+1</span> با select_related (یک) و prefetch_related (چند) حل می‌شود.</li>
+          <li>QuerySet تنبل و کش‌شونده است؛ count/exists/only/values ابزارهای سبک‌سازی.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «هر صفحه باید با انگشتان یک دست کوئری بخورد؛ بیشتر از آن یعنی N+1 جایی کمین کرده.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چطور SQL تولیدشده را ببینم؟</summary><div class="faq-body"><p>با DEBUG=True: <code class="inline-code">print(qs.query)</code> (تقریبی) یا <code class="inline-code">connection.queries</code> (واقعی). ابزار حرفه‌ای: Django Debug Toolbar در فصل ۲۱.</p></div></details>
+        <details class="faq-item"><summary>Manager سفارشی چیست؟</summary><div class="faq-body"><p>کلاسی از models.Manager که متدهای کوئری پرکاربرد را در خود بسته‌بندی می‌کند: <code class="inline-code">Post.objects.published()</code> به‌جای تکرار filter(published=True). با QuerySet سفارشی + <code class="inline-code">objects = PublishedManager.from_queryset(PostQuerySet)()</code> بهترین الگو است.</p></div></details>
+        <details class="faq-item"><summary>برای جست‌وجوی جدی (مثل گوگل) ORM کافی است؟</summary><div class="faq-body"><p>تا چند ده هزار رکورد با icontains + ایندکس قابل قبول است. فراتر: جست‌وجوی تمام‌متن خود دیتابیس (SearchVector در PostgreSQL) یا Elasticsearch/Meilisearch. فصل ۲۷ ابزارهای اندازه‌گیری را می‌دهد.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          تا اینجا «کنش» نوشتیم؛ در <strong>فصل ۱۶</strong> «واکنش» را یاد می‌گیریم: <span class="term" data-term="signal">سیگنال</span>ها — اجرای خودکار کد وقتی رویدادی (مثل ذخیره رکورد) رخ می‌دهد.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-15" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-15">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-14/index.html">→ فصل قبلی<br><b>🖼️ فصل ۱۴</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-16/index.html">فصل بعدی ←<br><b>🔔 فصل ۱۶: سیگنال‌ها (Signals) — مدیریت رویدادها</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۵: مدیریت پیشرفته پایگاه داده — QuerySetها | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
