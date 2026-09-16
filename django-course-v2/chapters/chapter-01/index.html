@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱: آشنایی با جنگو | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱ دوره جامع جنگو: وب و HTTP چیست؟ چرا فریم‌ورک؟ معماری MTV، تفاوت جنگو با Flask و معرفی اکوسیستم — با واژه‌نامه هاور، آزمون تعاملی و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱ از ۳۰ — آشنایی با جنگو (Django)</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 مبانی و اصول پایه ← فصل ۱
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱ از ۳۰</span>
+    <h1>🌱 آشنایی با جنگو (Django)</h1>
+    <p>
+      وب و <span class="term" data-term="http">HTTP</span> چیست؟ چرا به <span class="term" data-term="framework">فریم‌ورک</span> نیاز داریم؟
+      در این فصل با معماری <span class="term" data-term="mtv">MTV</span>، تاریخچه <span class="term" data-term="django">جنگو</span>،
+      تفاوت آن با Flask و کل اکوسیستمش آشنا می‌شوید — بدون هیچ پیش‌نیازی.
+    </p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۷۵ دقیقه</span>
+      <span class="pill">🎓 صفر مطلق</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>این فصل دروازه ورود شما به دنیای جنگو است؛ هیچ کد واقعی نصب نمی‌کنیم (کار فصل ۲ است)، ولی تا پایان فصل <strong>نقشه کامل ذهنی</strong> از وب و جنگو خواهید داشت.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>توضیح دهید وقتی نشانی سایتی را در مرورگر وارد می‌کنید، دقیقاً چه اتفاقی می‌افتد (<span class="term" data-term="request">درخواست</span> و <span class="term" data-term="response">پاسخ</span>).</li>
+          <li>بگویید <span class="term" data-term="framework">فریم‌ورک</span> چیست و چرا ساختن وب‌سایت بدون آن کار عاقلانه‌ای نیست.</li>
+          <li>معماری <span class="term" data-term="mtv">MTV</span> جنگو و نقش <span class="term" data-term="model">مدل</span>، <span class="term" data-term="view">ویو</span> و <span class="term" data-term="template">قالب</span> را توضیح دهید.</li>
+          <li>جنگو را با رقبایش (Flask و FastAPI) مقایسه کنید و بدانید کجا کدام به کار می‌آید.</li>
+          <li>اجزای اکوسیستم جنگو (<span class="term" data-term="orm">ORM</span>، <span class="term" data-term="admin">پنل مدیریت</span>، <span class="term" data-term="drf">DRF</span> و...) را نام ببرید.</li>
+        </ul>
+        <p><strong>جایگاه فصل:</strong> بخش «🧱 مبانی و اصول پایه» — پیش‌نیاز فصل‌های ۲ تا ۳۰. هر واژه‌ای که در این فصل با <span style="border-bottom:2px dotted var(--accent);font-weight:700">خط‌چین سبز</span> می‌بینید را هاور کنید؛ توضیحش فوراً نمایش داده می‌شود و پایان فصل (بخش ۱۵) همه‌شان یکجا فهرست شده‌اند.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>وب چطور کار می‌کند؟</h4><p>مرورگر، سرور، درخواست، پاسخ و کد وضعیت.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>فریم‌ورک و چرایی جنگو</h4><p>مقایسه «از صفر نوشتن» با فریم‌ورک؛ جنگو در برابر Flask.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>معماری MTV</h4><p>مدل، قالب، ویو و جریان یک درخواست در جنگو.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>اکوسیستم و تاریخچه</h4><p>ORM، Admin، DRF؛ جنگو از ۲۰۰۵ تا امروز.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، ۳۰ ثانیه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>وقتی آدرس digikala.com را در مرورگر می‌زنید و Enter را فشار می‌دهید، تا دیدن صفحه چه اتفاقاتی می‌افتد؟</summary>
+          <div class="answer-body"><p>مرورگر یک <strong>درخواست HTTP</strong> به <strong>سرور</strong> دیجی‌کالا می‌فرستد؛ سرور (که احتمالاً با فریم‌ورکی مثل جنگو نوشته شده) درخواست را پردازش می‌کند، داده‌ها را از <strong>پایگاه داده</strong> می‌گیرد، صفحه HTML را می‌سازد و به‌عنوان <strong>پاسخ</strong> برمی‌گرداند. مرورگر هم آن را نمایش می‌دهد. کل این رفت‌وبرگشت معمولاً زیر یک ثانیه طول می‌کشد!</p></div>
+        </details>
+        <details class="answer">
+          <summary>چرا اینستاگرام، اسپاتیفای و پینترست برای بک‌اندشان پایتون/جنگو را انتخاب کردند؟</summary>
+          <div class="answer-body"><p>چون جنگو <strong>سرعت توسعه</strong> فوق‌العاده‌ای دارد: احراز هویت، پنل مدیریت، امنیت و کار با پایگاه داده آماده است و تیم می‌تواند به‌جای چرخ‌اختراع‌های تکراری، روی <strong>منطق تجاری محصول</strong> تمرکز کند. مقیاس‌پذیری خوب و اکوسیستم غنی پایتون هم دلایل بعدی‌اند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>به نظر شما «پروژه» و «اپلیکیشن» در جنگو چه فرقی دارند؟</summary>
+          <div class="answer-body"><p><strong>پروژه (Project)</strong> کل وب‌سایت با تنظیمات مشترک است؛ <strong>اپلیکیشن (App)</strong> یک جزء مستقل داخل پروژه با یک مسئولیت مشخص (مثل بخش وبلاگ یا فروشگاه). یک پروژه می‌تواند چند اپ داشته باشد و هر اپ می‌تواند در چند پروژه استفاده شود. جزئیات کامل در فصل ۳.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>خبر خوب: این فصل <strong>هیچ نصبی لازم ندارد!</strong> فقط کافی است موارد زیر آماده باشد:</p>
+        <ul class="checklist">
+          <li>یک مرورگر وب (همین مرورگری که این صفحه را در آن می‌خوانید کافی است).</li>
+          <li>یک ویرایشگر متن ساده (Notepad هم فعلاً کافی است؛ در فصل ۲ VS Code نصب می‌کنیم).</li>
+          <li>آشنایی در حد «باز کردن <span class="term" data-term="terminal">ترمینال</span>» — اگر تا حالا ترمینال را ندیده‌اید هم نگران نباشید؛ فصل ۲ از صفر توضیح می‌دهد.</li>
+          <li>کنجکاوی و ۷۵ دقیقه زمان بدون مزاحم! 🙂</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 توصیه</b>
+          یک دفترچه یا همین «<a href="#p16">یادداشت‌های من</a>» (بخش ۱۶) را کنار دستتان باز بگذارید؛ واژه‌های جدیدی که در این فصل می‌بینید را با زبان خودتان یادداشت کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ وب چطور کار می‌کند؟ (مدل درخواست و پاسخ)</h3>
+        <p>
+          وب بر پایه یک گفت‌وگوی ساده ساخته شده: <strong>«درخواست بده، پاسخ بگیر»</strong>.
+          برنامه‌ای که شما استفاده می‌کنید (مرورگر، اپ موبایل و...) <span class="term" data-term="client">کلاینت</span> نام دارد و
+          رایانه‌ای که سایت روی آن اجرا می‌شود <span class="term" data-term="server">سرور</span>. زبان مشترک این دو،
+          پروتکل <span class="term" data-term="http">HTTP</span> است.
+        </p>
+        <ol>
+          <li>شما نشانی‌ای مثل <code class="inline-code">example.com/blog/</code> (یک <span class="term" data-term="url">URL</span>) را وارد می‌کنید.</li>
+          <li>مرورگر یک <span class="term" data-term="request">درخواست (Request)</span> به سرور می‌فرستد.</li>
+          <li>سرور درخواست را بررسی می‌کند، داده لازم را از <span class="term" data-term="database">پایگاه داده</span> می‌گیرد و صفحه را می‌سازد.</li>
+          <li>سرور یک <span class="term" data-term="response">پاسخ (Response)</span> برمی‌گرداند که شامل <span class="term" data-term="status-code">کد وضعیت</span> و محتوای HTML است.</li>
+          <li>مرورگر HTML را رندر می‌کند و شما صفحه را می‌بینید. 🎉</li>
+        </ol>
+        <div class="callout info">
+          <b class="title">📌 کدهای وضعیت پرکاربرد را همین‌جا حفظ کنید</b>
+          <strong>200</strong> = موفق • <strong>301/302</strong> = انتقال (Redirect) • <strong>404</strong> = پیدا نشد • <strong>403</strong> = دسترسی مجاز نیست • <strong>500</strong> = خطای داخلی سرور. در فصل ۸ عملاً با همه‌شان کار می‌کنید.
+        </div>
+
+        <h3>۵.۲ فریم‌ورک چیست و چرا جنگو؟</h3>
+        <p>
+          ساختن یک وب‌سایت واقعی یعنی هزاران کار تکراری: مدیریت <span class="term" data-term="url">URL</span>ها، اتصال به
+          <span class="term" data-term="database">پایگاه داده</span>، ساخت فرم‌ها، جلوگیری از حملات امنیتی، مدیریت ورود کاربران، پنل مدیریت و...
+          <span class="term" data-term="framework">فریم‌ورک</span> تمام این کارهای مشترک را <strong>یک‌بار و به‌صورت استاندارد</strong> انجام داده
+          و شما فقط منطق مخصوص سایت خودتان را می‌نویسید.
+        </p>
+        <p>
+          <span class="term" data-term="django">جنگو</span> یک فریم‌ورک <strong>سطح‌بالا</strong> بر پایه
+          <span class="term" data-term="python">پایتون</span> است؛ یعنی با کمترین کد، بیشترین امکانات را می‌دهد.
+          شعار رسمی‌اش هم همین است: <em>«فریم‌ورکی برای کمال‌گراها با مهلت تحویل فوری»</em>.
+        </p>
+        <div class="table-wrap">
+          <table class="compare">
+            <thead><tr><th>ویژگی</th><th>نوشتن از صفر (بدون فریم‌ورک)</th><th>Flask</th><th>Django</th></tr></thead>
+            <tbody>
+              <tr><td>مسیریابی و سرور</td><td>دستی می‌سازید ❌</td><td>ساده و در هسته ✅</td><td>کامل و آماده ✅✅</td></tr>
+              <tr><td>پایگاه داده / ORM</td><td>SQL خام ❌</td><td>اختیاری (افزودنی)</td><td><span class="term" data-term="orm">ORM</span> قدرتمند داخلی ✅✅</td></tr>
+              <tr><td>پنل مدیریت آماده</td><td>ندارد ❌</td><td>ندارد ❌</td><td><span class="term" data-term="admin">Admin</span> خودکار ✅✅</td></tr>
+              <tr><td>احراز هویت کاربران</td><td>دستی ❌</td><td>افزودنی جانبی</td><td>سیستم داخلی کامل ✅✅</td></tr>
+              <tr><td>امنیت پیش‌فرض (CSRF/XSS)</td><td>به عهده شما ❌</td><td>نسبتاً</td><td>محافظت داخلی قوی ✅✅</td></tr>
+              <tr><td>یادگیری برای اولین پروژه</td><td>سخت</td><td>ساده‌تر برای شروع</td><td>ساختاریافته و مستند ✅</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <strong>جمع‌بندی مقایسه:</strong> برای APIهای خیلی سبک یا میکروسرویس‌ها، Flask و FastAPI عالی‌اند؛
+          اما برای یک <strong>وب‌سایت کامل</strong> (وبلاگ، فروشگاه، پلتفرم آموزشی...) جنگو با اختلاف سریع‌ترین و امن‌ترین مسیر است —
+          چون «باتری‌ها همراهش هست» (Batteries Included).
+        </p>
+
+        <h3>۵.۳ معماری MTV: نقشهٔ ذهنی جنگو</h3>
+        <p>جنگو کد شما را به سه لایه تقسیم می‌کند تا هر بخش یک مسئولیت مشخص داشته باشد:</p>
+        <ul>
+          <li>🗄️ <span class="term" data-term="model">مدل (Model)</span> — <strong>داده</strong>: ساختار جدول‌ها و ارتباطشان با پایگاه داده (فایل <code class="inline-code">models.py</code>).</li>
+          <li>🎨 <span class="term" data-term="template">قالب (Template)</span> — <strong>ظاهر</strong>: فایل‌های HTML با جای‌خالی‌های پویا.</li>
+          <li>🎯 <span class="term" data-term="view">ویو (View)</span> — <strong>منطق</strong>: درخواست را می‌گیرد، از مدل داده می‌گیرد و با قالب، پاسخ می‌سازد.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">🧩 MTV در برابر MVC</b>
+          احتمالاً الگوی معروف <span class="term" data-term="mvc">MVC</span> (مدل-ویو-کنترلر) را شنیده‌اید.
+          در جنگو، «ویو»یِ MVC نقش <strong>کنترلر</strong> را دارد و «قالب» نقش <strong>ویو</strong> را؛
+          برای همین نامش را <span class="term" data-term="mtv">MTV</span> گذاشته‌اند. مفهوم یکی است، فقط نام‌گذاری جنگویی است.
+        </div>
+        <p><strong>جریان یک درخواست در جنگو:</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>جریان درخواست: از مرورگر تا پاسخ</span><span class="lang">مفهومی</span></div>
+          <pre class="code"><code data-lang="bash">مرورگر (کلاینت)
+   │  ۱. درخواست: GET /blog/5/
+   ▼
+urls.py ── ۲. مسیریابی: این URL مال کدام ویو است؟
+   ▼
+views.py ── ۳. منطق: ویو اجرا می‌شود
+   │        ۴. داده: از مدل (پایگاه داده) پست شماره ۵ را می‌گیرد
+   ▼
+template ── ۵. نمایش: داده داخل قالب HTML قرار می‌گیرد
+   ▼
+پاسخ (Response) ── ۶. HTML نهایی به مرورگر برمی‌گردد 🎉</code></pre>
+        </div>
+
+        <h3>۵.۴ نگاهی به کد: یک ویو چقدر ساده است؟</h3>
+        <p>هنوز چیزی نصب نکرده‌ایم، ولی ببینید ساده‌ترین ویوی دنیا در جنگو چه شکلی است (فصل ۳ عملاً می‌سازیمش):</p>
+        <div class="code-box">
+          <div class="code-head"><span>views.py — ساده‌ترین ویوی جنگو</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.http import HttpResponse
+
+def hello(request):
+    """یک درخواست می‌گیرد و یک پاسخ متنی برمی‌گرداند."""
+    return HttpResponse("سلام جنگو! 🌿")</code></pre>
+        </div>
+        <p>و اتصالش به یک نشانی، در فایل مسیرها:</p>
+        <div class="code-box">
+          <div class="code-head"><span>urls.py — مسیریابی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.hello, name="hello"),  # نشانی اصلی → ویوی hello
+]</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ توجه</b>
+          کدهای بالا فقط برای آشنایی‌اند؛ قبل از فصل ۲ (نصب) اجراشان نکنید. هدف این است که ببینید <strong>هر صفحه = یک URL + یک ویو + (معمولاً) یک قالب</strong>.
+        </div>
+
+        <h3>۵.۵ اکوسیستم و تاریخچه جنگو</h3>
+        <p>
+          جنگو در سال <strong>۲۰۰۳</strong> در روزنامه Lawrence Journal-World برای ساخت سریع سایت خبری متولد شد و
+          <strong>۲۰۰۵</strong> متن‌باز منتشر شد. از آن روز، اینستاگرام، پینترست، اسپاتیفای (بخش‌هایی)، موزیلا و هزاران سایت ایرانی
+          رویش ساخته شده‌اند. اجزای اصلی اکوسیستم:
+        </p>
+        <ul>
+          <li><span class="term" data-term="orm">ORM</span> — کار با پایگاه داده به‌جای SQL، با کد پایتون.</li>
+          <li><span class="term" data-term="admin">Admin Panel</span> — پنل مدیریت آماده، ساخته‌شده از روی مدل‌های شما.</li>
+          <li><span class="term" data-term="migration">Migration</span> — نسخه‌بندی و اعمال خودکار تغییرات ساختار پایگاه داده.</li>
+          <li>سیستم احراز هویت داخلی — کاربر، گروه، مجوز، ورود/خروج.</li>
+          <li><span class="term" data-term="drf">DRF</span> — ساخت <span class="term" data-term="api">API</span> حرفه‌ای (فصل‌های ۲۲ و ۲۳).</li>
+          <li><span class="term" data-term="sqlite">SQLite</span> — پایگاه داده پیش‌فرض برای توسعه؛ در تولید معمولاً PostgreSQL.</li>
+        </ul>
+        <p>
+          مفاهیم <span class="term" data-term="project">پروژه</span> و <span class="term" data-term="app">اپلیکیشن</span> را هم همین‌جا گوشه ذهن داشته باشید:
+          <strong>پروژه</strong> = کل سایت (تنظیمات در <span class="term" data-term="settings">settings.py</span>)،
+          <strong>اپ</strong> = یک ماژول مستقل داخلش. فصل ۳ کامل می‌سازیمشان.
+        </p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>چون هنوز نصب نکرده‌ایم، مثال عملی این فصل «<strong>پیش‌نمایش دستورات</strong>» است؛ همین ۴ قدم در فصل ۲ واقعاً اجرا می‌شوند. الان فقط ببینید مسیر چقدر کوتاه است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>گام ۱ — نصب جنگو داخل محیط مجازی</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python -m venv .venv            # ساخت محیط مجازی
+source .venv/bin/activate       # فعال‌سازی (لینوکس/مک)
+pip install django              # نصب جنگو</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-head"><span>گام ۲ — ساخت پروژه و اجرای سرور</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">django-admin startproject mysite   # ساخت پروژه
+cd mysite
+python manage.py runserver         # اجرای سرور توسعه</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-head"><span>گام ۳ — مشاهده نتیجه</span><span class="lang">مرورگر</span></div>
+          <pre class="code"><code data-lang="bash">http://127.0.0.1:8000/   # 🎉 صفحه خوش‌آمدگویی جنگو</code></pre>
+        </div>
+        <p><strong>تحلیل آنچه دیدید (با دانش همین فصل):</strong></p>
+        <ul>
+          <li><code class="inline-code">pip install django</code> → با <span class="term" data-term="pip">pip</span> بسته جنگو را از مخزن پایتون گرفتیم.</li>
+          <li><code class="inline-code">startproject</code> → اسکلت <span class="term" data-term="project">پروژه</span> شامل <span class="term" data-term="settings">settings.py</span> و <span class="term" data-term="manage-py">manage.py</span> ساخته شد.</li>
+          <li><code class="inline-code">runserver</code> → سرور توسعه بالا آمد؛ حالا مرورگر شما <span class="term" data-term="client">کلاینت</span> است و یک <span class="term" data-term="request">درخواست</span> به این <span class="term" data-term="server">سرور</span> می‌فرستد و <span class="term" data-term="response">پاسخ</span> می‌گیرد.</li>
+        </ul>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>در فصل ۲ این دستورات را <strong>خودتان تایپ و اجرا</strong> کنید؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>بدون نصب و کدنویسی — فقط با فکر و کاغذ (یا بخش یادداشت‌ها). حداقل ۱۰ دقیقه خودتان تلاش کنید و بعد سراغ بخش ۸ بروید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> فرض کنید کاربر در سایت فروشگاهی روی «افزودن به سبد خرید» کلیک می‌کند. جریان کامل را در ۵ مرحله بنویسید: چه کسی <span class="term" data-term="request">درخواست</span> می‌فرستد؟ <span class="term" data-term="server">سرور</span> چه می‌کند؟ <span class="term" data-term="response">پاسخ</span> چیست؟</li>
+          <li><strong>کارگاه ۲:</strong> برای یک «سایت وبلاگ شخصی»، مشخص کنید کدام قسمت <span class="term" data-term="model">مدل</span> است، کدام <span class="term" data-term="template">قالب</span> و کدام <span class="term" data-term="view">ویو</span>: (الف) جدول پست‌ها در پایگاه داده، (ب) صفحه HTML فهرست پست‌ها، (ج) کدی که پست‌ها را می‌گیرد و صفحه را می‌سازد.</li>
+          <li><strong>کارگاه ۳:</strong> سه دلیل بنویسید که چرا یک استارتاپ برای ساخت MVP محصولش، جنگو را به «نوشتن از صفر با پایتون خالص» ترجیح می‌دهد.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>پاسخ کارگاه ۱ — جریان «افزودن به سبد خرید»</summary>
+          <div class="answer-body">
+            <ol>
+              <li>مرورگر (<span class="term" data-term="client">کلاینت</span>) با کلیک روی دکمه، یک <span class="term" data-term="request">درخواست</span> (معمولاً POST) به <span class="term" data-term="url">URL</span> مربوطه مثل <code class="inline-code">/cart/add/7/</code> می‌فرستد.</li>
+              <li>سرور جنگو از روی فایل <code class="inline-code">urls.py</code> می‌فهمد این نشانی به کدام <span class="term" data-term="view">ویو</span> وصل است (مسیریابی).</li>
+              <li>ویو اجرا می‌شود: محصول شماره ۷ را از <span class="term" data-term="model">مدل</span>/پایگاه داده پیدا می‌کند و به سبد خرید کاربر (در نشست او) اضافه می‌کند.</li>
+              <li>ویو یک <span class="term" data-term="response">پاسخ</span> می‌سازد: یا صفحه سبد خرید را رندر می‌کند یا کاربر را به صفحه سبد هدایت (Redirect) می‌کند.</li>
+              <li>مرورگر پاسخ را نمایش می‌دهد و کاربر سبد به‌روز‌شده را می‌بیند؛ <span class="term" data-term="status-code">کد وضعیت</span> ۲۰۰ یا ۳۰۲.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>پاسخ کارگاه ۲ — اجزای MTV در سایت وبلاگ</summary>
+          <div class="answer-body">
+            <ul>
+              <li>(الف) جدول پست‌ها در پایگاه داده ← <strong>مدل (Model)</strong>: ساختار داده (عنوان، متن، تاریخ، نویسنده) را نگه می‌دارد.</li>
+              <li>(ب) صفحه HTML فهرست پست‌ها ← <strong>قالب (Template)</strong>: فقط ظاهر و جای‌خالی داده‌ها.</li>
+              <li>(ج) کدی که پست‌ها را می‌گیرد و صفحه را می‌سازد ← <strong>ویو (View)</strong>: منطق اتصال مدل به قالب.</li>
+            </ul>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>پاسخ کارگاه ۳ — چرا جنگو برای MVP؟</summary>
+          <div class="answer-body">
+            <ol>
+              <li><strong>سرعت توسعه:</strong> احراز هویت، پنل <span class="term" data-term="admin">ادمین</span>، فرم‌ها و کار با پایگاه داده آماده‌اند؛ MVP در هفته‌ها ساخته می‌شود نه ماه‌ها.</li>
+              <li><strong>امنیت پیش‌فرض:</strong> محافظت داخلی در برابر CSRF، XSS، تزریق SQL — چیزی که در کدنویسی از صفر، تازه‌کارها معمولاً فراموش می‌کنند.</li>
+              <li><strong>ساختار و نگهداری:</strong> معماری MTV و مستندات عالی یعنی کد تمیز، قابل توسعه و استخدام نیروی آشنا به جنگو راحت‌تر.</li>
+            </ol>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات رایج تازه‌کاران در همین مرحله مفهومی (و اولین قدم‌های فصل بعد):</p>
+        <div class="err-card">
+          <b class="err-title">❌ اشتباه ۱: «جنگو یک زبان برنامه‌نویسی است!»</b>
+          <p>جنگو <strong>فریم‌ورک</strong> است، نه زبان؛ زبانش <span class="term" data-term="python">پایتون</span> است. اگر پایتون بلد نیستید، هم‌زمان با دوره کمی مبانی پایتون هم تمرین کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ اشتباه ۲: قاطی کردن «پروژه» و «اپ»</b>
+          <p><span class="term" data-term="project">پروژه</span> کل سایت است و <span class="term" data-term="app">اپ</span> بخشی از آن. <code class="inline-code">startproject</code> یک‌بار برای کل سایت اجرا می‌شود، ولی <code class="inline-code">startapp</code> به تعداد بخش‌های سایت (وبلاگ، فروشگاه و...).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>'django-admin' is not recognized</code> (فصل بعد)</b>
+          <p>یعنی جنگو نصب نیست یا <span class="term" data-term="venv">محیط مجازی</span> فعال نشده. راه‌حل: <code class="inline-code">pip install django</code> داخل venv فعال. جزئیات کامل در فصل ۲.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>Port 8000 is already in use</code> (فصل بعد)</b>
+          <p>یک سرور دیگر روی پورت ۸۰۰۰ در حال اجراست. یا ببندیدش، یا پورت دیگری بدهید: <code class="inline-code">python manage.py runserver 8080</code>.</p>
+        </div>
+        <div class="callout danger">
+          <b class="title">🚨 هشدار مهم برای آینده</b>
+          <span class="term" data-term="runserver">runserver</span> فقط برای <strong>توسعه</strong> است. در مرحله استقرار (فصل ۲۶) حتماً از <span class="term" data-term="gunicorn">Gunicorn</span> پشت <span class="term" data-term="nginx">Nginx</span> استفاده می‌شود — الان فقط بدانید که چنین چیزی هست.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>تمرین ۱ — هر واژه را به تعریفش وصل کنید</summary>
+          <div class="answer-body">
+            <p><strong>سوال:</strong> (۱) ORM   (۲) Template   (۳) View   (۴) URL   →  (الف) منطق پردازش درخواست   (ب) نشانی هر صفحه   (ج) ظاهر HTML صفحه   (د) کار با پایگاه داده با کد پایتون</p>
+            <p><strong>پاسخ:</strong> ۱→د، ۲→ج، ۳→الف، ۴→ب</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>تمرین ۲ — کد وضعیت مناسب را انتخاب کنید</summary>
+          <div class="answer-body">
+            <p><strong>سوال:</strong> (الف) صفحه با موفقیت نمایش داده شد (ب) کاربر رمز عبور را اشتباه زد و به صفحه ورود برگشت (ج) پستی که دنبالش بودیم وجود ندارد (د) باگ در کد ویو باعث خرابی شد</p>
+            <p><strong>پاسخ:</strong> الف→200، ب→302 (انتقال به صفحه ورود)، ج→404، د→500</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>تمرین ۳ — معماری MTV را به رستوران تشبیه کنید</summary>
+          <div class="answer-body">
+            <p><strong>پاسخ نمونه:</strong> مدل = آشپزخانه و مواد اولیه (داده)، ویو = گارسون (سفارش/درخواست را می‌گیرد، به آشپزخانه می‌برد و نتیجه را برمی‌گرداند)، قالب = چیدمان و تزیین بشقاب (نمایش). مشتری (مرورگر) فقط بشقاب نهایی را می‌بیند!</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>۶ پرسش چهارگزینه‌ای؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود. پرسش‌های شک‌برانگیز را با 🚩 نشان کنید تا بعداً مرورشان کنید.</p>
+
+        <div class="quiz" data-id="ch-01" data-title="آزمون فصل ۱ — آشنایی با جنگو" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) جنگو (Django) دقیقاً چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">یک پایگاه داده رابطه‌ای متن‌باز</button>
+              <button type="button" class="quiz-opt" data-key="b">یک فریم‌ورک وب سطح‌بالا بر پایه پایتون</button>
+              <button type="button" class="quiz-opt" data-key="c">یک زبان برنامه‌نویسی جدید</button>
+              <button type="button" class="quiz-opt" data-key="d">یک مرورگر وب مخصوص توسعه‌دهندگان</button>
+            </div>
+            <div class="quiz-explain">💡 جنگو یک <b>فریم‌ورک وب</b> است که با پایتون نوشته می‌شود؛ یعنی ابزارهایی آماده برای ساخت سریع وب‌سایت فراهم می‌کند، نه زبان یا پایگاه داده.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) در معماری MTV، وظیفهٔ اصلی «مدل» (Model) چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ساخت ظاهر و HTML صفحه</button>
+              <button type="button" class="quiz-opt" data-key="b">مسیریابی URLها به ویوها</button>
+              <button type="button" class="quiz-opt" data-key="c">تعریف ساختار داده‌ها و ارتباط با پایگاه داده</button>
+              <button type="button" class="quiz-opt" data-key="d">استقرار پروژه روی سرور</button>
+            </div>
+            <div class="quiz-explain">💡 مدل = لایهٔ <b>داده</b>: ساختار جدول‌ها، فیلدها و روابط را تعریف و از طریق ORM با پایگاه داده گفت‌وگو می‌کند. ظاهر کارِ قالب و منطق کارِ ویو است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) در مدل ارتباط وب، مرورگر شما چه نقشی دارد و چه چیزی به سرور می‌فرستد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کلاینت است و درخواست (Request) می‌فرستد</button>
+              <button type="button" class="quiz-opt" data-key="b">سرور است و پاسخ (Response) می‌فرستد</button>
+              <button type="button" class="quiz-opt" data-key="c">کلاینت است و پاسخ (Response) می‌فرستد</button>
+              <button type="button" class="quiz-opt" data-key="d">سرور است و درخواست (Request) می‌فرستد</button>
+            </div>
+            <div class="quiz-explain">💡 مرورگر <b>کلاینت</b> است: <b>درخواست</b> می‌فرستد و <b>پاسخ</b> را دریافت و نمایش می‌دهد. سرور هم برعکس.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) کد وضعیت HTTP شمارهٔ 404 یعنی چه؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">درخواست با موفقیت پردازش شد</button>
+              <button type="button" class="quiz-opt" data-key="b">خطای داخلی در سرور رخ داده است</button>
+              <button type="button" class="quiz-opt" data-key="c">منبع به نشانی دیگری منتقل شده است</button>
+              <button type="button" class="quiz-opt" data-key="d">منبع درخواستی در سرور پیدا نشد</button>
+            </div>
+            <div class="quiz-explain">💡 404 = <b>پیدا نشد</b>. موفقیت 200، خطای سرور 500 و انتقال 301/302 است. در فصل ۸ با get_object_or_404 عملاً می‌سازیمش.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) رابطهٔ «پروژه» و «اپلیکیشن» در جنگو کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">دقیقاً یکی‌اند و فقط دو نام مختلف دارند</button>
+              <button type="button" class="quiz-opt" data-key="b">پروژه کل وب‌سایت است و اپ یک جزء مستقل با مسئولیت مشخص داخل آن</button>
+              <button type="button" class="quiz-opt" data-key="c">اپ بزرگ‌تر از پروژه است و چند پروژه داخل هر اپ قرار می‌گیرد</button>
+              <button type="button" class="quiz-opt" data-key="d">پروژه فقط برای پایگاه داده است و اپ فقط برای قالب‌ها</button>
+            </div>
+            <div class="quiz-explain">💡 یک <b>پروژه</b> (با settings مشترک) می‌تواند چند <b>اپ</b> داشته باشد؛ مثلاً اپ «وبلاگ» و اپ «فروشگاه» در یک سایت. هر اپ هم می‌تواند در پروژه‌های دیگر استفاده مجدد شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) برای ساخت Web API (مثلاً برای اپ موبایل) روی جنگو، ابزار استاندارد اکوسیستم کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">Celery</button>
+              <button type="button" class="quiz-opt" data-key="b">Nginx</button>
+              <button type="button" class="quiz-opt" data-key="c">Django REST Framework (DRF)</button>
+              <button type="button" class="quiz-opt" data-key="d">Redis</button>
+            </div>
+            <div class="quiz-explain">💡 <b>DRF</b> جعبه‌ابزار رسمی ساخت API در جنگوست (فصل‌های ۲۲ و ۲۳). سلری برای کارهای پس‌زمینه، Nginx وب‌سرور و Redis حافظه نهان/بروکر است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «نقشهٔ معماری وب‌سایت رؤیاها»</strong> — یک سایت که دوست دارید بسازید (وبلاگ، فروشگاه، پلتفرم آموزشی...) را انتخاب کنید و روی کاغذ طراحی‌اش کنید:</p>
+        <ul class="checklist">
+          <li>نام سایت و هدفش را در یک جمله بنویسید.</li>
+          <li>۳ صفحه اصلی‌اش را فهرست کنید (مثلاً: خانه، فهرست محصولات، صفحه محصول).</li>
+          <li>برای هر صفحه یک <span class="term" data-term="url">URL</span> پیشنهادی بنویسید (مثلاً <code class="inline-code">/products/7/</code>).</li>
+          <li>مشخص کنید در هر صفحه چه <strong>داده‌ای</strong> لازم است (→ مدل‌های آینده) و چه چیزی <strong>نمایش</strong> داده می‌شود (→ قالب‌های آینده).</li>
+          <li>بنویسید کدام بخش‌ها می‌توانند <span class="term" data-term="app">اپ</span>های جدا باشند (مثلاً اپ «فروشگاه» و اپ «وبلاگ»).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">🎯 چرا این پروژه مهم است؟</b>
+          این نقشه، دقیقاً همان چیزی است که از فصل ۳ به بعد <strong>واقعاً می‌سازید</strong>؛ در فصل‌های ۴ (مدل)، ۷ (URL) و ۱۰ (قالب) اجزای همین نقشه یکی‌یکی پیاده می‌شوند. آن را در بخش یادداشت‌ها (بخش ۱۶) ذخیره کنید!
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>وب = گفت‌وگوی <span class="term" data-term="client">کلاینت</span> و <span class="term" data-term="server">سرور</span> با پروتکل <span class="term" data-term="http">HTTP</span> در قالب <span class="term" data-term="request">درخواست</span>/<span class="term" data-term="response">پاسخ</span>.</li>
+          <li>فریم‌ورک یعنی ابزار آمادهٔ کارهای تکراری؛ جنگو «فریم‌ورک کامل» (Batteries Included) دنیای پایتون است.</li>
+          <li>معماری <span class="term" data-term="mtv">MTV</span>: مدل (داده) + قالب (ظاهر) + ویو (منطق)؛ جریان هر درخواست: URL → ویو → مدل → قالب → پاسخ.</li>
+          <li>اکوسیستم جنگو: <span class="term" data-term="orm">ORM</span>، <span class="term" data-term="admin">Admin</span>، <span class="term" data-term="migration">مهاجرت</span>ها، احراز هویت داخلی و <span class="term" data-term="drf">DRF</span>.</li>
+          <li>تفاوت <span class="term" data-term="project">پروژه</span> و <span class="term" data-term="app">اپ</span> و کدهای مهم وضعیت HTTP.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «جنگو = پایتون + ساختار آماده؛ هر صفحه یعنی یک URL که به یک ویو وصل است و ویو با مدل و قالب، پاسخ می‌سازد.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>برای این دوره چقدر پایتون بلد باشم کافی است؟</summary><div class="faq-body"><p>در حد متغیر، شرط، حلقه، تابع و لیست/دیکشنری. هر جای دوره که به مفهوم پایتونی برخورید، همان‌جا در حد نیاز توضیح داده می‌شود. فصل ۲ هم یک مرور فشرده دارد.</p></div></details>
+        <details class="faq-item"><summary>جنگو قدیمی نشده؟ هنوز بازار کار دارد؟</summary><div class="faq-body"><p>اتفاقاً برعکس! جنگو با نسخه‌های ۵.x و ۶.0 فعال‌تر از همیشه است و در ایران و جهان تقاضای استخدام بالایی دارد (اینستاگرام و اسپاتیفای هنوز رویش می‌سازند). فصل ۲۹ ویژگی‌های جدید و فصل ۳۰ نقشه راه بازار کار را دارد.</p></div></details>
+        <details class="faq-item"><summary>با موبایل هم می‌شود دوره را خواند؟</summary><div class="faq-body"><p>بله، قالب کاملاً واکنش‌گراست. فقط برای «مثال عملی» و کارگاه‌های کدنویسی به کامپیوتر نیاز دارید؛ بخش‌های مفهومی را می‌توانید با موبایل هم پیش بروید.</p></div></details>
+        <div class="callout info" style="margin-top:16px">
+          <b class="title">🧭 گام بعدی</b>
+          حالا که نقشه راه را در دست دارید، وقت <strong>نصب و راه‌اندازی</strong> است: در فصل ۲ پایتون و جنگو را نصب می‌کنیم، اولین پروژه را می‌سازیم و سرور توسعه را اجرا می‌کنیم. قبلش، آزمون این فصل را بدهید و دکمه «این فصل را تمام کردم» را بزنید!
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-01" placeholder="مثلاً: نقشهٔ معماری سایت رؤیاها را اینجا بنویسید...&#10;&#10;— نام سایت:&#10;— صفحات اصلی:&#10;— مدل‌های داده:"></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-01">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <span class="pager-item prev disabled">→ فصل قبلی<br><b>شروع دوره هستید</b></span>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-02/index.html">فصل بعدی ←<br><b>🛠️ فصل ۲: نصب، راه‌اندازی و محیط توسعه</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱: آشنایی با جنگو | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
