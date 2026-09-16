@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۲: REST API با DRF — مقدماتی | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۲ دوره جامع جنگو: REST API با DRF — مقدماتی — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۲ از ۳۰ — REST API با DRF — مقدماتی</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🎨 بهینه‌سازی و API ← فصل ۲۲
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۲ از ۳۰</span>
+    <h1>🔌 REST API با DRF — مقدماتی</h1>
+    <p>ساخت اولین <span class="term" data-term="api">API</span> با <span class="term" data-term="drf">Django REST Framework</span>: مفاهیم REST و <span class="term" data-term="endpoint">endpoint</span>، <span class="term" data-term="serializer">سریالایزر</span>ها، APIView، جنریک‌ها و کاوشگر API (Browsable API).</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۰۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا جنگو HTML تحویل می‌داد؛ حالا یاد می‌گیریم همان داده‌ها را به‌صورت JSON به هر کلاینتی (اپ موبایل، فرانت‌اند جدا، سرویس دیگر) بدهیم. DRF استانداردی‌ترین راه ساخت API در جنگو است.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>مفاهیم REST (منابع، متدها، کدهای وضعیت) را توضیح دهید.</li>
+          <li>DRF را نصب و در INSTALLED_APPS ثبت کنید.</li>
+          <li>با ModelSerializer مدل را به JSON و برگردانید.</li>
+          <li>با APIView یک endpoint کامل CRUD بنویسید.</li>
+          <li>از GenericAPIView/ListCreate برای کد کمتر استفاده کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> مدل‌ها (۴-۶)، ویوها (۸-۹) و احراز هویت (۱۲) پایه‌های مستقیم این فصل‌اند؛ ادامه در فصل ۲۳.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>REST و JSON</h4><p>قراردادها و کدها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>سریالایزر</h4><p>مدل ⇄ JSON.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>APIView</h4><p>ویوی دستی API.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>جنریک‌ها</h4><p>CRUD با کد کمتر.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 فرق APIView با ویوی معمولی جنگو چیست؟</summary>
+          <div class="answer-body"><p>ورودی/خروجی با فرمت‌های مختلف (<span class="term" data-term="json">JSON</span>, فرم، HTML کاوشگر)، مدیریت محتوای درخواست (request.data به‌جای POST)، <span class="term" data-term="authentication">احراز هویت</span>/<span class="term" data-term="authorization">مجوز</span> یکپارچه و پاسخ‌های استاندارد. در باطن همان View جنگو است که «چندزبانه» شده.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 request.data و request.POST چه فرقی دارند؟</summary>
+          <div class="answer-body"><p>POST فقط داده فرم‌کدگذاری‌شده را می‌خواند؛ request.data هر فرمتی (JSON شامل!) را یک‌جا می‌دهد. کلاینت‌های API معمولاً JSON می‌فرستند — پس همیشه request.data.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا PUT کامل و PATCH جزئی است؟</summary>
+          <div class="answer-body"><p>قرارداد <span class="term" data-term="rest">REST</span>: PUT یعنی «این منبع را با این تصویر <strong>کامل</strong> جایگزین کن» (فیلدهای غایب پاک/پیش‌فرض)؛ PATCH یعنی «فقط این تکه‌ها را تغییر بده». DRF در ویوهای به‌روزرسانی، partial=True را برای PATCH ست می‌کند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ با مدل‌های Post/Comment (فصل ۶).</li>
+          <li>درک JSON و متدهای HTTP (GET/POST/PUT/PATCH/DELETE).</li>
+          <li>کدهای وضعیت (فصل ۸): 200/201/204/400/401/403/404.</li>
+          <li>نصب DRF: <code class="inline-code">pip install djangorestframework</code>.</li>
+          
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ نسخه‌ها</b>
+          این فصل بر پایه djangorestframework نسخه ۳.۱۵+ و جنگو ۵.x نوشته شده. اگر خطای import دیدید، نسخه را با <code class="inline-code">pip show djangorestframework</code> چک کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ REST در یک نگاه</h3>
+<p><span class="term" data-term="rest">REST</span> سبک معماری است: هر چیز یک <strong>منبع</strong> با نشانی یکتا (URL) است و با متدهای HTTP روی آن عمل می‌کنیم:</p>
+          <div class="table-wrap"><table class="compare"><thead><tr><th>عملیات</th><th>متد + مسیر</th><th>پاسخ</th></tr></thead><tbody><tr><td>فهرست پست‌ها</td><td>GET /api/posts/</td><td>200 + آرایه JSON</td></tr><tr><td>ایجاد پست</td><td>POST /api/posts/</td><td>201 + شیء ساخته‌شده</td></tr><tr><td>جزئیات پست ۵</td><td>GET /api/posts/5/</td><td>200 + شیء</td></tr><tr><td>ویرایش کامل/جزئی</td><td>PUT / PATCH /api/posts/5/</td><td>200 + شیء به‌روز</td></tr><tr><td>حذف پست ۵</td><td>DELETE /api/posts/5/</td><td>204 بدون بدنه</td></tr></tbody></table></div>
+          <div class="code-box">
+          <div class="code-head"><span>settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">INSTALLED_APPS = [
+    ...
+    "rest_framework",   # ← کاوشگر API و ابزارها
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS":
+        "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}</code></pre>
+        </div>
+
+        <h3>۵.۲ سریالایزر: پل مدل و JSON</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/serializers.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from rest_framework import serializers
+
+from .models import Comment, Post
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["id", "name", "text", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+
+class PostSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)  # تودرتو
+    author_name = serializers.CharField(source="author.name",
+                                        read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ["id", "title", "slug", "body", "published",
+                  "author_name", "comments", "created_at"]
+        read_only_fields = ["id", "slug", "created_at"]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>دو جهت سریالایزر</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># مدل → JSON (خواندن)
+s = PostSerializer(post)
+s.data            # OrderedDict آماده JsonResponse
+
+# JSON → مدل (نوشتن، با اعتبارسنجی!)
+s = PostSerializer(data=request.data)
+s.is_valid(raise_exception=True)   # 400 خودکار با جزئیات خطاها
+post = s.save()</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 fields = "__all__"؟</b>
+          راحت ولی خطرناک: با تغییر مدل، ناخواسته فیلدی حساس (مثل is_staff یا فیلد داخلی) در API نشت می‌کند. فهرست صریح فیلدها عادت حرفه‌ای است.
+        </div>
+
+        <h3>۵.۳ APIView — کنترل کامل دستی</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/views_api.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import Post
+from .serializers import PostSerializer
+
+
+class PostListAPI(APIView):
+    def get(self, request):
+        posts = Post.objects.filter(published=True)
+        page = self.paginate_queryset(posts)
+        if page is not None:
+            return self.get_paginated_response(
+                PostSerializer(page, many=True).data)
+        return Response(PostSerializer(posts, many=True).data)
+
+    def post(self, request):
+        s = PostSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        s.save(author=request.user.author)
+        return Response(s.data, status=status.HTTP_201_CREATED)
+
+
+class PostDetailAPI(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(Post, pk=pk, published=True)
+
+    def get(self, request, pk):
+        return Response(PostSerializer(self.get_object(pk)).data)
+
+    def patch(self, request, pk):
+        post = self.get_object(pk)
+        s = PostSerializer(post, data=request.data, partial=True)
+        s.is_valid(raise_exception=True)
+        s.save()
+        return Response(s.data)
+
+    def delete(self, request, pk):
+        self.get_object(pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>blog/urls_api.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">urlpatterns = [
+    path("posts/", PostListAPI.as_view(), name="api_post_list"),
+    path("posts/&lt;int:pk&gt;/", PostDetailAPI.as_view(), name="api_post_detail"),
+]
+# در urls اصلی پروژه:
+# path("api/", include("blog.urls_api")),</code></pre>
+        </div>
+
+        <h3>۵.۴ جنریک‌ها: همان CRUD با کد کمتر</h3>
+<div class="code-box">
+          <div class="code-head"><span>معادل بخش ۵.۳ در چند خط</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+
+class PostListAPI(generics.ListCreateAPIView):
+    queryset = Post.objects.filter(published=True)
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user.author)
+
+
+class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.filter(published=True)
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]</code></pre>
+        </div>
+          <div class="table-wrap"><table class="compare"><thead><tr><th>جنریک</th><th>متدها</th></tr></thead><tbody><tr><td>ListAPIView / CreateAPIView</td><td>GET فهرست / POST</td></tr><tr><td>RetrieveAPIView</td><td>GET جزئیات</td></tr><tr><td>UpdateAPIView / DestroyAPIView</td><td>PUT+PATCH / DELETE</td></tr><tr><td>ListCreateAPIView</td><td>GET + POST</td></tr><tr><td>RetrieveUpdateDestroyAPIView</td><td>GET + PUT + PATCH + DELETE</td></tr></tbody></table></div>
+          <div class="callout tip">
+          <b class="title">💡 perform_create/perform_update</b>
+          hookهای جنریک برای تزریق داده (author از request، ip از متا) قبل از save — دقیقاً مثل form_valid در CBVها (فصل ۹).
+        </div>
+
+        <h3>۵.۵ کاوشگر API و تست سریع</h3>
+<p>چون rest_framework در INSTALLED_APPS است، اگر API را <strong>در مرورگر</strong> باز کنید، صفحه HTML تعاملی (Browsable API) می‌بینید: داده‌ها، فرم POST، حتی DELETE — بدون نوشتن هیچ فرانت‌اندی!</p>
+          <div class="code-box">
+          <div class="code-head"><span>تست با curl / کلاینت تست</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># خواندن
+curl http://localhost:8000/api/posts/
+
+# نوشتن (JSON)
+curl -X POST http://localhost:8000/api/posts/ \
+  -H "Content-Type: application/json" \
+  -d '{"title": "پست جدید", "body": "متن..."}'</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>تست خودکار با APIClient (فصل ۲۰)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from rest_framework.test import APITestCase
+
+
+class PostAPITest(APITestCase):
+    def test_list_ok(self):
+        r = self.client.get("/api/posts/", format="json")
+        self.assertEqual(r.status_code, 200)
+
+    def test_create_requires_auth(self):
+        r = self.client.post("/api/posts/", {"title": "t", "body": "b"})
+        self.assertIn(r.status_code, (401, 403))</code></pre>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>API کامل «نظرات» به‌صورت تودرتو زیر پست — الگوی واقعی پروژه‌ها:</p>
+        <div class="code-box">
+          <div class="code-head"><span>serializers — تودرتو و نوشتنی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class CommentSerializer(serializers.ModelSerializer):
+    post = serializers.PrimaryKeyRelatedField(
+        queryset=Post.objects.filter(published=True))
+
+    class Meta:
+        model = Comment
+        fields = ["id", "post", "name", "text", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+    def validate_text(self, value):
+        if "تبلیغ" in value:
+            raise serializers.ValidationError("متن تبلیغاتی مجاز نیست.")
+        return value</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>views — فهرست با فیلتر و ایجاد</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class CommentListAPI(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        qs = Comment.objects.select_related("post")
+        post_id = self.request.query_params.get("post")
+        if post_id:
+            qs = qs.filter(post_id=post_id)
+        return qs</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>urls</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">path("comments/", CommentListAPI.as_view()),
+path("comments/&lt;int:pk&gt;/", generics.RetrieveDestroyAPIView.as_view(
+    queryset=Comment.objects.all(),
+    serializer_class=CommentSerializer)),</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>نمونه پاسخ GET /api/comments/?post=5</span><span class="lang">JSON</span></div>
+          <pre class="code"><code data-lang="json">{
+  "count": 2,
+  "results": [
+    {
+      "id": 12,
+      "post": 5,
+      "name": "رضا",
+      "text": "عالی بود!",
+      "created_at": "2026-01-10T14:22:03Z"
+    }
+  ]
+}</code></pre>
+        </div>
+          <p>همین <span class="term" data-term="api">API</span> را یک اپ موبایل یا فرانت‌اند React (فصل ۲۸) مصرف می‌کند — بدون تغییر در بک‌اند.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>وبلاگ را API-محور کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> دو endpoint با جنریک‌ها بسازید: <code class="inline-code">/api/posts/</code> (فهرست+ایجاد) و <code class="inline-code">/api/posts/&lt;pk&gt;/</code> (جزئیات+ویرایش+حذف). در کاوشگر مرورگر تست کنید.</li>
+          <li><strong>کارگاه ۲:</strong> سریالایزر Post را طوری گسترش دهید که <code class="inline-code">tags</code> (فهرست نام‌ها، فقط خواندنی) و <code class="inline-code">comment_count</code> را برگرداند.</li>
+          <li><strong>کارگاه ۳:</strong> با APIClient دو تست بنویسید: ایجاد پست بدون ورود → 401/403؛ با force_authenticate → 201 و بررسی داده ذخیره‌شده.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><p>کد مفهوم ۵.۴ عیناً جواب است؛ نکات تکمیلی:</p><div class="code-box"><div class="code-head"><span>urls_api.py کامل</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.urls import path
+from rest_framework import generics
+
+from .models import Post
+from .serializers import PostSerializer
+
+
+class PostListAPI(generics.ListCreateAPIView):
+    queryset = Post.objects.filter(published=True).select_related("author")
+    serializer_class = PostSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user.author)
+
+
+class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.filter(published=True)
+    serializer_class = PostSerializer
+
+
+urlpatterns = [
+    path("posts/", PostListAPI.as_view()),
+    path("posts/&lt;int:pk&gt;/", PostDetailAPI.as_view()),
+]</code></pre></div><p>در <code class="inline-code">http://localhost:8000/api/posts/</code> کاوشگر را ببینید؛ فرم RAW data را امتحان کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>فیلدهای محاسباتی</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">class PostSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    comment_count = serializers.IntegerField(
+        source="comments.count", read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ["id", "title", "slug", "body", "published",
+                  "tags", "comment_count", "created_at"]
+
+    def get_tags(self, obj):
+        return list(obj.tags.values_list("name", flat=True))</code></pre></div><p><strong>هشدار <span class="term" data-term="n-plus-one">N+1</span>:</strong> comments.count برای هر پست یک کوئری است! در get_queryset ویو فهرست: <code class="inline-code">.annotate(comment_count=Count("comments")).prefetch_related("tags")</code> و فیلد سریالایزر را به IntegerField ساده تبدیل کنید (فصل ۱۵ در API هم صادق است).</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>tests_api.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from rest_framework.test import APITestCase
+
+
+class PostCreateAPITest(APITestCase):
+    def test_anonymous_cannot_create(self):
+        r = self.client.post("/api/posts/",
+                             {"title": "t", "body": "bb"}, format="json")
+        self.assertIn(r.status_code, (401, 403))
+
+    def test_author_can_create(self):
+        u = User.objects.create_user("a", password="p")
+        author = Author.objects.create(name="A", user=u)
+        self.client.force_authenticate(user=u)
+        r = self.client.post("/api/posts/",
+                             {"title": "t", "body": "bb"}, format="json")
+        self.assertEqual(r.status_code, 201)
+        self.assertTrue(Post.objects.filter(title="t", author=author).exists())</code></pre></div><p>force_authenticate مسیر ورود واقعی را دور می‌زند — برای تست منطق ویو عالی است. برای تست خودِ احراز هویت، client.credentials(HTTP_AUTHORIZATION=...) یا login را استفاده کنید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ خطای 405 Method Not Allowed</b>
+          <p>متد درخواست با متدهای تعریف‌شده ویو نمی‌خواند (مثلاً POST به RetrieveAPIView). جنریک درست یا متد get/post/... در APIView را چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ «You called this URL via POST, but the data... CSRF» (خطای 403 CSRF در API)</b>
+          <p>SessionAuthentication فعال است و مرورگر/کلاینت توکن CSRF ندارد. برای API معمولاً Token/JWT استفاده می‌شود (فصل ۲۳)؛ در تست با APIClient مشکلی نیست.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ AttributeError: got AttributeError when trying to get field value...</b>
+          <p>نام فیلد در Meta.fields با چیزی که سریالایزر می‌تواند بخواند نمی‌خواند (مثلاً source اشتباه یا property بدون خروجی). نام فیلد/property مدل را چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ 400 با پیام «This field is required» برای فیلدی که نفرستاده‌اید</b>
+          <p>فیلد در سریالایزر خواندنی نیست؛ read_only_fields را اضافه کنید یا در ویو مقدارش را تزریق کنید (perform_create).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ کاوشگر API نمایش داده نمی‌شود</b>
+          <p>rest_framework در INSTALLED_APPS نیست، یا با curl/هدر Accept: application/json درخواست داده‌اید (کاوشگر فقط برای درخواست‌های HTML مرورگر است).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — متد و کد وضعیت</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر سناریو متد HTTP و کد وضعیت موفق؟ (الف) ساخت نظر جدید (ب) گرفتن فهرست پست‌ها (ج) حذف پست (د) تغییر فقط عنوان پست (ه) درخواست جزئیات پستی که وجود ندارد</p><p><strong>پاسخ:</strong> الف → POST / 201 • ب → GET / 200 • ج → DELETE / 204 • د → PATCH / 200 • ه → GET / 404.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — طراحی سریالایزر</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> در سریالایزر ثبت‌نام، کدام فیلدها read_only و کدام write_only؟ (id، password، email، created_at، is_staff)</p><p><strong>پاسخ:</strong> read_only: id, created_at (و is_staff که هرگز از کلاینت گرفته نشود — کلاً نگذارید!) • write_only: password (در خروجی JSON برنگردد) • معمولی: email.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — APIView یا جنریک؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر مورد کدام مناسب‌تر؟ (الف) CRUD استاندارد روی یک مدل (ب) endpoint گزارش‌گیری که سه کوئری تجمیعی را ترکیب می‌کند (ج) endpoint که دو مدل را در یک پاسخ برمی‌گرداند</p><p><strong>پاسخ:</strong> الف → جنریک/ViewSet (کد کمتر، رفتار استاندارد) • ب و ج → APIView (منطق سفارشی؛ جنریک‌ها برای «یک مدل، CRUD» طراحی شده‌اند).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-22" data-title="آزمون فصل ۲۲ — REST API با DRF — مقدماتی" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) request.data در DRF چه مزیتی بر request.POST دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">سریع‌تر است</button>
+              <button type="button" class="quiz-opt" data-key="b">بدنه JSON و سایر فرمت‌ها را هم یک‌جا می‌خواند</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط خواندنی است</button>
+              <button type="button" class="quiz-opt" data-key="d">نیاز به CSRF ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 کلاینت‌های API معمولاً JSON می‌فرستند؛ request.POST آن را نمی‌بیند ولی request.data همه فرمت‌ها را پشتیبانی می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) کد وضعیت پاسخ موفق DELETE طبق قرارداد REST چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">200 با شیء حذف‌شده</button>
+              <button type="button" class="quiz-opt" data-key="b">204 بدون بدنه</button>
+              <button type="button" class="quiz-opt" data-key="c">302</button>
+              <button type="button" class="quiz-opt" data-key="d">404</button>
+            </div>
+            <div class="quiz-explain">💡 204 No Content: عملیات موفق و چیزی برای برگرداندن نیست. (بعضی APIها 200 با پیام می‌دهند؛ 204 استانداردتر است.)</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) is_valid(raise_exception=True) چه می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط True/False</button>
+              <button type="button" class="quiz-opt" data-key="b">در نامعتبر بودن، خودکار پاسخ 400 با جزئیات خطاهای فیلدها برمی‌گرداند</button>
+              <button type="button" class="quiz-opt" data-key="c">داده را پاک می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">استثنا را مخفی می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 DRF ValidationError را گرفته و به Response با status=400 و دیکشنری خطاها تبدیل می‌کند — بدون کد اضافه.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) کدام جنریک هم GET جزئیات و هم PUT/PATCH و DELETE را پوشش می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ListCreateAPIView</button>
+              <button type="button" class="quiz-opt" data-key="b">RetrieveUpdateDestroyAPIView</button>
+              <button type="button" class="quiz-opt" data-key="c">CreateAPIView</button>
+              <button type="button" class="quiz-opt" data-key="d">UpdateAPIView</button>
+            </div>
+            <div class="quiz-explain">💡 نام‌ها ترکیبی‌اند: Retrieve=GET جزئیات، Update=PUT/PATCH، Destroy=DELETE.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) چرا fields = "__all__" توصیه نمی‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند است</button>
+              <button type="button" class="quiz-opt" data-key="b">با تغییر مدل ممکن است فیلد حساس ناخواسته در API نشت کند</button>
+              <button type="button" class="quiz-opt" data-key="c">کار نمی‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط خواندنی می‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 فهرست صریح فیلدها «قرارداد API» را آگاهانه نگه می‌دارد؛ نشت تصادفی داده از رایج‌ترین باگ‌های امنیتی API است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) hook مناسب برای ست‌کردن author از کاربر لاگین‌شده در ListCreateAPIView چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">get_queryset</button>
+              <button type="button" class="quiz-opt" data-key="b">perform_create</button>
+              <button type="button" class="quiz-opt" data-key="c">serializer.data</button>
+              <button type="button" class="quiz-opt" data-key="d">dispatch</button>
+            </div>
+            <div class="quiz-explain">💡 perform_create قبل از save صدا زده می‌شود: serializer.save(author=self.request.user.author).</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «API عمومی وبلاگ»</strong> — نسخه API وبلاگ را بسازید که یک اپ موبایل فرضی بتواند مصرف کند.</p>
+        <ul class="checklist">
+          <li>نصب DRF و تنظیم REST_FRAMEWORK (صفحه‌بندی ۱۰ تایی).</li>
+          <li>سریالایزرهای Post و Comment (فیلد صریح + validate سفارشی).</li>
+          <li>endpointها: posts (List/Create)، posts/pk (RUD)، comments با فیلتر ?post=.</li>
+          <li>تست با کاوشگر مرورگر + curl برای هر متد.</li>
+          <li>حداقل ۴ تست APIClient (فهرست، ایجاد با/بدون احراز هویت، ۴۰۴).</li>
+          
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 مستندسازی</b>
+          از همین ابتدا مسیرها و پاسخ‌ها را در docs/api.md یادداشت کنید؛ در فصل ۲۳ مستندسازی خودکار OpenAPI را هم اضافه می‌کنیم.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>REST = منابع با URL + متدهای HTTP + کدهای وضعیت قرارداددار.</li>
+          <li>ModelSerializer دو جهت: data خواندن، data=... نوشتن با اعتبارسنجی.</li>
+          <li>APIView کنترل دستی؛ جنریک‌ها CRUD آماده با hookها.</li>
+          <li>request.data همیشه؛ perform_create برای تزریق author.</li>
+          <li>کاوشگر API + curl + APIClient: سه ابزار تست سریع.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «API خوب، قرارداد صریح است: فیلدهای اعلامی، کدهای وضعیت درست و پیام خطای خوانا.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>DRF تنها گزینه است؟</summary><div class="faq-body"><p>نه: Django Ninja (سریع‌تر، type-hint محور، OpenAPI خودکار) گزینه مدرن‌تری است و JsonResponse خالص هم ممکن. ولی DRF بالغ‌ترین اکوسیستم (مجوزها، صفحه‌بندی، مستندسازی) را دارد و بازار کار ایران/جهان اکثراً DRF است.</p></div></details>
+        <details class="faq-item"><summary>ورژن‌گذاری API چطور است؟</summary><div class="faq-body"><p>رایج‌ترین: پیشوند مسیر <code class="inline-code">/api/v1/...</code>. وقتی قرارداد را شکستید، v2 بسازید و v1 را مدت‌دار نگه دارید. تغییرات سازگار (افزودن فیلد) نیاز به نسخه جدید ندارند.</p></div></details>
+        <details class="faq-item"><summary>چطور فقط JSON بدهم و کاوشگر HTML حذف شود؟</summary><div class="faq-body"><p>در REST_FRAMEWORK: <code class="inline-code">"DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"]</code> — کاوشگر فقط یک renderer است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          پایه API ساخته شد؛ حالا حرفه‌ای‌اش می‌کنیم: <strong>فصل ۲۳</strong> — <span class="term" data-term="viewset">ViewSet</span> و <span class="term" data-term="router">Router</span>، مجوزها، <span class="term" data-term="throttling">محدودسازی نرخ</span>، <span class="term" data-term="jwt">JWT</span> و مستندسازی خودکار.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-22" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-22">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-21/index.html">→ فصل قبلی<br><b>🐞 فصل ۲۱</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-23/index.html">فصل بعدی ←<br><b>🚀 فصل ۲۳: DRF پیشرفته — ViewSet، مجوزها و JWT</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۲: REST API با DRF — مقدماتی | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
