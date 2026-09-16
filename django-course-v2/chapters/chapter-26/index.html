@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۶: استقرار (Deployment) روی سرور واقعی | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۶ دوره جامع جنگو: استقرار (Deployment) روی سرور واقعی — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۶ از ۳۰ — استقرار (Deployment) روی سرور واقعی</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🚀 استقرار و پروژه‌های عملی ← فصل ۲۶
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۶ از ۳۰</span>
+    <h1>📦 استقرار (Deployment) روی سرور واقعی</h1>
+    <p>از localhost تا اینترنت: آماده‌سازی امن پروژه، <span class="term" data-term="postgresql">PostgreSQL</span>، <span class="term" data-term="gunicorn">Gunicorn</span> و <span class="term" data-term="nginx">Nginx</span>، فایل‌های ایستا، <span class="term" data-term="https">HTTPS</span> رایگان، systemd و <span class="term" data-term="docker">داکر</span> — با چک‌لیست نهایی استقرار.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۲۰ دقیقه</span>
+      <span class="pill">🎓 پیشرفته</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>سایتی که فقط روی لپ‌تاپ شماست، وجود ندارد! استقرار یعنی پروژه را روی سروری واقعی، امن، پایدار و قابل به‌روزرسانی بالا بیاورید. این فصل نقشه کامل راه است — از <span class="term" data-term="vps">VPS</span> خام تا HTTPS.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>پروژه را برای تولید آماده کنید (SECRET_KEY، DEBUG، ALLOWED_HOSTS، env).</li>
+          <li>معماری Nginx → Gunicorn → Django را توضیح و پیکربندی کنید.</li>
+          <li>PostgreSQL را جایگزین SQLite و مهاجرت داده را مدیریت کنید.</li>
+          <li>فایل‌های ایستا/رسانه را در تولید سرو کنید (WhiteNoise یا Nginx).</li>
+          <li>HTTPS با Let's Encrypt، سرویس systemd و استقرار داکری بسازید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> عصاره همه فصل‌ها: استاتیک (۱۴)، لاگ (۲۱)، سلری (۲۴) و امنیت (۱۷). فصل ۲۷ (کارایی) بعد از این روی همین زیرساخت سوار می‌شود.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>آماده‌سازی پروژه</h4><p>secrets و settings تولید.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>دیتابیس و استاتیک</h4><p>Postgres + WhiteNoise/Nginx.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>سرور اپ</h4><p>Gunicorn + systemd.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>Nginx و HTTPS</h4><p>پروکسی معکوس + گواهی رایگان.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۵</span><h4>داکر</h4><p>کل پشته در compose.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا runserver برای تولید مناسب نیست؟</summary>
+          <div class="answer-body"><p>خود مستندات جنگو می‌گوید: تک‌رشته، بدون سخت‌گیری امنیتی، برای توسعه. در تولید از سرور <span class="term" data-term="wsgi">WSGI</span> مثل <span class="term" data-term="gunicorn">Gunicorn</span> استفاده می‌شود: چند ورکر، مدیریت پروسه، پایداری. runserver با اولین درخواست سنگین یا خطا کم می‌آورد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 نقش Nginx جلوی Gunicorn چیست؟</summary>
+          <div class="answer-body"><p><span class="term" data-term="reverse-proxy">پروکسی معکوس</span>: ترافیک را می‌گیرد، فایل‌های ایستا را خودش (خیلی سریع‌تر) سرو می‌کند، درخواست‌های داینامیک را به Gunicorn می‌دهد، HTTPS را خاتمه می‌دهد، بافر می‌کند (ورکرهای گران‌قیمت پایتون را با کلاینت کند مشغول نمی‌کند) و لاگ دسترسی می‌گیرد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا secrets نباید در گیت باشند؟</summary>
+          <div class="answer-body"><p>یک push اشتباه = SECRET_KEY/رمز دیتابیس عمومی برای همیشه (حتی اگر پاک کنید، تاریخچه و ربات‌های اسکنر می‌مانند). ربات‌ها ظرف <strong>دقیقه</strong> ریپازیتوری‌های عمومی را برای کلید AWS/رمز می‌کاوند. راه حل: <span class="term" data-term="env-var">متغیرهای محیطی</span> + فایل .env خارج از گیت.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ کامل با تست‌های سبز (فصل ۲۰).</li>
+          <li>یک VPS (ارزان‌ترین پلن کافی است؛ Hetzner/DigitalOcean/سرویس‌های ایرانی) با اوبونتو ۲۲.۰۴/۲۴.۰۴.</li>
+          <li>یک دامنه (یا زیردامنه رایگان) که A record آن به IP سرور وصل باشد.</li>
+          <li>دسترسی SSH به سرور: <code class="inline-code">ssh root@YOUR_IP</code>.</li>
+          
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 می‌شود بدون سرور هم تمرین کرد؟</b>
+          بله: همه پیکربندی‌های این فصل را می‌توانید با <strong>داکر روی همان لپ‌تاپ</strong> تمرین کنید (بخش ۵.۶). فقط DNS/HTTPS واقعی به سرور نیاز دارد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ آماده‌سازی پروژه: secrets و settings</h3>
+<div class="code-box">
+          <div class="code-head"><span>config/settings.py — خواندن از محیط</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# فایل .env (فقط محلی/روی سرور؛ هرگز در گیت نه!)
+# pip install python-dotenv
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.environ["SECRET_KEY"]          # وجودش اجباری است
+DEBUG = os.environ.get("DEBUG", "0") == "1"    # پیش‌فرض: خاموش!
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME", "blog"),
+        "USER": os.environ.get("DB_USER", "blog"),
+        "PASSWORD": os.environ.get("DB_PASS", ""),
+        "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+    }
+}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>.env (خارج از گیت) و .gitignore</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">SECRET_KEY=django-insecure-... (کلید تازه و قوی بسازید)
+DEBUG=0
+ALLOWED_HOSTS=example.com,www.example.com
+DB_NAME=blog
+DB_USER=blog
+DB_PASS=رمز_قوی_تصادفی
+DB_HOST=127.0.0.1
+
+# .gitignore:
+.env
+*.sqlite3
+/staticfiles/
+/media/
+logs/</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ساخت SECRET_KEY تازه</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python -c "from django.core.management.utils import \
+    get_random_secret_key; print(get_random_secret_key())"</code></pre>
+        </div>
+          <div class="callout danger">
+          <b class="title">🚨 چک‌لیست امنیتی تولید</b>
+          DEBUG=False • ALLOWED_HOSTS دقیق • SECRET_KEY از env • SESSION_COOKIE_SECURE=True • CSRF_COOKIE_SECURE=True • SECURE_SSL_REDIRECT=True • SECURE_HSTS_SECONDS=31536000 • رمز دیتابیس قوی. همه را می‌توان در settings با شرط not DEBUG گذاشت.
+        </div>
+
+        <h3>۵.۲ PostgreSQL روی سرور</h3>
+<div class="code-box">
+          <div class="code-head"><span>نصب و ساخت دیتابیس</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">sudo apt update
+sudo apt install -y postgresql postgresql-contrib
+
+sudo -u postgres psql
+# CREATE DATABASE blog;
+# CREATE USER blog WITH PASSWORD 'رمز_قوی';
+# ALTER ROLE blog SET client_encoding TO 'utf8';
+# ALTER ROLE blog SET timezone TO 'Asia/Tehran';
+# GRANT ALL PRIVILEGES ON DATABASE blog TO blog;
+# \q</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>انتقال داده از SQLite (اختیاری)</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># روی لپ‌تاپ: خروجی داده
+python manage.py dumpdata --natural-foreign --natural-primary \
+    -e contenttypes -e auth.permission --indent 2 &gt; data.json
+
+# روی سرور (با DATABASES تنظیم‌شده روی Postgres):
+python manage.py migrate
+python manage.py loaddata data.json</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ چرا Postgres نه SQLite در تولید؟</b>
+          SQLite تک‌فایل و عالی برای توسعه است، ولی نوشتن هم‌زمان چند ورکر Gunicorn روی آن قفل/کندی می‌آورد. Postgres: هم‌زمانی واقعی، پشتیبان‌گیری گرم، ایندکس‌های پیشرفته و مقیاس. (تله dumpdata: contenttypes و permissionها را exclude کنید وگرنه loaddata تکراری می‌شود.)
+        </div>
+
+        <h3>۵.۳ Gunicorn + systemd</h3>
+<div class="code-box">
+          <div class="code-head"><span>اجرای دستی (تست)</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">pip install gunicorn python-dotenv psycopg2-binary
+cd /srv/blog
+gunicorn config.wsgi:application \
+    --bind unix:/run/gunicorn.sock \
+    --workers 3 --timeout 60</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>/etc/systemd/system/blog.service</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">[Unit]
+Description=Blog Gunicorn
+After=network.target postgresql.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/blog
+EnvironmentFile=/srv/blog/.env
+ExecStart=/srv/blog/.venv/bin/gunicorn config.wsgi:application \
+    --bind unix:/run/gunicorn.sock \
+    --workers 3 --timeout 60 \
+    --access-logfile - --error-logfile -
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>فعال‌سازی</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">sudo systemctl daemon-reload
+sudo systemctl enable --now blog
+sudo systemctl status blog          # active (running)؟
+journalctl -u blog -f               # لاگ زنده</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 چند ورکر؟</b>
+          فرمول رایج: <code class="inline-code">2 × CPU + 1</code>. ورکر زیاد = رم زیاد (هر ورکر پروسه کامل پایتون). سرور ۲ هسته‌ای: ۳ تا ۵ ورکر کافی است؛ بقیه صف می‌کشند.
+        </div>
+
+        <h3>۵.۴ فایل‌های ایستا و رسانه</h3>
+<p><strong>گزینه الف — WhiteNoise (ساده‌ترین، توصیه برای شروع):</strong></p>
+          <div class="code-box">
+          <div class="code-head"><span>settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># pip install whitenoise
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",   # ← دوم!
+    ...,
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>collectstatic قبل از هر دیپلوی</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py collectstatic --noinput
+# staticfiles/ پر می‌شود؛ WhiteNoise با فشرده‌سازی و کش سرو می‌کند</code></pre>
+        </div>
+          <p><strong>گزینه ب — Nginx مستقیم (کارایی بالاتر برای رسانه سنگین):</strong> در کانفیگ Nginx، location /static/ و /media/ با alias به STATIC_ROOT و MEDIA_ROOT؛ در این حالت WhiteNoise لازم نیست.</p>
+
+        <h3>۵.۵ Nginx و HTTPS</h3>
+<div class="code-box">
+          <div class="code-head"><span>/etc/nginx/sites-available/blog</span><span class="lang">nginx</span></div>
+          <pre class="code"><code data-lang="nginx">server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    location /static/ { alias /srv/blog/staticfiles/; }
+    location /media/  { alias /srv/blog/media/; }
+
+    location / {
+        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        client_max_body_size 10M;      # سقف آپلود
+    }
+}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>فعال‌سازی و HTTPS رایگان</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">sudo ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
+sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+
+# گواهی Let's Encrypt (خودکار nginx را هم تنظیم می‌کند):
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d example.com -d www.example.com
+# تمدید خودکار تست: sudo certbot renew --dry-run</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ بعد از HTTPS</b>
+          در settings: SECURE_SSL_REDIRECT=True, SESSION_COOKIE_SECURE=True, CSRF_COOKIE_SECURE=True, SECURE_HSTS_SECONDS=31536000. و حتماً X-Forwarded-Proto را رد کنید (کردیم) وگرنه جنگو همه درخواست‌ها را http می‌بیند و ریدایرکت حلقوی می‌سازد.
+        </div>
+
+        <h3>۵.۶ داکر: کل پشته در یک compose</h3>
+<div class="code-box">
+          <div class="code-head"><span>Dockerfile</span><span class="lang">dockerfile</span></div>
+          <pre class="code"><code data-lang="dockerfile">FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN python manage.py collectstatic --noinput || true
+CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--workers", "3"]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>docker-compose.yml</span><span class="lang">yaml</span></div>
+          <pre class="code"><code data-lang="yaml">services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: blog
+      POSTGRES_USER: blog
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  web:
+    build: .
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_HOST=db
+      - DB_NAME=blog
+      - DB_USER=blog
+      - DB_PASS=${DB_PASS}
+    command: &gt;
+      sh -c "python manage.py migrate &amp;&amp;
+             gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 3"
+    volumes:
+      - media:/app/media
+    ports: ["8000:8000"]
+    depends_on: [db]
+
+volumes:
+  pgdata:
+  media:</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اجرا</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">docker compose up -d --build
+docker compose exec web python manage.py createsuperuser
+# جلوی آن در سرور واقعی، همان Nginx به :8000 پروکسی می‌کند</code></pre>
+        </div>
+          <div class="callout tip">
+          <b class="title">💡 کدام روش؟</b>
+          VPS + systemd + Nginx: کنترل کامل، رم کمتر، استاندارد بازار کار. داکر: محیط یکسان از توسعه تا تولید، مقیاس‌پذیری راحت‌تر. هر دو را بلد باشید؛ مسیر شغلی بیشتر به داکر می‌رود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>گردش کار دیپلوی واقعی — از git push تا سایت زنده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>اسکریپت دیپلوی ساده (deploy.sh روی سرور)</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">#!/usr/bin/env bash
+set -e                                # اولین خطا = توقف
+cd /srv/blog
+sudo -u www-data git pull
+sudo -u www-data .venv/bin/pip install -r requirements.txt
+sudo -u www-data .venv/bin/python manage.py migrate --noinput
+sudo -u www-data .venv/bin/python manage.py collectstatic --noinput
+sudo systemctl restart blog
+curl -sf https://example.com/health/ &gt; /dev/null \
+  &amp;&amp; echo "✅ دیپلوی موفق" || echo "❌ بررسی کن!"</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ویوی health check (برای مانیتورینگ)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># urls: path("health/", health)
+def health(request):
+    try:
+        cache.set("hb", "1", 10)
+        Post.objects.exists()            # اتصال دیتابیس سالم؟
+        return JsonResponse({"status": "ok"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "detail": str(e)},
+                            status=500)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ساختار سرور نهایی</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">/srv/blog/
+├── .venv/            (محیط مجازی)
+├── .env              (secrets — chmod 600)
+├── config/ appها/ templates/ ...
+├── staticfiles/      (خروجی collectstatic)
+├── media/            (آپلودها — پشتیبان‌گیری!)
+└── logs/
+
+systemd: blog.service (+ blog-worker.service برای سلری فصل ۲۴)
+nginx: 80 → 443 (certbot) → unix:/run/gunicorn.sock</code></pre>
+        </div>
+          <p>به‌روزرسانی بعدی فقط: <code class="inline-code">git push</code> روی لپ‌تاپ و <code class="inline-code">./deploy.sh</code> روی سرور. (در تیم‌های بزرگ‌تر همین را GitHub Actions/GitLab CI خودکار می‌کند.)</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>سایت خودتان را واقعاً بالا بیاورید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> پروژه را تولید-آماده کنید: SECRET_KEY و DB از env، DEBUG پیش‌فرض False، بلوک تنظیمات امنیتی (HSTS، کوکی‌های Secure) با شرط not DEBUG.</li>
+          <li><strong>کارگاه ۲:</strong> پشته کامل را با <strong>داکر</strong> روی سیستم خودتان بالا بیاورید (web + db + migrate خودکار) و صفحه را روی :8000 ببینید.</li>
+          <li><strong>کارگاه ۳ (اختیاری/واقعی):</strong> روی VPS: Postgres + Gunicorn + systemd + Nginx + certbot را مرحله‌به‌مرحله اجرا کنید تا https://دامنه‌شما بالا بیاید؛ اگر VPS ندارید، همان کارگاه ۲ را با WhiteNoise کامل کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>بلوک امنیتی settings</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"</code></pre></div><p>SECURE_PROXY_SSL_HEADER را فقط وقتی بگذارید که Nginx هدر را ست می‌کند (در ۵.۵ کردیم) — وگرنه ریدایرکت حلقوی. تست محلی: DEBUG=0 با ALLOWED_HOSTS=localhost و curl -I.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><p>فایل‌های ۵.۶ را بسازید؛ سپس:</p><div class="code-box"><div class="code-head"><span>بالا آوردن پشته</span><span class="lang">bash</span></div><pre class="code"><code data-lang="bash"># .env کنار compose (بدون پیشوند docker-):
+#   SECRET_KEY=...  DB_PASS=...
+docker compose up -d --build
+docker compose ps                        # هر دو سرویس Up؟
+docker compose exec web python manage.py createsuperuser
+docker compose logs -f web               # لاگ gunicorn
+curl -I http://localhost:8000/           # 200</code></pre></div><p>خطای رایج: DB_HOST را localhost گذاشته‌اید — در compose نام سرویس است: <code class="inline-code">DB_HOST=db</code>. و migrate باید <strong>بعد</strong> از آماده شدن db اجرا شود (depends_on ساده فقط شروع را ترتیب می‌دهد؛ در اسکریپت migrate قبل از gunicorn است، پس خود اصلاح می‌شود).</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><p>ترتیب اجرایی روی VPS تازه (هر قدم را تست کنید):</p><div class="code-box"><div class="code-head"><span>چک‌لیست VPS</span><span class="lang">bash</span></div><pre class="code"><code data-lang="bash"># 1) کاربر غیر root + فایروال
+adduser deploy &amp;&amp; usermod -aG sudo deploy
+ufw allow OpenSSH &amp;&amp; ufw allow "Nginx Full" &amp;&amp; ufw enable
+
+# 2) پایتون و مخزن
+apt install python3.12-venv postgresql nginx git
+sudo -u postgres createuser blog -P &amp;&amp; sudo -u postgres createdb blog -O blog
+git clone https://github.com/you/blog /srv/blog
+cd /srv/blog &amp;&amp; python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+# .env را دستی بسازید (chmod 600) — کلیدها از لپ‌تاپ نیایند!
+
+# 3) دیتابیس و استاتیک
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py collectstatic --noinput
+.venv/bin/python manage.py createsuperuser
+
+# 4) systemd و nginx (فایل‌های ۵.۳ و ۵.۵)
+systemctl enable --now blog
+ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
+nginx -t &amp;&amp; systemctl reload nginx
+
+# 5) HTTPS
+certbot --nginx -d example.com -d www.example.com
+
+# 6) تست نهایی
+curl -I https://example.com   # 200 و هدر HSTS</code></pre></div><p>فراموش نشود: سلری هم سرویس می‌خواهد — blog-worker.service با ExecStart برابر <code class="inline-code">celery -A config worker -l warning</code> (و beat در صورت نیاز).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ Invalid HTTP_HOST header / DisallowedHost</b>
+          <p>دامنه در ALLOWED_HOSTS نیست (www و بدون www هر دو لازم‌اند). بعد از اصلاح، سرویس را restart کنید — settings کش شده.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ صفحه می‌آید ولی CSS/JS نیست (۴۰۴ روی static)</b>
+          <p>collectstatic اجرا نشده، یا STATIC_ROOT با مسیر alias در Nginx نمی‌خواند، یا WhiteNoise بعد از SecurityMiddleware ثبت نشده. مسیر /static/ را با curl چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ ریدایرکت حلقوی http↔https</b>
+          <p>SECURE_SSL_REDIRECT=True ولی هدر X-Forwarded-Proto به جنگو نمی‌رسد یا SECURE_PROXY_SSL_HEADER تنظیم نشده. هر دو سمت (Nginx و settings) را چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ 502 Bad Gateway</b>
+          <p>Gunicorn بالا نیست یا sock اشتباه است: <code class="inline-code">systemctl status blog</code> و <code class="inline-code">journalctl -u blog -n 50</code>. مالکیت سوکت/پوشه (www-data) و دسترسی‌ها را چک کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ مهاجرت‌ها روی سرور fail می‌شوند</b>
+          <p>دیتابیس/کاربر Postgres با نام اشتباه در .env، یا pg_hba احراز هویت را رد می‌کند. با <code class="inline-code">psql -U blog -h 127.0.0.1 -d blog</code> دستی تست اتصال بگیرید.</p>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 پشتیبان‌گیری از روز اول</b>
+          کرون ساده: <code class="inline-code">pg_dump blog | gzip &gt; /backups/blog-$(date +\%F).sql.gz</code> + کپی media/ به فضای ابری. پشتیبانی که تست بازیابی نشده، پشتیبان نیست!
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — اجزای معماری</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> نقش هر جزء؟ (الف) Nginx (ب) Gunicorn (ج) systemd (د) certbot (ه) WhiteNoise</p><p><strong>پاسخ:</strong> الف → پروکسی معکوس/سرو استاتیک/HTTPS • ب → سرور WSGI که کد جنگو را در ورکرها اجرا می‌کند • ج → نگهبان پروسه‌ها (شروع خودکار، ری‌استارت هنگام کرش) • د → گرفتن/تمدید گواهی رایگان Let's Encrypt • ه → سرو استاتیک فشرده+کش‌دار از داخل خود اپ (وقتی Nginx استاتیک را سرو نمی‌کند).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — ترتیب دیپلوی</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> ترتیب درست این قدم‌ها: migrate / git pull / restart / collectstatic / pip install / تست health؟</p><p><strong>پاسخ:</strong> git pull ← pip install ← migrate ← collectstatic ← restart ← health check. منطق: کد و وابستگی‌ها اول، اسکیمای دیتابیس قبل از اجرای کد جدید، استاتیک قبل از restart (تا سایت لحظه‌ای بدون CSS نماند).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — سناریوی خرابی</summary>
+          <div class="answer-body"><p><strong>سناریو:</strong> بعد از دیپلوی، سایت 500 می‌دهد ولی دیشب سالم بود. سه قدم اول تشخیص؟</p><p><strong>پاسخ:</strong> ① <code class="inline-code">journalctl -u blog -n 100</code> (Traceback واقعی اینجاست، نه صفحه کاربر) ② اگر مهاجرت داشتید: آیا migrate اجرا شد؟ دیتابیس و کد هم‌نسخه‌اند؟ ③ رول‌بک سریع: <code class="inline-code">git checkout نسخه‌قبل &amp;&amp; ./deploy.sh</code> — اول سرویس برگردد، بعد ریشه‌یابی آرام. درس: همیشه قبل دیپلوی tag بزنید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-26" data-title="آزمون فصل ۲۶ — استقرار (Deployment) روی سرور واقعی" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) چرا در تولید از runserver استفاده نمی‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند است در توسعه</button>
+              <button type="button" class="quiz-opt" data-key="b">تک‌رشته و فاقد سخت‌گیری امنیتی است؛ فقط برای توسعه طراحی شده</button>
+              <button type="button" class="quiz-opt" data-key="c">PostgreSQL را پشتیبانی نمی‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">HTTPS ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 سرور WSGI تولید (Gunicorn/uWSGI) چند ورکر، مدیریت پروسه و پایداری می‌دهد؛ مستندات جنگو صریحاً runserver را برای تولید منع می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) مسیر درست یک درخواست در معماری استاندارد چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کاربر → Gunicorn → Nginx → Django</button>
+              <button type="button" class="quiz-opt" data-key="b">کاربر → Nginx → Gunicorn → Django</button>
+              <button type="button" class="quiz-opt" data-key="c">کاربر → Django → Nginx</button>
+              <button type="button" class="quiz-opt" data-key="d">کاربر → PostgreSQL → Django</button>
+            </div>
+            <div class="quiz-explain">💡 Nginx در لبه: استاتیک و HTTPS را خودش، داینامیک را به سوکت Gunicorn می‌دهد و آن ویوی جنگو را صدا می‌زند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) SECRET_KEY در تولید کجا باید باشد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">در settings.py داخل گیت</button>
+              <button type="button" class="quiz-opt" data-key="b">در متغیر محیطی/فایل .env خارج از کنترل نسخه</button>
+              <button type="button" class="quiz-opt" data-key="c">در دیتابیس</button>
+              <button type="button" class="quiz-opt" data-key="d">مهم نیست</button>
+            </div>
+            <div class="quiz-explain">💡 نشت کلید = امکان جعل نشست/توکن/امضا. .env با chmod 600 یا secret manager؛ در گیت فقط .env.example بدون مقدار.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) collectstatic چه می‌کند و کی لازم است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">استاتیک‌ها را پاک می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">همه فایل‌های ایستا اپ‌ها را در STATIC_ROOT جمع می‌کند؛ قبل از هر دیپلوی که استاتیک عوض شده</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط در توسعه لازم است</button>
+              <button type="button" class="quiz-opt" data-key="d">دیتابیس را جمع می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 Nginx/WhiteNoise فقط از STATIC_ROOT سرو می‌کنند؛ فایل‌های پراکنده اپ‌ها را کسی در تولید نمی‌بیند مگر جمع شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) کار certbot --nginx چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">نصب Nginx</button>
+              <button type="button" class="quiz-opt" data-key="b">گرفتن گواهی Let's Encrypt و تنظیم خودکار ریدایرکت HTTPS در کانفیگ Nginx</button>
+              <button type="button" class="quiz-opt" data-key="c">ساخت دیتابیس</button>
+              <button type="button" class="quiz-opt" data-key="d">اجرای Gunicorn</button>
+            </div>
+            <div class="quiz-explain">💡 گواهی رایگان + ثبت مسیرها + تمدید خودکار (systemd timer). بعد از آن هدرهای امنیتی جنگو را روشن کنید.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) در docker-compose، چرا DB_HOST باید «db» باشد نه localhost؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فرقی ندارد</button>
+              <button type="button" class="quiz-opt" data-key="b">هر سرویس کانتینر خودش است؛ localhost داخل کانتین web به خودش اشاره می‌کند، «db» نام سرویس در شبکه داخلی compose است</button>
+              <button type="button" class="quiz-opt" data-key="c">باگ داکر است</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط برای Postgres 16</button>
+            </div>
+            <div class="quiz-explain">💡 شبکه compose نام سرویس‌ها را DNS می‌کند؛ web با db:5432 به کانتین دیتابیس می‌رسد.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «وبلاگ زنده روی اینترنت»</strong> — پروژه را واقعاً دیپلوی کنید — این مهارت، رزومه‌سازترین بخش دوره است.</p>
+        <ul class="checklist">
+          <li>تنظیمات تولید-آماده (env، بلوک امنیتی، WhiteNoise) روی شاخه main.</li>
+          <li>پشته داکری (web+db) بالا آمده و health check پاسخ 200 می‌دهد.</li>
+          <li>(با VPS) Nginx + Gunicorn + systemd + HTTPS فعال و ۴۰۴/۵۰۰ سفارشی دیده می‌شوند.</li>
+          <li>اسکریپت deploy.sh یا workflow ساده CI که migrate/collectstatic/restart را انجام دهد.</li>
+          <li>کرون پشتیبان‌گیری pg_dump + media (و یک تست بازیابی دستی).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 PaaSهای بدون دردسر</b>
+          اگر مدیریت سرور فعلاً زیاد است: Railway، Render، Fly.io یا سرویس‌های ایرانی (لیارا و...) پروژه جنگو را با Git دیپلوی می‌کنند. مفاهیم این فصل دقیقاً همان‌جا به کار می‌آید — فقط Nginx/systemd را پلتفرم انجام می‌دهد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>تولید: DEBUG=False، secrets در env، ALLOWED_HOSTS دقیق، کوکی‌های Secure+HSTS.</li>
+          <li>Postgres جای SQLite؛ dumpdata/loaddata برای انتقال داده.</li>
+          <li>Gunicorn (WSGI) + systemd برای پایداری؛ چند ورکر = 2×CPU+1.</li>
+          <li>Nginx = پروکسی معکوس + استاتیک + HTTPS با certbot.</li>
+          <li>داکر/compose = محیط یکسان؛ اسکریپت دیپلوی + health check + پشتیبان‌گیری.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «استقرار موفق، خسته‌کننده است: اسکریپت تکرارپذیر، لاگ روشن، رول‌بک آماده.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>uWSGI یا Gunicorn؟</summary><div class="faq-body"><p>هر دو سرور WSGI معتبرند. Gunicorn پیکربندی ساده‌تر و جامعه بزرگ‌تری دارد و پیشنهاد خود مستندات استقرار جنگو است؛ uWSGI انعطاف بیشتر (و پیچیدگی بیشتر). برای شروع Gunicorn + Nginx عالی است.</p></div></details>
+        <details class="faq-item"><summary>برای WebSocket/realtime چه تغییری لازم است؟</summary><div class="faq-body"><p>سرور <span class="term" data-term="asgi">ASGI</span> (Daphne/Uvicorn) جای WSGI، همراه Django Channels و Redis برای لایه کانال‌ها. Nginx همچنان جلو می‌ماند و WebSocket را پروکسی می‌کند. این مسیر فصل جداگانه‌ای است (پروژه پیشرفته).</p></div></details>
+        <details class="faq-item"><summary>چطور zero-downtime دیپلوی کنم؟</summary><div class="faq-body"><p>ساده: چند ورکر Gunicorn + ری‌استارت graceful (HUP به master، ورکرهای قدیم کار را تمام می‌کنند). جدی‌تر: دو نمونه اپ پشت Nginx با health check و rolling restart، یا کانتینرهای جایگزین‌شونده. نکته حیاتی: مهاجرت‌ها باید backward-compatible باشند (کد قدیم با اسکیمای جدید کار کند).</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          سایت بالاست؛ حالا باید «سریع» بماند. <strong>فصل ۲۷</strong>: <span class="term" data-term="performance">بهینه‌سازی کارایی</span> — اندازه‌گیری، ایندکس، کوئری‌ها و کش در مقیاس.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-26" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-26">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-25/index.html">→ فصل قبلی<br><b>🌍 فصل ۲۵</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-27/index.html">فصل بعدی ←<br><b>🏎️ فصل ۲۷: بهینه‌سازی کارایی (Performance)</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۶: استقرار (Deployment) روی سرور واقعی | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
