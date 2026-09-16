@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۱: فرم‌ها (Forms) در جنگو | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۱ دوره جامع جنگو: فرم‌ها (Forms) در جنگو — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۱ از ۳۰ — فرم‌ها (Forms) در جنگو</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 📐 ساختار و Views ← فصل ۱۱
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۱ از ۳۰</span>
+    <h1>📝 فرم‌ها (Forms) در جنگو</h1>
+    <p>کلاس forms.Form و <span class="term" data-term="modelform">ModelForm</span>، انواع فیلد فرم، <span class="term" data-term="widget">ویجت</span>ها، اعتبارسنجی با clean_، نمایش فرم و مدیریت خطاها — به‌همراه <span class="term" data-term="csrf">CSRF</span>.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۱۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در فصل ۸ فرم را دستی با request.POST خواندیم؛ حالا ابزار حرفه‌ای جنگو را یاد می‌گیریم که هم HTML فرم را می‌سازد، هم <span class="term" data-term="validation">اعتبارسنجی</span> می‌کند و هم داده تمیز (clean) تحویل می‌دهد.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>با forms.Form فیلد، ویجت و اعتبارسنج تعریف کنید.</li>
+          <li>الگوی استاندارد فرم در ویو (Bound/Unbound) را بنویسید.</li>
+          <li>متد <code class="inline-code">clean_&lt;field&gt;</code> و <code class="inline-code">clean()</code> برای اعتبارسنجی سفارشی بنویسید.</li>
+          <li>با ModelForm فرم را مستقیم از مدل بسازید و save() کنید.</li>
+          <li>خطاهای فرم را زیبا در قالب نمایش دهید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> پایهٔ ثبت‌نام (فصل ۱۲)، CRUDهای CreateView (فصل ۹) و فرم‌های DRF (فصل ۲۲).</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>forms.Form</h4><p>فیلدها، ویجت‌ها و اعتبارسنج‌ها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>الگوی ویو</h4><p>Bound در برابر Unbound و is_valid.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>اعتبارسنجی سفارشی</h4><p>clean_field و clean.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>ModelForm</h4><p>فرم مستقیم از مدل + widgets.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا اعتبارسنجی فقط در مرورگر (جاوااسکریپت) کافی نیست؟</summary>
+          <div class="answer-body"><p>چون کاربر می‌تواند جاوااسکریپت را خاموش کند یا با ابزارهایی مثل curl <strong>مستقیم</strong> به سرور درخواست بفرستد. اعتبارسنجی مرورگر برای تجربه کاربری است؛ اعتبارسنجی سرور برای <strong>امنیت و صحت داده</strong> — همیشه هر دو.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 فرم Bound و Unbound یعنی چه؟</summary>
+          <div class="answer-body"><p><strong>Unbound</strong>: فرم خالی برای اولین نمایش (بدون داده). <strong>Bound</strong>: فرمی که با داده (معمولاً POST) ساخته شده؛ می‌تواند is_valid شود و در صورت خطا، داده‌های قبلی و خطاها را نشان دهد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 ModelForm چه چیزی را از مدل «ارث» می‌برد؟</summary>
+          <div class="answer-body"><p>فیلدها، محدودیت‌ها (max_length و...)، <strong>اعتبارسنج‌های سطح مدل</strong> (مثل unique) و help_text. یعنی یک تعریف، دو جا استفاده: دیتابیس و فرم.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>فصل ۸: الگوی GET/POST و نقش {% csrf_token %}.</li>
+          <li>مدل‌های Post و Comment آماده.</li>
+          <li>آشنایی با کلاس پایتون (فرم‌ها هم کلاس‌اند!).</li>
+          <li>قالب base.html از فصل ۱۰.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ ساخت فرم با forms.Form</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/forms.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django import forms
+
+
+class CommentForm(forms.Form):
+    name = forms.CharField(
+        label="نام شما", max_length=50,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "نام"}),
+    )
+    email = forms.EmailField(label="ایمیل", required=False)
+    text = forms.CharField(
+        label="متن نظر",
+        widget=forms.Textarea(attrs={"rows": 4, "maxlength": 500}),
+    )
+    agree = forms.BooleanField(label="قوانین را پذیرفته‌ام")</code></pre>
+        </div>
+          <p>فیلدهای رایج: CharField، EmailField، IntegerField، BooleanField، ChoiceField، DateField، FileField. هر فیلد هم <strong>ویجت</strong> (ظاهر HTML) دارد هم <strong>اعتبارسنج</strong> (منطق).</p>
+
+        <h3>۵.۲ الگوی استاندارد فرم در ویو</h3>
+<div class="code-box">
+          <div class="code-head"><span>ویوی فرم‌دار</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import CommentForm
+from .models import Post
+
+
+def add_comment(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)          # Bound
+        if form.is_valid():
+            data = form.cleaned_data               # داده تمیز و تبدیل‌شده
+            post.comments.create(
+                name=data["name"], text=data["text"],
+            )
+            messages.success(request, "نظر شما ثبت شد!")
+            return redirect(post.get_absolute_url())  # PRG
+    else:
+        form = CommentForm()                       # Unbound
+
+    return render(request, "blog/add_comment.html", {"form": form, "post": post})</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 cleaned_data چیست؟</b>
+          خروجی <span class="term" data-term="validation">اعتبارسنجی</span>: همه فیلدها به نوع درست تبدیل شده‌اند («۵» شده 5، رشته‌ها trim شده). <strong>هرگز</strong> مستقیم از request.POST برای ذخیره استفاده نکنید؛ فقط cleaned_data.
+        </div>
+
+        <h3>۵.۳ نمایش فرم در قالب</h3>
+<div class="code-box">
+          <div class="code-head"><span>add_comment.html — سه سبک نمایش</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;form method="post"&gt;
+  {% csrf_token %}
+
+  {# سبک ۱: دستی، فیلد به فیلد (زیباترین کنترل) #}
+  &lt;div class="field"&gt;
+    {{ form.name.label_tag }}
+    {{ form.name }}
+    {{ form.name.errors }}
+  &lt;/div&gt;
+
+  {# سبک ۲: نیمه‌دستی با حلقه #}
+  {% for field in form %}
+    &lt;div class="field"&gt;
+      {{ field.label_tag }} {{ field }}
+      {% if field.help_text %}&lt;small&gt;{{ field.help_text }}&lt;/small&gt;{% endif %}
+      {{ field.errors }}
+    &lt;/div&gt;
+  {% endfor %}
+
+  {# سبک ۳: یک‌خطی (فقط تست سریع) #}
+  {{ form.as_p }}
+
+  &lt;button type="submit"&gt;ثبت نظر&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+          <p>فرم Boundِ ناموفق، داده‌های قبلی کاربر و خطاها را نگه می‌دارد — لازم نیست چیزی اضافه کنید.</p>
+
+        <h3>۵.۴ اعتبارسنجی سفارشی: clean_</h3>
+<div class="code-box">
+          <div class="code-head"><span>فرم با منطق اختصاصی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django import forms
+from django.core.exceptions import ValidationError
+
+
+class CommentForm(forms.Form):
+    name = forms.CharField(max_length=50)
+    text = forms.CharField(widget=forms.Textarea)
+    website = forms.URLField(required=False)
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+        if name.lower() in ("admin", "مدیر"):
+            raise ValidationError("این نام رزرو شده است.")
+        return name                        # حتماً مقدار را برگردانید!
+
+    def clean(self):
+        cleaned = super().clean()
+        text = cleaned.get("text", "")
+        if "http" in text and not cleaned.get("website"):
+            self.add_error("website", "اگر لینک دارید، در فیلد سایت بنویسید.")
+        return cleaned</code></pre>
+        </div>
+          <ul><li><code class="inline-code">clean_&lt;field&gt;</code> — اعتبارسنجی <strong>یک فیلد</strong>.</li><li><code class="inline-code">clean()</code> — منطق <strong>چندفیلدی</strong> (مقایسه رمز و تکرارش، تاریخ شروع/پایان).</li><li>اعتبارسنج‌های آماده: <code class="inline-code">MinLengthValidator</code>، <code class="inline-code">RegexValidator</code> و... در <code class="inline-code">validators=[...]</code>.</li></ul>
+
+        <h3>۵.۵ ModelForm: فرم مستقیم از مدل</h3>
+<div class="code-box">
+          <div class="code-head"><span>فرم ساخت/ویرایش پست</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django import forms
+
+from .models import Post
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ("title", "slug", "body", "tags")   # یا exclude
+        widgets = {
+            "body": forms.Textarea(attrs={"rows": 10}),
+        }
+        labels = {"slug": "نشانی (انگلیسی)"}
+        help_texts = {"slug": "مثلاً: hello-django"}
+
+    def clean_title(self):
+        title = self.cleaned_data["title"]
+        if len(title) &lt; 5:
+            raise forms.ValidationError("عنوان حداقل ۵ نویسه باشد.")
+        return title</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ویو — یک فرم برای ساخت و ویرایش</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def post_create(request):
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)   # ذخیره نکن؛ اول تکمیل
+            post.author = request.user
+            post.save()
+            form.save_m2m()                  # روابط چندبه‌چند حالا
+            return redirect(post.get_absolute_url())
+    else:
+        form = PostForm()
+    return render(request, "blog/post_form.html", {"form": form})
+
+
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)   # ← instance!
+        if form.is_valid():
+            form.save()
+            return redirect(post.get_absolute_url())
+    else:
+        form = PostForm(instance=post)
+    return render(request, "blog/post_form.html", {"form": form, "post": post})</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ commit=False را بشناسید</b>
+          <code class="inline-code">form.save(commit=False)</code> شیء را می‌سازد ولی ذخیره نمی‌کند — فرصت می‌دهد فیلدهایی مثل author را از request.user ست کنید. اگر فرم M2M دارد، بعد از save() حتماً <code class="inline-code">form.save_m2m()</code> را صدا بزنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک فرم تماس کامل با اعتبارسنجی چندفیلدی و ذخیره در مدل:</p>
+        <div class="code-box">
+          <div class="code-head"><span>models و forms</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class ContactMessage(models.Model):
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    subject = models.CharField(max_length=120)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ContactForm(forms.ModelForm):
+    confirm_email = forms.EmailField(label="تکرار ایمیل")
+
+    class Meta:
+        model = ContactMessage
+        fields = ("name", "email", "subject", "body")
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get("email") != cleaned.get("confirm_email"):
+            self.add_error("confirm_email", "ایمیل و تکرار آن یکی نیستند.")
+        return cleaned</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ویو و قالب</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "پیام شما ارسال شد 🌿")
+            return redirect("pages:contact")
+    else:
+        form = ContactForm()
+    return render(request, "pages/contact.html", {"form": form})</code></pre>
+        </div>
+          <p>نکته امنیتی: ایمیل در مدل ذخیره می‌شود ولی confirm_email فیلد <strong>فرم-only</strong> است (در Meta.fields نیست) — مقایسه‌اش صرفاً اعتبارسنجی است.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>فرم‌های وبلاگ را حرفه‌ای کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> فرم نظر (CommentForm) را با forms.Form بسازید: نام (اجباری، ≥۳ نویسه)، ایمیل (اختیاری ولی معتبر)، متن (۱۰ تا ۵۰۰ نویسه) و ویجت‌های class="form-control".</li>
+          <li><strong>کارگاه ۲:</strong> اعتبارسنج سفارشی: اگر متن نظر شامل «تبلیغ» یا لینک بود، ValidationError با پیام فارسی بدهد.</li>
+          <li><strong>کارگاه ۳:</strong> PostForm را با ModelForm بنویسید و ویوهای post_create/post_edit فصل را به آن وصل کنید؛ slug خودکار از عنوان ساخته شود (در clean یا در مدل).</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>CommentForm</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">class CommentForm(forms.Form):
+    name = forms.CharField(label="نام", min_length=3, max_length=50,
+                           widget=forms.TextInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(label="ایمیل", required=False,
+                             widget=forms.EmailInput(attrs={"class": "form-control"}))
+    text = forms.CharField(label="متن نظر", min_length=10, max_length=500,
+                           widget=forms.Textarea(attrs={"class": "form-control", "rows": 4}))</code></pre></div><p>min/max_length خودکار اعتبارسنجی و پیام خطای فارسی‌شده می‌دهند (با تنظیم LANGUAGE_CODE="fa").</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>clean_text ضد تبلیغ</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">BANNED = ("تبلیغ", "خرید اینترنتی", "bit.ly")
+
+
+def clean_text(self):
+    text = self.cleaned_data["text"]
+    lowered = text.lower()
+    if any(word in text or word in lowered for word in BANNED):
+        raise forms.ValidationError("نظر شما شامل محتوای تبلیغاتی است.")
+    if "http://" in lowered or "https://" in lowered:
+        raise forms.ValidationError("درج لینک در نظر مجاز نیست.")
+    return text</code></pre></div><p>این «فیلتر محتوای» ساده است؛ در پروژه‌های جدی، پاک‌سازی و بررسی دقیق‌تر (یا تأیید دستی توسط مدیر — فیلد approved فصل ۶) توصیه می‌شود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>PostForm با slug خودکار</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.utils.text import slugify
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ("title", "body", "tags")   # slug را از کاربر نگیریم!
+
+    def save(self, commit=True):
+        post = super().save(commit=False)
+        if not post.slug:
+            base = slugify(post.title, allow_unicode=True)
+            slug, i = base, 1
+            while Post.objects.filter(slug=slug).exists():
+                i += 1
+                slug = f"{base}-{i}"
+            post.slug = slug
+        if commit:
+            post.save()
+            self.save_m2m()
+        return post</code></pre></div><p>slugify با allow_unicode=True اسلاگ فارسی می‌سازد؛ حلقه، یکتایی را با افزودن شماره تضمین می‌کند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ فرم همیشه نامعتبر است ولی نمی‌فهمم چرا</b>
+          <p>خطاها را ببینید! در قالب {{ form.errors }} یا در شل/دیباگ: <code class="inline-code">form.errors.as_data()</code>. رایج‌ترین علت: نام فیلد فرم با name ورودی HTML نمی‌خواند.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>The 'post' field is required</code> در ModelForm</b>
+          <p>فیلدی که در مدل null=False و بدون default است در فرم اجباری می‌شود. برای فیلدهای سیستمی (author، created_at) آن‌ها را از Meta.fields حذف یا با commit=False پر کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ cleaned_data KeyError</b>
+          <p>در clean() به cleaned_data["field"] دسترسی مستقیم کرده‌اید ولی فیلد قبلاً رد شده. از <code class="inline-code">cleaned.get("field")</code> استفاده کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ فرم با فایل (تصویر) آپلود نمی‌شود</b>
+          <p>دو نکته: ① در تگ form: <code class="inline-code">enctype="multipart/form-data"</code> ② در ویو: <code class="inline-code">Form(request.POST, request.FILES)</code>. فایل‌ها در request.FILES جدا می‌آیند.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ پیام خطاها انگلیسی است</b>
+          <p>در settings: <code class="inline-code">LANGUAGE_CODE = "fa"</code> و USE_I18N=True. پیام‌های داخلی جنگو ترجمه فارسی دارند (فصل ۲۵).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب نوع فرم</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر مورد forms.Form یا ModelForm؟ (الف) فرم تماس (ذخیره در مدل) (ب) فرم جست‌وجو (ج) فرم ورود (د) فرم ثبت پست</p><p><strong>پاسخ:</strong> الف → ModelForm (مدل ContactMessage) • ب → Form ساده (یا حتی GET دستی) • ج → فرم آماده AuthenticationForm (فصل ۱۲) • د → ModelForm.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — clean یا clean_field؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> بررسی «تاریخ پایان باید بعد از تاریخ شروع باشد» در کدام متد؟</p><p><strong>پاسخ:</strong> در <code class="inline-code">clean()</code> — چون به <strong>دو فیلد</strong> نیاز دارد. با self.add_error("end_date", ...) خطا را به فیلد درست نسبت دهید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — widget در برابر field</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> تفاوت <code class="inline-code">forms.ChoiceField</code> و <code class="inline-code">forms.Select</code> چیست؟</p><p><strong>پاسخ:</strong> ChoiceField <strong>منطق</strong> است (اعتبارسنجی یکی از گزینه‌ها)؛ Select <strong>ویجت</strong> است (نمایش dropdown). ChoiceField به‌طور پیش‌فرض ویجت Select دارد؛ می‌توان به RadioSelect عوضش کرد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-11" data-title="آزمون فصل ۱۱ — فرم‌ها (Forms) در جنگو" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) form.is_valid() چه می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فرم را در دیتابیس ذخیره می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">اعتبارسنجی همه فیلدها و ساخت cleaned_data</button>
+              <button type="button" class="quiz-opt" data-key="c">HTML فرم را می‌سازد</button>
+              <button type="button" class="quiz-opt" data-key="d">خطاها را پاک می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 is_valid تمام اعتبارسنج‌ها (و clean_های سفارشی) را اجرا می‌کند؛ اگر همه قبول شدند cleaned_data آماده است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۲) فرم Bound چه زمانی ساخته می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">وقتی با داده ساخته شود: CommentForm(request.POST)</button>
+              <button type="button" class="quiz-opt" data-key="b">وقتی خالی نمایش داده شود</button>
+              <button type="button" class="quiz-opt" data-key="c">وقتی is_valid شود</button>
+              <button type="button" class="quiz-opt" data-key="d">هرگز — فقط Unbound داریم</button>
+            </div>
+            <div class="quiz-explain">💡 دادن data به سازنده، فرم را Bound می‌کند؛ فرم Bound داده و خطاها را در رندر نگه می‌دارد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) خروجی تمیز و تبدیل‌شده فرم کجاست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">form.data</button>
+              <button type="button" class="quiz-opt" data-key="b">form.cleaned_data</button>
+              <button type="button" class="quiz-opt" data-key="c">request.POST</button>
+              <button type="button" class="quiz-opt" data-key="d">form.fields</button>
+            </div>
+            <div class="quiz-explain">💡 cleaned_data فقط بعد از is_valid موفق وجود دارد؛ form.data همان ورودی خام (و نامطمئن) است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) در ModelForm، نقش instance در فرم ویرایش چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">قالب را مشخص می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">فرم را به رکورد موجود وصل می‌کند تا save() به‌روزش کند</button>
+              <button type="button" class="quiz-opt" data-key="c">اعتبارسنجی را غیرفعال می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">فیلدها را حذف می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 PostForm(request.POST, instance=post) یعنی همین رکورد را با داده جدید به‌روزرسانی کن؛ بدون instance، رکورد جدید ساخته می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) form.save(commit=False) چه وقتی لازم است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">همیشه</button>
+              <button type="button" class="quiz-opt" data-key="b">وقتی باید فیلدهایی مثل author را قبل از ذخیره از request.user پر کنیم</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط در DeleteView</button>
+              <button type="button" class="quiz-opt" data-key="d">وقتی فرم نامعتبر است</button>
+            </div>
+            <div class="quiz-explain">💡 commit=False شیء ذخیره‌نشده برمی‌گرداند؛ پس از تکمیل فیلدها save() و در صورت M2M، save_m2m() صدا زده می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کدام گزینه درباره اعتبارسنجی سمت مرورگر درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کافی است و سرور لازم نیست</button>
+              <button type="button" class="quiz-opt" data-key="b">فقط برای تجربه کاربری است؛ سرور همیشه باید مستقل اعتبارسنجی کند</button>
+              <button type="button" class="quiz-opt" data-key="c">امنیت را تأمین می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">جنگو آن را خودکار انجام می‌دهد</button>
+            </div>
+            <div class="quiz-explain">💡 کلاینت قابل اعتماد نیست؛ forms جنگو لایه اطمینان سمت سرور است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «سامانه نظرات با فرم حرفه‌ای»</strong> — سیستم نظردهی وبلاگ را کاملاً فرم‌محور بازنویسی کنید.</p>
+        <ul class="checklist">
+          <li>CommentForm با اعتبارسنج‌های طول و ایمیل اختیاری.</li>
+          <li>clean_text ضد لینک/تبلیغ + پیام‌های فارسی.</li>
+          <li>ویوی PRG با messages.success/error.</li>
+          <li>نمایش field-by-field با classهای Bootstrapمانند و highlight خطاها.</li>
+          <li>فرم پست (ModelForm) با ساخت/ویرایش و slug خودکار.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 تست دستی فرم</b>
+          هر بار: یک‌بار خالی، یک‌بار داده غلط، یک‌بار داده درست submit کنید. سه مسیر ویو (GET، POST ناموفق، POST موفق) همه باید کار کنند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>فرم جنگو = تعریف فیلدها + اعتبارسنجی + رندر HTML در یک کلاس.</li>
+          <li>الگوی ویو: POST → Bound → is_valid → cleaned_data → PRG؛ GET → Unbound.</li>
+          <li>clean_&lt;field&gt; برای تک‌فیلد و clean() برای منطق چندفیلدی.</li>
+          <li>ModelForm فرم را از مدل مشتق می‌کند؛ instance برای ویرایش، commit=False برای تکمیل دستی.</li>
+          <li>فایل‌ها: request.FILES + enctype="multipart/form-data".</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «هرگز به ورودی کاربر اعتماد نکن؛ forms جنگو همان لایه‌ای است که اعتماد را «اعتبارسنجی» می‌کند.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>کریسپی‌فرم‌ها (crispy-forms) چیست؟</summary><div class="faq-body"><p>بسته django-crispy-forms رندر فرم را به قالب Bootstrap/Tailwind واگذار می‌کند و کد قالب را تمیزتر می‌سازد. برای شروع، حلقه {% for field in form %} کافی است.</p></div></details>
+        <details class="faq-item"><summary>Formset برای چه زمانی است؟</summary><div class="faq-body"><p><span class="term" data-term="formset">مجموعه فرم</span> وقتی لازم است که تعداد نمونه‌ها پویا باشد: مثل «افزودن چند تصویر به یک محصول». مدیریت پیشوندهای فیلد و فرم‌های خالی/اضافی را خودش انجام می‌دهد.</p></div></details>
+        <details class="faq-item"><summary>چطور فیلد را فقط در ویرایش نشان دهم نه ایجاد؟</summary><div class="faq-body"><p>دو فرم مجزا (PostCreateForm/PostUpdateForm) یا حذف فیلد در __init__ بر اساس self.instance.pk. دو فرم صریح‌تر و خواناتر است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          فرم‌ها آماده‌اند؛ حالا در <strong>فصل ۱۲</strong> مهم‌ترین فرم‌های هر سایت را می‌سازیم: ثبت‌نام، ورود و خروج با سیستم <span class="term" data-term="authentication">احراز هویت</span> داخلی جنگو.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-11" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-11">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-10/index.html">→ فصل قبلی<br><b>🎨 فصل ۱۰</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-12/index.html">فصل بعدی ←<br><b>🔐 فصل ۱۲: احراز هویت (Authentication) و کاربران</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۱: فرم‌ها (Forms) در جنگو | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
