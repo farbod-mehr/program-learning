@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۸: جنگو و فرانت‌اند — HTMX، Tailwind و SPA | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۸ دوره جامع جنگو: جنگو و فرانت‌اند — HTMX، Tailwind و SPA — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۸ از ۳۰ — جنگو و فرانت‌اند — HTMX، Tailwind و SPA</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🚀 استقرار و پروژه‌های عملی ← فصل ۲۸
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۸ از ۳۰</span>
+    <h1>🎭 جنگو و فرانت‌اند — HTMX، Tailwind و SPA</h1>
+    <p>طیف انتخاب فرانت‌اند برای جنگو: قالب‌ها + <span class="term" data-term="htmx">HTMX</span> برای تعامل بدون JS سنگین، <span class="term" data-term="tailwind">Tailwind</span> برای استایل، و <span class="term" data-term="react">React</span>/<span class="term" data-term="vue">Vue</span> + DRF برای <span class="term" data-term="spa">SPA</span> — با مثال عملی هرکدام.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۰۵ دقیقه</span>
+      <span class="pill">🎓 پیشرفته</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>«جنگو یا React؟» سوال غلطی است — سوال درست «کدام ترکیب برای این پروژه؟» است. این فصل سه مسیر واقعی را با کد نشان می‌دهد تا آگاهانه انتخاب کنید: HTMX-محور، هیبریدی، و SPA کامل.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>سه معماری رایج فرانت‌اند برای جنگو را مقایسه کنید.</li>
+          <li>با HTMX تعامل واقعی (لایک، جست‌وجوی زنده، اسکرول بی‌نهایت) بدون نوشتن JS بسازید.</li>
+          <li>Tailwind را به پروژه قالب‌محور وصل کنید.</li>
+          <li>یک SPA ساده React/Vue را به API فصل ۲۳ وصل کنید (fetch + JWT + CORS).</li>
+          <li>معیارهای انتخاب (تیم، SEO، پیچیدگی) را به کار ببرید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> قالب‌ها (۱۰) مسیر اول، API (۲۲-۲۳) مسیر سوم؛ پروژه نهایی (۳۰) یکی از این سه را انتخاب می‌کند.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>طیف انتخاب</h4><p>سه معماری و معیارها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>HTMX</h4><p>تعامل با HTML.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>Tailwind</h4><p>استایل مدرن در قالب.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>SPA + DRF</h4><p>فرانت جدا روی API.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 HTMX دقیقاً چه کار می‌کند؟</summary>
+          <div class="answer-body"><p>یک کتابخانه ~۱۴KB که به تگ‌های HTML «قدرت AJAX» می‌دهد: <code class="inline-code">hx-post="/like/5/"</code> یعنی «این درخواست را بفرست و <strong>HTML برگشتی</strong> را در فلان عنصر جایگزین کن». سرور همان ویوهای جنگو/قالب‌های تکه‌ای است — بدون ساخت API، بدون state سمت کلاینت.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 کجا SPA لازم می‌شود و کجا اضافه‌کاری است؟</summary>
+          <div class="answer-body"><p>SPA برای اپ‌های «شبیه نرم‌افزار»: داشبورد پیچیده، آفلاین‌مانند، state سنگین سمت کلاینت. برای وبلاگ/فروشگاه محتوامحور، رندر سمت سرور + HTMX هم سریع‌تر ساخته می‌شود هم <strong>SEO</strong> بهتری دارد. هزینه SPA: یک پروژه فرانت کامل، CORS/JWT، دو برابر سطح دیباگ.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 Tailwind و Bootstrap چه فرقی دارند؟</summary>
+          <div class="answer-body"><p>Bootstrap «کامپوننت آماده» می‌دهد (سریع، ولی همه سایت‌ها شبیه هم)؛ Tailwind «کلاس‌های اتمی» می‌دهد (flex, p-4, text-sm) که در همان HTML ترکیبشان می‌کنید — طراحی کاملاً سفارشی بدون نوشتن CSS جدا. در پروژه جنگو با build ساده یا CDN شروع می‌شود.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ با قالب base.html و API فصل ۲۳ (برای بخش SPA).</li>
+          <li>Node.js نصب‌شده (فقط برای build Tailwind و ساخت SPA — اختیاری در بخش HTMX).</li>
+          <li>آشنایی اولیه با HTML/فچ در مرورگر (DevTools → Network).</li>
+          <li>درک partial/تکه قالب (include) از فصل ۱۰.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ سه معماری، یک تصمیم</h3>
+<div class="table-wrap"><table class="compare"><thead><tr><th></th><th>قالب + کمی JS</th><th>قالب + HTMX + Tailwind</th><th>SPA (React/Vue) + DRF</th></tr></thead><tbody><tr><td>رندر</td><td>سرور</td><td>سرور (تکه‌ای)</td><td>کلاینت</td></tr><tr><td>SEO</td><td>عالی</td><td>عالی</td><td>نیاز به کار (SSR/prerender)</td></tr><tr><td>تعامل پیچیده</td><td>سخت (JS دستی)</td><td>متوسط تا خوب</td><td>عالی</td></tr><tr><td>تعداد پروژه</td><td>۱ (جنگو)</td><td>۱ (جنگو)</td><td>۲ (جنگو + فرانت)</td></tr><tr><td>مناسب</td><td>سایت محتوایی ساده</td><td>داشبورد/فروشگاه/ابزار داخلی</td><td>اپ محصولی پیچیده، تیم جدا</td></tr></tbody></table></div>
+          <div class="callout tip">
+          <b class="title">💡 قاعده شست</b>
+          «محتوا محور + SEO مهم → سرور-رندر (مسیر ۱/۲). اپ‌محور + state سنگین → SPA (مسیر ۳). شک دارید → HTMX: ۸۰٪ سود SPA با ۲۰٪ پیچیدگی.»
+        </div>
+
+        <h3>۵.۲ HTMX — تعامل با خود HTML</h3>
+<div class="code-box">
+          <div class="code-head"><span>نصب (یک فایل ایستا!)</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!-- assets/js/htmx.min.js را دانلود و در base.html: --&gt;
+&lt;script src="{% static 'js/htmx.min.js' %}" defer&gt;&lt;/script&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۱) دکمه لایک بدون رفرش</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!-- قالب post_list.html --&gt;
+&lt;button hx-post="{% url 'blog:like' post.pk %}"
+        hx-target="#like-count-{{ post.pk }}"
+        hx-swap="outerHTML"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        class="like-btn"&gt;
+  ❤ &lt;span id="like-count-{{ post.pk }}"&gt;{{ post.likes_count }}&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ویوی برگرداننده «تکه HTML»</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@login_required
+@require_POST
+def like(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Like.objects.get_or_create(user=request.user, post=post)
+    return render(request, "blog/partials/like_count.html",
+                  {"post": post})   # فقط تکه، نه صفحه کامل!</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) جست‌وجوی زنده</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;input type="search" name="q" placeholder="جست‌وجو..."
+       hx-get="{% url 'blog:search' %}"
+       hx-trigger="keyup changed delay:300ms"
+       hx-target="#results"
+       hx-indicator=".spinner"&gt;
+&lt;div id="results"&gt;&lt;/div&gt;
+&lt;span class="spinner htmx-indicator"&gt;⏳&lt;/span&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) اسکرول بی‌نهایت</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% for post in posts %}
+  {% include "blog/partials/post_card.html" %}
+{% endfor %}
+
+{% if page_obj.has_next %}
+&lt;div hx-get="?page={{ page_obj.next_page_number }}"
+     hx-trigger="revealed"
+     hx-swap="afterend"&gt;
+  &lt;span class="htmx-indicator"&gt;در حال بارگذاری...&lt;/span&gt;
+&lt;/div&gt;
+{% endif %}</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 چرا hx-headers با CSRF؟</b>
+          درخواست‌های POST/PUT خارج از <span class="term" data-term="form">فرم</span> هستند؛ CsrfViewMiddleware توکن می‌خواهد. راه تمیزتر سراسری: در base.html روی body تگ <code class="inline-code">hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'</code> بگذارید تا همه درخواست‌ها ارث ببرند.
+        </div>
+
+        <h3>۵.۳ Tailwind CSS در پروژه قالب‌محور</h3>
+<div class="code-box">
+          <div class="code-head"><span>راه سریع: CLI بدون Node (standalone)</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># دانلود باینری tailwindcss و ساخت CSS:
+./tailwindcss -i src/input.css -o static/css/tailwind.css \
+    --content "./templates/**/*.html" --minify</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>src/input.css و قالب</span><span class="lang">css</span></div>
+          <pre class="code"><code data-lang="css">@tailwind base;
+@tailwind components;
+@tailwind utilities;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>نمونه کارت پست با Tailwind</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!-- templates/blog/partials/post_card.html --&gt;
+&lt;article class="bg-white dark:bg-slate-800 rounded-xl shadow p-5
+                hover:shadow-lg transition"&gt;
+  &lt;h2 class="text-xl font-bold text-emerald-600"&gt;
+    &lt;a href="{{ post.get_absolute_url }}"&gt;{{ post.title }}&lt;/a&gt;
+  &lt;/h2&gt;
+  &lt;p class="text-sm text-gray-500 mt-1"&gt;
+    {{ post.author.name }} · {{ post.created_at|date:"Y/m/d" }}
+  &lt;/p&gt;
+  &lt;p class="mt-3 text-gray-700 line-clamp-3"&gt;{{ post.body|truncatewords:40 }}&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ RTL و Tailwind</b>
+          برای سایت فارسی: در tailwind.config <code class="inline-code">direction: rtl</code> ندارد — از کلاس‌های منطقی جدید استفاده کنید (ms-4/me-4 به‌جای ml/mr، ps-/pe-، text-start/end) و dir="rtl" روی html. کلاس‌های فیزیکی (ml-) در RTL برعکس به نظر می‌رسند!
+        </div>
+
+        <h3>۵.۴ مسیر SPA: فرانت جدا روی DRF</h3>
+<div class="code-box">
+          <div class="code-head"><span>۱) CORS برای دامنه/پورت فرانت</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># pip install django-cors-headers
+INSTALLED_APPS += ["corsheaders"]
+MIDDLEWARE += ["corsheaders.middleware.CorsMiddleware"]  # بالاترین حد ممکن
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",     # Vite dev
+    "https://app.example.com",
+]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) مصرف API در React (Vite)</span><span class="lang">jsx</span></div>
+          <pre class="code"><code data-lang="jsx">// src/api.js — کلاینت کوچک با JWT
+const BASE = import.meta.env.VITE_API_BASE; // http://localhost:8000/api
+let access = localStorage.getItem("access");
+
+export async function api(path, opts = {}) {
+  const res = await fetch(`${BASE}/${path}`, {
+    ...opts,
+    headers: {
+      "Content-Type": "application/json",
+      ...(access &amp;&amp; { Authorization: `Bearer ${access}` }),
+      ...opts.headers,
+    },
+  });
+  if (res.status === 401) {
+    // تلاش برای refresh؛ در صورت شکست → صفحه ورود
+    const ok = await refresh();
+    if (ok) return api(path, opts);
+    location.href = "/login";
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+// src/Posts.jsx
+export default function Posts() {
+  const [posts, setPosts] = useState([]);
+  useEffect(() =&gt; { api("posts/").then(d =&gt; setPosts(d.results)); }, []);
+  return (
+    &lt;ul&gt;{posts.map(p =&gt; &lt;li key={p.id}&gt;{p.title}&lt;/li&gt;)}&lt;/ul&gt;
+  );
+}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) یا Vue 3 به همان سادگی</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!-- حتی بدون build، با CDN در همان قالب جنگو --&gt;
+&lt;div id="app" data-api="{% url 'api_post_list' %}"&gt;
+  &lt;ul&gt;&lt;li v-for="p in posts"&gt;[[ p.title ]]&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;
+&lt;script type="module"&gt;
+  import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+  createApp({
+    delimiters: ['[[', ']]'],           // تداخل نکردن با {{ }} جنگو!
+    data: () =&gt; ({ posts: [] }),
+    async mounted() {
+      this.posts = (await (await fetch(this.$el.dataset.api)).json()).results
+    },
+  }).mount('#app')
+&lt;/script&gt;</code></pre>
+        </div>
+          <div class="callout danger">
+          <b class="title">🚨 delimiters در Vue</b>
+          هم Vue هم جنگو از {{ }} استفاده می‌کنند؛ بدون تغییر delimiter، قالب جنگو سعی می‌کند p.title را رندر کند (و خالی/خطا می‌دهد). در Vue: <code class="inline-code">delimiters: ['[[', ']]']</code> یا v-pre روی بلوک.
+        </div>
+
+        <h3>۵.۵ تصمیم‌گیری نهایی</h3>
+<ul><li><strong>تیم یک‌نفره/کوچک + محتوامحور:</strong> قالب + HTMX + Tailwind. یک دیپلوی، یک زبان، SEO عالی.</li><li><strong>محصول اپ‌گونه + تیم فرانت جدا:</strong> DRF (فصل ۲۳) + React/Vue + JWT. مرز تمیز API.</li><li><strong>مهاجرت تدریجی:</strong> سایت موجود قالبی است؟ صفحه‌به‌صفحه بخش‌های تعاملی را HTMX کنید؛ یا فقط داشبورد را SPA بسازید زیر app.example.com.</li></ul>
+          <div class="callout info">
+          <b class="title">📌 آنچه در همه مسیرها ثابت است</b>
+          مدل‌ها، ORM، احراز هویت، مجوزها و تست‌های شما — سرمایه اصلی، بک‌اند است. فرانت‌اند «لایه ارائه» است و قابل تعویض؛ پس وسواس را روی API/داده بگذارید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک ویژگی را در هر سه معماری — «افزودن نظر بدون رفرش»:</p>
+        <div class="code-box">
+          <div class="code-head"><span>مسیر ۱: JS دستی (بدون کتابخانه)</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;form id="comment-form" data-url="{% url 'blog:add_comment' post.slug %}"&gt;
+  {% csrf_token %}{{ form.as_p }}&lt;button&gt;ارسال&lt;/button&gt;
+&lt;/form&gt;
+&lt;ul id="comments"&gt;{% for c in post.comments.all %}&lt;li&gt;{{ c.text }}&lt;/li&gt;{% endfor %}&lt;/ul&gt;
+&lt;script&gt;
+document.getElementById('comment-form').onsubmit = async (e) =&gt; {
+  e.preventDefault();
+  const f = e.target;
+  const res = await fetch(f.dataset.url, {method:'POST', body:new FormData(f)});
+  const li = document.createElement('li');
+  li.textContent = new FormData(f).get('text');
+  document.getElementById('comments').append(li);
+  f.reset();
+};
+&lt;/script&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>مسیر ۲: HTMX — بدون یک خط JS</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;form hx-post="{% url 'blog:add_comment' post.slug %}"
+      hx-target="#comments" hx-swap="beforeend"
+      hx-on::after-request="this.reset()"&gt;
+  {% csrf_token %}{{ form.as_p }}&lt;button&gt;ارسال&lt;/button&gt;
+&lt;/form&gt;
+&lt;ul id="comments"&gt;...&lt;/ul&gt;
+&lt;!-- ویو در POST موفق، تکه &lt;li&gt; کامنت جدید را render می‌کند --&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ویوی دو حالته (HTML کامل برای GET، تکه برای POST)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@require_http_methods(["GET", "POST"])
+def add_comment(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            if request.headers.get("HX-Request"):     # ← HTMX بوده
+                return render(request,
+                              "blog/partials/comment_item.html",
+                              {"comment": comment})
+            return redirect(post)
+    ...</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>مسیر ۳: SPA روی API</span><span class="lang">jsx</span></div>
+          <pre class="code"><code data-lang="jsx">// فرانت React — POST JSON به /api/comments/
+await api("comments/", {
+  method: "POST",
+  body: JSON.stringify({ post: postId, name, text }),
+});
+// پاسخ 201 + شیء → افزودن به state → رندر مجدد لیست</code></pre>
+        </div>
+          <p>مقایسه کنید: مسیر ۲ کمترین کد را دارد و سرور HTML می‌دهد (SEO رایگان)؛ مسیر ۳ منعطف‌ترین برای state پیچیده است. همان ویژگی، سه فلسفه.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>هر سه مسیر را با دست لمس کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> HTMX را اضافه کنید و دکمه لایک (۵.۲) را کامل پیاده کنید — شامل ویوی تکه‌ای، CSRF و به‌روزرسانی شمارنده بدون رفرش.</li>
+          <li><strong>کارگاه ۲:</strong> جست‌وجوی زنده با hx-get و تأخیر ۳۰۰ms بسازید؛ تکه نتیجه را با همان قالب post_card رندر کنید.</li>
+          <li><strong>کارگاه ۳:</strong> یک صفحه Vue/CDN (بدون build!) بسازید که فهرست پست‌ها را از <code class="inline-code">/api/posts/</code> بگیرید و نمایش دهد — با حل مسئله delimiter.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>تکه like_count.html</span><span class="lang">html</span></div><pre class="code"><code data-lang="html">&lt;button hx-post="{% url 'blog:like' post.pk %}"
+        hx-target="closest button" hx-swap="outerHTML"&gt;
+  ❤ &lt;span&gt;{{ post.likes_count }}&lt;/span&gt;
+&lt;/button&gt;</code></pre></div><p>ویو مثل ۵.۲ ولی با hx-target="closest button" کل دکمه را با نسخه تازه (شمار جدید) جایگزین می‌کنیم — ساده‌تر از مدیریت id یکتا برای هر پست. CSRF سراسری را روی body بگذارید تا هر تگ hx لازم نداشته باشد. تست: Network را در DevTools باز کنید — باید درخواست POST کوچک با پاسخ HTML تکه ببینید، نه رفرش صفحه.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>ویوی جست‌وجوی تکه‌ای</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def search(request):
+    q = request.GET.get("q", "").strip()
+    posts = (Post.objects.filter(published=True, title__icontains=q)
+             .select_related("author")[:20] if q else [])
+    return render(request, "blog/partials/post_cards.html",
+                  {"posts": posts, "q": q})</code></pre></div><p>post_cards.html فقط حلقه {% include post_card %} است. hx-trigger="keyup changed delay:300ms" سه بهینه‌سازی در یک خط: فقط تغییر واقعی، با تأخیر (جلوگیری از رگبار درخواست)، و hx-indicator برای UX. اگر q خالی بود پیام «چیزی بنویسید!» برگردانید — تکه خالی گیج‌کننده است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>صفحه Vue بدون build</span><span class="lang">html</span></div><pre class="code"><code data-lang="html">{# templates/vue_demo.html — extends base #}
+{% block content %}
+&lt;div id="app"&gt;
+  &lt;h1&gt;پست‌ها (Vue + DRF)&lt;/h1&gt;
+  &lt;ul v-if="posts.length"&gt;
+    &lt;li v-for="p in posts" :key="p.id"&gt;[[ p.title ]]&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;p v-else&gt;[[ loading ? "بارگذاری..." : "خالی" ]]&lt;/p&gt;
+&lt;/div&gt;
+&lt;script type="module"&gt;
+import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+createApp({
+  delimiters: ["[[", "]]"],
+  data: () =&gt; ({ posts: [], loading: true }),
+  async mounted() {
+    const r = await fetch("/api/posts/?format=json")
+    this.posts = (await r.json()).results
+    this.loading = false
+  },
+}).mount("#app")
+&lt;/script&gt;
+{% endblock %}</code></pre></div><p>نکات: ① delimiters مشکل {{ }} را حل می‌کند ② چون فرانت همان دامنه جنگو است، CORS/JWT لازم نشد (SessionAuthentication کافی) — این «هیبرید» خوش‌قیافه‌ترین راه ورود به Vue است ③ ?format=json برای اطمینان از پاسخ JSON حتی از مرورگر.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ HTMX هیچ کاری نمی‌کند (کلیک = رفرش کامل یا هیچ)</b>
+          <p>اسکریپت htmx.min.js لود نشده (مسیر static/defer) یا hx-post به URLای می‌خورد که 403/302 می‌دهد (CSRF/ورود). تب Network را ببینید: درخواست hx رفت؟ پاسخ چه بود؟ ویو باید تکه HTML با 200 برگرداند نه redirect.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ استایل Tailwind اعمال نمی‌شود</b>
+          <p>فایل output ساخته/لینک نشده، یا --content الگوی قالب‌ها را شامل نمی‌شود (کلاس‌های استفاده‌نشده purge می‌شوند!). بعد از هر تغییر قالب، build را دوباره بزنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ SPA خطای CORS در کنسول می‌دهد</b>
+          <p>corsheaders نصب/ثبت نشده، یا origin دقیق (http://localhost:5173 با پورت!) در CORS_ALLOWED_ORIGINS نیست، یا میدلور CorsMiddleware پایین‌تر از حد لازم است. پیام خطای کنسول origin مورد انتظار را می‌گوید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ {{ p.title }} در صفحه خالی رندر می‌شود</b>
+          <p>قالب جنگو آن را «خورد»! تداخل delimiter با Vue/Alpine: از [[ ]] (تنظیم delimiters) یا v-pre یا {% verbatim %} استفاده کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ fetch به API «۴۰۳ CSRF» می‌دهد</b>
+          <p>SessionAuthentication با POST مرورگری توکن CSRF می‌خواهد (فصل ۲۲). برای SPA واقعی: JWT/Bearer استفاده کنید (نیاز به CSRF ندارد) یا هدر X-CSRFToken را از کوکی csrftoken بفرستید.</p>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 DevTools دوست شماست</b>
+          هر تعامل HTMX/fetch یک درخواست شبکه است: تب Network نوع/مسیر/پاسخ را نشان می‌دهد. ۹۰٪ «کار نمی‌کند»ها با یک نگاه به آن حل می‌شود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب معماری</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر محصول کدام مسیر؟ (الف) وبلاگ شخصی با SEO مهم (ب) داشبورد داخلی شرکت با جدول‌ها و فرم‌های زیاد (ج) اپلیکیشن مدیریت پروژه بلادرنگ با درگ‌اند‌دراپ سنگین</p><p><strong>پاسخ:</strong> الف → قالب + Tailwind (HTMX برای جست‌وجو) • ب → HTMX + تکه‌های قالب (سرعت توسعه، بدون تیم فرانت) • ج → SPA (React/Vue) + DRF + احتمالاً WebSocket. معیار اصلی: پیچیدگی state سمت کلاینت و نیاز SEO.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — تکه یا JSON؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> ویوی like در مسیر HTMX «تکه HTML» برمی‌گرداند و در مسیر SPA «JSON». مزیت/عیب هرکدام؟</p><p><strong>پاسخ:</strong> تکه HTML: منطق نمایش در سرور می‌ماند (قالب/ترجمه/i18n خودکار)، فرانت احمق و ساده؛ ولی فقط همان‌جا مصرف می‌شود. JSON: برای هر کلاینتی (موبایل، SPA) قابل استفاده و کش‌پذیر؛ ولی منطق نمایش در کلاینت تکرار می‌شود. پروژه‌های بزرگ اغلب هر دو endpoint را دارند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — SEO در SPA</summary>
+          <div class="answer-body"><p><strong>سناریو:</strong> فروشگاه با React می‌خواهد صفحات محصول در گوگل ایندکس شوند. سه راه حل؟</p><p><strong>پاسخ:</strong> ① SSR با Next.js/Nuxt (رندر سمت سرور فریم‌ورک) ② prerendering صفحات عمومی ③ معماری هیبرید: صفحات عمومی (محصول/فهرست) را جنگو رندر کند و بخش «سبد/داشبورد» SPA باشد. برای محتوای عمومی، سرور-رندر همیشه ساده‌ترین پاسخ SEO است.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-28" data-title="آزمون فصل ۲۸ — جنگو و فرانت‌اند — HTMX، Tailwind و SPA" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) HTMX چه چیزی را به تگ‌های HTML اضافه می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">استایل</button>
+              <button type="button" class="quiz-opt" data-key="b">ارسال درخواست AJAX و جایگزینی پاسخ HTML در DOM — بدون نوشتن JavaScript</button>
+              <button type="button" class="quiz-opt" data-key="c">مسیریابی</button>
+              <button type="button" class="quiz-opt" data-key="d">کامپایل قالب</button>
+            </div>
+            <div class="quiz-explain">💡 hx-post/hx-get + hx-target/hx-swap: سرور تکه HTML می‌فرستد و HTMX جایش می‌گذارد. منطق در همان ویوهای جنگو می‌ماند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) ویوی جنگو در مسیر HTMX باید چه برگرداند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">JSON</button>
+              <button type="button" class="quiz-opt" data-key="b">تکه HTML (partial) با 200 — نه صفحه کامل و نه redirect</button>
+              <button type="button" class="quiz-opt" data-key="c">صفحه کامل</button>
+              <button type="button" class="quiz-opt" data-key="d">هیچ (204)</button>
+            </div>
+            <div class="quiz-explain">💡 هدف جایگزینی یک عنصر است؛ صفحه کامل یا redirect در DOM نتیجه عجیب می‌دهد. با HX-Request می‌توان دو رفتار داشت.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) مشکل {{ }} بین جنگو و Vue چطور حل می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">حل نمی‌شود</button>
+              <button type="button" class="quiz-opt" data-key="b">delimiters در Vue (مثل [[ ]]) یا {% verbatim %} در جنگو</button>
+              <button type="button" class="quiz-opt" data-key="c">حذف Vue</button>
+              <button type="button" class="quiz-opt" data-key="d">فرقی ندارند</button>
+            </div>
+            <div class="quiz-explain">💡 هر دو موتور همان نشانگر را می‌خواهند؛ یکی باید نشانگرش عوض شود وگرنه قالب جنگو عبارت Vue را خالی رندر می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) CORS_ALLOWED_ORIGINS چه چیزی را کنترل می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کاربران مجاز</button>
+              <button type="button" class="quiz-opt" data-key="b">دامنه‌های (origin) مجاز برای خواندن API توسط جاوااسکریپت مرورگر</button>
+              <button type="button" class="quiz-opt" data-key="c">سرعت API</button>
+              <button type="button" class="quiz-opt" data-key="d">رمزنگاری</button>
+            </div>
+            <div class="quiz-explain">💡 وقتی فرانت روی origin دیگر است (localhost:5173 یا app.site.com)، مرورگر اجازه خواندن پاسخ را فقط برای originهای فهرست‌شده می‌دهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) برای وبلاگ محتوامحور با SEO مهم، کدام معماری مناسب‌تر است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">SPA کامل React</button>
+              <button type="button" class="quiz-opt" data-key="b">رندر سمت سرور (قالب/HTMX)</button>
+              <button type="button" class="quiz-opt" data-key="c">API بدون فرانت</button>
+              <button type="button" class="quiz-opt" data-key="d">فرقی ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 HTML آماده از سرور = خزش/ایندکس آسان و First Paint سریع؛ SPA نیاز به SSR/prerender اضافه برای همان نتیجه دارد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کلاس‌های ms-4/ps-4 در Tailwind چه مزیتی برای سایت فارسی دارند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">سریع‌ترند</button>
+              <button type="button" class="quiz-opt" data-key="b">منطقی‌اند (start/end) و با dir=rtl خودکار به سمت درست می‌نشینند</button>
+              <button type="button" class="quiz-opt" data-key="c">رندوم‌اند</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط در LTR کار می‌کنند</button>
+            </div>
+            <div class="quiz-explain">💡 کلاس‌های فیزیکی ml/mr با تغییر جهت برعکسِ انتظار می‌شوند؛ ms/me و ps/pe بر اساس جهت سند عمل می‌کنند — RTL بدون بازنویسی.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «فرانت‌اند وبلاگ به انتخاب شما»</strong> — یکی از سه مسیر را کامل پیاده کنید (پیشنهاد: HTMX — بیشترین نسبت سود/تلاش).</p>
+        <ul class="checklist">
+          <li>مسیر HTMX: لایک + جست‌وجوی زنده + اسکرول بی‌نهایت + افزودن نظر، همه بدون رفرش.</li>
+          <li>استایل Tailwind (build یا CDN) روی کارت‌ها و فرم‌ها + پشتیبانی RTL.</li>
+          <li>ویوهای تکه‌ای (partials/) با تشخیص HX-Request برای سازگاری no-JS.</li>
+          <li>یا مسیر SPA: صفحه فهرست/جزئیات/ورود با JWT + CORS + مدیریت خطای ۴۰۱.</li>
+          <li>مستند «چرا این مسیر را انتخاب کردم» با مقایسه ۵.۱.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 پلکان مهاجرت</b>
+          مسیر HTMX را از یک ویو شروع کنید (دکمه لایک)؛ اگر جواب داد، صفحه‌به‌صفحه گسترش دهید. لازم نیست کل سایت یک‌شبه عوض شود — مزیت بزرگ همین تدریجی بودن است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>سه معماری: قالب+JS / قالب+HTMX+Tailwind / SPA+DRF — انتخاب بر پایه محتوا، state و تیم.</li>
+          <li>HTMX: درخواست از تگ HTML، پاسخ تکه HTML؛ CSRF سراسری روی body.</li>
+          <li>ویوهای دو حالته با تشخیص HX-Request؛ progressive enhancement.</li>
+          <li>Tailwind با کلاس‌های منطقی (ms/ps) برای RTL.</li>
+          <li>SPA: CORS دقیق + JWT + مدیریت ۴۰۱/refresh؛ delimiterها را جدا کنید.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «فریم‌ورک فرانت مهم نیست؛ مهم این است که «مرز» فرانت و بک‌اند تمیز باشد: HTML تکه‌ای یا JSON قرارداددار.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>Alpine.js کجای این طیف است؟</summary><div class="faq-body"><p>کتابخانه ~۱۵KB برای تعامل «جزیره‌ای» کوچک (باز/بسته شدن منو، تب‌ها، فرم‌های ساده) با attributeهای x-data/x-show. مکمل عالی قالب‌های جنگو و HTMX — سه‌تایی «HOT stack» معروف (HTMX+Alpine+Tailwind) دقیقاً همین ترکیب است.</p></div></details>
+        <details class="faq-item"><summary>آیا HTMX برای اپ‌های بزرگ مقیاس می‌گیرد؟</summary><div class="faq-body"><p>برای اکثر داشبوردها/فروشگاه‌ها بله (نمونه‌های تولیدی بزرگ دارد). جایی به سقف می‌خورد که state پیچیده کلاینت لازم شود (ویرایشگر زنده، آفلاین، درگ سنگین) — آنجا SPA درست است. می‌شود ترکیبی: ۹۰٪ صفحات HTMX، یک بخش SPA.</p></div></details>
+        <details class="faq-item"><summary>Django 6.0 template partials به HTMX کمک می‌کند؟</summary><div class="faq-body"><p>بله! با {% partialdef %}/{% partial %} (فصل ۲۹) تعریف تکه در همان فایل قالب می‌ماند و با syntax مثل "post_list.html#card" قابل include/render است — فایل‌های partials پراکنده کم می‌شوند و ویوهای HTMX تمیزتر.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          ابزارها را دیدیم؛ حالا «به‌روز» می‌مانیم: <strong>فصل ۲۹</strong> — جنگو ۵.۲ LTS و ۶.۰: tasks داخلی، template partials، CSP و کلیدهای مرکب.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-28" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-28">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-27/index.html">→ فصل قبلی<br><b>🏎️ فصل ۲۷</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-29/index.html">فصل بعدی ←<br><b>🆕 فصل ۲۹: جنگوی امروز — 5.2 LTS و 6.0</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۸: جنگو و فرانت‌اند — HTMX، Tailwind و SPA | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
