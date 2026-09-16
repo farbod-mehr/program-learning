@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۴: مدل‌ها (Models) و پایگاه داده | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۴ دوره جامع جنگو: مدل‌ها (Models) و پایگاه داده — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۴ از ۳۰ — مدل‌ها (Models) و پایگاه داده</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 مبانی و اصول پایه ← فصل ۴
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۴ از ۳۰</span>
+    <h1>🗄️ مدل‌ها (Models) و پایگاه داده</h1>
+    <p><span class="term" data-term="database">پایگاه داده</span> و <span class="term" data-term="orm">ORM</span>، انواع فیلد و پارامترهایشان، روابط ForeignKey و ManyToMany، کلاس Meta، ساخت مدل وبلاگ و کار با داده در <span class="term" data-term="django-shell">شل جنگو</span>.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۱۰ دقیقه</span>
+      <span class="pill">🎓 مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا حالا داده‌ها ساختگی بودند؛ از این فصل سایت شما «حافظه» پیدا می‌کند. مدل‌ها مهم‌ترین بخش اکثر پروژه‌های جنگو هستند — خوب طراحی‌شان کنید، بقیه کارها آسان می‌شود.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>بگویید <span class="term" data-term="orm">ORM</span> چه مشکلی را حل می‌کند.</li>
+          <li>مدل با فیلدهای مناسب و پارامترهایشان (max_length، default، unique و...) بنویسید.</li>
+          <li>روابط <span class="term" data-term="foreign-key">یک‌به‌چند</span> و <span class="term" data-term="many-to-many">چندبه‌چند</span> بسازید.</li>
+          <li>با <span class="term" data-term="django-shell">شل جنگو</span> داده ایجاد، خواندن، ویرایش و حذف کنید (<span class="term" data-term="crud">CRUD</span>).</li>
+          <li>نقش <code class="inline-code">__str__</code> و کلاس Meta را توضیح دهید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> پایهٔ فصل ۵ (مهاجرت‌ها)، ۶ (ادمین)، ۱۵ (QuerySet پیشرفته) و عملاً همه پروژه‌های دوره.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>ORM و پایگاه داده</h4><p>چرا SQL خام نه؛ جنگو چطور کوئری می‌سازد.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>مدل و فیلدها</h4><p>انواع فیلد، پارامترها، __str__ و Meta.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>روابط</h4><p>ForeignKey، OneToOne و ManyToMany.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>شل و CRUD</h4><p>ساخت/خواندن/ویرایش/حذف داده به‌صورت عملی.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا به‌جای نوشتن SQL، از ORM استفاده کنیم؟</summary>
+          <div class="answer-body"><p>سه دلیل: ① <strong>امنیت</strong> — <span class="term" data-term="orm">ORM</span> جلوی <span class="term" data-term="sql-injection">تزریق SQL</span> را می‌گیرد. ② <strong>قابلیت حمل</strong> — کد شما روی SQLite و PostgreSQL یکسان کار می‌کند. ③ <strong>خوانایی</strong> — <code class="inline-code">Post.objects.filter(published=True)</code> از ۱۰ خط SQL تمیزتر است. برای کوئری‌های خیلی خاص، فرار به SQL خام هم ممکن است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 رابطه «نویسنده ← پست‌ها» از چه نوعی است؟ یک نویسنده می‌تواند چند پست داشته باشد؟</summary>
+          <div class="answer-body"><p><strong>یک‌به‌چند</strong>: هر پست دقیقاً یک نویسنده دارد، ولی هر نویسنده چند پست. در جنگو: <span class="term" data-term="foreign-key">ForeignKey</span> سمت «چند» (یعنی در مدل Post) تعریف می‌شود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 اگر بخواهیم به هر پست چند «برچسب» بدهیم و هر برچسب به چند پست بخورد؟</summary>
+          <div class="answer-body"><p>رابطه <span class="term" data-term="many-to-many">چندبه‌چند</span>: <code class="inline-code">tags = ManyToManyField(Tag)</code>. جنگو خودش جدول واسط را می‌سازد و مدیریت می‌کند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه فصل ۳ با اپ <code class="inline-code">blog</code> آماده باشد.</li>
+          <li>مفهوم جدول/سطر/ستون پایگاه داده (در ۵.۱ از صفر توضیح می‌دهیم).</li>
+          <li>آشنایی اولیه با کلاس در پایتون (اگر یادتان نیست، جعبه زیر را بخوانید).</li>
+          <li><span class="term" data-term="migration">مهاجرت</span> را فعلاً با دو دستور ساده انجام می‌دهیم؛ منطق کاملش فصل ۵ است.</li>
+          
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 یادآوری ۳۰ ثانیه‌ای کلاس پایتون</b>
+          کلاس = قالب ساخت شیء. <code class="inline-code">class Post(models.Model):</code> یعنی «کلاس Post که از Model جنگو ارث می‌برد». هر نمونهٔ آن = یک سطر جدول. اگر با <code class="inline-code">def __str__(self)</code> آشنا نیستید: متدی که می‌گوید «این شیء را چطور به رشته تبدیل کنم».
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ پایگاه داده و ORM در یک نگاه</h3>
+<p><span class="term" data-term="database">پایگاه داده</span> = مخزن منظم داده‌ها به شکل <strong>جدول</strong> (سطر و ستون). جنگو به‌صورت پیش‌فرض از <span class="term" data-term="sqlite">SQLite</span> استفاده می‌کند: یک فایل ساده <code class="inline-code">db.sqlite3</code> بدون هیچ نصب اضافی — عالی برای یادگیری و توسعه.</p>
+          <p><span class="term" data-term="orm">ORM</span> پلی است بین دنیای شیءگرای پایتون و دنیای رابطه‌ای SQL:</p>
+          <ul><li>کلاس مدل ←→ جدول</li><li>نمونهٔ مدل ←→ سطر (با یک <span class="term" data-term="primary-key">کلید اصلی</span> یکتا، همان <code class="inline-code">id</code> خودکار)</li><li><span class="term" data-term="field">فیلد</span> کلاس ←→ ستون</li></ul>
+          <div class="code-box">
+          <div class="code-head"><span>معادل‌های ORM و SQL</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># این کد پایتون...
+post = Post.objects.get(id=1)
+# ...چنین SQL‌ای تولید می‌کند:
+# SELECT * FROM blog_post WHERE id = 1;</code></pre>
+        </div>
+
+        <h3>۵.۲ نوشتن اولین مدل</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/models.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db import models
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200, verbose_name="عنوان")
+    slug = models.SlugField(max_length=200, unique=True)
+    body = models.TextField(verbose_name="متن")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    published = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title</code></pre>
+        </div>
+          <p>فیلدهای پرکاربرد:</p>
+          <ul><li><code class="inline-code">CharField(max_length=N)</code> — متن کوتاه (max_length <strong>اجباری</strong> است).</li><li><code class="inline-code">TextField()</code> — متن بلند بدون محدودیت.</li><li><span class="term" data-term="slug">SlugField</span> — شناسه خوانا برای URL (فقط حروف، رقم و خط تیره).</li><li><code class="inline-code">IntegerField / DecimalField(max_digits, decimal_places)</code> — عدد / عدد اعشاری دقیق (پول را <strong>هرگز</strong> FloatField نگذارید!).</li><li><code class="inline-code">BooleanField, DateTimeField, DateField, EmailField, URLField, ImageField</code></li></ul>
+          <p>پارامترهای مشترک: <code class="inline-code">null=True</code> (مقدار NULL در دیتابیس مجاز)، <code class="inline-code">blank=True</code> (فیلد در فرم می‌تواند خالی بماند)، <code class="inline-code">unique=True</code>، <code class="inline-code">default=...</code>، <code class="inline-code">choices=...</code>.</p>
+          <div class="callout tip">
+          <b class="title">💡 چرا __str__ مهم است؟</b>
+          بدون <code class="inline-code">__str__</code>، همه‌جا (مخصوصاً پنل <span class="term" data-term="admin">ادمین</span>) به‌جای «آموزش جنگو» می‌بینید: <code class="inline-code">Post object (1)</code>. همیشه تعریفش کنید.
+        </div>
+
+        <h3>۵.۳ روابط بین مدل‌ها</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/models.py — روابط</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Post(models.Model):
+    author = models.ForeignKey(
+        Author, on_delete=models.CASCADE, related_name="posts"
+    )
+    tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
+    # ... بقیه فیلدهای قبلی
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)</code></pre>
+        </div>
+          <ul><li><span class="term" data-term="foreign-key">ForeignKey</span> = یک‌به‌چند. <strong>on_delete اجباری است</strong>: CASCADE (با حذف والد، فرزندها هم حذف شوند)، PROTECT (تا فرزند هست، والد حذف نشود)، SET_NULL (کلید خارجی null شود؛ نیاز به null=True).</li><li><span class="term" data-term="many-to-many">ManyToManyField</span> = چندبه‌چند؛ جدول واسط خودکار ساخته می‌شود.</li><li><code class="inline-code">related_name</code> = نام دسترسی معکوس: <code class="inline-code">author.posts.all()</code> یا <code class="inline-code">post.comments.all()</code>.</li></ul>
+
+        <h3>۵.۴ کلاس Meta و اعمال تغییرات (مهاجرت)</h3>
+<p>کلاس Meta رفتارهای غیرفیلدی مدل را تنظیم می‌کند:</p>
+          <div class="code-box">
+          <div class="code-head"><span>کلاس Meta</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Post(models.Model):
+    # ...فیلدها...
+
+    class Meta:
+        ordering = ["-created_at"]        # ترتیب پیش‌فرض: جدیدترین اول
+        verbose_name = "نوشته"
+        verbose_name_plural = "نوشته‌ها"</code></pre>
+        </div>
+          <p>برای اینکه مدل‌ها واقعاً در پایگاه داده ساخته شوند، دو فرمان لازم است (منطق کامل در فصل ۵):</p>
+          <div class="code-box">
+          <div class="code-head"><span>ساخت و اعمال مهاجرت</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py makemigrations
+python manage.py migrate</code></pre>
+        </div>
+
+        <h3>۵.۵ کار با داده در شل جنگو (CRUD)</h3>
+<p><span class="term" data-term="django-shell">شل جنگو</span> پایتونِ تعاملی با تنظیمات و مدل‌های بارگذاری‌شده است:</p>
+          <div class="code-box">
+          <div class="code-head"><span>python manage.py shell</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from blog.models import Author, Post, Tag, Comment
+
+# Create — ایجاد
+author = Author.objects.create(name="سارا")
+post = Post.objects.create(
+    title="سلام جنگو", slug="hello-django",
+    body="اولین پست من!", author=author, published=True,
+)
+tag = Tag.objects.create(name="جنگو")
+post.tags.add(tag)                      # اتصال چندبه‌چند
+
+# Read — خواندن
+Post.objects.all()                      # همه
+Post.objects.get(id=1)                  # دقیقاً یکی (یا خطا)
+Post.objects.filter(published=True)     # فیلتر
+post.author.name                        # پیمایش رابطه
+author.posts.all()                      # دسترسی معکوس
+
+# Update — ویرایش
+post.title = "سلام جنگو (ویرایش‌شده)"
+post.save()
+# یا بدون بارگذاری شیء:
+Post.objects.filter(id=1).update(published=False)
+
+# Delete — حذف
+comment = Comment.objects.create(post=post, text="عالی!")
+comment.delete()                        # حذف یک رکورد
+# post.delete()                         # حذف پست (و کامنت‌هایش با CASCADE)</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 objects چیست؟</b>
+          <code class="inline-code">objects</code> مدیر (Manager) پیش‌فرض مدل است و دروازه ساخت <span class="term" data-term="queryset">QuerySet</span>ها. فصل ۱۵ تمام قدرتش را باز می‌کنیم.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>مدل‌های یک «کتابخانه شخصی» را کامل بسازید و داده‌گذاری کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>books/models.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db import models
+
+
+class Publisher(models.Model):
+    name = models.CharField(max_length=120)
+
+    def __str__(self):
+        return self.name
+
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    publisher = models.ForeignKey(
+        Publisher, on_delete=models.PROTECT, related_name="books"
+    )
+    price = models.DecimalField(max_digits=8, decimal_places=0)
+    published_year = models.PositiveIntegerField(null=True, blank=True)
+    tags = models.ManyToManyField("Tag", blank=True, related_name="books")
+
+    class Meta:
+        ordering = ["title"]
+
+    def __str__(self):
+        return f"{self.title} ({self.publisher.name})"
+
+
+class Tag(models.Model):
+    name = models.SlugField(max_length=50, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اعمال و داده‌گذاری در شل</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py makemigrations books
+python manage.py migrate
+python manage.py shell</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>داخل شل</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from books.models import Publisher, Book, Tag
+
+p = Publisher.objects.create(name="نشر جنگو")
+t = Tag.objects.create(name="python")
+b = Book.objects.create(title="یادگیری جنگو", publisher=p, price=250000)
+b.tags.add(t)
+
+Book.objects.filter(publisher__name="نشر جنگو").count()  # 1</code></pre>
+        </div>
+          <p>به <code class="inline-code">publisher__name</code> دقت کنید: دو زیرخط یعنی <strong>پیمایش رابطه</strong> در فیلتر — «کتاب‌هایی که ناشرشان این نام را دارد».</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>برای همان اپ blog فصل قبل، لایه داده واقعی بسازید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> مدل‌های Author، Post (با ForeignKey به Author) و Comment (با ForeignKey به Post) را با فیلدهای مناسب بنویسید و مهاجرت بزنید.</li>
+          <li><strong>کارگاه ۲:</strong> در شل: ۲ نویسنده، ۳ پست و ۲ کامنت بسازید؛ سپس همه پست‌های نویسنده اول را با related_name چاپ کنید.</li>
+          <li><strong>کارگاه ۳:</strong> ویوی فهرست پست‌های فصل ۳ (که لیست ساختگی داشت) را به داده واقعی وصل کنید: <code class="inline-code">Post.objects.filter(published=True)</code> را به قالب بدهید و با حلقه نمایش دهید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱ — مدل‌ها</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>blog/models.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.db import models
+
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    body = models.TextField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="posts")
+    published = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)</code></pre></div><p>سپس: <code class="inline-code">python manage.py makemigrations blog && python manage.py migrate</code></p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲ — داده‌گذاری و related_name</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>شل جنگو</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">a1 = Author.objects.create(name="سارا")
+a2 = Author.objects.create(name="رضا")
+Post.objects.create(title="پست ۱", slug="post-1", body="...", author=a1, published=True)
+Post.objects.create(title="پست ۲", slug="post-2", body="...", author=a1, published=True)
+Post.objects.create(title="پست ۳", slug="post-3", body="...", author=a2)
+p1 = Post.objects.get(slug="post-1")
+Comment.objects.create(post=p1, text="عالی بود")
+
+for post in a1.posts.all():
+    print(post.title)   # پست ۱ / پست ۲</code></pre></div></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳ — اتصال ویو به داده واقعی</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>blog/views.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.shortcuts import render
+from .models import Post
+
+
+def post_list(request):
+    posts = Post.objects.filter(published=True)
+    return render(request, "blog/post_list.html", {"posts": posts})</code></pre></div><div class="code-box"><div class="code-head"><span>blog/templates/blog/post_list.html</span><span class="lang">HTML</span></div><pre class="code"><code data-lang="html">&lt;h1&gt;نوشته‌ها&lt;/h1&gt;
+{% for post in posts %}
+  &lt;article&gt;
+    &lt;h2&gt;{{ post.title }}&lt;/h2&gt;
+    &lt;p&gt;نویسنده: {{ post.author.name }} — {{ post.created_at|date:"Y/m/d" }}&lt;/p&gt;
+  &lt;/article&gt;
+{% empty %}
+  &lt;p&gt;هنوز نوشته‌ای منتشر نشده.&lt;/p&gt;
+{% endfor %}</code></pre></div></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ تغییر مدل ولی فراموشی makemigrations/migrate</b>
+          <p>خطای <code>no such column: blog_post.published</code> یعنی مدل و پایگاه داده هم‌گام نیستند. همیشه بعد از تغییر مدل: makemigrations و بعد migrate.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی <code>on_delete</code> در ForeignKey</b>
+          <p>خطای <code>TypeError: ForeignKey.__init__() missing 1 required keyword-only argument: 'on_delete'</code>. فکر کنید با حذف والد چه باید بشود: CASCADE، PROTECT یا SET_NULL.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ CharField بدون max_length</b>
+          <p>خطای سیستم‌چک جنگو: <code>CharFields must define a 'max_length' attribute</code>. برای متن بلند و بی‌محدودیت از TextField استفاده کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ ذخیره مبلغ با FloatField</b>
+          <p>خطای مفهومی نه خطای اجرا! Float خطای گردنگردن دارد (۰.۱+۰.۲ ≠ ۰.۳). برای پول: <code class="inline-code">DecimalField(max_digits=10, decimal_places=2)</code>.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ related_name تکراری</b>
+          <p>اگر دو ForeignKey از یک مدل به مدل دیگر دارید، جنگو خطای clash می‌دهد؛ برای هر کدام related_name یکتا بگذارید.</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب فیلد</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر داده کدام فیلد؟ (الف) ایمیل کاربر (ب) قیمت محصول (ج) متن ۵۰۰۰ کلمه‌ای مقاله (د) موجود/ناموجود (ه) نشانی تصویر پروفایل</p><p><strong>پاسخ:</strong> الف → EmailField • ب → DecimalField • ج → TextField • د → BooleanField • ه → ImageField (یا URLField اگر روی CDN است).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — ترجمه ORM</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> این کوئری چه می‌کند؟ <code class="inline-code">Comment.objects.filter(post__published=True).order_by("-created_at")[:5]</code></p><p><strong>پاسخ:</strong> ۵ کامنت آخرِ پست‌های <strong>منتشرشده</strong> (مرتب از جدیدترین). دو زیرخط = پیمایش رابطه به Post.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — انتخاب on_delete</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای این روابط کدام on_delete؟ (الف) حذف کاربر → پست‌هایش (ب) حذف ناشر → کتاب‌هایش (ج) حذف پست → برچسب‌هایش</p><p><strong>پاسخ:</strong> الف → CASCADE (یا بهتر: SET_NULL با null=True تا تاریخچه بماند) • ب → PROTECT (ناشرِ کتابِ موجود نباید حذف شود) • ج → سوال انحرافی است! رابطه پست-برچسب ManyToMany است و on_delete نمی‌گیرد؛ با حذف پست فقط ردیف‌های جدول واسط پاک می‌شوند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-04" data-title="آزمون فصل ۴ — مدل‌ها (Models) و پایگاه داده" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) کدام معادله درباره ORM درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کلاس مدل = سطر، نمونه = جدول</button>
+              <button type="button" class="quiz-opt" data-key="b">کلاس مدل = جدول، نمونهٔ مدل = سطر، فیلد = ستون</button>
+              <button type="button" class="quiz-opt" data-key="c">فیلد = جدول، مدل = ستون</button>
+              <button type="button" class="quiz-opt" data-key="d">ORM همان SQL است با نام دیگر</button>
+            </div>
+            <div class="quiz-explain">💡 نگاشت: کلاس↔جدول، نمونه↔سطر، فیلد↔ستون. ORM کوئری‌های پایتون را به SQL ترجمه می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) برای ذخیره قیمت محصول کدام فیلد مناسب است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">FloatField</button>
+              <button type="button" class="quiz-opt" data-key="b">CharField</button>
+              <button type="button" class="quiz-opt" data-key="c">DecimalField</button>
+              <button type="button" class="quiz-opt" data-key="d">IntegerField</button>
+            </div>
+            <div class="quiz-explain">💡 Decimal دقت اعشار دارد و خطای گردکردن شناور نمی‌دهد؛ Float برای پول خطرناک است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) رابطه «هر پست یک نویسنده، هر نویسنده چند پست» با کدام فیلد و در کدام مدل ساخته می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ManyToManyField در Author</button>
+              <button type="button" class="quiz-opt" data-key="b">ForeignKey در Post به Author</button>
+              <button type="button" class="quiz-opt" data-key="c">ForeignKey در Author به Post</button>
+              <button type="button" class="quiz-opt" data-key="d">OneToOneField در Post</button>
+            </div>
+            <div class="quiz-explain">💡 سمت «چند» رابطه (Post) کلید خارجی می‌گیرد. با related_name="posts" از سمت نویسنده هم author.posts.all() در دسترس است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) on_delete=models.CASCADE یعنی چه؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">رکورد والد حذف نشود</button>
+              <button type="button" class="quiz-opt" data-key="b">با حذف والد، رکوردهای وابسته هم حذف شوند</button>
+              <button type="button" class="quiz-opt" data-key="c">کلید خارجی صفر شود</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط در پنل ادمین حذف ممکن باشد</button>
+            </div>
+            <div class="quiz-explain">💡 CASCADE = حذف آبشاری: حذف نویسنده، پست‌ها (و با زنجیره، کامنت‌ها) را هم حذف می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) خروجی <code>Post.objects.filter(published=True)</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">یک شیء Post</button>
+              <button type="button" class="quiz-opt" data-key="b">یک QuerySet (تنبل) از پست‌های منتشرشده</button>
+              <button type="button" class="quiz-opt" data-key="c">یک لیست پایتون معمولی</button>
+              <button type="button" class="quiz-opt" data-key="d">تعداد پست‌ها</button>
+            </div>
+            <div class="quiz-explain">💡 filter همیشه QuerySet برمی‌گرداند؛ تنبل است یعنی تا وقتی لازم نشود (حلقه، len، ایندکس) کوئری به دیتابیس نمی‌رود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) چرا متد __str__ را در مدل تعریف می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">اجباری است وگرنه migrate خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">برای نمایش خوانای رکورد در ادمین و شل</button>
+              <button type="button" class="quiz-opt" data-key="c">برای مرتب‌سازی رکوردها</button>
+              <button type="button" class="quiz-opt" data-key="d">برای تبدیل به JSON</button>
+            </div>
+            <div class="quiz-explain">💡 بدون __str__ همه‌جا «Post object (1)» می‌بینید؛ با آن، عنوان یا نام خوانا نمایش داده می‌شود.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «مدل‌های فروشگاه کتاب»</strong> — لایه داده یک فروشگاه کوچک کتاب را طراحی و پیاده‌سازی کنید.</p>
+        <ul class="checklist">
+          <li>مدل‌ها: Category (با fkey والد برای دسته‌بندی تودرتو — اختیاری)، Book، Author، Customer.</li>
+          <li>رابطه چندبه‌چند Book↔Author (یک کتاب ممکن است چند نویسنده داشته باشد).</li>
+          <li>فیلد قیمت با DecimalField و موجودی با PositiveIntegerField.</li>
+          <li>Meta: ordering مناسب + verbose_name فارسی.</li>
+          <li>در شل: ۵ کتاب با نویسنده و دسته بسازید و ۳ کوئری معنادار بنویسید (مثلاً کتاب‌های ارزان‌تر از X).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 طراحی قبل از کد</b>
+          اول روی کاغذ نمودار ER بکشید: موجودیت‌ها را با دایره و روابط را با خط وصل کنید و نوع رابطه (۱-۱، ۱-ن، ن-ن) را بنویسید. ۱۰ دقیقه طراحی، یک ساعت دیباگ را نجات می‌دهد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li><span class="term" data-term="orm">ORM</span> کلاس پایتون را به جدول پایگاه داده نگاشت می‌کند.</li>
+          <li>فیلدها را شناختیم؛ پول با Decimal، متن بلند با TextField.</li>
+          <li>روابط: ForeignKey (یک‌به‌چند با on_delete)، ManyToMany (چندبه‌چند)، related_name برای دسترسی معکوس.</li>
+          <li>کلاس Meta برای ترتیب و نام نمایشی؛ __str__ برای خوانایی.</li>
+          <li><span class="term" data-term="crud">CRUD</span> کامل در <span class="term" data-term="django-shell">شل جنگو</span> + فیلتر با پیمایش رابطه (دو زیرخط).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «مدل خوب = طرح پایگاه داده خوب؛ هر رابطه را آگاهانه انتخاب کنید: چندبه‌یک، یک‌به‌یک یا چندبه‌چند.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>برای تولید هم SQLite کافی است؟</summary><div class="faq-body"><p>برای سایت‌های کم‌ترافیک بله، ولی استاندارد صنعت <span class="term" data-term="postgresql">PostgreSQL</span> است. در فصل ۲۶ تعویضش می‌کنیم — چون ORM داریم، تقریباً فقط settings عوض می‌شود!</p></div></details>
+        <details class="faq-item"><summary>تعداد فیلدهای مدل چقدر باشد؟</summary><div class="faq-body"><p>قاعده دقیق ندارد. نشانه هشدار: مدلی با ۳۰+ فیلد یا فیلدهایی که نیمی از رکوردها خالی‌اند — شاید باید به مدل جدا (با OneToOne) تقسیم شود.</p></div></details>
+        <details class="faq-item"><summary>می‌توانم بدون مدل، مستقیم SQL بزنم؟</summary><div class="faq-body"><p>بله (متدهای raw و connection.cursor)، ولی تا وقتی مجبور نشده‌اید نکنید: امنیت، قابلیت حمل و خوانایی ORM را از دست می‌دهید.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          مدل‌ها ساخته شدند، ولی هر تغییرشان چطور بدون از دست رفتن داده روی پایگاه داده اعمال می‌شود؟ <strong>فصل ۵</strong> اختصاصاً درباره <span class="term" data-term="migration">مهاجرت‌ها</span> است.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-04" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-04">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-03/index.html">→ فصل قبلی<br><b>🧩 فصل ۳</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-05/index.html">فصل بعدی ←<br><b>🚂 فصل ۵: مهاجرت‌ها (Migrations) و مدیریت پایگاه داده</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۴: مدل‌ها (Models) و پایگاه داده | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
