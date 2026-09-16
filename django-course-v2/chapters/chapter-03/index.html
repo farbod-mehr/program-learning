@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۳: اپلیکیشن‌ها (Apps) در جنگو | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۳ دوره جامع جنگو: اپلیکیشن‌ها (Apps) در جنگو — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۳ از ۳۰ — اپلیکیشن‌ها (Apps) در جنگو</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 مبانی و اصول پایه ← فصل ۳
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۳ از ۳۰</span>
+    <h1>🧩 اپلیکیشن‌ها (Apps) در جنگو</h1>
+    <p>تفاوت <span class="term" data-term="project">پروژه</span> و <span class="term" data-term="app">اپ</span>، ساخت اولین اپ با startapp، ثبت در INSTALLED_APPS و نوشتن اولین <span class="term" data-term="view">ویو</span> و مسیر <span class="term" data-term="url">URL</span> — اولین کد واقعی شما!</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۸۰ دقیقه</span>
+      <span class="pill">🎓 مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا الان فقط «اسکلت» داشتیم؛ از این فصل کد واقعی می‌نویسیم. اپ‌ها قلب سازمان‌دهی کد در جنگو هستند و هر ویو یک قدم به سمت ساختن سایت واقعی است.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>تفاوت پروژه و <span class="term" data-term="app">اپلیکیشن</span> را توضیح دهید.</li>
+          <li>با <code class="inline-code">startapp</code> اپ بسازید و فایل‌هایش را بشناسید.</li>
+          <li>اپ را در <span class="term" data-term="settings">INSTALLED_APPS</span> ثبت کنید.</li>
+          <li>اولین <span class="term" data-term="view">ویوی تابعی</span> را بنویسید و به یک <span class="term" data-term="url">URL</span> وصل کنید.</li>
+          <li>صفحه «سلام دنیا»ی خودتان را در مرورگر ببینید!</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> روی محیط توسعه فصل ۲ ساخته می‌شود و پایه فصل‌های ۴ (مدل)، ۷ (مسیریابی کامل) و ۸ (ویوها) است.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>پروژه در برابر اپ</h4><p>مرز مسئولیت‌ها و ساختار پوشه‌ها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>ساخت اپ</h4><p>startapp و آناتومی فایل‌های اپ.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>ثبت و اتصال</h4><p>INSTALLED_APPS و include در urls.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>اولین ویو</h4><p>HttpResponse و render — سلام دنیای جنگویی!</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 اگر سایتی «وبلاگ»، «فروشگاه» و «تماس با ما» دارد، چند اپ باید بسازیم؟</summary>
+          <div class="answer-body"><p>به‌طور کلاسیک سه اپ: <code class="inline-code">blog</code>، <code class="inline-code">shop</code> و <code class="inline-code">pages</code>. قاعده سرانگشتی: <strong>هر مسئولیت مستقل = یک اپ</strong>. مدل‌ها، ویوها و قالب‌های هر بخش داخل اپ خودش می‌ماند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا جنگو اصرار دارد ویو یک «درخواست» بگیرد و «پاسخ» برگرداند؟</summary>
+          <div class="answer-body"><p>چون وب همین است! هر <span class="term" data-term="view">ویو</span> در واقع کارخانه تبدیل <span class="term" data-term="request">درخواست</span> به <span class="term" data-term="response">پاسخ</span> است. این قرارداد ساده باعث می‌شود همه چیز (صفحه HTML، فایل، JSON) یک‌شکل مدیریت شود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 بدون ثبت اپ در INSTALLED_APPS چه می‌شود؟</summary>
+          <div class="answer-body"><p>جنگو اصلاً نمی‌فهمد اپ شما وجود دارد: مدل‌هایش <span class="term" data-term="migration">مهاجرت</span> نمی‌گیرند، قالب‌هایش پیدا نمی‌شوند و فرمان‌های مدیریتی‌اش کار نمی‌کنند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش از شروع مطمئن شوید:</p>
+        <ul class="checklist">
+          <li>فصل ۲ کامل شده: پروژه‌ای با <code class="inline-code">config</code> (یا mysite) و venv فعال دارید.</li>
+          <li>سرور توسعه قابل اجراست و صفحه خوش‌آمدگویی را دیده‌اید.</li>
+          <li>مفاهیم <span class="term" data-term="request">درخواست</span>/<span class="term" data-term="response">پاسخ</span> و MTV از فصل ۱ یادتان هست.</li>
+          <li>ویرایشگر کد آماده و پوشه پروژه در آن باز است.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ پروژه در برابر اپلیکیشن</h3>
+<p><span class="term" data-term="project">پروژه</span> = <strong>کل وب‌سایت</strong>: تنظیمات مشترک، پایگاه داده و ریشه URLها. <span class="term" data-term="app">اپ</span> = <strong>یک ماژول با مسئولیت مشخص</strong> داخل پروژه: مثل اپ «وبلاگ» یا «نظرسنجی».</p>
+          <ul><li>یک پروژه می‌تواند چند اپ داشته باشد.</li><li>یک اپ می‌تواند در چند پروژه <strong>استفاده مجدد</strong> شود (فلسفه اصلی اپ!).</li><li>اپ‌ها کنار هم در پوشه <code class="inline-code">apps/</code> یا ریشه پروژه قرار می‌گیرند؛ در دوره ما کنار manage.py.</li></ul>
+
+        <h3>۵.۲ ساخت اپ و آناتومی آن</h3>
+<div class="code-box">
+          <div class="code-head"><span>ساخت اپ وبلاگ</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py startapp blog</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ساختار اپ</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">blog/
+├── __init__.py
+├── admin.py       ← ثبت مدل‌ها در پنل مدیریت (فصل ۶)
+├── apps.py        ← کلاس پیکربندی اپ
+├── migrations/    ← مهاجرت‌های پایگاه داده (فصل ۵)
+├── models.py      ← مدل‌های داده (فصل ۴)
+├── tests.py       ← تست‌ها (فصل ۲۰)
+└── views.py       ← ویوها (منطق صفحه‌ها)</code></pre>
+        </div>
+          <p>دو فایل دیگر را <strong>خودمان</strong> اضافه می‌کنیم چون جنگو به‌صورت پیش‌فرض نمی‌سازدشان: <code class="inline-code">urls.py</code> (مسیرهای مخصوص اپ) و پوشه <code class="inline-code">templates/blog/</code> (قالب‌ها).</p>
+
+        <h3>۵.۳ ثبت اپ در INSTALLED_APPS</h3>
+<p>در <span class="term" data-term="settings">settings.py</span> نام اپ را اضافه کنید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>config/settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # اپ‌های خودمان:
+    "blog",
+]</code></pre>
+        </div>
+          <p>آن شش مورد اول، اپ‌های آماده خود جنگو هستند (پنل <span class="term" data-term="admin">ادمین</span>، <span class="term" data-term="authentication">احراز هویت</span>، نشست‌ها و...). حالا اپ blog برای جنگو «وجود دارد».</p>
+
+        <h3>۵.۴ اولین ویو و اتصال به URL</h3>
+<p>ویو تابعی ساده‌ترین شکل منطق صفحه است: یک <span class="term" data-term="request">درخواست</span> می‌گیرد، یک <span class="term" data-term="response">پاسخ</span> برمی‌گرداند:</p>
+          <div class="code-box">
+          <div class="code-head"><span>blog/views.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.http import HttpResponse
+
+
+def home(request):
+    return HttpResponse("&lt;h1&gt;سلام از اولین ویوی من! 🌿&lt;/h1&gt;")
+
+
+def about(request):
+    return HttpResponse("اینجا صفحه درباره ماست.")</code></pre>
+        </div>
+          <p>حالا <span class="term" data-term="routing">مسیریابی</span>. اول در اپ، فایل <code class="inline-code">blog/urls.py</code>:</p>
+          <div class="code-box">
+          <div class="code-head"><span>blog/urls.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("about/", views.about, name="about"),
+]</code></pre>
+        </div>
+          <p>و در ریشه پروژه، مسیرهای اپ را با <code class="inline-code">include</code> وصل می‌کنیم:</p>
+          <div class="code-box">
+          <div class="code-head"><span>config/urls.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("blog.urls")),
+]</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 جریان کار</b>
+          درخواست <code class="inline-code">/about/</code> → از config/urls.py به blog.urls می‌رود (include) → با الگوی <code class="inline-code">about/</code> مطابقت می‌کند → ویوی <code class="inline-code">about</code> اجرا و <span class="term" data-term="response">پاسخ</span> برگردانده می‌شود. جزئیات کامل include و نام‌گذاری در فصل ۷.
+        </div>
+
+        <h3>۵.۵ از متن خام به صفحه HTML: render</h3>
+<p>HttpResponse برای متن ساده خوب است، ولی صفحه واقعی یعنی HTML. فعلاً یک نمونه سریع (فصل ۱۰ کامل توضیح می‌دهد):</p>
+          <div class="code-box">
+          <div class="code-head"><span>blog/views.py — استفاده از قالب</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.shortcuts import render
+
+
+def home(request):
+    context = {"title": "وبلاگ من", "posts_count": 3}
+    return render(request, "blog/home.html", context)</code></pre>
+        </div>
+          <p>فایل <code class="inline-code">blog/templates/blog/home.html</code> را بسازید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>blog/templates/blog/home.html</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="fa" dir="rtl"&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;{{ title }}&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;به {{ title }} خوش آمدید!&lt;/h1&gt;
+  &lt;p&gt;تعداد نوشته‌ها: {{ posts_count }}&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+          <p>تابع <span class="term" data-term="render">render</span>، <span class="term" data-term="template">قالب</span> و <span class="term" data-term="context">بافت</span> (دیکشنری داده) را ترکیب و HTML نهایی می‌سازد.</p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک اپ کامل «pages» با دو صفحه — مرحله‌به‌مرحله:</p>
+        <div class="code-box">
+          <div class="code-head"><span>۱) ساخت و ثبت اپ</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py startapp pages
+# سپس "pages" را به INSTALLED_APPS اضافه کنید</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) ویوها — pages/views.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.shortcuts import render
+
+
+def home(request):
+    return render(request, "pages/home.html", {"name": "دنیای جنگو"})
+
+
+def about(request):
+    return render(request, "pages/about.html")</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) مسیرها — pages/urls.py و اتصال در config/urls.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># pages/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("about/", views.about, name="about"),
+]
+
+# config/urls.py
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("pages.urls")),
+]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۴) قالب‌ها — pages/templates/pages/home.html</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="fa" dir="rtl"&gt;
+&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;title&gt;خانه&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;سلام {{ name }}! 🌿&lt;/h1&gt;
+  &lt;a href="/about/"&gt;درباره ما&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+          <p>سرور را اجرا کنید و <code class="inline-code">/</code> و <code class="inline-code">/about/</code> را ببینید. اولین سایت دو صفحه‌ای شما ساخته شد! 🎉</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>۲۰ دقیقه وقت بگذارید و خودتان بسازید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> اپی به نام <code class="inline-code">shop</code> بسازید، ثبتش کنید و ویویی بنویسید که با HttpResponse متن «به فروشگاه خوش آمدید» را در مسیر <code class="inline-code">/shop/</code> نشان دهد.</li>
+          <li><strong>کارگاه ۲:</strong> در همان اپ، ویوی <code class="inline-code">product</code> با <span class="term" data-term="render">render</span> و یک قالب بسازید که نام محصول را از <span class="term" data-term="context">بافت</span> بگیرد و نمایش دهد (مسیر: <code class="inline-code">/shop/product/</code>).</li>
+          <li><strong>کارگاه ۳:</strong> عمداً نام اپ را از INSTALLED_APPS حذف کنید و ببینید چه خطایی می‌بینید. سپس برگردانید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱ — اپ shop</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>shop/views.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.http import HttpResponse
+
+
+def shop_home(request):
+    return HttpResponse("به فروشگاه خوش آمدید 🛍️")</code></pre></div><div class="code-box"><div class="code-head"><span>shop/urls.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.shop_home, name="shop_home"),
+]</code></pre></div><p>و در config/urls.py: <code class="inline-code">path("shop/", include("shop.urls")),</code> + ثبت "shop" در INSTALLED_APPS.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲ — ویو با render</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>shop/views.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.shortcuts import render
+
+
+def product(request):
+    context = {"product_name": "لپ‌تاپ جنگویی"}
+    return render(request, "shop/product.html", context)</code></pre></div><p>قالب در <code class="inline-code">shop/templates/shop/product.html</code> با <code class="inline-code">{{ product_name }}</code>. مسیر: <code class="inline-code">path("product/", views.product)</code> داخل shop/urls.py.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳ — نتیجه حذف از INSTALLED_APPS</summary>
+          <div class="answer-body"><p>با حذف نام اپ، قالب‌هایش پیدا نمی‌شوند: خطای <strong>TemplateDoesNotExist</strong> (برای کارگاه ۲) — چون جنگو پوشه templates اپ‌های ثبت‌نشده را جست‌وجو نمی‌کند. ویوهای HttpResponse-only ممکن است هنوز کار کنند (چون import مستقیم‌اند) ولی مدل‌ها و مهاجرت‌ها قطعاً از کار می‌افتند. درس: <strong>ثبت در INSTALLED_APPS یعنی «جنگو، این اپ را بشناس»</strong>.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>TemplateDoesNotExist</code></b>
+          <p>سه علت: ① اپ در INSTALLED_APPS ثبت نشده. ② مسیر قالب غلط است — ساختار درست: <code class="inline-code">blog/templates/blog/home.html</code> و در ویو: <code class="inline-code">"blog/home.html"</code> (پوشه templates دوبرابر ندارد!). ③ نام فایل اشتباه تایپ شده.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ صفحه <code>404</code> برای مسیری که نوشته‌ام</b>
+          <p>معمولاً include درست وصل نشده یا الگوی path اشتباه است. ترتیب مهم است: جنگو urlpatterns را <strong>از بالا به پایین</strong> امتحان می‌کند. همچنین اسلش انتهایی را چک کنید (<code class="inline-code">about/</code> با <code class="inline-code">about</code> فرق دارد).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>ModuleNotFoundError: No module named 'blog'</code></b>
+          <p>پوشه اپ هم‌سطح manage.py نیست (جایی دیگر ساخته‌اید) یا نام را اشتباه نوشته‌اید. manage.py را پیدا کنید و ببینید پوشه اپ کنارش هست یا نه.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی کاما یا براکت در urlpatterns</b>
+          <p>SyntaxError با پیام روشن می‌دهد. هر <code class="inline-code">path(...)</code> را با کاما جدا کنید و آخرین <code class="inline-code">]</code> را ببندید.</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — مرز پروژه و اپ</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای سایتی با بخش‌های «خبر»، «ویدیو» و «کاربران»، ساختار پروژه/اپ را طراحی کنید.</p><p><strong>پاسخ نمونه:</strong> یک پروژه (config) با سه اپ: <code class="inline-code">news</code>، <code class="inline-code">video</code> و <code class="inline-code">accounts</code>. تنظیمات و پایگاه داده مشترک در پروژه؛ هر بخش مدل/ویو/قالب خودش را در اپ خودش دارد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — ترتیب اجرا</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> مراحل ساخت یک صفحه جدید را مرتب کنید: نوشتن قالب / ساخت ویو / افزودن path / ثبت اپ.</p><p><strong>پاسخ:</strong> ① ثبت اپ در INSTALLED_APPS → ② نوشتن ویو در views.py → ③ افزودن path در urls → ④ ساخت قالب و اتصالش به ویو با render. (ترتیب ۲ و ۴ قابل جابه‌جایی است.)</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — نام‌گذاری</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> چرا پیشنهاد می‌شود قالب‌ها را در <code class="inline-code">templates/blog/</code> بگذاریم نه مستقیم <code class="inline-code">templates/</code>؟</p><p><strong>پاسخ:</strong> چون جست‌وجوی قالب جنگو در همه اپ‌ها مشترک است؛ اگر دو اپ هر دو <code class="inline-code">home.html</code> داشته باشند، تداخل پیش می‌آید. پوشه همنام با اپ (namespace) از برخورد جلوگیری می‌کند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-03" data-title="آزمون فصل ۳ — اپلیکیشن‌ها (Apps) در جنگو" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) رابطه پروژه و اپلیکیشن در جنگو کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">یک پروژه فقط یک اپ می‌تواند داشته باشد</button>
+              <button type="button" class="quiz-opt" data-key="b">پروژه کل سایت است و اپ یک ماژول با مسئولیت مشخص داخل آن</button>
+              <button type="button" class="quiz-opt" data-key="c">اپ بزرگ‌تر از پروژه است</button>
+              <button type="button" class="quiz-opt" data-key="d">هر دو یک چیزند</button>
+            </div>
+            <div class="quiz-explain">💡 پروژه تنظیمات و اسکلت کل سایت را دارد؛ اپ‌ها اجزای مستقل و قابل استفاده مجدد داخل آن‌اند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) کدام فایل را جنگو در startapp نمی‌سازد و معمولاً خودمان اضافه می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">views.py</button>
+              <button type="button" class="quiz-opt" data-key="b">models.py</button>
+              <button type="button" class="quiz-opt" data-key="c">urls.py اپ</button>
+              <button type="button" class="quiz-opt" data-key="d">admin.py</button>
+            </div>
+            <div class="quiz-explain">💡 urls.py مخصوص اپ (و پوشه templates) را خودمان می‌سازیم؛ بقیه با startapp ایجاد می‌شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) یک ویوی تابعی در جنگو چه چیزی دریافت و چه چیزی برمی‌گرداند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">درخواست (request) → پاسخ (response)</button>
+              <button type="button" class="quiz-opt" data-key="b">پاسخ → درخواست</button>
+              <button type="button" class="quiz-opt" data-key="c">قالب → مدل</button>
+              <button type="button" class="quiz-opt" data-key="d">URL → پایگاه داده</button>
+            </div>
+            <div class="quiz-explain">💡 قرارداد ثابت جنگو: ویو = تابعی که HttpRequest می‌گیرد و HttpResponse (یا نتیجه render/redirect) برمی‌گرداند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۴) اگر اپ در INSTALLED_APPS ثبت نشود، کدام مورد از کار می‌افتد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط پنل ادمین</button>
+              <button type="button" class="quiz-opt" data-key="b">فقط URLها</button>
+              <button type="button" class="quiz-opt" data-key="c">مدل‌ها/مهاجرت‌ها، کشف قالب‌ها و فرمان‌های اپ</button>
+              <button type="button" class="quiz-opt" data-key="d">هیچ چیز؛ ثبت اختیاری است</button>
+            </div>
+            <div class="quiz-explain">💡 جنگو اپ‌های ثبت‌نشده را نمی‌شناسد: مهاجرت مدل‌ها ساخته نمی‌شود و قالب‌هایش در جست‌وجو پیدا نمی‌شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) تابع render چه ترکیبی را به پاسخ HTML تبدیل می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">مدل + ویو</button>
+              <button type="button" class="quiz-opt" data-key="b">قالب + بافت (context)</button>
+              <button type="button" class="quiz-opt" data-key="c">URL + ویو</button>
+              <button type="button" class="quiz-opt" data-key="d">فرم + قالب</button>
+            </div>
+            <div class="quiz-explain">💡 render(request, template, context) قالب را با داده‌های بافت پر و پاسخ HTML می‌سازد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) در config/urls.py، تابع include چه کاری می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">قالب‌ها را شامل صفحه می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">مسیرهای یک اپ را به ریشه مسیریابی پروژه وصل می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">اپ را نصب می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">پایگاه داده را شامل می‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 include("blog.urls") یعنی «بقیه مسیرها را از فایل urls همان اپ بخوان»؛ یعنی مسیریابی تکه‌تکه و منظم.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «سایت دو بخشی من»</strong> — یک پروژه با دو اپ واقعی بسازید: <code class="inline-code">pages</code> (صفحه‌های عمومی) و <code class="inline-code">blog</code> (مقالات).</p>
+        <ul class="checklist">
+          <li>اپ pages با صفحه‌های خانه و درباره (با render و قالب).</li>
+          <li>اپ blog با ویوی فهرست مقالات که فعلاً یک لیست پایتونی ساختگی (hardcode) را به قالب می‌دهد و با حلقه نمایش می‌دهد.</li>
+          <li>هر دو اپ در INSTALLED_APPS ثبت و با include به ریشه وصل شوند.</li>
+          <li>در همه قالب‌ها یک لینک مشترک بین صفحه‌ها بگذارید.</li>
+          <li>ساختار پوشه‌ها را در یادداشت‌ها رسم کنید.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نگاه به آینده</b>
+          فهرست «ساختگی» مقالات در فصل ۴ جای خودش را به <span class="term" data-term="model">مدل</span> و پایگاه داده واقعی می‌دهد — صبور باشید!
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>پروژه = کل سایت؛ اپ = ماژول مستقل با مسئولیت مشخص.</li>
+          <li>با <code class="inline-code">startapp</code> اپ ساختیم و نقش models.py، views.py، admin.py و migrations را شناختیم.</li>
+          <li>اپ را در INSTALLED_APPS ثبت کردیم.</li>
+          <li>اولین ویوهای تابعی با HttpResponse و <span class="term" data-term="render">render</span> نوشتیم.</li>
+          <li>با path و include، ویوها را به <span class="term" data-term="url">URL</span>ها وصل کردیم.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «اپ = واحد سازمان‌دهی کد؛ ویو = تابعی که درخواست را به پاسخ تبدیل می‌کند؛ urls = نقشهٔ اتصال این دو.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>نام اپ را فارسی یا با حرف بزرگ بگذارم؟</summary><div class="faq-body"><p>خیر! نام اپ باید شناسه معتبر پایتون باشد: حروف کوچک انگلیسی، بدون فاصله (مثل blog، shop، accounts). عنوان نمایشی فارسی را در قالب و پنل ادمین بگذارید.</p></div></details>
+        <details class="faq-item"><summary>چند اپ زیاد است؟</summary><div class="faq-body"><p>قاعده سفت‌وسختی ندارد. یک سایت کوچک با ۲ تا ۵ اپ نرمال است. وقتی دو اپ همیشه با هم تغییر می‌کنند، شاید باید یکی باشند؛ وقتی یک اپ دو مسئولیت مستقل دارد، شاید باید تقسیم شود.</p></div></details>
+        <details class="faq-item"><summary>می‌توانم همه چیز را در یک اپ بگذارم؟</summary><div class="faq-body"><p>فنی بله، ولی ساختار به‌هم می‌ریزد و استفاده مجدد از بین می‌رود. در پروژه‌های کوچکِ تمرینی اشکالی ندارد؛ برای پروژه جدی، تفکیک کنید.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          صفحه‌ها ساخته شدند ولی داده‌هایشان ساختگی است. در <strong>فصل ۴</strong> با <span class="term" data-term="model">مدل‌ها</span> و <span class="term" data-term="orm">ORM</span>، داده‌های واقعی را در پایگاه داده ذخیره و مدیریت می‌کنیم.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-03" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-03">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-02/index.html">→ فصل قبلی<br><b>🛠️ فصل ۲</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-04/index.html">فصل بعدی ←<br><b>🗄️ فصل ۴: مدل‌ها (Models) و پایگاه داده</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۳: اپلیکیشن‌ها (Apps) در جنگو | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
