@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۹: جنگوی امروز — 5.2 LTS و 6.0 | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۹ دوره جامع جنگو: جنگوی امروز — 5.2 LTS و 6.0 — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۹ از ۳۰ — جنگوی امروز — 5.2 LTS و 6.0</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🚀 استقرار و پروژه‌های عملی ← فصل ۲۹
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۹ از ۳۰</span>
+    <h1>🆕 جنگوی امروز — 5.2 LTS و 6.0</h1>
+    <p>چه چیزی در جنگو ۵.۲ (LTS) و ۶.۰ تازه است: <span class="term" data-term="task">Background Tasks</span> داخلی، <span class="term" data-term="template-partial">Template Partials</span>، پشتیبانی بومی CSP، کلیدهای اصلی مرکب، AsyncPaginator و متدولوژی ارتقای نسخه.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۹۰ دقیقه</span>
+      <span class="pill">🎓 پیشرفته</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>جنگو هر ۸ ماه یک نسخه ویژگی و هر ~۲.۵ سال یک نسخه LTS می‌دهد. دانستن «چه چیزی تازه است» شما را در مصاحبه و تصمیم‌های معماری جلو می‌اندازد — مخصوصاً وقتی ابزار داخلی جای پکیج ثالث را می‌گیرد.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>چرخه انتشار جنگو و معنی LTS را توضیح دهید.</li>
+          <li>کلید اصلی مرکب (CompositePrimaryKey) را به کار ببرید.</li>
+          <li>با Background Tasks داخلی ۶.۰ یک تسک ساده تعریف و اجرا کنید.</li>
+          <li>Template Partials را در قالب‌ها استفاده کنید.</li>
+          <li>CSP بومی را فعال و یک پروژه را با متد صحیح ارتقا دهید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> به‌روزرسانی دانش فصل‌های ۱۰ (قالب)، ۲۴ (سلری) و ۱۷ (میدلور/CSP)؛ پایه تصمیم «کدام نسخه برای پروژه من».</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>چرخه نسخه‌ها</h4><p>LTS و پشتیبانی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>۵.۲</h4><p>کلید مرکب، شل هوشمند، فرم/async.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>۶.۰</h4><p>tasks، partials، CSP، ایمیل.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>ارتقا</h4><p>متدولوژی مهاجرت نسخه.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 LTS یعنی چه و کدام را انتخاب کنیم؟</summary>
+          <div class="answer-body"><p>Long-Term Support: جنگو ۵.۲ (آوریل ۲۰۲۵) تا <strong>آوریل ۲۰۲۸</strong> وصله امنیتی می‌گیرد؛ نسخه‌های ویژگی (مثل ۶.۰، دسامبر ۲۰۲۵) فقط تا نسخه بعدی+. پروژه جدید جدی/سازمانی: LTS. پروژه شخصی/یادگیری: تازه‌ترین نسخه ویژگی هم عالی است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 آیا tasks داخلی یعنی سلری مرده است؟</summary>
+          <div class="answer-body"><p>نه! فریم‌ورک tasks جنگو (۶.۰) <strong>تعریف و صف‌کردن</strong> تسک را استاندارد می‌کند و بک‌اندهای ساده می‌دهد؛ برای صف‌های پیچیده (retry پیشرفته، زنجیره‌ها، پایش Flower، صف‌های چندگانه) همچنان سلری قدرتمندتر است. روند: شروع با tasks داخلی، مهاجرت به سلری وقتی نیاز پیچیده شد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا ۶.۰ پایتون ۳.۱۲+ می‌خواهد؟</summary>
+          <div class="answer-body"><p>سیاست جنگو: با هر نسخه، حمایت از پایتون‌های EOL قطع می‌شود تا از ویژگی‌های زبان (تایپ‌های بهتر، کارایی) استفاده کند. ۶.۰ از ۳.۱۰/۳.۱۱ خداحافظی کرد و ۳.۱۲-۳.۱۴ را پشتیبانی می‌کند. قبل از ارتقای جنگو، ارتقای پایتون را چک کنید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ (هر نسخه‌ای که دارید — ارتقا بخشی از تمرین است).</li>
+          <li>پایتون ۳.۱۲+ نصب‌شده (<code class="inline-code">python --version</code>).</li>
+          <li>فصل ۲۴: درک صف تسک برای مقایسه با tasks داخلی.</li>
+          <li>فصل ۱۰: قالب‌ها و include برای درک partials.</li>
+          
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ نسخه‌های این فصل</b>
+          محتوا بر پایه جنگو ۵.۲.x (LTS، پشتیبانی تا آوریل ۲۰۲۸) و ۶.۰.x (دسامبر ۲۰۲۵، پشتیبانی تا آوریل ۲۰۲۷) نوشته شده. قبل از هر ارتقا، release notes رسمی همان نسخه را بخوانید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ چرخه انتشار و نقشه راه نسخه‌ها</h3>
+<div class="table-wrap"><table class="compare"><thead><tr><th>نسخه</th><th>انتشار</th><th>نوع</th><th>پایان پشتیبانی</th></tr></thead><tbody><tr><td>4.2</td><td>آوریل ۲۰۲۳</td><td>LTS</td><td>آوریل ۲۰۲۶ (پایان!)</td></tr><tr><td>5.0/5.1</td><td>دسامبر ۲۰۲۳/اوت ۲۰۲۴</td><td>ویژگی</td><td>پایان یافته</td></tr><tr><td><strong>5.2</strong></td><td>آوریل ۲۰۲۵</td><td><strong>LTS</strong></td><td>آوریل ۲۰۲۸</td></tr><tr><td><strong>6.0</strong></td><td>دسامبر ۲۰۲۵</td><td>ویژگی</td><td>آوریل ۲۰۲۷</td></tr><tr><td>6.2</td><td>آوریل ۲۰۲۶ (برنامه)</td><td>LTS</td><td>~۲۰۲۹</td></tr></tbody></table></div>
+          <div class="code-box">
+          <div class="code-head"><span>دیدن نسخه فعلی پروژه</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python -m django --version
+pip index versions django           # نسخه‌های موجود
+pip install -U "django~=5.2.0"      # ارتقا در محدوده patch</code></pre>
+        </div>
+
+        <h3>۵.۲ جنگو ۵.۲ LTS — ویژگی‌های کلیدی</h3>
+<div class="code-box">
+          <div class="code-head"><span>۱) کلید اصلی مرکب (CompositePrimaryKey)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models import CompositePrimaryKey
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
+    class Meta:
+        pk = CompositePrimaryKey("order", "product")
+
+
+# item.pk → (order_id, product_id) — بدون فیلد id اضافی!
+# مناسب: جداول واسط معنادار، مهاجرت از اسکیمای قدیمی</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) شل با import خودکار مدل‌ها</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py shell
+&gt;&gt;&gt; Post.objects.count()      # بدون import — مدل‌ها خودکار حاضرند!
+&gt;&gt;&gt; User, Comment             # همه اپ‌ها</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) احراز هویت ناهمگام</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># در ویوهای async:
+user = await authenticate(request, username="ali", password="...")
+await login(request, user)     # نسخه async توابع auth
+# و method_decorator برای متدهای کلاس async</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۴) ویجت‌های فرم جدید و دسترس‌پذیری</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class ProfileForm(forms.Form):
+    color = forms.CharField(widget=forms.ColorInput)     # انتخاب رنگ
+    phone = forms.CharField(widget=forms.TelInput)       # tel
+    q = forms.CharField(widget=forms.SearchInput)        # search
+# + attributهای ARIA بهتر در رندر پیش‌فرض فرم‌ها</code></pre>
+        </div>
+          <ul><li>سایر: عملیات AlterConstraint در <span class="term" data-term="migration">مهاجرت</span> (تغییر محدودیت بدون حذف/ساخت)، تابع JSONArray، رعایت ترتیب عبارت‌ها در values()/values_list()، CharField.max_length اختیاری در SQLite، تکرار PBKDF2 قوی‌تر.</li></ul>
+
+        <h3>۵.۳ جنگو ۶.۰ — چهار ستون بزرگ</h3>
+<div class="code-box">
+          <div class="code-head"><span>۱) Background Tasks داخلی (جایگزین سبک سلری)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># tasks.py
+from django.tasks import task
+
+
+@task
+def send_welcome_email(user_id: int):
+    from django.contrib.auth import get_user_model
+    user = get_user_model().objects.get(pk=user_id)
+    user.email_user("خوش آمدید!", "متن...")
+
+
+# در ویو — صف‌کردن:
+from django.tasks import enqueue
+enqueue(send_welcome_email, user.pk)
+
+# اجرا با ورکر داخلی (پشتیبان پیش‌فرض: database):
+# python manage.py runworker</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) Template Partials</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{# blog/post_list.html #}
+{% partialdef post-card %}
+  &lt;article class="card"&gt;
+    &lt;h2&gt;{{ post.title }}&lt;/h2&gt;
+    &lt;p&gt;{{ post.body|truncatewords:30 }}&lt;/p&gt;
+  &lt;/article&gt;
+{% endpartialdef %}
+
+{# استفاده در همان فایل: #}
+{% for post in posts %}{% partial post-card %}{% endfor %}
+
+{# از ویو: رندر «فقط» تکه (عالی برای HTMX — فصل ۲۸!) #}
+{#   render(request, "blog/post_list.html#post-card") #}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) پشتیبانی بومی CSP (امنیت)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># settings.py — با میدلور ContentSecurityPolicyMiddleware
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ["'self'"],
+        "script-src": ["'self'"],
+        "img-src": ["'self'", "data:"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+    },
+    "REPORT_ONLY": False,   # اول True بگذارید و فقط گزارش بگیرید!
+}
+# هدف: حتی اگر XSS رخ دهد، مرورگر اسکریپت مهاجم را اجرا نکند</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۴) ایمیل مدرن + AsyncPaginator</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># API ایمیل بر پایه email استاندارد پایتون (positional args منسوخ)
+# پیام‌ها حالا به‌جای EmailMessage کلاسیک، ساختار مدرن‌تر دارند
+
+# صفحه‌بندی ناهمگام در ویوهای async:
+from django.core.paginator import AsyncPaginator
+paginator = AsyncPaginator(await sync_to_async(list)(qs), 10)
+page = await paginator.apage(request.GET.get("page"))</code></pre>
+        </div>
+          <ul><li>سایر ۶.۰: DEFAULT_AUTO_FIELD پیش‌فرض BigAutoField شد، StringAgg روی همه بک‌اندها، AnyValue، متغیر forloop.length در حلقه قالب، تگ querystring همیشه با "?" شروع می‌شود، حمایت از پایتون ۳.۱۲-۳.۱۴ (قطع ۳.۱۰/۳.۱۱ و MariaDB ۱۰.۵).</li></ul>
+
+        <h3>۵.۴ متدولوژی ارتقای نسخه</h3>
+<div class="code-box">
+          <div class="code-head"><span>مسیر امن ارتقا</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># ۰) حمایت: تست‌ها سبز + git tag (فصل ۲۰ سرمایه این لحظه است!)
+git tag pre-upgrade &amp;&amp; git push --tags
+
+# ۱) نسخه فعلی را patch کنید: 5.1.x → آخرین 5.1
+pip install -U "django~=5.1.0" &amp;&amp; python manage.py test
+
+# ۲) deprecationها را ببینید و پاک کنید
+python -Wd manage.py test 2&gt;&amp;1 | grep -i deprecat
+
+# ۳) ارتقای اصلی (یک پله: 5.1 → 5.2 → 6.0، نه پرش)
+pip install -U "django~=5.2.0"
+python manage.py test &amp;&amp; python manage.py check --deploy
+
+# ۴) مهاجرت‌های جدید را بسازید/اجرا کنید
+python manage.py makemigrations --check
+python manage.py migrate</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ پکیج‌های ثالث را فراموش نکنید</b>
+          DRF، celery، whitenoise و... هرکدام جدول سازگاری نسخه دارند. قبل از ارتقای جنگو، سازگاری همه پکیج‌های requirements را چک کنید؛ گاهی باید اول پکیج را ارتقا داد. در پروژه جدی: ارتقا را در شاخه جدا و با داده کپی-تولید تمرین کنید.
+        </div>
+
+        <h3>۵.۵ چشم‌انداز: async و آینده</h3>
+<ul><li><strong>مسیر async:</strong> از ۳.۰ به بعد <span class="term" data-term="view">ویوها</span>، <span class="term" data-term="orm">ORM</span> (aobjects)، auth (۵.۲) و صفحه‌بندی (۶.۰) ناهمگام شده‌اند. پروژه‌های I/O-محور (پروکسی APIها، realtime) بیشترین سود را می‌برند؛ CRUD معمول هنوز با sync ساده‌تر است.</li><li><strong>tasks داخلی:</strong> استاندارد شدن صف تسک = احتمالاً در ۶.۲ LTS پخته‌تر؛ معماری «اول داخلی، بعد سلری» را در نظر بگیرید.</li><li><strong>partials + <span class="term" data-term="htmx">HTMX</span>:</strong> ترکیب ۶.۰ و فصل ۲۸ = الگوی رسمی-جامعه‌ای «سرور-رندر تعاملی».</li><li><strong>CSP:</strong> با بومی شدنش، انتظار سخت‌گیرانه‌تر شدن پیش‌فرض‌های امنیتی در نسخه‌های بعد.</li></ul>
+          <div class="callout tip">
+          <b class="title">💡 عادت بمانید به‌روز</b>
+          دنبال کردن: وبلاگ رسمی djangoproject.com، release notes هر نسخه (بخش Backwards incompatible!), و خبرنامه‌های جامعه. برای کار حرفه‌ای «خواندن release notes» مهارت است نه کار اضافه.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>مهاجرت عملی: پروژه وبلاگ را از سلری-محور به ترکیب «tasks داخلی + partials» مدرن کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>قبل (فصل ۲۴ — سلری)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># blog/tasks.py
+@shared_task(bind=True, max_retries=3)
+def send_publish_email(self, post_id, emails):
+    ...
+
+# ویو:
+send_publish_email.delay(post.pk, emails)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>بعد (۶.۰ — tasks داخلی، ساده‌شده)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.tasks import enqueue, task
+
+
+@task(queue="mail")
+def send_publish_email(post_id: int, emails: list[str]):
+    from .models import Post
+    post = Post.objects.get(pk=post_id)
+    send_mail(f"پست جدید: {post.title}", post.body[:500],
+              None, emails[:50])
+
+
+# ویو — همان یک خط:
+transaction.on_commit(
+    lambda: enqueue(send_publish_email, post.pk, emails))
+
+# اجرای ورکر: python manage.py runworker --queue mail
+# (retry/صف‌های پیچیده لازم شد؟ همان کد را به سلری برگردانید)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>partials برای HTMX (ترکیب ۶.۰ + فصل ۲۸)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ویوی تکه‌ای بدون فایل partials/ جدا:
+def like(request, pk):
+    post = ...
+    if request.headers.get("HX-Request"):
+        return render(request, "blog/post_detail.html#like-box")
+        #                                            ↑ فقط تکه!</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>قالب با partialdef</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{# blog/post_detail.html #}
+{% partialdef like-box %}
+&lt;button hx-post="{% url 'blog:like' post.pk %}" hx-target="closest button"
+        hx-swap="outerHTML"&gt;❤ {{ post.likes_count }}&lt;/button&gt;
+{% endpartialdef %}
+
+{% block content %}
+  &lt;h1&gt;{{ post.title }}&lt;/h1&gt;
+  {% partial like-box %}
+{% endblock %}</code></pre>
+        </div>
+          <p>نتیجه: یک فایل قالب کمتر، یک سرویس کمتر (Redis فقط برای سلری دیگر لازم نیست اگر tasks دیتابیسی کافی باشد)، و همان قابلیت‌ها. سادگی، خودش یک ویژگی است.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>پروژه را به‌روز و مدرن کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> وضعیت نسخه پروژه را گزارش کنید: <code class="inline-code">python -m django --version</code>، فهرست deprecationها با -Wd، و برنامه ارتقای پله‌ای تا ۵.۲ (یا ۶.۰ با پایتون ۳.۱۲+).</li>
+          <li><strong>کارگاه ۲:</strong> یک جدول با CompositePrimaryKey بسازید (مثلاً «امتیاز کاربر به پست»: کلید = user+post) و CRUD کوچکش را در ادمین/ویو تست کنید.</li>
+          <li><strong>کارگاه ۳ (اگر روی ۶.۰ هستید):</strong> یک تسک با @task داخلی بنویسید (مثل welcome email)، با enqueue صف و با runworker اجرا کنید؛ سپس همان را با template partial برای HTMX تکمیل کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>گزارش ارتقا</span><span class="lang">bash</span></div><pre class="code"><code data-lang="bash">python -m django --version
+# مثال: 4.2.11
+
+pip install -U "django~=4.2.0"     # آخرین patch همین شاخه
+python -Wd manage.py test 2>&amp;1 | grep -i deprecat
+# خروجی نمونه: RemovedInDjango51Warning: ...
+
+# پله‌ها: 4.2 → 5.0 → 5.1 → 5.2 (LTS) [→ 6.0 اختیاری]
+# در هر پله: pip install -U، test، migrate، رفع deprecation
+# پکیج‌ها: pip list --outdated + جدول سازگاری DRF/celery</code></pre></div><p>نکته مهم: اگر پروژه روی ۴.۲ است، پشتیبانی‌اش <strong>آوریل ۲۰۲۶ تمام شده</strong> — ارتقا دیگر «اختیاری» نیست، امنیت است. گزارش را در docs/upgrade.md با تاریخ هر پله ثبت کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>کلید مرکب</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.db import models
+
+
+class PostRating(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    score = models.PositiveSmallIntegerField()   # 1..5
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        pk = models.CompositePrimaryKey("user", "post")
+
+
+# استفاده:
+r, _ = PostRating.objects.update_or_create(
+    user=request.user, post=post, defaults={"score": 4})
+r.pk                    # (3, 17) — تاپل!
+PostRating.objects.filter(pk=(3, 17))
+
+# ادمین: ثبت معمولی؛ فقط pk ادمین‌پسند نیست —
+# برای URLهای ادمین بهتر است id ساده نگه دارید یا views دستی بنویسید.</code></pre></div><p>توجه: با <span class="term" data-term="primary-key">کلید مرکب</span>، r.pk دیگر عدد نیست — کدهایی که pk را در <span class="term" data-term="url">URL</span>/<span class="term" data-term="cache">کش</span>/<span class="term" data-term="json">JSON</span> فرض عددی دارند را بررسی کنید. برای همین بیشتر پروژه‌ها id یکتا + unique_together/UniqueConstraint را ترجیح می‌دهند؛ CompositePrimaryKey برای وفاداری به اسکیمای موجود عالی است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>tasks داخلی + partial</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python"># accounts/tasks.py (جنگو 6.0+)
+from django.tasks import task
+
+
+@task
+def send_welcome_email(user_id: int):
+    from django.contrib.auth import get_user_model
+    u = get_user_model().objects.get(pk=user_id)
+    u.email_user("خوش آمدید 👋", "ممنون از ثبت‌نام!")
+
+
+# در ویوی ثبت‌نام، بعد از ایجاد کاربر:
+from django.tasks import enqueue
+from django.db import transaction
+transaction.on_commit(lambda: enqueue(send_welcome_email, user.pk))
+
+# اجرا:
+# ترمینال ۱: python manage.py runworker
+# ترمینال ۲: python manage.py runserver
+# ثبت‌نام کنید → در لاگ runworker اجرای تسک را ببینید
+# (EMAIL_BACKEND=console ایمیل را در ترمینال نشان می‌دهد)</code></pre></div><p>مقایسه با سلری: بدون Redis، بدون پروسه جداگانه celery — پشتیبان database داخلی است. محدودیت‌ها: retry/زمان‌بندی دوره‌ای/صف‌های پیشرفته به پختگی سلری نیست؛ برای «ایمیل خوش‌آمد و کارهای سبک» کاملاً کافی. partial را هم طبق مثال فصل برای like-box اضافه کنید و render("...#like-box") را تست کنید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ بعد از ارتقا: ImportError یا «no module named ...»</b>
+          <p>پکیج ثالث با نسخه جدید جنگو ناسازگار است (معمولاً DRF/celery/... پیام واضح می‌دهد). جدول سازگاری پکیج را چک و اول پکیج را ارتقا دهید. به همین دلیل «یک پله در هر بار».</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ هشدارهای RemovedInDjangoXXWarning انباشته</b>
+          <p>از نسخه‌ها قبل پشت گوش انداخته‌اید. همه را با -Wd لیست و طبق پیام هر هشدار (معمولاً جایگزین مشخص دارد) اصلاح کنید؛ بعد ارتقای اصلی. هشدار امروز = شکست فردا.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ runworker تسک‌ها را اجرا نمی‌کند (۶.۰)</b>
+          <p>backend تسک‌ها پیکربندی نشده (پیش‌فرض database باید migrate شده باشد: python manage.py migrate برای جدول تسک‌ها) یا صف اشتباه است (runworker --queue mail اگر task(queue="mail")). لاگ ورکر را با -v 2 ببینید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ CSP سایت را «خالی/شکسته» کرد</b>
+          <p>دیگرکتیو خیلی سخت‌گیرانه است (مثلاً script-src بدون CDNهای استفاده‌شده). کنسول مرورگر دقیقاً می‌گوید کدام منبع نقض شد؛ آن origin را به فهرست اضافه کنید. همیشه اول REPORT_ONLY=True برای دیدن نقض‌ها بدون شکستن.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ DEFAULT_AUTO_FIELD و هشدارهای مهاجرت بعد از ۶.۰</b>
+          <p>پیش‌فرض BigAutoField شد؛ پروژه‌های قدیمی ممکن است AutoField داشته باشند و makemigrations مهاجرت تبدیل id بسازد. <strong>کورکورانه migrate نکنید</strong> — تبدیل PK روی جدول بزرگ سنگین است؛ یا تنظیم صریح را نگه دارید یا با برنامه (قفل‌گیری/ downtime) انجام دهید.</p>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 کانال اطلاع از شکستن‌ها</b>
+          بخش «Backwards incompatible changes» هر release notes + ایمیل‌های django-announce. قبل از ارتقای تولید، فقط همان بخش را هم بخوانید کافی است — معمولاً ۵ مورد است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب نسخه</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر سناریو کدام نسخه (امروز: شهریور ۱۴۰۵/سپتامبر ۲۰۲۶)؟ (الف) پروژه سازمانی جدید با ۵ سال عمر (ب) استارت‌آپ با نیاز به tasks داخلی و partials (ج) نگهداری پروژه موجود روی ۴.۲</p><p><strong>پاسخ:</strong> الف → ۵.۲ LTS (پشتیبانی تا آوریل ۲۰۲۸؛ بعد مهاجرت برنامه‌ریزی‌شده به ۶.۲ LTS) • ب → ۶.۰ (با آگاهی که تا آوریل ۲۰۲۷ پشتیبانی می‌شود و باید به ۶.۲ برود) • ج → <strong>فوری</strong> ارتقا از ۴.۲ (پشتیبانی تمام شده!) به ۵.۲ با متد پله‌ای فصل.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — tasks داخلی یا سلری؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر نیاز کدام؟ (الف) ایمیل خوش‌آمد بعد از ثبت‌نام (ب) ۱۰ نوع تسک با retry، اولویت، سه صف جدا و Flower (ج) گزارش شبانه با زمان‌بندی پیچیده</p><p><strong>پاسخ:</strong> الف → tasks داخلی (ساده، بدون Redis) • ب → سلری (زیرساخت صف بالغ) • ج → سلری+beat یا django-celery-beat. مرز: «یک صف، تسک‌های سبک، تیم کوچک → داخلی؛ پیچیدگی صف/پایش → سلری».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — خواندن release note</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> در notes جنگو ۶.۰ کدام بند برای پروژه‌ای که روی پایتون ۳.۱۰ است حیاتی است؟ و کدام برای پروژه‌ای که DEFAULT_AUTO_FIELD صریح ندارد؟</p><p><strong>پاسخ:</strong> «Dropped support for Python &lt; 3.12» → اول باید پایتون را ارتقا داد (وگرنه اصلاً نصب نمی‌شود/تست نشده است). «DEFAULT_AUTO_FIELD now defaults to BigAutoField» → ممکن است مهاجرت‌های تبدیل کلید ساخته شود؛ قبل از migrate بررسی (خطای رایج بخش ۵). مهارت: اسکن بخش Backwards incompatible قبل از هر ارتقا.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-29" data-title="آزمون فصل ۲۹ — جنگوی امروز — 5.2 LTS و 6.0" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) نسخه LTS جنگو چه مزیتی دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ویژگی‌های بیشتر</button>
+              <button type="button" class="quiz-opt" data-key="b">پشتیبانی امنیتی طولانی‌تر (~۳ سال) — مناسب پروژه‌های با عمر بلند</button>
+              <button type="button" class="quiz-opt" data-key="c">سریع‌تر است</button>
+              <button type="button" class="quiz-opt" data-key="d">بدون مهاجرت</button>
+            </div>
+            <div class="quiz-explain">💡 ۵.۲ تا آوریل ۲۰۲۸ وصله امنیتی می‌گیرد؛ نسخه‌های ویژگی زودتر EOL می‌شوند. سازمان‌ها معمولاً LTS-به-LTS می‌روند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) CompositePrimaryKey در ۵.۲ چه چیزی را ممکن کرد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کلید خارجی مرکب در فرم</button>
+              <button type="button" class="quiz-opt" data-key="b">کلید اصلی چندستونی (مثل order+product) بدون فیلد id جایگزین</button>
+              <button type="button" class="quiz-opt" data-key="c">ایندکس مرکب</button>
+              <button type="button" class="quiz-opt" data-key="d">پارتیشن‌بندی جدول</button>
+            </div>
+            <div class="quiz-explain">💡 Meta.pk = CompositePrimaryKey("order", "product") — pk تبدیل به تاپل می‌شود؛ مناسب وفاداری به اسکیمای موجود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) tasks داخلی جنگو ۶.۰ با کدام دکوریتور و دستور تعریف/اجرا می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">@shared_task و celery worker</button>
+              <button type="button" class="quiz-opt" data-key="b">@task و python manage.py runworker</button>
+              <button type="button" class="quiz-opt" data-key="c">@task و runserver</button>
+              <button type="button" class="quiz-opt" data-key="d">@job و worker start</button>
+            </div>
+            <div class="quiz-explain">💡 from django.tasks import task/enqueue؛ ورکر داخلی با runworker و پشتیبان پیش‌فرض دیتابیسی — صف سبک بدون سرویس اضافه.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) {% partialdef %} چه مشکلی را حل می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">سرعت قالب</button>
+              <button type="button" class="quiz-opt" data-key="b">تعریف و استفاده تکه‌های نام‌دار داخل همان فایل قالب + رندر مستقیم تکه با name#partial</button>
+              <button type="button" class="quiz-opt" data-key="c">ترجمه قالب</button>
+              <button type="button" class="quiz-opt" data-key="d">کش قالب</button>
+            </div>
+            <div class="quiz-explain">💡 جایگزین فایل‌های include پراکنده؛ برای ویوهای HTMX عالی است: render(request, "post_list.html#post-card").</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) CONTENT_SECURITY_POLICY چه خطری را کاهش می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">SQL injection</button>
+              <button type="button" class="quiz-opt" data-key="b">اجرای اسکریپت/منبع غیرمجاز در مرورگر — لایه دفاعی حتی در صورت وقوع XSS</button>
+              <button type="button" class="quiz-opt" data-key="c">CSRF</button>
+              <button type="button" class="quiz-opt" data-key="d">کندی سایت</button>
+            </div>
+            <div class="quiz-explain">💡 CSP به مرورگر می‌گوید کدام originها برای script/style/img مجازند؛ حمله تزریق حتی موفق هم نتواند اسکریپت خارجی لود کند. اول REPORT_ONLY.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) ترتیب درست ارتقای نسخه کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">پرش مستقیم به آخرین نسخه</button>
+              <button type="button" class="quiz-opt" data-key="b">تست سبز → آخرین patch نسخه فعلی → رفع deprecationها → پله‌به‌پله ارتقای اصلی + تست در هر پله</button>
+              <button type="button" class="quiz-opt" data-key="c">اول پکیج‌ها بعد تست</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط pip install -U django</button>
+            </div>
+            <div class="quiz-explain">💡 پله‌به‌پله با تست در هر مرحله و چک سازگاری پکیج‌های ثالث؛ پرش = انباشت شکستگی‌های نامشخص.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «پروژه به‌روز و مدرن»</strong> — دانش این فصل را روی همان پروژه وبلاگ پیاده کنید.</p>
+        <ul class="checklist">
+          <li>ارتقا به ۵.۲ LTS (یا ۶.۰ با پایتون ۳.۱۲+) با متد پله‌ای + تست‌های سبز.</li>
+          <li>صفر هشدار deprecation در خروجی python -Wd manage.py test.</li>
+          <li>یک جدول با کلید مرکب (PostRating) یا یک تسک @task داخلی در حال کار.</li>
+          <li>یک partialdef در قالب اصلی + رندر «تکه» از یک ویو (HX-Request).</li>
+          <li>گزارش docs/upgrade.md: نسخه‌های قبل/بعد، تغییرات، مشکلات و راه‌حل‌ها.</li>
+          
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 تمرین حرفه‌ای</b>
+          در تیم‌های واقعی، «ارتقای فریم‌ورک» خودش یک پروژه کوچک با برآورد و ریسک است. همین گزارش ساده، نمونه کار عالی برای مصاحبه است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>چرخه: نسخه ویژگی هر ~۸ ماه، LTS هر ~۲.۵ سال؛ ۵.۲ تا آوریل ۲۰۲۸.</li>
+          <li>۵.۲: کلید مرکب، شل با import خودکار، auth ناهمگام، ویجت‌های جدید.</li>
+          <li>۶.۰: tasks داخلی (task/enqueue/runworker)، partials، CSP بومی، ایمیل مدرن، AsyncPaginator.</li>
+          <li>DEFAULT_AUTO_FIELD=BigAutoField پیش‌فرض شد؛ پایتون ۳.۱۲+ لازم است.</li>
+          <li>ارتقا: پله‌به‌پله، تست در هر پله، رفع deprecation، چک پکیج‌های ثالث.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «به‌روز ماندن ارزان است اگر پیوسته باشد؛ انباشته‌شدن ارتقاها گران‌ترین بدهی فنی است.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>پروژه موجود را به ۶.۰ ببرم یا صبر کنم؟</summary><div class="faq-body"><p>سازمانی: روی ۵.۲ LTS بمانید و برای ۶.۲ LTS (آوریل ۲۰۲۶ — الان منتشر شده) برنامه‌ریزی کنید. شخصی/یادگیری: ۶.۰ را تجربه کنید — tasks و partials ارزشش را دارند. هر دو مسیر «روی ۴.۲ ماندن» غلط است (پشتیبانی تمام شده).</p></div></details>
+        <details class="faq-item"><summary>tasks داخلی جایگزین Flower/مانیتورینگ می‌شود؟</summary><div class="faq-body"><p>فعلاً اکوسیستم پایش سلری (Flower، Sentry integration) بالغ‌تر است. tasks داخلی در ۶.۰ نقطه شروع است؛ برای تولید جدی با صف‌های حیاتی، فعلاً سلری ابزارهای عملیاتی بیشتری دارد.</p></div></details>
+        <details class="faq-item"><summary>async ویوها را در پروژه فعلی فعال کنیم؟</summary><div class="faq-body"><p>اگر گلوگاه I/O خارجی دارید (صدا زدن چند <span class="term" data-term="api">API</span> بیرونی در یک درخواست) بله — async واقعی سود دارد. برای <span class="term" data-term="crud">CRUD</span> دیتابیسی معمول، ORM sync همچنان ساده‌تر و کافی است؛ async بدون دلیل = پیچیدگی (sync_to_async همه‌جا). اول اندازه‌گیری (فصل ۲۷).</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          همه‌چیز آماده است؛ وقت ساختن شاهکار: <strong>فصل ۳۰</strong> — سه پروژه کامل عملی که تمام ۲۹ فصل را به هم می‌بافند.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-29" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-29">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-28/index.html">→ فصل قبلی<br><b>🎭 فصل ۲۸</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-30/index.html">فصل بعدی ←<br><b>🏆 فصل ۳۰: پروژه‌های عملی نهایی</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۹: جنگوی امروز — 5.2 LTS و 6.0 | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
