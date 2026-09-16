@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲: نصب، راه‌اندازی و محیط توسعه | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲ دوره جامع جنگو: نصب، راه‌اندازی و محیط توسعه — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲ از ۳۰ — نصب، راه‌اندازی و محیط توسعه</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 مبانی و اصول پایه ← فصل ۲
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲ از ۳۰</span>
+    <h1>🛠️ نصب، راه‌اندازی و محیط توسعه</h1>
+    <p>قدم‌به‌قدم نصب <span class="term" data-term="python">پایتون</span> و <span class="term" data-term="django">جنگو</span>، ساخت اولین پروژه، آشنایی با <span class="term" data-term="terminal">ترمینال</span>، <span class="term" data-term="venv">محیط مجازی</span> و اجرای اولین سرور — همراه دستورات ویندوز و مک/لینوکس.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۹۰ دقیقه</span>
+      <span class="pill">🎓 صفر مطلق</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>این فصل اولین برخورد عملی شما با ابزارهاست. تا پایان فصل، محیط توسعه‌تان کامل آماده است و صفحه خوش‌آمدگویی جنگو را در مرورگر می‌بینید — یکی از لذت‌بخش‌ترین لحظات دوره! 🙂</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>پایتون را نصب و نسخه‌اش را در <span class="term" data-term="terminal">ترمینال</span> بررسی کنید.</li>
+          <li><span class="term" data-term="venv">محیط مجازی</span> بسازید و فعال کنید و بدانید چرا ضروری است.</li>
+          <li>جنگو را با <span class="term" data-term="pip">pip</span> نصب کنید.</li>
+          <li>با <code class="inline-code">startproject</code> اولین پروژه را بسازید و نقش هر فایل را بگویید.</li>
+          <li>سرور توسعه را با <span class="term" data-term="runserver">runserver</span> اجرا و صفحه را در مرورگر ببینید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> پیش‌نیاز تمام فصل‌های عملی دوره. اگر جایی از نصب گیر کردید، بخش ۹ (خطاهای رایج) را حتماً ببینید — ۹۰٪ مشکلات نصب آنجاست.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>نصب پایتون</h4><p>دانلود، نصب و بررسی نسخه در ویندوز/مک/لینوکس.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>ترمینال و محیط مجازی</h4><p>آشنایی با خط فرمان و ساخت venv.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>نصب جنگو و ساخت پروژه</h4><p>pip install django و startproject.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>اجرای سرور</h4><p>runserver و دیدن اولین صفحه؛ مرور فایل‌های پروژه.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا نباید بسته‌های پایتون را مستقیم روی پایتونِ اصلی سیستم نصب کرد؟</summary>
+          <div class="answer-body"><p>چون پروژه‌های مختلف به نسخه‌های متفاوت یک بسته نیاز دارند و نصب سراسری باعث <strong>تداخل</strong> می‌شود. <span class="term" data-term="venv">محیط مجازی</span> برای هر پروژه یک «اتاق ایزوله» می‌سازد تا بسته‌ها و نسخه‌هایشان قاطی نشوند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 وقتی در مرورگر <code class="inline-code">127.0.0.1:8000</code> را باز می‌کنید، درخواست به کجا می‌رود؟</summary>
+          <div class="answer-body"><p>به <strong>همان کامپیوتر خودتان</strong>! عدد 127.0.0.1 یعنی «خودم» (localhost). سرور توسعه جنگو روی کامپیوتر شما اجرا شده و <span class="term" data-term="request">درخواست</span> مرورگر را locally پاسخ می‌دهد. به اینترنت هم نیازی نیست.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 فایل <code class="inline-code">manage.py</code> با <code class="inline-code">django-admin</code> چه فرقی دارد؟</summary>
+          <div class="answer-body"><p>هر دو فرمان اجرا می‌کنند؛ اما <span class="term" data-term="manage-py">manage.py</span> به <strong>پروژه شما</strong> و فایل <span class="term" data-term="settings">settings.py</span>اش وصل است (فرمان‌هایی مثل runserver و migrate)، در حالی که django-admin عمومی است و بیشتر برای startproject استفاده می‌شود.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>قبل از شروع، این موارد را آماده کنید:</p>
+        <ul class="checklist">
+          <li>کامل بودن فصل ۱ (مفاهیم وب، <span class="term" data-term="framework">فریم‌ورک</span> و MTV).</li>
+          <li>یک کامپیوتر با ویندوز ۱۰/۱۱، مک یا لینوکس.</li>
+          <li>دسترسی به اینترنت فقط برای <strong>دانلود و نصب</strong> (بعد از نصب، دوره آفلاین است).</li>
+          <li>حدود ۹۰ دقیقه زمان و یک لیوان چای! ☕</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 درباره ویرایشگر کد</b>
+          برای این دوره <strong>VS Code</strong> (رایگان) پیشنهاد می‌شود؛ ولی هر ویرایشگری (حتی PyCharm Community) کار می‌کند. در ویرایشگر، افزونه Python را نصب کنید تا رنگ‌آمیزی و تکمیل خودکار داشته باشید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ نصب پایتون</h3>
+<p>جنگو با <span class="term" data-term="python">پایتون</span> کار می‌کند، پس اول پایتون لازم است (نسخه ۳.۱۰ به بالا؛ پیشنهاد ما ۳.۱۲). پایتون ۲ سال‌هاست منسوخ شده — حتماً نسخه ۳ را نصب کنید.</p>
+          <ul><li><strong>ویندوز:</strong> از <code class="inline-code">python.org/downloads</code> نصب‌کننده را بگیرید. در صفحه اول نصب، تیک <strong>«Add python.exe to PATH»</strong> را حتماً بزنید (مهم‌ترین قدم!).</li><li><strong>مک:</strong> پایتون معمولاً هست، ولی برای به‌روز بودن با <code class="inline-code">brew install python</code> نصبش کنید.</li><li><strong>لینوکس (اوبونتو/دبیان):</strong> <code class="inline-code">sudo apt install python3 python3-venv python3-pip</code></li></ul>
+          <p>حالا در <span class="term" data-term="terminal">ترمینال</span> (ویندوز: PowerShell یا CMD) بررسی کنید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>بررسی نصب پایتون</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python --version
+# یا در برخی سیستم‌ها:
+python3 --version
+# خروجی نمونه: Python 3.12.4</code></pre>
+        </div>
+
+        <h3>۵.۲ ترمینال و محیط مجازی (venv)</h3>
+<p>ترمینال محیط متنی اجرای دستورات است. برای هر پروژه یک پوشه بسازید و داخلش <span class="term" data-term="venv">محیط مجازی</span> ایجاد کنید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>ساخت و فعال‌سازی محیط مجازی</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">mkdir django-course &amp;&amp; cd django-course
+
+# ساخت محیط مجازی (پوشه .venv ساخته می‌شود)
+python -m venv .venv
+
+# فعال‌سازی در ویندوز (PowerShell):
+.venv\Scripts\Activate.ps1
+# فعال‌سازی در ویندوز (CMD):
+.venv\Scripts\activate.bat
+# فعال‌سازی در مک/لینوکس:
+source .venv/bin/activate</code></pre>
+        </div>
+          <p>بعد از فعال‌سازی، اول خط فرمان <code class="inline-code">(.venv)</code> ظاهر می‌شود؛ یعنی از این به بعد هر نصبی فقط داخل همین محیط انجام می‌شود. برای خروج: <code class="inline-code">deactivate</code>.</p>
+          <div class="callout warn">
+          <b class="title">⚠️ قانون طلایی</b>
+          هر بار که ترمینال جدید باز می‌کنید، <strong>اول venv را فعال کنید</strong> بعد دستور جنگو بزنید. نیمی از خطاهای «django-admin is not recognized» همین است!
+        </div>
+
+        <h3>۵.۳ نصب جنگو</h3>
+<p>با venv فعال، جنگو را با <span class="term" data-term="pip">pip</span> (نصب‌کننده بسته‌های پایتون) نصب کنید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>نصب جنگو</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">pip install "django&gt;=5.2,&lt;6.0"
+
+# بررسی نصب:
+django-admin --version
+# خروجی نمونه: 5.2.4
+
+python -m django --version   # روش جایگزین</code></pre>
+        </div>
+          <p>پیشنهاد ما نصب نسخه <strong>5.2 (LTS)</strong> است — نسخهٔ <span class="term" data-term="lts">پشتیبانی بلندمدت</span> که تا ۲۰۲۸ به‌روزرسانی امنیتی می‌گیرد. جزئیات نسخه‌ها در فصل ۲۹.</p>
+
+        <h3>۵.۴ ساخت اولین پروژه و آناتومی فایل‌ها</h3>
+<p>با دستور زیر اسکلت <span class="term" data-term="project">پروژه</span> ساخته می‌شود:</p>
+          <div class="code-box">
+          <div class="code-head"><span>ساخت پروژه</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">django-admin startproject mysite .
+# نقطه آخر مهم است: پروژه در همین پوشه ساخته شود، نه زیرپوشه تو در تو</code></pre>
+        </div>
+          <p>ساختار حاصل:</p>
+          <div class="code-box">
+          <div class="code-head"><span>ساختار پروژه</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">django-course/
+├── .venv/            ← محیط مجازی (به مخزن کد اضافه نمی‌شود)
+├── manage.py         ← رابط فرمان پروژه
+└── mysite/
+    ├── __init__.py
+    ├── settings.py   ← تنظیمات مرکزی پروژه
+    ├── urls.py       ← ریشه مسیریابی URLها
+    ├── asgi.py       ← ورودی سرور ناهمگام (فصل ۲۶)
+    └── wsgi.py       ← ورودی سرور تولید (فصل ۲۶)</code></pre>
+        </div>
+          <p>نگاه سریع به چند تنظیم مهم <span class="term" data-term="settings">settings.py</span>:</p>
+          <ul><li><code class="inline-code">SECRET_KEY</code> — <span class="term" data-term="secret-key">کلید مخفی</span> امضای رمزنگاری؛ هرگز لو نرود.</li><li><code class="inline-code">DEBUG = True</code> — <span class="term" data-term="debug">حالت اشکال‌زدایی</span>؛ در تولید باید False شود.</li><li><code class="inline-code">ALLOWED_HOSTS = []</code> — دامنه‌های مجاز؛ با DEBUG=True سخت‌گیری نمی‌شود.</li><li><code class="inline-code">INSTALLED_APPS</code> — فهرست <span class="term" data-term="app">اپ‌ها</span>؛ فصل ۳ اضافه می‌کنیم.</li><li><code class="inline-code">DATABASES</code> — به‌صورت پیش‌فرض <span class="term" data-term="sqlite">SQLite</span> (فایل <code class="inline-code">db.sqlite3</code>).</li></ul>
+
+        <h3>۵.۵ اجرای سرور توسعه</h3>
+<p>لحظه دیدن نتیجه! با <span class="term" data-term="runserver">runserver</span> سرور توسعه را اجرا کنید:</p>
+          <div class="code-box">
+          <div class="code-head"><span>اجرای سرور</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py runserver
+
+# خروجی نمونه:
+# Starting development server at http://127.0.0.1:8000/
+# Quit the server with CTRL-BREAK.</code></pre>
+        </div>
+          <p>مرورگر را باز کنید و به <code class="inline-code">http://127.0.0.1:8000/</code> بروید: 🎉 صفحه خوش‌آمدگویی موشک جنگو! سرور با <code class="inline-code">Ctrl+C</code> متوقف می‌شود و با ذخیره هر فایل، خودش reload می‌کند.</p>
+          <div class="callout info">
+          <b class="title">📌 این سرور چیست؟</b>
+          runserver یک <span class="term" data-term="server">سرور</span> سبک مخصوص توسعه است. مرورگر شما <span class="term" data-term="client">کلاینت</span> است و یک <span class="term" data-term="request">درخواست</span> می‌فرستد و <span class="term" data-term="response">پاسخ</span> می‌گیرد — دقیقاً همان مفهومی که در فصل ۱ یاد گرفتید، حالا روی کامپیوتر خودتان. برای تولید هرگز از runserver استفاده نمی‌شود (فصل ۲۶).
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک دور کامل از صفر تا سرورِ در حال اجرا — همین توالی را عملاً انجام دهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>دور کامل راه‌اندازی (مک/لینوکس؛ ویندوز مشابه)</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">mkdir blog-project &amp;&amp; cd blog-project
+python3 -m venv .venv
+source .venv/bin/activate
+pip install "django&gt;=5.2,&lt;6.0"
+django-admin startproject config .
+python manage.py runserver</code></pre>
+        </div>
+          <p><strong>تحلیل هر خط:</strong></p>
+          <ol><li>پوشه پروژه ساخته و واردش شدیم.</li><li>محیط مجازی <code class="inline-code">.venv</code> ساخته شد.</li><li>فعالش کردیم — حالا pip و python این محیط‌اند.</li><li>جنگو فقط داخل .venv نصب شد.</li><li>پروژه‌ای به نام <code class="inline-code">config</code> در همین پوشه ساخته شد (نام config یک قرارداد حرفه‌ای است).</li><li>سرور توسعه بالا آمد → <code class="inline-code">127.0.0.1:8000</code> را ببینید!</li></ol>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>حالا نوبت شماست (حدود ۲۰ دقیقه). اگر جایی خطا گرفتید، اول بخش ۹ را ببینید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> پوشه‌ای به نام <code class="inline-code">my-first-site</code> بسازید، داخلش venv بسازید و فعال کنید و جنگو نصب کنید. با <code class="inline-code">pip list</code> مطمئن شوید django در فهرست است.</li>
+          <li><strong>کارگاه ۲:</strong> پروژه‌ای به نام <code class="inline-code">config</code> در همان پوشه بسازید و سرور را روی پورت <strong>۹۰۰۰</strong> اجرا کنید (راهنما: runserver یک آرگومان پورت هم می‌گیرد).</li>
+          <li><strong>کارگاه ۳:</strong> در فایل <span class="term" data-term="settings">settings.py</span> مقدار <code class="inline-code">DEBUG</code> را موقتاً <code class="inline-code">False</code> کنید، صفحه را رفرش کنید و تفاوت را ببینید. بعد برگردانید True. چه نتیجه‌ای گرفتید؟</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱ — محیط و نصب</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>دستورات کامل</span><span class="lang">Bash</span></div><pre class="code"><code data-lang="bash">mkdir my-first-site && cd my-first-site
+python -m venv .venv
+source .venv/bin/activate   # ویندوز: .venv\\Scripts\\activate
+pip install "django>=5.2,<6.0"
+pip list   # باید: django  5.2.x</code></pre></div><p>اگر <code class="inline-code">pip list</code> جنگو را نشان نداد، یعنی venv فعال نبوده؛ فعال کنید و دوباره نصب کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲ — پروژه و پورت ۹۰۰۰</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>دستورات</span><span class="lang">Bash</span></div><pre class="code"><code data-lang="bash">django-admin startproject config .
+python manage.py runserver 9000</code></pre></div><p>حالا در مرورگر: <code class="inline-code">http://127.0.0.1:9000/</code>. پورت فقط عدد درگاه شبکه است؛ ۸۰۰۰ پیش‌فرض است و اجباری نیست.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳ — نتیجه DEBUG=False</summary>
+          <div class="answer-body"><p>با <code class="inline-code">DEBUG=False</code> و <code class="inline-code">ALLOWED_HOSTS</code> خالی، جنگو صفحه خطای <strong>«DisallowedHost»</strong> نشان می‌دهد و حتی خطاهای دیگر را هم بدون جزئیات نمایش می‌دهد. درس: DEBUG=False یعنی «هیچ جزئیاتی از خطا به کاربر غریبه نشان نده» — دقیقاً چیزی که در تولید می‌خواهیم (به‌همراه تنظیم صحیح ALLOWED_HOSTS و یک صفحه خطای ۵۰۰ مناسب). DEBUG را برای ادامه دوره True بگذارید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>'django-admin' is not recognized</code> یا <code>command not found</code></b>
+          <p>سه علت رایج: ① جنگو نصب نیست → <code class="inline-code">pip install django</code>. ② venv فعال نیست → فعالش کنید. ③ در ویندوز، پایتون با تیک PATH نصب نشده → دوباره نصب کنید و «Add to PATH» را بزنید (یا از <code class="inline-code">python -m django</code> استفاده کنید).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>'python' is not recognized</code></b>
+          <p>پایتون نصب نیست یا در PATH نیست. در مک/لینوکس ممکن است دستور <code class="inline-code">python3</code> باشد نه <code class="inline-code">python</code>. در ویندوز نصب‌کننده را با گزینه PATH دوباره اجرا کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>Port 8000 is already in use</code></b>
+          <p>سرور قبلی هنوز باز است (شاید در ترمینالی دیگر). آن را با Ctrl+C ببندید یا پورت دیگری بدهید: <code class="inline-code">python manage.py runserver 8080</code>.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ اجرای Activate.ps1 در PowerShell خطا می‌دهد</b>
+          <p>سیاست اجرایی PowerShell محدود است. با PowerShell به‌عنوان مدیر: <code class="inline-code">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code> یا از activate.bat در CMD استفاده کنید.</p>
+        </div>
+        <div class="callout danger">
+          <b class="title">🚨 هرگز این کار را نکنید</b>
+          <code class="inline-code">pip install django</code> را <strong>بیرون از venv</strong> اجرا نکنید (مگر عمداً). نصب سراسری، ریشه اکثر تداخل‌های عجیب‌وغریب نسخه‌هاست.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — فرمان درست را انتخاب کنید</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر کار کدام فرمان؟ (الف) ساخت محیط مجازی (ب) نصب جنگو (ج) ساخت پروژه (د) اجرای سرور</p><p><strong>پاسخ:</strong> الف → <code class="inline-code">python -m venv .venv</code> • ب → <code class="inline-code">pip install django</code> • ج → <code class="inline-code">django-admin startproject NAME .</code> • د → <code class="inline-code">python manage.py runserver</code></p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — نقش فایل‌ها</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> نقش هر فایل چیست؟ <code class="inline-code">settings.py</code>، <code class="inline-code">urls.py</code>، <code class="inline-code">manage.py</code>، <code class="inline-code">wsgi.py</code></p><p><strong>پاسخ:</strong> settings → تنظیمات مرکزی (پایگاه داده، اپ‌ها، امنیت) • urls → ریشه مسیریابی نشانی‌ها • manage.py → رابط فرمان‌های پروژه • wsgi.py → نقطه اتصال سرورهای تولید مثل Gunicorn (فصل ۲۶).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — عیب‌یابی</summary>
+          <div class="answer-body"><p><strong>سناریو:</strong> هم‌اتاقی‌تان می‌گوید «دیروز همه‌چیز کار می‌کرد، امروز django-admin کار نمی‌کند!». محتمل‌ترین علت چیست؟</p><p><strong>پاسخ:</strong> ترمینال جدید باز کرده و <strong>venv را فعال نکرده</strong>. راه‌حل: <code class="inline-code">cd</code> به پوشه پروژه + فعال‌سازی venv. به او بگویید نشانه فعال بودن، پیشوند <code class="inline-code">(.venv)</code> است.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-02" data-title="آزمون فصل ۲ — نصب، راه‌اندازی و محیط توسعه" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) چرا برای هر پروژه یک محیط مجازی (venv) می‌سازیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">چون جنگو بدون آن نصب نمی‌شود</button>
+              <button type="button" class="quiz-opt" data-key="b">تا بسته‌ها و نسخه‌های پروژه‌های مختلف با هم تداخل نکنند</button>
+              <button type="button" class="quiz-opt" data-key="c">چون سرعت اجرا را دو برابر می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">چون پایتون فقط یک نسخه می‌تواند داشته باشد</button>
+            </div>
+            <div class="quiz-explain">💡 محیط مجازی ایزوله‌سازی می‌کند: هر پروژه بسته‌ها و نسخه‌های خودش را دارد و به بقیه سیستم کاری ندارد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) کدام گزینه یک پروژه جدید جنگو می‌سازد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">python manage.py startproject mysite</button>
+              <button type="button" class="quiz-opt" data-key="b">django-admin startproject mysite</button>
+              <button type="button" class="quiz-opt" data-key="c">pip install mysite</button>
+              <button type="button" class="quiz-opt" data-key="d">django-admin runserver</button>
+            </div>
+            <div class="quiz-explain">💡 برای ساخت پروژه از django-admin استفاده می‌شود؛ manage.py بعد از ساخت پروژه وجود دارد (مرغ و تخم‌مرغ!).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) سرور توسعه جنگو با کدام دستور اجرا می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">django-admin startserver</button>
+              <button type="button" class="quiz-opt" data-key="b">python manage.py runserver</button>
+              <button type="button" class="quiz-opt" data-key="c">pip run server</button>
+              <button type="button" class="quiz-opt" data-key="d">python server.py</button>
+            </div>
+            <div class="quiz-explain">💡 runserver فرمان مخصوص manage.py است؛ آدرس پیش‌فرض http://127.0.0.1:8000/.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) در مرحله تولید (سایت واقعی روی اینترنت) کدام تنظیم درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">DEBUG = True تا خطاها را ببینیم</button>
+              <button type="button" class="quiz-opt" data-key="b">DEBUG = False همراه با ALLOWED_HOSTS تنظیم‌شده</button>
+              <button type="button" class="quiz-opt" data-key="c">SECRET_KEY را خالی بگذاریم</button>
+              <button type="button" class="quiz-opt" data-key="d">فرقی نمی‌کند؛ فقط سرعت مهم است</button>
+            </div>
+            <div class="quiz-explain">💡 DEBUG=True در تولید، جزئیات حساس (کلیدها، مسیرها، کوئری‌ها) را به غریبه‌ها لو می‌دهد؛ پس False + ALLOWED_HOSTS مشخص.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) نقش فایل settings.py چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">قالب‌های HTML پروژه</button>
+              <button type="button" class="quiz-opt" data-key="b">تنظیمات مرکزی: پایگاه داده، اپ‌ها، قالب‌ها و امنیت</button>
+              <button type="button" class="quiz-opt" data-key="c">ذخیره داده‌های کاربران</button>
+              <button type="button" class="quiz-opt" data-key="d">مسیریابی URLها</button>
+            </div>
+            <div class="quiz-explain">💡 settings.py مرکز پیکربندی پروژه است؛ مسیریابی در urls.py و قالب‌ها در پوشه templatesاند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) نشانه فعال بودن محیط مجازی در خط فرمان چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">رنگ ترمینال سبز می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="b">پیشوند (.venv) ابتدای خط فرمان ظاهر می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="c">دستور pip غیرفعال می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="d">هیچ نشانه‌ای ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 بعد از activate، نام محیط (معمولاً .venv) ابتدای prompt اضافه می‌شود؛ دیدن آن یعنی نصب‌ها ایزوله‌اند.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «محیط توسعه شخصی من»</strong> — یک محیط توسعه استاندارد و تکرارپذیر برای خودتان بسازید که در همه فصل‌های بعد از آن استفاده می‌کنید.</p>
+        <ul class="checklist">
+          <li>پوشه پروژه + venv فعال + جنگو 5.2 نصب‌شده.</li>
+          <li>پروژه‌ای به نام <code class="inline-code">config</code> ساخته و سرور روی ۱۲۷.۰.۰.۱:۸۰۰۰ اجرا شود.</li>
+          <li>در settings.py، مقادیر SECRET_KEY، DEBUG، ALLOWED_HOSTS، INSTALLED_APPS و DATABASES را پیدا کنید و نقش هرکدام را در یک خط در بخش یادداشت‌ها بنویسید.</li>
+          <li>با <code class="inline-code">pip freeze &gt; requirements.txt</code> <span class="term" data-term="requirements">فایل وابستگی</span> پروژه را بسازید.</li>
+          <li>یک بار ترمینال را ببندید، دوباره باز کنید و کل توالی «cd + فعال‌سازی venv + runserver» را از حفظ انجام دهید. 🙂</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 چرا این پروژه مهم است؟</b>
+          همین محیط، پایه همه فصل‌های بعد است. عادت «اول venv، بعد دستور» از همین‌جا شکل می‌گیرد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>پایتون ۳ را نصب و در ترمینال بررسی کردیم.</li>
+          <li>با <span class="term" data-term="venv">venv</span> محیط ایزوله ساختیم؛ قانون طلایی: اول فعال‌سازی، بعد هر دستور.</li>
+          <li>جنگو را با <span class="term" data-term="pip">pip</span> نصب کردیم (نسخه پیشنهادی: 5.2 LTS).</li>
+          <li>پروژه را با <code class="inline-code">startproject</code> ساختیم و نقش manage.py، settings.py، urls.py و wsgi.py را شناختیم.</li>
+          <li>سرور توسعه را با <span class="term" data-term="runserver">runserver</span> اجرا و صفحه خوش‌آمدگویی را دیدیم.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «هر پروژه = یک پوشه + یک venv + یک startproject + یک runserver؛ به همین سادگی.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا باید حتماً VS Code داشته باشم؟</summary><div class="faq-body"><p>خیر. PyCharm Community، Sublime یا هر ویرایشگر دیگری هم کار می‌کند. VS Code به‌خاطر سبکی، رایگان بودن و افزونه عالی Python پیشنهاد اول ماست.</p></div></details>
+        <details class="faq-item"><summary>پایتون ۳.۱۳ نصب کردم؛ مشکلی ندارد؟</summary><div class="faq-body"><p>نه! جنگو 5.2 از پایتون 3.10 تا 3.13 پشتیبانی می‌کند. فقط پایتون ۲ یا نسخه‌های خیلی قدیمی (زیر 3.10) مشکل‌سازند.</p></div></details>
+        <details class="faq-item"><summary>سرور را بگذارم باز بماند اشکالی دارد؟</summary><div class="faq-body"><p>برای توسعه خیر؛ ولی موقع بستن لپ‌تاپ یا تمام‌شدن کار با Ctrl+C ببندیدش. مصرف منابع runserver ناچیز است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          محیط آماده است! در <strong>فصل ۳</strong> اولین <span class="term" data-term="app">اپلیکیشن</span> را می‌سازیم و اولین کد واقعی جنگو (ویو و URL) را می‌نویسیم.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-02" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-02">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-01/index.html">→ فصل قبلی<br><b>🌱 فصل ۱</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-03/index.html">فصل بعدی ←<br><b>🧩 فصل ۳: اپلیکیشن‌ها (Apps) در جنگو</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲: نصب، راه‌اندازی و محیط توسعه | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
