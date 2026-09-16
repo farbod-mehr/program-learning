@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۷: بهینه‌سازی کارایی (Performance) | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۷ دوره جامع جنگو: بهینه‌سازی کارایی (Performance) — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۷ از ۳۰ — بهینه‌سازی کارایی (Performance)</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🚀 استقرار و پروژه‌های عملی ← فصل ۲۷
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۷ از ۳۰</span>
+    <h1>🏎️ بهینه‌سازی کارایی (Performance)</h1>
+    <p>متدولوژی بهینه‌سازی: اول اندازه‌گیری، بعد اصلاح. <span class="term" data-term="db-index">ایندکس</span>‌ها، کوئری‌های بهینه، <span class="term" data-term="n-plus-one">N+1</span>، لایه‌های <span class="term" data-term="cache">کش</span>، GZip، تصاویر و پایش تولید.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۹۵ دقیقه</span>
+      <span class="pill">🎓 پیشرفته</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>«سایت کند است» یک تشخیص است، نه یک مشکل! مشکل دقیقاً کدام صفحه، کدام کوئری، کدام میلی‌ثانیه است؟ این فصل روش مهندسی سرعت را یاد می‌دهد: اندازه‌گیری → یافتن گلوگاه → اصلاح → اندازه‌گیری دوباره.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>با ابزارها (Toolbar، EXPLAIN، لاگ زمان) گلوگاه را پیدا کنید.</li>
+          <li>ایندکس درست بسازید و با EXPLAIN ANALYZE اثرش را ببینید.</li>
+          <li>کوئری‌ها را با select_related/only/bulk به حداقل برسانید.</li>
+          <li>لایه‌های کش (مرورگر، GZip، Redis، CDN) را ترکیب کنید.</li>
+          <li>بودجه کارایی تعیین و در CI پایش کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> جمع‌بندی QuerySet (۱۵) و کش (۱۹) روی زیرساخت فصل ۲۶؛ عددگذاری‌های واقعی برای مصاحبه و پروژه نهایی.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>اندازه‌گیری</h4><p>پیدا کردن گلوگاه واقعی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>دیتابیس</h4><p>ایندکس، EXPLAIN، کوئری.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>لایه‌های HTTP</h4><p>GZip، کش مرورگر، CDN.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>فرهنگ کارایی</h4><p>بودجه و پایش مستمر.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 قانون ۸۰/۲۰ در کارایی یعنی چه؟</summary>
+          <div class="answer-body"><p>معمولاً ۸۰٪ زمان پاسخ، در ۲۰٪ کد (اغلب کوئری‌های دیتابیس) می‌رود. پس قبل از دست بردن به هر چیزی <strong>اندازه بگیرید</strong>: بهینه‌سازی بدون پروفایل یعنی حدس زدن — و حدس معمولاً جایی بهینه می‌کند که اثری ندارد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 ایندکس چرا همیشه جواب نیست؟</summary>
+          <div class="answer-body"><p>ایندکس خواندن را سریع ولی <strong>نوشتن</strong> را گران می‌کند (هر insert/update باید درخت ایندکس را هم به‌روز کند) و فضا می‌گیرد. ایندکس برای کوئری‌های پرتکرار با فیلتر/ترتیب مشخص (WHERE، ORDER BY، JOIN) ساخته می‌شود — نه روی هر ستونی.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 سریع‌ترین پاسخ HTTP کدام است؟</summary>
+          <div class="answer-body"><p>پاسخی که <strong>ارسال نمی‌شود</strong>! کش مرورگر با Cache-Control خوب، فایل استاتیک با هش در نام (ManifestStaticFiles)، و ETag/304 یعنی مرورگر اصلاً درخواست نمی‌دهد یا بدنه نمی‌گیرد. لایه مرورگر ارزان‌ترین CDN دنیاست.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ با داده <strong>واقعی/حجیم</strong> — با ۱۰ رکورد هیچ‌چیز معلوم نمی‌شود!</li>
+          <li>اسکریپت ساخت داده تست (تمرین‌های فصل ۱۵ یا dumpdata).</li>
+          <li>Debug Toolbar نصب (فصل ۲۱) و میدلور زمان‌سنج (فصل ۱۷).</li>
+          <li>دسترسی به <span class="term" data-term="django-shell">شل</span> برای EXPLAIN.</li>
+          
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ اول داده حجیم</b>
+          بهینه‌سازی روی ۲۰ رکورد توهم است. با اسکریپت زیر ۵۰ هزار پست بسازید:<br><code class="inline-code">Post.objects.bulk_create(Post(...) for ... in range(50000))</code> — یا management command سفارشی (تمرین فصل ۹).
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ اندازه‌گیری: سه ابزار</h3>
+<div class="code-box">
+          <div class="code-head"><span>۱) Debug Toolbar — نمای کلی</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">پنل SQL: تعداد کوئری‌ها، زمان هرکدام، Traceback هر کوئری
+پنل Time: زمان هر بخش (SQL، قالب، میدلور)
+→ صفحه فهرست با ۲۱ کوئری = بوی N+1</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) EXPLAIN در شل — سطح کوئری</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">qs = Post.objects.filter(published=True, created_at__gte=cutoff)
+print(qs.explain(analyze=True, verbose=True))
+# Seq Scan on blog_post  (cost=0.00..2183.00 rows=48000 width=...)
+#   → «Seq Scan» = جدول کامل خوانده شد = ایندکس لازم دارد!
+#   (analyze=True کوئری را واقعاً اجرا می‌کند — روی داده تولید مراقب!)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) زمان‌سنجی پایتون — سطح تابع</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">import timeit
+
+setup = "from blog.models import Post"
+t = timeit.timeit(
+    "list(Post.objects.filter(published=True)[:20])",
+    setup=setup, number=100)
+print(f"{t/100*1000:.1f}ms میانگین")</code></pre>
+        </div>
+          <div class="callout tip">
+          <b class="title">💡 بودجه کارایی (Performance Budget)</b>
+          عدد بگذارید: «صفحه فهرست: ≤۱۰۰ms سمت سرور، ≤۵ کوئری، ≤۳۰۰KB وزن صفحه». هر تغییر که بودجه را شکست، در بازبینی کد رد می‌شود. بدون عدد، «کند» سلیقه‌ای است.
+        </div>
+
+        <h3>۵.۲ دیتابیس: ایندکس‌ها</h3>
+<div class="code-box">
+          <div class="code-head"><span>سه سطح ایندکس‌گذاری</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Post(models.Model):
+    # ۱) تک‌ستونی ساده
+    views_count = models.PositiveIntegerField(default=0, db_index=True)
+    published = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            # ۲) چندستونی — ترتیب ستون‌ها مهم است!
+            # برای: filter(published=True).order_by("-created_at")
+            models.Index(fields=["published", "-created_at"],
+                         name="post_pub_created"),
+            # ۳) شرطی (Postgres) — ایندکس کوچک و دقیق
+            models.Index(fields=["views_count"], name="post_views_hot",
+                         condition=models.Q(published=True)),
+        ]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ایندکس تابعی (پیشرفته، Postgres)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models import Func
+from django.db.models.functions import Lower
+
+models.Index(Lower("title"), name="post_title_lower")
+# حالا filter(title__iexact=...) از ایندکس استفاده می‌کند</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ قواعد ایندکس چندستونی</b>
+          ایندکس (a, b) به کوئری‌های روی a، و a+b کمک می‌کند — ولی <strong>نه</strong> به کوئری فقط روی b (prefix rule). ستون با «انتخاب‌گری بیشتر» یا ستون WHERE اول، ستون ORDER BY آخر. بعد از ساخت: <code class="inline-code">python manage.py makemigrations && migrate</code> (ساخت ایندکس روی جدول بزرگ ممکن است قفل بگیرد — Postgres CONCURRENTLY راهش است).
+        </div>
+
+        <h3>۵.۳ کوئری‌های بهینه</h3>
+<div class="code-box">
+          <div class="code-head"><span>چک‌لیست کوئری</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ✅ فقط آنچه لازم است
+posts = (Post.objects
+    .filter(published=True)
+    .select_related("author", "author__user")   # JOIN برای FK
+    .prefetch_related("tags", "comments")        # کوئری جدا برای m2m/reverse
+    .only("id", "title", "slug", "created_at",
+          "author__name", "author__user__username")
+    .order_by("-created_at")[:20])
+
+# ✅ شمارش بدون کشیدن ردیف‌ها
+n = Post.objects.filter(published=True).count()          # SELECT COUNT(*)
+exists = Post.objects.filter(slug=s).exists()            # SELECT 1 ... LIMIT 1
+
+# ✅ نوشتن دسته‌ای
+Post.objects.bulk_create(new_posts, batch_size=500)
+Post.objects.bulk_update(posts, ["views_count"], batch_size=500)
+qs.update(views_count=F("views_count") + 1)              # یک SQL اتمی</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>تله‌های رایج</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ❌ QuerySet تنبل را چندبار ارزیابی کنید = چندبار SQL
+qs = Post.objects.all()
+print(qs.count(), list(qs), qs[0])       # ۳ بار!
+posts = list(qs)                          # ✅ یکبار materialize
+
+# ❌ برش بعد از فیلترهای پایتونی
+[obj for obj in Post.objects.all() if "x" in obj.title][:10]  # کل جدول!
+Post.objects.filter(title__icontains="x")[:10]                # ✅ در SQL
+
+# ❌ len(qs) به‌جای count() (کل ردیف‌ها را می‌کشد)</code></pre>
+        </div>
+
+        <h3>۵.۴ لایه‌های HTTP و کش</h3>
+<div class="code-box">
+          <div class="code-head"><span>GZip — یک خط، سود بزرگ</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",   # بعد از Security
+    ...,
+]
+# HTML/JSON متنی ~۷۰-۸۰٪ کوچک‌تر؛ در Nginx هم gzip on ممکن است</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>کش مرورگر برای استاتیک (WhiteNoise/Manifest)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># CompressedManifestStaticFilesStorage نام فایل را هش‌دار می‌کند:
+# style.a1b2c3.css → چون محتوا عوض شود نام عوض می‌شود،
+# می‌توان کش «بی‌نهایت» داد (cache-control: max-age=31536000, immutable)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ETag و کش ویو (فصل ۱۹)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.views.decorators.http import condition
+
+@condition(last_modified_func=lambda r, pk: Post.objects.get(pk=pk).updated_at)
+def post_detail(request, pk): ...   # تغییر نکرده → 304 بدون بدنه</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>تصاویر: بزرگ‌ترین وزن صفحات</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># آپلود → تسک سلری (فصل ۲۴) → بندانگشتی وب (WebP):
+from PIL import Image
+
+def make_thumb(path, size=(480, 480)):
+    with Image.open(path) as im:
+        im.thumbnail(size)
+        im.save(thumb_path(path), "WEBP", quality=80)
+# در قالب فقط بندانگشتی را لود کنید؛ srcset برای اندازه‌های مختلف</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 CDN کی لازم می‌شود؟</b>
+          وقتی کاربران پراکنده جغرافیایی دارید یا استاتیک سنگین (تصویر/فونت/JS). <span class="term" data-term="cdn">CDN</span> فایل‌های STATIC_ROOT را در لبه جهان کش می‌کند (ArvanCloud، Cloudflare). برای شروع، همان WhiteNoise+GZip کافی است.
+        </div>
+
+        <h3>۵.۵ پایش در تولید</h3>
+<div class="code-box">
+          <div class="code-head"><span>کوئری‌های کند در لاگ Postgres</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># postgresql.conf
+log_min_duration_statement = 500   # هر کوئری &gt;۵۰۰ms لاگ شود
+# سپس: grep روی لاگ → داوطلبان ایندکس/بازنویسی</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>متریک‌های ساده اپلیکیشنی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># میدلور فصل ۱۷ را ارتقا دهید:
+if duration &gt; 0.5:
+    logger.warning("slow_request path=%s ms=%.0f queries=%s",
+                   request.path, duration * 1000,
+                   getattr(connection, "queries_log", "?"))
+# در DEBUG، len(connection.queries) تعداد کوئری‌های همان درخواست است</code></pre>
+        </div>
+          <ul><li><strong>چهار عدد طلایی:</strong> زمان پاسخ (p50/p95)، تعداد درخواست بر ثانیه، نرخ خطا، اشباع (CPU/RAM/صف).</li><li>ابزارها برای شروع: لاگ‌های Nginx (access time با $request_time)، Flower برای صف سلری، pg_stat_statements در Postgres.</li><li>p95 مهم‌تر از میانگین است: میانگین ۵۰ms با p95=۳ ثانیه یعنی کاربران بدشانس رنج می‌برند.</li></ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک صفحه «کند» را علمی سریع کنیم — از ۱۸۰۰ms تا ۴۵ms:</p>
+        <div class="code-box">
+          <div class="code-head"><span>وضعیت اولیه (Toolbar)</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">GET /blog/  → 1820ms
+SQL: ۲۱ کوئری  |  کندترین: SELECT ... WHERE published ORDER BY created_at DESC (780ms, Seq Scan)
+قالب: post_list.html با {{ post.author.name }} و {{ post.tags.all }}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>گام ۱ — ایندکس برای فیلتر+ترتیب</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Meta:
+    indexes = [
+        models.Index(fields=["published", "-created_at"],
+                     name="post_pub_created"),
+    ]
+# EXPLAIN بعد از ایندکس:
+# Index Scan using post_pub_created ... (cost=0.29..8.31 rows=20)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>گام ۲ — رفع N+1 در ویو</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">posts = (Post.objects.filter(published=True)
+         .select_related("author", "author__user")
+         .prefetch_related("tags")
+         .order_by("-created_at")[:20])
+# ۲۱ کوئری → ۴ کوئری</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>گام ۳ — only + کش فهرست</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">posts = posts.only("id", "title", "slug", "created_at", "author__name")
+key = f"blog:list:home:v{cache.get_or_set('blog:version', 1)}"
+posts = cache.get_or_set(key, lambda: list(posts), timeout=60)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>نتیجه</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">قبل: 1820ms، ۲۱ کوئری
+بعد از گام ۱:   950ms، ۲۱ کوئری   (Seq Scan حذف)
+بعد از گام ۲:   120ms، ۴ کوئری     (N+1 حذف)
+بعد از گام ۳ (hit): 45ms، ۰ کوئری 🏆
+هر گام با اندازه‌گیری تأیید شد — نه حدس!</code></pre>
+        </div>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>وبلاگ را زیر ذره‌بین ببرید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> ۵۰هزار پست تستی با bulk_create بسازید؛ سه صفحه (فهرست، جزئیات، آمار) را با Toolbar بررسی و «بدترین کوئری» هرکدام را با explain(analyze=True) ثبت کنید.</li>
+          <li><strong>کارگاه ۲:</strong> برای الگوهای واقعی فیلتر خودتان حداقل دو ایندکس (یکی چندستونی، یکی شرطی) بسازید و EXPLAIN قبل/بعد را مقایسه کنید.</li>
+          <li><strong>کارگاه ۳:</strong> GZip + only() + کش نسخه‌دار فهرست را اعمال کنید؛ وزن پاسخ (Content-Length) و زمان را قبل/بعد گزارش کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>ساخت داده حجیم</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python"># blog/management/commands/seed.py
+from django.core.management.base import BaseCommand
+from blog.models import Post, Author
+import random, faker
+
+
+class Command(BaseCommand):
+    def handle(self, *args, **opts):
+        fake = faker.Faker("fa_IR")
+        authors = list(Author.objects.all())
+        posts = [
+            Post(title=fake.sentence()[:80],
+                 slug=f"seed-{i}",
+                 body=fake.text(2000),
+                 author=random.choice(authors),
+                 published=random.random() &gt; 0.2)
+            for i in range(50_000)
+        ]
+        Post.objects.bulk_create(posts, batch_size=1000)
+        self.stdout.write("50k ✅")</code></pre></div><p>سپس برای هر صفحه یادداشت کنید: تعداد کوئری، زمان کل، و خروجی explain بدترین‌ها. Seq Scan روی جدول ۵۰ هزار ردیفی یعنی داوطلب قطعی ایندکس.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>ایندکس‌های نمونه</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">indexes = [
+    models.Index(fields=["published", "-created_at"],
+                 name="post_pub_created"),
+    models.Index(fields=["views_count"], name="post_hot",
+                 condition=models.Q(published=True)),
+    models.Index(fields=["slug"], name="post_slug_idx"),  # یکتا که unique=True دارد
+]</code></pre></div><p>مقایسه: قبل → <code class="inline-code">Seq Scan ... rows=48000 (780ms)</code>؛ بعد → <code class="inline-code">Index Scan using post_pub_created (2ms)</code>. عدد دقیق روی ماشین شما فرق می‌کند؛ <strong>نسبت</strong> مهم است. ایندکس شرطی روی «پست‌های داغ منتشرشده» کوچک‌تر و گرم‌تر در حافظه می‌ماند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>اندازه‌گیری GZip با curl</span><span class="lang">bash</span></div><pre class="code"><code data-lang="bash"># بدون فشرده‌سازی
+curl -s -o /dev/null -w "size=%{size_download} time=%{time_total}\n" \
+  -H "Accept-Encoding: identity" http://localhost:8000/blog/
+
+# با GZip
+curl -s -o /dev/null -w "size=%{size_download} time=%{time_total}\n" \
+  -H "Accept-Encoding: gzip" --compressed http://localhost:8000/blog/
+# نمونه خروج: 145KB → 28KB (~80٪ کاهش)</code></pre></div><p>only() را با explain تأیید کنید (لیست ستون‌های SELECT کوچک‌تر). کش فهرست با نسخه (فصل ۱۹): در hit، صفر کوئری و ~5ms. سه گزارش قبل/بعد را در docs/perf.md پروژه نگه دارید — این یعنی «مهندسی» کارایی.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ ایندکس ساختم ولی EXPLAIN همچنان Seq Scan است</b>
+          <p>چند علت: داده کم است (پلنر Seq Scan را ارزان‌تر می‌داند — درست هم هست!)، تابع روی ستون در WHERE است (lower(title) بدون ایندکس تابعی)، یا ANALYZE لازم است (<code class="inline-code">ANALYZE blog_post;</code>). با ۵۰ هزار ردیف قضاوت کنید نه ۵۰ تا.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ select_related روی ManyToMany خطا/اثر ندارد</b>
+          <p>برای m2m و روابط معکوس باید prefetch_related باشد؛ select_related فقط FK/O2O (JOIN یک‌به‌یک). اشتباه گرفتنشان N+1 را «حل‌نشده» نگه می‌دارد.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ کش کردم ولی صفحه برای کاربر A/B قاطی شد</b>
+          <p>داده کاربرمحور را کش سراسری کرده‌اید (همان تله فصل ۱۹). کلید را با user.pk پارامتری کنید یا بخش خصوصی را از کش بیرون نگه دارید (Vary: Cookie برای صفحات احراز هویتی).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ GZip تصویرها را هم فشرده می‌کند و CPU می‌سوزد</b>
+          <p>JPEG/PNG/WebP از قبل فشرده‌اند؛ فشرده‌سازی مجدد اتلاف است. GZipMiddleware فقط محتوای متنی را فشرده می‌کند، ولی اگر CPU تنگ است، فشرده‌سازی را به Nginx/CDN بسپارید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ پس از migrate سایت موقتاً قفل شد (ساخت ایندکس)</b>
+          <p>ساخت ایندکس روی جدول بزرگ در Postgres به‌طور پیش‌فرض قفل نوشتن می‌گیرد. راه تولید: مهاجرت با RunSQL و <code class="inline-code">CREATE INDEX CONCURRENTLY</code> (خارج از تراکنش — atomic=False در Migration).</p>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 ترتیب حمله به کندی</b>
+          ۱) کوئری‌های اضافی (N+1) ۲) کوئری‌های سنگین (ایندکس/بازنویسی) ۳) حجم پاسخ (only/GZip/تصویر) ۴) کش. این ترتیب معمولاً بیشترین سود به ازای تلاش را دارد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — ایندکس بساز یا نه؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> روی کدام فیلدها ایندکس بزنید؟ (الف) Post.slug که unique=True است (ب) Comment.text (ج) Post.published + created_at برای صفحه اصلی (د) User.password</p><p><strong>پاسخ:</strong> الف → لازم نیست، unique خودش ایندکس می‌سازد • ب → نه (متن بلند و جست‌وجویش full-text می‌خواهد نه B-tree) • ج → بله، چندستونی (published, -created_at) • د → هرگز (کوئری روی هش رمز معنا ندارد).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — شمارش کوئری</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> این کد چند کوئری می‌زند؟ <code class="inline-code">for p in Post.objects.filter(published=True)[:10]: print(p.author.name, p.tags.count())</code></p><p><strong>پاسخ:</strong> ۱ (فهرست) + ۱۰ (author هر پست — select_related ندارد) + ۱۰ (tags.count هر پست) = <strong>۲۱ کوئری</strong>. اصلاح: select_related("author") و prefetch tags با annotate(Count("tags")) → ۲ تا ۳ کوئری.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — تشخیص لایه</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> هر کندی مربوط به کدام لایه است؟ (الف) TTFB صفحه ۳ ثانیه (ب) صفحه سریع می‌آید ولی «رندر» در مرورگر ۲ ثانیه (ج) بار دوم سایت فوری است ولی بار اول در شهر دیگر کند (د) هر شب ساعت ۳ سایت ۱۰ ثانیه‌ای می‌خوابد</p><p><strong>پاسخ:</strong> الف → سرور/دیتابیس (کوئری‌ها؛ Toolbar/EXPLAIN) • ب → فرانت (JS سنگین، تصاویر بزرگ، فونت؛ Lighthouse) • ج → فاصله جغرافیایی/شبکه → <span class="term" data-term="cdn">CDN</span> • د → تسک زمان‌بندی‌شده سنگین (فصل ۲۴) روی همان دیتابیس — صف جدا یا nice/اولویت.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-27" data-title="آزمون فصل ۲۷ — بهینه‌سازی کارایی (Performance)" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) اولین قدم درست بهینه‌سازی چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">افزودن کش</button>
+              <button type="button" class="quiz-opt" data-key="b">اندازه‌گیری و یافتن گلوگاه واقعی با ابزار</button>
+              <button type="button" class="quiz-opt" data-key="c">بازنویسی با زبان دیگر</button>
+              <button type="button" class="quiz-opt" data-key="d">افزودن ایندکس به همه فیلدها</button>
+            </div>
+            <div class="quiz-explain">💡 پروفایل/Toolbar/EXPLAIN بدون حدس زدن نشان می‌دهند زمان کجا می‌رود؛ بعد اصلاح، بعد اندازه‌گیری مجدد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) «Seq Scan» در خروجی EXPLAIN روی جدول بزرگ یعنی چه؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کوئری بهینه است</button>
+              <button type="button" class="quiz-opt" data-key="b">کل جدول ردیف‌به‌ردیف خوانده شده — معمولاً نامزد ایندکس</button>
+              <button type="button" class="quiz-opt" data-key="c">ایندکس خراب است</button>
+              <button type="button" class="quiz-opt" data-key="d">دیتابیس قفل است</button>
+            </div>
+            <div class="quiz-explain">💡 برای فیلتر/ترتیب پرتکرار، Index Scan با ایندکس مناسب جای Seq Scan را می‌گیرد (۷۸۰ms → ۲ms در مثال فصل).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) select_related و prefetch_related به‌ترتیب برای کدام روابط‌اند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هر دو m2m</button>
+              <button type="button" class="quiz-opt" data-key="b">FK/O2O (JOIN) و m2m/روابط معکوس (کوئری جدا و به هم چسباندن در پایتون)</button>
+              <button type="button" class="quiz-opt" data-key="c">m2m و FK</button>
+              <button type="button" class="quiz-opt" data-key="d">فرقی ندارند</button>
+            </div>
+            <div class="quiz-explain">💡 select_related با JOIN یک کوئری می‌سازد؛ prefetch_related یک کوئری IN برای مجموعه‌ها. جای غلط = N+1 باقی می‌ماند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) چرا len(queryset) برای شمارش اشتباه است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">کل ردیف‌ها را از دیتابیس می‌کشد؛ count() فقط SELECT COUNT(*) می‌زند</button>
+              <button type="button" class="quiz-opt" data-key="c">کش نمی‌شود</button>
+              <button type="button" class="quiz-opt" data-key="d">ترتیب را عوض می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 برای «آیا چیزی هست؟» هم exists() کافی است (LIMIT 1). کشیدن ۵۰ هزار ردیف برای یک عدد = فاجعه.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) سود GZipMiddleware عمدتاً روی چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">تصاویر JPEG</button>
+              <button type="button" class="quiz-opt" data-key="b">محتوای متنی (HTML/JSON/CSS/JS) — معمولاً ۷۰-۸۰٪ کاهش حجم</button>
+              <button type="button" class="quiz-opt" data-key="c">سرعت کوئری</button>
+              <button type="button" class="quiz-opt" data-key="d">رمزنگاری داده</button>
+            </div>
+            <div class="quiz-explain">💡 فشرده‌سازی فایل‌های از قبل فشرده اتلاف CPU است؛ متن‌ها برنده بزرگ GZip هستند (فشرده ≠ رمزنگاری!).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) ایندکس چه هزینه‌ای دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ</button>
+              <button type="button" class="quiz-opt" data-key="b">نوشتن (INSERT/UPDATE/DELETE) کندتر و فضای دیسک بیشتر</button>
+              <button type="button" class="quiz-opt" data-key="c">خواندن کندتر</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط روی SQLite اثر دارد</button>
+            </div>
+            <div class="quiz-explain">💡 هر ایندکس یک ساختار اضافی است که با هر نوشتن به‌روز می‌شود؛ پس فقط برای الگوهای کوئری واقعی ایندکس بسازید.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «پروفایل کارایی وبلاگ»</strong> — یک «بازرسی کارایی» کامل روی پروژه انجام دهید و گزارش بدهید.</p>
+        <ul class="checklist">
+          <li>داده حجیم (≥۵۰ هزار پست) با management command ساخته شود.</li>
+          <li>گزارش سه صفحه اصلی: زمان، تعداد کوئری، بدترین EXPLAIN (قبل).</li>
+          <li>حداقل ۳ اصلاح: ایندکس چندستونی، رفع N+1، only()/کش فهرست.</li>
+          <li>گزارش بعد از اصلاح + درصد بهبود در docs/perf.md.</li>
+          <li>بودجه کارایی مکتوب: p95 ≤۲۰۰ms و ≤۵ کوئری برای صفحات فهرست.</li>
+          
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 ابزارهای بعدی</b>
+          django-silk (پروفایلر درخواست/کوئری با UI)، pg_stat_statements (کوئری‌های کند تجمیعی)، Lighthouse (سمت مرورگر). هر سه مکمل این فصل‌اند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>اول اندازه‌گیری: Toolbar + explain(analyze) + timeit؛ بودجه عددی بگذارید.</li>
+          <li>ایندکس: تک‌ستونی/چندستونی/شرطی؛ prefix rule و هزینه نوشتن را بشناسید.</li>
+          <li>کوئری: select_related/prefetch، only، count/exists، bulk_* و F().</li>
+          <li>لایه‌های HTTP: GZip، کش مرورگر با نام هش‌دار، ETag/304، تصویر WebP.</li>
+          <li>پایش تولید: لاگ کوئری کند، p95، چهار عدد طلایی.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «کارایی یک ویژگی نیست، یک عادت است: هر PR با پرسش «چند کوئری؟ چند میلی‌ثانیه؟».»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>Redis را کجا و Memcached را کجا؟</summary><div class="faq-body"><p>در این دوره همه‌جا Redis (کش + بروکر سلری + throttle). Memcached سبک‌تر و صرفاً کش است. تفاوت عملی برای شما در این مقیاس ناچیز است؛ یک سرویس مشترک ساده‌تر از دو سرویس است.</p></div></details>
+        <details class="faq-item"><summary>کش کوئری (per-query cache) نداریم؟</summary><div class="faq-body"><p>کش سطح QuerySet جنگو حذف شده؛ Postgres هم page cache داخلی دارد. راه درست: کش <strong>نتیجه</strong> در سطح اپ (فصل ۱۹) و کوئری‌های کارآمد. دنبال «جادوی خودکار» نباشید.</p></div></details>
+        <details class="faq-item"><summary>چطور بفهمم گلوگاه CPU است یا IO؟</summary><div class="faq-body"><p>روی سرور: top/htop (CPU پایتون بالا = محاسبه/قالب/سریالایز؛ iowait بالا = دیسک/دیتابیس). در اپ: زمان SQL در Toolbar در برابر زمان قالب. p95 لاگ‌های Nginx با $request_time و $upstream_response_time تفکیک شبکه/اپ را می‌دهد.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          بک‌اند سریع شد؛ تجربه کاربر را کامل می‌کنیم: <strong>فصل ۲۸</strong> — جنگو و فرانت‌اند: از <span class="term" data-term="htmx">HTMX</span> و <span class="term" data-term="tailwind">Tailwind</span> تا <span class="term" data-term="react">React</span> روی API.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-27" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-27">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-26/index.html">→ فصل قبلی<br><b>📦 فصل ۲۶</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-28/index.html">فصل بعدی ←<br><b>🎭 فصل ۲۸: جنگو و فرانت‌اند — HTMX، Tailwind و SPA</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۷: بهینه‌سازی کارایی (Performance) | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
