@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۵: چندزبانه‌سازی و بومی‌سازی (i18n/L10n) | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۵ دوره جامع جنگو: چندزبانه‌سازی و بومی‌سازی (i18n/L10n) — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۵ از ۳۰ — چندزبانه‌سازی و بومی‌سازی (i18n/L10n)</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🎨 بهینه‌سازی و API ← فصل ۲۵
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۵ از ۳۰</span>
+    <h1>🌍 چندزبانه‌سازی و بومی‌سازی (i18n/L10n)</h1>
+    <p>سایت چندزبانه با <span class="term" data-term="i18n">i18n</span> جنگو: gettext در کد و قالب، فایل‌های .po/.mo، تغییر زبان کاربر، فرمت تاریخ و عدد فارسی و منطقه زمانی.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۸۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>کاربر فارسی‌زبان «۱۴۰۴/۱۰/۲۲» و کاربر انگلیسی «Jan 12, 2026» می‌بیند — از یک کد! بومی‌سازی یعنی جداکردن «متن و فرمت» از «منطق». جنگو ابزار کاملی دارد که حتی ادمین خودش هم با آن فارسی شده.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>زیرساخت i18n جنگو را فعال و LocaleMiddleware را درست جای‌گذاری کنید.</li>
+          <li>رشته‌ها را با gettext/_ در کد و {% translate %} در قالب علامت بزنید.</li>
+          <li>با makemessages/compilemessages فایل ترجمه بسازید و پر کنید.</li>
+          <li>زبان را با کوکی/URL/هدر انتخاب کنید و تعویض زبان بسازید.</li>
+          <li>فرمت تاریخ/عدد (L10N) و منطقه زمانی را برای فارسی تنظیم کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> قالب‌ها (۱۰)، میدلور (۱۷) و کوکی/نشست (۱۸) مستقیماً استفاده می‌شوند؛ سایت چندزبانه در پروژه نهایی (۳۰) اختیار می‌شود.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>فعال‌سازی</h4><p>تنظیمات و میدلور.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>علامت‌گذاری</h4><p>_ در کد، translate در قالب.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>گردش ترجمه</h4><p>makemessages تا compile.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>انتخاب زبان و L10N</h4><p>کوکی، URL و فرمت‌ها.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 gettext دقیقاً چه می‌کند؟</summary>
+          <div class="answer-body"><p>رشته اصلی (معمولاً انگلیسی) را «کلید» می‌گیرد و در کاتالوگ ترجمه زبان <strong>فعال فعلی</strong> دنبالش می‌گردد؛ اگر بود ترجمه، نبود همان اصلی را برمی‌گرداند. پس بدون فایل ترجمه هم کد کار می‌کند — i18n تدریجی ممکن است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 LANGUAGE_CODE = "fa" کافی نیست؟</summary>
+          <div class="answer-body"><p>برای «پیش‌فرض فارسی» بله. ولی برای سایت <strong>چندزبانه</strong> باید زبان هر درخواست تشخیص داده شود: <span class="term" data-term="middleware">LocaleMiddleware</span> به‌ترتیب <span class="term" data-term="url">URL</span> (i18n_patterns)، <span class="term" data-term="cookie">کوکی</span> django_language، هدر Accept-Language و در نهایت LANGUAGE_CODE را چک می‌کند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 .po و .mo چه فرقی دارند؟</summary>
+          <div class="answer-body"><p>.po فایل متنی قابل ویرایش ترجمه‌هاست (msgid/msgstr)؛ .mo نسخه باینری کامپایل‌شده است که جنگو <strong>فقط آن</strong> را می‌خواند. پس بعد از هر ویرایش .po باید compilemessages بزنید — وگرنه تغییرات دیده نمی‌شوند (تله رایج!).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>gettext روی سیستم: در لینوکس <code class="inline-code">sudo apt install gettext</code>؛ در ویندوز به PATH اضافه شود.</li>
+          <li>پروژه وبلاگ با قالب‌های base/list/detail (فصل ۱۰).</li>
+          <li>درک میدلور (فصل ۱۷) و کوکی (فصل ۱۸).</li>
+          <li>آشنایی با ساختار پوشه locale.</li>
+          
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ خطای رایج makemessages</b>
+          اگر <code class="inline-code">CommandError: Can't find msguniq</code> گرفتید، gettext نصب نیست. برای زبان فارسی: <code class="inline-code">python manage.py makemessages -l fa</code> (کد زبان دو حرفی، نه fa_IR مگر منطقه خاصی بخواهید).
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ فعال‌سازی زیرساخت</h3>
+<div class="code-box">
+          <div class="code-head"><span>settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.utils.translation import gettext_lazy as _
+
+USE_I18N = True                    # ترجمه رشته‌ها
+USE_TZ = True                      # منطقه زمانی آگاه
+TIME_ZONE = "Asia/Tehran"
+
+LANGUAGE_CODE = "fa"               # پیش‌فرض
+LANGUAGES = [
+    ("fa", _("فارسی")),
+    ("en", _("English")),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
+
+MIDDLEWARE = [
+    ...,
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",     # ← بعد از session،
+    "django.contrib.auth.middleware.AuthenticationMiddleware",  # ← قبل از auth
+    ...,
+]</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ gettext_lazy در settings</b>
+          در سطح ماژول <span class="term" data-term="settings">settings</span>/models/forms زبان هنوز «فعال» نشده؛ اگر gettext عادی را صدا بزنید، ترجمه یک‌بار برای همیشه (به زبان پیش‌فرض) ثابت می‌شود. در این جایگاه‌ها همیشه <strong>gettext_lazy</strong> (با alias <code class="inline-code">_</code>).
+        </div>
+
+        <h3>۵.۲ علامت‌گذاری رشته‌ها</h3>
+<div class="code-box">
+          <div class="code-head"><span>در کد پایتون (ویو، مدل، فرم)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["name", "text"]
+        labels = {"name": gettext_lazy("نام شما")}   # lazy در فرم/مدل
+
+    def clean_text(self):
+        text = self.cleaned_data["text"]
+        if "تبلیغ" in text:
+            raise forms.ValidationError(
+                _("متن تبلیغاتی مجاز نیست."))       # gettext در متد (اجرا)
+        return text
+
+
+def welcome(request):
+    messages.success(request, _("خوش آمدید!"))
+    # با پارامتر:
+    msg = _("شما %(count)s پست دارید") % {"count": n}
+    # جمع‌بندی (singular/plural):
+    from django.utils.translation import ngettext
+    ngettext("%(n)d روز", "%(n)d روز", days) % {"n": days}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>در قالب</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load i18n %}
+
+&lt;h1&gt;{% translate "پست‌های اخیر" %}&lt;/h1&gt;
+&lt;p&gt;{% blocktranslate count n=posts|length %}
+     یک پست پیدا شد
+   {% plural %}
+     {{ n }} پست پیدا شد
+   {% endblocktranslate %}&lt;/p&gt;
+
+{# با متغیر #}
+{% translate post.title as title_tr %}
+
+{# کامنت برای مترجم #}
+{% translate "Submit" as submit_label %}</code></pre>
+        </div>
+          <div class="callout tip">
+          <b class="title">💡 قاعده انگشتی</b>
+          هر رشته‌ای که <strong>کاربر می‌بیند</strong> علامت بزنید؛ رشته‌های لاگ، کلیدهای داخلی و slug را نه. gettext (اجرا) در ویو/متد؛ gettext_lazy در کلاس/ماژول/فرم/مدل.
+        </div>
+
+        <h3>۵.۳ گردش کار ترجمه: po → mo</h3>
+<div class="code-box">
+          <div class="code-head"><span>دستورات</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># ۱) استخراج رشته‌ها → locale/fa/LC_MESSAGES/django.po
+python manage.py makemessages -l fa
+
+# (اختیاری) برای JS هم: makemessages -d djangojs -l fa
+
+# ۲) ویرایش django.po — هر msgid را ترجمه کنید
+# ۳) کامپایل → django.mo (جنگو فقط این را می‌خواند)
+python manage.py compilemessages
+
+# بررسی همه زبان‌ها
+python manage.py makemessages --all</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ساختار فایل django.po</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text"># locale/fa/LC_MESSAGES/django.po
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n &gt; 1);\n"
+
+#: blog/views.py:42 templates/blog/post_list.html:8
+msgid "پست‌های اخیر"
+msgstr "پست‌های اخیر"          # ← فارسی: msgid خودش فارسی باشد
+
+#: blog/forms.py:20
+msgid "متن تبلیغاتی مجاز نیست."
+msgstr "متن تبلیغاتی مجاز نیست."
+
+msgid "You have %(count)s posts"
+msgstr "شما %(count)s پست دارید"</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 msgid فارسی یا انگلیسی؟</b>
+          دو مکتب: ① msgid انگلیسی و ترجمه فارسی (استاندارد جهانی، ابزارها راحت‌تر) ② msgid فارسی (زبان پیش‌فرض بدون po کار می‌کند). پروژه شما فارسی‌محور است → مکتب ② منطقی است؛ ولی <strong>یکدست</strong> بمانید.
+        </div>
+
+        <h3>۵.۴ انتخاب و تعویض زبان</h3>
+<div class="code-box">
+          <div class="code-head"><span>الف) URL زبان‌دار (i18n_patterns)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># config/urls.py
+from django.conf.urls.i18n import i18n_patterns
+
+urlpatterns = [
+    path("admin/", admin.site.urls),          # بدون پیشوند زبان
+]
+urlpatterns += i18n_patterns(
+    path("", include("blog.urls")),
+    path("accounts/", include("accounts.urls")),
+)
+# → /fa/blog/... و /en/blog/...
+# قالب‌ها: {% url "set_language" %} باید بیرون i18n_patterns باشد</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ب) ویوی تعویض زبان (کوکی)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># urls: path("i18n/", include("django.conf.urls.i18n"))
+# جنگو set_language آماده دارد (POST با فیلد language):</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>قالب: سوییچر زبان</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load i18n %}
+&lt;form action="{% url "set_language" %}" method="post"&gt;
+  {% csrf_token %}
+  &lt;input name="next" type="hidden" value="{{ redirect_to }}"&gt;
+  &lt;select name="language" onchange="this.form.submit()"&gt;
+    {% get_current_language as LANGUAGE_CODE %}
+    {% get_available_languages as LANGUAGES %}
+    {% for code, name in LANGUAGES %}
+      &lt;option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}&gt;
+        {{ name }}
+      &lt;/option&gt;
+    {% endfor %}
+  &lt;/select&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ج) تنظیم RTL/LTR در قالب پایه</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load i18n %}
+{% get_current_language_bidi as RTL %}
+&lt;html lang="{% get_current_language as l %}{{ l }}" dir="{{ RTL|yesno:"rtl,ltr" }}"&gt;</code></pre>
+        </div>
+
+        <h3>۵.۵ L10N: فرمت تاریخ، عدد و پول</h3>
+<div class="code-box">
+          <div class="code-head"><span>قالب — فرمت‌های محلی</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load l10n i18n %}
+
+{# تاریخ بر اساس زبان فعال (با formats.py سفارشی‌سازی می‌شود) #}
+{{ post.created_at|date }}
+{% localize off %}{{ value }}{% endlocalize %}   {# بدون بومی‌سازی #}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>locale/fa/formats.py — فرمت‌های فارسی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">DATE_FORMAT = "j F Y"               # ۲۲ دی ۱۴۰۴ (با jdatetime)
+DATETIME_FORMAT = "j F Y، ساعت G:i"
+SHORT_DATE_FORMAT = "Y/m/d"
+THOUSAND_SEPARATOR = "٬"            # جداکننده هزارگان فارسی
+DECIMAL_SEPARATOR = "٫"
+NUMBER_GROUPING = 3</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>تاریخ شمسی در قالب (jdatetime/persian-datetime)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># pip install jdatetime
+import jdatetime
+
+def to_jalali(dt):
+    jd = jdatetime.datetime.fromgregorian(datetime=dt)
+    return jd.strftime("%Y/%m/%d %H:%M")
+
+# در ویو: context["jalali_date"] = to_jalali(post.created_at)
+# یا با فیلتر سفارشی قالب (تمرین ۳)</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 تقویم شمسی در جنگو</b>
+          i18n خود جنگو تقویم جلالی ندارد؛ تاریخ‌ها میلادی ذخیره و با کتابخانه‌هایی مثل jdatetime یا django-jalali (فیلدهای مدل JalaliDateField) نمایشی تبدیل می‌شوند. ذخیره همیشه UTC/میلادی بماند — تبدیل فقط در نمایش.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>وبلاگ دوزبانه واقعی — از base.html تا صفحه پست:</p>
+        <div class="code-box">
+          <div class="code-head"><span>templates/base.html (گزیده)</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load i18n %}
+{% get_current_language as LANG %}
+{% get_current_language_bidi as IS_RTL %}
+&lt;!doctype html&gt;
+&lt;html lang="{{ LANG }}" dir="{% if IS_RTL %}rtl{% else %}ltr{% endif %}"&gt;
+&lt;head&gt;
+  &lt;title&gt;{% block title %}{% translate "وبلاگ من" %}{% endblock %}&lt;/title&gt;
+  &lt;link rel="stylesheet" href="{% static 'css/style.css' %}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;nav&gt;
+  &lt;a href="{% url 'blog:list' %}"&gt;{% translate "خانه" %}&lt;/a&gt;
+  &lt;a href="{% url 'blog:about' %}"&gt;{% translate "درباره" %}&lt;/a&gt;
+  {% include "partials/lang_switcher.html" %}
+&lt;/nav&gt;
+{% block content %}{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>views.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.utils.translation import gettext as _
+
+
+def post_list(request):
+    posts = Post.objects.filter(published=True)
+    q = request.GET.get("q")
+    if q:
+        posts = posts.filter(title__icontains=q)
+        messages.info(request, _("نتایج جست‌وجو برای «%(q)s»") % {"q": q})
+    return render(request, "blog/post_list.html", {"posts": posts})</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>گردش کار کامل</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py makemessages -l fa -l en
+# ویرایش locale/en/LC_MESSAGES/django.po (ترجمه انگلیسی رشته‌های فارسی)
+python manage.py compilemessages
+# ری‌استارت → /en/ سایت انگلیسی، /fa/ فارسی (با i18n_patterns)
+# تعویض با سوییچر → کوکی django_language ست می‌شود</code></pre>
+        </div>
+          <p>نکته معماری: <strong>محتوای پست‌ها</strong> (عنوان/بدنه <span class="term" data-term="database">دیتابیس</span>) با gettext ترجمه نمی‌شود! برای محتوای دیتابیسی چندزبانه از django-modeltranslation یا فیلدهای title_en/title_fa استفاده کنید — gettext فقط برای «رشته‌های رابط» است.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>وبلاگ را دوزبانه کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> زیرساخت i18n را فعال کنید، base.html را با get_current_language_bidi دایرکتیک کنید و سوییچر زبان (کوپیی از مثال) بگذارید.</li>
+          <li><strong>کارگاه ۲:</strong> ده رشته رابط (ناوبری، عنوان صفحه فهرست، پیام‌های فرم کامنت، دکمه‌ها) را علامت بزنید، makemessages -l en بزنید و ترجمه انگلیسی را پر کنید.</li>
+          <li><strong>کارگاه ۳:</strong> یک فیلتر سفارشی قالب بنویسید: <code class="inline-code">{{ post.created_at|jalali:"%Y/%m/%d" }}</code> با jdatetime و آن را در صفحه جزئیات استفاده کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><p>تنظیمات ۵.۱ + الگوی ۵.۴ج را کپی کنید؛ i18n_patterns را در urls اصلی بپیچید. سوییچر: فایل partials/lang_switcher.html از مفهوم ۵.۴ب را include کنید. تست سریع: صفحه را با /en/ باز کنید — اگر dir=ltr شد و متن‌های translate‌شده عوض شدند، زیرساخت سالم است.</p><p><strong>دام رایج:</strong> بعد از افزودن i18n_patterns، همه URLهای قبلی (مثل /blog/) به /fa/blog/ ریدایرکت می‌شوند؛ لینک‌های سخت‌کدشده در قالب/جاوااسکریپت را با {% url %} جایگزین کنید تا خودکار درست شوند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>نمونه علامت‌گذاری و po</span><span class="lang">text</span></div><pre class="code"><code data-lang="text"># قالب:
+&lt;h1&gt;{% translate "پست‌های اخیر" %}&lt;/h1&gt;
+&lt;button&gt;{% translate "ارسال نظر" %}&lt;/button&gt;
+
+# forms.py:
+raise forms.ValidationError(_("متن تبلیغاتی مجاز نیست."))
+
+# بعد از makemessages -l en در django.po:
+msgid "پست‌های اخیر"
+msgstr "Recent Posts"
+
+msgid "ارسال نظر"
+msgstr "Submit Comment"
+
+msgid "متن تبلیغاتی مجاز نیست."
+msgstr "Advertising text is not allowed."
+
+# compilemessages + ری‌استارت</code></pre></div><p>اگر ترجمه دیده نشد: ① compilemessages زده‌اید؟ ② .mo کنار همان .po در locale/en/LC_MESSAGES است؟ ③ زبان فعال واقعاً en است؟ (با {{ LANGUAGE_CODE }} در قالب یا get_language() در شل چک کنید.) ④ رشته <strong>دقیقاً</strong> مثل msgid است (فاصله/نیم‌فاصله!).</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>blog/templatetags/jalali.py</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">import jdatetime
+from django import template
+
+register = template.Library()
+
+
+@register.filter(name="jalali")
+def jalali(value, fmt="%Y/%m/%d"):
+    """تبدیل datetime میلادی (UTC-aware) به رشته شمسی"""
+    if value is None:
+        return ""
+    jd = jdatetime.datetime.fromgregorian(datetime=value)
+    return jd.strftime(fmt)
+
+# قالب: {% load jalali %} → {{ post.created_at|jalali }}
+# با ساعت: {{ post.created_at|jalali:"%Y/%m/%d %H:%M" }}</code></pre></div><p>ساختار templatetags را از فصل ۱۰ می‌شناسید (پوشه + __init__.py + register). جdatetime خودش timezone-aware را به تهران تبدیل نمی‌کند؛ اگر USE_TZ دارید اول با timezone.localtime(value) محلی کنید بعد تبدیل — وگرنه ساعت ۳:۳۰ UTC را ۳:۳۰ شمسی نشان می‌دهد!</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ ترجمه‌ها اعمال نمی‌شوند</b>
+          <p>زنجیره را چک کنید: ① compilemessages اجرا و django.mo ساخته شده؟ ② LOCALE_PATHS درست است؟ ③ LocaleMiddleware در MIDDLEWARE هست؟ ④ msgid دقیقاً برابر رشته کد است (نیم‌فاصله‌ها!)؟ ۹۰٪ موارد = فراموشی compile.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ msguniq/msgmerge not found</b>
+          <p>gettext نصب نیست: apt install gettext (لینوکس) یا باینری ویندوز در PATH. روی برخی ویندوزها python manage.py makemessages -l fa --no-location هم لازم می‌شود.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ رشته در settings/models ترجمه نمی‌شود یا همیشه یک زبان است</b>
+          <p>gettext عادی به‌جای gettext_lazy در سطح ماژول/کلاس استفاده شده؛ رشته یک‌بار در زمان import ارزیابی و ثابت شده. اصلاح به lazy (و در قالب با {% translate %} که lazy-safe است).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ با i18n_patterns همه لینک‌ها ۴۰۴ شدند</b>
+          <p>لینک‌های سخت‌کد (href="/blog/") یا reverse در جاوااسکریپت بدون پیشوند زبان‌اند. همه را {% url %} کنید؛ برای JS از javascript_catalog یا data-attribute استفاده کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ ساعت‌ها ۳:۳۰ اختلاف دارند</b>
+          <p>TIME_ZONE یا تبدیل UTC: تاریخ‌ها در دیتابیس UTC ذخیره می‌شوند (USE_TZ=True)؛ برای نمایش timezone.localtime() یا در قالب، جنگو خودش محلی می‌کند — مگر در فیلتر سفارشی jdatetime که دستی لازم است (کارگاه ۳).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — gettext یا lazy؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> کدام نوع در هر جایگاه؟ (الف) verbose_name فیلد مدل (ب) messages.success داخل ویو (ج) label فیلد فرم در Meta (د) رشته در بدنه تابع clean</p><p><strong>پاسخ:</strong> الف → lazy (کلاس/ماژول) • ب → gettext عادی (زمان اجرا) • ج → lazy (Meta کلاس است) • د → gettext عادی. قاعده: «سطح کلاس/ماژول = lazy، داخل تابع = عادی».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — طراحی URL دوزبانه</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> مزایا/معایب سه طرح: ① پیشوند مسیر /en/blog/ (ب) زیردامنه en.site.com (ج) فقط کوکی بدون تغییر URL؟</p><p><strong>پاسخ:</strong> ① ساده‌ترین با جنگو (i18n_patterns)، SEO خوب با hreflang — پیشنهاد ما • ② جداسازی تمیزتر ولی نیاز به تنظیمات دامنه/میزبانی • ③ بدون هزینه URL ولی اشتراک‌گذاری لینک زبان را منتقل نمی‌کند و SEO ضعیف (یک URL دو محتوا).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — محتوا یا رابط؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> کدام با gettext و کدام با راه‌حل دیتابیسی؟ (الف) عنوان صفحه «تماس با ما» (ب) عنوان یک پست خاص در دیتابیس (ج) پیام خطای فرم (د) نام دسته‌بندی‌ها که مدیر سایت فارسی/انگلیسی‌شان را وارد می‌کند</p><p><strong>پاسخ:</strong> الف ✅ gettext • ب ❌ مدل ترجمه‌پذیر (django-modeltranslation یا فیلد title_en) • ج ✅ gettext • د ❌ دیتابیس (فیلد دوزبانه در مدل Category). مرز: «رشته‌های کد = gettext؛ رکوردهای دیتابیس = ترجمه مدل».</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-25" data-title="آزمون فصل ۲۵ — چندزبانه‌سازی و بومی‌سازی (i18n/L10n)" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) gettext_lazy کجا ضروری است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">داخل بدنه ویوها</button>
+              <button type="button" class="quiz-opt" data-key="b">در سطح ماژول/کلاس (settings، verbose_name مدل، Meta فرم‌ها)</button>
+              <button type="button" class="quiz-opt" data-key="c">در قالب‌ها</button>
+              <button type="button" class="quiz-opt" data-key="d">فقط در تست‌ها</button>
+            </div>
+            <div class="quiz-explain">💡 در import زمان فعال‌بودن زبان معلوم نیست؛ lazy ارزیابی را به زمان استفاده موکول می‌کند. داخل توابع gettext عادی کافی است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) ترتیب makemessages → compilemessages چرا است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فرقی ندارد</button>
+              <button type="button" class="quiz-opt" data-key="b">makemessages رشته‌ها را در django.po استخراج می‌کند؛ ترجمه دستی؛ compilemessages نسخه باینری django.mo را می‌سازد که جنگو می‌خواند</button>
+              <button type="button" class="quiz-opt" data-key="c">compile اول است</button>
+              <button type="button" class="quiz-opt" data-key="d">هر دو خودکار ترجمه می‌کنند</button>
+            </div>
+            <div class="quiz-explain">💡 po = متنی قابل ویرایش، mo = باینری مصرفی. بدون compile ترجمه‌ها اثر نمی‌کنند — رایج‌ترین تله فصل.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) LocaleMiddleware زبان کاربر را با چه اولویتی تشخیص می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">همیشه LANGUAGE_CODE</button>
+              <button type="button" class="quiz-opt" data-key="b">پیشوند URL (i18n_patterns) ← کوکی django_language ← هدر Accept-Language ← LANGUAGE_CODE</button>
+              <button type="button" class="quiz-opt" data-key="c">نشست کاربر</button>
+              <button type="button" class="quiz-opt" data-key="d">تصادفی</button>
+            </div>
+            <div class="quiz-explain">💡 اول صریح‌ترین سیگنال (URL)، بعد انتخاب قبلی کاربر (کوکی)، بعد ترجیح مرورگر و در نهایت پیش‌فرض.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) برای ترجمه «عنوان پست‌ها» (رکورد دیتابیس) چه باید کرد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">gettext روی post.title</button>
+              <button type="button" class="quiz-opt" data-key="b">راه‌حل ترجمه مدل: django-modeltranslation یا فیلدهای title_fa/title_en</button>
+              <button type="button" class="quiz-opt" data-key="c">compilemessages</button>
+              <button type="button" class="quiz-opt" data-key="d">ممکن نیست</button>
+            </div>
+            <div class="quiz-explain">💡 gettext فقط رشته‌های ثابت کد را ترجمه می‌کند؛ محتوای دیتابیس ساختار خودش را می‌خواهد (فیلد به‌ازای زبان).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) get_current_language_bidi در قالب چه می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">نام زبان</button>
+              <button type="button" class="quiz-opt" data-key="b">True/False راست‌به‌چپ بودن زبان فعال — برای dir=rtl</button>
+              <button type="button" class="quiz-opt" data-key="c">فهرست زبان‌ها</button>
+              <button type="button" class="quiz-opt" data-key="d">ترجمه رشته</button>
+            </div>
+            <div class="quiz-explain">💡 فارسی/عربی → True؛ با آن dir و استایل‌های جهت‌دار را شرطی می‌کنید — کلید قالب‌های دوزبانه RTL/LTR.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) با USE_TZ=True تاریخ‌ها در دیتابیس چطور ذخیره می‌شوند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">به وقت تهران</button>
+              <button type="button" class="quiz-opt" data-key="b">UTC — و هنگام نمایش به منطقه زمانی فعال تبدیل می‌شوند</button>
+              <button type="button" class="quiz-opt" data-key="c">بدون منطقه زمانی</button>
+              <button type="button" class="quiz-opt" data-key="d">به وقت سرور</button>
+            </div>
+            <div class="quiz-explain">💡 ذخیره UTC استاندارد جهانی است؛ timezone.localtime و قالب‌ها برای نمایش تبدیل می‌کنند. TIME_ZONE و ترجیح کاربر فقط نمایش را عوض می‌کند.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «وبلاگ دوزبانه فارسی/انگلیسی»</strong> — سایت را کاملاً دوزبانه کنید — همان پروژه‌ای که در فصل ۳۰ گسترش می‌یابد.</p>
+        <ul class="checklist">
+          <li>i18n_patterns + LocaleMiddleware + سوییچر زبان در navbar.</li>
+          <li>حداقل ۲۵ رشته رابط علامت‌خورده (ناوبری، فرم‌ها، پیام‌ها، خطاهای 404).</li>
+          <li>فایل‌های po پرشده برای fa و en + compile شده.</li>
+          <li>قالب با dir پویا و تست دستی هر دو زبان (اسکرین‌شات).</li>
+          <li>نمایش تاریخ شمسی با فیلتر jalali در صفحه جزئیات.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 hreflang برای SEO</b>
+          در base.html برای هر زبان لینک متناوب بگذارید: <code class="inline-code">&lt;link rel="alternate" hreflang="en" href="...&gt;</code> تا موتورهای جست‌وجو نسخه درست را به کاربر نشان دهند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>USE_I18N + LocaleMiddleware + LANGUAGES + LOCALE_PATHS زیرساخت است.</li>
+          <li>در کد gettext/_ و در قالب {% translate %}؛ سطح کلاس = lazy.</li>
+          <li>گردش: makemessages → ویرایش po → compilemessages (mo).</li>
+          <li>انتخاب زبان: <span class="term" data-term="url">URL</span> ← <span class="term" data-term="cookie">کوکی</span> ← Accept-Language ← پیش‌فرض.</li>
+          <li>L10N: formats.py، جداکننده فارسی، تاریخ شمسی با jdatetime؛ محتوای دیتابیس راه حل جدا می‌خواهد.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «منطق یک‌بار نوشته می‌شود؛ زبان و فرمت، لایه نمایشی‌اند که کاربر انتخاب می‌کند.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چطور زبان را در پروفایل کاربر ذخیره کنم؟</summary><div class="faq-body"><p>فیلد language در <span class="term" data-term="model">مدل</span> Profile؛ در ویوی تنظیمات پروفایل، هم کوکی set_language را ست کنید و هم ترجمه‌ها را با translation.activate(lang) برای همان درخواست. ورود: در سیگنال user_logged_in زبان پروفایل را activate کنید.</p></div></details>
+        <details class="faq-item"><summary>po را با چه ابزاری ویرایش کنم؟</summary><div class="faq-body"><p>ویرایشگر متنی کافی است، ولی ابزارهای گرافیکی مثل Poedit یا وب‌اپ‌هایی مثل Weblate/Transifex برای تیم مترجم عالی‌اند (fuzzy-marking، حافظه ترجمه).</p></div></details>
+        <details class="faq-item"><summary>ترجمه رشته‌های خود جنگو (ادمین، پیام‌های اعتبارسنجی) چطور می‌آید؟</summary><div class="faq-body"><p>خودکار! جنگو کاتالوگ ترجمه داخلی دارد و پیام‌های آماده (مثل "This field is required.") با makemessages در po شما هم ظاهر می‌شوند (به‌عنوان ارجاع) — کافی است LANGUAGE_CODE/LANGUAGES را داشته باشید؛ ادمین فارسی جنگو نمونه‌اش است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          سایت چندزبانه آماده پرواز است: <strong>فصل ۲۶</strong> — <span class="term" data-term="deployment">استقرار</span> واقعی با Gunicorn، Nginx، Postgres و داکر روی VPS.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-25" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-25">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-24/index.html">→ فصل قبلی<br><b>🕐 فصل ۲۴</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-26/index.html">فصل بعدی ←<br><b>📦 فصل ۲۶: استقرار (Deployment) روی سرور واقعی</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۵: چندزبانه‌سازی و بومی‌سازی (i18n/L10n) | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
