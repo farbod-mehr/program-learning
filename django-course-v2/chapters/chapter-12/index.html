@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۲: احراز هویت (Authentication) و کاربران | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۲ دوره جامع جنگو: احراز هویت (Authentication) و کاربران — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۲ از ۳۰ — احراز هویت (Authentication) و کاربران</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 📐 ساختار و Views ← فصل ۱۲
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۲ از ۳۰</span>
+    <h1>🔐 احراز هویت (Authentication) و کاربران</h1>
+    <p>مدل User، ثبت‌نام با UserCreationForm، ورود و خروج با LoginView و LogoutView، محافظت صفحه‌ها با <span class="term" data-term="decorator">@login_required</span> و LoginRequiredMixin و ساخت پروفایل کاربری.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۱۰۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>«کاربر» مرکز اکثر وب‌سایت‌هاست. خوشبختانه جنگو یکی از کامل‌ترین سیستم‌های احراز هویت آماده را دارد: مدل کاربر، هش امن رمز، نشست‌ها و ویوهای ورود/خروج — ما فقط وصل و شخصی‌سازی می‌کنیم.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>مدل User داخلی و فیلدهایش را بشناسید.</li>
+          <li>صفحه ثبت‌نام با UserCreationForm بسازید.</li>
+          <li>ورود/خروج با ویوهای آماده و قالب registration/login.html.</li>
+          <li>با @login_required و LoginRequiredMixin دسترسی را محدود کنید.</li>
+          <li>پروفایل کاربر را با OneToOne و <span class="term" data-term="signal">سیگنال</span> بسازید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> بعد از فرم‌ها (۱۱). مجوزهای ریزتر در فصل ۱۳ و احراز هویت API در فصل ۲۳.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>سیستم auth جنگو</h4><p>User، رمز هش‌شده، نشست.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>ثبت‌نام</h4><p>UserCreationForm و ورود خودکار.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>ورود/خروج</h4><p>LoginView، LogoutView و تنظیمات.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>پروفایل</h4><p>OneToOne + سیگنال + محافظت صفحه‌ها.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 رمز عبور در دیتابیس چطور ذخیره می‌شود؟</summary>
+          <div class="answer-body"><p><strong>هش شده</strong> با الگوریتم PBKDF2 (به‌همراه salt یکتا). حتی خودِ سایت هم رمز اصلی را نمی‌بیند؛ فقط «آیا هش ورودی با هش ذخیره‌شده می‌خواند». برای همین «بازیابی رمز» یعنی «تنظیم رمز جدید».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 بعد از ورود موفق، جنگو چطور می‌فهمد این درخواست از همان کاربر است؟</summary>
+          <div class="answer-body"><p>با <span class="term" data-term="session">نشست</span>: یک شناسه نشست در کوکی کاربر ذخیره و داده نشست (شامل user_id) سمت سرور نگه داشته می‌شود. میان‌افزار AuthenticationMiddleware در هر درخواست request.user را از روی آن پر می‌کند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا مدل User را «کاستوم» نکنیم مگر مجبور باشیم؟</summary>
+          <div class="answer-body"><p>تغییر مدل کاربر <strong>بعد از</strong> شروع پروژه پرهزینه است (مهاجرت‌های پیچیده). اگر فیلد اضافه می‌خواهید، اول پروفایل OneToOne را در نظر بگیرید؛ کاستوم‌کردن را از روز اول پروژه تصمیم بگیرید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>فصل ۱۱: کار با ModelForm و الگوی ویوی فرم.</li>
+          <li>اپ <code class="inline-code">accounts</code> بسازید: <code class="inline-code">python manage.py startapp accounts</code> و ثبت در INSTALLED_APPS.</li>
+          <li>آشنایی با رابطه OneToOneField (مشابه ForeignKey با محدودیت یکی).</li>
+          <li>قالب base.html با جای navbar (کارگاه فصل ۱۰).</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ سیستم auth داخلی جنگو</h3>
+<p>اپ <code class="inline-code">django.contrib.auth</code> این‌ها را آماده می‌دهد:</p>
+          <ul><li>مدل <code class="inline-code">User</code>: username، password (هش)، email، first/last_name، is_active، is_staff، is_superuser، last_login.</li><li>توابع: <code class="inline-code">authenticate()</code>، <code class="inline-code">login()</code>، <code class="inline-code">logout()</code>.</li><li><span class="term" data-term="cbv">ویوهای آماده</span>: LoginView، LogoutView، PasswordChangeView و... .</li><li>Group و <span class="term" data-term="permission">Permission</span> (فصل ۱۳).</li></ul>
+          <div class="code-box">
+          <div class="code-head"><span>request.user در هر ویو</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">def dashboard(request):
+    if request.user.is_authenticated:
+        name = request.user.username
+    else:
+        ...  # کاربر ناشناس (AnonymousUser)</code></pre>
+        </div>
+
+        <h3>۵.۲ صفحه ثبت‌نام</h3>
+<div class="code-box">
+          <div class="code-head"><span>accounts/forms.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django import forms
+
+
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="ایمیل")
+
+    class Meta:
+        model = User
+        fields = ("username", "email")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("این ایمیل قبلاً ثبت شده است.")
+        return email</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>accounts/views.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+
+from .forms import SignupForm
+
+
+class SignupView(CreateView):
+    form_class = SignupForm
+    template_name = "registration/signup.html"
+    success_url = reverse_lazy("blog:list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)   # ورود خودکار بعد از ثبت‌نام
+        return response</code></pre>
+        </div>
+          <p><span class="term" data-term="form">UserCreationForm</span> خودش username + password1 + password2 و بررسی شباهت رمز را دارد؛ ما فقط email افزودیم.</p>
+
+        <h3>۵.۳ ورود و خروج با ویوهای آماده</h3>
+<div class="code-box">
+          <div class="code-head"><span>accounts/urls.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth import views as auth_views
+from django.urls import path
+
+app_name = "accounts"
+
+urlpatterns = [
+    path("signup/", SignupView.as_view(), name="signup"),
+    path("login/", auth_views.LoginView.as_view(
+        template_name="registration/login.html"), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("password-change/", auth_views.PasswordChangeView.as_view(
+        template_name="registration/password_change_form.html",
+        success_url=reverse_lazy("blog:list")), name="password_change"),
+]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>registration/login.html</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% extends "base.html" %}
+{% block content %}
+&lt;h1&gt;ورود&lt;/h1&gt;
+&lt;form method="post"&gt;
+  {% csrf_token %}
+  {{ form.as_p }}
+  &lt;button type="submit"&gt;ورود&lt;/button&gt;
+&lt;/form&gt;
+&lt;p&gt;حساب ندارید؟ &lt;a href="{% url 'accounts:signup' %}"&gt;ثبت‌نام&lt;/a&gt;&lt;/p&gt;
+{% endblock %}</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>تنظیمات لازم در settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">LOGIN_URL = "accounts:login"          # @login_required به کجا بفرستد
+LOGIN_REDIRECT_URL = "blog:list"      # بعد از ورود موفق
+LOGOUT_REDIRECT_URL = "blog:list"     # بعد از خروج</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ خروج فقط با POST</b>
+          از جنگو ۵ به بعد LogoutView فقط POST را می‌پذیرد (جلوگیری از خروج اجباری با لینک). پس «خروج» باید یک فرم POST کوچک باشد، نه <code class="inline-code">&lt;a href&gt;</code>.
+        </div>
+
+        <h3>۵.۴ محافظت از صفحه‌ها</h3>
+<div class="code-box">
+          <div class="code-head"><span>دکوریتور برای FBV</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def dashboard(request):
+    ...
+# کاربر ناشناس → redirect به LOGIN_URL?next=/dashboard/</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>میکسین برای CBV</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ("title", "body")</code></pre>
+        </div>
+          <p>پارامتر <code class="inline-code">?next=</code> باعث می‌شود بعد از ورود، کاربر دقیقاً به همان صفحه‌ای برگردد که می‌خواست — LoginView خودش مدیریتش می‌کند.</p>
+
+        <h3>۵.۵ پروفایل کاربر با OneToOne و سیگنال</h3>
+<div class="code-box">
+          <div class="code-head"><span>accounts/models.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    bio = models.TextField(blank=True, max_length=500)
+    avatar = models.ImageField(upload_to="avatars/", blank=True)
+    website = models.URLField(blank=True)
+
+    def __str__(self):
+        return f"پروفایل {self.user.username}"
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)</code></pre>
+        </div>
+          <p>حالا همیشه <code class="inline-code">request.user.profile.bio</code> در دسترس است. توضیح کامل <span class="term" data-term="signal">سیگنال</span>ها فصل ۱۶ است؛ اینجا فقط استفاده می‌کنیم.</p>
+          <div class="callout info">
+          <b class="title">📌 settings.AUTH_USER_MODEL</b>
+          در کدهای جدید به‌جای import مستقیم User، از این تنظیم استفاده کنید؛ اگر روزی مدل کاربر کاستوم شد، کد شما نمی‌شکند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>جریان کامل یک کاربر جدید — از ثبت‌نام تا پروفایل:</p>
+        <div class="code-box">
+          <div class="code-head"><span>۱) ثبت‌نام</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash"># کاربر در /accounts/signup/ فرم را پر می‌کند
+# → SignupView کاربر را می‌سازد (رمز هش می‌شود)
+# → سیگنال post_save پروفایل خالی می‌سازد
+# → login() خودکار: نشست شروع می‌شود</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۲) ویرایش پروفایل</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    fields = ("bio", "avatar", "website")
+    template_name = "accounts/profile_form.html"
+    success_url = reverse_lazy("accounts:profile")
+
+    def get_object(self):
+        return self.request.user.profile   # فقط پروفایل خودش!
+
+
+@login_required
+def profile(request):
+    return render(request, "accounts/profile.html",
+                  {"profile": request.user.profile})</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>۳) تست در شل</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">&gt;&gt;&gt; from django.contrib.auth.models import User
+&gt;&gt;&gt; u = User.objects.first()
+&gt;&gt;&gt; u.password[:30]      # هش، نه رمز اصلی!
+'pbkdf2_sha256$870000$Xk2...'
+&gt;&gt;&gt; u.profile.bio = "سلام!"
+&gt;&gt;&gt; u.profile.save()</code></pre>
+        </div>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>سیستم کاربران وبلاگ را کامل کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> صفحات signup/login/logout/password-change را با ویوهای آماده بسازید و لینک‌هایشان را در navbar بگذارید (خروج با فرم POST).</li>
+          <li><strong>کارگاه ۲:</strong> ویوهای ایجاد/ویرایش/حذف پست را محافظت کنید و در post_list، برای کاربر واردشده دکمه «نوشته جدید» نشان دهید.</li>
+          <li><strong>کارگاه ۳:</strong> صفحه پروفایل عمومی بسازید: <code class="inline-code">/accounts/user/&lt;username&gt;/</code> که بیو و فهرست پست‌های همان نویسنده را نشان دهد.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><p>urls طبق مفهوم ۵.۳ + در navbar:</p><div class="code-box"><div class="code-head"><span>partials/navbar.html</span><span class="lang">HTML</span></div><pre class="code"><code data-lang="html">{% if user.is_authenticated %}
+  &lt;a href="{% url 'accounts:profile' %}"&gt;پروفایل من&lt;/a&gt;
+  &lt;form method="post" action="{% url 'accounts:logout' %}" style="display:inline"&gt;
+    {% csrf_token %}&lt;button&gt;خروج&lt;/button&gt;
+  &lt;/form&gt;
+{% else %}
+  &lt;a href="{% url 'accounts:login' %}"&gt;ورود&lt;/a&gt;
+  &lt;a href="{% url 'accounts:signup' %}"&gt;ثبت‌نام&lt;/a&gt;
+{% endif %}</code></pre></div></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>محافظت CBVها</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">class PostCreateView(LoginRequiredMixin, CreateView): ...
+class PostUpdateView(LoginRequiredMixin, UpdateView): ...
+class PostDeleteView(LoginRequiredMixin, DeleteView): ...
+
+# و محدودسازی به پست‌های خود کاربر:
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ("title", "body")
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)</code></pre></div><p>get_queryset روی author فیلتر می‌کند تا کاربر A نتواند پست کاربر B را با حدس زدن pk ویرایش کند (وگرنه 404 می‌گیرد).</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>پروفایل عمومی</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def public_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    posts = user.posts.filter(published=True)
+    return render(request, "accounts/public_profile.html",
+                  {"profile_user": user, "posts": posts})</code></pre></div><p>مسیر: <code class="inline-code">path("user/&lt;str:username&gt;/", views.public_profile, name="public_profile")</code>. در قالب: بیو از <code class="inline-code">profile_user.profile.bio</code>.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ حلقه redirect بی‌نهایت روی صفحه ورود</b>
+          <p>LOGIN_URL به مسیری اشاره می‌کند که خودش login_required دارد یا نامش غلط است. LOGIN_URL باید دقیقاً مسیر صفحه ورود باشد (accounts:login).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ بعد از ورود موفق به صفحه اصلی نمی‌روم</b>
+          <p>LOGIN_REDIRECT_URL تنظیم نشده (پیش‌فرض /accounts/profile/ است که شاید وجود نداشته باشد → 404). در settings تنظیمش کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای 405 Method Not Allowed هنگام خروج</b>
+          <p>خروج را با لینک GET صدا زده‌اید؛ LogoutView جنگو ۵+ فقط POST می‌پذیرد. فرم POST با csrf_token بگذارید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ request.user همیشه AnonymousUser است</b>
+          <p>میان‌افزارهای SessionMiddleware و AuthenticationMiddleware از MIDDLEWARE حذف شده‌اند (یا ترتیبشان خراب است). settings پیش‌فرض را دست نزنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ Profile.DoesNotExist برای بعضی کاربران</b>
+          <p>کاربرانی که <strong>قبل از</strong> افزودن سیگنال ساخته شده‌اند پروفایل ندارند. یک‌بار در شل برای همه بسازید: <code class="inline-code">[Profile.objects.get_or_create(user=u) for u in User.objects.all()]</code>.</p>
+        </div>
+        <div class="callout danger">
+          <b class="title">🚨 هرگز رمز را این‌گونه نسازید</b>
+          <code class="inline-code">user.password = "1234"</code> رمز را <strong>رمزنگاری‌نشده</strong> ذخیره می‌کند و کاربر هرگز نمی‌تواند وارد شود! همیشه <code class="inline-code">user.set_password("1234")</code> و بعد save().
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — جریان ورود</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> مراحل ورود موفق را مرتب کنید: ساخت/به‌روزرسانی نشست • چک کردن هش رمز • دریافت username/password • پر شدن request.user در درخواست‌های بعدی.</p><p><strong>پاسخ:</strong> دریافت داده → authenticate (چک هش) → login() (ساخت نشست + کوکی sessionid) → درخواست‌های بعدی: request.user پرشده.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — انتخاب ابزار</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر مورد: (الف) محافظت FBV (ب) محافظت CBV (ج) تغییر مسیر کاربر غیرمجازه به صفحه خطا به‌جای لاگین (د) چک «آیا این کاربر نویسنده همان پست است؟»</p><p><strong>پاسخ:</strong> الف → @login_required • ب → LoginRequiredMixin • ج → @user_passes_test یا permission_required (فصل ۱۳) • د → بررسی دستی در ویو یا فیلتر get_queryset (کارگاه ۲).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — OneToOne یا ForeignKey؟</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای پروفایل چرا OneToOneField نه ForeignKey؟</p><p><strong>پاسخ:</strong> چون هر کاربر باید <strong>دقیقاً یک</strong> پروفایل داشته باشد. با FK، user.profile چند مقدار برمی‌گرداند و یکتایی تضمین نمی‌شود؛ OneToOne هم یکتایی دیتابیس می‌دهد هم دسترسی user.profile تک‌مقداری.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-12" data-title="آزمون فصل ۱۲ — احراز هویت (Authentication) و کاربران" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) رمز عبور کاربر در پایگاه داده چطور ذخیره می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">متن ساده برای بازیابی</button>
+              <button type="button" class="quiz-opt" data-key="b">هش یک‌طرفه با salt (مثل PBKDF2)</button>
+              <button type="button" class="quiz-opt" data-key="c">رمزنگاری دوطرفه با SECRET_KEY</button>
+              <button type="button" class="quiz-opt" data-key="d">اصلاً ذخیره نمی‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 هش یک‌طرفه است: از هش نمی‌توان رمز را بازیافت؛ ورود = مقایسه هش‌ها. set_password() همین کار را می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) LOGIN_URL چه نقشی دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">نشانی خروج</button>
+              <button type="button" class="quiz-opt" data-key="b">مقصد redirect برای کاربر ناشناسی که به صفحه محافظت‌شده می‌رسد</button>
+              <button type="button" class="quiz-opt" data-key="c">صفحه ثبت‌نام</button>
+              <button type="button" class="quiz-opt" data-key="d">صفحه پروفایل</button>
+            </div>
+            <div class="quiz-explain">💡 login_required و LoginRequiredMixin کاربر ناشناس را به LOGIN_URL با پارامتر ?next= می‌فرستند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) بعد از ثبت‌نام موفق می‌خواهیم کاربر بدون ورود دستی ادامه دهد. کدام تابع؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">authenticate()</button>
+              <button type="button" class="quiz-opt" data-key="b">login(request, user)</button>
+              <button type="button" class="quiz-opt" data-key="c">request.user = user</button>
+              <button type="button" class="quiz-opt" data-key="d">create_session()</button>
+            </div>
+            <div class="quiz-explain">💡 login() نشست را برای کاربرِ (احراز هویت‌شده) شروع می‌کند؛ معمولاً در form_valid بعد از super().form_valid.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) خروج (logout) در جنگو ۵+ با کدام متد HTTP انجام می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">GET با لینک</button>
+              <button type="button" class="quiz-opt" data-key="b">POST با فرم و csrf_token</button>
+              <button type="button" class="quiz-opt" data-key="c">DELETE</button>
+              <button type="button" class="quiz-opt" data-key="d">هر کدام فرقی ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 POST بودن، خروج اجباری از راه لینک‌های خارجی (نوعی CSRF) را خنثی می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) برای افزودن فیلد «شماره تلفن» به کاربر، کم‌هزینه‌ترین راه در پروژه موجود چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">تغییر مدل User به کاستوم</button>
+              <button type="button" class="quiz-opt" data-key="b">ساخت مدل Profile با OneToOneField به User</button>
+              <button type="button" class="quiz-opt" data-key="c">ذخیره در session</button>
+              <button type="button" class="quiz-opt" data-key="d">افزودن به settings</button>
+            </div>
+            <div class="quiz-explain">💡 مدل پروفایل بدون مهاجرت‌های سنگین auth کار می‌کند؛ User کاستوم باید از روز اول پروژه تصمیم گرفته می‌شد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) request.user برای کاربر واردنشده چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">None و خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">شیء AnonymousUser با is_authenticated=False</button>
+              <button type="button" class="quiz-opt" data-key="c">User خالی</button>
+              <button type="button" class="quiz-opt" data-key="d">رشته "guest"</button>
+            </div>
+            <div class="quiz-explain">💡 AnonymousUser رابط User را تقلید می‌کند تا کد شما نیاز به if None نداشته باشد؛ is_authenticated آن False است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «حساب‌های کاربری کامل وبلاگ»</strong> — اپ accounts را به یک سیستم کاربری واقعی تبدیل کنید.</p>
+        <ul class="checklist">
+          <li>ثبت‌نام + ورود + خروج + تغییر رمز (همه با ویوهای آماده و قالب فارسی).</li>
+          <li>پروفایل با سیگنال + ویرایش بیو/آواتار.</li>
+          <li>صفحه «نوشته‌های من»: فهرست + آمار پست‌های کاربر واردشده.</li>
+          <li>همه ویوهای نوشتن (ساخت/ویرایش/حذف پست) محافظت‌شده و محدود به مالک.</li>
+          <li>navbar با وضعیت ورود و لینک‌های contextual.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ایمیل تأیید ثبت‌نام</b>
+          ارسال ایمیل فعال‌سازی یک گام حرفه‌ای بعدی است؛ در فصل ۲۴ با <span class="term" data-term="celery">سلری</span> به‌صورت ناهمگام پیاده‌اش می‌کنیم.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>سیستم auth جنگو: مدل User، هش PBKDF2، نشست‌محور.</li>
+          <li>ثبت‌نام با UserCreationForm + ورود خودکار با login().</li>
+          <li>LoginView/LogoutView با تنظیمات LOGIN_URL و REDIRECTها.</li>
+          <li>محافظت: @login_required (تابعی) و LoginRequiredMixin (کلاسی).</li>
+          <li>پروفایل: OneToOne + post_save + دسترسی user.profile.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «احراز هویت = «کیستی» کاربر؛ از این پس هر ویوی نوشتن، هم هویت می‌خواهد هم مالکیت.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>می‌توانم با ایمیل به‌جای username وارد شوم؟</summary><div class="faq-body"><p>بله؛ یا AuthenticationBackend سفارشی می‌نویسید یا از همان ابتدا مدل کاربر کاستوم با USERNAME_FIELD="email" می‌سازید (پکیج‌هایی مثل django-allauth هم این را آماده دارند).</p></div></details>
+        <details class="faq-item"><summary>allauth چیست و کجا لازم می‌شود؟</summary><div class="faq-body"><p>django-allauth مجموعه‌ای کامل: ورود با گوگل/گیت‌هاب، تأیید ایمیل، بازنشانی رمز و 2FA. برای پروژه جدی با «ورود اجتماعی» بهترین انتخاب است؛ برای یادگیری، اول سیستم داخلی را مسلط شوید.</p></div></details>
+        <details class="faq-item"><summary>چطور کاربر را بعد از N ورود ناموفق قفل کنم؟</summary><div class="faq-body"><p>داخلی ندارد؛ پکیج django-axes دقیقاً همین کار (ضد Brute-Force) را می‌کند. فصل ۲۶ (استقرار) آن را در چک‌لیست امنیت داریم.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          حالا که «کیستی» روشن شد، در <strong>فصل ۱۳</strong> «چه اجازه‌ای دارد» را حل می‌کنیم: گروه‌ها، <span class="term" data-term="permission">مجوزها</span> و نقش‌های کاربری.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-12" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-12">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-11/index.html">→ فصل قبلی<br><b>📝 فصل ۱۱</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-13/index.html">فصل بعدی ←<br><b>🛡️ فصل ۱۳: گروه‌ها و مجوزها (Permissions)</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۲: احراز هویت (Authentication) و کاربران | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
