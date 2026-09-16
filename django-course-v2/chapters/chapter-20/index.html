@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲۰: تست‌نویسی (Testing) در جنگو | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۲۰ دوره جامع جنگو: تست‌نویسی (Testing) در جنگو — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲۰ از ۳۰ — تست‌نویسی (Testing) در جنگو</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🎨 بهینه‌سازی و API ← فصل ۲۰
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲۰ از ۳۰</span>
+    <h1>🧪 تست‌نویسی (Testing) در جنگو</h1>
+    <p>چرا تست؟ TestCase و <span class="term" data-term="test-client">TestClient</span>، تست مدل‌ها، ویوها و فرم‌ها، setUp، assertهای کاربردی، اجرای تست‌ها و الگوی <span class="term" data-term="tdd">TDD</span> ساده.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۹۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تست خودکار یعنی «شبکه اطمینان»: با خیال راحت ریفکتور کنید، دیپلوی کنید و بخوابید! جنگو ابزار تست داخلی دارد (بر پایه unittest) و از فصل قبل هر منطقی که نوشتیم را می‌توانیم تست‌پذیر کنیم.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>انواع تست (واحد، دیدگاه ویو، یکپارچگی) را تشخیص دهید.</li>
+          <li>با TestCase و setUp داده تست بسازید.</li>
+          <li><span class="term" data-term="view">ویوها</span> را با <span class="term" data-term="test-client">self.client</span> تست کنید (GET/POST، redirect، <span class="term" data-term="template">قالب</span>).</li>
+          <li>مدل‌ها، متدها و فرم‌ها را با assertهای دقیق بسنجید.</li>
+          <li>یک چرخه <span class="term" data-term="tdd">TDD</span> کامل (قرمز → سبز → بازآرایی) را تجربه کنید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> مهارت «حرفه‌ای‌ساز» دوره؛ تست مجوزها (۱۳)، کش (۱۹) و API (۲۲-۲۳) در پروژه‌ها به همین ابزارها تکیه دارد.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>چرا و چه چیزی</h4><p>هرم تست و انتخاب هدف.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>ابزارها</h4><p>TestCase، setUp و assertها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>تست ویو</h4><p>client، POST و احراز هویت.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>TDD عملی</h4><p>یک ویژگی از صفر با تست.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 تست‌ها روی دیتابیس واقعی اجرا می‌شوند؟</summary>
+          <div class="answer-body"><p>نه! جنگو یک <strong>دیتابیس تست جدا</strong> (test_...) می‌سازد، هر TestCase را در تراکنشی اجرا و <strong>rollback</strong> می‌کند. داده واقعی دست‌نخورده می‌ماند — با خیال راحت delete بنویسید!</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چه چیزی را تست کنیم و چه چیزی را نه؟</summary>
+          <div class="answer-body"><p>منطق خودتان را: متدهای مدل، clean_های فرم، مسیرهای ویو (مخصوصاً مجوز و POST). چیزهای جنگو را نه: اینکه ListView کار می‌کند تست جنگوست، نه شما. «تست رفتار، نه پیاده‌سازی».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا می‌گویند تست گران نیست، باگ گران است؟</summary>
+          <div class="answer-body"><p>یک تست ۵ دقیقه‌ای، همان سناریو را هر دیپلوی دوباره چک می‌کند. باگی که در تولید پیدا شود، ده‌ها برابر هزینه دارد (داده خراب، اعتماد از دست رفته). تست = بیمه ارزان.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ کامل (مدل، ویو، فرم، احراز هویت، مجوزها).</li>
+          <li>فایل tests.py هر اپ (خودکار ساخته شده).</li>
+          <li>آشنایی با assert پایتون و دکوریتور.</li>
+          <li>دیتابیس تست ساخته می‌شود؛ فضای خالی و زمان کافی (اولین اجرا کمی طول می‌کشد).</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ هرم تست و اولین تست</h3>
+<ul><li><strong>واحد (Unit)</strong>: یک تابع/متد تنها — زیاد و سریع.</li><li><strong>یکپارچگی (Integration)</strong>: ویو + قالب + دیتابیس با هم — کمتر.</li><li><strong>رابط کاربری (E2E)</strong>: مرورگر واقعی (Selenium/Playwright) — حداقل.</li></ul>
+          <div class="code-box">
+          <div class="code-head"><span>blog/tests.py — ساده‌ترین تست</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.test import TestCase
+
+from .models import Author, Post
+
+
+class PostModelTest(TestCase):
+    def test_str_returns_title(self):
+        author = Author.objects.create(name="سارا")
+        post = Post.objects.create(
+            title="سلام", slug="salam", body="...", author=author)
+        self.assertEqual(str(post), "سلام")</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اجرا</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py test                  # همه
+python manage.py test blog             # فقط اپ blog
+python manage.py test blog.tests.PostModelTest.test_str_returns_title
+python manage.py test --keepdb -v 2    # سریع‌تر + پرورbose</code></pre>
+        </div>
+
+        <h3>۵.۲ setUp و ساخت داده</h3>
+<div class="code-box">
+          <div class="code-head"><span>الگوی استاندارد</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class PostViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # یک‌بار برای همه تست‌های کلاس (سریع‌تر)
+        cls.author = Author.objects.create(name="سارا")
+        cls.post = Post.objects.create(
+            title="پست عمومی", slug="public", body="x",
+            author=cls.author, published=True)
+        cls.draft = Post.objects.create(
+            title="پست خصوصی", slug="draft", body="x",
+            author=cls.author, published=False)
+
+    def setUp(self):
+        # قبل از «هر» متد تست
+        self.user = User.objects.create_user(
+            "ali", password="pass12345!")</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 setUpTestData یا setUp؟</b>
+          setUpTestData برای داده <strong>فقط‌خواندنی</strong> یک‌بار ساخته می‌شود (سرعت)؛ setUp برای داده‌ای که تست تغییرش می‌دهد (مثل کاربر ورود/خروج). ترکیب هر دو رایج است.
+        </div>
+
+        <h3>۵.۳ تست ویوها با client</h3>
+<div class="code-box">
+          <div class="code-head"><span>GET، قالب، بافت و وضعیت</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">    def test_list_shows_only_published(self):
+        response = self.client.get(reverse("blog:list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "blog/post_list.html")
+        self.assertContains(response, "پست عمومی")
+        self.assertNotContains(response, "پست خصوصی")
+        self.assertEqual(len(response.context["posts"]), 1)
+
+    def test_draft_detail_is_404(self):
+        url = reverse("blog:detail", args=[self.draft.slug])
+        self.assertEqual(self.client.get(url).status_code, 404)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>POST و احراز هویت</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">    def test_comment_post_creates_and_redirects(self):
+        url = reverse("blog:add_comment", args=[self.post.slug])
+        response = self.client.post(url, {
+            "name": "رضا", "text": "عالی بود! واقعاً",
+        })
+        self.assertRedirects(response, self.post.get_absolute_url())
+        self.assertEqual(self.post.comments.count(), 1)
+
+    def test_create_post_requires_login(self):
+        url = reverse("blog:post_create")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/accounts/login/", response.url)
+
+    def test_author_can_edit_own_post(self):
+        self.client.login(username="ali", password="pass12345!")
+        # ... ساخت پست متعلق به ali و درخواست ویرایش
+        response = self.client.post(url, {"title": "جدید", "body": "..."})
+        self.post.refresh_from_db()</code></pre>
+        </div>
+
+        <h3>۵.۴ تست فرم و متدهای سفارشی</h3>
+<div class="code-box">
+          <div class="code-head"><span>فرم‌ها مستقیم تست می‌شوند</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class CommentFormTest(TestCase):
+    def test_valid_form(self):
+        form = CommentForm(data={"name": "رضا", "text": "متنی بلندتر از ده"})
+        self.assertTrue(form.is_valid())
+
+    def test_ad_text_rejected(self):
+        form = CommentForm(data={"name": "رضا",
+                                 "text": "این تبلیغ است و بلند هم هست!"})
+        self.assertFalse(form.is_valid())
+        self.assertIn("text", form.errors)
+
+    def test_empty_name_invalid(self):
+        form = CommentForm(data={"name": "", "text": "متنی بلندتر از ده"})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["name"], ["This field is required."])</code></pre>
+        </div>
+
+        <h3>۵.۵ چرخه TDD و نکات اجرایی</h3>
+<div class="code-box">
+          <div class="code-head"><span>ویژگی جدید: «پست‌های پیشنهادی نویسنده»</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># ۱) قرمز — اول تست (ویژگی وجود ندارد؛ تست شکست می‌خورد)
+    def test_related_by_author_shown(self):
+        Post.objects.create(title="دیگر", slug="other",
+                            body="x", author=self.author, published=True)
+        response = self.client.get(
+            reverse("blog:detail", args=[self.post.slug]))
+        self.assertEqual(len(response.context["related_posts"]), 1)
+
+# ۲) سبز — حداقل کد در ویو:
+#    context["related_posts"] = Post.objects.filter(
+#        author=post.author, published=True).exclude(pk=post.pk)[:3]
+
+# ۳) بازآرایی — تمیزکاری با خیال راحت (تست پاس می‌ماند)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اجرای حرفه‌ای</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py test --parallel 4      # موازی
+python manage.py test --keepdb          # دیتابیس تست را نگه دار (سریع)
+python manage.py test --failfast        # اولین شکست، توقف
+
+# پوشش کد:
+pip install coverage
+coverage run manage.py test &amp;&amp; coverage report -m</code></pre>
+        </div>
+          <div class="callout tip">
+          <b class="title">💡 چه چیزی را حتماً تست کنیم</b>
+          ① هر مسیر مجوز (ناشناس/کاربر/مدیر) ② هر POST با داده نامعتبر ③ منطق پولی/عددی ④ باطل‌سازی‌های مهم (کش/سیگنال). تست‌های شکننده (وابسته به ترتیب/زمان واقعی) را با freezegun و ترتیب‌ناپذیری اصلاح کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>مجموعه تست کامل برای یک ویژگی واقعی — «انتشار پست فقط توسط ویراستار»:</p>
+        <div class="code-box">
+          <div class="code-head"><span>blog/tests/test_publish.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+
+from ..models import Author, Post
+
+
+class PublishPermissionTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.author_user = User.objects.create_user("writer", password="p")
+        cls.editor_user = User.objects.create_user("editor", password="p")
+        perm = Permission.objects.get(codename="publish_post")
+        cls.editor_user.user_permissions.add(perm)
+
+        cls.author = Author.objects.create(name="A")
+        cls.post = Post.objects.create(
+            title="t", slug="t", body="b", author=cls.author, published=False)
+
+    def url(self):
+        return reverse("blog:publish", args=[self.post.pk])
+
+    def test_anonymous_redirected_to_login(self):
+        r = self.client.get(self.url())
+        self.assertEqual(r.status_code, 302)
+
+    def test_writer_forbidden(self):
+        self.client.login(username="writer", password="p")
+        r = self.client.post(self.url())
+        self.assertEqual(r.status_code, 403)   # raise_exception=True
+        self.post.refresh_from_db()
+        self.assertFalse(self.post.published)
+
+    def test_editor_can_publish(self):
+        self.client.login(username="editor", password="p")
+        r = self.client.post(self.url())
+        self.post.refresh_from_db()
+        self.assertTrue(self.post.published)
+
+    def test_get_not_allowed(self):
+        self.client.login(username="editor", password="p")
+        r = self.client.get(self.url())
+        self.assertIn(r.status_code, (403, 405))</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اجرا</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py test blog.tests.test_publish -v 2
+# test_anonymous_redirected_to_login ... ok
+# test_editor_can_publish ... ok
+# test_get_not_allowed ... ok
+# test_writer_forbidden ... ok</code></pre>
+        </div>
+          <p>چهار تست، همه مسیرهای دسترسی و دو حالت متد را پوشش می‌دهند. اگر فردا ویو را ریفکتور کنید، این تست‌ها اخطار می‌دهند.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>شبکه اطمینان وبلاگ خودتان را ببافید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> برای هر ویوی عمومی (list, detail, search) حداقل دو تست بنویسید: وضعیت ۲۰۰ + صحت داده نمایشی (فقط منتشرشده‌ها).</li>
+          <li><strong>کارگاه ۲:</strong> برای فرم کامنت: داده معتبر، متن تبلیغاتی (رد)، و فیلد خالی — سه تست با بررسی form.errors.</li>
+          <li><strong>کارگاه ۳:</strong> یک ویژگی جدید با TDD کامل: «دکمه کپی لینک فقط برای پست‌های منتشرشده» — اول تست، بعد کد.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>تست ویوهای عمومی</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def test_list_ok_and_only_published(self):
+    r = self.client.get(reverse("blog:list"))
+    self.assertEqual(r.status_code, 200)
+    slugs = [p.slug for p in r.context["posts"]]
+    self.assertIn("public", slugs)
+    self.assertNotIn("draft", slugs)
+
+
+def test_detail_of_published(self):
+    r = self.client.get(reverse("blog:detail", args=["public"]))
+    self.assertEqual(r.status_code, 200)
+    self.assertEqual(r.context["post"].slug, "public")
+
+
+def test_detail_of_draft_404(self):
+    r = self.client.get(reverse("blog:detail", args=["draft"]))
+    self.assertEqual(r.status_code, 404)
+
+
+def test_search_filters(self):
+    r = self.client.get(reverse("blog:search"), {"q": "عمومی"})
+    self.assertContains(r, "پست عمومی")</code></pre></div></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>تست فرم کامنت</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def test_valid(self):
+    f = CommentForm({"name": "رضا", "text": "یک نظر کاملاً معمولی"})
+    self.assertTrue(f.is_valid(), f.errors)
+
+
+def test_ad_rejected(self):
+    f = CommentForm({"name": "رضا", "text": "این تبلیغ محصول است!"})
+    self.assertFalse(f.is_valid())
+    self.assertIn("text", f.errors)
+
+
+def test_required_fields(self):
+    f = CommentForm({"name": "", "text": ""})
+    self.assertFalse(f.is_valid())
+    self.assertIn("name", f.errors)</code></pre></div><p>نکته: <code class="inline-code">self.assertTrue(f.is_valid(), f.errors)</code> — پاس دادن errors به‌عنوان پیام، دیباگ شکست را راحت می‌کند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><p><strong>قرمز:</strong></p><div class="code-box"><div class="code-head"><span>تست ابتدا</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">def test_copy_button_only_for_published(self):
+    r = self.client.get(reverse("blog:detail", args=["public"]))
+    self.assertContains(r, "data-copy-link")
+    r = self.client.get(reverse("blog:detail", args=["draft"]))  # 404
+
+
+def test_draft_copy_not_in_author_view(self):
+    # برای نویسنده، draft با 200 ولی بدون دکمه نمایش داده شود
+    ...</code></pre></div><p><strong>سبز:</strong> در قالب <code class="inline-code">{% if post.published %}&lt;button data-copy-link&gt;کپی لینک&lt;/button&gt;{% endif %}</code>. <strong>بازآرایی:</strong> اگر شرط‌ها زیاد شدند، به یک متد/property مثل post.is_shareable منتقل کنید — تست‌ها محافظتتان می‌کنند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ خطای <code>Table ... doesn't exist</code> یا داده پیدا نمی‌شود</b>
+          <p>داده را خارج از TestCase (مثلاً در ماژول) ساخته‌اید یا از دیتابیس واقعی می‌خوانید. همه ساخت‌و‌ساز داخل setUpTestData/setUp/متد تست باشد — دیتابیس تست خالی شروع می‌شود.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ client.login کار نمی‌کند (302 به login)</b>
+          <p>رمز اشتباه است (create_user رمز را هش می‌کند؛ login با رمز خام). در تست رمز را یک‌جا تعریف کنید. همچنین username نه email — مگر backend عوض کرده باشید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ POST خطای 403 CSRF می‌دهد</b>
+          <p>خودکار نیست! client جنگو CSRF را bypass می‌کند. اگر 403 دیدید، احتمالاً middleware دست‌کاری شده یا با Requests/مرورگر تست می‌کنید نه self.client.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ تست‌ها به ترتیب پاس می‌شوند و تنها شکست می‌خورند</b>
+          <p>وابستگی بین تست‌ها (داده مشترک تغییرپذیر). هر تست باید مستقل باشد: داده خودش را بسازد. setUpTestData را فقط برای داده فقط‌خواندنی.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ تست‌ها خیلی کندند</b>
+          <p>--keepdb و --parallel را فعال کنید، دیتابیس تست را ساده نگه دارید و از ساخت داده سنگین در هر تست بپرهیزید (factory_boy کمک می‌کند).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — assert درست</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> کدام assert برای هر بررسی؟ (الف) کد وضعیت ۳۰۲ (ب) وجود متن در پاسخ (ج) استفاده از قالب مشخص (د) برابرسی دو مقدار (ه) رد شدن به نشانی خاص با پارامتر next</p><p><strong>پاسخ:</strong> الف → assertEqual(r.status_code, 302) یا assertRedirects • ب → assertContains • ج → assertTemplateUsed • د → assertEqual • ه → assertRedirects(r, "/login/?next=/blog/new/").</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — دامنه تست</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> این‌ها را تست می‌کنید یا نه؟ (الف) اینکه Django LoginView کار می‌کند (ب) اینکه ویوی شما فقط مالک را راه می‌دهد (ج) اینکه sqlite درست نصب شده (د) اینکه slugify شما اسلاگ یکتا می‌سازد</p><p><strong>پاسخ:</strong> الف → نه (تست خود جنگو) • ب → بله (منطق دسترسی شما) • ج → نه (زیرساخت) • د → بله (منطق سفارشی کارگاه فصل ۱۱).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — TDD معکوس</summary>
+          <div class="answer-body"><p><strong>سناریو:</strong> باگی گزارش شده: «کاربر عادی می‌تواند پست دیگران را حذف کند». اولین قدم TDD چیست؟</p><p><strong>پاسخ:</strong> اول یک تست <strong>شکست‌خورنده</strong> که باگ را بازتولید کند بنویسید (user B حذف پست user A → انتظار 403/404). سپس کد را اصلاح تا تست سبز شود. تست باگ = نگهبان همیشگی در برابر بازگشت باگ (regression).</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-20" data-title="آزمون فصل ۲۰ — تست‌نویسی (Testing) در جنگو" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) دیتابیس تست جنگو چه ویژگی دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">همان دیتابیس توسعه است</button>
+              <button type="button" class="quiz-opt" data-key="b">جدا ساخته می‌شود و هر TestCase با rollback ایزوله است</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط خواندنی است</button>
+              <button type="button" class="quiz-opt" data-key="d">باید دستی ساخت</button>
+            </div>
+            <div class="quiz-explain">💡 جنگو test_ database می‌سازد، مهاجرت می‌زند و داده هر تست را برمی‌گرداند؛ داده واقعی امن است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) setUpTestData چه مزیتی بر setUp دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هر متد تست داده تازه می‌گیرد</button>
+              <button type="button" class="quiz-opt" data-key="b">یک‌بار برای کل کلاس ساخته می‌شود — سریع‌تر (برای داده فقط‌خواندنی)</button>
+              <button type="button" class="quiz-opt" data-key="c">اجباری است</button>
+              <button type="button" class="quiz-opt" data-key="d">روی دیتابیس واقعی می‌نویسد</button>
+            </div>
+            <div class="quiz-explain">💡 داده فقط‌خواندنی یک‌بار ساخته و بین تست‌ها اشتراک می‌شود؛ داده تغییرپذیر در setUp تا هر تست نسخه تمیز بگیرد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) self.client در تست چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">مرورگر واقعی</button>
+              <button type="button" class="quiz-opt" data-key="b">کلاینت ساختگی که بدون شبکه به ویوها درخواست می‌زند</button>
+              <button type="button" class="quiz-opt" data-key="c">کاربر ناشناس</button>
+              <button type="button" class="quiz-opt" data-key="d">ابزار دیتابیس</button>
+            </div>
+            <div class="quiz-explain">💡 TestClient کل پشته جنگو (urls, middleware, view, template) را در حافظه اجرا می‌کند — تست یکپارچگی بدون سرور.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) بعد از client.post برای بررسی «داده ذخیره شد» چه می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط status_code را چک می‌کنیم</button>
+              <button type="button" class="quiz-opt" data-key="b">شیء را از دیتابیس دوباره می‌خوانیم و assertEqual می‌گیریم</button>
+              <button type="button" class="quiz-opt" data-key="c">response.content را می‌خوانیم</button>
+              <button type="button" class="quiz-opt" data-key="d">به assert نیازی نیست</button>
+            </div>
+            <div class="quiz-explain">💡 تست باید اثر ماندگار را بسنجد: obj.refresh_from_db() یا کوئری مجدد + assert روی مقدار.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) ترتیب صحیح چرخه TDD کدام است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کد → تست → مستند</button>
+              <button type="button" class="quiz-opt" data-key="b">تست شکست‌خورنده → حداقل کد تا سبز → بازآرایی</button>
+              <button type="button" class="quiz-opt" data-key="c">بازآرایی → تست → کد</button>
+              <button type="button" class="quiz-opt" data-key="d">تست سبز → کد → حذف تست</button>
+            </div>
+            <div class="quiz-explain">💡 قرمز (تست ویژگی ناموجود) → سبز (ساده‌ترین پیاده‌سازی) → بازآرایی (تمیزکاری با اطمینان تست).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کدام گزینه تست نوشتن «ارزش» دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">اینکه path() در urls کار می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">منطق مجوز، فرم و متدهای سفارشی خودمان</button>
+              <button type="button" class="quiz-opt" data-key="c">عملکرد داخلی ORM</button>
+              <button type="button" class="quiz-opt" data-key="d">اینکه sqlite فایل می‌سازد</button>
+            </div>
+            <div class="quiz-explain">💡 تست روی کد و رفتار خودتان؛ اجزای فریم‌ورک توسط تست‌های خود جنگو پوشش داده شده‌اند.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «شبکه اطمینان وبلاگ»</strong> — مجموعه تستی بسازید که با خیال راحت بتوانید وبلاگ را دیپلوی کنید.</p>
+        <ul class="checklist">
+          <li>تست مدل‌ها: __str__، get_absolute_url، متدهای سفارشی.</li>
+          <li>تست فرم‌ها: معتبر، نامعتبر، clean سفارشی.</li>
+          <li>تست ویوها: عمومی/محافظت‌شده، GET/POST، redirect و ۴۰۴.</li>
+          <li>تست مجوزها: ناشناس/نویسنده/ویراستار (الگوی فصل).</li>
+          <li>اجرا با coverage و هدف ≥۷۰٪ برای اپ blog.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ساختار حرفه‌ای</b>
+          tests را به پکیج تبدیل کنید: blog/tests/__init__.py + test_models.py + test_views.py + test_forms.py — پیدا کردن و موازی‌سازی راحت‌تر.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>جنگو دیتابیس تست جدا و ایزوله می‌سازد؛ TestCase با rollback.</li>
+          <li>setUpTestData (فقط‌خواندنی) + setUp (تغییرپذیر) الگوی داده است.</li>
+          <li>client.get/post + assertRedirects/Contains/TemplateUsed برای ویوها.</li>
+          <li>فرم‌ها مستقیم با data تست می‌شوند؛ errors را assert کنید.</li>
+          <li>TDD: قرمز → سبز → بازآرایی؛ --parallel و --keepdb برای سرعت.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «تست خوب، رفتار را از دید «کاربر کد» می‌سنجد — نه جزئیات پیاده‌سازی را.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>pytest بهتر نیست؟</summary><div class="faq-body"><p>pytest-django همان ابزارها را با نحو تمیزتر (fixture، assert ساده) می‌دهد و بسیار رایج است. یادگیری unittest داخلی هیچ‌وقت هدر نمی‌رود؛ مهاجرت بعداً آسان است.</p></div></details>
+        <details class="faq-item"><summary>چند تست کافی است؟</summary><div class="faq-body"><p>عدد جادویی نیست. معیار عملی: هر باگی که پیدا می‌شود یک تست بگیرد؛ هر ویژگی جدید با تست بیاید. پوشش ۷۰-۸۰٪ روی کد خودتان هدف سالمی است.</p></div></details>
+        <details class="faq-item"><summary>تست APIها چطور است؟</summary><div class="faq-body"><p><span class="term" data-term="drf">DRF</span> ابزار اختصاصی APIClient می‌دهد (با format="json" و احراز هویت راحت‌تر) — در فصل ۲۲ می‌بینیم. منطق یکسان است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          تست‌ها پاس شدند؛ حالا اگر جایی در تولید خراب شد چطور ریشه‌یابی کنیم؟ <strong>فصل ۲۱</strong>: <span class="term" data-term="logging">لاگ</span>، pdb، Debug Toolbar و متدولوژی اشکال‌زدایی حرفه‌ای.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-20" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-20">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-19/index.html">→ فصل قبلی<br><b>⚡ فصل ۱۹</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-21/index.html">فصل بعدی ←<br><b>🐞 فصل ۲۱: اشکال‌زدایی (Debug) و لاگ‌گیری</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۲۰: تست‌نویسی (Testing) در جنگو | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
