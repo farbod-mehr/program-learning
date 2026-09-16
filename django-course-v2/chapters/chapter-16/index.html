@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۶: سیگنال‌ها (Signals) — مدیریت رویدادها | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۶ دوره جامع جنگو: سیگنال‌ها (Signals) — مدیریت رویدادها — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۶ از ۳۰ — سیگنال‌ها (Signals) — مدیریت رویدادها</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← ⚡ پیشرفته‌ها و ابزارها ← فصل ۱۶
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۶ از ۳۰</span>
+    <h1>🔔 سیگنال‌ها (Signals) — مدیریت رویدادها</h1>
+    <p><span class="term" data-term="signal">سیگنال</span>های آماده جنگو: pre_save، post_save، pre_delete، post_delete و m2m_changed؛ ساخت پروفایل خودکار هنگام ثبت‌نام با receiver، مهاجرت داده و کاربردهای واقعی.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۸۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>سیگنال‌ها سامانه «اعلان رویداد» جنگو هستند: وقتی رکوردی ذخیره یا حذف می‌شود، هر کدی که به آن رویداد گوش داده، خودکار اجرا می‌شود. ابزاری قدرتمند که اگر نابجا استفاده شود، کد را غیرقابل ردیابی می‌کند — پس «کی استفاده کنیم» را هم دقیق یاد می‌گیریم.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>مکانیزم فرستنده/گیرنده (sender/receiver) سیگنال‌ها را توضیح دهید.</li>
+          <li>با <span class="term" data-term="decorator">@receiver</span> به post_save و pre_delete گوش دهید.</li>
+          <li>سیگنال‌های سفارشی برای رویدادهای دامنه کسب‌وکار بسازید.</li>
+          <li>signals.py را درست بارگذاری کنید (apps.py ready).</li>
+          <li>بدانید کجا سیگنال <strong>نزنید</strong> و به‌جایش صریح کد بنویسید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> از پروفایل خودکار فصل ۱۲ استفاده می‌کند؛ پاک‌سازی فایل در فصل ۱۴ و اعلان‌ها در پروژه‌ها به آن تکیه دارند.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>مفهوم سیگنال</h4><p>رویداد، فرستنده و گیرنده.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>سیگنال‌های آماده</h4><p>save/delete/m2m و کاربردها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>اجرا و بارگذاری</h4><p>signals.py و ready().</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>کی و کی نه</h4><p>الگوهای درست و نادرست.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 پروفایل خودکار فصل ۱۲ با سیگنال ساخته می‌شد؛ چرا بعضی‌ها می‌گویند سیگنال ضدالگو است؟</summary>
+          <div class="answer-body"><p>چون جریان برنامه را <strong>نامرئی</strong> می‌کند: خوانندهٔ کد نمی‌بیند که save() چه کارهای دیگری را برمی‌انگیزد. قاعده: اگر منطق «بخش اصلی» کسب‌وکار است، صریح بنویسید؛ سیگنال برای اثرهای جانبیِ واقعاً جانبی (ساخت پروفایل، پاک‌سازی فایل، ارسال اعلان).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا سیگنال‌ها را در signals.py می‌گذارند و نه models.py؟</summary>
+          <div class="answer-body"><p>جداسازی مسئولیت‌ها + جلوگیری از import حلقوی. ولی فایل signals.py باید <strong>جایی import شود</strong> وگرنه receiverها ثبت نمی‌شوند — مکان استاندارد: متد ready() در apps.py.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 post_save چند بار برای یک save() اجرا می‌شود؟</summary>
+          <div class="answer-body"><p>یک بار. ولی مراقب باشید: در توسعه، <span class="term" data-term="runserver">runserver</span> دو پروسه دارد (autoreloader) و اگر آماده‌سازی‌تان idempotent نباشد، اثرات دوبرابر به نظر می‌رسد. همچنین اگر داخل گیرنده دوباره همان مدل را save کنید، <strong>بازگشت بی‌نهایت</strong> می‌گیرد!</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>فصل ۱۲ (مدل Profile و سیگنال نمونه) و فصل ۱۴ (ImageField).</li>
+          <li>درک دکوریتور پایتون (@syntax).</li>
+          <li>آشنایی با ساختار اپ: apps.py و کلاس AppConfig.</li>
+          <li>پروژه وبلاگ در حال اجرا.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ سیگنال چیست؟</h3>
+<p>الگوی «ناشر-مشترک» در سطح اپلیکیشن: <strong>فرستنده</strong> (معمولاً یک <span class="term" data-term="model">مدل</span>) هنگام رخدادی سیگنال می‌فرستد و <strong>گیرنده‌ها</strong> (توابع ثبت‌شده) صدا زده می‌شوند. همه‌چیز هم‌زمان (synchronous) و در همان تراکنش است.</p>
+          <div class="code-box">
+          <div class="code-head"><span>اجزای یک گیرنده</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+@receiver(post_save, sender=Post)        # سیگنال + فرستنده (اختیاری)
+def notify_admins(sender, instance, created, **kwargs):
+    if created:                           # فقط موقع «ایجاد»
+        ...
+# آرگومان‌ها: sender=کلاس مدل، instance=نمونه، created=آیا جدید بود</code></pre>
+        </div>
+
+        <h3>۵.۲ سیگنال‌های آمادهٔ پرکاربرد</h3>
+<ul><li><code class="inline-code">pre_save</code> / <code class="inline-code">post_save</code> — قبل/بعد از ذخیره رکورد (created بولی دارد).</li><li><code class="inline-code">pre_delete</code> / <code class="inline-code">post_delete</code> — قبل/بعد از حذف.</li><li><code class="inline-code">m2m_changed</code> — تغییرات <span class="term" data-term="many-to-many">رابطه چندبه‌چند</span> (add/remove با action مشخص).</li><li>سیگنال‌های درخواست: <code class="inline-code">request_started/finished</code> — کمتر استفاده می‌شوند.</li></ul>
+          <div class="code-box">
+          <div class="code-head"><span>مثال ۱: پروفایل خودکار (فصل ۱۲)</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@receiver(post_save, sender=User)
+def ensure_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_profile_with_user(sender, instance, **kwargs):
+    if hasattr(instance, "profile"):
+        instance.profile.save()</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>مثال ۲: پاک‌سازی فایل آپلودی هنگام حذف</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@receiver(pre_delete, sender=Post)
+def delete_cover_file(sender, instance, **kwargs):
+    if instance.cover:
+        instance.cover.delete(save=False)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>مثال ۳: به‌روزرسانی شمارنده با m2m_changed</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@receiver(m2m_changed, sender=Post.tags.through)
+def update_tag_count(sender, instance, action, **kwargs):
+    if action in ("post_add", "post_remove", "post_clear"):
+        for tag in instance.tags.all():
+            tag.posts_count = tag.posts.count()
+            tag.save()</code></pre>
+        </div>
+
+        <h3>۵.۳ سیگنال سفارشی برای رویداد کسب‌وکار</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/signals.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">import django.dispatch
+
+post_published = django.dispatch.Signal()      # رویداد «پست منتشر شد»
+order_paid = django.dispatch.Signal()          # (برای فروشگاه)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>فرستادن سیگنال در ویو/سرویس</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from .signals import post_published
+
+
+def publish(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.published = True
+    post.save()
+    post_published.send(sender=Post, post=post, by=request.user)
+    return redirect(post)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>گیرنده‌ها — هر اپ مسئولیت خودش</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">@receiver(post_published, sender=Post)
+def notify_subscribers(sender, post, by, **kwargs):
+    ...  # ایمیل به دنبال‌کنندگان (با سلری، فصل ۲۴)
+
+
+@receiver(post_published, sender=Post)
+def clear_cache(sender, post, **kwargs):
+    cache.delete(f"post_{post.pk}")</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 چرا این الگو زیباست؟</b>
+          اپ «اعلان‌ها» بدون اینکه وبلاگ بشناسدش، به رویداد انتشار وصل می‌شود — <strong>جداسازی (Decoupling)</strong> واقعی بین اپ‌ها.
+        </div>
+
+        <h3>۵.۴ بارگذاری درست: apps.py و ready()</h3>
+<div class="code-box">
+          <div class="code-head"><span>blog/apps.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.apps import AppConfig
+
+
+class BlogConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "blog"
+
+    def ready(self):
+        from . import signals  # noqa: F401  — فقط ثبت receiverها</code></pre>
+        </div>
+          <p>ready() یک‌بار موقع بالا آمدن جنگو اجرا می‌شود؛ import کردن signals باعث اجرای @receiverها و ثبتشان می‌شود. بدون این کار، سیگنال‌ها <strong>بی‌صدا کار نمی‌کنند</strong> — از آن باگ‌های گیج‌کننده!</p>
+          <div class="callout warn">
+          <b class="title">⚠️ قواعد ready()</b>
+          داخل ready() فقط import و ثبت‌نام انجام دهید؛ کوئری دیتابیس یا منطق سنگین ممنوع (هنوز همه‌چیز آماده نیست و در مهاجرت‌ها اجرا می‌شود).
+        </div>
+
+        <h3>۵.۵ کی سیگنال و کی نه؟</h3>
+<div class="table-wrap"><table class="compare"><thead><tr><th>مناسب سیگنال ✅</th><th>نامناسب — صریح بنویسید ❌</th></tr></thead><tbody><tr><td>اثر جانبی کوچک و مستقل (پروفایل، پاک‌سازی فایل)</td><td>منطق اصلی کسب‌وکار (محاسبه قیمت سفارش)</td></tr><tr><td>اعلان بین اپ‌ها (انتشار → ایمیل)</td><td>کاری که باید در همان تراکنش و قابل ردیابی باشد</td></tr><tr><td><span class="term" data-term="cache">کش</span>‌زدایی بعد از تغییر</td><td><span class="term" data-term="validation">اعتبارسنجی</span> داده (جای آن فرم/مدل است)</td></tr><tr><td>لاگ‌گیری رویدادها</td><td>ویرایش رکوردی که خود سیگنال را برانگیخته (بازگشت بی‌نهایت!)</td></tr></tbody></table></div>
+          <div class="callout danger">
+          <b class="title">🚨 دو تله مرگبار</b>
+          ① <code class="inline-code">queryset.update()</code> سیگنال <strong>نمی‌فرستد</strong> (فصل ۱۵) — منطق حیاتی را به سیگنال نبندید اگر ممکن است update دسته‌ای شود. ② save() داخل گیرندهٔ post_save همان مدل = بازگشت بی‌نهایت؛ از update() یا پرچم استفاده کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک «تاریخچه فعالیت» (Activity Log) کامل با سیگنال سفارشی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>audit/models.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Activity(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    action = models.CharField(max_length=50)
+    detail = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>blog/signals.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">import django.dispatch
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from audit.models import Activity
+from .models import Post
+
+post_published = django.dispatch.Signal()
+
+
+@receiver(post_published)
+def log_publish(sender, post, by, **kwargs):
+    Activity.objects.create(
+        user=by, action="publish",
+        detail=f"«{post.title}» منتشر شد",
+    )
+
+
+@receiver(post_save, sender=Post)
+def log_new_post(sender, instance, created, **kwargs):
+    if created:
+        Activity.objects.create(
+            user=instance.author, action="create",
+            detail=f"«{instance.title}» ساخته شد",
+        )</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>audit/apps.py + اتصال در ویو</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python"># apps.py → ready(): from blog import signals  # noqa
+
+# views.py → بعد از انتشار:
+post_published.send(sender=Post, post=post, by=request.user)</code></pre>
+        </div>
+          <p>نتیجه: <span class="term" data-term="app">اپ</span> audit بدون اینکه blog به آن اشاره‌ای کند، همه رویدادها را ثبت می‌کند. حذف اپ audit هم هیچ‌چیز را در blog نمی‌شکند.</p>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>سه سناریوی سیگنالی پیاده کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> با pre_save، اسلاگ پست را اگر خالی بود از عنوان بسازید (slugify با allow_unicode) و یکتایی‌اش را تضمین کنید.</li>
+          <li><strong>کارگاه ۲:</strong> با post_delete روی Comment، یک سیگنال سفارشی comment_removed بفرستید و در گیرنده‌ای آمار را در لاگ ثبت کنید.</li>
+          <li><strong>کارگاه ۳:</strong> باگ بازگشت بی‌نهایت بسازید! داخل post_save همان مدل را save() کنید و خطا را ببینید؛ سپس با update() یا پرچم created اصلاحش کنید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>اسلاگ خودکار با pre_save</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">from django.utils.text import slugify
+
+
+@receiver(pre_save, sender=Post)
+def ensure_slug(sender, instance, **kwargs):
+    if not instance.slug:
+        base = slugify(instance.title, allow_unicode=True) or "post"
+        slug, i = base, 1
+        while Post.objects.filter(slug=slug).exclude(pk=instance.pk).exists():
+            i += 1
+            slug = f"{base}-{i}"
+        instance.slug = slug</code></pre></div><p>تغییر instance در pre_save <strong>مجاز</strong> است (هنوز save نشده) — برخلاف post_save. exclude(pk=...) تا رکورد با اسلاگ خودش نزدد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>سیگنال سفارشی حذف کامنت</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python">comment_removed = django.dispatch.Signal()
+
+
+@receiver(post_delete, sender=Comment)
+def announce_removal(sender, instance, **kwargs):
+    comment_removed.send(sender=Comment, post=instance.post, text=instance.text)
+
+
+@receiver(comment_removed)
+def log_removal(sender, post, text, **kwargs):
+    Activity.objects.create(
+        user=post.author, action="comment_removed",
+        detail=f"نظری از «{post.title}» حذف شد",
+    )</code></pre></div></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>بازگشت بی‌نهایت و اصلاح</span><span class="lang">Python</span></div><pre class="code"><code data-lang="python"># ❌ باگ:
+@receiver(post_save, sender=Post)
+def bad(sender, instance, **kwargs):
+    instance.title = instance.title.strip()
+    instance.save()          # → post_save دوباره → بی‌نهایت → RecursionError
+
+
+# ✅ اصلاح با update (سیگنال نمی‌فرستد):
+@receiver(post_save, sender=Post)
+def good(sender, instance, created, **kwargs):
+    clean = instance.title.strip()
+    if clean != instance.title:
+        Post.objects.filter(pk=instance.pk).update(title=clean)</code></pre></div><p>درس: در post_save برای تغییر همان رکورد از update() یا بهتر از همه، تمیزکاری در pre_save استفاده کنید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ سیگنال ثبت شده ولی اجرا نمی‌شود</b>
+          <p>signals.py هیچ‌جا import نشده! در apps.py متد ready() را بنویسید و مطمئن شوید AppConfig درست ارجاع شده (default_app_config یا نام اپ در INSTALLED_APPS با مسیر AppConfig).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ RecursionError: maximum recursion depth exceeded</b>
+          <p>داخل گیرنده post_save همان مدل را save() کرده‌اید. اصلاح با update() یا انتقال منطق به pre_save (الگوی کارگاه ۳).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ گیرنده دو بار اجرا می‌شود</b>
+          <p>دو علت رایج: ① signals.py هم در ready و هم جای دیگر (مثل __init__.py) import شده — dispatch_uid بدهید یا import دوباره را حذف کنید. ② در توسعه، autoreloader دو پروسه دارد که طبیعی است و اثر جانبی تکراری ندارد (هر پروسه یک گیرنده).</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ بعد از حذف دسته‌ای، پاک‌سازی انجام نشد</b>
+          <p><code class="inline-code">queryset.delete()</code> برای هر شیء سیگنال می‌فرستد ولی <code class="inline-code">queryset.update()</code> نه؛ همچنین حذف آبشاری (CASCADE) سیگنال مدل فرزند را می‌فرستد. منطق را متناسب با مسیرهای واقعی حذف طراحی کنید.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ در تست‌ها سیگنال مزاحم است</b>
+          <p>می‌توانید موقتاً قطعش کنید: <code class="inline-code">post_save.disconnect(handler, sender=Post)</code> در setUp و connect مجدد در tearDown؛ یا با mock آن را بررسی کنید (فصل ۲۰).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — انتخاب رویداد</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> برای هر کار کدام سیگنال؟ (الف) پرکردن فیلد قبل از ذخیره (ب) ارسال ایمیل خوش‌آمد بعد از ثبت‌نام (ج) حذف فایل عکس با حذف پست (د) شمارش برچسب بعد از افزودن تگ</p><p><strong>پاسخ:</strong> الف → pre_save • ب → post_save با created=True (یا سیگنال سفارشی) • ج → pre_delete (قبل از رفتن رکورد، تا مسیر فایل موجود باشد) • د → m2m_changed با action="post_add".</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — dispatch_uid</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> پارامتر dispatch_uid در @receiver چه مشکلی را حل می‌کند؟</p><p><strong>پاسخ:</strong> از ثبت <strong>دوباره</strong> یک گیرنده جلوگیری می‌کند (وقتی ماژول بیش از یک بار import/اجرا شود). <code class="inline-code">@receiver(post_save, sender=Post, dispatch_uid="ensure_slug")</code> — هر uid فقط یک بار ثبت می‌شود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — ردیابی</summary>
+          <div class="answer-body"><p><strong>سناریو:</strong> همکار شما می‌گوید «رکورد را save کردم ولی یک ایمیل هم رفت! از کجا؟». چطور پیدایش می‌کنید؟</p><p><strong>پاسخ:</strong> جست‌وجوی گیرنده‌ها: همه @receiverها و .connectها را در پروژه grep کنید؛ مخصوصاً post_save همان مدل. بعد apps.py ready()ها را ببینید که کدام ماژول signals بارگذاری می‌شود. درس طراحی: مستند کنید چه سیگنال‌هایی در پروژه فعال‌اند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-16" data-title="آزمون فصل ۱۶ — سیگنال‌ها (Signals) — مدیریت رویدادها" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) آرگومان created در گیرنده post_save چه می‌گوید؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">رکورد حذف شده</button>
+              <button type="button" class="quiz-opt" data-key="b">آیا این save یک «ایجاد» بوده یا «به‌روزرسانی»</button>
+              <button type="button" class="quiz-opt" data-key="c">سیگنال سفارشی است</button>
+              <button type="button" class="quiz-opt" data-key="d">زمان ساخت مدل</button>
+            </div>
+            <div class="quiz-explain">💡 created=True یعنی رکورد تازه insert شده؛ برای واکنش‌های «فقط بار اول» حیاتی است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) کدام مسیرها سیگنال post_save را اجرا نمی‌کنند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">model.save()</button>
+              <button type="button" class="quiz-opt" data-key="b">queryset.update()</button>
+              <button type="button" class="quiz-opt" data-key="c">ایجاد با objects.create()</button>
+              <button type="button" class="quiz-opt" data-key="d">save(force_update=True)</button>
+            </div>
+            <div class="quiz-explain">💡 update() کوئری مستقیم SQL است و save را صدا نمی‌زند؛ پس سیگنالی هم نیست — تله معروف فصل.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) signals.py کجا باید import شود تا گیرنده‌ها ثبت شوند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">در urls.py</button>
+              <button type="button" class="quiz-opt" data-key="b">در apps.py متد ready()</button>
+              <button type="button" class="quiz-opt" data-key="c">در settings.py</button>
+              <button type="button" class="quiz-opt" data-key="d">نیازی به import نیست</button>
+            </div>
+            <div class="quiz-explain">💡 ready() موقع راه‌اندازی جنگو اجرا می‌شود؛ import signals در آن باعث اجرای @receiverها و ثبتشان می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) چرا ذخاره کردن رکورد در گیرنده post_save همان رکورد خطرناک است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">کند است</button>
+              <button type="button" class="quiz-opt" data-key="b">بازگشت بی‌نهایت: save → post_save → save → ...</button>
+              <button type="button" class="quiz-opt" data-key="c">سیگنال پاک می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="d">تراکنش بسته می‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 هر save دوباره post_save را برمی‌انگیزد؛ نتیجه RecursionError. اصلاح: pre_save یا queryset.update().</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۵) سیگنال سفارشی چطور ساخته و ارسال می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">Signal() و my_signal.send(sender=..., ...)</button>
+              <button type="button" class="quiz-opt" data-key="b">def signal(): ...</button>
+              <button type="button" class="quiz-opt" data-key="c">register_signal(...)</button>
+              <button type="button" class="quiz-opt" data-key="d">در settings تعریف می‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 django.dispatch.Signal یک شیء سیگنال می‌سازد؛ send/send_robust آن را با آرگومان‌های کلیدواژه‌ای منتشر می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) کدام مورد استفاده «درست» از سیگنال است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">محاسبه قیمت نهایی سفارش</button>
+              <button type="button" class="quiz-opt" data-key="b">اعتبارسنجی فرم ثبت‌نام</button>
+              <button type="button" class="quiz-opt" data-key="c">پاک‌کردن فایل کاور هنگام حذف پست</button>
+              <button type="button" class="quiz-opt" data-key="d">ساخت خود کاربر</button>
+            </div>
+            <div class="quiz-explain">💡 سیگنال برای اثرهای جانبی مستقل و غیرحیاتی عالی است؛ منطق اصلی باید صریح و قابل ردیابی بماند.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «سامانه رویدادها و تاریخچه»</strong> — یک سیستم Activity Log واقعی با سیگنال‌های سفارشی بسازید.</p>
+        <ul class="checklist">
+          <li>اپ audit با مدل Activity.</li>
+          <li>سیگنال‌های سفارشی: post_published و comment_added.</li>
+          <li>گیرنده‌های ثبت تاریخچه + پاک‌سازی کش پست.</li>
+          <li>بارگذاری درست در ready() و تست دستی هر رویداد.</li>
+          <li>صفحه «فعالیت‌های من» برای کاربر واردشده (۲۰ مورد آخر).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نگاه به آینده</b>
+          ارسال ایمیل در گیرنده سیگنال، کاربر را منتظر می‌گذارد! در فصل ۲۴ همین گیرنده را به یک <span class="term" data-term="celery">تسک سلری</span> تبدیل می‌کنیم تا ناهمگام شود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>سیگنال = اعلان رویداد؛ @receiver گیرنده را ثبت می‌کند.</li>
+          <li>post_save با created، pre_delete برای پاک‌سازی، m2m_changed برای روابط.</li>
+          <li>signals.py باید در apps.py→ready() ایمپورت شود.</li>
+          <li>سیگنال سفارشی با Signal() و send() برای رویدادهای کسب‌وکار.</li>
+          <li>تله‌ها: update() سیگنال ندارد؛ save در post_save = بازگشت بی‌نهایت.</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «سیگنال برای «اثرهای جانبی جانبی» است؛ هرچه منطق حیاتی‌تر، کد صریح‌تر.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>send یا send_robust؟</summary><div class="faq-body"><p>send: استثنا در یک گیرنده، بقیه را متوقف و خطا را پخش می‌کند. send_robust: استثناها را می‌گیرد و به‌صورت لیست نتیجه برمی‌گرداند — برای گیرنده‌های غیرحیاتی (مثل لاگ) امن‌تر.</p></div></details>
+        <details class="faq-item"><summary>می‌شود سیگنال را موقتاً غیرفعال کرد؟</summary><div class="faq-body"><p>بله: <code class="inline-code">post_save.disconnect(receiver, sender=Model)</code> و بعداً connect مجدد. در اسکریپت‌های دادهٔ دسته‌جمعی (bulk) کاربرد دارد.</p></div></details>
+        <details class="faq-item"><summary>سیگنال‌ها در تراکنش دیتابیس چطورند؟</summary><div class="faq-body"><p>هم‌زمان با save اجرا می‌شوند (داخل همان تراکنش). اگر گیرنده کار بیرونی می‌کند (ایمیل/HTTP) و تراکنش rollback شود، کار بیرونی برگشت‌ناپذیر است! برای این موارد transaction.on_commit(lambda: ...) را استفاده کنید تا بعد از commit قطعی اجرا شود.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          یک لایه به بیرون می‌آییم: در <strong>فصل ۱۷</strong> <span class="term" data-term="middleware">میان‌افزار</span> — کدی که روی <strong>همه</strong> درخواست‌ها/پاسخ‌های سایت اجرا می‌شود.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-16" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-16">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-15/index.html">→ فصل قبلی<br><b>🔍 فصل ۱۵</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-17/index.html">فصل بعدی ←<br><b>🛂 فصل ۱۷: میان‌افزار (Middleware)</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۶: سیگنال‌ها (Signals) — مدیریت رویدادها | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
