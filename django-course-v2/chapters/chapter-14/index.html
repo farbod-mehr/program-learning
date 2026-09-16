@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۴: فایل‌های ایستا و رسانه (Static و Media) | دوره جامع جنگو (Django)</title>
+<meta name="description" content="فصل ۱۴ دوره جامع جنگو: فایل‌های ایستا و رسانه (Static و Media) — با واژه‌نامه هاور، آزمون تعاملی نمره‌دار، کارگاه عملی با پاسخ و یادداشت شخصی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🌿 دوره جامع جنگو</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۴ از ۳۰ — فایل‌های ایستا و رسانه (Static و Media)</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← ⚡ پیشرفته‌ها و ابزارها ← فصل ۱۴
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۴ از ۳۰</span>
+    <h1>🖼️ فایل‌های ایستا و رسانه (Static و Media)</h1>
+    <p>تفاوت فایل ایستا و رسانه، تنظیمات STATIC_URL و MEDIA_URL، تگ {% static %}، دستور collectstatic و آپلود فایل با FileField و ImageField.</p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۸۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>CSS، جاوااسکریپت، تصویر لوگو و عکس پروفایل کاربران — همه «فایل» هستند ولی دو جنس کاملاً متفاوت: ایستا (مال ما) و رسانه (مال کاربر). اشتباه گرفتن این دو، منبع کلاسیک باگ‌های استقرار است.</p>
+        <p><strong>اهداف یادگیری — پس از این فصل شما می‌توانید:</strong></p>
+        <ul>
+          <li>تفاوت <span class="term" data-term="static-files">Static</span> و Media را توضیح دهید.</li>
+          <li>پوشه‌ها و تنظیمات STATICFILES_DIRS، STATIC_ROOT و MEDIA_ROOT را پیکربندی کنید.</li>
+          <li>با تگ {% static %} و {% load static %} به فایل‌ها ارجاع دهید.</li>
+          <li>FileField/ImageField بسازید و آپلود را در فرم و ویو مدیریت کنید.</li>
+          <li>نقش collectstatic در استقرار را بگویید.</li>
+          
+        </ul>
+        <p><strong>جایگاه فصل:</strong> مکمل قالب‌ها (۱۰) و فرم‌ها (۱۱)؛ سرو فایل در تولید با WhiteNoise/Nginx در فصل ۲۶.</p>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>ایستا در برابر رسانه</h4><p>دو جنس فایل، دو مسیر سرو.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>تنظیمات و static tag</h4><p>STATIC_*ها و ارجاع در قالب.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>آپلود کاربر</h4><p>ImageField، request.FILES، نمایش.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>collectstatic</h4><p>جمع‌آوری برای تولید.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید؛ حتی اگر جواب را نمی‌دانید، ذهنتان آماده دریافت آن می‌شود:</p>
+        <details class="answer">
+          <summary>🤔 چرا در توسعه MEDIA را دستی به urls اضافه می‌کنیم ولی STATIC را نه؟</summary>
+          <div class="answer-body"><p>چون <span class="term" data-term="app">app</span> ایستای جنگو (staticfiles) در <span class="term" data-term="debug">DEBUG=True</span> خودش فایل‌های ایستا را سرو می‌کند؛ ولی برای رسانه‌های آپلودی هیچ‌کس این کار را نمی‌کند — باید خودمان الگوی URL بدهیم.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 اگر دو اپ هر دو فایل <code class="inline-code">css/style.css</code> داشته باشند کدام سرو می‌شود؟</summary>
+          <div class="answer-body"><p>اولین موردی که در ترتیب جست‌وجو (STATICFILES_DIRS قبل از appها) پیدا شود! برای همین فایل‌ها را با پیشوند نام اپ می‌گذارند: <code class="inline-code">blog/css/blog.css</code>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 در تولید چه کسی فایل‌ها را سرو می‌کند؟</summary>
+          <div class="answer-body"><p>نه runserver (که وجود ندارد!) — یا <span class="term" data-term="nginx">Nginx</span> مستقیم از STATIC_ROOT، یا پکیجی مثل <span class="term" data-term="whitenoise">WhiteNoise</span>، یا <span class="term" data-term="cdn">CDN</span>. collectstatic همه فایل‌ها را در STATIC_ROOT جمع می‌کند تا این سرویس‌ها یک‌جا بردارند.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>پیش‌نیازها:</p>
+        <ul class="checklist">
+          <li>پروژه وبلاگ با base.html (فصل ۱۰) و فرم پست (فصل ۱۱).</li>
+          <li>برای ImageField: نصب Pillow → <code class="inline-code">pip install pillow</code>.</li>
+          <li>مدل Post آماده افزودن فیلد تصویر.</li>
+          <li>درک تفاوت پوشه اپ و پوشه ریشه پروژه.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام مفاهیم ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: مفاهیم</h2></div>
+
+        <h3>۵.۱ دو جنس فایل: ایستا و رسانه</h3>
+<div class="table-wrap"><table class="compare"><thead><tr><th></th><th>Static</th><th>Media</th></tr></thead><tbody><tr><td>مالک</td><td>توسعه‌دهنده (بخش کد)</td><td>کاربر (آپلود می‌کند)</td></tr><tr><td>نمونه</td><td>CSS، JS، لوگو، فونت</td><td>عکس پروفایل، کاور پست، فایل پیوست</td></tr><tr><td>تغییر</td><td>فقط با دیپلوی</td><td>هر لحظه توسط کاربر</td></tr><tr><td>محل توسعه</td><td>app/static/app/ یا templates/../static/</td><td>MEDIA_ROOT (بیرون از کد!)</td></tr><tr><td>تنظیمات</td><td>STATIC_URL, STATICFILES_DIRS, STATIC_ROOT</td><td>MEDIA_URL, MEDIA_ROOT</td></tr></tbody></table></div>
+
+        <h3>۵.۲ تنظیمات و ساختار پوشه‌ها</h3>
+<div class="code-box">
+          <div class="code-head"><span>settings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ایستا
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]      # پوشه static ریشه پروژه
+STATIC_ROOT = BASE_DIR / "staticfiles"        # مقصد collectstatic (تولید)
+
+# رسانه
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"               # آپلودهای کاربران</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>ساختار پوشه‌ها</span><span class="lang">متن</span></div>
+          <pre class="code"><code data-lang="text">project/
+├── static/            ← ایستاهای مشترک (css/base.css, img/logo.png)
+├── media/             ← آپلودها (covers/2026/09/cover.jpg)
+├── staticfiles/       ← خروجی collectstatic (در git نباشد)
+├── blog/
+│   ├── static/blog/   ← ایستاهای مخصوص اپ
+│   └── templates/blog/
+└── manage.py</code></pre>
+        </div>
+
+        <h3>۵.۳ ارجاع در قالب با {% static %}</h3>
+<div class="code-box">
+          <div class="code-head"><span>در base.html</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">{% load static %}
+&lt;!DOCTYPE html&gt;
+&lt;html lang="fa" dir="rtl"&gt;
+&lt;head&gt;
+  &lt;link rel="stylesheet" href="{% static 'css/base.css' %}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;img src="{% static 'img/logo.png' %}" alt="لوگو" width="48"&gt;
+  ...
+  &lt;script src="{% static 'js/main.js' %}"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+          <div class="callout warn">
+          <b class="title">⚠️ هرگز hardcode نکنید</b>
+          <code class="inline-code">href="/static/css/base.css"</code> شاید امروز کار کند، ولی با تغییر STATIC_URL یا آمدن <span class="term" data-term="cdn">CDN</span> در تولید می‌شکند. همیشه تگ {% static %}.
+        </div>
+
+        <h3>۵.۴ آپلود کاربر: ImageField</h3>
+<div class="code-box">
+          <div class="code-head"><span>مدل</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Post(models.Model):
+    ...
+    cover = models.ImageField(upload_to="covers/%Y/%m/", blank=True, null=True)
+    attachment = models.FileField(upload_to="files/%Y/%m/", blank=True, null=True)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>فرم و ویو</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ("title", "body", "cover")
+
+
+def post_create(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)   # ← FILES!
+        if form.is_valid():
+            form.instance.author = request.user
+            form.save()
+            return redirect("blog:list")
+    ...</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>قالب فرم و نمایش</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;form method="post" enctype="multipart/form-data"&gt;
+  {% csrf_token %}
+  {{ form.as_p }}
+  &lt;button&gt;انتشار&lt;/button&gt;
+&lt;/form&gt;
+
+{# نمایش کاور #}
+{% if post.cover %}
+  &lt;img src="{{ post.cover.url }}" alt="{{ post.title }}" width="600"&gt;
+{% endif %}</code></pre>
+        </div>
+          <p>نکات: <code class="inline-code">upload_to</code> با %Y/%m پوشه‌بندی زمانی می‌سازد؛ <code class="inline-code">.url</code> نشانی سرو فایل است؛ ImageField نوع/ابعاد را با Pillow بررسی می‌کند (validators مثل FileExtensionValidator هم دارید).</p>
+
+        <h3>۵.۵ سرو Media در توسعه و collectstatic</h3>
+<div class="code-box">
+          <div class="code-head"><span>config/urls.py — فقط برای DEBUG</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [...]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>آماده‌سازی تولید</span><span class="lang">Bash</span></div>
+          <pre class="code"><code data-lang="bash">python manage.py collectstatic
+# 142 static files copied to '/srv/project/staticfiles'.</code></pre>
+        </div>
+          <div class="callout info">
+          <b class="title">📌 در تولید چه می‌شود؟</b>
+          فصل ۲۶: Nginx فایل‌های staticfiles/ و media/ را مستقیم (و سریع) سرو می‌کند یا WhiteNoise کار ایستاها را به‌عهده می‌گیرد. جمع‌آوری با collectstatic، تحویل با وب‌سرور — جنگو در حلقه نیست.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>کاور پست با پیش‌نمایش زنده و پاک‌سازی — یک مثال کامل آپلود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>مدل با متد پاک‌سازی</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">class Post(models.Model):
+    title = models.CharField(max_length=200)
+    cover = models.ImageField(upload_to="covers/%Y/%m/", blank=True)
+
+    def delete(self, *args, **kwargs):
+        if self.cover:
+            self.cover.delete(save=False)     # فایل هم پاک شود
+        super().delete(*args, **kwargs)</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>پیش‌نمایش زنده با جاوااسکریپت ساده</span><span class="lang">HTML</span></div>
+          <pre class="code"><code data-lang="html">&lt;input type="file" name="cover" id="id_cover" accept="image/*"&gt;
+&lt;img id="preview" hidden width="200"&gt;
+&lt;script&gt;
+  id_cover.addEventListener("change", (e) =&gt; {
+    const file = e.target.files[0];
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.hidden = false;
+    }
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+          <div class="code-box">
+          <div class="code-head"><span>اعتبارسنجی سمت سرور</span><span class="lang">Python</span></div>
+          <pre class="code"><code data-lang="python">from django.core.exceptions import ValidationError
+
+
+def validate_cover(image):
+    if image.size &gt; 5 * 1024 * 1024:          # حداکثر ۵ مگابایت
+        raise ValidationError("حجم تصویر حداکثر ۵ مگابایت باشد.")
+
+
+cover = models.ImageField(upload_to="covers/%Y/%m/",
+                          validators=[validate_cover], blank=True)</code></pre>
+        </div>
+        <div class="callout tip"><b class="title">💡 نکته طلایی</b>کدهای بالا را <strong>خودتان تایپ و اجرا کنید</strong>؛ تایپ کردن رمز یادگیری است!</div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>ظاهر و رسانه وبلاگ را کامل کنید:</p>
+        <ol>
+          <li><strong>کارگاه ۱:</strong> پوشه static ریشه را بسازید، یک base.css با استایل ساده (رنگ هدر، کارت‌ها) بنویسید و با {% static %} به base.html وصل کنید.</li>
+          <li><strong>کارگاه ۲:</strong> فیلد cover (ImageField) را به Post اضافه کنید؛ فرم، ویو و نمایش را کامل کنید و enctype را از یاد نبرید.</li>
+          <li><strong>کارگاه ۳:</strong> آواتار را به Profile (فصل ۱۲) اضافه کنید و در navbar تصویر کوچک کاربر واردشده را نشان دهید.</li>
+          
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۱</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>static/css/base.css</span><span class="lang">CSS</span></div><pre class="code"><code data-lang="text">body { font-family: Vazirmatn, Tahoma, sans-serif; background: #f8fafc; }
+header.site { background: #0f172a; color: #fff; padding: 12px 20px; }
+.card { background: #fff; border-radius: 12px; padding: 16px; margin: 12px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,.08); }</code></pre></div><p>در <span class="term" data-term="settings">settings</span>: STATICFILES_DIRS = [BASE_DIR / "static"] و در base.html: <code class="inline-code">{% load static %}</code> + <code class="inline-code">&lt;link rel="stylesheet" href="{% static 'css/base.css' %}"&gt;</code>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۲</summary>
+          <div class="answer-body"><p>① مدل: <code class="inline-code">cover = ImageField(upload_to="covers/%Y/%m/", blank=True)</code> + makemigrations/migrate (و pip install pillow). ② PostForm: افزودن "cover" به fields. ③ ویو: <code class="inline-code">PostForm(request.POST, request.FILES)</code>. ④ قالب فرم: <code class="inline-code">enctype="multipart/form-data"</code>. ⑤ نمایش: <code class="inline-code">{{ post.cover.url }}</code> با شرط {% if post.cover %}. ⑥ urls: الگوی static() در DEBUG.</p></div>
+        </details>
+        <details class="answer">
+          <summary>✅ پاسخ کارگاه ۳</summary>
+          <div class="answer-body"><div class="code-box"><div class="code-head"><span>navbar با آواتار</span><span class="lang">HTML</span></div><pre class="code"><code data-lang="html">{% if user.is_authenticated %}
+  {% if user.profile.avatar %}
+    &lt;img src="{{ user.profile.avatar.url }}" width="28" height="28"
+         style="border-radius:50%" alt="آواتار"&gt;
+  {% endif %}
+  {{ user.username }}
+{% endif %}</code></pre></div><p>avatar در Profile: <code class="inline-code">ImageField(upload_to="avatars/", blank=True)</code>. فرم پروفایل هم request.FILES می‌خواهد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>اشتباهات و خطاهای رایج این فصل را بشناسید تا سریع‌تر رفعشان کنید:</p>
+        <div class="err-card">
+          <b class="err-title">❌ فایل CSS 404 می‌شود</b>
+          <p>چک کنید: ① {% load static %} بالای قالب ② مسیر دقیقاً مطابق پوشه (static/css/base.css ← {% static "css/base.css" %}) ③ STATICFILES_DIRS درست ④ سرور restart شده.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ تصویر آپلود شد ولی نمایش داده نمی‌شود</b>
+          <p>الگوی سرو MEDIA در urls نیست (مفهوم ۵.۵ فقط در DEBUG لازم است) یا MEDIA_ROOT/MEDIA_URL اشتباه است. {{ post.cover.url }} باید چیزی مثل /media/covers/2026/09/x.jpg بدهد.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ فرم فایل، فایل را ارسال نمی‌کند</b>
+          <p>enctype="multipart/form-data" روی تگ form نیست یا request.FILES به فرم پاس نشده. هر دو لازم‌اند!</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ خطای ImportError: cannot import name 'PIL'</b>
+          <p>Pillow نصب نیست: pip install pillow (داخل venv). ImageField بدون Pillow کار نمی‌کند.</p>
+        </div>
+        <div class="err-card">
+          <b class="err-title">❌ بعد از collectstatic، فایل‌های قدیمی نمایش داده می‌شوند</b>
+          <p>کش مرورگر/CDN. در تولید حرفه‌ای از ManifestStaticFilesStorage استفاده می‌شود که به نام فایل hash اضافه می‌کند (فصل ۲۶/۲۷).</p>
+        </div>
+        
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+        <details class="answer">
+          <summary>🏋️ تمرین ۱ — طبقه‌بندی</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> هر مورد ایستا است یا رسانه؟ (الف) لوگوی سایت (ب) عکس محصول که فروشنده آپلود کرده (ج) فونت وزیر (د) فایل رزومه کاربر (ه) main.js</p><p><strong>پاسخ:</strong> الف، ج، ه → Static (بخش کد) • ب، د → Media (آپلود کاربر).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۲ — مسیر upload_to</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> با <code class="inline-code">upload_to="covers/%Y/%m/"</code> فایلی در مهر ۱۴۰۵ (≈ 2026/09) آپلود می‌شود؛ مسیر کاملش چیست؟</p><p><strong>پاسخ:</strong> <code class="inline-code">MEDIA_ROOT/covers/2026/09/&lt;name&gt;.jpg</code> و URLش <code class="inline-code">/media/covers/2026/09/&lt;name&gt;.jpg</code>. پوشه‌بندی زمانی از انباشته شدن هزاران فایل در یک پوشه جلوگیری می‌کند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🏋️ تمرین ۳ — نقش STATIC_ROOT</summary>
+          <div class="answer-body"><p><strong>سوال:</strong> چرا در توسعه هیچ‌وقت فایل‌ها را دستی در STATIC_ROOT نمی‌گذاریم؟</p><p><strong>پاسخ:</strong> چون STATIC_ROOT فقط «مقصد جمع‌آوری» collectstatic برای تولید است؛ هر فایلی آنجا باید از STATICFILES_DIRS یا app/static آمده باشد. دستی گذاشتن = با اولین collectstatic پاک/بازنویسی شدن یا ناهمگامی محیط‌ها.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-14" data-title="آزمون فصل ۱۴ — فایل‌های ایستا و رسانه (Static و Media)" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) کدام جفت درباره تفاوت Static و Media درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">Static = آپلود کاربر؛ Media = فایل کد</button>
+              <button type="button" class="quiz-opt" data-key="b">Static = فایل‌های خود پروژه؛ Media = آپلودهای کاربران</button>
+              <button type="button" class="quiz-opt" data-key="c">هر دو یکی‌اند</button>
+              <button type="button" class="quiz-opt" data-key="d">Static فقط برای CSS است</button>
+            </div>
+            <div class="quiz-explain">💡 ایستا بخشی از کد و دیپلوی است؛ رسانه دادهٔ زمان اجراست و پشتیبان‌گیری جدا می‌خواهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) برای ارجاع به فایل ایستا در قالب از چه استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">{{ "css/x.css" }}</button>
+              <button type="button" class="quiz-opt" data-key="b">{% static "css/x.css" %} با {% load static %}</button>
+              <button type="button" class="quiz-opt" data-key="c">/static/css/x.css دستی</button>
+              <button type="button" class="quiz-opt" data-key="d">{% media "css/x.css" %}</button>
+            </div>
+            <div class="quiz-explain">💡 تگ static با STATIC_URL و در آینده CDN/manifest سازگار است؛ hardcode شکننده است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) فرم آپلود فایل به کدام دو چیز نیاز دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">method="get" و csrf</button>
+              <button type="button" class="quiz-opt" data-key="b">enctype="multipart/form-data" و request.FILES در ویو</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط input type=file</button>
+              <button type="button" class="quiz-opt" data-key="d">JSON و fetch</button>
+            </div>
+            <div class="quiz-explain">💡 بدون enctype، مرورگر فایل را نمی‌فرستد؛ بدون request.FILES، جنگو آن را به فرم نمی‌دهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) کار collectstatic چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">آپلودها را پاک می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">همه فایل‌های ایستا را در STATIC_ROOT جمع می‌کند (برای تولید)</button>
+              <button type="button" class="quiz-opt" data-key="c">فایل‌ها را فشرده می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">مدیا را به ایستا تبدیل می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 خروجی یک پوشه واحد است که Nginx/CDN/WhiteNoise بتواند یک‌جا سرو کند؛ معمولاً بخشی از اسکریپت دیپلوی است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) ImageField برای کار به چه بسته‌ای نیاز دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">requests</button>
+              <button type="button" class="quiz-opt" data-key="b">Pillow</button>
+              <button type="button" class="quiz-opt" data-key="c">celery</button>
+              <button type="button" class="quiz-opt" data-key="d">redis</button>
+            </div>
+            <div class="quiz-explain">💡 Pillow کتابخانه پردازش تصویر پایتون است؛ بدون آن ImageField هنگام اعتبارسنجی خطا می‌دهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) سرو URLهای /media/ در محیط توسعه با چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">خودکار مثل static</button>
+              <button type="button" class="quiz-opt" data-key="b">الگوی static(MEDIA_URL, document_root=MEDIA_ROOT) در urls وقتی DEBUG=True</button>
+              <button type="button" class="quiz-opt" data-key="c">Nginx</button>
+              <button type="button" class="quiz-opt" data-key="d">collectstatic</button>
+            </div>
+            <div class="quiz-explain">💡 جنگو در توسعه فقط ایستاها را خودکار سرو می‌کند؛ برای رسانه باید دستی الگو اضافه کنیم (و در تولید حذف است).</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «وبلاگ تصویری»</strong> — وبلاگ را با کاور، آواتار و ظاهر مرتب کامل کنید.</p>
+        <ul class="checklist">
+          <li>static ریشه + base.css + لوگو با {% static %}.</li>
+          <li>Post.cover با پوشه‌بندی %Y/%m، پیش‌نمایش زنده و اعتبارسنج حجم ≤۵MB.</li>
+          <li>Profile.avatar و نمایش در navbar و صفحه نویسنده.</li>
+          <li>پاک‌سازی: با حذف پست، فایل کاور هم حذف شود.</li>
+          <li>اجرای collectstatic و بررسی پوشه staticfiles.</li>
+          
+        </ul>
+        
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>Static = فایل‌های کد (CSS/JS/تصویر خودمان)؛ Media = آپلود کاربران.</li>
+          <li>STATICFILES_DIRS منبع توسعه، STATIC_ROOT مقصد تولید، {% static %} ارجاع قالب.</li>
+          <li>ImageField/FileField + Pillow + upload_to پوشه‌دار.</li>
+          <li>فرم آپلود: enctype + request.FILES — هر دو.</li>
+          <li>collectstatic برای تولید؛ سرو واقعی با Nginx/WhiteNoise/CDN (فصل ۲۶).</li>
+          
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «ایستا با کد دیپلوی می‌شود، رسانه با داده پشتیبان‌گیری — این دو خط را هرگز قاطی نکنید.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>media را هم collectstatic جمع می‌کند؟</summary><div class="faq-body"><p>خیر! فقط static. رسانه‌ها زمان اجرا تولید می‌شوند و مسیر سرو جدا دارند؛ در تولید، پشتیبان‌گیری دوره‌ای از MEDIA_ROOT (یا آپلود مستقیم به فضای ابری/S3) لازم است.</p></div></details>
+        <details class="faq-item"><summary>آپلود مستقیم به S3/آروان‌کلادری بهتر نیست؟</summary><div class="faq-body"><p>برای تولید جدی بله: django-storages فایل‌ها را مستقیم به فضای ابری می‌فرستد و با CDN سرو می‌شوند. برای یادگیری و پروژه کوچک، دیسک سرور کافی است.</p></div></details>
+        <details class="faq-item"><summary>چطور از آپلود فایل مخرب جلوگیری کنم؟</summary><div class="faq-body"><p>محدودیت پسوند (FileExtensionValidator)، بررسی نوع واقعی (content_type و ابعاد با Pillow)، حجم مجاز، و ذخیره بیرون از ریشه وب. هیچ‌وقت اجازه اجرای اسکریپت از MEDIA_ROOT ندهید.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          داده‌ها زیاد می‌شوند و کوئری‌ها پیچیده. در <strong>فصل ۱۵</strong> قدرت کامل <span class="term" data-term="queryset">QuerySet</span>ها را آزاد می‌کنیم: Q، F، aggregate/annotate و حل مشکل N+1.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-14" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-14">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-13/index.html">→ فصل قبلی<br><b>🛡️ فصل ۱۳</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-15/index.html">فصل بعدی ←<br><b>🔍 فصل ۱۵: مدیریت پیشرفته پایگاه داده — QuerySetها</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام: مفاهیم</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — دوره جامع جنگو — فصل ۱۴: فایل‌های ایستا و رسانه (Static و Media) | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>
