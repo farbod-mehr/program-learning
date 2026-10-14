@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۰ - Denial of Service - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۰ – Denial of Service</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – DoS چیست؟</a></li>
+            <li><a href="#types">📌 انواع حملات DoS</a></li>
+            <li><a href="#dos-attacks">🎯 حملات معروف DoS</a></li>
+            <li><a href="#ddos">🌐 حملات DDoS</a></li>
+            <li><a href="#ddos-attacks">🎯 حملات معروف DDoS</a></li>
+            <li><a href="#botnets">🤖 بات‌نت‌ها (Botnets)</a></li>
+            <li><a href="#dos-techniques">🛠️ تکنیک‌های اجرای DoS</a></li>
+            <li><a href="#reflection-amplification">📡 حملات بازتابی و تقویتی</a></li>
+            <li><a href="#dos-tools">🛠️ ابزارهای DoS/DDoS</a></li>
+            <li><a href="#detection">🔍 تشخیص حملات DoS</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با DoS</a></li>
+            <li><a href="#ai-dos">🤖 DoS و هوش مصنوعی</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – Denial of Service (DoS) چیست؟</h2>
+        <p>
+            <b>حمله محروم‌سازی از سرویس (Denial of Service - DoS)</b> یک حمله سایبری است که در آن مهاجم سعی می‌کند یک سرویس، شبکه یا سرور را برای کاربران مجاز غیرقابل دسترس کند. این کار معمولاً با ارسال حجم عظیمی از درخواست‌ها یا ترافیک به هدف انجام می‌شود تا منابع آن اشباع شده و از کار بیفتد.
+        </p>
+        <p>
+            حملات DoS یکی از قدیمی‌ترین و رایج‌ترین حملات سایبری هستند که می‌توانند خسارت‌های مالی و اعتباری سنگینی به سازمان‌ها وارد کنند. این حملات معمولاً <b>قسمت سوم مثلث CIA (در دسترس بودن - Availability)</b> را هدف قرار می‌دهند.
+        </p>
+        <p>
+            دو نوع اصلی حملات DoS وجود دارد:
+        </p>
+        <ul>
+            <li><b>DoS (متمرکز):</b> حمله از یک منبع واحد انجام می‌شود.</li>
+            <li><b>DDoS (توزیع‌شده):</b> حمله از چندین منبع همزمان انجام می‌شود.</li>
+        </ul>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> حملات DoS در بسیاری از کشورها جرم محسوب می‌شوند و مجازات‌های سنگینی دارند. در هک قانونمند، این حملات فقط در محیط‌های آزمایشگاهی با مجوز انجام می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: انواع حملات DoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="types">
+        <h2>📌 انواع حملات DoS</h2>
+        <p>
+            حملات DoS بر اساس لایه OSI که در آن انجام می‌شوند و نحوه اجرا، به دسته‌های مختلفی تقسیم می‌شوند:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>نوع حمله</th><th>لایه OSI</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><b>SYN Flood</b></td>
+                    <td>لایه ۴ (Transport)</td>
+                    <td>ارسال تعداد زیادی بسته SYN بدون تکمیل Handshake</td>
+                    <td>اشغال صف اتصالات TCP</td>
+                </tr>
+                <tr>
+                    <td><b>UDP Flood</b></td>
+                    <td>لایه ۴ (Transport)</td>
+                    <td>ارسال تعداد زیادی بسته UDP به پورت‌های تصادفی</td>
+                    <td>اشغال پهنای باند و CPU</td>
+                </tr>
+                <tr>
+                    <td><b>ICMP Flood (Ping of Death)</b></td>
+                    <td>لایه ۳ (Network)</td>
+                    <td>ارسال بسته‌های ICMP بزرگ‌تر از حد مجاز</td>
+                    <td>خرابی سیستم‌های قدیمی</td>
+                </tr>
+                <tr>
+                    <td><b>HTTP Flood</b></td>
+                    <td>لایه ۷ (Application)</td>
+                    <td>ارسال تعداد زیادی درخواست HTTP به وب‌سرور</td>
+                    <td>اشغال منابع وب‌سرور</td>
+                </tr>
+                <tr>
+                    <td><b>Slowloris</b></td>
+                    <td>لایه ۷ (Application)</td>
+                    <td>باز کردن اتصالات HTTP و نگه‌داشتن آنها</td>
+                    <td>اشغال Threadهای سرور</td>
+                </tr>
+                <tr>
+                    <td><b>NTP Amplification</b></td>
+                    <td>لایه ۷ (Application)</td>
+                    <td>استفاده از سرورهای NTP برای تقویت ترافیک</td>
+                    <td>حمله بازتابی و تقویتی</td>
+                </tr>
+                <tr>
+                    <td><b>DNS Amplification</b></td>
+                    <td>لایه ۷ (Application)</td>
+                    <td>استفاده از سرورهای DNS برای تقویت ترافیک</td>
+                    <td>حمله بازتابی و تقویتی</td>
+                </tr>
+                <tr>
+                    <td><b>Smurf Attack</b></td>
+                    <td>لایه ۳ (Network)</td>
+                    <td>ارسال ICMP Echo به آدرس Broadcast با IP جعلی</td>
+                    <td>حمله بازتابی قدیمی</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> حملات لایه ۷ (Application) معمولاً پیچیده‌تر و تشخیص آنها سخت‌تر است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: حملات معروف DoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="dos-attacks">
+        <h2>🎯 حملات معروف DoS</h2>
+        <p>
+            در ادامه، برخی از معروف‌ترین حملات DoS را معرفی می‌کنیم:
+        </p>
+
+        <h3>🔴 ۱. SYN Flood</h3>
+        <ul>
+            <li><b>توضیح:</b> مهاجم تعداد زیادی بسته SYN (درخواست اتصال TCP) به سرور ارسال می‌کند و هرگز پاسخ SYN-ACK را کامل نمی‌کند.</li>
+            <li><b>تأثیر:</b> صف اتصالات نیمه‌باز (Half-Open) سرور پر می‌شود و سرور نمی‌تواند اتصالات جدید را بپذیرد.</li>
+            <li><b>مقابله:</b> استفاده از SYN Cookies، کاهش زمان Timeout، استفاده از فایروال.</li>
+        </ul>
+
+        <h3>🔵 ۲. UDP Flood</h3>
+        <ul>
+            <li><b>توضیح:</b> مهاجم تعداد زیادی بسته UDP به پورت‌های تصادفی سرور ارسال می‌کند.</li>
+            <li><b>تأثیر:</b> سرور برای بررسی هر بسته (ICMP Port Unreachable) منابع خود را مصرف می‌کند.</li>
+            <li><b>مقابله:</b> محدود کردن ترافیک UDP، استفاده از فایروال.</li>
+        </ul>
+
+        <h3>🟡 ۳. Ping of Death</h3>
+        <ul>
+            <li><b>توضیح:</b> ارسال بسته‌های ICMP بزرگ‌تر از ۶۵۵۳۵ بایت (حداکثر اندازه IP) به هدف.</li>
+            <li><b>تأثیر:</b> در سیستم‌های قدیمی، باعث سرریز بافر و خرابی سیستم می‌شد.</li>
+            <li><b>مقابله:</b> سیستم‌های مدرن این مشکل را حل کرده‌اند.</li>
+        </ul>
+
+        <h3>🟢 ۴. Smurf Attack</h3>
+        <ul>
+            <li><b>توضیح:</b> ارسال بسته‌های ICMP Echo Request به آدرس Broadcast با IP مبدأ جعلی (IP قربانی).</li>
+            <li><b>تأثیر:</b> همه دستگاه‌های شبکه به قربانی پاسخ می‌دهند و ترافیک سنگینی ایجاد می‌کنند.</li>
+            <li><b>مقابله:</b> غیرفعال کردن IP Broadcast در شبکه.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> این حملات در محیط‌های واقعی بسیار خطرناک هستند و فقط برای آزمایش در محیط‌های کنترل‌شده استفاده می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: حملات DDoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="ddos">
+        <h2>🌐 حملات DDoS (Distributed Denial of Service)</h2>
+        <p>
+            <b>DDoS</b> نوع پیشرفته‌تری از حمله DoS است که در آن مهاجم از چندین منبع (معمولاً یک بات‌نت) برای انجام حمله استفاده می‌کند. این حملات بسیار قدرتمندتر از DoS هستند و مقابله با آنها دشوارتر است.
+        </p>
+
+        <h3>📌 تفاوت DoS و DDoS:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>ویژگی</th><th>DoS</th><th>DDoS</th></tr>
+                <tr><td><b>منبع حمله</b></td><td>یک منبع</td><td>چندین منبع (توزیع‌شده)</td></tr>
+                <tr><td><b>پیچیدگی</b></td><td>ساده‌تر</td><td>پیچیده‌تر</td></tr>
+                <tr><td><b>قدرت</b></td><td>کمتر</td><td>بسیار بیشتر</td></tr>
+                <tr><td><b>تشخیص</b></td><td>آسان‌تر</td><td>دشوارتر</td></tr>
+                <tr><td><b>مقابله</b></td><td>ساده‌تر</td><td>دشوارتر</td></tr>
+                <tr><td><b>مثال</b></td><td>SYN Flood از یک IP</td><td>SYN Flood از هزاران IP مختلف</td></tr>
+            </table>
+        </div>
+
+        <h3>📌 اجزای یک حمله DDoS:</h3>
+        <ul>
+            <li><b>مهاجم (Attacker):</b> فردی که حمله را هماهنگ می‌کند.</li>
+            <li><b>سرور فرماندهی (C2 Server):</b> سروری که بات‌نت را کنترل می‌کند.</li>
+            <li><b>بات‌نت (Botnet):</b> شبکه‌ای از دستگاه‌های آلوده که برای انجام حمله استفاده می‌شوند.</li>
+            <li><b>هدف (Target):</b> سرویسی که مورد حمله قرار می‌گیرد.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> حملات DDoS می‌توانند ترافیکی به اندازه چند ترابیت بر ثانیه تولید کنند و بزرگ‌ترین سرویس‌های اینترنتی را از کار بیندازند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: حملات معروف DDoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="ddos-attacks">
+        <h2>🎯 حملات معروف DDoS</h2>
+        <p>
+            در ادامه، برخی از بزرگ‌ترین حملات DDoS تاریخ را معرفی می‌کنیم:
+        </p>
+
+        <ul>
+            <li><b>Dyn DNS Attack (2016):</b> حمله به سرویس DNS Dyn که باعث شد بسیاری از وب‌سایت‌های معروف (مانند Twitter, Netflix, Reddit) از کار بیفتند.</li>
+            <li><b>GitHub Attack (2018):</b> حمله با ترافیک ۱.۳۵ ترابیت بر ثانیه به GitHub که با استفاده از Memcached Amplification انجام شد.</li>
+            <li><b>Mirai Botnet (2016):</b> بات‌نت مبتنی بر IoT که حملات عظیم DDoS را انجام داد.</li>
+            <li><b>AWS Attack (2020):</b> حمله با ترافیک ۲.۳ ترابیت بر ثانیه که توسط AWS خنثی شد.</li>
+            <li><b>Google Attack (2022):</b> حمله با ترافیک ۲.۵۴ ترابیت بر ثانیه که توسط Google Cloud مسدود شد.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> حملات DDoS می‌توانند خسارت‌های مالی بسیار سنگینی به سازمان‌ها وارد کنند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: بات‌نت‌ها -->
+    <!-- ============================================================ -->
+    <div class="card" id="botnets">
+        <h2>🤖 بات‌نت‌ها (Botnets)</h2>
+        <p>
+            <b>بات‌نت</b> شبکه‌ای از دستگاه‌های آلوده (بات‌ها) است که توسط یک مهاجم کنترل می‌شوند و برای انجام حملات DDoS، ارسال اسپم، سرقت اطلاعات و … استفاده می‌شوند.
+        </p>
+
+        <h3>📌 چرخه حیات یک بات‌نت:</h3>
+        <ol>
+            <li><b>نفوذ (Infection):</b> بدافزار روی دستگاه قربانی نصب می‌شود.</li>
+            <li><b>ارتباط با C2 (Connection):</b> دستگاه به سرور فرماندهی متصل می‌شود.</li>
+            <li><b>کنترل (Control):</b> مهاجم از طریق C2 به بات‌ها دستور می‌دهد.</li>
+            <li><b>حمله (Attack):</b> بات‌ها دستورات را اجرا می‌کنند (مثل ارسال ترافیک به هدف).</li>
+        </ol>
+
+        <h3>📌 بات‌نت‌های معروف:</h3>
+        <ul>
+            <li><b>Mirai:</b> بات‌نت IoT که حملات عظیم DDoS انجام داد.</li>
+            <li><b>Zeus:</b> بات‌نت بانکی برای سرقت اطلاعات.</li>
+            <li><b>Emotet:</b> بات‌نت چندمنظوره با قابلیت تکثیر.</li>
+            <li><b>Conficker:</b> یکی از بزرگ‌ترین بات‌نت‌های تاریخ.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> دستگاه‌های IoT به دلیل امنیت ضعیف، هدف اصلی برای ایجاد بات‌نت‌ها هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: تکنیک‌های اجرای DoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="dos-techniques">
+        <h2>🛠️ تکنیک‌های اجرای حملات DoS</h2>
+        <p>
+            حملات DoS از تکنیک‌های مختلفی برای محروم‌سازی از سرویس استفاده می‌کنند. در ادامه، مهم‌ترین تکنیک‌ها را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 ۱. حملات حجمی (Volumetric Attacks)</h3>
+        <ul>
+            <li><b>هدف:</b> اشباع پهنای باند هدف.</li>
+            <li><b>روش:</b> ارسال حجم عظیمی از ترافیک به هدف.</li>
+            <li><b>مثال:</b> UDP Flood, ICMP Flood, DNS Amplification.</li>
+        </ul>
+
+        <h3>📌 ۲. حملات پروتکلی (Protocol Attacks)</h3>
+        <ul>
+            <li><b>هدف:</b> اشغال منابع شبکه یا سرور.</li>
+            <li><b>روش:</b> سوءاستفاده از نقاط ضعف پروتکل‌ها.</li>
+            <li><b>مثال:</b> SYN Flood, Ping of Death, Smurf Attack.</li>
+        </ul>
+
+        <h3>📌 ۳. حملات لایه کاربرد (Application Layer Attacks)</h3>
+        <ul>
+            <li><b>هدف:</b> اشغال منابع برنامه‌های کاربردی.</li>
+            <li><b>روش:</b> ارسال درخواست‌های به‌ظاهر عادی اما سنگین.</li>
+            <li><b>مثال:</b> HTTP Flood, Slowloris, RUDY.</li>
+        </ul>
+
+        <h3>📌 ۴. حملات بازتابی و تقویتی (Reflection & Amplification)</h3>
+        <ul>
+            <li><b>هدف:</b> افزایش قدرت حمله با استفاده از سرورهای ثالث.</li>
+            <li><b>روش:</b> ارسال درخواست‌های کوچک به سرورهای عمومی با IP جعلی (IP قربانی) و دریافت پاسخ‌های بزرگ.</li>
+            <li><b>مثال:</b> DNS Amplification, NTP Amplification, Memcached Amplification.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> حملات بازتابی و تقویتی بسیار قدرتمند هستند و می‌توانند ترافیک را تا ۵۰۰۰۰ برابر افزایش دهند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: حملات بازتابی و تقویتی -->
+    <!-- ============================================================ -->
+    <div class="card" id="reflection-amplification">
+        <h2>📡 حملات بازتابی و تقویتی (Reflection & Amplification Attacks)</h2>
+        <p>
+            این حملات یکی از قدرتمندترین انواع DDoS هستند که در آنها مهاجم از سرورهای عمومی (مانند DNS, NTP, Memcached) برای تقویت ترافیک استفاده می‌کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>مهاجم یک درخواست کوچک به یک سرور عمومی ارسال می‌کند (با IP مبدأ جعلی = IP قربانی).</li>
+            <li>سرور عمومی یک پاسخ بسیار بزرگ به قربانی ارسال می‌کند.</li>
+            <li>با تکرار این کار از چندین سرور، ترافیک عظیمی به سمت قربانی هدایت می‌شود.</li>
+        </ol>
+
+        <h3>📌 مثال‌های معروف:</h3>
+        <ul>
+            <li><b>DNS Amplification:</b> درخواست کوچک (۶۰ بایت) به سرور DNS و پاسخ بزرگ (۴۰۰۰ بایت) – ضریب تقویت تا ۷۰ برابر.</li>
+            <li><b>NTP Amplification:</b> درخواست کوچک به سرور NTP (با دستور monlist) و پاسخ بزرگ – ضریب تقویت تا ۵۰۰ برابر.</li>
+            <li><b>Memcached Amplification:</b> درخواست کوچک به سرور Memcached و پاسخ بزرگ – ضریب تقویت تا ۵۰۰۰۰ برابر.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># DNS Amplification با استفاده از dnsrecon
+dnsrecon -d example.com -t zonewalk
+
+# NTP Amplification با استفاده از ntpdc
+ntpdc -n -c monlist 192.168.1.1</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> حملات بازتابی و تقویتی بسیار خطرناک هستند و می‌توانند سرویس‌های بزرگ را از کار بیندازند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: ابزارهای DoS/DDoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="dos-tools">
+        <h2>🛠️ ابزارهای DoS/DDoS</h2>
+        <p>
+            ابزارهای متعددی برای اجرای حملات DoS و DDoS وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>نوع حمله</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>LOIC (Low Orbit Ion Cannon)</b></td>
+                    <td>TCP, UDP, HTTP</td>
+                    <td>ابزار ساده برای حملات DoS با رابط گرافیکی</td>
+                </tr>
+                <tr>
+                    <td><b>HOIC (High Orbit Ion Cannon)</b></td>
+                    <td>HTTP Flood</td>
+                    <td>نسخه قوی‌تر LOIC با قابلیت حمله به چندین هدف</td>
+                </tr>
+                <tr>
+                    <td><b>Slowloris</b></td>
+                    <td>HTTP (لایه ۷)</td>
+                    <td>حمله با باز کردن اتصالات HTTP و نگه‌داشتن آنها</td>
+                </tr>
+                <tr>
+                    <td><b>RUDY (R U Dead Yet?)</b></td>
+                    <td>HTTP (لایه ۷)</td>
+                    <td>حمله با ارسال داده‌های طولانی به فرم‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>hping3</b></td>
+                    <td>TCP, UDP, ICMP</td>
+                    <td>ابزار تولید بسته‌های سفارشی برای حملات DoS</td>
+                </tr>
+                <tr>
+                    <td><b>GoldenEye</b></td>
+                    <td>HTTP Flood</td>
+                    <td>ابزار تست DoS برای وب‌سایت‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>DDoSIM</b></td>
+                    <td>TCP, UDP, HTTP</td>
+                    <td>شبیه‌ساز حملات DDoS</td>
+                </tr>
+                <tr>
+                    <td><b>Mirai</b></td>
+                    <td>DDoS (IoT)</td>
+                    <td>بات‌نت معروف IoT برای حملات DDoS</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از hping3 برای SYN Flood
+hping3 -S -p 80 --flood 192.168.1.101
+
+# استفاده از Slowloris
+slowloris 192.168.1.101 -p 80
+
+# استفاده از GoldenEye
+goldeneye http://192.168.1.101 -w 100 -s 100</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> استفاده از این ابزارها بدون مجوز جرم است. فقط در محیط‌های آزمایشگاهی با مجوز استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: تشخیص حملات DoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="detection">
+        <h2>🔍 تشخیص حملات DoS</h2>
+        <p>
+            تشخیص به‌موقع حملات DoS می‌تواند از خسارت‌های بزرگ جلوگیری کند. در ادامه، روش‌های تشخیص حملات DoS را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 نشانه‌های یک حمله DoS:</h3>
+        <ul>
+            <li>کاهش شدید سرعت شبکه یا وب‌سایت.</li>
+            <li>افزایش غیرعادی ترافیک ورودی.</li>
+            <li>مصرف بالای CPU و حافظه سرور.</li>
+            <li>تعداد زیاد اتصالات نیمه‌باز (Half-Open).</li>
+            <li>افزایش خطاهای ۵۰x (مثل ۵۰۳ Service Unavailable).</li>
+            <li>درخواست‌های تکراری از یک IP یا محدوده IP خاص.</li>
+        </ul>
+
+        <h3>📌 ابزارهای تشخیص DoS:</h3>
+        <ul>
+            <li><b>Wireshark:</b> تحلیل ترافیک شبکه.</li>
+            <li><b>Tcpdump:</b> ضبط ترافیک برای تحلیل.</li>
+            <li><b>Snort:</b> سیستم تشخیص نفوذ.</li>
+            <li><b>Suricata:</b> سیستم تشخیص نفوذ پیشرفته.</li>
+            <li><b>Zeek (Bro):</b> تحلیل شبکه و تشخیص تهدیدات.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از tcpdump برای تشخیص ترافیک غیرعادی
+tcpdump -i eth0 -n -c 1000
+
+# استفاده از Snort برای تشخیص SYN Flood
+snort -i eth0 -c /etc/snort/snort.conf -A console
+
+# بررسی آمار اتصالات TCP
+netstat -an | grep SYN_RECV | wc -l</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند روش تشخیص، دقت را به شدت افزایش می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: راه‌های مقابله با DoS -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات DoS (Countermeasures)</h2>
+        <p>
+            برای جلوگیری و کاهش اثر حملات DoS، سازمان‌ها باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از فایروال:</b> فیلتر کردن ترافیک مخرب و محدود کردن نرخ بسته‌ها (Rate Limiting).</li>
+            <li><b>استفاده از IDS/IPS:</b> تشخیص و جلوگیری از حملات در زمان واقعی.</li>
+            <li><b>استفاده از CDN (Content Delivery Network):</b> توزیع ترافیک بین چندین سرور و کاهش فشار روی سرور اصلی.</li>
+            <li><b>استفاده از سرویس‌های ضد DDoS:</b> مانند Cloudflare, Akamai, AWS Shield.</li>
+            <li><b>افزایش پهنای باند:</b> داشتن پهنای باند کافی برای تحمل ترافیک اضافی.</li>
+            <li><b>پیکربندی صحیح سرورها:</b> تنظیم Timeout, SYN Cookies, و محدودیت‌های اتصال.</li>
+            <li><b>پشتیبان‌گیری منظم:</b> تهیه نسخه پشتیبان از داده‌ها و تنظیمات.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+        <ul>
+            <li><b>در برابر SYN Flood:</b> فعال‌سازی SYN Cookies، کاهش زمان SYN-ACK Timeout.</li>
+            <li><b>در برابر UDP Flood:</b> محدود کردن ترافیک UDP، بستن پورت‌های غیرضروری.</li>
+            <li><b>در برابر HTTP Flood:</b> استفاده از WAF (Web Application Firewall)، محدود کردن نرخ درخواست‌ها.</li>
+            <li><b>در برابر Slowloris:</b> افزایش محدودیت Threadهای سرور، استفاده از ماژول‌های ضد Slowloris.</li>
+            <li><b>در برابر Amplification:</b> غیرفعال کردن سرویس‌های عمومی غیرضروری، پیکربندی صحیح DNS/NTP.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات DoS، ترکیبی از فناوری، پیکربندی صحیح و استفاده از سرویس‌های ابری ضد DDoS است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: DoS و هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-dos">
+        <h2>🤖 DoS و هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در تشخیص و مقابله با حملات DoS نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در DoS:</h3>
+        <ul>
+            <li><b>تشخیص خودکار حملات:</b> AI می‌تواند الگوهای غیرعادی در ترافیک شبکه را شناسایی کند.</li>
+            <li><b>کاهش مثبت کاذب:</b> AI می‌تواند هشدارهای اشتباه را کاهش دهد.</li>
+            <li><b>پیش‌بینی حملات:</b> AI می‌تواند حملات آینده را پیش‌بینی کند.</li>
+            <li><b>واکنش خودکار:</b> AI می‌تواند به‌صورت خودکار اقدامات دفاعی را فعال کند.</li>
+            <li><b>تحلیل ترافیک:</b> AI می‌تواند ترافیک عادی را از ترافیک مخرب تشخیص دهد.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered DoS Detection:</h3>
+        <ul>
+            <li><b>AI-Based IDS/IPS:</b> سیستم‌های تشخیص نفوذ مبتنی بر AI.</li>
+            <li><b>AI-Powered Traffic Analysis:</b> تحلیل ترافیک با استفاده از AI.</li>
+            <li><b>AI-Driven Anomaly Detection:</b> تشخیص ناهنجاری‌های شبکه با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در DoS مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند حملات DoS را سریع‌تر و دقیق‌تر از روش‌های سنتی تشخیص دهد و به‌صورت خودکار به آنها پاسخ دهد.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – حملات DoS</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای DoS آشنا خواهید شد و یک سناریوی کامل از حمله DoS را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای DoS مانند hping3 و Slowloris.</li>
+            <li>اجرای حملات SYN Flood و HTTP Flood.</li>
+            <li>تشخیص حمله با استفاده از ابزارهای مانیتورینگ.</li>
+            <li>یادگیری روش‌های مقابله با حملات DoS.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> یک وب‌سرور آزمایشگاهی (مثل Metasploitable 2 یا یک سرور Apache)</li>
+            <li><b>ابزارها:</b> hping3, Slowloris, GoldenEye, Wireshark, netstat</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: راه‌اندازی وب‌سرور هدف</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سیستم هدف (Metasploitable 2)
+sudo service apache2 start</code></pre>
+        </div>
+        <p><b>تحلیل:</b> وب‌سرور روی پورت ۸۰ اجرا می‌شود.</p>
+
+        <h4>مرحله ۲: اجرای SYN Flood با hping3</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># از Kali Linux
+sudo hping3 -S -p 80 --flood 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> ترافیک SYN به سرور هدف ارسال می‌شود و اتصالات نیمه‌باز ایجاد می‌کند.</p>
+
+        <h4>مرحله ۳: مانیتورینگ سرور هدف</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سیستم هدف
+netstat -an | grep SYN_RECV | wc -l
+sudo tcpdump -i eth0 -n port 80</code></pre>
+        </div>
+        <p><b>تحلیل:</b> تعداد اتصالات SYN_RECV افزایش می‌یابد و ترافیک غیرعادی قابل مشاهده است.</p>
+
+        <h4>مرحله ۴: اجرای حمله Slowloris</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># از Kali Linux
+slowloris 192.168.1.101 -p 80</code></pre>
+        </div>
+        <p><b>تحلیل:</b> اتصالات HTTP باز نگه‌داشته می‌شوند و سرور منابع خود را از دست می‌دهد.</p>
+
+        <h4>مرحله ۵: تشخیص و مقابله</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># فعال‌سازی SYN Cookies (روی سرور)
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+
+# محدود کردن اتصالات با iptables
+iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 10 -j DROP</code></pre>
+        </div>
+        <p><b>تحلیل:</b> با فعال‌سازی SYN Cookies و محدود کردن اتصالات، حمله خنثی می‌شود.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند حمله، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه حملات DoS را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – SYN Flood:</b>
+                <br>با استفاده از hping3، یک حمله SYN Flood روی یک سرور آزمایشگاهی اجرا کنید و نتایج را تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – تشخیص DoS:</b>
+                <br>با استفاده از Wireshark و netstat، یک حمله SYN Flood را تشخیص دهید.
+            </li>
+            <li>
+                <b>تمرین ۳ – HTTP Flood:</b>
+                <br>با استفاده از GoldenEye، یک حمله HTTP Flood روی یک وب‌سرور اجرا کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – مقابله با DoS:</b>
+                <br>با استفاده از SYN Cookies و iptables، یک حمله SYN Flood را خنثی کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – تحقیق:</b>
+                <br>در مورد یک حمله DDoS معروف (مثل Dyn DNS یا Mirai) تحقیق کنید و گزارشی تهیه کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DoS</span></td>
+                    <td><b>D</b>enial <b>o</b>f <b>S</b>ervice</td>
+                    <td>حمله محروم‌سازی از سرویس.</td>
+                    <td>از کار انداختن یک وب‌سایت یا سرویس.</td>
+                    <td>SYN Flood به یک وب‌سرور.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DDoS</span></td>
+                    <td><b>D</b>istributed <b>D</b>enial <b>o</b>f <b>S</b>ervice</td>
+                    <td>حمله محروم‌سازی از سرویس توزیع‌شده.</td>
+                    <td>حمله از چندین منبع همزمان.</td>
+                    <td>حمله به Dyn DNS با بات‌نت Mirai.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SYN Flood</span></td>
+                    <td>—</td>
+                    <td>ارسال تعداد زیادی بسته SYN بدون تکمیل Handshake.</td>
+                    <td>اشغال صف اتصالات TCP.</td>
+                    <td><code dir='ltr'>hping3 -S --flood</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">UDP Flood</span></td>
+                    <td>—</td>
+                    <td>ارسال تعداد زیادی بسته UDP به پورت‌های تصادفی.</td>
+                    <td>اشغال پهنای باند و CPU.</td>
+                    <td>حمله با LOIC.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">HTTP Flood</span></td>
+                    <td>—</td>
+                    <td>ارسال تعداد زیادی درخواست HTTP به وب‌سرور.</td>
+                    <td>اشغال منابع وب‌سرور.</td>
+                    <td>حمله با GoldenEye.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Slowloris</span></td>
+                    <td>—</td>
+                    <td>حمله با باز کردن اتصالات HTTP و نگه‌داشتن آنها.</td>
+                    <td>اشغال Threadهای سرور.</td>
+                    <td><code dir='ltr'>slowloris 192.168.1.1 -p 80</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Amplification Attack</span></td>
+                    <td>—</td>
+                    <td>حمله بازتابی و تقویتی.</td>
+                    <td>افزایش قدرت حمله با استفاده از سرورهای عمومی.</td>
+                    <td>DNS Amplification.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Botnet</span></td>
+                    <td><b>Bot</b> + <b>Net</b>work</td>
+                    <td>شبکه‌ای از دستگاه‌های آلوده تحت کنترل مهاجم.</td>
+                    <td>اجرای حملات DDoS, اسپم و …</td>
+                    <td>بات‌نت Mirai.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">C2 Server</span></td>
+                    <td><b>C</b>ommand <b>a</b>nd <b>C</b>ontrol</td>
+                    <td>سرور فرماندهی برای کنترل بات‌نت.</td>
+                    <td>ارسال دستور به بات‌ها.</td>
+                    <td>سرور C2 در حملات DDoS.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SYN Cookies</span></td>
+                    <td>—</td>
+                    <td>مکانیزم دفاعی در برابر SYN Flood.</td>
+                    <td>جلوگیری از اشغال صف اتصالات.</td>
+                    <td><code dir='ltr'>echo 1 > /proc/sys/net/ipv4/tcp_syncookies</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Rate Limiting</span></td>
+                    <td>—</td>
+                    <td>محدود کردن نرخ بسته‌ها یا درخواست‌ها.</td>
+                    <td>جلوگیری از حملات DoS.</td>
+                    <td>محدود کردن ۱۰۰ درخواست در ثانیه.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">hping3</span></td>
+                    <td>—</td>
+                    <td>ابزار تولید بسته‌های سفارشی.</td>
+                    <td>اجرای حملات DoS و تست شبکه.</td>
+                    <td><code dir='ltr'>hping3 -S -p 80 --flood</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">LOIC</span></td>
+                    <td><b>L</b>ow <b>O</b>rbit <b>I</b>on <b>C</b>annon</td>
+                    <td>ابزار ساده DoS با رابط گرافیکی.</td>
+                    <td>حملات TCP, UDP, HTTP.</td>
+                    <td>استفاده از LOIC برای حمله به یک وب‌سایت.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">CDN</span></td>
+                    <td><b>C</b>ontent <b>D</b>elivery <b>N</b>etwork</td>
+                    <td>شبکه توزیع محتوا برای کاهش ترافیک سرور اصلی.</td>
+                    <td>جلوگیری از حملات DDoS.</td>
+                    <td>Cloudflare, Akamai.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۰ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۰:</b>
+        <p>
+            در این ماژول با یکی از قدیمی‌ترین و رایج‌ترین حملات سایبری، یعنی <b>حملات محروم‌سازی از سرویس (DoS)</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>تعریف و اهمیت</b> حملات DoS و DDoS.</li>
+            <li><b>انواع حملات:</b> SYN Flood, UDP Flood, ICMP Flood, HTTP Flood, Slowloris.</li>
+            <li><b>حملات معروف:</b> Smurf, Ping of Death, حملات بازتابی و تقویتی.</li>
+            <li><b>بات‌نت‌ها:</b> Mirai, Zeus, Emotet.</li>
+            <li><b>ابزارهای DoS:</b> hping3, Slowloris, GoldenEye, LOIC, HOIC.</li>
+            <li><b>تشخیص حملات:</b> با Wireshark, Snort, netstat.</li>
+            <li><b>راه‌های مقابله:</b> SYN Cookies, Rate Limiting, فایروال, CDN, سرویس‌های ضد DDoS.</li>
+            <li><b>نقش هوش مصنوعی</b> در تشخیص و مقابله با حملات DoS.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_11_Session_Hijacking/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۱ – Session Hijacking</a> با تکنیک‌های ربودن جلسات و روش‌های مقابله با آن آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۰ – Denial of Service | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
