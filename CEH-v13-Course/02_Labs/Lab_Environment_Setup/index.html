@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه: راه‌اندازی محیط - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .step-card {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-right: 4px solid #2a7de1;
+        }
+        .step-card h3 {
+            margin-top: 0;
+            color: #0b3b5c;
+            border-bottom: none;
+            font-size: 1.2rem;
+        }
+        .step-card .badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #2a7de1;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .step-card .warning-box {
+            background: #fef0e8;
+            border-right: 4px solid #e74c3c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .step-card .tip-box {
+            background: #e8fef0;
+            border-right: 4px solid #27ae60;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.92rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .checklist li {
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        .checklist li:before {
+            content: "✅ ";
+            font-size: 1rem;
+        }
+        .checklist li.pending:before {
+            content: "⬜ ";
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .system-req {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .system-req .req-item {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-right: 3px solid #2a7de1;
+        }
+        .system-req .req-item strong {
+            color: #0b3b5c;
+        }
+        @media (max-width: 768px) {
+            .system-req {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">آزمایشگاه‌ها</a>
+        </span>
+    </div>
+
+    <h1>🖥️ آزمایشگاه: راه‌اندازی محیط تست نفوذ</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – چرا محیط آزمایشگاهی مهم است؟</h2>
+        <p>
+            قبل از شروع هرگونه تست نفوذ، باید یک <b>محیط آزمایشگاهی امن و ایزوله</b> داشته باشید. این محیط به شما امکان می‌دهد تا بدون نگرانی از آسیب به سیستم‌های واقعی، تکنیک‌های هک را تمرین کنید.
+        </p>
+        <p>
+            در این آزمایشگاه، شما یک <b>شبکه مجازی کامل</b> با سه ماشین اصلی راه‌اندازی خواهید کرد:
+        </p>
+        <ul>
+            <li><b>Kali Linux:</b> ماشین حمله‌کننده با تمام ابزارهای تست نفوذ.</li>
+            <li><b>Metasploitable 2:</b> ماشین هدف آسیب‌پذیر برای تمرین حملات.</li>
+            <li><b>Windows 10 (اختیاری):</b> برای تمرین حملات به سیستم‌های ویندوزی.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>💡 هدف نهایی:</b>
+            <p>
+                پس از اتمام این آزمایشگاه، شما یک محیط کامل برای انجام تمام تست‌های نفوذ دوره CEH V13 خواهید داشت و می‌توانید هر سناریویی را بدون نگرانی پیاده‌سازی کنید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نیازمندی‌ها -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📋 نیازمندی‌های سیستم</h2>
+        <p>
+            قبل از شروع، مطمئن شوید که سیستم شما شرایط زیر را دارد:
+        </p>
+        <div class="system-req">
+            <div class="req-item">
+                <strong>💾 رم (RAM)</strong><br>
+                حداقل ۸ گیگابایت (۱۶ گیگابایت توصیه می‌شود)
+            </div>
+            <div class="req-item">
+                <strong>💿 فضای ذخیره‌سازی</strong><br>
+                حداقل ۵۰ گیگابایت فضای خالی
+            </div>
+            <div class="req-item">
+                <strong>⚙️ پردازنده</strong><br>
+                پشتیبانی از مجازی‌سازی (Intel VT-x یا AMD-V)
+            </div>
+            <div class="req-item">
+                <strong>🖥️ نرم‌افزار</strong><br>
+                VirtualBox 7.x یا VMware Workstation/Player
+            </div>
+        </div>
+
+        <h3>📌 نرم‌افزارهای مورد نیاز:</h3>
+        <ul>
+            <li><b>VirtualBox:</b> <a href="https://www.virtualbox.org/" target="_blank">دانلود</a> (رایگان و متن‌باز)</li>
+            <li><b>VMware Workstation Player:</b> <a href="https://www.vmware.com/products/workstation-player.html" target="_blank">دانلود</a> (رایگان برای استفاده شخصی)</li>
+            <li><b>تصاویر ISO:</b>
+                <ul>
+                    <li><a href="https://www.kali.org/get-kali/" target="_blank">Kali Linux ISO</a></li>
+                    <li><a href="https://sourceforge.net/projects/metasploitable/" target="_blank">Metasploitable 2</a></li>
+                    <li><a href="https://www.microsoft.com/software-download/windows10" target="_blank">Windows 10 ISO</a> (اختیاری)</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته:</b> اگر سیستم شما محدودیت منابع دارد، می‌توانید فقط Kali و Metasploitable را نصب کنید و از Windows صرف‌نظر کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: نصب VirtualBox و تنظیمات -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 مرحله ۱: نصب VirtualBox</h2>
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <h3>دانلود و نصب VirtualBox</h3>
+            <p>از سایت رسمی VirtualBox، آخرین نسخه را دانلود و نصب کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># برای سیستم‌های مبتنی بر Debian/Ubuntu می‌توانید از دستور زیر استفاده کنید:
+sudo apt update
+sudo apt install virtualbox virtualbox-ext-pack -y</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ توجه:</b> پس از نصب، حتماً سیستم را ری‌استارت کنید تا ماژول‌های هسته به‌درستی بارگذاری شوند.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <h3>نصب Extension Pack</h3>
+            <p>برای پشتیبانی از USB 3.0، رمزگذاری دیسک و سایر قابلیت‌ها، Extension Pack را نصب کنید.</p>
+            <ul>
+                <li>از منوی File → Preferences → Extensions</li>
+                <li>روی دکمه Add کلیک کرده و فایل .vbox-extpack را انتخاب کنید.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <h3>تنظیم شبکه مجازی (Host-Only Network)</h3>
+            <p>یک شبکه Host-Only برای ارتباط بین ماشین‌های مجازی ایجاد کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># در VirtualBox:
+# File → Host Network Manager → Create
+# Name: vboxnet0
+# IPv4 Address: 192.168.56.1
+# DHCP Server: فعال (برای تخصیص خودکار IP)</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> این شبکه به ماشین‌ها اجازه می‌دهد بدون نیاز به اینترنت واقعی، با یکدیگر ارتباط برقرار کنند.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: نصب Kali Linux -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🐧 مرحله ۲: نصب Kali Linux (ماشین حمله‌کننده)</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <h3>ایجاد ماشین مجازی جدید</h3>
+            <ul>
+                <li><b>نام:</b> Kali Linux</li>
+                <li><b>نوع:</b> Linux</li>
+                <li><b>ورژن:</b> Debian (64-bit)</li>
+                <li><b>رم:</b> ۲ تا ۴ گیگابایت (توصیه: ۴ گیگ)</li>
+                <li><b>هارد دیسک:</b> ۲۰ تا ۴۰ گیگابایت (پویا یا ثابت)</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <h3>تنظیمات شبکه</h3>
+            <ul>
+                <li><b>Adapter 1:</b> NAT (برای دسترسی به اینترنت)</li>
+                <li><b>Adapter 2:</b> Host-Only (vboxnet0) – برای ارتباط با Metasploitable</li>
+            </ul>
+            <div class="tip-box">
+                <b>💡 نکته:</b> دو آداپتور به ماشین امکان می‌دهد همزمان به اینترنت و شبکه داخلی دسترسی داشته باشد.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <h3>نصب Kali Linux</h3>
+            <ol>
+                <li>ISO را در DVD-ROM قرار دهید و ماشین را روشن کنید.</li>
+                <li>گزینه <b>Graphical Install</b> را انتخاب کنید.</li>
+                <li>زبان و منطقه را انتخاب کنید (Persian / Iran یا English).</li>
+                <li>نام میزبان: <code dir='ltr'>kali</code></li>
+                <li>نام کاربری: <code dir='ltr'>kali</code> و رمز عبور قوی انتخاب کنید.</li>
+                <li>پارتیشن‌بندی: <b>Guided – use entire disk</b></li>
+                <li>نصب GRUB روی <code dir='ltr'>/dev/sda</code></li>
+                <li>پس از اتمام، سیستم را ری‌استارت کنید.</li>
+            </ol>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># پس از ورود به Kali، سیستم را به‌روزرسانی کنید:
+sudo apt update && sudo apt upgrade -y
+
+# نصب ابزارهای اضافی (در صورت نیاز):
+sudo apt install kali-linux-headless -y</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۴</span>
+            <h3>بررسی شبکه در Kali</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># نمایش تنظیمات شبکه
+ip a
+
+# تست اتصال به اینترنت (NAT)
+ping -c 4 google.com
+
+# تست ارتباط با شبکه Host-Only (بعد از نصب Metasploitable)
+ping -c 4 192.168.56.101</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: نصب Metasploitable 2 -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🎯 مرحله ۳: نصب Metasploitable 2 (ماشین هدف)</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <h3>دانلود و راه‌اندازی</h3>
+            <ul>
+                <li>فایل <b>Metasploitable 2</b> را از اینترنت دانلود کنید (فایل .zip یا .ova).</li>
+                <li>در VirtualBox، از منوی <b>File → Import Appliance</b> استفاده کنید.</li>
+                <li>فایل .ova را انتخاب کرده و روی <b>Import</b> کلیک کنید.</li>
+                <li>تنظیمات پیش‌فرض را تأیید کنید.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <h3>تنظیمات شبکه Metasploitable</h3>
+            <ul>
+                <li><b>Adapter 1:</b> Host-Only (vboxnet0) – ارتباط با Kali</li>
+                <li><b>Adapter 2:</b> NAT (اختیاری – برای دسترسی به اینترنت)</li>
+            </ul>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> هرگز Metasploitable را با آداپتور Bridged یا NAT به اینترنت متصل نکنید! این دستگاه به‌عمد آسیب‌پذیر است و می‌تواند توسط هکرهای دیگر هدف قرار گیرد.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <h3>ورود و بررسی Metasploitable</h3>
+            <ul>
+                <li><b>نام کاربری:</b> <code dir='ltr'>msfadmin</code></li>
+                <li><b>رمز عبور:</b> <code dir='ltr'>msfadmin</code></li>
+                <li>پس از ورود، آدرس IP را بررسی کنید:</li>
+            </ul>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>ifconfig
+# یا
+ip a
+
+# آدرس IP معمولاً 192.168.56.101 است</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> اگر IP متفاوتی دریافت کردید، آن را یادداشت کنید. در تمام آزمایشگاه‌ها از این IP به عنوان هدف استفاده خواهید کرد.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: نصب Windows 10 (اختیاری) -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🪟 مرحله ۴: نصب Windows 10 (اختیاری – برای تمرین حملات ویندوزی)</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">اختیاری</span>
+            <h3>ایجاد ماشین Windows 10</h3>
+            <ul>
+                <li><b>نام:</b> Windows 10</li>
+                <li><b>نوع:</b> Windows</li>
+                <li><b>ورژن:</b> Windows 10 (64-bit)</li>
+                <li><b>رم:</b> ۴ تا ۸ گیگابایت</li>
+                <li><b>هارد دیسک:</b> ۵۰ گیگابایت</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">اختیاری</span>
+            <h3>تنظیمات شبکه</h3>
+            <ul>
+                <li><b>Adapter 1:</b> Host-Only (vboxnet0)</li>
+                <li><b>Adapter 2:</b> NAT (برای به‌روزرسانی و دسترسی به اینترنت)</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">اختیاری</span>
+            <h3>غیرفعال کردن Windows Defender و فایروال</h3>
+            <p>برای تمرین تست نفوذ، بهتر است امنیت ویندوز را به‌طور موقت غیرفعال کنید:</p>
+            <ul>
+                <li>Windows Security → Virus & threat protection → Manage settings → Real-time protection (غیرفعال)</li>
+                <li>Windows Defender Firewall → Turn Windows Defender Firewall on or off → غیرفعال</li>
+            </ul>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> این تنظیمات فقط برای محیط آزمایشگاهی است. هرگز در سیستم‌های واقعی امنیت را غیرفعال نکنید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: تست ارتباط -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔗 مرحله ۵: تست ارتباط بین ماشین‌ها</h2>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <h3>از Kali به Metasploitable پینگ کنید</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>ping -c 4 192.168.56.101</code></pre>
+            </div>
+            <p><b>خروجی مورد انتظار:</b> ۴ بسته ارسال و دریافت شده با زمان پاسخ.</p>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <h3>اسکن سریع با Nmap از Kali</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>nmap -sV -p- 192.168.56.101</code></pre>
+            </div>
+            <p><b>خروجی مورد انتظار:</b> لیست پورت‌های باز شامل 21 (FTP), 22 (SSH), 80 (HTTP), 443 (HTTPS), 3306 (MySQL) و …</p>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <h3>تست ارتباط با ویندوز (در صورت نصب)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>ping -c 4 192.168.56.102   # آدرس IP ویندوز را بررسی کنید</code></pre>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <b>✅ موفقیت!</b>
+            <p>
+                اگر همه پینگ‌ها موفقیت‌آمیز بود، محیط آزمایشگاهی شما به درستی پیکربندی شده است.
+                اکنون می‌توانید به سراغ <a href="Session_1_System_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">آزمایشگاه هک سیستم</a> بروید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: ابزارهای ضروری در Kali -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🛠️ ابزارهای ضروری در Kali</h2>
+        <p>
+            Kali Linux شامل بیش از ۶۰۰ ابزار تست نفوذ است. در اینجا مهم‌ترین ابزارهایی که در طول دوره استفاده خواهید کرد، معرفی می‌شوند:
+        </p>
+        <ul>
+            <li><b>Nmap:</b> اسکن شبکه و شناسایی پورت‌ها</li>
+            <li><b>Metasploit:</b> چارچوب بهره‌برداری از آسیب‌پذیری‌ها</li>
+            <li><b>Burp Suite:</b> تست نفوذ برنامه‌های وب</li>
+            <li><b>Wireshark:</b> تحلیل و شنود ترافیک شبکه</li>
+            <li><b>Hydra:</b> حملات Brute-Force</li>
+            <li><b>SQLmap:</b> تشخیص و بهره‌برداری SQL Injection</li>
+            <li><b>John the Ripper:</b> کرک پسورد</li>
+            <li><b>Aircrack-ng:</b> هک شبکه‌های بی‌سیم</li>
+            <li><b>Ettercap:</b> حملات MITM و ARP Spoofing</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای یادگیری هر ابزار، به بخش <a href="../03_Tools/index.html" style="color:#2a7de1;font-weight:bold;">چیت‌شیت ابزارها</a> مراجعه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: عیب‌یابی مشکلات رایج -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔧 عیب‌یابی مشکلات رایج</h2>
+
+        <div class="step-card">
+            <h3>❌ مشکل: Kali و Metasploitable نمی‌توانند یکدیگر را پینگ کنند</h3>
+            <ul>
+                <li>مطمئن شوید هر دو ماشین از آداپتور Host-Only استفاده می‌کنند.</li>
+                <li>در VirtualBox، Host Network Manager را بررسی کنید و مطمئن شوید vboxnet0 فعال است.</li>
+                <li>در Kali، آدرس IP را با <code dir='ltr'>ip a</code> و در Metasploitable با <code dir='ltr'>ifconfig</code> بررسی کنید.</li>
+                <li>در Metasploitable، فایروال را غیرفعال کنید: <code dir='ltr'>sudo ufw disable</code></li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>❌ مشکل: Kali اینترنت ندارد</h3>
+            <ul>
+                <li>مطمئن شوید که آداپتور اول (NAT) به درستی تنظیم شده است.</li>
+                <li>در Kali، دستور <code dir='ltr'>sudo dhclient eth0</code> را اجرا کنید.</li>
+                <li>فایل <code dir='ltr'>/etc/network/interfaces</code> را بررسی کنید.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>❌ مشکل: Metasploitable راه‌اندازی نمی‌شود</h3>
+            <ul>
+                <li>مطمئن شوید VirtualBox Extension Pack نصب است.</li>
+                <li>از نسخه صحیح VirtualBox استفاده کنید (حداقل ۶.x).</li>
+                <li>در صورت خطا، ماشین را با تنظیمات پیش‌فرض دوباره ایمپورت کنید.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>❌ مشکل: ابزار در Kali یافت نمی‌شود</h3>
+            <ul>
+                <li>ابزار را نصب کنید: <code dir='ltr'>sudo apt install [tool-name] -y</code></li>
+                <li>اگر ابزار در مخازن نیست، از مخزن اضافی استفاده کنید.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: چک‌لیست نهایی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>✅ چک‌لیست نهایی</h2>
+        <p>
+            قبل از شروع آزمایشگاه‌های بعدی، مطمئن شوید که تمام موارد زیر را انجام داده‌اید:
+        </p>
+        <ul class="checklist">
+            <li>VirtualBox یا VMware نصب شده است.</li>
+            <li>شبکه Host-Only (vboxnet0) پیکربندی شده است.</li>
+            <li>Kali Linux نصب و به‌روزرسانی شده است.</li>
+            <li>Metasploitable 2 ایمپورت و پیکربندی شده است.</li>
+            <li>ارتباط بین Kali و Metasploitable با پینگ تست شده است.</li>
+            <li>ابزارهای اصلی در Kali موجود هستند (Nmap, Metasploit, Burp Suite, Wireshark).</li>
+            <li>یک پوشه برای ذخیره نتایج آزمایشگاه‌ها ایجاد شده است.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>🎉 تبریک!</b>
+            <p>
+                محیط آزمایشگاهی شما آماده است. اکنون می‌توانید به سراغ 
+                <a href="Session_1_System_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">آزمایشگاه هک سیستم</a> بروید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">آزمایشگاه: راه‌اندازی محیط | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
