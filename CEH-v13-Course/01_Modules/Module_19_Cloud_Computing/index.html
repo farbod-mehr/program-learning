@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۹ - Cloud Computing - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۹ – Cloud Computing</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – رایانش ابری چیست؟</a></li>
+            <li><a href="#cloud-models">📊 مدل‌های خدمات و استقرار ابری</a></li>
+            <li><a href="#cloud-architecture">🏗️ معماری ابری</a></li>
+            <li><a href="#cloud-threats">🎯 تهدیدات و آسیب‌پذیری‌های ابری</a></li>
+            <li><a href="#aws-security">☁️ امنیت AWS</a></li>
+            <li><a href="#azure-security">☁️ امنیت Azure</a></li>
+            <li><a href="#gcp-security">☁️ امنیت GCP</a></li>
+            <li><a href="#iam">🔑 مدیریت هویت و دسترسی (IAM)</a></li>
+            <li><a href="#container-security">🐳 امنیت کانتینرها و Kubernetes</a></li>
+            <li><a href="#cloud-storage">💾 امنیت ذخیره‌سازی ابری</a></li>
+            <li><a href="#cloud-attacks">⚡ حملات به محیط‌های ابری</a></li>
+            <li><a href="#cloud-tools">🛠️ ابزارهای تست نفوذ ابری</a></li>
+            <li><a href="#ai-cloud">🤖 هوش مصنوعی در امنیت ابری</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با حملات ابری</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – رایانش ابری چیست؟</h2>
+        <p>
+            <b>رایانش ابری (Cloud Computing)</b> یک مدل محاسباتی است که دسترسی بر اساس تقاضا و از راه دور به منابع محاسباتی قابل تنظیم (شبکه‌ها، سرورها، ذخیره‌سازی، برنامه‌ها و سرویس‌ها) را فراهم می‌کند. این منابع با حداقل تلاش مدیریتی و تعامل با ارائه‌دهنده سرویس، به سرعت قابل تامین و آزادسازی هستند.
+        </p>
+        <p>
+            رایانش ابری امروزه به بخش جدایی‌ناپذیر زیرساخت‌های فناوری اطلاعات تبدیل شده است. سازمان‌ها از ابر برای کاهش هزینه‌ها، افزایش مقیاس‌پذیری و بهبود دسترس‌پذیری استفاده می‌کنند. با این حال، این تغییر به معنای ظهور چالش‌های امنیتی جدیدی نیز هست که متخصصان امنیت باید با آنها آشنا باشند.
+        </p>
+        <p>
+            در این ماژول، با مفاهیم پایه رایانش ابری، مدل‌های خدمات و استقرار، معماری ابری، تهدیدات و آسیب‌پذیری‌ها، امنیت پلتفرم‌های اصلی (AWS، Azure، GCP)، مدیریت هویت و دسترسی (IAM)، امنیت کانتینرها و Kubernetes، و ابزارهای تست نفوذ ابری آشنا خواهید شد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> حملات به محیط‌های ابری بدون مجوز جرم است. تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی با مجوز انجام شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مدل‌های خدمات و استقرار ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-models">
+        <h2>📊 مدل‌های خدمات و استقرار ابری</h2>
+        <p>
+            رایانش ابری بر اساس سه مدل خدمات اصلی و چهار مدل استقرار دسته‌بندی می‌شود:
+        </p>
+
+        <h3>📌 مدل‌های خدمات (Service Models):</h3>
+        <ul>
+            <li><b>IaaS (Infrastructure as a Service):</b> ارائه زیرساخت‌های محاسباتی (سرورها، ذخیره‌سازی، شبکه). کاربر کنترل کامل بر سیستمعامل و برنامه‌ها دارد. مثال: AWS EC2، Azure Virtual Machines.</li>
+            <li><b>PaaS (Platform as a Service):</b> ارائه پلتفرم توسعه و استقرار برنامه‌ها بدون نیاز به مدیریت زیرساخت. مثال: Google App Engine، AWS Elastic Beanstalk.</li>
+            <li><b>SaaS (Software as a Service):</b> ارائه نرم‌افزارهای آماده از طریق اینترنت. مثال: Google Workspace، Microsoft 365، Salesforce.</li>
+        </ul>
+
+        <h3>📌 مدل‌های استقرار (Deployment Models):</h3>
+        <ul>
+            <li><b>ابر عمومی (Public Cloud):</b> منابع توسط ارائه‌دهنده شخص ثالث مدیریت می‌شوند و از طریق اینترنت در دسترس عموم هستند. (AWS، Azure، GCP).</li>
+            <li><b>ابر خصوصی (Private Cloud):</b> منابع منحصراً برای یک سازمان خاص استفاده می‌شوند و معمولاً در محل (On-Premise) یا در مرکز داده اختصاصی قرار دارند.</li>
+            <li><b>ابر ترکیبی (Hybrid Cloud):</b> ترکیبی از ابر عمومی و خصوصی که داده‌ها و برنامه‌ها بین آنها به اشتراک گذاشته می‌شوند.</li>
+            <li><b>ابر اجتماعی (Community Cloud):</b> منابع بین چندین سازمان با اهداف مشترک (مثل سازمان‌های دولتی) به اشتراک گذاشته می‌شود.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در CEH v13، تمرکز اصلی بر امنیت ابرهای عمومی (AWS، Azure، GCP) است، زیرا رایج‌ترین محیط‌های ابری مورد استفاده سازمان‌ها هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: معماری ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-architecture">
+        <h2>🏗️ معماری ابری (Cloud Architecture)</h2>
+        <p>
+            معماری ابری شامل اجزای مختلفی است که با هم یک محیط ابری کارآمد و مقیاس‌پذیر را تشکیل می‌دهند.
+        </p>
+
+        <h3>📌 اجزای اصلی معماری ابری:</h3>
+        <ul>
+            <li><b>Frontend (سمت کاربر):</b> رابط‌های کاربری و APIهایی که کاربران برای تعامل با ابر استفاده می‌کنند.</li>
+            <li><b>Backend (سمت سرور):</b> منابع محاسباتی، ذخیره‌سازی، شبکه و نرم‌افزارهای مدیریت ابر.</li>
+            <li><b>شبکه (Network):</b> زیرساخت ارتباطی که Frontend و Backend را به هم متصل می‌کند.</li>
+            <li><b>ذخیره‌سازی (Storage):</b> ذخیره‌سازی داده‌ها به صورت ساختاریافته (پایگاه‌های داده) و غیرساختاریافته (فایل‌ها، اشیاء).</li>
+            <li><b>مجازی‌سازی (Virtualization):</b> فناوری که منابع فیزیکی را به منابع مجازی تبدیل می‌کند.</li>
+            <li><b>مدیریت (Management):</b> ابزارهای نظارت، مقیاس‌پذیری و مدیریت منابع.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> درک معماری ابری برای شناسایی نقاط ضعف و حملات مؤثر ضروری است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: تهدیدات و آسیب‌پذیری‌های ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-threats">
+        <h2>🎯 تهدیدات و آسیب‌پذیری‌های ابری</h2>
+        <p>
+            محیط‌های ابری با تهدیدات و آسیب‌پذیری‌های خاصی مواجه هستند که در ادامه به مهم‌ترین آنها اشاره می‌کنیم:
+        </p>
+
+        <h3>📌 تهدیدات اصلی امنیت ابری (بر اساس CSA Top Threats 2024):</h3>
+        <ul>
+            <li><b>پیکربندی اشتباه (Misconfiguration):</b> شایع‌ترین علت نقض امنیت در ابر.</li>
+            <li><b>کنترل دسترسی ناکافی (Insufficient Access Controls):</b> مدیریت ضعیف IAM.</li>
+            <li><b>آسیب‌پذیری‌های APIها:</b> APIهای ابری که به درستی امن نشده‌اند.</li>
+            <li><b>دزدیده شدن اعتبارنامه‌ها (Credential Theft):</b> سرقت کلیدهای API و رمزهای عبور.</li>
+            <li><b>تهدیدات داخلی (Insider Threats):</b> کارمندان یا پیمانکاران با دسترسی سوءاستفاده‌کننده.</li>
+            <li><b>حملات انکار سرویس (DoS/DDoS):</b> هدف قرار دادن در دسترس بودن سرویس‌های ابری.</li>
+            <li><b>نشت داده (Data Breaches):</b> دسترسی غیرمجاز به داده‌های ذخیره‌شده در ابر.</li>
+            <li><b>کمبود دید و نظارت (Visibility & Monitoring Gaps):</b> عدم توانایی در مشاهده کامل محیط ابری.</li>
+            <li><b>وابستگی به ارائه‌دهنده (Vendor Lock-in):</b> مشکلات مهاجرت و امنیت بین سرویس‌ها.</li>
+            <li><b>حملات به کانتینرها و Kubernetes:</b> هدف قرار دادن برنامه‌های کانتینری.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> پیکربندی اشتباه در ابر (مانند باز بودن Bucketها) یکی از اصلی‌ترین دلایل نشت داده در سال‌های اخیر بوده است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: امنیت AWS -->
+    <!-- ============================================================ -->
+    <div class="card" id="aws-security">
+        <h2>☁️ امنیت AWS (Amazon Web Services)</h2>
+        <p>
+            AWS بزرگترین ارائه‌دهنده خدمات ابری در جهان است و امنیت آن یکی از مهم‌ترین مباحث در هک قانونمند محسوب می‌شود.
+        </p>
+
+        <h3>📌 اجزای کلیدی امنیت AWS:</h3>
+        <ul>
+            <li><b>IAM (Identity and Access Management):</b> مدیریت کاربران، گروه‌ها و دسترسی‌ها.</li>
+            <li><b>S3 (Simple Storage Service):</b> ذخیره‌سازی اشیاء که به دلیل پیکربندی اشتباه، یکی از منابع اصلی نشت داده است.</li>
+            <li><b>EC2 (Elastic Compute Cloud):</b> ماشین‌های مجازی که نیاز به مدیریت امنیتی دقیق دارند.</li>
+            <li><b>VPC (Virtual Private Cloud):</b> شبکه مجازی ایزوله برای منابع AWS.</li>
+            <li><b>CloudTrail:</b> ثبت و مانیتورینگ فعالیت‌های API.</li>
+            <li><b>GuardDuty:</b> تشخیص تهدیدات مبتنی بر یادگیری ماشین.</li>
+            <li><b>Inspector:</b> اسکن خودکار آسیب‌پذیری.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب و پیکربندی AWS CLI
+aws configure
+
+# لیست کردن Bucketهای S3 (تست دسترسی)
+aws s3 ls
+
+# بررسی تنظیمات امنیتی IAM
+aws iam list-users
+aws iam list-groups</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> S3 Bucketهای عمومی یکی از رایج‌ترین آسیب‌پذیری‌های AWS هستند. همیشه سطح دسترسی Bucketها را بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: امنیت Azure -->
+    <!-- ============================================================ -->
+    <div class="card" id="azure-security">
+        <h2>☁️ امنیت Azure (Microsoft Azure)</h2>
+        <p>
+            Azure دومین ارائه‌دهنده بزرگ خدمات ابری است که به دلیل یکپارچگی با محصولات مایکروسافت، بسیار محبوب است.
+        </p>
+
+        <h3>📌 اجزای کلیدی امنیت Azure:</h3>
+        <ul>
+            <li><b>Azure AD (Active Directory):</b> مدیریت هویت و دسترسی.</li>
+            <li><b>Azure Key Vault:</b> ذخیره‌سازی امن کلیدها و رمزها.</li>
+            <li><b>Azure Security Center:</b> مدیریت یکپارچه امنیت و نظارت.</li>
+            <li><b>Azure Sentinel:</b> سیستم SIEM ابری.</li>
+            <li><b>Azure VNet:</b> شبکه‌های مجازی.</li>
+            <li><b>Azure Blob Storage:</b> ذخیره‌سازی اشیاء (مشابه S3).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب Azure CLI
+az login
+
+# لیست کردن منابع
+az resource list
+
+# بررسی دسترسی‌ها
+az role assignment list</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Azure AD یکی از مهم‌ترین اهداف حملات در محیط‌های Azure است. مدیریت صحیح نقش‌ها و دسترسی‌ها بسیار حیاتی است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: امنیت GCP -->
+    <!-- ============================================================ -->
+    <div class="card" id="gcp-security">
+        <h2>☁️ امنیت GCP (Google Cloud Platform)</h2>
+        <p>
+            GCP سومین ارائه‌دهنده بزرگ خدمات ابری است که به دلیل قدرت در داده‌های بزرگ و یادگیری ماشین شناخته می‌شود.
+        </p>
+
+        <h3>📌 اجزای کلیدی امنیت GCP:</h3>
+        <ul>
+            <li><b>IAM:</b> مدیریت هویت و دسترسی.</li>
+            <li><b>Cloud Storage:</b> ذخیره‌سازی اشیاء (مشابه S3).</li>
+            <li><b>Compute Engine:</b> ماشین‌های مجازی.</li>
+            <li><b>Cloud Armor:</b> محافظت در برابر DDoS و WAF.</li>
+            <li><b>Security Command Center:</b> مدیریت امنیت و کشف آسیب‌پذیری.</li>
+            <li><b>VPC Service Controls:</b> جداسازی سرویس‌ها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب gcloud CLI
+gcloud init
+
+# لیست کردن پروژه‌ها
+gcloud projects list
+
+# بررسی دسترسی‌ها
+gcloud projects get-iam-policy PROJECT_ID</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> GCP از Cloud IAM برای مدیریت دسترسی استفاده می‌کند. اصول کمترین دسترسی (Least Privilege) باید به دقت رعایت شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: مدیریت هویت و دسترسی (IAM) -->
+    <!-- ============================================================ -->
+    <div class="card" id="iam">
+        <h2>🔑 مدیریت هویت و دسترسی (IAM)</h2>
+        <p>
+            <b>IAM (Identity and Access Management)</b> یکی از حیاتی‌ترین اجزای امنیت ابری است که تعیین می‌کند چه کسی (Who) به چه چیزی (What) و چگونه (How) دسترسی دارد.
+        </p>
+
+        <h3>📌 مفاهیم اصلی IAM:</h3>
+        <ul>
+            <li><b>User (کاربر):</b> یک هویت منحصربه‌فرد (معمولاً یک شخص).</li>
+            <li><b>Group (گروه):</b> مجموعه‌ای از کاربران با مجوزهای مشترک.</li>
+            <li><b>Role (نقش):</b> مجموعه‌ای از مجوزها که می‌تواند به کاربران یا سرویس‌ها اختصاص داده شود.</li>
+            <li><b>Policy (سیاست):</b> مجموعه قوانینی که دسترسی را مشخص می‌کند.</li>
+            <li><b>Permission (مجوز):</b> اجازه انجام یک عمل خاص روی یک منبع خاص.</li>
+        </ul>
+
+        <h3>📌 اصول کلیدی IAM:</h3>
+        <ul>
+            <li><b>Least Privilege (کمترین دسترسی):</b> فقط دسترسی‌های لازم برای انجام وظایف را اعطا کنید.</li>
+            <li><b>Separation of Duties (جدایی وظایف):</b> هیچ کاربری نباید تمام مجوزهای یک فرآیند حساس را داشته باشد.</li>
+            <li><b>MFA (Multi-Factor Authentication):</b> برای کاربران با دسترسی بالا الزامی است.</li>
+            <li><b>بررسی منظم دسترسی‌ها:</b> به‌طور دوره‌ای مجوزهای کاربران را بررسی و اصلاح کنید.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># AWS IAM: ایجاد یک کاربر جدید
+aws iam create-user --user-name newuser
+
+# AWS IAM: متصل کردن یک سیاست به کاربر
+aws iam attach-user-policy --user-name newuser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
+# Azure: ایجاد یک نقش
+az role assignment create --assignee user@domain.com --role Contributor</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> یکی از بزرگترین ریسک‌های امنیتی، اعطای دسترسی‌های بیش از حد به کاربران است. همیشه از اصل کمترین دسترسی پیروی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: امنیت کانتینرها و Kubernetes -->
+    <!-- ============================================================ -->
+    <div class="card" id="container-security">
+        <h2>🐳 امنیت کانتینرها و Kubernetes</h2>
+        <p>
+            کانتینرها (مانند Docker) و Kubernetes به عنوان استانداردهای استقرار برنامه‌های مدرن، نیازمند توجه ویژه به امنیت هستند.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های رایج کانتینرها:</h3>
+        <ul>
+            <li><b>تصاویر ناامن (Insecure Images):</b> استفاده از تصاویر پایه با آسیب‌پذیری‌های شناخته‌شده.</li>
+            <li><b>رمزهای پیش‌فرض:</b> وجود رمزهای پیش‌فرض در تصاویر.</li>
+            <li><b>دسترسی root:</b> اجرای کانتینر با دسترسی root.</li>
+            <li><b>متغیرهای محیطی حساس:</b> ذخیره کلیدهای API در متغیرهای محیطی.</li>
+        </ul>
+
+        <h3>📌 آسیب‌پذیری‌های رایج Kubernetes:</h3>
+        <ul>
+            <li><b>پیکربندی ضعیف RBAC:</b> مدیریت نادرست نقش‌ها و دسترسی‌ها.</li>
+            <li><b>API Server بدون احراز هویت:</b> دسترسی عمومی به API Server.</li>
+            <li><b>ثبت‌های (Secrets) ضعیف:</b> ذخیره‌سازی ناامن اطلاعات حساس.</li>
+            <li><b>پهنه‌های شبکه (Network Policies):</b> عدم محدودیت در ارتباطات بین Podها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن تصاویر Docker با Trivy
+trivy image myapp:latest
+
+# بررسی تنظیمات امنیتی Kubernetes با kube-hunter
+kube-hunter --pod
+
+# بررسی دسترسی‌ها در Kubernetes
+kubectl auth can-i list pods --as=system:serviceaccount:default:myuser</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> استفاده از ابزارهایی مانند Trivy، Clair و Aqua Security برای اسکن آسیب‌پذیری تصاویر کانتینری ضروری است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: امنیت ذخیره‌سازی ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-storage">
+        <h2>💾 امنیت ذخیره‌سازی ابری (Cloud Storage Security)</h2>
+        <p>
+            ذخیره‌سازی ابری (S3، Blob Storage، Cloud Storage) یکی از پرکاربردترین سرویس‌های ابری است که به دلیل سادگی، اغلب پیکربندی اشتباه دارد.
+        </p>
+
+        <h3>📌 تهدیدات مرتبط با ذخیره‌سازی ابری:</h3>
+        <ul>
+            <li><b>دسترسی عمومی (Public Access):</b> باز بودن Bucketها به روی عموم.</li>
+            <li><b>فایل‌های حساس غیررمزنگاری‌شده:</b> ذخیره داده‌های حساس بدون رمزنگاری.</li>
+            <li><b>مدیریت ضعیف کلید:</b> کلیدهای دسترسی به سرقت رفته.</li>
+            <li><b>نسخه‌سازی غیرفعال:</b> عدم امکان بازیابی فایل‌های حذف‌شده.</li>
+            <li><b>گزارش‌دهی ضعیف:</b> عدم مانیتورینگ دسترسی‌ها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># AWS S3: بررسی سطح دسترسی یک Bucket
+aws s3api get-bucket-acl --bucket my-bucket
+
+# AWS S3: فعال‌سازی رمزنگاری
+aws s3api put-bucket-encryption --bucket my-bucket --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+
+# Azure: بررسی دسترسی Blob Storage
+az storage container show --name mycontainer --account-name myaccount</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> باز بودن غیرعمدی Bucketهای ذخیره‌سازی یکی از بزرگترین علل نشت داده در سال‌های اخیر بوده است. همیشه تنظیمات دسترسی را بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: حملات به محیط‌های ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-attacks">
+        <h2>⚡ حملات به محیط‌های ابری</h2>
+        <p>
+            حملات به محیط‌های ابری شامل مجموعه‌ای از تکنیک‌ها برای نفوذ، سرقت داده و ایجاد اختلال در سرویس‌های ابری است.
+        </p>
+
+        <h3>📌 حملات رایج ابری:</h3>
+        <ul>
+            <li><b>حملات به S3/Blob Storage:</b> جستجوی Bucketهای عمومی و استخراج داده.</li>
+            <li><b>جعل هویت IAM:</b> سرقت کلیدهای API و دسترسی به منابع.</li>
+            <li><b>حملات به EC2/VM:</b> اسکن آسیب‌پذیری و نفوذ به ماشین‌های مجازی.</li>
+            <li><b>حملات DoS/DDoS:</b> هدف قرار دادن سرویس‌های ابری.</li>
+            <li><b>حملات به Kubernetes:</b> نفوذ به خوشه‌های Kubernetes.</li>
+            <li><b>حملات Supply Chain:</b> آلوده کردن تصاویر کانتینری.</li>
+            <li><b>SSRF (Server-Side Request Forgery):</b> دسترسی به متادیتای ابری (AWS Metadata API).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># حمله به AWS Metadata API (SSRF)
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/admin
+
+# جستجوی Bucketهای عمومی با AWS CLI
+aws s3 ls s3:// --recursive | grep "public"
+
+# اسکن آسیب‌پذیری EC2 با Nmap
+nmap -sV -p 22,80,443 192.168.1.101</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> حملات به Metadata API یکی از رایج‌ترین روش‌های به دست آوردن اعتبارنامه‌های IAM در AWS است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: ابزارهای تست نفوذ ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="cloud-tools">
+        <h2>🛠️ ابزارهای تست نفوذ ابری</h2>
+        <p>
+            ابزارهای متعددی برای تست نفوذ و ارزیابی امنیت محیط‌های ابری وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>پلتفرم</th><th>کاربرد اصلی</th></tr>
+                <tr>
+                    <td><b>Pacu</b></td>
+                    <td>AWS</td>
+                    <td>چارچوب تست نفوذ AWS</td>
+                </tr>
+                <tr>
+                    <td><b>ScoutSuite</b></td>
+                    <td>AWS, Azure, GCP</td>
+                    <td>ارزیابی امنیت چندپلتفرمی</td>
+                </tr>
+                <tr>
+                    <td><b>CloudBrute</b></td>
+                    <td>AWS, Azure, GCP, DigitalOcean</td>
+                    <td>جستجوی ذخیره‌سازی‌های عمومی</td>
+                </tr>
+                <tr>
+                    <td><b>Stormspotter</b></td>
+                    <td>Azure</td>
+                    <td>نقشه‌برداری و تحلیل امنیتی Azure</td>
+                </tr>
+                <tr>
+                    <td><b>Cartography</b></td>
+                    <td>AWS, Azure, GCP</td>
+                    <td>نقشه‌برداری زیرساخت ابری</td>
+                </tr>
+                <tr>
+                    <td><b>CloudSploit</b></td>
+                    <td>AWS, Azure, GCP</td>
+                    <td>اسکن خودکار پیکربندی امنیتی</td>
+                </tr>
+                <tr>
+                    <td><b>kube-hunter</b></td>
+                    <td>Kubernetes</td>
+                    <td>اسکن امنیتی Kubernetes</td>
+                </tr>
+                <tr>
+                    <td><b>Trivy</b></td>
+                    <td>کانتینرها</td>
+                    <td>اسکن آسیب‌پذیری تصاویر</td>
+                </tr>
+                <tr>
+                    <td><b>CloudMapper</b></td>
+                    <td>AWS</td>
+                    <td>نقشه‌برداری و تحلیل امنیتی AWS</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Pacu برای تست AWS
+git clone https://github.com/RhinoSecurityLabs/pacu.git
+cd pacu
+python3 pacu.py
+# سپس کلیدهای AWS را وارد کنید
+
+# استفاده از ScoutSuite
+scout --help
+
+# استفاده از CloudBrute برای جستجوی Bucketهای عمومی
+cloudbrute -d company.com -k aws</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Pacu یکی از قدرتمندترین ابزارهای تست نفوذ اختصاصی AWS است که توسط Rhino Security Labs توسعه یافته است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: هوش مصنوعی در امنیت ابری -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-cloud">
+        <h2>🤖 هوش مصنوعی در امنیت ابری</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در امنیت ابری نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در امنیت ابری:</h3>
+        <ul>
+            <li><b>تشخیص خودکار پیکربندی اشتباه:</b> AI می‌تواند تنظیمات ناامن را در محیط‌های ابری شناسایی کند.</li>
+            <li><b>شناسایی فعالیت‌های غیرعادی:</b> AI می‌تواند رفتارهای مشکوک در IAM و APIها را تشخیص دهد.</li>
+            <li><b>پیش‌بینی حملات:</b> AI می‌تواند حملات به سرویس‌های ابری را پیش‌بینی کند.</li>
+            <li><b>اتوماسیون پاسخ به حوادث:</b> AI می‌تواند به‌صورت خودکار به تهدیدات پاسخ دهد.</li>
+            <li><b>تحلیل تصاویر کانتینری:</b> AI می‌تواند آسیب‌پذیری‌های تصاویر را شناسایی کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Cloud Security:</h3>
+        <ul>
+            <li><b>AWS GuardDuty:</b> تشخیص تهدیدات مبتنی بر یادگیری ماشین.</li>
+            <li><b>Azure Security Center:</b> با قابلیت‌های AI برای تشخیص تهدیدات.</li>
+            <li><b>Google Cloud Security Command Center:</b> با قابلیت تحلیل هوشمند.</li>
+            <li><b>Lacework:</b> پلتفرم امنیت ابری مبتنی بر AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در امنیت ابری مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند حجم عظیم داده‌های ابری را تحلیل کرده و حملات پیچیده را سریع‌تر از روش‌های سنتی شناسایی کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات ابری</h2>
+        <p>
+            برای محافظت از محیط‌های ابری در برابر حملات، سازمان‌ها باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>مدیریت صحیح IAM:</b> استفاده از اصل کمترین دسترسی، فعال‌سازی MFA.</li>
+            <li><b>رمزنگاری داده‌ها:</b> رمزنگاری داده‌ها در حالت ذخیره‌سازی و انتقال.</li>
+            <li><b>پیکربندی امن:</b> بررسی منظم تنظیمات امنیتی با ابزارهایی مانند ScoutSuite.</li>
+            <li><b>مونیتورینگ و لاگ‌گیری:</b> فعال‌سازی CloudTrail، Azure Monitor، و Stackdriver Logging.</li>
+            <li><b>استفاده از WAF و فایروال:</b> محافظت از برنامه‌ها و APIها.</li>
+            <li><b>به‌روزرسانی تصاویر کانتینری:</b> اسکن و به‌روزرسانی منظم تصاویر.</li>
+            <li><b>آموزش کارکنان:</b> آگاهی‌بخشی درباره امنیت ابری.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر پلتفرم:</h3>
+        <ul>
+            <li><b>AWS:</b> استفاده از AWS Config، AWS Shield، Amazon Inspector.</li>
+            <li><b>Azure:</b> استفاده از Azure Policy، Azure Firewall، Azure DDoS Protection.</li>
+            <li><b>GCP:</b> استفاده از Cloud Armor، Security Command Center، VPC Service Controls.</li>
+            <li><b>Kubernetes:</b> استفاده از Network Policies، Pod Security Policies، RBAC صحیح.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات ابری، ترکیبی از پیکربندی صحیح، مونیتورینگ مداوم و استفاده از ابزارهای خودکار است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – تست نفوذ ابری</h2>
+        <p>
+            در این کارگاه، شما با ابزارهای تست نفوذ ابری آشنا خواهید شد و یک سناریوی کامل از ارزیابی امنیت یک محیط ابری را پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای Pacu و ScoutSuite.</li>
+            <li>شناسایی پیکربندی‌های اشتباه در محیط AWS.</li>
+            <li>اجرای حمله به Metadata API.</li>
+            <li>اسکن آسیب‌پذیری کانتینرها.</li>
+            <li>مقابله با آسیب‌پذیری‌های شناسایی‌شده.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> یک محیط AWS آزمایشگاهی (با مجوز) یا یک شبیه‌ساز محلی (مانند LocalStack).</li>
+            <li><b>ابزارها:</b> AWS CLI, Pacu, ScoutSuite, Trivy, Nmap</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: نصب و پیکربندی ابزارها</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب AWS CLI
+sudo apt install awscli
+
+# نصب Pacu
+git clone https://github.com/RhinoSecurityLabs/pacu.git
+cd pacu
+pip3 install -r requirements.txt
+
+# نصب ScoutSuite
+pip3 install scoutsuite
+
+# نصب Trivy
+sudo apt install trivy</code></pre>
+        </div>
+
+        <h4>مرحله ۲: اسکن با ScoutSuite</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن کامل AWS
+scout aws --report-dir ./reports</code></pre>
+        </div>
+
+        <h4>مرحله ۳: تست با Pacu</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اجرای Pacu
+python3 pacu.py
+# وارد کردن کلیدهای AWS
+# اجرای ماژول‌ها برای کشف آسیب‌پذیری‌ها</code></pre>
+        </div>
+
+        <h4>مرحله ۴: جستجوی دسترسی‌های عمومی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># جستجوی S3 Bucketهای عمومی
+aws s3 ls s3:// --recursive | grep "public"
+
+# با CloudBrute
+cloudbrute -d example.com -k aws</code></pre>
+        </div>
+
+        <h4>مرحله ۵: اسکن کانتینرها با Trivy</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن یک تصویر Docker
+trivy image nginx:latest</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود (با مجوز) اجرا کنید و یک گزارش کامل از فرآیند تست نفوذ ابری، یافته‌ها و راهکارهای رفع تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه امنیت ابری را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – ScoutSuite:</b>
+                <br>با استفاده از ScoutSuite، یک محیط AWS آزمایشگاهی را اسکن کنید و پیکربندی‌های اشتباه را شناسایی کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – Pacu:</b>
+                <br>با استفاده از Pacu، ماژول‌های مختلف را روی یک محیط AWS آزمایشگاهی اجرا کنید و نتایج را تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Metadata API:</b>
+                <br>روی یک EC2 آزمایشگاهی، دسترسی به Metadata API را شبیه‌سازی کنید و اعتبارنامه‌های IAM را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – امنیت کانتینرها:</b>
+                <br>یک تصویر Docker (مثل nginx) را با Trivy اسکن کنید و آسیب‌پذیری‌های آن را شناسایی کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – ارائه راهکارهای امنیتی:</b>
+                <br>برای یک سازمان با محیط AWS، یک برنامه امنیتی جامع (شامل IAM، رمزنگاری، مونیتورینگ، WAF) تهیه کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IaaS</span></td>
+                    <td><b>I</b>nfrastructure <b>a</b>s <b>a</b> <b>S</b>ervice</td>
+                    <td>زیرساخت به عنوان سرویس</td>
+                    <td>هدف حملات به سرورها و شبکه</td>
+                    <td>AWS EC2, Azure VMs</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">PaaS</span></td>
+                    <td><b>P</b>latform <b>a</b>s <b>a</b> <b>S</b>ervice</td>
+                    <td>پلتفرم به عنوان سرویس</td>
+                    <td>هدف حملات به برنامه‌ها</td>
+                    <td>Google App Engine</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SaaS</span></td>
+                    <td><b>S</b>oftware <b>a</b>s <b>a</b> <b>S</b>ervice</td>
+                    <td>نرم‌افزار به عنوان سرویس</td>
+                    <td>هدف حملات فیشینگ و سرقت داده</td>
+                    <td>Google Workspace, Office 365</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IAM</span></td>
+                    <td><b>I</b>dentity <b>a</b>nd <b>A</b>ccess <b>M</b>anagement</td>
+                    <td>مدیریت هویت و دسترسی</td>
+                    <td>مدیریت مجوزها و دسترسی‌ها</td>
+                    <td>AWS IAM, Azure AD</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">S3</span></td>
+                    <td><b>S</b>imple <b>S</b>torage <b>S</b>ervice</td>
+                    <td>سرویس ذخیره‌سازی AWS</td>
+                    <td>دسترسی به Bucketهای عمومی</td>
+                    <td>aws s3 ls</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">EC2</span></td>
+                    <td><b>E</b>lastic <b>C</b>ompute <b>C</b>loud</td>
+                    <td>ماشین‌های مجازی AWS</td>
+                    <td>اسکن آسیب‌پذیری VMها</td>
+                    <td>nmap EC2_IP</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Container</span></td>
+                    <td>—</td>
+                    <td>کانتینر (مثل Docker)</td>
+                    <td>اسکن آسیب‌پذیری تصاویر</td>
+                    <td>Docker, Trivy</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Kubernetes</span></td>
+                    <td>K8s</td>
+                    <td>سیستم ارکستراسیون کانتینر</td>
+                    <td>نفوذ به خوشه‌ها</td>
+                    <td>kubectl, kube-hunter</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Pacu</span></td>
+                    <td>—</td>
+                    <td>چارچوب تست نفوذ AWS</td>
+                    <td>ارزیابی امنیت AWS</td>
+                    <td>python3 pacu.py</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ScoutSuite</span></td>
+                    <td>—</td>
+                    <td>ابزار ارزیابی امنیت چندپلتفرمی</td>
+                    <td>اسکن پیکربندی ابری</td>
+                    <td>scout aws</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Metadata API</span></td>
+                    <td>—</td>
+                    <td>API متادیتای AWS</td>
+                    <td>استخراج اعتبارنامه‌های IAM</td>
+                    <td>curl 169.254.169.254</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Serverless</span></td>
+                    <td>—</td>
+                    <td>محاسبات بدون سرور</td>
+                    <td>حملات به توابع Lambda</td>
+                    <td>AWS Lambda, Azure Functions</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۹ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۹:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین حوزه‌های امنیت سایبری مدرن، یعنی <b>امنیت رایانش ابری</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>مفاهیم پایه:</b> IaaS, PaaS, SaaS و مدل‌های استقرار.</li>
+            <li><b>معماری ابری:</b> اجزا و نحوه عملکرد محیط‌های ابری.</li>
+            <li><b>تهدیدات ابری:</b> پیکربندی اشتباه، IAM ضعیف، حملات DDoS و …</li>
+            <li><b>امنیت AWS, Azure, GCP:</b> خدمات کلیدی و نکات امنیتی هر پلتفرم.</li>
+            <li><b>IAM:</b> مدیریت هویت و دسترسی با اصل کمترین دسترسی.</li>
+            <li><b>امنیت کانتینرها و Kubernetes:</b> آسیب‌پذیری‌ها و ابزارهای اسکن.</li>
+            <li><b>حملات ابری:</b> SSRF, S3 Public Access, Metadata API.</li>
+            <li><b>ابزارهای تست نفوذ:</b> Pacu, ScoutSuite, CloudBrute, Trivy.</li>
+            <li><b>نقش هوش مصنوعی:</b> تشخیص تهدیدات و اتوماسیون امنیتی.</li>
+            <li><b>راه‌های مقابله:</b> پیکربندی صحیح، مونیتورینگ، به‌روزرسانی.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_20_Cryptography/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۲۰ – Cryptography</a> با مفاهیم رمزنگاری و کاربردهای آن در امنیت اطلاعات آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۹ – Cloud Computing | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
