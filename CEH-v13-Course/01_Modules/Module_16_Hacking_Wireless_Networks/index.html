@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۶ - Hacking Wireless Networks - دوره CEH V13</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۶ – Hacking Wireless Networks</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – هک شبکه‌های بی‌سیم</a></li>
+            <li><a href="#basics">📡 مفاهیم پایه شبکه‌های بی‌سیم</a></li>
+            <li><a href="#standards">📶 استانداردهای بی‌سیم (802.11)</a></li>
+            <li><a href="#encryption">🔐 پروتکل‌های امنیتی وای‌فای</a></li>
+            <li><a href="#wep">🔴 WEP – آسیب‌پذیری‌ها و کرک</a></li>
+            <li><a href="#wpa">🟡 WPA/WPA2 – آسیب‌پذیری‌ها و کرک</a></li>
+            <li><a href="#wpa3">🟢 WPA3 – امنیت جدید</a></li>
+            <li><a href="#attacks">🎯 انواع حملات به شبکه‌های بی‌سیم</a></li>
+            <li><a href="#tools">🛠️ ابزارهای هک وای‌فای</a></li>
+            <li><a href="#aircrack">📡 آموزش جامع Aircrack-ng</a></li>
+            <li><a href="#wps">🔑 حملات به WPS</a></li>
+            <li><a href="#eviltwin">🎭 حمله Evil Twin</a></li>
+            <li><a href="#deauth">📡 حمله Deauthentication</a></li>
+            <li><a href="#wireless-sniffing">👁️ شنود شبکه‌های بی‌سیم</a></li>
+            <li><a href="#ai-wireless">🤖 هوش مصنوعی در هک وای‌فای</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با حملات بی‌سیم</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – هک شبکه‌های بی‌سیم</h2>
+        <p>
+            <b>شبکه‌های بی‌سیم (Wireless Networks)</b> امروزه به بخش جدایی‌ناپذیر زندگی ما تبدیل شده‌اند. از خانه‌ها و ادارات گرفته تا کافه‌ها و فضاهای عمومی، همه‌جا به وای‌فای دسترسی داریم. اما همین راحتی و دسترسی‌پذیری، شبکه‌های بی‌سیم را به یکی از اهداف اصلی هکرها تبدیل کرده است.
+        </p>
+        <p>
+            هک شبکه‌های بی‌سیم شامل مجموعه‌ای از تکنیک‌ها برای شناسایی، نفوذ و بهره‌برداری از آسیب‌پذیری‌های شبکه‌های وای‌فای است. این حملات می‌توانند از شنود ترافیک و سرقت اطلاعات تا نفوذ کامل به شبکه و دستگاه‌های متصل را شامل شوند.
+        </p>
+        <p>
+            در این ماژول، با مفاهیم پایه شبکه‌های بی‌سیم، استانداردها، پروتکل‌های امنیتی، انواع حملات، ابزارهای تخصصی و مهم‌تر از همه، روش‌های دفاعی آشنا خواهید شد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> هک شبکه‌های بی‌سیم بدون مجوز جرم است. تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی و با مجوز انجام شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مفاهیم پایه -->
+    <!-- ============================================================ -->
+    <div class="card" id="basics">
+        <h2>📡 مفاهیم پایه شبکه‌های بی‌سیم</h2>
+        <p>
+            برای درک هک شبکه‌های بی‌سیم، ابتدا باید با مفاهیم پایه آنها آشنا شوید:
+        </p>
+
+        <h3>📌 اجزای یک شبکه بی‌سیم:</h3>
+        <ul>
+            <li><b>AP (Access Point - نقطه دسترسی):</b> دستگاهی که شبکه بی‌سیم را ایجاد می‌کند و کلاینت‌ها به آن متصل می‌شوند.</li>
+            <li><b>کلاینت (Client):</b> دستگاه‌هایی که به شبکه بی‌سیم متصل می‌شوند (لپ‌تاپ، گوشی، تبلت).</li>
+            <li><b>SSID (Service Set Identifier):</b> نام شبکه بی‌سیم که کاربران آن را می‌بینند.</li>
+            <li><b>BSSID (Basic Service Set Identifier):</b> آدرس MAC دستگاه Access Point.</li>
+            <li><b>کانال (Channel):</b> فرکانس مشخصی که شبکه بی‌سیم روی آن کار می‌کند (۱ تا ۱۱ در باند ۲.۴ گیگاهرتز).</li>
+            <li><b>باند فرکانسی:</b> ۲.۴ گیگاهرتز (پوشش بیشتر، سرعت کمتر) و ۵ گیگاهرتز (سرعت بیشتر، پوشش کمتر).</li>
+        </ul>
+
+        <h3>📌 حالت‌های شبکه بی‌سیم:</h3>
+        <ul>
+            <li><b>Ad-Hoc (Peer-to-Peer):</b> دستگاه‌ها مستقیماً به هم متصل می‌شوند.</li>
+            <li><b>Infrastructure (Managed):</b> دستگاه‌ها از طریق Access Point متصل می‌شوند.</li>
+            <li><b>Mesh:</b> شبکه‌ای از Access Pointها که با هم ارتباط دارند.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در هک وای‌فای، مهم‌ترین اطلاعاتی که نیاز دارید عبارتند از: SSID، BSSID (MAC)، کانال، و پروتکل امنیتی (WEP, WPA, WPA2, WPA3).
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: استانداردهای بی‌سیم -->
+    <!-- ============================================================ -->
+    <div class="card" id="standards">
+        <h2>📶 استانداردهای بی‌سیم (IEEE 802.11)</h2>
+        <p>
+            استانداردهای IEEE 802.11 مجموعه‌ای از مشخصات فنی برای شبکه‌های بی‌سیم هستند که توسط موسسه مهندسان برق و الکترونیک (IEEE) توسعه یافته‌اند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>استاندارد</th><th>باند فرکانسی</th><th>سرعت حداکثر</th><th>محدوده</th></tr>
+                <tr><td><b>802.11a</b></td><td>۵ گیگاهرتز</td><td>۵۴ مگابیت بر ثانیه</td><td>۳۵ متر</td></tr>
+                <tr><td><b>802.11b</b></td><td>۲.۴ گیگاهرتز</td><td>۱۱ مگابیت بر ثانیه</td><td>۴۰ متر</td></tr>
+                <tr><td><b>802.11g</b></td><td>۲.۴ گیگاهرتز</td><td>۵۴ مگابیت بر ثانیه</td><td>۴۰ متر</td></tr>
+                <tr><td><b>802.11n (Wi-Fi 4)</b></td><td>۲.۴ و ۵ گیگاهرتز</td><td>۶۰۰ مگابیت بر ثانیه</td><td>۷۰ متر</td></tr>
+                <tr><td><b>802.11ac (Wi-Fi 5)</b></td><td>۵ گیگاهرتز</td><td>۳.۵ گیگابیت بر ثانیه</td><td>۳۵ متر</td></tr>
+                <tr><td><b>802.11ax (Wi-Fi 6)</b></td><td>۲.۴ و ۵ گیگاهرتز</td><td>۹.۶ گیگابیت بر ثانیه</td><td>۷۰ متر</td></tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Wi-Fi 6 (802.11ax) جدیدترین استاندارد است که سرعت و کارایی بالاتری را ارائه می‌دهد و امنیت بهتری (WPA3) دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: پروتکل‌های امنیتی وای‌فای -->
+    <!-- ============================================================ -->
+    <div class="card" id="encryption">
+        <h2>🔐 پروتکل‌های امنیتی وای‌فای</h2>
+        <p>
+            پروتکل‌های امنیتی برای محافظت از شبکه‌های بی‌سیم در برابر حملات طراحی شده‌اند. در ادامه، مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>پروتکل</th><th>سال معرفی</th><th>نوع رمزنگاری</th><th>وضعیت امنیت</th></tr>
+                <tr><td><b>WEP</b></td><td>۱۹۹۹</td><td>RC4 (رمز جریانی)</td><td>⚠️ ناامن – به راحتی قابل کرک</td></tr>
+                <tr><td><b>WPA</b></td><td>۲۰۰۳</td><td>TKIP (با RC4)</td><td>⚠️ نسبتاً امن – آسیب‌پذیر</td></tr>
+                <tr><td><b>WPA2</b></td><td>۲۰۰۴</td><td>CCMP (با AES)</td><td>✅ امن (با رمز قوی) – آسیب‌پذیر در برابر KRACK</td></tr>
+                <tr><td><b>WPA3</b></td><td>۲۰۱۸</td><td>GCMP-256 (با AES)</td><td>✅ امن‌ترین – مقاوم در برابر حملات</td></tr>
+                <tr><td><b>WPA2-Enterprise</b></td><td>۲۰۰۴</td><td>AES (با RADIUS)</td><td>✅ بسیار امن (با تنظیمات صحیح)</td></tr>
+            </table>
+        </div>
+
+        <h3>📌 تفاوت‌های کلیدی:</h3>
+        <ul>
+            <li><b>WEP:</b> قدیمی‌ترین و ناامن‌ترین – به دلیل ضعف در رمزنگاری RC4 و استفاده از IV کوتاه، به راحتی قابل کرک است.</li>
+            <li><b>WPA:</b> بهبودی نسبت به WEP با استفاده از TKIP، اما همچنان آسیب‌پذیر است (حمله KRACK).</li>
+            <li><b>WPA2:</b> استاندارد فعلی با رمزنگاری AES که امنیت خوبی دارد، اما در برابر حملات KRACK آسیب‌پذیر است.</li>
+            <li><b>WPA3:</b> جدیدترین استاندارد با امنیت بالاتر و مقاوم در برابر حملات شناخته‌شده.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> هرگز از شبکه‌های وای‌فای با WEP استفاده نکنید. این پروتکل به راحتی در عرض چند دقیقه قابل کرک است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: WEP -->
+    <!-- ============================================================ -->
+    <div class="card" id="wep">
+        <h2>🔴 WEP – آسیب‌پذیری‌ها و کرک</h2>
+        <p>
+            <b>WEP (Wired Equivalent Privacy)</b> اولین پروتکل امنیتی برای شبکه‌های بی‌سیم بود که در سال ۱۹۹۹ معرفی شد. متأسفانه این پروتکل به دلیل ضعف‌های اساسی در طراحی، امروزه کاملاً ناامن محسوب می‌شود.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های WEP:</h3>
+        <ul>
+            <li><b>IV کوتاه (۲۴ بیت):</b> بردار اولیه (Initialization Vector) فقط ۲۴ بیت است که پس از حدود ۵۰۰۰ بسته، IVها تکرار می‌شوند.</li>
+            <li><b>استفاده از RC4:</b> رمزنگاری RC4 با استفاده از IV ضعیف، آسیب‌پذیر است.</li>
+            <li><b>عدم تأیید یکپارچگی:</b> از CRC-32 برای تأیید یکپارچگی استفاده می‌کند که قابل دستکاری است.</li>
+            <li><b>کلیدهای ضعیف:</b> کلیدهای WEP اغلب کوتاه و قابل حدس هستند.</li>
+        </ul>
+
+        <h3>📌 کرک WEP با Aircrack-ng:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ۱. قرار دادن کارت شبکه در حالت Monitor
+sudo airmon-ng start wlan0
+
+# ۲. اسکن شبکه‌های بی‌سیم
+sudo airodump-ng wlan0mon
+
+# ۳. جمع‌آوری بسته‌های IV (بردار اولیه) از شبکه هدف
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# ۴. افزایش ترافیک با ارسال بسته‌های ARP (برای تولید IV بیشتر)
+sudo aireplay-ng -3 -b [BSSID] -h [Client_MAC] wlan0mon
+
+# ۵. کرک کلید WEP با استفاده از بسته‌های جمع‌آوری شده
+sudo aircrack-ng capture-01.cap</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> کرک WEP معمولاً با جمع‌آوری حدود ۴۰,۰۰۰ تا ۸۰,۰۰۰ بسته IV (بردار اولیه) انجام می‌شود که در شبکه‌های شلوغ چند دقیقه طول می‌کشد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: WPA/WPA2 -->
+    <!-- ============================================================ -->
+    <div class="card" id="wpa">
+        <h2>🟡 WPA/WPA2 – آسیب‌پذیری‌ها و کرک</h2>
+        <p>
+            <b>WPA (Wi-Fi Protected Access)</b> و <b>WPA2</b> به عنوان جایگزین‌های امن‌تر برای WEP معرفی شدند. WPA2 با استفاده از رمزنگاری AES-CCMP امنیت بسیار بالاتری دارد، اما همچنان آسیب‌پذیر است.
+        </p>
+
+        <h3>📌 آسیب‌پذیری‌های WPA/WPA2:</h3>
+        <ul>
+            <li><b>حمله WPA Handshake:</b> مهاجم با ثبت Handshake (دست‌دادن) بین کلاینت و AP، می‌تواند با Brute-Force به رمز پی ببرد.</li>
+            <li><b>حمله KRACK (Key Reinstallation Attack):</b> آسیب‌پذیری در پروتکل دست‌دادن که امکان نصب مجدد کلید را فراهم می‌کند.</li>
+            <li><b>حمله PMKID:</b> در WPA2، مهاجم می‌تواند PMKID را از AP دریافت کند و بدون نیاز به Handshake، حمله Brute-Force انجام دهد.</li>
+            <li><b>حمله دیکشنری:</b> اگر رمز شبکه ضعیف باشد، می‌توان با استفاده از لیست کلمات رایج آن را پیدا کرد.</li>
+        </ul>
+
+        <h3>📌 کرک WPA/WPA2 با Aircrack-ng:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ۱. قرار دادن کارت شبکه در حالت Monitor
+sudo airmon-ng start wlan0
+
+# ۲. اسکن شبکه‌های بی‌سیم
+sudo airodump-ng wlan0mon
+
+# ۳. جمع‌آوری Handshake از شبکه هدف
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# ۴. اجرای حمله Deauthentication برای دریافت Handshake (در صورت نیاز)
+sudo aireplay-ng -0 5 -a [BSSID] wlan0mon
+
+# ۵. کرک کلید با استفاده از Handshake و یک دیکشنری
+sudo aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap
+
+# ۶. استفاده از ابزار hashcat برای کرک سریع‌تر
+# ابتدا تبدیل cap به hccapx
+cap2hccapx capture-01.cap capture.hccapx
+# سپس کرک با hashcat
+hashcat -m 2500 capture.hccapx /usr/share/wordlists/rockyou.txt</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> کرک WPA/WPA2 نیاز به یک دیکشنری خوب و زمان زیادی دارد. اگر رمز قوی باشد، ممکن است سال‌ها طول بکشد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: WPA3 -->
+    <!-- ============================================================ -->
+    <div class="card" id="wpa3">
+        <h2>🟢 WPA3 – امنیت جدید</h2>
+        <p>
+            <b>WPA3</b> جدیدترین استاندارد امنیتی وای‌فای است که در سال ۲۰۱۸ توسط Wi-Fi Alliance معرفی شد. این استاندارد با هدف رفع آسیب‌پذیری‌های WPA2 و ارائه امنیت بالاتر طراحی شده است.
+        </p>
+
+        <h3>📌 ویژگی‌های WPA3:</h3>
+        <ul>
+            <li><b>رمزنگاری قوی‌تر:</b> استفاده از GCMP-256 با AES به جای CCMP.</li>
+            <li><b>SAE (Simultaneous Authentication of Equals):</b> جایگزینی برای PSK که در برابر حملات دیکشنری و Brute-Force مقاوم است.</li>
+            <li><b>Forward Secrecy:</b> حتی اگر کلید اصلی لو برود، ترافیک گذشته قابل رمزگشایی نیست.</li>
+            <li><b>امنیت در شبکه‌های عمومی (OWE):</b> رمزنگاری خودکار حتی در شبکه‌های بدون رمز.</li>
+            <li><b>مقاومت در برابر KRACK:</b> طراحی شده تا در برابر حملات نصب مجدد کلید مقاوم باشد.</li>
+        </ul>
+
+        <h3>📌 آسیب‌پذیری‌های WPA3 (شناخته‌شده):</h3>
+        <ul>
+            <li><b>Dragonblood:</b> مجموعه‌ای از آسیب‌پذیری‌ها در پیاده‌سازی SAE که امکان حملات DoS و Downgrade را فراهم می‌کند.</li>
+            <li><b>حمله Side-Channel:</b> در برخی پیاده‌سازی‌ها، اطلاعاتی از طریق زمان‌بندی نشت می‌کند.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> WPA3 امن‌ترین استاندارد موجود است، اما پیاده‌سازی صحیح آن بسیار مهم است. بسیاری از دستگاه‌های قدیمی از WPA3 پشتیبانی نمی‌کنند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: انواع حملات -->
+    <!-- ============================================================ -->
+    <div class="card" id="attacks">
+        <h2>🎯 انواع حملات به شبکه‌های بی‌سیم</h2>
+        <p>
+            حملات به شبکه‌های بی‌سیم را می‌توان بر اساس هدف و روش اجرا به دسته‌های زیر تقسیم کرد:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>نوع حمله</th><th>توضیح</th><th>هدف</th></tr>
+                <tr><td><b>Deauthentication Attack</b></td><td>قطع اتصال کلاینت با ارسال بسته Deauth</td><td>گرفتن Handshake برای کرک WPA/WPA2</td></tr>
+                <tr><td><b>Evil Twin Attack</b></td><td>ایجاد یک AP جعلی با همان SSID</td><td>شنود ترافیک، فیشینگ، MITM</td></tr>
+                <tr><td><b>WPS Attack</b></td><td>حمله به WPS (Wi-Fi Protected Setup)</td><td>پیدا کردن PIN و سپس رمز شبکه</td></tr>
+                <tr><td><b>Karma Attack</b></td><td>پاسخ به درخواست‌های Probe از کلاینت</td><td>اتصال کلاینت به AP جعلی</td></tr>
+                <tr><td><b>Beacon Flood</b></td><td>ارسال تعداد زیادی Beacon با SSIDهای مختلف</td><td>اختلال در شبکه و سردرگمی کلاینت‌ها</td></tr>
+                <tr><td><b>MAC Spoofing</b></td><td>جعل آدرس MAC برای دور زدن فیلتر</td><td>دسترسی به شبکه‌های با فیلتر MAC</td></tr>
+                <tr><td><b>Rogue AP</b></td><td>نصب یک Access Point غیرمجاز در شبکه</td><td>شنود و نفوذ به شبکه داخلی</td></tr>
+                <tr><td><b>MITM Attack</b></td><td>قرار گرفتن بین کلاینت و AP</td><td>شنود و تغییر ترافیک</td></tr>
+                <tr><td><b>Jamming</b></td><td>اختلال در سیگنال فرکانس</td><td>محروم‌سازی از سرویس (DoS)</td></tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> حملات Deauthentication و Evil Twin دو تا از رایج‌ترین حملات در هک وای‌فای هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: ابزارهای هک وای‌فای -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای هک وای‌فای</h2>
+        <p>
+            ابزارهای متعددی برای هک شبکه‌های بی‌سیم وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>کاربرد اصلی</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>Aircrack-ng</b></td>
+                    <td>کرک وای‌فای</td>
+                    <td>مجموعه کامل ابزارها برای اسکن، جمع‌آوری Handshake و کرک WEP/WPA/WPA2</td>
+                </tr>
+                <tr>
+                    <td><b>Reaver</b></td>
+                    <td>کرک WPS</td>
+                    <td>ابزار تخصصی برای حمله به WPS (Wi-Fi Protected Setup)</td>
+                </tr>
+                <tr>
+                    <td><b>Wash</b></td>
+                    <td>شناسایی APهای با WPS فعال</td>
+                    <td>اسکن شبکه‌های بی‌سیم برای پیدا کردن APهای با WPS</td>
+                </tr>
+                <tr>
+                    <td><b>Bully</b></td>
+                    <td>کرک WPS</td>
+                    <td>جایگزین Reaver با سرعت بیشتر</td>
+                </tr>
+                <tr>
+                    <td><b>Kismet</b></td>
+                    <td>شنود و تحلیل</td>
+                    <td>اسکنر شبکه بی‌سیم با قابلیت شناسایی APهای مخفی</td>
+                </tr>
+                <tr>
+                    <td><b>Wireshark</b></td>
+                    <td>تحلیل بسته</td>
+                    <td>ضبط و تحلیل بسته‌های شبکه بی‌سیم</td>
+                </tr>
+                <tr>
+                    <td><b>airmon-ng</b></td>
+                    <td>مدیریت کارت شبکه</td>
+                    <td>قرار دادن کارت شبکه در حالت Monitor</td>
+                </tr>
+                <tr>
+                    <td><b>aireplay-ng</b></td>
+                    <td>تولید بسته</td>
+                    <td>ارسال بسته‌های خاص مانند Deauth, ARP Replay</td>
+                </tr>
+                <tr>
+                    <td><b>airodump-ng</b></td>
+                    <td>اسکن شبکه</td>
+                    <td>شناسایی APها و کلاینت‌های متصل</td>
+                </tr>
+                <tr>
+                    <td><b>hashcat</b></td>
+                    <td>کرک سریع</td>
+                    <td>استفاده از قدرت GPU برای کرک سریع‌تر Handshake</td>
+                </tr>
+                <tr>
+                    <td><b>BetterCAP</b></td>
+                    <td>MITM و احراز هویت</td>
+                    <td>ابزار مدرن برای حملات MITM و Evil Twin</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Aircrack-ng کامل‌ترین مجموعه ابزار برای هک وای‌فای است و در Kali Linux به صورت پیش‌فرض نصب است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: آموزش جامع Aircrack-ng -->
+    <!-- ============================================================ -->
+    <div class="card" id="aircrack">
+        <h2>📡 آموزش جامع Aircrack-ng</h2>
+        <p>
+            <b>Aircrack-ng</b> مجموعه‌ای از ابزارهای خط فرمان برای ارزیابی امنیت شبکه‌های بی‌سیم 802.11 است. این مجموعه شامل ابزارهای زیر است:
+        </p>
+
+        <h3>📌 اجزای اصلی Aircrack-ng:</h3>
+        <ul>
+            <li><b>airmon-ng:</b> مدیریت کارت شبکه و قرار دادن در حالت Monitor.</li>
+            <li><b>airodump-ng:</b> اسکن و جمع‌آوری اطلاعات از شبکه‌های بی‌سیم.</li>
+            <li><b>aireplay-ng:</b> تولید و ارسال بسته‌های خاص (Deauth, ARP Replay, …).</li>
+            <li><b>aircrack-ng:</b> کرک کلیدهای WEP و WPA/WPA2.</li>
+            <li><b>airdecap-ng:</b> رمزگشایی بسته‌های ضبط‌شده.</li>
+            <li><b>airolib-ng:</b> ساخت و مدیریت پایگاه داده برای کرک سریع‌تر.</li>
+        </ul>
+
+        <h3>📌 مراحل کرک WPA/WPA2 با Aircrack-ng:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ۱. قرار دادن کارت شبکه در حالت Monitor
+sudo airmon-ng start wlan0
+# (پس از اجرا، رابط جدید wlan0mon ایجاد می‌شود)
+
+# ۲. اسکن شبکه‌های بی‌سیم
+sudo airodump-ng wlan0mon
+
+# ۳. انتخاب هدف و جمع‌آوری بسته‌ها
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# ۴. در یک ترمینال دیگر، اجرای حمله Deauth برای گرفتن Handshake
+sudo aireplay-ng -0 5 -a [BSSID] wlan0mon
+
+# ۵. پس از گرفتن Handshake (پیام WPA handshake در airodump)، کرک با دیکشنری
+sudo aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap</code></pre>
+        </div>
+
+        <h3>📌 کرک WEP:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ۱. اسکن با airodump-ng
+sudo airodump-ng wlan0mon
+
+# ۲. جمع‌آوری بسته‌های IV از شبکه WEP
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# ۳. افزایش ترافیک با ARP Replay (در ترمینال دیگر)
+sudo aireplay-ng -3 -b [BSSID] -h [Client_MAC] wlan0mon
+
+# ۴. کرک WEP با aircrack-ng
+sudo aircrack-ng capture-01.cap</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای کرک WPA/WPA2، به یک دیکشنری خوب (مانند rockyou.txt) و زمان کافی نیاز دارید. کرک WEP بسیار سریع‌تر است و معمولاً چند دقیقه طول می‌کشد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: حملات به WPS -->
+    <!-- ============================================================ -->
+    <div class="card" id="wps">
+        <h2>🔑 حملات به WPS (Wi-Fi Protected Setup)</h2>
+        <p>
+            <b>WPS (Wi-Fi Protected Setup)</b> یک استاندارد برای آسان‌سازی اتصال دستگاه‌ها به شبکه‌های بی‌سیم است. WPS با استفاده از یک PIN ۸ رقمی یا دکمه فیزیکی (Push Button) کار می‌کند.
+        </p>
+
+        <h3>📌 آسیب‌پذیری WPS:</h3>
+        <ul>
+            <li>PIN ۸ رقمی فقط ۱۰,۰۰۰ ترکیب ممکن دارد (چون ۴ رقم آخر به صورت جداگانه بررسی می‌شود).</li>
+            <li>بسیاری از روترها قفل (Lock) را پس از چند تلاش ناموفق فعال نمی‌کنند.</li>
+            <li>با حدود ۲ تا ۱۰ ساعت تلاش، می‌توان PIN را پیدا کرد.</li>
+            <li>پس از پیدا کردن PIN، رمز WPA/WPA2 نیز قابل استخراج است.</li>
+        </ul>
+
+        <h3>📌 ابزارهای حمله به WPS:</h3>
+        <ul>
+            <li><b>Reaver:</b> ابزار اصلی برای Brute-Force به WPS PIN.</li>
+            <li><b>Bully:</b> نسخه سریع‌تر و سبک‌تر Reaver.</li>
+            <li><b>Wash:</b> شناسایی APهای با WPS فعال.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ۱. اسکن APهای با WPS فعال
+sudo wash -i wlan0mon
+
+# ۲. حمله با Reaver به یک AP خاص
+sudo reaver -i wlan0mon -b [BSSID] -c [channel] -v
+
+# ۳. حمله با Bully (سریع‌تر)
+sudo bully wlan0mon -b [BSSID] -c [channel] -v</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> حملات WPS می‌توانند باعث قفل شدن روتر شوند. همیشه از گزینه‌های Delay استفاده کنید تا از قفل شدن جلوگیری شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: حمله Evil Twin -->
+    <!-- ============================================================ -->
+    <div class="card" id="eviltwin">
+        <h2>🎭 حمله Evil Twin (دوقلوی شیطانی)</h2>
+        <p>
+            <b>Evil Twin Attack</b> یک حمله بسیار مؤثر است که در آن مهاجم یک Access Point جعلی با همان SSID (نام) شبکه اصلی ایجاد می‌کند. کاربران به اشتباه به این AP جعلی متصل می‌شوند و مهاجم می‌تواند تمام ترافیک آنها را شنود کند یا حملات MITM انجام دهد.
+        </p>
+
+        <h3>📌 مراحل حمله Evil Twin:</h3>
+        <ol>
+            <li><b>شناسایی:</b> شناسایی شبکه هدف (SSID, BSSID, کانال).</li>
+            <li><b>ایجاد AP جعلی:</b> راه‌اندازی یک AP با همان SSID و کانال مشابه.</li>
+            <li><b>حمله Deauth:</b> قطع اتصال کلاینت‌ها از AP اصلی برای وادار کردن آنها به اتصال به AP جعلی.</li>
+            <li><b>شنود:</b> دریافت ترافیک کاربران و استخراج اطلاعات حساس (رمزها، کوکی‌ها).</li>
+            <li><b>MITM (اختیاری):</b> تغییر داده‌ها یا هدایت کاربران به صفحات فیشینگ.</li>
+        </ol>
+
+        <h3>📌 ابزارهای Evil Twin:</h3>
+        <ul>
+            <li><b>Airgeddon:</b> مجموعه ابزار جامع برای Evil Twin و حملات مختلف.</li>
+            <li><b>BetterCAP:</b> ابزار مدرن با قابلیت Evil Twin.</li>
+            <li><b>hostapd:</b> ایجاد Access Point نرم‌افزاری.</li>
+            <li><b>dnsmasq:</b> سرور DHCP برای تخصیص IP به کلاینت‌ها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از BetterCAP برای Evil Twin
+sudo bettercap -eval "set wifi.ap.ssid target_SSID; set wifi.ap.bssid 00:11:22:33:44:55; wifi.ap on"
+
+# استفاده از Airgeddon (اسکریپت جامع)
+sudo ./airgeddon.sh</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> حمله Evil Twin یکی از خطرناک‌ترین حملات وای‌فای است و می‌تواند اطلاعات بسیار حساسی را به سرقت ببرد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: حمله Deauth -->
+    <!-- ============================================================ -->
+    <div class="card" id="deauth">
+        <h2>📡 حمله Deauthentication</h2>
+        <p>
+            <b>Deauthentication Attack</b> یک حمله ساده اما مؤثر است که در آن مهاجم بسته‌های Deauth (قطع اتصال) را به کلاینت یا Access Point ارسال می‌کند تا اتصال آنها قطع شود. این حمله معمولاً برای گرفتن Handshake یا اجرای حملات Evil Twin استفاده می‌شود.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ul>
+            <li>مهاجم بسته‌های Deauth را با آدرس MAC جعلی (به عنوان AP) به کلاینت ارسال می‌کند.</li>
+            <li>کلاینت تصور می‌کند که این بسته از AP اصلی ارسال شده و اتصال را قطع می‌کند.</li>
+            <li>کلاینت سپس دوباره به شبکه متصل می‌شود (و در این فرآیند Handshake جدیدی انجام می‌شود).</li>
+            <li>مهاجم می‌تواند Handshake را ضبط کرده و برای کرک استفاده کند.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اجرای حمله Deauth با aireplay-ng (ارسال ۵ بسته)
+sudo aireplay-ng -0 5 -a [BSSID] wlan0mon
+
+# اجرای حمله Deauth مداوم (برای قطع اتصال کلاینت‌ها)
+sudo aireplay-ng -0 0 -a [BSSID] wlan0mon
+
+# حمله Deauth به یک کلاینت خاص
+sudo aireplay-ng -0 5 -a [BSSID] -c [Client_MAC] wlan0mon</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> حمله Deauth یکی از ساده‌ترین و مؤثرترین روش‌ها برای گرفتن Handshake WPA/WPA2 است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: شنود شبکه‌های بی‌سیم -->
+    <!-- ============================================================ -->
+    <div class="card" id="wireless-sniffing">
+        <h2>👁️ شنود شبکه‌های بی‌سیم (Wireless Sniffing)</h2>
+        <p>
+            شنود شبکه‌های بی‌سیم یکی از مهم‌ترین تکنیک‌های هک وای‌فای است که در آن مهاجم با قرار دادن کارت شبکه در حالت Monitor، تمام بسته‌های موجود در شبکه را ضبط و تحلیل می‌کند.
+        </p>
+
+        <h3>📌 ابزارهای شنود:</h3>
+        <ul>
+            <li><b>Wireshark:</b> تحلیل گرافیکی بسته‌ها.</li>
+            <li><b>Tcpdump:</b> ضبط خط فرمان.</li>
+            <li><b>airodump-ng:</b> ضبط مخصوص وای‌فای.</li>
+            <li><b>Kismet:</b> اسکنر پیشرفته وای‌فای.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ضبط ترافیک با airodump-ng
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# ضبط با Wireshark (از طریق رابط wlan0mon)
+wireshark
+
+# فیلترهای مفید در Wireshark برای وای‌فای
+wlan.fc.type == 2       # بسته‌های داده (Data)
+wlan.fc.type_subtype == 8   # بسته‌های Beacon
+eapol                   # بسته‌های EAPOL (Handshake)</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> شنود شبکه‌های بی‌سیم در شبکه‌های با رمزنگاری WPA/WPA2، داده‌ها را رمزنگاری‌شده نشان می‌دهد، اما اطلاعات متادیتا (MAC, SSID, کانال) قابل مشاهده است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: هوش مصنوعی در هک وای‌فای -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-wireless">
+        <h2>🤖 هوش مصنوعی در هک وای‌فای</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در هک شبکه‌های بی‌سیم نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در هک وای‌فای:</h3>
+        <ul>
+            <li><b>تشخیص خودکار حملات:</b> AI می‌تواند الگوهای حمله (مثل Deauth Flood) را شناسایی کند.</li>
+            <li><b>بهینه‌سازی کرک پسورد:</b> AI می‌تواند دیکشنری‌های هوشمند تولید کند.</li>
+            <li><b>تشخیص APهای مخرب:</b> AI می‌تواند Evil Twin را شناسایی کند.</li>
+            <li><b>تحلیل خودکار ترافیک:</b> AI می‌تواند ترافیک رمزنگاری‌شده را تحلیل کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Wireless:</h3>
+        <ul>
+            <li><b>AI-Based Intrusion Detection:</b> تشخیص نفوذ با AI.</li>
+            <li><b>AI-Powered Password Cracking:</b> کرک پسورد با AI.</li>
+            <li><b>AI-Driven Anomaly Detection:</b> تشخیص ناهنجاری در شبکه بی‌سیم.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در هک وای‌فای مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند حملات را سریع‌تر و دقیق‌تر تشخیص دهد و روش‌های پیشرفته‌تری برای کرک پسورد ارائه دهد.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات بی‌سیم</h2>
+        <p>
+            برای محافظت از شبکه‌های بی‌سیم در برابر حملات، سازمان‌ها و کاربران باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از WPA3:</b> جدیدترین و امن‌ترین استاندارد.</li>
+            <li><b>استفاده از رمزهای قوی:</b> حداقل ۱۲ کاراکتر، شامل حروف بزرگ و کوچک، اعداد و نمادها.</li>
+            <li><b>غیرفعال کردن WPS:</b> یکی از اصلی‌ترین آسیب‌پذیری‌ها.</li>
+            <li><b>غیرفعال کردن مدیریت از راه دور:</b> جلوگیری از دسترسی غیرمجاز به روتر.</li>
+            <li><b>فیلتر کردن MAC:</b> محدود کردن دستگاه‌های مجاز (اگرچه قابل دور زدن است).</li>
+            <li><b>استفاده از VPN:</b> رمزنگاری ارتباطات حتی در شبکه‌های عمومی.</li>
+            <li><b>به‌روزرسانی فریم‌ور:</b> نصب آخرین به‌روزرسانی‌های روتر.</li>
+            <li><b>آموزش کاربران:</b> آگاهی‌بخشی درباره شبکه‌های جعلی (Evil Twin).</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+        <ul>
+            <li><b>در برابر Deauth:</b> استفاده از پروتکل 802.11w (Management Frame Protection).</li>
+            <li><b>در برابر Evil Twin:</b> استفاده از گواهی‌های SSL برای احراز هویت.</li>
+            <li><b>در برابر WPS:</b> غیرفعال کردن WPS.</li>
+            <li><b>در برابر شنود:</b> استفاده از WPA2/WPA3 با AES.</li>
+            <li><b>در برابر Jamming:</b> تشخیص و گزارش اختلال فرکانس.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات بی‌سیم، ترکیبی از فناوری‌های به‌روز، پیکربندی صحیح و آموزش کاربران است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – هک شبکه‌های بی‌سیم</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای هک شبکه‌های بی‌سیم آشنا خواهید شد و یک سناریوی کامل از هک وای‌فای را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای Aircrack-ng.</li>
+            <li>اجرای حمله Deauth برای گرفتن Handshake.</li>
+            <li>کرک WPA/WPA2 با استفاده از دیکشنری.</li>
+            <li>اجرای حمله Evil Twin.</li>
+            <li>مقابله با حملات بی‌سیم.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux با کارت شبکه بی‌سیم (با قابلیت Monitor).</li>
+            <li><b>هدف:</b> یک روتر وای‌فای آزمایشگاهی با WPA2 (و رمز ضعیف).</li>
+            <li><b>ابزارها:</b> Aircrack-ng (airodump-ng, aireplay-ng, aircrack-ng), Reaver, BetterCAP.</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: راه‌اندازی کارت شبکه</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># شناسایی کارت شبکه
+iwconfig
+
+# قرار دادن در حالت Monitor
+sudo airmon-ng start wlan0
+
+# تأیید حالت Monitor
+iwconfig</code></pre>
+        </div>
+
+        <h4>مرحله ۲: اسکن شبکه‌های بی‌سیم</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن با airodump-ng
+sudo airodump-ng wlan0mon
+
+# مشاهده SSID, BSSID, کانال, و نوع رمزنگاری</code></pre>
+        </div>
+
+        <h4>مرحله ۳: جمع‌آوری Handshake</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># انتخاب هدف و ضبط
+sudo airodump-ng -c [channel] --bssid [BSSID] -w capture wlan0mon
+
+# در ترمینال دیگر، حمله Deauth برای گرفتن Handshake
+sudo aireplay-ng -0 5 -a [BSSID] wlan0mon
+
+# پس از دریافت "WPA handshake" در airodump، ضبط را متوقف کنید</code></pre>
+        </div>
+
+        <h4>مرحله ۴: کرک WPA/WPA2</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># کرک با دیکشنری
+sudo aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap
+
+# اگر دیکشنری rockyou.txt موجود نیست، آن را استخراج کنید
+sudo gunzip /usr/share/wordlists/rockyou.txt.gz</code></pre>
+        </div>
+
+        <h4>مرحله ۵: حمله Evil Twin (اختیاری)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از BetterCAP برای Evil Twin
+sudo bettercap -eval "set wifi.ap.ssid target_SSID; wifi.ap on"
+
+# یا استفاده از Airgeddon
+sudo ./airgeddon.sh</code></pre>
+        </div>
+
+        <h4>مرحله ۶: مقابله با حملات</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی روتر:
+# ۱. غیرفعال کردن WPS
+# ۲. تغییر رمز به رمز قوی (حداقل ۲۰ کاراکتر)
+# ۳. فعال‌سازی 802.11w (Management Frame Protection)
+# ۴. به‌روزرسانی فریم‌ور</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند هک وای‌فای، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۸: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه هک شبکه‌های بی‌سیم را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – اسکن شبکه‌های بی‌سیم:</b>
+                <br>با استفاده از airodump-ng، شبکه‌های بی‌سیم اطراف خود را اسکن کنید و اطلاعات SSID، BSSID، کانال و رمزنگاری را ثبت کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – حمله Deauth:</b>
+                <br>روی یک شبکه آزمایشگاهی، حمله Deauth را اجرا کنید و Handshake را ضبط کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – کرک WPA/WPA2:</b>
+                <br>با استفاده از Handshake ضبط شده، با Aircrack-ng و دیکشنری rockyou.txt، رمز شبکه را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – حمله Evil Twin:</b>
+                <br>با استفاده از BetterCAP یا Airgeddon، یک حمله Evil Twin روی یک شبکه آزمایشگاهی پیاده‌سازی کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – مقابله با حملات:</b>
+                <br>تنظیمات امنیتی یک روتر را بررسی کنید و اقدامات لازم برای محافظت در برابر حملات بی‌سیم را انجام دهید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۹: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">AP</span></td>
+                    <td><b>A</b>ccess <b>P</b>oint</td>
+                    <td>نقطه دسترسی بی‌سیم</td>
+                    <td>هدف اصلی حملات بی‌سیم</td>
+                    <td>روتر وای‌فای</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSID</span></td>
+                    <td><b>S</b>ervice <b>S</b>et <b>ID</b>entifier</td>
+                    <td>نام شبکه بی‌سیم</td>
+                    <td>شناسایی شبکه هدف</td>
+                    <td>"Home_WiFi"</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">BSSID</span></td>
+                    <td><b>B</b>asic <b>S</b>ervice <b>S</b>et <b>ID</b>entifier</td>
+                    <td>آدرس MAC Access Point</td>
+                    <td>شناسه منحصربه‌فرد AP</td>
+                    <td>00:11:22:33:44:55</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WEP</span></td>
+                    <td><b>W</b>ired <b>E</b>quivalent <b>P</b>rivacy</td>
+                    <td>پروتکل امنیتی قدیمی</td>
+                    <td>به راحتی قابل کرک</td>
+                    <td>WEP 64/128-bit</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WPA</span></td>
+                    <td><b>W</b>i-Fi <b>P</b>rotected <b>A</b>ccess</td>
+                    <td>پروتکل امنیتی نسل دوم</td>
+                    <td>امن‌تر از WEP</td>
+                    <td>WPA-PSK</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WPA2</span></td>
+                    <td><b>W</b>i-Fi <b>P</b>rotected <b>A</b>ccess <b>2</b></td>
+                    <td>پروتکل امنیتی نسل سوم</td>
+                    <td>استاندارد فعلی</td>
+                    <td>WPA2-PSK/AES</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WPA3</span></td>
+                    <td><b>W</b>i-Fi <b>P</b>rotected <b>A</b>ccess <b>3</b></td>
+                    <td>پروتکل امنیتی جدید</td>
+                    <td>امن‌ترین استاندارد</td>
+                    <td>WPA3-SAE</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Handshake</span></td>
+                    <td>—</td>
+                    <td>فرآیند دست‌دادن WPA</td>
+                    <td>برای کرک WPA/WPA2 نیاز است</td>
+                    <td>4-way handshake</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Monitor Mode</span></td>
+                    <td>—</td>
+                    <td>حالت شنود کارت شبکه</td>
+                    <td>ضبط بسته‌های وای‌فای</td>
+                    <td><code dir='ltr'>airmon-ng start wlan0</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Deauth Attack</span></td>
+                    <td>—</td>
+                    <td>حمله قطع اتصال</td>
+                    <td>گرفتن Handshake</td>
+                    <td><code dir='ltr'>aireplay-ng -0 5</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Evil Twin</span></td>
+                    <td>—</td>
+                    <td>AP جعلی با SSID مشابه</td>
+                    <td>شنود و MITM</td>
+                    <td>ایجاد AP با نام "Home_WiFi"</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WPS</span></td>
+                    <td><b>W</b>i-Fi <b>P</b>rotected <b>S</b>etup</td>
+                    <td>تنظیمات محافظت‌شده وای‌فای</td>
+                    <td>آسیب‌پذیری در PIN</td>
+                    <td>حمله با Reaver</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Aircrack-ng</span></td>
+                    <td>—</td>
+                    <td>مجموعه ابزار هک وای‌فای</td>
+                    <td>کرک WEP/WPA/WPA2</td>
+                    <td>airodump-ng, aireplay-ng</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Reaver</span></td>
+                    <td>—</td>
+                    <td>ابزار کرک WPS</td>
+                    <td>Brute-Force PIN</td>
+                    <td><code dir='ltr'>reaver -i wlan0mon -b [BSSID]</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Kismet</span></td>
+                    <td>—</td>
+                    <td>اسکنر شبکه بی‌سیم</td>
+                    <td>شناسایی APهای مخفی</td>
+                    <td><code dir='ltr'>kismet</code></td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۶ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۶:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین حوزه‌های امنیت سایبری، یعنی <b>هک شبکه‌های بی‌سیم</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>مفاهیم پایه:</b> AP, SSID, BSSID, کانال، باند فرکانسی.</li>
+            <li><b>استانداردها:</b> 802.11a/b/g/n/ac/ax (Wi-Fi 4/5/6).</li>
+            <li><b>پروتکل‌های امنیتی:</b> WEP (ناامن)، WPA (نسبتاً امن)، WPA2 (امن)، WPA3 (امن‌ترین).</li>
+            <li><b>حملات اصلی:</b> Deauth, Evil Twin, WPS Attack, MITM, Jamming.</li>
+            <li><b>ابزارهای کلیدی:</b> Aircrack-ng, Reaver, BetterCAP, Kismet.</li>
+            <li><b>کرک WEP/WPA/WPA2:</b> با Aircrack-ng و دیکشنری.</li>
+            <li><b>حملات Evil Twin:</b> ایجاد AP جعلی و شنود ترافیک.</li>
+            <li><b>نقش هوش مصنوعی:</b> تشخیص حملات و بهینه‌سازی کرک.</li>
+            <li><b>راه‌های مقابله:</b> WPA3, رمز قوی, غیرفعال کردن WPS, 802.11w.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_17_Hacking_Mobile_Platforms/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۷ – Hacking Mobile Platforms</a> با تکنیک‌های هک دستگاه‌های موبایل و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۶ – Hacking Wireless Networks | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
