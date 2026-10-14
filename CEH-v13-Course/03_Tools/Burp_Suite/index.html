@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت Burp Suite - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tab-section {
+            margin: 20px 0;
+            border-right: 4px solid #2a7de1;
+            padding-right: 15px;
+        }
+        .tab-section h3 {
+            color: #0b3b5c;
+            border-bottom: 2px solid #b6d4f0;
+            padding-bottom: 5px;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>🛡️ چیت‌شیت جامع Burp Suite</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – Burp Suite چیست؟</h2>
+        <p>
+            <b>Burp Suite</b> یک ابزار قدرتمند و جامع برای <b>تست نفوذ برنامه‌های وب (Web Application Penetration Testing)</b> است که توسط شرکت PortSwigger توسعه داده شده است. این ابزار به عنوان یکی از استانداردهای طلایی در حوزه امنیت وب شناخته می‌شود و توسط هکرهای قانونمند، تحلیلگران امنیتی و تست‌کنندگان نفوذ در سراسر جهان استفاده می‌شود.
+        </p>
+        <p>
+            Burp Suite به عنوان یک <b>پروکسی بین مرورگر و سرور</b> عمل می‌کند و تمام ترافیک HTTP/HTTPS را ضبط، بررسی و دستکاری می‌کند. این قابلیت به متخصصان امنیت اجازه می‌دهد تا درخواست‌های ارسالی به سرور را تغییر دهند، پاسخ‌ها را تحلیل کنند و آسیب‌پذیری‌های مختلف را شناسایی نمایند.
+        </p>
+        <div class="info-box">
+            <b>💡 کاربردهای اصلی Burp Suite:</b>
+            <ul>
+                <li><b>ضبط و دستکاری ترافیک (Proxy):</b> مشاهده و تغییر درخواست‌ها و پاسخ‌های HTTP/HTTPS.</li>
+                <li><b>اسکن آسیب‌پذیری (Scanner):</b> شناسایی خودکار آسیب‌پذیری‌های رایج مانند SQL Injection, XSS, CSRF.</li>
+                <li><b>حملات Brute-Force و Fuzzing (Intruder):</b> ارسال خودکار درخواست‌های متعدد با payloadهای مختلف.</li>
+                <li><b>دستکاری و ارسال مجدد درخواست‌ها (Repeater):</b> تغییر و ارسال مجدد درخواست‌ها برای تست دقیق‌تر.</li>
+                <li><b>رمزگشایی/رمزنگاری (Decoder):</b> تبدیل داده‌ها به فرمت‌های مختلف (Base64, URL encoding, HTML encoding).</li>
+                <li><b>مقایسه پاسخ‌ها (Comparer):</b> مقایسه دو پاسخ برای تشخیص تفاوت‌ها.</li>
+            </ul>
+        </div>
+        <div class="tip-box">
+            <b>💡 نکته:</b> Burp Suite در دو نسخه <b>Community (رایگان)</b> و <b>Professional (تجاری)</b> موجود است. نسخه رایگان برای یادگیری و تست‌های اولیه کافی است، اما نسخه Professional امکانات پیشرفته‌تری مانند اسکنر خودکار و Intruder با سرعت بالا را ارائه می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی Burp Suite</h2>
+
+        <h3>📌 نصب در Kali Linux:</h3>
+        <p>Burp Suite در Kali Linux به صورت پیش‌فرض نصب است. برای اجرا:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>burpsuite</code></pre>
+        </div>
+        <p>اگر نصب نیست:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install burpsuite -y</code></pre>
+        </div>
+
+        <h3>📌 نصب در ویندوز:</h3>
+        <p>دانلود از سایت رسمی: <a href="https://portswigger.net/burp" target="_blank">https://portswigger.net/burp</a></p>
+
+        <h3>📌 راه‌اندازی اولیه:</h3>
+        <ol>
+            <li>اجرای Burp Suite و انتخاب <b>Temporary Project</b> (برای تست موقت).</li>
+            <li>انتخاب <b>Use Burp Defaults</b> برای تنظیمات پیش‌فرض.</li>
+            <li>رفتن به تب <b>Proxy</b> و مشاهده آدرس و پورت پروکسی (پیش‌فرض: <code dir='ltr'>127.0.0.1:8080</code>).</li>
+            <li>تنظیم مرورگر برای استفاده از پروکسی <code dir='ltr'>127.0.0.1:8080</code>.</li>
+            <li>نصب گواهی SSL Burp برای مشاهده ترافیک HTTPS (در مرورگر به <code dir='ltr'>http://burp</code> بروید و گواهی را دانلود و نصب کنید).</li>
+        </ol>
+
+        <div class="warning-box">
+            <b>⚠️ نکته:</b> برای مشاهده ترافیک HTTPS، حتماً گواهی Burp را در مرورگر نصب کنید. در غیر این صورت، خطای SSL مشاهده خواهید کرد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: تب‌های اصلی Burp Suite -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📑 تب‌های اصلی Burp Suite</h2>
+        <p>Burp Suite دارای تب‌های مختلفی است که هر کدام وظیفه خاصی را بر عهده دارند:</p>
+
+        <div class="tab-section">
+            <h3>📡 ۱. Proxy – ضبط و دستکاری ترافیک</h3>
+            <p>تب Proxy قلب Burp Suite است. تمام درخواست‌ها و پاسخ‌های HTTP/HTTPS از این تب عبور می‌کنند.</p>
+            <ul>
+                <li><b>Intercept:</b> قابلیت توقف درخواست‌ها برای مشاهده و تغییر قبل از ارسال به سرور.</li>
+                <li><b>HTTP History:</b> تاریخچه تمام درخواست‌ها و پاسخ‌ها.</li>
+                <li><b>WebSockets History:</b> تاریخچه ارتباطات WebSocket.</li>
+                <li><b>Options:</b> تنظیمات پروکسی (پورت، فیلترها، و …).</li>
+            </ul>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># فعال‌سازی Intercept
+# در تب Proxy روی Intercept is on کلیک کنید
+
+# ارسال درخواست به Repeater
+# راست‌کلیک → Send to Repeater
+
+# ارسال درخواست به Intruder
+# راست‌کلیک → Send to Intruder</code></pre>
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <h3>🔄 ۲. Repeater – ارسال مجدد درخواست‌ها</h3>
+            <p>تب Repeater به شما امکان می‌دهد یک درخواست را تغییر داده و بارها ارسال کنید تا پاسخ‌های مختلف را مشاهده کنید.</p>
+            <ul>
+                <li>مشاهده و ویرایش درخواست قبل از ارسال.</li>
+                <li>ارسال مجدد با کلیک روی دکمه <b>Send</b>.</li>
+                <li>مشاهده پاسخ در سمت راست.</li>
+                <li>قابلیت تغییر روش HTTP (GET, POST, PUT, DELETE).</li>
+            </ul>
+            <div class="tip-box">
+                <b>💡 نکته:</b> Repeater برای تست دستی آسیب‌پذیری‌ها مانند SQL Injection و XSS بسیار مفید است.
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <h3>🚀 ۳. Intruder – حملات خودکار</h3>
+            <p>تب Intruder برای انجام حملات خودکار مانند Brute-Force، Fuzzing و Enumeration استفاده می‌شود.</p>
+            <ul>
+                <li><b>Positions:</b> تعیین نقاطی که payloadها در آن قرار می‌گیرند.</li>
+                <li><b>Payloads:</b> تعیین لیست payloadها (دیکشنری).</li>
+                <li><b>Attack Types:</b> Sniper, Battering ram, Pitchfork, Cluster bomb.</li>
+                <li>مشاهده نتایج حملات در تب <b>Results</b>.</li>
+            </ul>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># مثال: حمله Brute-Force به صفحه ورود
+# ۱. درخواست را به Intruder ارسال کنید
+# ۲. در Positions، قسمت username و password را highlight کنید
+# ۳. روی Add § کلیک کنید
+# ۴. در Payloads، یک دیکشنری بارگذاری کنید
+# ۵. روی Start Attack کلیک کنید</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> حملات Intruder می‌توانند باعث ایجاد ترافیک سنگین و شناسایی توسط سیستم‌های دفاعی شوند. با احتیاط استفاده کنید.
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <h3>🔍 ۴. Scanner – اسکن خودکار آسیب‌پذیری (فقط Professional)</h3>
+            <p>تب Scanner به‌صورت خودکار برنامه وب را برای آسیب‌پذیری‌های رایج اسکن می‌کند.</p>
+            <ul>
+                <li>اسکن فعال و غیرفعال.</li>
+                <li>شناسایی SQL Injection, XSS, CSRF, Path Traversal و …</li>
+                <li>نمایش نتایج با سطح خطر (High, Medium, Low).</li>
+                <li>ارائه پیشنهادات برای رفع آسیب‌پذیری‌ها.</li>
+            </ul>
+            <div class="info-box">
+                <b>💡 نکته:</b> نسخه Community فاقد قابلیت Scanner است. برای اسکن خودکار از ابزارهای جایگزین مانند OWASP ZAP استفاده کنید.
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <h3>🔐 ۵. Decoder – رمزگشایی و رمزنگاری</h3>
+            <p>تب Decoder برای تبدیل داده‌ها به فرمت‌های مختلف استفاده می‌شود.</p>
+            <ul>
+                <li><b>Encode:</b> تبدیل به Base64, URL encoding, HTML encoding, Hex.</li>
+                <li><b>Decode:</b> تبدیل از Base64, URL encoding, HTML encoding, Hex.</li>
+                <li><b>Hash:</b> محاسبه هش (MD5, SHA-1, SHA-256).</li>
+            </ul>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># مثال: رمزگشایی Base64
+# ۱. متن Base64 را در Decoder paste کنید
+# ۲. Decode as → Base64 را انتخاب کنید</code></pre>
+            </div>
+        </div>
+
+        <div class="tab-section">
+            <h3>📊 ۶. Comparer – مقایسه پاسخ‌ها</h3>
+            <p>تب Comparer برای مقایسه دو پاسخ یا دو درخواست برای یافتن تفاوت‌ها استفاده می‌شود.</p>
+            <ul>
+                <li>مقایسه متن (Text).</li>
+                <li>مقایسه بایت (Bytes).</li>
+                <li>نمایش تفاوت‌ها به صورت رنگی.</li>
+            </ul>
+        </div>
+
+        <div class="tab-section">
+            <h3>🧩 ۷. Extender – افزونه‌ها</h3>
+            <p>تب Extender برای نصب و مدیریت افزونه‌های Burp Suite (BApps) استفاده می‌شود.</p>
+            <ul>
+                <li>نصب افزونه‌های متن‌باز از BApp Store.</li>
+                <li>بارگذاری افزونه‌های سفارشی (Python, Ruby, Java).</li>
+                <li>مدیریت و فعال/غیرفعال کردن افزونه‌ها.</li>
+            </ul>
+            <div class="tip-box">
+                <b>💡 نکته:</b> افزونه‌های مفید: <b>ActiveScan++</b>, <b>Logger++</b>, <b>Turbo Intruder</b>, <b>XSS Validator</b>.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: سناریوهای عملی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 سناریوهای عملی با Burp Suite</h2>
+
+        <h3>📌 ۱. شناسایی و دستکاری درخواست‌ها</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. مرورگر را روی پروکسی 127.0.0.1:8080 تنظیم کنید
+# ۲. در Burp، Proxy → Intercept را فعال کنید
+# ۳. در مرورگر، یک صفحه وب را باز کنید
+# ۴. درخواست در Burp متوقف می‌شود
+# ۵. درخواست را تغییر دهید (مثلاً User-Agent را عوض کنید)
+# ۶. روی Forward کلیک کنید تا درخواست ارسال شود
+# ۷. پاسخ را در HTTP History مشاهده کنید</code></pre>
+        </div>
+
+        <h3>📌 ۲. تست SQL Injection با Repeater</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. درخواست را در Proxy ضبط کنید
+# ۲. راست‌کلیک → Send to Repeater
+# ۳. در Repeater، پارامتر را تغییر دهید:
+#    ?id=1' OR '1'='1
+# ۴. روی Send کلیک کنید
+# ۵. پاسخ را بررسی کنید
+# ۶. در صورت مشاهده خطا یا داده‌های غیرعادی، آسیب‌پذیری تایید می‌شود</code></pre>
+        </div>
+
+        <h3>📌 ۳. Brute-Force با Intruder</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. درخواست ورود را در Proxy ضبط کنید
+# ۲. راست‌کلیک → Send to Intruder
+# ۳. در Positions، قسمت username و password را highlight کنید
+# ۴. روی Add § کلیک کنید
+# ۵. در Payloads، یک لیست از کاربران و رمزها بارگذاری کنید
+# ۶. Attack Type را Sniper انتخاب کنید
+# ۷. روی Start Attack کلیک کنید
+# ۸. نتایج را بر اساس طول پاسخ فیلتر کنید</code></pre>
+        </div>
+
+        <h3>📌 ۴. رمزگشایی داده‌ها با Decoder</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. یک رشته Base64 را در Decoder paste کنید
+# ۲. Decode as → Base64 را انتخاب کنید
+# ۳. نتیجه را مشاهده کنید
+# ۴. برای رمزنگاری، Encode as → Base64 را انتخاب کنید</code></pre>
+        </div>
+
+        <h3>📌 ۵. مقایسه پاسخ‌ها با Comparer</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. دو پاسخ مختلف را در Proxy انتخاب کنید
+# ۲. راست‌کلیک → Send to Comparer
+# ۳. در Comparer، روی دو آیتم کلیک کنید
+# ۴. تفاوت‌ها به صورت رنگی نمایش داده می‌شوند</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> ترکیب Repeater و Intruder برای شناسایی و بهره‌برداری از آسیب‌پذیری‌ها بسیار مؤثر است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: افزونه‌های مفید -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧩 افزونه‌های مفید Burp Suite</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>افزونه</th><th>کاربرد</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>ActiveScan++</b></td>
+                    <td>اسکن فعال پیشرفته</td>
+                    <td>افزایش قابلیت‌های اسکنر برای شناسایی آسیب‌پذیری‌های پیچیده‌تر</td>
+                </tr>
+                <tr>
+                    <td><b>Logger++</b></td>
+                    <td>ثبت و لاگ‌گیری پیشرفته</td>
+                    <td>ثبت تمام درخواست‌ها و پاسخ‌ها با قابلیت فیلتر و جستجوی پیشرفته</td>
+                </tr>
+                <tr>
+                    <td><b>Turbo Intruder</b></td>
+                    <td>Intruder با سرعت بالا</td>
+                    <td>اجرای حملات Intruder با سرعت بسیار بالا با استفاده از Python</td>
+                </tr>
+                <tr>
+                    <td><b>XSS Validator</b></td>
+                    <td>تشخیص XSS</td>
+                    <td>تأیید خودکار آسیب‌پذیری‌های XSS با اجرای Payload در مرورگر</td>
+                </tr>
+                <tr>
+                    <td><b>JWT Editor</b></td>
+                    <td>دستکاری JWT</td>
+                    <td>ویرایش و دستکاری توکن‌های JWT برای تست آسیب‌پذیری‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>JSON Web Tokens (JWT)</b></td>
+                    <td>تحلیل JWT</td>
+                    <td>بررسی ساختار و محتوای توکن‌های JWT</td>
+                </tr>
+                <tr>
+                    <td><b>Flow</b></td>
+                    <td>مدیریت جریان درخواست‌ها</td>
+                    <td>مدیریت بصری جریان درخواست‌ها و پاسخ‌ها</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># نصب افزونه از BApp Store
+# ۱. تب Extender را باز کنید
+# ۲. روی BApp Store کلیک کنید
+# ۳. افزونه مورد نظر را پیدا کرده و روی Install کلیک کنید</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> افزونه‌ها قابلیت‌های Burp Suite را به شدت افزایش می‌دهند. همیشه آخرین نسخه افزونه‌ها را نصب کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: نکات امنیتی و حرفه‌ای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔒 نکات امنیتی و حرفه‌ای</h2>
+
+        <ul>
+            <li><b>همیشه پروکسی را بعد از تست غیرفعال کنید:</b> اگر پروکسی Burp روشن بماند، ممکن است باعث اختلال در اتصال اینترنت شود.</li>
+            <li><b>از فیلترها استفاده کنید:</b> در HTTP History از فیلترها برای نمایش فقط درخواست‌های مورد نظر استفاده کنید.</li>
+            <li><b>ذخیره پروژه:</b> برای نگهداری نتایج تست، پروژه را ذخیره کنید.</li>
+            <li><b>استفاده از گواهی سفارشی:</b> برای دور زدن SSL Pinning، از گواهی Burp در دستگاه موبایل استفاده کنید.</li>
+            <li><b>تنظیم تایم‌اوت:</b> در Intruder، تایم‌اوت را تنظیم کنید تا از گیر کردن جلوگیری شود.</li>
+            <li><b>احترام به حریم خصوصی:</b> هرگز داده‌های حساس (رمزها، اطلاعات کارت) را ذخیره نکنید مگر در محیط‌های آزمایشگاهی.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> استفاده از Burp Suite برای تست برنامه‌های وب بدون مجوز، جرم محسوب می‌شود. همیشه قبل از تست، مجوز کتبی دریافت کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی Burp Suite</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Proxy</span></td>
+                    <td>یک سرور واسط که درخواست‌های مرورگر را دریافت کرده و به سرور ارسال می‌کند. Burp Suite به عنوان یک پروکسی عمل می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Intercept</span></td>
+                    <td>قابلیت توقف درخواست‌ها در پروکسی برای مشاهده و تغییر آنها قبل از ارسال به سرور.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Repeater</span></td>
+                    <td>ابزاری برای تغییر و ارسال مجدد درخواست‌ها به سرور برای مشاهده پاسخ‌های مختلف.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Intruder</span></td>
+                    <td>ابزاری برای انجام حملات خودکار مانند Brute-Force, Fuzzing و Enumeration.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Payload</span></td>
+                    <td>داده‌ای که در حملات Intruder به نقاط مشخص شده تزریق می‌شود (مثل رمز عبور، کد SQL).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Fuzzing</span></td>
+                    <td>ارسال داده‌های تصادفی یا نیمه‌تصادفی به برنامه برای شناسایی آسیب‌پذیری‌ها.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Decoder</span></td>
+                    <td>ابزاری برای رمزگشایی و رمزنگاری داده‌ها به فرمت‌های مختلف (Base64, URL, HTML, Hex).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Comparer</span></td>
+                    <td>ابزاری برای مقایسه دو پاسخ یا دو درخواست و نمایش تفاوت‌ها.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Extender</span></td>
+                    <td>سیستم مدیریت افزونه‌های Burp Suite که امکان نصب افزونه‌های سفارشی را فراهم می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">BApp</span></td>
+                    <td>فروشگاه افزونه‌های Burp Suite که شامل افزونه‌های متن‌باز و رایگان است.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSL Pinning</span></td>
+                    <td>مکانیزمی که برنامه‌ها برای جلوگیری از حملات MITM از گواهی‌های خاص استفاده می‌کنند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Scope</span></td>
+                    <td>محدوده تعیین‌شده برای تست که Burp Suite فقط درخواست‌های مربوط به آن را پردازش می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Active Scan</span></td>
+                    <td>اسکن فعال که با ارسال درخواست‌های خاص به سرور، آسیب‌پذیری‌ها را شناسایی می‌کند.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت Burp Suite:</b>
+        <p>
+            Burp Suite یکی از قدرتمندترین ابزارهای تست نفوذ وب است که با ترکیب Proxy، Repeater، Intruder و سایر امکانات، 
+            به متخصصان امنیت امکان شناسایی و بهره‌برداری از آسیب‌پذیری‌های برنامه‌های وب را می‌دهد.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> برای تسلط بر Burp Suite، با Proxy و Repeater شروع کنید و سپس به سراغ Intruder و افزونه‌ها بروید. 
+            تمرین عملی روی محیط‌های آزمایشگاهی مانند DVWA و OWASP WebGoat بهترین راه برای یادگیری است.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت Burp Suite | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
