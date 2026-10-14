@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۴ - Enumeration - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* === بهبودهای اضافی برای این صفحه خاص === */
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .badge-new {
+            background: #ff9f1c;
+            color: #1e2a3a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۴ – Enumeration</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – Enumeration چیست؟</a></li>
+            <li><a href="#objectives">🎯 اهداف Enumeration</a></li>
+            <li><a href="#techniques">🛠️ تکنیک‌های Enumeration</a></li>
+            <li><a href="#netbios">💻 NetBIOS Enumeration</a></li>
+            <li><a href="#snmp">📡 SNMP Enumeration</a></li>
+            <li><a href="#ldap">👤 LDAP Enumeration</a></li>
+            <li><a href="#smb">📂 SMB Enumeration</a></li>
+            <li><a href="#nfs">🗂️ NFS Enumeration</a></li>
+            <li><a href="#dns">🌐 DNS Enumeration</a></li>
+            <li><a href="#email">📧 Email Enumeration</a></li>
+            <li><a href="#tools">🛠️ ابزارهای Enumeration</a></li>
+            <li><a href="#ai-enumeration">🤖 Enumeration با هوش مصنوعی</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با Enumeration</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – Enumeration چیست؟</h2>
+        <p>
+            <b>Enumeration (شمارش)</b> سومین مرحله از چرخه هک قانونمند است که پس از <b>شناسایی (Footprinting)</b> و <b>اسکن (Scanning)</b> انجام می‌شود. در این مرحله، هکر با استفاده از اتصالات فعال به سیستم هدف، اطلاعات دقیق‌تری مانند <b>نام کاربران، گروه‌ها، اشتراک‌های شبکه، سرویس‌های در حال اجرا، و تنظیمات سیستم</b> را جمع‌آوری می‌کند.
+        </p>
+        <p>
+            تفاوت اصلی Enumeration با اسکن در این است که اسکن به دنبال <b>پورت‌های باز و سرویس‌ها</b> است، در حالی که Enumeration به دنبال <b>جزئیات دقیق</b> درباره آن سرویس‌ها و کاربران است. به عبارت دیگر، اسکن به شما می‌گوید <b>"چه چیزی"</b> در حال اجراست، در حالی که Enumeration به شما می‌گوید <b>"چه کسی"</b> و <b>"با چه جزئیاتی"</b> در حال استفاده از آن است.
+        </p>
+        <div class="info-box">
+            <b>💡 نکته کلیدی:</b> Enumeration یکی از حیاتی‌ترین مراحل هک است، زیرا اطلاعات جمع‌آوری شده در این مرحله به طور مستقیم برای <b>نفوذ و دسترسی</b> به سیستم استفاده می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: اهداف Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="objectives">
+        <h2>🎯 اهداف Enumeration</h2>
+        <p>
+            Enumeration با اهداف مشخصی انجام می‌شود که در ادامه به مهم‌ترین آنها اشاره می‌کنیم:
+        </p>
+        <ul>
+            <li><b>شناسایی نام کاربران:</b> پیدا کردن نام کاربران سیستم برای حملات Brute-Force و مهندسی اجتماعی.</li>
+            <li><b>شناسایی گروه‌ها و نقش‌ها:</b> درک ساختار سازمانی و سطوح دسترسی.</li>
+            <li><b>شناسایی اشتراک‌های شبکه:</b> پیدا کردن پوشه‌ها و منابع اشتراکی که ممکن است اطلاعات حساس داشته باشند.</li>
+            <li><b>شناسایی سرویس‌های در حال اجرا:</b> دریافت اطلاعات دقیق‌تر از سرویس‌ها مانند نسخه و تنظیمات.</li>
+            <li><b>شناسایی سیاست‌های امنیتی:</b> درک قوانین و محدودیت‌های سیستم هدف.</li>
+            <li><b>شناسایی آسیب‌پذیری‌ها:</b> برخی اطلاعات Enumeration می‌توانند آسیب‌پذیری‌های خاصی را نشان دهند.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>💡 نتیجه‌گیری:</b> اطلاعات جمع‌آوری شده در این مرحله، نقشه راهی برای نفوذ به سیستم هدف است. هرچه Enumeration دقیق‌تر و کامل‌تر باشد، احتمال موفقیت در مراحل بعدی بیشتر خواهد بود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: تکنیک‌های Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="techniques">
+        <h2>🛠️ تکنیک‌های Enumeration</h2>
+        <p>
+            Enumeration از طریق پروتکل‌ها و سرویس‌های مختلف شبکه انجام می‌شود. در ادامه، مهم‌ترین تکنیک‌های Enumeration را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>پروتکل/سرویس</th><th>پورت</th><th>اطلاعات قابل دریافت</th><th>ابزارها</th></tr>
+                <tr>
+                    <td><b>NetBIOS</b></td>
+                    <td>۱۳۹, ۴۴۵</td>
+                    <td>نام کاربران، گروه‌ها، اشتراک‌ها، کامپیوترها</td>
+                    <td>nbtstat, enum4linux, smbclient</td>
+                </tr>
+                <tr>
+                    <td><b>SNMP</b></td>
+                    <td>۱۶۱ (UDP)</td>
+                    <td>اطلاعات سیستم، فرآیندها، کاربران، شبکه</td>
+                    <td>snmpwalk, snmpcheck, MIB Browser</td>
+                </tr>
+                <tr>
+                    <td><b>LDAP</b></td>
+                    <td>۳۸۹, ۶۳۶ (SSL)</td>
+                    <td>ساختار دایرکتوری، کاربران، گروه‌ها، کامپیوترها</td>
+                    <td>ldapsearch, JXplorer, LDAP Admin</td>
+                </tr>
+                <tr>
+                    <td><b>SMB</b></td>
+                    <td>۴۴۵, ۱۳۹</td>
+                    <td>اشتراک‌ها، کاربران، گروه‌ها، سیاست‌ها</td>
+                    <td>enum4linux, smbclient, smbmap</td>
+                </tr>
+                <tr>
+                    <td><b>NFS</b></td>
+                    <td>۲۰۴۹ (TCP/UDP)</td>
+                    <td>اشتراک‌های فایل، کاربران، گروه‌ها</td>
+                    <td>showmount, mount, nfs-common</td>
+                </tr>
+                <tr>
+                    <td><b>DNS</b></td>
+                    <td>۵۳ (TCP/UDP)</td>
+                    <td>زیردامنه‌ها، رکوردهای DNS، Zone Transfer</td>
+                    <td>dig, nslookup, dnsrecon, dnsenum</td>
+                </tr>
+                <tr>
+                    <td><b>Email</b></td>
+                    <td>۲۵ (SMTP), ۱۱۰ (POP3), ۱۴۳ (IMAP)</td>
+                    <td>کاربران ایمیل، تنظیمات سرور</td>
+                    <td>smtp-user-enum, VRFY, EXPN</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> انتخاب تکنیک مناسب به سرویس‌های در حال اجرا روی سیستم هدف بستگی دارد. معمولاً ترکیبی از چند تکنیک برای جمع‌آوری اطلاعات کامل‌تر استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: NetBIOS Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="netbios">
+        <h2>💻 NetBIOS Enumeration</h2>
+        <p>
+            <b>NetBIOS (Network Basic Input/Output System)</b> یک پروتکل قدیمی اما همچنان پرکاربرد در شبکه‌های ویندوزی است که برای اشتراک‌گذاری فایل‌ها، چاپگرها و ارتباطات بین برنامه‌ها استفاده می‌شود. NetBIOS Enumeration به هکر اجازه می‌دهد تا اطلاعات زیر را جمع‌آوری کند:
+        </p>
+        <ul>
+            <li><b>نام کامپیوترها</b> (NetBIOS Names)</li>
+            <li><b>نام کاربران</b> (User Names)</li>
+            <li><b>گروه‌ها</b> (Groups)</li>
+            <li><b>اشتراک‌های شبکه</b> (Shares)</li>
+            <li><b>جلسات فعال</b> (Active Sessions)</li>
+            <li><b>خدمات در حال اجرا</b> (Services)</li>
+        </ul>
+
+        <h3>📌 ابزارهای NetBIOS Enumeration:</h3>
+        <ul>
+            <li><b>nbtstat:</b> ابزار خط فرمان ویندوز برای نمایش اطلاعات NetBIOS.</li>
+            <li><b>enum4linux:</b> ابزاری قدرتمند در Kali Linux برای Enumeration سیستم‌های ویندوز و SMB.</li>
+            <li><b>smbclient:</b> ابزاری برای اتصال و کاوش اشتراک‌های SMB.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از nbtstat (در ویندوز)
+nbtstat -A 192.168.1.101
+
+# استفاده از enum4linux (در Kali Linux)
+enum4linux -a 192.168.1.101
+
+# استفاده از smbclient برای مشاهده اشتراک‌ها
+smbclient -L //192.168.1.101 -N
+
+# اتصال به اشتراک خاص
+smbclient //192.168.1.101/share -N</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ نکته امنیتی:</b> NetBIOS ذاتاً ناامن است و اطلاعات حساسی را افشا می‌کند. بسیاری از سازمان‌ها امروزه NetBIOS را غیرفعال می‌کنند و از پروتکل‌های امن‌تر مانند SMB با احراز هویت قوی استفاده می‌کنند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: SNMP Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="snmp">
+        <h2>📡 SNMP Enumeration</h2>
+        <p>
+            <b>SNMP (Simple Network Management Protocol)</b> یک پروتکل استاندارد برای مدیریت و مانیتورینگ دستگاه‌های شبکه است. SNMP Enumeration به هکر اجازه می‌دهد تا اطلاعات بسیار گسترده‌ای از یک دستگاه جمع‌آوری کند، از جمله:
+        </p>
+        <ul>
+            <li><b>اطلاعات سیستم:</b> نام سیستم، توضیحات، موقعیت، تماس.</li>
+            <li><b>فرآیندهای در حال اجرا:</b> لیست کامل فرآیندها و خدمات.</li>
+            <li><b>کاربران:</b> نام کاربران لاگین‌شده.</li>
+            <li><b>شبکه:</b> رابط‌های شبکه، آدرس‌های IP، جدول مسیریابی.</li>
+            <li><b>دیسک:</b> اطلاعات دیسک‌ها و فضای ذخیره‌سازی.</li>
+            <li><b>نرم‌افزار:</b> نرم‌افزارهای نصب‌شده و نسخه‌های آنها.</li>
+        </ul>
+
+        <h3>📌 رشته‌های Community مهم SNMP:</h3>
+        <ul>
+            <li><b>public:</b> رشته پیش‌فرض برای دسترسی فقط خواندنی (Read-Only).</li>
+            <li><b>private:</b> رشته پیش‌فرض برای دسترسی خواندن/نوشتن (Read-Write).</li>
+            <li><b>manager:</b> گاهی اوقات برای مدیریت استفاده می‌شود.</li>
+        </ul>
+
+        <h3>📌 ابزارهای SNMP Enumeration:</h3>
+        <ul>
+            <li><b>snmpwalk:</b> ابزار خط فرمان برای پیمایش درخت MIB.</li>
+            <li><b>snmpcheck:</b> اسکنر SNMP برای جمع‌آوری اطلاعات.</li>
+            <li><b>MIB Browser:</b> ابزار گرافیکی برای مرور MIB.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از snmpwalk برای جمع‌آوری اطلاعات سیستم
+snmpwalk -v 1 -c public 192.168.1.101 system
+
+# جمع‌آوری اطلاعات کاربران
+snmpwalk -v 1 -c public 192.168.1.101 .1.3.6.1.4.1.77.1.2.25
+
+# جمع‌آوری اطلاعات فرآیندها
+snmpwalk -v 1 -c public 192.168.1.101 hrSWRunTable
+
+# استفاده از snmpcheck
+snmpcheck -t 192.168.1.101 -c public</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار امنیتی:</b> استفاده از رشته‌های Community پیش‌فرض (public/private) یک آسیب‌پذیری امنیتی بزرگ است. سازمان‌ها باید رشته‌های قوی و منحصربه‌فرد برای SNMP تنظیم کنند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: LDAP Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="ldap">
+        <h2>👤 LDAP Enumeration</h2>
+        <p>
+            <b>LDAP (Lightweight Directory Access Protocol)</b> یک پروتکل استاندارد برای دسترسی و مدیریت دایرکتوری‌های اطلاعاتی است. LDAP معمولاً در سازمان‌ها برای مدیریت کاربران، گروه‌ها و منابع استفاده می‌شود. LDAP Enumeration به هکر اجازه می‌دهد تا اطلاعات زیر را جمع‌آوری کند:
+        </p>
+        <ul>
+            <li><b>ساختار دایرکتوری:</b> سازماندهی کاربران و گروه‌ها.</li>
+            <li><b>نام کاربران و گروه‌ها:</b> لیست کامل کاربران و گروه‌ها.</li>
+            <li><b>اطلاعات تماس:</b> ایمیل، تلفن، آدرس.</li>
+            <li><b>سیاست‌های امنیتی:</b> برخی اطلاعات امنیتی ممکن است در LDAP ذخیره شوند.</li>
+            <li><b>کامپیوترها و دستگاه‌ها:</b> دستگاه‌های متصل به دایرکتوری.</li>
+        </ul>
+
+        <h3>📌 ابزارهای LDAP Enumeration:</h3>
+        <ul>
+            <li><b>ldapsearch:</b> ابزار خط فرمان برای جستجو در LDAP.</li>
+            <li><b>JXplorer:</b> مرورگر گرافیکی LDAP.</li>
+            <li><b>LDAP Admin:</b> ابزار مدیریت LDAP.</li>
+            <li><b>Recon-ng:</b> ماژول‌های LDAP در این چارچوب موجود است.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># جستجوی LDAP با ldapsearch
+ldapsearch -x -h 192.168.1.101 -b "dc=example,dc=com" -D "cn=admin,dc=example,dc=com" -w password
+
+# جستجوی کاربران
+ldapsearch -x -h 192.168.1.101 -b "ou=users,dc=example,dc=com" "(objectClass=person)"
+
+# جستجوی گروه‌ها
+ldapsearch -x -h 192.168.1.101 -b "ou=groups,dc=example,dc=com" "(objectClass=group)"</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> LDAP معمولاً با احراز هویت پیکربندی می‌شود. در صورتی که احراز هویت ضعیف باشد (مثل رمز پیش‌فرض)، هکر می‌تواند به تمام اطلاعات دسترسی پیدا کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: SMB Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="smb">
+        <h2>📂 SMB Enumeration</h2>
+        <p>
+            <b>SMB (Server Message Block)</b> یک پروتکل شبکه برای اشتراک‌گذاری فایل‌ها، چاپگرها و ارتباطات بین دستگاه‌ها (عمدتاً در محیط‌های ویندوز) است. SMB Enumeration به هکر اجازه می‌دهد تا اطلاعات زیر را جمع‌آوری کند:
+        </p>
+        <ul>
+            <li><b>اشتراک‌های فایل:</b> پوشه‌های مشترک در شبکه.</li>
+            <li><b>نام کاربران:</b> کاربرانی که به سیستم دسترسی دارند.</li>
+            <li><b>گروه‌ها:</b> گروه‌های کاربری و سطح دسترسی آنها.</li>
+            <li><b>سیاست‌های امنیتی:</b> قوانین مرتبط با رمز عبور و احراز هویت.</li>
+            <li><b>جلسات فعال:</b> کاربرانی که در حال حاضر به سیستم متصل هستند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای SMB Enumeration:</h3>
+        <ul>
+            <li><b>enum4linux:</b> ابزار قدرتمند برای Enumeration SMB و NetBIOS.</li>
+            <li><b>smbclient:</b> کلاینت SMB برای اتصال و کاوش اشتراک‌ها.</li>
+            <li><b>smbmap:</b> ابزاری برای نقشه‌برداری از اشتراک‌های SMB.</li>
+            <li><b>Nmap:</b> با اسکریپت‌های NSE برای SMB.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از enum4linux برای Enumeration کامل
+enum4linux -a 192.168.1.101
+
+# استفاده از smbclient برای مشاهده اشتراک‌ها
+smbclient -L //192.168.1.101 -N
+
+# استفاده از smbmap برای نقشه‌برداری
+smbmap -H 192.168.1.101 -u guest -p ""
+
+# استفاده از Nmap برای اسکن SMB
+nmap --script=smb-* -p 445 192.168.1.101</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> SMB دارای آسیب‌پذیری‌های معروفی مانند EternalBlue است که در حملات باج‌افزاری مانند WannaCry استفاده شد. همیشه سیستم‌های SMB را به‌روز نگه دارید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: NFS Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="nfs">
+        <h2>🗂️ NFS Enumeration</h2>
+        <p>
+            <b>NFS (Network File System)</b> یک پروتکل اشتراک‌گذاری فایل در محیط‌های Unix/Linux است. NFS Enumeration به هکر اجازه می‌دهد تا اشتراک‌های فایل NFS را شناسایی کند.
+        </p>
+
+        <h3>📌 ابزارهای NFS Enumeration:</h3>
+        <ul>
+            <li><b>showmount:</b> نمایش اشتراک‌های NFS.</li>
+            <li><b>mount:</b> برای اتصال به اشتراک‌های NFS.</li>
+            <li><b>Nmap:</b> با اسکریپت‌های NSE برای NFS.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نمایش اشتراک‌های NFS
+showmount -e 192.168.1.101
+
+# اتصال به اشتراک NFS
+sudo mount -t nfs 192.168.1.101:/export /mnt/nfs
+
+# استفاده از Nmap برای اسکن NFS
+nmap --script=nfs-* -p 2049 192.168.1.101</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> NFS معمولاً بدون رمزنگاری کار می‌کند و اگر به درستی پیکربندی نشود، می‌تواند اطلاعات حساس را افشا کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: DNS Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="dns">
+        <h2>🌐 DNS Enumeration</h2>
+        <p>
+            <b>DNS Enumeration</b> فرآیند جمع‌آوری اطلاعات از سرورهای DNS است. این اطلاعات می‌تواند شامل زیردامنه‌ها، رکوردهای مختلف DNS و حتی Zone Transfer باشد.
+        </p>
+
+        <h3>📌 اطلاعات قابل دریافت از DNS:</h3>
+        <ul>
+            <li><b>رکوردهای A:</b> آدرس‌های IPv4.</li>
+            <li><b>رکوردهای AAAA:</b> آدرس‌های IPv6.</li>
+            <li><b>رکوردهای MX:</b> سرورهای ایمیل.</li>
+            <li><b>رکوردهای NS:</b> سرورهای نام.</li>
+            <li><b>رکوردهای TXT:</b> اطلاعات متنی (مثل SPF).</li>
+            <li><b>زیردامنه‌ها:</b> زیردامنه‌های یک دامنه.</li>
+            <li><b>Zone Transfer:</b> انتقال کامل منطقه (در صورت پیکربندی اشتباه).</li>
+        </ul>
+
+        <h3>📌 ابزارهای DNS Enumeration:</h3>
+        <ul>
+            <li><b>dig:</b> ابزار خط فرمان قدرتمند برای پرس‌وجوی DNS.</li>
+            <li><b>nslookup:</b> ابزار خط فرمان ساده برای پرس‌وجوی DNS.</li>
+            <li><b>dnsrecon:</b> ابزار پیشرفته برای Enumeration DNS.</li>
+            <li><b>dnsenum:</b> ابزار دیگر برای Enumeration DNS با قابلیت جستجوی زیردامنه.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از dig
+dig example.com A
+dig example.com MX
+dig example.com NS
+dig example.com ANY
+
+# Zone Transfer
+dig @ns1.example.com example.com AXFR
+
+# استفاده از dnsrecon
+dnsrecon -d example.com
+
+# استفاده از dnsenum
+dnsenum example.com</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Zone Transfer یکی از آسیب‌پذیری‌های رایج DNS است. سرورهای DNS باید به گونه‌ای پیکربندی شوند که Zone Transfer را محدود کنند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: Email Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="email">
+        <h2>📧 Email Enumeration</h2>
+        <p>
+            <b>Email Enumeration</b> فرآیند جمع‌آوری آدرس‌های ایمیل از سرورهای ایمیل است. این کار معمولاً با استفاده از دستورات SMTP مانند <b>VRFY</b> و <b>EXPN</b> انجام می‌شود.
+        </p>
+
+        <h3>📌 روش‌های Email Enumeration:</h3>
+        <ul>
+            <li><b>VRFY (Verify):</b> تأیید وجود یک آدرس ایمیل.</li>
+            <li><b>EXPN (Expand):</b> نمایش اعضای یک گروه ایمیل.</li>
+            <li><b>RCPT TO:</b> در مرحله SMTP، می‌توان از آن برای Enumeration استفاده کرد.</li>
+        </ul>
+
+        <h3>📌 ابزارهای Email Enumeration:</h3>
+        <ul>
+            <li><b>smtp-user-enum:</b> ابزار تخصصی برای Enumeration کاربران SMTP.</li>
+            <li><b>theHarvester:</b> جمع‌آوری ایمیل از منابع عمومی.</li>
+            <li><b>Metasploit:</b> ماژول‌های SMTP Enumeration.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از smtp-user-enum
+smtp-user-enum -M VRFY -U users.txt -t 192.168.1.101
+
+# استفاده از theHarvester
+theharvester -d example.com -l 500 -b google,linkedin
+
+# استفاده از Metasploit برای SMTP Enumeration
+msf6 > use auxiliary/scanner/smtp/smtp_enum</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> بسیاری از سرورهای SMTP مدرن، VRFY و EXPN را به دلایل امنیتی غیرفعال کرده‌اند. با این حال، برخی سرورها همچنان این دستورات را فعال نگه می‌دارند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: ابزارهای Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای Enumeration</h2>
+        <p>
+            ابزارهای متعددی برای Enumeration وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>پروتکل/سرویس</th><th>توضیح</th></tr>
+                <tr><td><b>enum4linux</b></td><td>NetBIOS, SMB</td><td>ابزار قدرتمند برای Enumeration سیستم‌های ویندوز و Linux/Samba</td></tr>
+                <tr><td><b>smbclient</b></td><td>SMB</td><td>کلاینت SMB برای اتصال و کاوش اشتراک‌ها</td></tr>
+                <tr><td><b>smbmap</b></td><td>SMB</td><td>نقشه‌برداری از اشتراک‌های SMB</td></tr>
+                <tr><td><b>snmpwalk</b></td><td>SNMP</td><td>پیمایش درخت MIB برای جمع‌آوری اطلاعات</td></tr>
+                <tr><td><b>snmpcheck</b></td><td>SNMP</td><td>اسکنر SNMP برای جمع‌آوری اطلاعات گسترده</td></tr>
+                <tr><td><b>ldapsearch</b></td><td>LDAP</td><td>جستجو در دایرکتوری‌های LDAP</td></tr>
+                <tr><td><b>dnsrecon</b></td><td>DNS</td><td>ابزار پیشرفته برای Enumeration DNS</td></tr>
+                <tr><td><b>dnsenum</b></td><td>DNS</td><td>ابزار دیگر برای Enumeration DNS با جستجوی زیردامنه</td></tr>
+                <tr><td><b>smtp-user-enum</b></td><td>SMTP</td><td>Enumeration کاربران SMTP</td></tr>
+                <tr><td><b>theHarvester</b></td><td>Email, OSINT</td><td>جمع‌آوری ایمیل و اطلاعات از منابع عمومی</td></tr>
+                <tr><td><b>Nmap</b></td><td>همه</td><td>با اسکریپت‌های NSE برای Enumeration</td></tr>
+                <tr><td><b>Recon-ng</b></td><td>همه</td><td>چارچوب جامع برای جمع‌آوری اطلاعات</td></tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> ابزارهای enum4linux و snmpwalk به دلیل جامعیت و قدرت، جزو محبوب‌ترین ابزارهای Enumeration هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: Enumeration با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-enumeration">
+        <h2>🤖 Enumeration با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، ابزارها و تکنیک‌های مبتنی بر AI را برای Enumeration نیز معرفی می‌کند.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در Enumeration:</h3>
+        <ul>
+            <li><b>اتوماسیون جمع‌آوری اطلاعات:</b> AI می‌تواند به‌صورت خودکار از چندین منبع اطلاعات جمع‌آوری کند.</li>
+            <li><b>تحلیل هوشمند داده‌ها:</b> AI می‌تواند الگوها و روابط پنهان در داده‌های جمع‌آوری شده را شناسایی کند.</li>
+            <li><b>پیش‌بینی اطلاعات مفید:</b> AI می‌تواند بر اساس داده‌های موجود، اطلاعات مفید را اولویت‌بندی کند.</li>
+            <li><b>کاهش خطاهای انسانی:</b> خودکارسازی فرآیندها باعث کاهش خطاهای انسانی می‌شود.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Enumeration در CEH v13:</h3>
+        <ul>
+            <li><b>AI-Powered OSINT Tools:</b> ابزارهایی که از هوش مصنوعی برای جمع‌آوری و تحلیل اطلاعات استفاده می‌کنند.</li>
+            <li><b>AI-Based User Enumeration:</b> شناسایی خودکار کاربران با استفاده از الگوریتم‌های یادگیری ماشین.</li>
+            <li><b>AI-Driven Data Analysis:</b> تحلیل داده‌های جمع‌آوری شده برای شناسایی آسیب‌پذیری‌های بالقوه.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در Enumeration مهم است؟</b>
+            <p>
+                Enumeration با AI می‌تواند اطلاعات را بسیار سریع‌تر و دقیق‌تر از روش‌های دستی جمع‌آوری کند و الگوهای پیچیده‌ای را شناسایی کند که ممکن است توسط تحلیلگران انسانی نادیده گرفته شوند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: راه‌های مقابله با Enumeration -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با Enumeration (Countermeasures)</h2>
+        <p>
+            برای جلوگیری از Enumeration، سازمان‌ها باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>غیرفعال کردن سرویس‌های غیرضروری:</b> سرویس‌هایی مانند NetBIOS و SNMP که نیازی به آنها نیست را غیرفعال کنید.</li>
+            <li><b>استفاده از فایروال:</b> پورت‌های حساس را با فایروال محدود کنید.</li>
+            <li><b>به‌روزرسانی سیستم‌ها:</b> همه سیستم‌ها را با آخرین وصله‌های امنیتی به‌روز نگه دارید.</li>
+            <li><b>استفاده از احراز هویت قوی:</b> از رمزهای عبور قوی و احراز هویت چندعاملی استفاده کنید.</li>
+            <li><b>آموزش کارکنان:</b> کارکنان را در مورد خطرات Enumeration و مهندسی اجتماعی آموزش دهید.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر پروتکل:</h3>
+        <ul>
+            <li><b>NetBIOS/SMB:</b> NetBIOS را غیرفعال کنید و از SMB با احراز هویت قوی استفاده کنید.</li>
+            <li><b>SNMP:</b> رشته‌های Community پیش‌فرض را تغییر دهید و از نسخه SNMPv3 با رمزنگاری استفاده کنید.</li>
+            <li><b>LDAP:</b> از احراز هویت قوی و رمزنگاری (LDAPS) استفاده کنید.</li>
+            <li><b>DNS:</b> Zone Transfer را محدود کنید و از DNSSEC استفاده کنید.</li>
+            <li><b>SMTP:</b> دستورات VRFY و EXPN را غیرفعال کنید.</li>
+            <li><b>NFS:</b> از NFSv4 با احراز هویت و رمزنگاری استفاده کنید.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Enumeration معمولاً اولین گام برای نفوذ است. اگر بتوانید Enumeration را متوقف کنید، بسیاری از حملات قبل از شروع خنثی می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – Enumeration در عمل</h2>
+        <p>
+            در این کارگاه، شما یک سناریوی جامع Enumeration را روی یک هدف فرضی پیاده‌سازی می‌کنید. هدف این کارگاه، آشنایی عملی با تکنیک‌ها و ابزارهای Enumeration است.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>انجام NetBIOS Enumeration با enum4linux.</li>
+            <li>انجام SNMP Enumeration با snmpwalk و snmpcheck.</li>
+            <li>انجام SMB Enumeration با smbclient و smbmap.</li>
+            <li>انجام DNS Enumeration با dig و dnsrecon.</li>
+            <li>یادگیری تحلیل و ترکیب اطلاعات جمع‌آوری شده.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> Metasploitable 2 یا یک سیستم ویندوز آزمایشگاهی</li>
+            <li><b>ابزارها:</b> enum4linux, snmpwalk, snmpcheck, smbclient, smbmap, dnsrecon, dig</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: NetBIOS Enumeration با enum4linux</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># Enumeration کامل با enum4linux
+enum4linux -a 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> نتایج را بررسی کنید. اطلاعاتی مانند نام کاربران، گروه‌ها، اشتراک‌ها و جلسات فعال را شناسایی کنید.</p>
+
+        <h4>مرحله ۲: SNMP Enumeration با snmpwalk</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># جمع‌آوری اطلاعات سیستم
+snmpwalk -v 1 -c public 192.168.1.101 system
+
+# جمع‌آوری اطلاعات کاربران
+snmpwalk -v 1 -c public 192.168.1.101 .1.3.6.1.4.1.77.1.2.25
+
+# جمع‌آوری اطلاعات فرآیندها
+snmpwalk -v 1 -c public 192.168.1.101 hrSWRunTable</code></pre>
+        </div>
+        <p><b>تحلیل:</b> اطلاعات سیستم، کاربران و فرآیندهای در حال اجرا را شناسایی کنید.</p>
+
+        <h4>مرحله ۳: SMB Enumeration با smbclient و smbmap</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># مشاهده اشتراک‌ها با smbclient
+smbclient -L //192.168.1.101 -N
+
+# نقشه‌برداری با smbmap
+smbmap -H 192.168.1.101 -u guest -p ""</code></pre>
+        </div>
+        <p><b>تحلیل:</b> اشتراک‌های موجود و دسترسی‌های آنها را بررسی کنید.</p>
+
+        <h4>مرحله ۴: DNS Enumeration با dig و dnsrecon</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پرس‌وجوی DNS با dig
+dig example.com ANY
+
+# Enumeration کامل DNS با dnsrecon
+dnsrecon -d example.com</code></pre>
+        </div>
+        <p><b>تحلیل:</b> رکوردهای DNS، زیردامنه‌ها و اطلاعات Zone Transfer را شناسایی کنید.</p>
+
+        <h4>مرحله ۵: جمع‌بندی و مستندسازی</h4>
+        <p>تمام اطلاعات جمع‌آوری شده را در یک گزارش منظم ثبت کنید. این گزارش باید شامل موارد زیر باشد:</p>
+        <ul>
+            <li>لیست کاربران و گروه‌های شناسایی شده.</li>
+            <li>اشتراک‌های شبکه و دسترسی‌ها.</li>
+            <li>اطلاعات سیستم از SNMP.</li>
+            <li>زیردامنه‌ها و رکوردهای DNS.</li>
+            <li>تحلیل و جمع‌بندی نقاط ضعف شناسایی شده.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از نتایج Enumeration تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های Enumeration خود را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – NetBIOS Enumeration:</b>
+                <br>با استفاده از enum4linux، یک Enumeration کامل روی یک سیستم ویندوز انجام دهید و نتایج را تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – SNMP Enumeration:</b>
+                <br>با استفاده از snmpwalk، اطلاعات سیستم و کاربران یک دستگاه با SNMP فعال را جمع‌آوری کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – SMB Enumeration:</b>
+                <br>با استفاده از smbclient و smbmap، اشتراک‌های SMB یک سیستم را شناسایی و تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – DNS Enumeration:</b>
+                <br>با استفاده از dig و dnsrecon، اطلاعات DNS یک دامنه را جمع‌آوری کنید و زیردامنه‌های آن را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – LDAP Enumeration:</b>
+                <br>با استفاده از ldapsearch، اطلاعات LDAP یک دایرکتوری را جمع‌آوری کنید.
+            </li>
+            <li>
+                <b>تمرین ۶ – Email Enumeration:</b>
+                <br>با استفاده از smtp-user-enum، کاربران ایمیل یک سرور SMTP را شناسایی کنید.
+            </li>
+            <li>
+                <b>تمرین ۷ – ترکیبی:</b>
+                <br>یک سناریوی کامل Enumeration را روی یک سیستم هدف پیاده‌سازی کنید و یک گزارش جامع تهیه کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Enumeration</span></td>
+                    <td>—</td>
+                    <td>فرآیند جمع‌آوری اطلاعات دقیق از یک سیستم هدف.</td>
+                    <td>شناسایی کاربران، گروه‌ها، اشتراک‌ها و سرویس‌ها.</td>
+                    <td>استفاده از enum4linux برای جمع‌آوری اطلاعات یک سرور.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NetBIOS</span></td>
+                    <td><b>Net</b>work <b>B</b>asic <b>I</b>nput/<b>O</b>utput <b>S</b>ystem</td>
+                    <td>پروتکل قدیمی برای اشتراک‌گذاری فایل‌ها و ارتباطات در شبکه‌های ویندوز.</td>
+                    <td>شناسایی نام کامپیوترها، کاربران و اشتراک‌ها.</td>
+                    <td>دستور <code dir='ltr'>nbtstat -A 192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SNMP</span></td>
+                    <td><b>S</b>imple <b>N</b>etwork <b>M</b>anagement <b>P</b>rotocol</td>
+                    <td>پروتکل مدیریت شبکه برای مانیتورینگ دستگاه‌ها.</td>
+                    <td>جمع‌آوری اطلاعات سیستم، کاربران و فرآیندها.</td>
+                    <td><code dir='ltr'>snmpwalk -v 1 -c public 192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">LDAP</span></td>
+                    <td><b>L</b>ightweight <b>D</b>irectory <b>A</b>ccess <b>P</b>rotocol</td>
+                    <td>پروتکل دسترسی به دایرکتوری‌های اطلاعاتی.</td>
+                    <td>جمع‌آوری اطلاعات کاربران و گروه‌ها از دایرکتوری.</td>
+                    <td><code dir='ltr'>ldapsearch -x -h 192.168.1.1 -b "dc=example,dc=com"</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SMB</span></td>
+                    <td><b>S</b>erver <b>M</b>essage <b>B</b>lock</td>
+                    <td>پروتکل اشتراک‌گذاری فایل‌ها در شبکه‌های ویندوز.</td>
+                    <td>شناسایی اشتراک‌ها، کاربران و گروه‌ها.</td>
+                    <td><code dir='ltr'>smbclient -L //192.168.1.1 -N</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NFS</span></td>
+                    <td><b>N</b>etwork <b>F</b>ile <b>S</b>ystem</td>
+                    <td>پروتکل اشتراک‌گذاری فایل‌ها در محیط‌های Unix/Linux.</td>
+                    <td>شناسایی اشتراک‌های فایل NFS.</td>
+                    <td><code dir='ltr'>showmount -e 192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Zone Transfer</span></td>
+                    <td>—</td>
+                    <td>انتقال کامل رکوردهای DNS از یک سرور به سرور دیگر.</td>
+                    <td>جمع‌آوری تمام رکوردهای DNS یک دامنه.</td>
+                    <td><code dir='ltr'>dig @ns1.example.com example.com AXFR</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">VRFY</span></td>
+                    <td><b>Ver</b>i<b>fy</b></td>
+                    <td>دستور SMTP برای تأیید وجود یک آدرس ایمیل.</td>
+                    <td>تأیید وجود کاربران ایمیل.</td>
+                    <td><code dir='ltr'>VRFY user@example.com</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">EXPN</span></td>
+                    <td><b>Exp</b>a<b>n</b>d</td>
+                    <td>دستور SMTP برای نمایش اعضای یک گروه ایمیل.</td>
+                    <td>شناسایی اعضای گروه‌های ایمیل.</td>
+                    <td><code dir='ltr'>EXPN group@example.com</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MIB</span></td>
+                    <td><b>M</b>anagement <b>I</b>nformation <b>B</b>ase</td>
+                    <td>پایگاه داده اطلاعات مدیریت در SNMP.</td>
+                    <td>مرجع اطلاعات قابل جمع‌آوری از SNMP.</td>
+                    <td>پیمایش درخت MIB با snmpwalk.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">enum4linux</span></td>
+                    <td>—</td>
+                    <td>ابزار قدرتمند برای Enumeration NetBIOS و SMB.</td>
+                    <td>جمع‌آوری کامل اطلاعات از سیستم‌های ویندوز و Samba.</td>
+                    <td><code dir='ltr'>enum4linux -a 192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">snmpwalk</span></td>
+                    <td>—</td>
+                    <td>ابزار پیمایش درخت MIB در SNMP.</td>
+                    <td>جمع‌آوری اطلاعات سیستم، کاربران و فرآیندها.</td>
+                    <td><code dir='ltr'>snmpwalk -v 1 -c public 192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ldapsearch</span></td>
+                    <td>—</td>
+                    <td>ابزار جستجو در دایرکتوری‌های LDAP.</td>
+                    <td>جمع‌آوری اطلاعات کاربران و گروه‌ها.</td>
+                    <td><code dir='ltr'>ldapsearch -x -h 192.168.1.1 -b "dc=example,dc=com"</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">dnsrecon</span></td>
+                    <td>—</td>
+                    <td>ابزار پیشرفته برای Enumeration DNS.</td>
+                    <td>جمع‌آوری رکوردهای DNS، زیردامنه‌ها و Zone Transfer.</td>
+                    <td><code dir='ltr'>dnsrecon -d example.com</code></td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۴ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۴:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین مراحل هک قانونمند، یعنی <b>Enumeration</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>تعریف و اهمیت</b> Enumeration در چرخه هک.</li>
+            <li><b>تکنیک‌های اصلی</b> Enumeration: NetBIOS, SNMP, LDAP, SMB, NFS, DNS, Email.</li>
+            <li><b>ابزارهای کلیدی</b> مانند enum4linux, snmpwalk, ldapsearch, smbclient, dnsrecon.</li>
+            <li><b>نقش هوش مصنوعی</b> در Enumeration.</li>
+            <li><b>راه‌های مقابله</b> با Enumeration برای محافظت از سازمان.</li>
+            <li><b>کارگاه عملی</b> برای پیاده‌سازی Enumeration روی یک هدف فرضی.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_05_System_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۵ – System Hacking</a> یاد خواهید گرفت که چگونه از اطلاعات جمع‌آوری شده برای نفوذ به سیستم و دسترسی به آن استفاده کنید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۴ – Enumeration | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
