@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۲ CCNP — مجازی‌سازی (Virtualization)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-02">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۲ — مجازی‌سازی (Virtualization)</h1>
+    <div class="meta">
+      <span>📖 ۸۵ دقیقه</span>
+      <span>🎯 وزن در ENCOR: ۱۰٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      مجازی‌سازی، پایه‌ی معماری‌های مدرن شبکه است. در این فصل یاد می‌گیری چطور
+      <strong>Hypervisor</strong>ها منابع فیزیکی را تقسیم می‌کنند،
+      <span class="term" data-term="vrf">VRF</span> چطور چند شبکه‌ی مجازی روی یک روتر می‌سازد،
+      <span class="term" data-term="gre">GRE</span> و
+      <span class="term" data-term="ipsec">IPsec</span> چگونه تونل‌های امن ایجاد می‌کنند،
+      و <span class="term" data-term="vxlan">VXLAN</span> چطور محدودیت ۴۰۹۶ VLAN را به میلیون‌ها Segment تبدیل می‌کند.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>درک مفهومی + پیکربندی عملی</strong> است —
+      بعد از آن، می‌توانی چند Tenant مجزا روی یک زیرساخت بسازی و بین سایت‌ها
+      تونل امن با Performance بالا راه‌اندازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه مجازی‌سازی — Server و Network</li>
+      <li>Hypervisor Type 1 vs Type 2 — Bare-Metal و Hosted</li>
+      <li>Virtual Machine و Virtual Switch</li>
+      <li>Containers vs VMs</li>
+      <li>VRF — Virtual Routing and Forwarding</li>
+      <li>VRF-Lite و Multi-Tenant</li>
+      <li>GRE Tunnel — تونل L3 ساده</li>
+      <li>GRE over IPsec — تونل امن</li>
+      <li>IPsec — Transport vs Tunnel Mode</li>
+      <li>IKEv1 vs IKEv2</li>
+      <li>VXLAN — Overlay مدرن L2 روی L3</li>
+      <li>VXLAN Flood-and-Learn vs EVPN</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت VM و Container در چیست و هرکدام برای چه سناریوهایی مناسب‌اند؟</li>
+      <li>VRF چطور به یک ISP اجازه می‌دهد چند مشتری با IPهای یکسان را روی یک روتر سرویس بدهد؟</li>
+      <li>چرا GRE به‌تنهایی امن نیست ولی با IPsec، ترکیب قدرتمندی می‌سازد؟</li>
+      <li>VXLAN چطور ۱۶ میلیون Segment می‌سازد درحالی‌که VLAN فقط ۴۰۹۶ دارد؟</li>
+      <li>تفاوت VXLAN Flood-and-Learn با VXLAN EVPN در چیست؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۲.۱ ==== -->
+    <h3>۲.۱ مفاهیم پایه مجازی‌سازی</h3>
+    <p>
+      مجازی‌سازی یعنی اجرای چند سیستم مستقل (که هرکدام فکر می‌کنند منابع اختصاصی دارند)
+      روی یک زیرساخت فیزیکی مشترک. سه لایه‌ی اصلی مجازی‌سازی:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🖥️ Server Virtualization</strong>
+        <p style="margin:6px 0">چند VM روی یک سرور فیزیکی — صرفه‌جویی در CAPEX و افزایش Utilization از ۱۵٪ به ۸۰٪.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🌐 Network Virtualization</strong>
+        <p style="margin:6px 0">چند شبکه‌ی منطقی روی یک زیرساخت فیزیکی — VRF، VLAN، VXLAN.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>💾 Storage Virtualization</strong>
+        <p style="margin:6px 0">چند LUN منطقی روی Pool فیزیکی — SAN، NAS، vSAN.</p>
+      </div>
+    </div>
+
+    <!-- ==== ۲.۲ ==== -->
+    <h3>۲.۲ Hypervisor Type 1 vs Type 2</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Type 1 (Bare-Metal)</th>
+          <th style="padding:6px;border:1px solid var(--border)">Type 2 (Hosted)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">اجرا</td><td style="padding:6px;border:1px solid var(--border)">مستقیم روی سخت‌افزار</td><td style="padding:6px;border:1px solid var(--border)">روی OS میزبان</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Performance</td><td style="padding:6px;border:1px solid var(--border)">بالا (Direct Access)</td><td style="padding:6px;border:1px solid var(--border)">متوسط</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Overhead</td><td style="padding:6px;border:1px solid var(--border)">کم</td><td style="padding:6px;border:1px solid var(--border)">زیاد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">Data Center Enterprise</td><td style="padding:6px;border:1px solid var(--border)">تست، توسعه، دسکتاپ</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نمونه</td><td style="padding:6px;border:1px solid var(--border)">VMware ESXi، Hyper-V، KVM، Xen</td><td style="padding:6px;border:1px solid var(--border)">VMware Workstation، VirtualBox، Parallels</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Hyper-V در Windows Server، علی‌رغم اینکه یک Role است، از نوع <strong>Type 1</strong>
+      محسوب می‌شود — چون مستقیماً روی سخت‌افزار اجرا می‌شود و Windows فقط یک VM مدیریتی
+      (Parent Partition) است.
+    </div>
+
+    <!-- ==== ۲.۳ ==== -->
+    <h3>۲.۳ Virtual Machine و Virtual Switch</h3>
+
+    <p><strong>VM (Virtual Machine)</strong> یک کامپیوتر کامل مجازی با CPU، RAM، Disk و NIC مجازی است.
+      هر VM از دید شبکه، یک Endpoint مستقل با MAC و IP خود است.</p>
+
+    <p><strong>Virtual Switch (vSwitch):</strong> سوئیچ نرم‌افزاری که VMها را به شبکه فیزیکی
+      و به هم متصل می‌کند. انواع vSwitch:</p>
+
+    <ul>
+      <li><strong>vSwitch Standard:</strong> پیکربندی مستقل روی هر ESXi — ساده ولی مدیریت دستی</li>
+      <li><strong>vSwitch Distributed:</strong> پیکربندی متمرکز از vCenter — مقیاس‌پذیر برای صدها Host</li>
+      <li><strong>Cisco Nexus 1000V:</strong> سوئیچ مجازی سیسکو با همان Featureهای NX-OS — Policy متمرکز</li>
+    </ul>
+
+    <pre><code>! نمونه‌ی Topology
+[Physical Switch]
+      │
+   [Uplink]
+      │
+   [vSwitch]
+    ╱  │  ╲
+ [VM1][VM2][VM3]
+ 10.1 10.2 10.3
+! VMها از دید Physical Switch — همه روی یک پورت
+! ترافیک بین VMها در vSwitch سوییچ می‌شود (بدون خروج از Host)</code></pre>
+
+    <p><strong>مفاهیم مهم vSwitch:</strong></p>
+    <ul>
+      <li><strong>Port Group:</strong> گروه پورت‌های vSwitch با VLAN مشترک — به VM اختصاص می‌یابد</li>
+      <li><strong>VLAN Tagging:</strong> 802.1Q روی Trunk — EST (External Switch Tagging) یا VST (Virtual Switch Tagging)</li>
+      <li><strong>NIC Teaming:</strong> Bundling چند Uplink برای Redundancy و Load Balancing</li>
+    </ul>
+
+    <!-- ==== ۲.۴ ==== -->
+    <h3>۲.۴ Containers vs Virtual Machines</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">VM</th>
+          <th style="padding:6px;border:1px solid var(--border)">Container</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Kernel</td><td style="padding:6px;border:1px solid var(--border)">هر VM کرنل خودش</td><td style="padding:6px;border:1px solid var(--border)">اشتراک کرنل Host</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">حجم</td><td style="padding:6px;border:1px solid var(--border)">چند GB</td><td style="padding:6px;border:1px solid var(--border)">چند MB</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">زمان راه‌اندازی</td><td style="padding:6px;border:1px solid var(--border)">چند دقیقه</td><td style="padding:6px;border:1px solid var(--border)">چند ثانیه</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Isolation</td><td style="padding:6px;border:1px solid var(--border)">بالا (سخت‌افزاری)</td><td style="padding:6px;border:1px solid var(--border)">متوسط (Namespace)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">Mixed OS، Legacy App</td><td style="padding:6px;border:1px solid var(--border)">Microservices، DevOps، CI/CD</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نمونه</td><td style="padding:6px;border:1px solid var(--border)">VMware، Hyper-V، KVM</td><td style="padding:6px;border:1px solid var(--border)">Docker، Podman، Containerd</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ نکته</div>
+      در Kubernetes، Containerها در Pod قرار می‌گیرند و Pod روی Node اجرا می‌شود.
+      گاهی Kubernetes روی VM اجرا می‌شود — این معماری را <strong>Nested Virtualization</strong> می‌نامند.
+    </div>
+
+    <!-- ==== ۲.۵ ==== -->
+    <h3>۲.۵ VRF — Virtual Routing and Forwarding</h3>
+    <p>
+      <span class="term" data-term="vrf">VRF</span> یک تکنولوژی کلیدی در مجازی‌سازی لایه ۳ است.
+      با VRF، یک روتر می‌تواند چند جدول مسیریابی مستقل داشته باشد — گویی چند روتر
+      در یک روتر است.
+    </p>
+
+    <p><strong>کاربردهای VRF:</strong></p>
+    <ul>
+      <li><strong>ISP Multi-Tenant:</strong> سرویس‌دهی به مشتریان متعدد با IPهای یکسان</li>
+      <li><strong>Segmentation داخلی:</strong> جداسازی دپارتمان‌ها یا Zones امنیتی</li>
+      <li><strong>MPLS L3 VPN:</strong> پایه‌ی ارائه‌ی VPN در شبکه‌های ISP</li>
+      <li><strong>Management VRF:</strong> جداسازی ترافیک مدیریتی از ترافیک کاربران</li>
+    </ul>
+
+    <pre><code>! پیکربندی VRF
+Router(config)# ip vrf CUSTOMER-A
+Router(config-vrf)# rd 65000:100
+Router(config-vrf)# route-target export 65000:100
+Router(config-vrf)# route-target import 65000:100
+Router(config-vrf)# exit
+
+! اختصاص اینترفیس به VRF
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding CUSTOMER-A
+Router(config-if)# ip address 10.0.0.1 255.255.255.0
+! توجه: با ip vrf forwarding، IP قبلی پاک می‌شود — باید دوباره بدهی
+
+! بررسی
+Router# show ip vrf
+Router# show ip vrf interfaces
+Router# show ip route vrf CUSTOMER-A
+Router# ping vrf CUSTOMER-A 10.0.0.2</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      با اعمال <code>ip vrf forwarding</code> روی یک اینترفیس، تمام IP Config آن پاک می‌شود.
+      همیشه قبل از اعمال، IP را یادداشت کن.
+    </div>
+
+    <!-- ==== ۲.۶ ==== -->
+    <h3>۲.۶ VRF-Lite و Multi-Tenant</h3>
+    <p>
+      <strong>VRF-Lite</strong> یعنی استفاده از VRF بدون MPLS. در این حالت:
+    </p>
+    <ul>
+      <li>چند VRF روی یک روتر با RD (Route Distinguisher) یکتا</li>
+      <li>Route-Target برای Import/Export بین VRFها (در سناریوهای Route Leak)</li>
+      <li>هر VRF جدول مسیریابی و Adjacency مستقل خودش را دارد</li>
+    </ul>
+
+    <p><strong>مثال Multi-Tenant روی یک روتر:</strong></p>
+
+    <pre><code>! دو مشتری با IP یکسان — کاملاً جدا
+Router(config)# ip vrf TENANT-A
+Router(config-vrf)# rd 1:100
+Router(config-vrf)# route-target both 1:100
+Router(config-vrf)# exit
+
+Router(config)# ip vrf TENANT-B
+Router(config-vrf)# rd 1:200
+Router(config-vrf)# route-target both 1:200
+Router(config-vrf)# exit
+
+! هر دو مشتری Subnet یکسان دارند
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding TENANT-A
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip vrf forwarding TENANT-B
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+! همان IP — بدون تداخل
+
+! Route Leak بین دو VRF (اگر لازم باشد)
+Router(config)# ip route vrf TENANT-A 10.0.0.0 255.255.255.0 Gi0/1 192.168.1.2 global</code></pre>
+
+    <!-- ==== ۲.۷ ==== -->
+    <h3>۲.۷ GRE Tunnel — تونل L3 ساده</h3>
+    <p>
+      <span class="term" data-term="gre">GRE</span> (Generic Routing Encapsulation) یک
+      پروتکل تونل‌سازی L3 است که هر نوع پروتکل L3 (IPv4، IPv6، Multicast،
+      Routing Protocols) را داخل IP کپسوله می‌کند.
+    </p>
+
+    <p><strong>مشخصات GRE:</strong></p>
+    <ul>
+      <li>پروتکل IP با شماره <strong>47</strong></li>
+      <li>هدر ۴ بایتی (بدون گزینه) تا ۱۶ بایتی (با همه‌ی گزینه‌ها)</li>
+      <li>بدون رمزنگاری — فقط Encapsulation</li>
+      <li>پشتیبانی از Multicast و Routing Protocol (بر خلاف IPsec خالص)</li>
+      <li>پشتیبانی از MTU بالا با Fragment و PMTUD</li>
+    </ul>
+
+    <pre><code>! پیکربندی GRE Tunnel
+R1(config)# interface Tunnel0
+R1(config-if)# ip address 10.1.1.1 255.255.255.252
+R1(config-if)# tunnel source 203.0.113.1
+R1(config-if)# tunnel destination 203.0.113.2
+R1(config-if)# tunnel mode gre ip
+R1(config-if)# no shutdown
+
+! توصیه: Source به‌جای IP فیزیکی، از Loopback استفاده کن
+R1(config)# interface Loopback0
+R1(config-if)# ip address 1.1.1.1 255.255.255.255
+
+R1(config)# interface Tunnel0
+R1(config-if)# tunnel source Loopback0
+! مزیت: حتی اگر اینترفیس فیزیکی Down/Up شود، Tunnel پایدار می‌ماند
+
+! بررسی
+R1# show interface Tunnel0
+R1# show ip interface brief | include Tunnel
+R1# ping 10.1.1.2</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      MTU تونل به‌طور پیش‌فرض 1476 بایت است (1500 - 20 IP + 4 GRE).
+      اگر <code>tunnel path-mtu-discovery</code> فعال نباشد، ممکن است Fragment مشکل بسازد.
+    </div>
+
+    <!-- ==== ۲.۸ ==== -->
+    <h3>۲.۸ GRE over IPsec — تونل امن</h3>
+    <p>
+      GRE به‌تنهایی امن نیست (بدون رمزنگاری). ترکیب GRE + IPsec یک تونل امن
+      و انعطاف‌پذیر می‌سازد که از Routing Protocol و Multicast هم پشتیبانی می‌کند.
+    </p>
+
+    <p><strong>دو روش پیاده‌سازی GRE over IPsec:</strong></p>
+    <ul>
+      <li><strong>GRE + Crypto Map:</strong> روش سنتی — ACL برای Match کردن GRE</li>
+      <li><strong>GRE + IPsec Profile + Tunnel Protection:</strong> روش مدرن — کلید و Policy روی تونل</li>
+    </ul>
+
+    <pre><code>! ===== روش مدرن: Tunnel Protection =====
+
+! گام ۱: GRE Tunnel
+R1(config)# interface Tunnel0
+R1(config-if)# ip address 10.1.1.1 255.255.255.252
+R1(config-if)# tunnel source Gi0/0
+R1(config-if)# tunnel destination 203.0.113.2
+R1(config-if)# tunnel mode gre ip
+R1(config-if)# exit
+
+! گام ۲: IKE Policy
+R1(config)# crypto isakmp policy 10
+R1(config-isakmp)# encryption aes 256
+R1(config-isakmp)# hash sha256
+R1(config-isakmp)# authentication pre-share
+R1(config-isakmp)# group 14
+R1(config-isakmp)# exit
+
+R1(config)# crypto isakmp key StrongKey123 address 203.0.113.2
+
+! گام ۳: IPsec Transform Set
+R1(config)# crypto ipsec transform-set MY-SET esp-aes 256 esp-sha256-hmac
+
+! گام ۴: IPsec Profile
+R1(config)# crypto ipsec profile MY-PROFILE
+R1(ipsec-profile)# set transform-set MY-SET
+R1(ipsec-profile)# exit
+
+! گام ۵: اعمال روی Tunnel
+R1(config)# interface Tunnel0
+R1(config-if)# tunnel protection ipsec profile MY-PROFILE
+
+! بررسی
+R1# show crypto isakmp sa
+R1# show crypto ipsec sa
+R1# show interface Tunnel0</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      روش <code>tunnel protection ipsec profile</code> بسیار تمیزتر از Crypto Map است —
+      نیازی به ACL Match، Crypto Map روی اینترفیس فیزیکی و پیچیدگی‌های اضافی ندارد.
+    </div>
+
+    <!-- ==== ۲.۹ ==== -->
+    <h3>۲.۹ IPsec — Transport vs Tunnel Mode</h3>
+
+    <p><strong>IPsec دو پروتکل اصلی دارد:</strong></p>
+    <ul>
+      <li><strong>AH (IP Protocol 51):</strong> Authentication only — بدون رمزنگاری. امروز کمتر استفاده می‌شود.</li>
+      <li><strong>ESP (IP Protocol 50):</strong> Authentication + Encryption — استاندارد امروز.</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Transport Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">Tunnel Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">IP Header اصلی</td><td style="padding:6px;border:1px solid var(--border)">حفظ می‌شود</td><td style="padding:6px;border:1px solid var(--border)">کپسوله می‌شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Overhead</td><td style="padding:6px;border:1px solid var(--border)">کم (۲۰-۳۰ بایت)</td><td style="padding:6px;border:1px solid var(--border)">زیاد (۵۰-۷۰ بایت)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">Host-to-Host</td><td style="padding:6px;border:1px solid var(--border)">Site-to-Site VPN</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پشتیبانی Multicast</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌ (نیاز به GRE)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! نمونه بسته در Tunnel Mode
+[New IP Header | ESP Header | Original IP Packet | ESP Trailer | ESP Auth]
+
+! نمونه بسته در Transport Mode
+[Original IP Header | ESP Header | Payload | ESP Trailer | ESP Auth]
+                     ↑ فقط Payload رمزنگاری شده</code></pre>
+
+    <!-- ==== ۲.۱۰ ==== -->
+    <h3>۲.۱۰ IKEv1 vs IKEv2</h3>
+    <p>
+      IKE (Internet Key Exchange) پروتکل مذاکره‌ی کلید در IPsec است. دو نسخه دارد:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">IKEv1</th>
+          <th style="padding:6px;border:1px solid var(--border)">IKEv2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Phaseها</td><td style="padding:6px;border:1px solid var(--border)">2 Phase (Main/Aggressive + Quick)</td><td style="padding:6px;border:1px solid var(--border)">Single Exchange (IKE_SA_INIT + IKE_AUTH)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیام‌ها</td><td style="padding:6px;border:1px solid var(--border)">۹ پیام (Main Mode)</td><td style="padding:6px;border:1px solid var(--border)">۴ پیام</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">NAT Traversal</td><td style="padding:6px;border:1px solid var(--border)">افزونه جداگانه</td><td style="padding:6px;border:1px solid var(--border)">Built-in</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">MOBIKE</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (Mobility)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">EAP</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">کامل (EAP-Only)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کارایی</td><td style="padding:6px;border:1px solid var(--border)">متوسط</td><td style="padding:6px;border:1px solid var(--border)">بالاتر</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! پیکربندی IKEv2 در سیسکو
+R1(config)# crypto ikev2 proposal MY-PROPOSAL
+R1(config-ikev2-proposal)# encryption aes-cbc-256
+R1(config-ikev2-proposal)# integrity sha256
+R1(config-ikev2-proposal)# group 14
+
+R1(config)# crypto ikev2 policy MY-POLICY
+R1(config-ikev2-policy)# proposal MY-PROPOSAL
+
+R1(config)# crypto ikev2 keyring MY-KEYRING
+R1(config-ikev2-keyring)# peer R2
+R1(config-ikev2-keyring-peer)# address 203.0.113.2
+R1(config-ikev2-keyring-peer)# pre-shared-key StrongKey123
+
+R1(config)# crypto ikev2 profile MY-PROFILE
+R1(config-ikev2-profile)# match identity remote address 203.0.113.2 255.255.255.255
+R1(config-ikev2-profile)# authentication local pre-share
+R1(config-ikev2-profile)# authentication remote pre-share
+R1(config-ikev2-profile)# keyring local MY-KEYRING</code></pre>
+
+    <!-- ==== ۲.۱۱ ==== -->
+    <h3>۲.۱۱ VXLAN — Overlay مدرن L2 روی L3</h3>
+    <p>
+      <span class="term" data-term="vxlan">VXLAN</span> (Virtual Extensible LAN) یک
+      تکنولوژی <strong>MAC-in-UDP</strong> است که فریم‌های L2 را داخل بسته‌های UDP
+      کپسوله می‌کند.
+    </p>
+
+    <p><strong>مشخصات کلیدی:</strong></p>
+    <ul>
+      <li>پورت UDP: <strong>4789</strong> (استاندارد IANA)</li>
+      <li><strong>VNI</strong> (VXLAN Network Identifier): ۲۴ بیت — ~۱۶ میلیون Segment</li>
+      <li><strong>VTEP</strong> (VXLAN Tunnel Endpoint): دستگاهی که Encapsulation/Decapsulation می‌کند</li>
+      <li>Overhead: ۵۰ بایت (20 IP + 8 UDP + 8 VXLAN + 14 Inner Ethernet)</li>
+      <li>پشتیبانی از ECMP در Underlay — استفاده از چند مسیر همزمان</li>
+    </ul>
+
+    <pre><code>! ساختار بسته VXLAN
+[Outer Ethernet | Outer IP | Outer UDP (4789) | VXLAN Header | Inner Ethernet Frame]
+                       ↑                          ↑
+                  VTEP IPها                    VNI (24 بیت)
+
+! نمونه Topology
+[Host A: MAC-AA, IP 10.1.1.10]
+       │
+   [VTEP-1: IP 192.168.1.1]
+       │
+   (IP Network / Underlay)
+       │
+   [VTEP-2: IP 192.168.2.1]
+       │
+[Host B: MAC-BB, IP 10.1.1.20]
+
+! Host A به Host B — فریم L2 داخل بسته‌ی UDP بین VTEPها</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ چرا VXLAN؟</div>
+      <ul style="margin:6px 0 0">
+        <li>محدودیت ۴۰۹۶ VLAN را به ~۱۶M VNI می‌رساند</li>
+        <li>L2 را روی L3 گسترش می‌دهد — بدون نیاز به Trunk بین DCها</li>
+        <li>مقیاس‌پذیری Multi-Tenant در Cloud</li>
+        <li>پایه‌ی معماری SD-Access و EVPN</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۲.۱۲ ==== -->
+    <h3>۲.۱۲ VXLAN Flood-and-Learn vs EVPN</h3>
+
+    <p><strong>Flood-and-Learn (روش سنتی):</strong></p>
+    <ul>
+      <li>VTEPها از Multicast در Underlay برای Flood کردن BUM استفاده می‌کنند</li>
+      <li>یادگیری MAC مقصد — مشابه سوئیچ L2 سنتی</li>
+      <li>نیازمند Multicast در Underlay (PIM Sparse Mode)</li>
+      <li>Data Plane Learning — مقیاس‌پذیری محدود</li>
+    </ul>
+
+    <p><strong>EVPN (Ethernet VPN — روش مدرن):</strong></p>
+    <ul>
+      <li>Control Plane با <strong>BGP</strong> — MP-BGP با Address Family L2VPN EVPN</li>
+      <li>هر VTEP اطلاعات MAC/IP خود را با BGP اعلان می‌کند</li>
+      <li>بدون نیاز به Multicast — استفاده از <strong>Ingress Replication</strong> برای BUM</li>
+      <li>مقیاس‌پذیری بالا، همگرایی سریع، پشتیبانی از Multi-Homing با All-Active</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Flood-and-Learn</th>
+          <th style="padding:6px;border:1px solid var(--border)">EVPN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Control Plane</td><td style="padding:6px;border:1px solid var(--border)">Data Plane Learning</td><td style="padding:6px;border:1px solid var(--border)">MP-BGP EVPN</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Multicast لازم؟</td><td style="padding:6px;border:1px solid var(--border)">✅ بله</td><td style="padding:6px;border:1px solid var(--border)">❌ خیر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مقیاس‌پذیری</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">بالا</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Multi-Homing</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">All-Active (MLAG)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">همگرایی</td><td style="padding:6px;border:1px solid var(--border)">کند</td><td style="padding:6px;border:1px solid var(--border)">سریع</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! خلاصه‌ی VXLAN EVPN
+- Underlay: OSPF یا eBGP بین Spine/Leaf
+- Overlay: iBGP یا eBGP با Address Family l2vpn evpn
+- Route Type 2: MAC/IP Advertisement
+- Route Type 3: Inclusive Multicast (IMET)
+- Route Type 5: IP Prefix (برای L3 VNI)
+
+! نتیجه: Fabric مقیاس‌پذیر بدون Multicast در Underlay</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در GRE Tunnel، همیشه <strong>Source</strong> را از یک Loopback بگیر.
+      این کار پایداری تونل را حتی در زمان Flapping اینترفیس فیزیکی تضمین می‌کند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      در IPsec، Pre-Shared Key ضعیف، کل تونل را بی‌دفاع می‌کند.
+      امروز با IKEv2 و PSK حداقل ۳۲ کاراکتر تصادفی استفاده کن، یا به Certificate مهاجرت کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای تونل Site-to-Site مدرن، از <strong>GRE + IPsec Profile + Tunnel Protection</strong>
+      استفاده کن — نه Crypto Map. کد تمیزتر، نگهداری ساده‌تر، عملکرد بهتر.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۳ CCNP وارد <span class="term" data-term="ospf">OSPF</span> چندناحیه‌ای،
+      <span class="term" data-term="eigrp">EIGRP</span> و
+      <span class="term" data-term="bgp">BGP</span> پیشرفته می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در ENARSI با <span class="term" data-term="mpls">MPLS</span> L3 VPN،
+      <span class="term" data-term="dmvpn">DMVPN</span> و
+      <span class="term" data-term="vxlan">VXLAN</span> EVPN در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — VRF-Lite کامل با Route Leak</h3>
+    <pre><code>! دو Tenant با IP یکسان + یک شبکه‌ی مشترک
+Router(config)# ip vrf TENANT-A
+Router(config-vrf)# rd 1:100
+Router(config-vrf)# route-target both 1:100
+Router(config-vrf)# exit
+
+Router(config)# ip vrf TENANT-B
+Router(config-vrf)# rd 1:200
+Router(config-vrf)# route-target both 1:200
+Router(config-vrf)# exit
+
+! اینترفیس‌های هر Tenant
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding TENANT-A
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip vrf forwarding TENANT-B
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+
+! Route Leak: TENANT-A به TENANT-B اجازه دسترسی
+Router(config)# ip route vrf TENANT-A 10.0.0.0 255.255.255.0 Gi0/1 192.168.1.2 global
+
+! بررسی
+Router# show ip route vrf TENANT-A
+Router# ping vrf TENANT-A 10.0.0.5</code></pre>
+
+    <h3>مثال ۲ — GRE Tunnel بین دو سایت</h3>
+    <pre><code>! ===== R1 =====
+R1(config)# interface Loopback0
+R1(config-if)# ip address 1.1.1.1 255.255.255.255
+
+R1(config)# interface Tunnel0
+R1(config-if)# ip address 10.1.1.1 255.255.255.252
+R1(config-if)# tunnel source Loopback0
+R1(config-if)# tunnel destination 2.2.2.2
+R1(config-if)# tunnel mode gre ip
+R1(config-if)# keepalive 10 3
+
+! ===== R2 =====
+R2(config)# interface Loopback0
+R2(config-if)# ip address 2.2.2.2 255.255.255.255
+
+R2(config)# interface Tunnel0
+R2(config-if)# ip address 10.1.1.2 255.255.255.252
+R2(config-if)# tunnel source Loopback0
+R2(config-if)# tunnel destination 1.1.1.1
+R2(config-if)# tunnel mode gre ip
+R2(config-if)# keepalive 10 3
+
+! بررسی
+R1# show interface Tunnel0
+! ببین: Tunnel source, Tunnel destination, Tunnel protocol
+R1# ping 10.1.1.2</code></pre>
+
+    <h3>مثال ۳ — GRE over IPsec با Tunnel Protection</h3>
+    <pre><code>! ===== گام ۱: IKE Policy =====
+R1(config)# crypto isakmp policy 10
+R1(config-isakmp)# encryption aes 256
+R1(config-isakmp)# hash sha256
+R1(config-isakmp)# authentication pre-share
+R1(config-isakmp)# group 14
+R1(config-isakmp)# lifetime 86400
+R1(config-isakmp)# exit
+
+R1(config)# crypto isakmp key StrongKey@2024 address 203.0.113.2
+
+! ===== گام ۲: IPsec Transform Set =====
+R1(config)# crypto ipsec transform-set STRONG-SET esp-aes 256 esp-sha256-hmac
+R1(cfg-crypto-trans)# mode tunnel
+
+! ===== گام ۳: IPsec Profile =====
+R1(config)# crypto ipsec profile GRE-PROFILE
+R1(ipsec-profile)# set transform-set STRONG-SET
+R1(ipsec-profile)# exit
+
+! ===== گام ۴: اعمال روی Tunnel =====
+R1(config)# interface Tunnel0
+R1(config-if)# tunnel protection ipsec profile GRE-PROFILE
+
+! بررسی
+R1# show crypto isakmp sa
+R1# show crypto ipsec sa
+R1# show interface Tunnel0</code></pre>
+
+    <h3>مثال ۴ — VXLAN Flood-and-Learn ساده</h3>
+    <pre><code>! ===== VTEP-1 (Switch L3) =====
+VTEP1(config)# feature vn-segment-vlan-based
+VTEP1(config)# feature nv overlay
+
+VTEP1(config)# vlan 10
+VTEP1(config-vlan)# vn-segment 10010
+VTEP1(config-vlan)# exit
+
+VTEP1(config)# interface nve1
+VTEP1(config-if-nve)# no shutdown
+VTEP1(config-if-nve)# source-interface Loopback0
+VTEP1(config-if-nve)# member vni 10010
+VTEP1(config-if-nve-vni)# mcast-group 239.1.1.1
+VTEP1(config-if-nve-vni)# exit
+
+! Underlay: OSPF + PIM Sparse Mode
+VTEP1(config)# interface Gi0/0
+VTEP1(config-if)# ip pim sparse-mode
+VTEP1(config-if)# ip router ospf 1 area 0
+
+! بررسی
+VTEP1# show nve interface
+VTEP1# show nve peers
+VTEP1# show nve vni
+VTEP1# show mac address-table</code></pre>
+
+    <h3>مثال ۵ — بررسی و عیب‌یابی IPsec</h3>
+    <pre><code>! بررسی وضعیت IKE SA
+Router# show crypto isakmp sa
+! Status باید QM_IDLE (v1) یا READY (v2) باشد
+
+! بررسی IPsec SA
+Router# show crypto ipsec sa
+! ببین:
+! #pkts encaps, #pkts decaps
+! #pkts encrypt, #pkts decrypt
+! #send errors, #recv errors
+
+! دیباگ زنده
+Router# debug crypto isakmp
+Router# debug crypto ipsec
+
+! چک ACL و Crypto Map
+Router# show crypto map
+
+! چک NAT-T
+Router# show crypto ipsec sa | include NAT-T</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3 یا EVE-NG سه روتر Cisco IOS-XE بساز (R1, R2, R3)</li>
+      <li>روی هر سه، یک Loopback با IP مثل 1.1.1.1/2.2.2.2/3.3.3.3 بساز</li>
+      <li>بین R1 و R2 از طریق اینترنت شبیه‌سازی‌شده (203.0.113.0/24) وصل شو</li>
+      <li>Underlay را با Static Route یا OSPF پایدار کن — Loopbackها به هم Ping بزنند</li>
+      <li>یک VRF به نام CUSTOMER-A روی R2 بساز</li>
+      <li>یک اینترفیس R2 را به CUSTOMER-A اختصاص بده و IP متفاوت با VRF دیگر بده</li>
+      <li>روی R3 یک VRF مشابه بساز و از R2 به R3 پینگ VRF بزن (Route Leak)</li>
+      <li>یک GRE Tunnel بین R1 و R2 با Source/Destination Loopback بساز</li>
+      <li>روی Tunnel یک شبکه 10.1.1.0/30 بساز و پینگ بگیر</li>
+      <li>IPsec با IKEv2 + Tunnel Protection روی GRE Tunnel پیاده کن</li>
+      <li>با <code>show crypto ipsec sa</code> ترافیک Encrypted را تأیید کن</li>
+      <li>اگر تجهیزات NX-OS داری، VXLAN Flood-and-Learn بین دو VTEP راه‌اندازی کن</li>
+      <li>در VXLAN، Underlay را با PIM Sparse Mode و RP پایدار کن</li>
+      <li>Ping بین دو هاست در یک VNI مختلف و بررسی MAC Learning در VTEP</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>VRF اینترفیس IP از دست می‌رود:</strong> با <code>ip vrf forwarding</code> IP پاک می‌شود — باید دوباره وارد کنی.</li>
+      <li><strong>Route Leak کار نمی‌کند:</strong> Route-Target اشتباه یا Static Route درست تعریف نشده — از <code>global</code> در دستور استفاده کن.</li>
+      <li><strong>GRE Tunnel Up می‌شود ولی Trafic رد نمی‌شود:</strong> مسیر Underlay به Destination Loopback وجود ندارد — Static Route یا OSPF چک کن.</li>
+      <li><strong>IPsec SA برقرار نمی‌شود:</strong> PSK، Proposal، Transform-Set یا ACL Match اشتباه.</li>
+      <li><strong>IPsec Disconnect می‌شود:</strong> Lifetime یکسان نباشد — Standard 86400 ثانیه (2 Phase).</li>
+      <li><strong>MTU مشکل در GRE:</strong> <code>ip tcp adjust-mss 1400</code> روی Tunnel بگذار.</li>
+      <li><strong>VXLAN Tunnel بالا نمی‌آید:</strong> VTEP Source Loopback باید در Underlay قابل دسترسی باشد.</li>
+      <li><strong>VXLAN BUM Flood نمی‌شود:</strong> PIM Sparse Mode و RP Config را چک کن.</li>
+      <li><strong>VNI Mapping اشتباه:</strong> روی هر دو VTEP باید VNI یکسان به VLAN یکسان Map شده باشد.</li>
+      <li><strong>EVPN Route Type 2 دریافت نمی‌شود:</strong> Session BGP در AF L2VPN EVPN Up نیست.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="vrf">VRF</span> •
+      <span class="term" data-term="gre">GRE</span> •
+      <span class="term" data-term="ipsec">IPsec</span> •
+      <span class="term" data-term="vxlan">VXLAN</span> •
+      <span class="term" data-term="vtep">VTEP</span> •
+      <span class="term" data-term="vni">VNI</span> •
+      <span class="term" data-term="esp">ESP</span> •
+      <span class="term" data-term="ah">AH</span> •
+      <span class="term" data-term="hyperv">Hyper-V</span> •
+      <span class="term" data-term="lisp">LISP</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-02" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) تفاوت اصلی VM و Container چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> VM سبک‌تر از Container است</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Containerها کرنل Host را به اشتراک می‌گذارند، هر VM کرنل مستقل دارد</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Container فقط برای Windows است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) Hyper-V از چه نوع Hypervisor است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Type 2</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Container Runtime</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Type 1 (Bare-Metal)</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> Hybrid</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) VRF چه چیزی را جدا می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> MAC Addressها</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> جدول‌های مسیریابی مستقل و Interfaces</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> فقط VLANها</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Storage</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) با <code>ip vrf forwarding</code> روی اینترفیس چه اتفاقی می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> فقط Shutdown می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> VLAN تغییر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> IP Config اینترفیس پاک می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هیچ تغییری نمی‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) GRE با چه شماره پروتکل IP کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> 47 — UDP</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> 47 — IP Protocol (نه پورت)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> 50 — ESP</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> 51 — AH</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) چرا GRE + IPsec ترکیب رایجی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> برای کاهش Cost</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> برای IPv6</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> GRE از Multicast/Routing پشتیبانی می‌کند و IPsec رمزنگاری می‌آورد</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> برای افزایش پهنای باند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) تفاوت Transport Mode و Tunnel Mode در IPsec چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Transport برای Site-to-Site است</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Transport فقط Payload، Tunnel کل بسته را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Tunnel فقط برای IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) کدام پروتکل IPsec رمزنگاری + احراز هویت را همزمان انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> AH</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> GRE</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> ESP</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> IKE</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) IKEv2 چه مزیتی نسبت به IKEv1 دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> رمزنگاری AES ندارد</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> پیام‌های کمتر، MOBIKE داخلی، NAT-T پیش‌فرض</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> فقط روی IPv6 کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> کندتر از IKEv1 است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۰) پورت UDP استاندارد VXLAN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> 4789</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> 500</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> 4500</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> 179</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) VNI در VXLAN چند بیت است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> ۱۲ بیت</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> ۱۶ بیت</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> ۲۴ بیت</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> ۳۲ بیت</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) تفاوت Flood-and-Learn و EVPN در VXLAN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Flood-and-Learn جدیدتر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Flood-and-Learn از Multicast + Data Plane Learning، EVPN از BGP Control Plane</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> EVPN فقط برای IPv4</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) در GRE Tunnel، چرا Source را از Loopback می‌گیریم؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> سرعت بالاتر</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> رمزنگاری بهتر</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> پایداری Tunnel در زمان Flapping اینترفیس فیزیکی</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> کاهش MTU</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) تفاوت vSwitch Standard و Distributed چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> Standard مقیاس‌پذیرتر است</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> Standard پیکربندی مستقل هر ESXi، Distributed پیکربندی متمرکز از vCenter</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Distributed فقط روی Hyper-V</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۵) در IPsec، NAT-T از چه پورتی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> UDP/4500</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> UDP/500</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> UDP/4789</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک زیرساخت Multi-Site با VRF و تونل امن بساز:</p>
+    <ul>
+      <li><strong>Site A و Site B:</strong> هرکدام یک روتر Edge</li>
+      <li><strong>Underlay:</strong> اینترنت شبیه‌سازی‌شده با Static Route</li>
+      <li><strong>VRF-Lite:</strong> حداقل دو Tenant در هر سایت با IP یکسان در Subnet</li>
+      <li><strong>GRE Tunnel:</strong> بین دو Site با Source/Destination Loopback</li>
+      <li><strong>IPsec:</strong> GRE را با IPsec Profile + Tunnel Protection امن کن</li>
+      <li><strong>OSPF:</strong> Routing Protocol روی Tunnel برای تبادل مسیرهای Tenantها</li>
+      <li><strong>Route Leak:</strong> بین VRFها در هر سایت در صورت نیاز</li>
+      <li><strong>MTU:</strong> MSS Adjustment روی Tunnel برای جلوگیری از Fragment</li>
+      <li><strong>پایش:</strong> Snapshot از show crypto ipsec sa برای اثبات Encryption</li>
+      <li>مستندسازی Diagram + IP Plan + Policy Doc</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>از IKEv1 به IKEv2 مهاجرت کن و تفاوت تعداد پیام‌ها را در Debug ببین.</li>
+        <li>در NX-OS، VXLAN Flood-and-Learn با PIM Sparse Mode راه‌اندازی کن.</li>
+        <li>EVPN با iBGP بین VTEPها پیاده کن و Route Type 2 را در <code>show bgp l2vpn evpn</code> تحلیل کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Hypervisor Type 1:</strong> Bare-Metal (ESXi، Hyper-V) — <strong>Type 2:</strong> Hosted (VirtualBox، Workstation)</li>
+      <li><strong>VM vs Container:</strong> کرنل مستقل vs اشتراک کرنل</li>
+      <li><strong>vSwitch:</strong> Standard (مستقل) vs Distributed (متمرکز از vCenter)</li>
+      <li><strong>VRF:</strong> جدول مسیریابی مستقل روی یک روتر — Multi-Tenant</li>
+      <li><strong>RD:</strong> Route Distinguisher — یکتایی مسیرها — <strong>RT:</strong> Route Target — Import/Export</li>
+      <li><strong>GRE:</strong> تونل L3، IP Protocol 47، بدون رمزنگاری، پشتیبانی Multicast</li>
+      <li><strong>GRE Source از Loopback:</strong> پایداری در زمان Flapping</li>
+      <li><strong>IPsec ESP:</strong> پروتکل 50 — Auth + Encrypt — <strong>AH:</strong> پروتکل 51 — Auth فقط</li>
+      <li><strong>Tunnel Mode:</strong> Site-to-Site — <strong>Transport Mode:</strong> Host-to-Host</li>
+      <li><strong>IKEv1:</strong> 9 پیام (Main Mode) — <strong>IKEv2:</strong> 4 پیام، MOBIKE، NAT-T داخلی</li>
+      <li><strong>GRE + IPsec Profile + Tunnel Protection:</strong> روش مدرن (جای Crypto Map)</li>
+      <li><strong>VXLAN:</strong> MAC-in-UDP، UDP/4789، VNI ۲۴ بیت (~۱۶M Segment)</li>
+      <li><strong>VTEP:</strong> Endpoint تونل — <strong>Overhead:</strong> ۵۰ بایت</li>
+      <li><strong>Flood-and-Learn:</strong> Multicast + Data Plane Learning — <strong>EVPN:</strong> MP-BGP Control Plane</li>
+      <li><strong>EVPN Route Types:</strong> Type 2 (MAC/IP)، Type 3 (IMET)، Type 5 (IP Prefix)</li>
+      <li><strong>MTU در GRE:</strong> 1476 پیش‌فرض — با <code>ip tcp adjust-mss</code> تنظیم کن</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_01.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-02">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_03.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 09: رشته‌ها - بخش دوم: پیشرفته</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 200px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .regex-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .regex-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .regex-card .pattern {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #0f172a;
+            font-size: 1.1rem;
+        }
+        .regex-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 09: رشته‌ها - بخش دوم: پیشرفته</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-08/index.html">قبلی</a>
+            <a href="../chapter-10/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۹: رشته‌ها - بخش دوم: پیشرفته</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۹: رشته‌ها - بخش دوم: پیشرفته</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی رشته‌ها از فصل ۸)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی رشته‌ها (فصل ۸)</li>
+                <li>✅ آشنایی با لیست‌ها و دیکشنری‌ها (فصل‌های ۶ و ۷)</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ از <strong>عبارات منظم (Regular Expressions)</strong> با ماژول <code dir='ltr'>re</code> استفاده کنید.</li>
+                <li>✔️ با <strong>متدهای <code dir='ltr'>search()</code>، <code dir='ltr'>match()</code>، <code dir='ltr'>findall()</code> و <code dir='ltr'>sub()</code></strong> کار کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>replace()</code></strong> و <strong><code dir='ltr'>translate()</code></strong> برای جایگزینی پیشرفته استفاده کنید.</li>
+                <li>✔️ با <strong>یونیکد (Unicode)</strong> و <strong>encoding/decoding</strong> آشنا شوید.</li>
+                <li>✔️ از <strong>متدهای <code dir='ltr'>is*</code></strong> (مانند <code dir='ltr'>isprintable()</code>، <code dir='ltr'>isascii()</code>) استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>format_map()</code></strong> و قالب‌بندی پیشرفته آشنا شوید.</li>
+                <li>✔️ <strong>رشته‌های باینری (bytes)</strong> و تفاوت آنها با رشته‌های معمولی را درک کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با مبانی رشته‌ها آشنا شدید. اما دنیای رشته‌ها بسیار گسترده‌تر است. <strong>عبارات منظم (Regular Expressions)</strong> یکی از قدرتمندترین ابزارهای پردازش متن هستند که به شما اجازه می‌دهند الگوهای پیچیده را در متن پیدا کنید. همچنین مفاهیمی مانند <strong>یونیکد</strong>، <strong>encoding</strong> و <strong>رشته‌های باینری</strong> برای برنامه‌نویسی بین‌المللی و پردازش داده‌ها ضروری هستند.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث پیشرفته‌ی رشته‌ها</strong> آشنا می‌شوید: عبارات منظم برای جستجو و جایگزینی الگوها، متدهای پیشرفته مانند <code dir='ltr'>translate()</code> و <code dir='ltr'>format_map()</code>، یونیکد و encoding، و رشته‌های باینری. این مباحث شما را برای کار با داده‌های متنی در پروژه‌های واقعی آماده می‌کنند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۹.۱ -->
+            <div class="sub-section">
+                <h4>۹.۱ عبارات منظم (Regular Expressions) – مقدمه و <code dir='ltr'>re</code></h4>
+                <p><strong>عبارات منظم (Regex)</strong> یک زبان قدرتمند برای توصیف الگوهای متنی است. در پایتون، ماژول <code dir='ltr'>re</code> ابزارهای کامل برای کار با regex ارائه می‌دهد.</p>
+                <div class="regex-grid">
+                    <div class="regex-card">
+                        <span class="pattern">\d</span>
+                        <span class="desc">هر رقم (۰-۹)</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">\w</span>
+                        <span class="desc">حروف، اعداد و _</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">\s</span>
+                        <span class="desc">فضای خالی</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">.</span>
+                        <span class="desc">هر کاراکتر (به جز خط جدید)</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">*</span>
+                        <span class="desc">۰ یا چند بار</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">+</span>
+                        <span class="desc">۱ یا چند بار</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">?</span>
+                        <span class="desc">۰ یا ۱ بار</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">{n,m}</span>
+                        <span class="desc">n تا m بار</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">^</span>
+                        <span class="desc">شروع رشته</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">$</span>
+                        <span class="desc">پایان رشته</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">[abc]</span>
+                        <span class="desc">یکی از a,b,c</span>
+                    </div>
+                    <div class="regex-card">
+                        <span class="pattern">(a|b)</span>
+                        <span class="desc">a یا b</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import re
+
+# پیدا کردن اعداد
+text = "My phone number is 0912-345-6789"
+pattern = r"\d{4}-\d{3}-\d{4}"
+match = re.search(pattern, text)
+if match:
+    print(match.group())  # "0912-345-6789"
+
+# پیدا کردن همه‌ی ایمیل‌ها
+text2 = "Emails: ali@example.com, sara@gmail.com"
+emails = re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", text2)
+print(emails)  # ['ali@example.com', 'sara@gmail.com']
+
+# جایگزینی
+text3 = "Hello 123 World 456"
+result = re.sub(r"\d+", "###", text3)
+print(result)  # "Hello ### World ###"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">0912-345-6789</span><br>
+                    <span class="highlight">➜</span> <span class="result">['ali@example.com', 'sara@gmail.com']</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hello ### World ###</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> از رشته‌های خام (<code dir='ltr'>r"..."</code>) برای جلوگیری از تفسیر اشتباه backslashها استفاده کنید. در regex، backslash نقش مهمی دارد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با چند شماره تلفن ایجاد کنید. با استفاده از <code dir='ltr'>re.findall()</code> همه‌ی شماره‌های تلفن را استخراج کنید.
+                </div>
+            </div>
+
+            <!-- ۹.۲ -->
+            <div class="sub-section">
+                <h4>۹.۲ متدهای اصلی <code dir='ltr'>re</code>: <code dir='ltr'>search()</code>، <code dir='ltr'>match()</code>، <code dir='ltr'>findall()</code>، <code dir='ltr'>finditer()</code></h4>
+                <p>چهار متد اصلی برای جستجو با regex:</p>
+                <ul>
+                    <li><strong><code dir='ltr'>re.search(pattern, string)</code></strong>: اولین occurrence را پیدا می‌کند.</li>
+                    <li><strong><code dir='ltr'>re.match(pattern, string)</code></strong>: فقط از ابتدای رشته جستجو می‌کند.</li>
+                    <li><strong><code dir='ltr'>re.findall(pattern, string)</code></strong>: همه‌ی occurrenceها را به‌صورت لیست برمی‌گرداند.</li>
+                    <li><strong><code dir='ltr'>re.finditer(pattern, string)</code></strong>: مثل findall اما iterator برمی‌گرداند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import re
+
+text = "Python 3.10 is great. Python is awesome!"
+
+# search() - اولین occurrence
+match = re.search(r"Python", text)
+if match:
+    print(match.group())      # "Python"
+    print(match.start())      # 0
+    print(match.end())        # 6
+
+# match() - فقط از ابتدا
+match2 = re.match(r"Python", text)
+print(match2.group())         # "Python"
+match3 = re.match(r"great", text)  # None
+
+# findall() - همه
+matches = re.findall(r"Python", text)
+print(matches)                # ['Python', 'Python']
+
+# finditer() - iterator
+for match in re.finditer(r"Python", text):
+    print(f"{match.start()}-{match.end()}: {match.group()}")
+# 0-6: Python
+# 25-31: Python
+
+# گروه‌های捕获
+pattern = r"(\w+) (\d+\.\d+)"
+text2 = "Version 3.10"
+match = re.search(pattern, text2)
+if match:
+    print(match.group(0))  # "Version 3.10"
+    print(match.group(1))  # "Version"
+    print(match.group(2))  # "3.10"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Python</span><br>
+                    <span class="highlight">➜</span> <span class="result">['Python', 'Python']</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>re.search()</code> برای بررسی وجود یک الگو در متن، از <code dir='ltr'>re.findall()</code> برای استخراج همه‌ی موارد، و از <code dir='ltr'>re.finditer()</code> برای پردازش تکه‌تکه متن‌های بزرگ استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک متن بلند ایجاد کنید. با <code dir='ltr'>re.findall()</code> همه‌ی کلماتی که با حرف بزرگ شروع می‌شوند را پیدا کنید. با <code dir='ltr'>re.finditer()</code> موقعیت آنها را نمایش دهید.
+                </div>
+            </div>
+
+            <!-- ۹.۳ -->
+            <div class="sub-section">
+                <h4>۹.۳ جایگزینی و تقسیم با regex: <code dir='ltr'>sub()</code> و <code dir='ltr'>split()</code></h4>
+                <ul>
+                    <li><strong><code dir='ltr'>re.sub(pattern, replacement, string)</code></strong>: جایگزینی همه‌ی occurrenceها.</li>
+                    <li><strong><code dir='ltr'>re.split(pattern, string)</code></strong>: تقسیم رشته بر اساس الگو.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import re
+
+# sub() - جایگزینی
+text = "Hello 123 World 456"
+result = re.sub(r"\d+", "###", text)
+print(result)  # "Hello ### World ###"
+
+# sub با تابع جایگزین
+def replace_digits(match):
+    return str(int(match.group()) * 2)
+
+text2 = "Numbers: 5, 10, 15"
+result2 = re.sub(r"\d+", replace_digits, text2)
+print(result2)  # "Numbers: 10, 20, 30"
+
+# split() - تقسیم با الگو
+text3 = "apple, banana; orange|grape"
+parts = re.split(r"[,;|]", text3)
+print(parts)   # ['apple', ' banana', ' orange', 'grape']
+
+# حذف فضاهای اضافی
+text4 = "Hello   World   Python"
+parts2 = re.split(r"\s+", text4)
+print(parts2)  # ['Hello', 'World', 'Python']
+
+# sub با flags (مثلاً نادیده گرفتن حساسیت به بزرگ/کوچک)
+text5 = "Python PYTHON python"
+result3 = re.sub(r"python", "Java", text5, flags=re.IGNORECASE)
+print(result3)  # "Java Java Java"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Hello ### World ###</span><br>
+                    <span class="highlight">➜</span> <span class="result">['apple', ' banana', ' orange', 'grape']</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>re.split()</code> زمانی مفید است که نیاز به تقسیم رشته بر اساس الگوهای پیچیده‌تر از یک کاراکتر ساده دارید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با چند عدد ایجاد کنید. با <code dir='ltr'>re.sub()</code> همه‌ی اعداد را با "X" جایگزین کنید. سپس با <code dir='ltr'>re.split()</code> متن را بر اساس اعداد تقسیم کنید.
+                </div>
+            </div>
+
+            <!-- ۹.۴ -->
+            <div class="sub-section">
+                <h4>۹.۴ متدهای <code dir='ltr'>replace()</code>، <code dir='ltr'>translate()</code> و <code dir='ltr'>maketrans()</code></h4>
+                <ul>
+                    <li><strong><code dir='ltr'>replace(old, new, count)</code></strong>: جایگزینی ساده‌ی زیررشته.</li>
+                    <li><strong><code dir='ltr'>maketrans(x, y, z)</code></strong>: ایجاد جدول ترجمه.</li>
+                    <li><strong><code dir='ltr'>translate(table)</code></strong>: ترجمه بر اساس جدول.</li>
+                </ul>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">🔄</span>
+                        <span class="name">replace()</span>
+                        <span class="desc">جایگزینی ساده</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">maketrans()</span>
+                        <span class="desc">ایجاد جدول ترجمه</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔤</span>
+                        <span class="name">translate()</span>
+                        <span class="desc">ترجمه با جدول</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># replace() - جایگزینی ساده
+text = "Hello World"
+print(text.replace("World", "Python"))  # "Hello Python"
+
+# replace با تعداد محدود
+text2 = "apple apple apple"
+print(text2.replace("apple", "orange", 2))  # "orange orange apple"
+
+# maketrans() و translate() - ترجمه کاراکترها
+text3 = "abc123"
+trans = str.maketrans("abc", "XYZ")
+print(text3.translate(trans))  # "XYZ123"
+
+# حذف کاراکترها با translate
+trans2 = str.maketrans("", "", "aeiou")
+text4 = "Hello World"
+print(text4.translate(trans2))  # "Hll Wrld"
+
+# ترجمه با دیکشنری
+trans3 = str.maketrans({
+    'a': 'A',
+    'b': 'B',
+    'c': 'C'
+})
+text5 = "abc"
+print(text5.translate(trans3))  # "ABC"
+
+# کاربرد: تبدیل حروف فارسی به انگلیسی
+persian_to_english = str.maketrans("ابپ", "abp")
+persian_text = "ابپ"
+print(persian_text.translate(persian_to_english))  # "abp"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Hello Python</span><br>
+                    <span class="highlight">➜</span> <span class="result">XYZ123</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hll Wrld</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>translate()</code> برای حذف یا جایگزینی مجموعه‌ای از کاراکترها بسیار کارآمدتر از زنجیره‌ای از <code dir='ltr'>replace()</code>هاست، به‌خصوص برای رشته‌های طولانی.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با حروف صدادار ایجاد کنید. با <code dir='ltr'>maketrans()</code> و <code dir='ltr'>translate()</code> همه‌ی حروف صدادار را حذف کنید. همچنین با <code dir='ltr'>replace()</code> یک کلمه را با کلمه‌ی دیگر جایگزین کنید.
+                </div>
+            </div>
+
+            <!-- ۹.۵ -->
+            <div class="sub-section">
+                <h4>۹.۵ یونیکد (Unicode) و Encoding/Decoding</h4>
+                <p>پایتون از یونیکد پشتیبانی کامل دارد. رشته‌ها در پایتون ۳ به‌صورت <strong>UTF-8</strong> ذخیره می‌شوند و می‌توانید با کاراکترهای بین‌المللی کار کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># کاراکترهای یونیکد
+text = "سلام دنیا 🌍"
+print(text)  # "سلام دنیا 🌍"
+
+# کدهای یونیکد
+print("\u0645")   # "م" (حرف فارسی)
+print("\U0001F600")  # "😀" (اموجی)
+
+# نام کاراکترها
+import unicodedata
+print(unicodedata.name("🌍"))  # "EARTH GLOBE EUROPE-AFRICA"
+print(unicodedata.name("😀"))  # "GRINNING FACE"
+
+# Encoding (تبدیل رشته به bytes)
+text = "سلام"
+encoded = text.encode("utf-8")
+print(encoded)  # b'\xd8\xb3\xd9\x84\xd8\xa7\xd9\x85'
+
+# Decoding (تبدیل bytes به رشته)
+decoded = encoded.decode("utf-8")
+print(decoded)  # "سلام"
+
+# بررسی ASCII بودن
+print("سلام".isascii())  # False
+print("Hello".isascii())  # True
+
+# Normalization (یکسان‌سازی کاراکترها)
+text2 = "é"  # می‌تواند به دو شکل باشد
+print(unicodedata.normalize("NFC", text2))
+print(unicodedata.normalize("NFD", text2))</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام دنیا 🌍</span><br>
+                    <span class="highlight">➜</span> <span class="result">b'\xd8\xb3\xd9\x84\xd8\xa7\xd9\x85'</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> همیشه از <code dir='ltr'>utf-8</code> برای encoding/decoding استفاده کنید، مگر اینکه دلیل خاصی برای استفاده از encoding دیگری داشته باشید. UTF-8 استاندارد جهانی است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با کاراکترهای فارسی و اموجی ایجاد کنید. آن را به bytes تبدیل کنید و دوباره به رشته برگردانید. سپس با <code dir='ltr'>isascii()</code> بررسی کنید که آیا رشته فقط شامل کاراکترهای ASCII است یا خیر.
+                </div>
+            </div>
+
+            <!-- ۹.۶ -->
+            <div class="sub-section">
+                <h4>۹.۶ متدهای <code dir='ltr'>is*</code> و بررسی نوع کاراکترها</h4>
+                <p>متدهای <code dir='ltr'>is*</code> برای بررسی ویژگی‌های رشته استفاده می‌شوند و <code dir='ltr'>True</code> یا <code dir='ltr'>False</code> برمی‌گردانند.</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">🔤</span>
+                        <span class="name">isascii()</span>
+                        <span class="desc">همه‌ی کاراکترها ASCII</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔠</span>
+                        <span class="name">isprintable()</span>
+                        <span class="desc">همه قابل چاپ</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📝</span>
+                        <span class="name">isidentifier()</span>
+                        <span class="desc">نام متغیر معتبر</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔢</span>
+                        <span class="name">isnumeric()</span>
+                        <span class="desc">همه عددی (یونیکد)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📊</span>
+                        <span class="name">isdecimal()</span>
+                        <span class="desc">همه اعشاری (۰-۹)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔡</span>
+                        <span class="name">islower()/isupper()</span>
+                        <span class="desc">حالت حروف</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># isascii() - آیا همه‌ی کاراکترها ASCII هستند؟
+print("Hello".isascii())     # True
+print("سلام".isascii())      # False
+
+# isprintable() - آیا همه‌ی کاراکترها قابل چاپ هستند؟
+print("Hello\n".isprintable())  # False (وجود \n)
+print("Hello".isprintable())    # True
+
+# isidentifier() - آیا نام متغیر معتبر است؟
+print("variable".isidentifier())  # True
+print("1variable".isidentifier()) # False
+
+# isnumeric() - آیا همه‌ی کاراکترها عددی هستند؟
+print("123".isnumeric())      # True
+print("۱۲۳".isnumeric())      # True (اعداد فارسی)
+print("١٢٣".isnumeric())      # True (اعداد عربی)
+
+# isdecimal() - آیا همه‌ی کاراکترها اعشاری هستند؟
+print("123".isdecimal())      # True
+print("۱۲۳".isdecimal())      # True
+print("1.23".isdecimal())     # False
+
+# islower() / isupper()
+print("hello".islower())      # True
+print("HELLO".isupper())      # True
+
+# کاربرد: اعتبارسنجی ورودی
+user_input = "user123"
+if user_input.isidentifier():
+    print("نام کاربری معتبر است")
+else:
+    print("نام کاربری نامعتبر است")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با ترکیبی از حروف، اعداد و کاراکترهای خاص ایجاد کنید. با استفاده از متدهای <code dir='ltr'>is*</code> بررسی کنید که آیا رشته فقط شامل حروف است، فقط شامل اعداد است یا ترکیبی.
+                </div>
+            </div>
+
+            <!-- ۹.۷ -->
+            <div class="sub-section">
+                <h4>۹.۷ رشته‌های باینری (bytes) و قالب‌بندی پیشرفته</h4>
+                <ul>
+                    <li><strong>bytes</strong>: رشته‌های باینری (غیرقابل تغییر) برای داده‌های خام.</li>
+                    <li><strong>bytearray</strong>: مشابه bytes اما قابل تغییر.</li>
+                    <li><strong><code dir='ltr'>format_map()</code></strong>: فرمت‌دهی با دیکشنری.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># bytes - رشته باینری
+b = b"Hello"
+print(b[0])     # 72 (ASCII 'H')
+print(b[1])     # 101 (ASCII 'e')
+
+# bytearray - قابل تغییر
+ba = bytearray(b"Hello")
+ba[0] = 74      # 'J'
+print(ba)       # bytearray(b'Jello')
+
+# format_map() - فرمت‌دهی با دیکشنری
+data = {"name": "علی", "age": 25}
+text = "نام: {name}, سن: {age}".format_map(data)
+print(text)     # "نام: علی, سن: 25"
+
+# format_map با کلاس سفارشی
+class Default(dict):
+    def __missing__(self, key):
+        return "نامشخص"
+
+text2 = "نام: {name}, شغل: {job}".format_map(Default(name="علی"))
+print(text2)    # "نام: علی, شغل: نامشخص"
+
+# f-strings پیشرفته با دیکشنری
+print(f"نام: {data['name']}, سن: {data['age']}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">72</span><br>
+                    <span class="highlight">➜</span> <span class="result">نام: علی, سن: 25</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>format_map()</code> زمانی مفید است که داده‌ها در دیکشنری هستند و نیاز به فرمت‌دهی پویا دارید. همچنین می‌توانید از <code dir='ltr'>f-strings</code> با متغیرهای دیکشنری استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک دیکشنری با اطلاعات یک شخص ایجاد کنید. با <code dir='ltr'>format_map()</code> و f-strings، یک پیام خوش‌آمدگویی با اطلاعات آن شخص تولید کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک استخراج‌کننده اطلاعات با Regex</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>info_extractor.py</code> ایجاد کنید.</li>
+                <li>یک متن نمونه با اطلاعات (نام، ایمیل، شماره تلفن، تاریخ) آماده کنید.</li>
+                <li>با <code dir='ltr'>re.findall()</code> اطلاعات زیر را استخراج کنید:
+                    <ul>
+                        <li>ایمیل‌ها</li>
+                        <li>شماره تلفن‌ها (با فرمت‌های مختلف)</li>
+                        <li>تاریخ‌ها (با فرمت‌های مختلف)</li>
+                        <li>کلماتی که با حرف بزرگ شروع می‌شوند</li>
+                    </ul>
+                </li>
+                <li>با <code dir='ltr'>re.sub()</code> ایمیل‌ها را سانسور کنید (با "***" جایگزین کنید).</li>
+                <li>با <code dir='ltr'>translate()</code> کاراکترهای خاص را از متن حذف کنید.</li>
+                <li>با <code dir='ltr'>format_map()</code> یک گزارش از اطلاعات استخراج‌شده تولید کنید.</li>
+                <li>همه‌ی نتایج را در کنسول چاپ کنید.</li>
+            </ol>
+            <div class="live-demo" id="regex-demo">
+                <h4>🔍 استخراج‌کننده اطلاعات با Regex</h4>
+                <input type="text" id="regexInput" placeholder="یک متن با ایمیل و تلفن وارد کنید..." style="width:80%;">
+                <button onclick="extractInfo()">🔍 استخراج اطلاعات</button>
+                <div class="result-box" id="regexResult">منتظر ورودی...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک متن طولانی از کاربر دریافت کند.</li>
+                <li>با استفاده از regex، همه‌ی URLها را استخراج کند.</li>
+                <li>با استفاده از regex، همه‌ی کلماتی که با "https" شروع می‌شوند را پیدا کند.</li>
+                <li>با <code dir='ltr'>sub()</code> همه‌ی اعداد را با "NUM" جایگزین کند.</li>
+                <li>با <code dir='ltr'>translate()</code> کاراکترهای نقطه‌گذاری را حذف کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین <code dir='ltr'>re.search()</code> و <code dir='ltr'>re.match()</code> چیست؟</li>
+                <li><code dir='ltr'>re.findall()</code> و <code dir='ltr'>re.finditer()</code> چه تفاوتی دارند؟</li>
+                <li><code dir='ltr'>translate()</code> چه مزیتی نسبت به چندین <code dir='ltr'>replace()</code> دارد؟</li>
+                <li>یونیکد چیست و چرا در پایتون پشتیبانی می‌شود؟</li>
+                <li>تفاوت بین <code dir='ltr'>bytes</code> و <code dir='ltr'>str</code> در پایتون چیست؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای پیدا کردن همه‌ی occurrenceها استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>re.search()</code>  ب) <code dir='ltr'>re.match()</code>  ج) <code dir='ltr'>re.findall()</code>  د) <code dir='ltr'>re.sub()</code></li>
+                <li>خروجی <code dir='ltr'>re.sub(r"\d+", "X", "a1b2c3")</code> چیست؟<br>
+                    أ) "aXbXcX"  ب) "a1b2c3"  ج) "X"  د) "abc"</li>
+                <li>کدام متد برای بررسی اینکه آیا یک رشته فقط شامل کاراکترهای ASCII است استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>isascii()</code>  ب) <code dir='ltr'>isprintable()</code>  ج) <code dir='ltr'>isidentifier()</code>  د) <code dir='ltr'>isnumeric()</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک متن از کاربر دریافت کند.</li>
+                <li>با <code dir='ltr'>re.findall()</code> همه‌ی ایمیل‌ها را استخراج کند.</li>
+                <li>با <code dir='ltr'>re.sub()</code> ایمیل‌ها را با "[ایمیل]" جایگزین کند.</li>
+                <li>با <code dir='ltr'>translate()</code> کاراکترهای نقطه‌گذاری را حذف کند.</li>
+                <li>با <code dir='ltr'>format_map()</code> یک گزارش از تعداد ایمیل‌ها تولید کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>عبارات منظم (Regex)</strong> با ماژول <code dir='ltr'>re</code> برای جستجو و جایگزینی الگوها استفاده می‌شود.</li>
+                <li>🔹 متدهای اصلی <code dir='ltr'>re</code>: <code dir='ltr'>search()</code>، <code dir='ltr'>match()</code>، <code dir='ltr'>findall()</code>، <code dir='ltr'>finditer()</code>، <code dir='ltr'>sub()</code>، <code dir='ltr'>split()</code>.</li>
+                <li>🔹 <strong><code dir='ltr'>translate()</code></strong> با <code dir='ltr'>maketrans()</code> برای ترجمه و حذف کاراکترها کارآمد است.</li>
+                <li>🔹 پایتون از <strong>یونیکد</strong> پشتیبانی کامل دارد و رشته‌ها به‌صورت UTF-8 ذخیره می‌شوند.</li>
+                <li>🔹 متدهای <code dir='ltr'>is*</code> برای بررسی ویژگی‌های رشته (مانند <code dir='ltr'>isascii()</code>، <code dir='ltr'>isprintable()</code>) استفاده می‌شوند.</li>
+                <li>🔹 <strong><code dir='ltr'>format_map()</code></strong> برای فرمت‌دهی با دیکشنری و <strong>f-strings</strong> برای فرمت‌دهی پویا استفاده می‌شوند.</li>
+                <li>🔹 <strong>bytes</strong> و <strong>bytearray</strong> برای داده‌های باینری استفاده می‌شوند.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># Regex
+import re
+re.search(pattern, text)
+re.findall(pattern, text)
+re.sub(pattern, replacement, text)
+re.split(pattern, text)
+
+# ترجمه
+str.maketrans(from, to)
+text.translate(table)
+
+# یونیکد
+text.encode("utf-8")
+bytes.decode("utf-8")
+unicodedata.name(char)
+
+# بررسی
+text.isascii()
+text.isprintable()
+text.isidentifier()
+
+# فرمت‌دهی
+"{} {}".format(a, b)
+f"{a} {b}"
+"{name}".format_map(dict)</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Regular Expression (عبارت منظم):</strong> الگویی برای جستجو در متن.</li>
+                <li><strong>Regex (رجکس):</strong> مخفف Regular Expression.</li>
+                <li><strong>Unicode (یونیکد):</strong> استاندارد جهانی برای نمایش کاراکترها.</li>
+                <li><strong>Encoding:</strong> تبدیل رشته به bytes.</li>
+                <li><strong>Decoding:</strong> تبدیل bytes به رشته.</li>
+                <li><strong>bytes:</strong> رشته باینری غیرقابل تغییر.</li>
+                <li><strong>bytearray:</strong> رشته باینری قابل تغییر.</li>
+                <li><strong>translate():</strong> متد برای ترجمه کاراکترها.</li>
+                <li><strong>format_map():</strong> فرمت‌دهی با دیکشنری.</li>
+                <li><strong>ASCII:</strong> استاندارد قدیمی برای کاراکترهای انگلیسی.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/library/re.html" target="_blank" rel="noopener noreferrer">Python: re — Regular expressions</a></li>
+                <li><a href="https://docs.python.org/3/howto/regex.html" target="_blank" rel="noopener noreferrer">Python: Regex HOWTO</a></li>
+                <li><a href="https://docs.python.org/3/howto/unicode.html" target="_blank" rel="noopener noreferrer">Python: Unicode HOWTO</a></li>
+                <li><a href="https://realpython.com/regex-python/" target="_blank" rel="noopener noreferrer">Real Python: Regular Expressions</a></li>
+                <li><a href="https://www.w3schools.com/python/python_regex.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Regex</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> عبارات منظم و re – ۲۰ دقیقه</li>
+                <li><strong>گام ۲:</strong> متدهای search, match, findall – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> sub و split – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> replace, translate, maketrans – ۱۵ دقیقه</li>
+                <li><strong>گام ۵:</strong> یونیکد و encoding – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> متدهای is* – ۱۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> bytes و format_map – ۱۰ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>re.search()</code> و <code dir='ltr'>re.match()</code> وجود دارد و هرکدام چه زمانی مناسب هستند؟</li>
+                <li>❓ چرا از رشته‌های خام (raw strings) در regex استفاده می‌کنیم؟</li>
+                <li>❓ اگر یک رشته را با encoding اشتباه decode کنیم، چه اتفاقی می‌افتد؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>isnumeric()</code> و <code dir='ltr'>isdecimal()</code> وجود دارد؟</li>
+                <li>❓ چگونه می‌توان با <code dir='ltr'>translate()</code> چندین کاراکتر را همزمان جایگزین کرد؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>r</code> قبل از رشته‌های regex که باعث می‌شود backslashها اشتباه تفسیر شوند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از رشته‌های خام استفاده کنید: <code dir='ltr'>r"\d+"</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>re.match()</code> برای جستجو در وسط رشته که فقط ابتدا را بررسی می‌کند.<br>
+                    <strong>🔧 راه حل:</strong> برای جستجو در کل رشته از <code dir='ltr'>re.search()</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>.group()</code> بعد از <code dir='ltr'>re.search()</code> که شیء MatchObject برمی‌گرداند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>.group()</code> برای دریافت مقدار استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از encoding اشتباه برای decode که باعث خطا یا کاراکترهای نامفهوم می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>utf-8</code> استفاده کنید یا از <code dir='ltr'>errors='ignore'</code> یا <code dir='ltr'>errors='replace'</code> برای مدیریت خطاها استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>replace()</code> به‌جای <code dir='ltr'>translate()</code> برای حذف مجموعه‌ای از کاراکترها که باعث کدنویسی طولانی می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>translate()</code> با <code dir='ltr'>maketrans()</code> برای حذف یا ترجمه‌ی چند کاراکتر همزمان استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک ابزار پردازش متن پیشرفته با Regex و یونیکد</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای پردازش و تحلیل متن‌های بزرگ با استفاده از regex و یونیکد بسازید:</p>
+            <ul>
+                <li>یک فایل <code dir='ltr'>text_processor.py</code> ایجاد کنید.</li>
+                <li>از کاربر یک متن طولانی (چند پاراگراف) با <code dir='ltr'>input()</code> دریافت کنید.</li>
+                <li>وظایف زیر را روی متن انجام دهید:
+                    <ul>
+                        <li>با <code dir='ltr'>re.findall()</code> همه‌ی ایمیل‌ها، URLها و شماره تلفن‌ها را استخراج کنید.</li>
+                        <li>با <code dir='ltr'>re.sub()</code> ایمیل‌ها را سانسور کنید (با "***" جایگزین کنید).</li>
+                        <li>با <code dir='ltr'>re.split()</code> متن را بر اساس نقطه‌گذاری به جملات تقسیم کنید.</li>
+                        <li>با <code dir='ltr'>translate()</code> و <code dir='ltr'>maketrans()</code> کاراکترهای خاص (مثل !@#$%^) را از متن حذف کنید.</li>
+                        <li>با <code dir='ltr'>isascii()</code> تعداد کاراکترهای غیر-ASCII را محاسبه کنید.</li>
+                        <li>با <code dir='ltr'>encode()</code> و <code dir='ltr'>decode()</code> متن را به UTF-8 تبدیل کنید و دوباره برگردانید.</li>
+                        <li>با <code dir='ltr'>format_map()</code> یک گزارش از تمام آمارها (تعداد ایمیل، URL، تلفن، کاراکترهای غیر-ASCII) تولید کنید.</li>
+                    </ul>
+                </li>
+                <li>گزارش را با f-strings به‌صورت زیبا نمایش دهید.</li>
+                <li>نتایج پردازش‌شده را در یک فایل متنی (با <code dir='ltr'>open()</code>) ذخیره کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>با استفاده از regex، یک اعتبارسنجی برای ایمیل‌ها و شماره تلفن‌ها پیاده‌سازی کنید.</li>
+                    <li>با <code dir='ltr'>unicodedata</code>، کاراکترهای فارسی را از کاراکترهای عربی جدا کنید.</li>
+                    <li>با <code dir='ltr'>re.sub()</code> و یک تابع جایگزین، کلمات خاص را با معادل انگلیسی آنها جایگزین کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-08/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-10/index.html" class="btn-demo">رفتن به فصل ۱۰ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی استخراج‌کننده اطلاعات با Regex
+        function extractInfo() {
+            const input = document.getElementById('regexInput');
+            const resultBox = document.getElementById('regexResult');
+            const text = input.value;
+
+            if (!text || text.trim() === '') {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً یک متن وارد کنید!';
+                return;
+            }
+
+            // استخراج ایمیل‌ها
+            const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const emails = text.match(emailPattern) || [];
+
+            // استخراج شماره تلفن‌ها (فرمت‌های مختلف)
+            const phonePattern = /\d{4}-\d{3}-\d{4}|\d{11}|\d{10}/g;
+            const phones = text.match(phonePattern) || [];
+
+            // استخراج URLها
+            const urlPattern = /https?:\/\/[^\s]+/g;
+            const urls = text.match(urlPattern) || [];
+
+            // استخراج کلماتی که با حرف بزرگ شروع می‌شوند
+            const capitalPattern = /\b[A-Z][a-z]*\b/g;
+            const capitals = text.match(capitalPattern) || [];
+
+            // سانسور ایمیل‌ها
+            let censored = text;
+            emails.forEach(email => {
+                censored = censored.replace(email, '***@***.***');
+            });
+
+            // حذف کاراکترهای خاص با translate (شبیه‌سازی)
+            const trans = str.maketrans('', '', '!@#$%^&*()_+{}[]|\\:;"\'<>,.?/~`');
+            const cleaned = censored.translate(trans);
+
+            // گزارش
+            const report = {
+                email_count: emails.length,
+                phone_count: phones.length,
+                url_count: urls.length,
+                capital_count: capitals.length,
+                original_length: text.length,
+                cleaned_length: cleaned.length
+            };
+
+            const reportText = `
+📊 گزارش استخراج اطلاعات
+
+📧 تعداد ایمیل‌ها: ${report.email_count}
+📞 تعداد تلفن‌ها: ${report.phone_count}
+🔗 تعداد URLها: ${report.url_count}
+🔠 کلمات با حرف بزرگ: ${report.capital_count}
+📏 طول متن اصلی: ${report.original_length}
+📏 طول متن پس از پاکسازی: ${report.cleaned_length}
+
+✅ ایمیل‌های پیدا شده: ${emails.length > 0 ? emails.join(', ') : 'هیچ'}
+📞 تلفن‌های پیدا شده: ${phones.length > 0 ? phones.join(', ') : 'هیچ'}
+
+📝 متن پاکسازی‌شده:
+${cleaned.substring(0, 200)}${cleaned.length > 200 ? '...' : ''}
+            `;
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = reportText.replace(/\n/g, '<br>');
+        }
+
+        // متد maketrans برای JavaScript (شبیه‌سازی)
+        if (!String.maketrans) {
+            String.maketrans = function(from, to) {
+                const trans = {};
+                for (let i = 0; i < from.length; i++) {
+                    trans[from.charCodeAt(i)] = to.charCodeAt(i);
+                }
+                return trans;
+            };
+        }
+        if (!String.prototype.translate) {
+            String.prototype.translate = function(table) {
+                let result = '';
+                for (let i = 0; i < this.length; i++) {
+                    const code = this.charCodeAt(i);
+                    result += table[code] !== undefined ? String.fromCharCode(table[code]) : this[i];
+                }
+                return result;
+            };
+        }
+    </script>
+</body>
+</html>

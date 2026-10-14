@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۷ - Hacking Mobile Platforms - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۷ – Hacking Mobile Platforms</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – پلتفرم‌های موبایل و امنیت آنها</a></li>
+            <li><a href="#architectures">🏗️ معماری سیستمعامل‌های موبایل</a></li>
+            <li><a href="#android-security">🤖 امنیت اندروید</a></li>
+            <li><a href="#ios-security">🍎 امنیت iOS</a></li>
+            <li><a href="#mobile-app-sec">📱 امنیت برنامه‌های موبایل (OWASP Mobile Top 10)</a></li>
+            <li><a href="#android-attacks">🎯 حملات به اندروید</a></li>
+            <li><a href="#ios-attacks">🎯 حملات به iOS</a></li>
+            <li><a href="#mobile-malware">🦠 بدافزارهای موبایل</a></li>
+            <li><a href="#mobile-phishing">📧 فیشینگ موبایل (Smishing)</a></li>
+            <li><a href="#mobile-forensics">🔍 جرم‌یابی موبایل</a></li>
+            <li><a href="#tools">🛠️ ابزارهای هک موبایل</a></li>
+            <li><a href="#ai-mobile">🤖 هوش مصنوعی در امنیت موبایل</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با حملات موبایل</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – پلتفرم‌های موبایل و امنیت آنها</h2>
+        <p>
+            <b>دستگاه‌های موبایل</b> امروزه به بخش جدایی‌ناپذیر زندگی ما تبدیل شده‌اند. گوشی‌های هوشمند و تبلت‌ها نه‌تنها برای ارتباطات، بلکه برای بانکداری، خرید، کار، سرگرمی و ذخیره اطلاعات حساس استفاده می‌شوند. این محبوبیت و حجم بالای اطلاعات، پلتفرم‌های موبایل را به یکی از اهداف اصلی هکرها تبدیل کرده است.
+        </p>
+        <p>
+            در این ماژول، با <b>معماری امنیتی</b> سیستمعامل‌های اصلی موبایل (اندروید و iOS)، <b>آسیب‌پذیری‌های رایج</b> برنامه‌های موبایل، <b>ابزارهای هک</b>، <b>بدافزارهای موبایل</b>، و روش‌های <b>مقابله با حملات</b> آشنا خواهید شد.
+        </p>
+        <p>
+            دو سیستمعامل غالب موبایل عبارتند از:
+        </p>
+        <ul>
+            <li><b>اندروید (Android):</b> مبتنی بر لینوکس، متن‌باز، با سهم بازار بیش از ۷۰٪.</li>
+            <li><b>iOS:</b> اختصاصی اپل، بسته، با امنیت بالا و سهم بازار حدود ۲۵٪.</li>
+        </ul>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> تمام تمرینات این ماژول فقط در محیط‌های آزمایشگاهی و با مجوز انجام شوند. هک دستگاه‌های دیگران بدون اجازه جرم است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: معماری سیستمعامل‌های موبایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="architectures">
+        <h2>🏗️ معماری سیستمعامل‌های موبایل</h2>
+        <p>
+            درک معماری سیستمعامل‌های موبایل برای شناسایی نقاط ضعف و حملات مؤثر ضروری است.
+        </p>
+
+        <h3>📌 معماری اندروید</h3>
+        <ul>
+            <li><b>هسته لینوکس (Linux Kernel):</b> مدیریت حافظه، درایورها، امنیت (SELinux).</li>
+            <li><b>لایه انتزاع سخت‌افزار (HAL):</b> ارتباط با سخت‌افزار.</li>
+            <li><b>زمان اجرا (ART/Dalvik):</b> اجرای کدهای اپلیکیشن با فرمت DEX.</li>
+            <li><b>چارچوب برنامه‌نویسی (Application Framework):</b> مدیریت فعالیت‌ها، سرویس‌ها، محتوا.</li>
+            <li><b>برنامه‌های کاربردی (Apps):</b> برنامه‌های نصب‌شده.</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته:</b> اندروید از <b>آموزه‌های امنیتی مبتنی بر مجوز (Permissions)</b> و <b>Sandbox</b> استفاده می‌کند که هر برنامه در محیط جداگانه‌ای اجرا می‌شود.
+        </div>
+
+        <h3>📌 معماری iOS</h3>
+        <ul>
+            <li><b>هسته XNU:</b> ترکیبی از Mach و BSD، مدیریت حافظه و فرآیندها.</li>
+            <li><b>لایه‌های پایه (Core OS, Core Services):</b> مدیریت فایل‌ها، شبکه، امنیت.</li>
+            <li><b>لایه Media:</b> پردازش صدا، تصویر و ویدیو.</li>
+            <li><b>لایه Cocoa Touch:</b> چارچوب اصلی برای توسعه برنامه‌های iOS.</li>
+            <li><b>برنامه‌های کاربردی:</b> برنامه‌های نصب‌شده از App Store.</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته:</b> iOS دارای <b>Sandbox</b> سخت‌گیرانه، <b>Code Signing</b> و <b>App Review</b> برای امنیت بیشتر است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: امنیت اندروید -->
+    <!-- ============================================================ -->
+    <div class="card" id="android-security">
+        <h2>🤖 امنیت اندروید</h2>
+        <p>
+            اندروید دارای لایه‌های امنیتی متعددی است که در ادامه به مهم‌ترین آنها اشاره می‌کنیم:
+        </p>
+
+        <h3>📌 اجزای امنیتی اندروید:</h3>
+        <ul>
+            <li><b>Sandbox (ایزوله‌سازی برنامه):</b> هر برنامه با یک کاربر مجزا اجرا می‌شود.</li>
+            <li><b>سیستم مجوزها (Permissions):</b> دسترسی به منابع حساس (دوربین، موقعیت، تماس‌ها) نیاز به مجوز دارد.</li>
+            <li><b>SELinux:</b> کنترل دسترسی مبتنی بر سیاست برای هسته.</li>
+            <li><b>Verified Boot:</b> تأیید صحت بوت برای جلوگیری از اجرای کد مخرب.</li>
+            <li><b>Google Play Protect:</b> اسکن خودکار برنامه‌ها برای بدافزار.</li>
+            <li><b>Keystore:</b> ذخیره امن کلیدهای رمزنگاری.</li>
+            <li><b>Android Security Updates:</b> وصله‌های ماهانه امنیتی.</li>
+        </ul>
+
+        <h3>📌 مدیریت مجوزها در اندروید:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>سطح</th><th>توضیح</th><th>مثال</th></tr>
+                <tr><td><b>Normal</b></td><td>خطر کم، به‌صورت خودکار اعطا می‌شود</td><td>اینترنت، دسترسی به شبکه</td></tr>
+                <tr><td><b>Dangerous</b></td><td>خطر بالا، نیاز به تأیید کاربر</td><td>دوربین، موقعیت مکانی، مخاطبین</td></tr>
+                <tr><td><b>Signature</b></td><td>فقط برنامه‌های با امضای مشابه</td><td>دسترسی به APIهای سیستمی</td></tr>
+                <tr><td><b>SignatureOrSystem</b></td><td>برنامه‌های سیستمی یا با امضای مشابه</td><td>دسترسی به APIهای سطح پایین</td></tr>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> مهاجمان معمولاً از برنامه‌های جعلی برای دریافت مجوزهای خطرناک استفاده می‌کنند. همیشه مجوزهای برنامه را بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: امنیت iOS -->
+    <!-- ============================================================ -->
+    <div class="card" id="ios-security">
+        <h2>🍎 امنیت iOS</h2>
+        <p>
+            iOS به دلیل معماری بسته و کنترل شدید اپل، به عنوان یکی از امن‌ترین سیستمعامل‌های موبایل شناخته می‌شود.
+        </p>
+
+        <h3>📌 اجزای امنیتی iOS:</h3>
+        <ul>
+            <li><b>Secure Enclave:</b> تراشه اختصاصی برای ذخیره کلیدها و پردازش بیومتریک.</li>
+            <li><b>Code Signing:</b> تمام برنامه‌ها باید با گواهی اپل امضا شوند.</li>
+            <li><b>Sandbox:</b> هر برنامه در محیط ایزوله اجرا می‌شود.</li>
+            <li><b>App Review:</b> بررسی دستی برنامه‌ها قبل از انتشار در App Store.</li>
+            <li><b>Data Protection:</b> رمزنگاری فایل‌ها با کلیدهای سخت‌افزاری.</li>
+            <li><b>Keychain:</b> ذخیره امن اطلاعات حساس (رمزها، گواهی‌ها).</li>
+            <li><b>App Transport Security (ATS):</b> الزام به استفاده از HTTPS برای ارتباطات.</li>
+        </ul>
+
+        <h3>📌 فرآیند راه‌اندازی امن (Secure Boot):</h3>
+        <ol>
+            <li>بررسی امضای بوت‌لودر (Bootloader) توسط سخت‌افزار.</li>
+            <li>بررسی امضای کرنل توسط بوت‌لودر.</li>
+            <li>بررسی امضای سیستم‌عامل توسط کرنل.</li>
+            <li>اجرای سیستم‌عامل تنها در صورت تأیید تمام مراحل.</li>
+        </ol>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Jailbreak کردن iOS، تمام این لایه‌های امنیتی را دور می‌زند و دستگاه را در معرض حملات قرار می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: امنیت برنامه‌های موبایل (OWASP Mobile Top 10) -->
+    <!-- ============================================================ -->
+    <div class="card" id="mobile-app-sec">
+        <h2>📱 امنیت برنامه‌های موبایل – OWASP Mobile Top 10</h2>
+        <p>
+            OWASP (Open Web Application Security Project) لیستی از ۱۰ آسیب‌پذیری برتر برنامه‌های موبایل را منتشر کرده است که به عنوان مرجعی برای توسعه‌دهندگان و متخصصان امنیت استفاده می‌شود.
+        </p>
+
+        <h3>📌 OWASP Mobile Top 10 (نسخه ۲۰۲۴):</h3>
+        <ol>
+            <li><b>M1: ضعف در مدیریت مجوزها (Improper Credential Usage):</b> ذخیره‌سازی ناامن رمزها و توکن‌ها.</li>
+            <li><b>M2: ذخیره‌سازی ناامن داده (Insecure Data Storage):</b> ذخیره داده‌های حساس به صورت متن واضح.</li>
+            <li><b>M3: ارتباط ناامن (Insecure Communication):</b> استفاده از HTTP یا SSL/TLS ضعیف.</li>
+            <li><b>M4: احراز هویت ناامن (Insecure Authentication):</b> مکانیزم‌های ضعیف یا قابل حدس.</li>
+            <li><b>M5: رمزنگاری ضعیف (Insufficient Cryptography):</b> استفاده از الگوریتم‌های ضعیف یا پیاده‌سازی اشتباه.</li>
+            <li><b>M6: مجوزهای بیش از حد (Insecure Authorization):</b> دسترسی بیش از حد به منابع.</li>
+            <li><b>M7: کیفیت کد پایین (Client Code Quality):</b> آسیب‌پذیری‌های ناشی از کدنویسی ضعیف.</li>
+            <li><b>M8: تزریق کد (Code Tampering):</b> تغییر کد برنامه پس از انتشار.</li>
+            <li><b>M9: مهندسی معکوس (Reverse Engineering):</b> استخراج کد و منطق برنامه.</li>
+            <li><b>M10: آسیب‌پذیری‌های کتابخانه‌های ثالث (Extraneous Functionality):</b> کتابخانه‌های مخرب یا آسیب‌پذیر.</li>
+        </ol>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> توسعه‌دهندگان باید با این لیست آشنا باشند و در مراحل طراحی و پیاده‌سازی، آنها را مد نظر قرار دهند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: حملات به اندروید -->
+    <!-- ============================================================ -->
+    <div class="card" id="android-attacks">
+        <h2>🎯 حملات به اندروید</h2>
+        <p>
+            حملات به اندروید شامل مجموعه‌ای از تکنیک‌ها برای نفوذ به دستگاه، سرقت اطلاعات یا کنترل برنامه‌ها است.
+        </p>
+
+        <h3>📌 حملات رایج:</h3>
+        <ul>
+            <li><b>مهندسی معکوس (Reverse Engineering):</b> استخراج کد منبع از فایل‌های APK با استفاده از ابزارهایی مانند <code dir='ltr'>apktool</code> و <code dir='ltr'>dex2jar</code>.</li>
+            <li><b>تحلیل داینامیک:</b> اجرای برنامه در محیط ایزوله (مانند <code dir='ltr'>Frida</code>، <code dir='ltr'>Xposed</code>) برای مشاهده رفتار و تغییر کد.</li>
+            <li><b>Rooting:</b> به‌دست آوردن دسترسی root برای دور زدن محدودیت‌ها و نصب بدافزارهای سیستمی.</li>
+            <li><b>حمله MITM (Man-in-the-Middle):</b> شنود ترافیک شبکه با استفاده از ابزارهایی مانند <code dir='ltr'>Burp Suite</code>.</li>
+            <li><b>APK Repackaging:</b> تغییر کد یک برنامه معتبر، اضافه کردن بدافزار و انتشار مجدد آن.</li>
+            <li><b>Abusing Permissions:</b> استفاده از مجوزهای بیش از حد برای دسترسی به اطلاعات حساس.</li>
+            <li><b>بدافزارهای بانکی:</b> تروجان‌هایی که اطلاعات کارت بانکی و رمزهای عبور را می‌دزدند.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استخراج کد با apktool
+apktool d app.apk
+
+# تبدیل dex به jar با dex2jar
+d2j-dex2jar classes.dex
+
+# تحلیل با jd-gui (برای مشاهده کد جاوا)
+jd-gui classes-dex2jar.jar
+
+# اتصال به دستگاه با adb
+adb shell
+
+# نصب Frida و اجرای اسکریپت
+frida -U -f com.example.app -l script.js</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Root کردن دستگاه، امنیت آن را به شدت کاهش می‌دهد و آن را در معرض حملات قرار می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: حملات به iOS -->
+    <!-- ============================================================ -->
+    <div class="card" id="ios-attacks">
+        <h2>🎯 حملات به iOS</h2>
+        <p>
+            حملات به iOS معمولاً به دلیل معماری بسته، نیازمند روش‌های پیشرفته‌تری هستند.
+        </p>
+
+        <h3>📌 حملات رایج به iOS:</h3>
+        <ul>
+            <li><b>Jailbreak:</b> دور زدن محدودیت‌های iOS برای نصب برنامه‌های غیرمجاز و دسترسی به سیستم فایل.</li>
+            <li><b>مهندسی معکوس IPA:</b> استخراج کد از فایل‌های IPA با ابزارهایی مانند <code dir='ltr'>class-dump</code> و <code dir='ltr'>Hopper</code>.</li>
+            <li><b>تحلیل داینامیک با Frida:</b> تزریق کد به برنامه برای مشاهده رفتار و دستکاری داده‌ها.</li>
+            <li><b>MITM:</b> شنود ترافیک با ابزارهایی مانند <code dir='ltr'>Burp Suite</code> (با نصب گواهی‌های جعلی).</li>
+            <li><b>Sideloading:</b> نصب برنامه‌های تأیید نشده از طریق ابزارهایی مانند <code dir='ltr'>AltStore</code> یا <code dir='ltr'>Xcode</code>.</li>
+            <li><b>حمله به Keychain:</b> استخراج اطلاعات ذخیره‌شده در Keychain در صورت وجود آسیب‌پذیری.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استخراج کد با class-dump (برای iOS)
+class-dump -H MyApp.app
+
+# تحلیل با Hopper (برای مشاهده اسمبلی)
+hopper -f MyApp.app/MyApp
+
+# استفاده از Frida برای iOS
+frida -U -f com.example.app -l script.js</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Jailbreak کردن iOS برای تست امنیت مجاز است، اما در دستگاه‌های واقعی بسیار خطرناک است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: بدافزارهای موبایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="mobile-malware">
+        <h2>🦠 بدافزارهای موبایل</h2>
+        <p>
+            بدافزارهای موبایل نرم‌افزارهای مخربی هستند که برای سرقت اطلاعات، کنترل دستگاه یا اخاذی از کاربران طراحی شده‌اند.
+        </p>
+
+        <h3>📌 انواع بدافزارهای موبایل:</h3>
+        <ul>
+            <li><b>تروجان:</b> برنامه‌ای که خود را مفید نشان می‌دهد اما کارهای مخرب انجام می‌دهد (مثل تروجان‌های بانکی).</li>
+            <li><b>جاسوس‌افزار (Spyware):</b> اطلاعات شخصی را جمع‌آوری و به سرور مهاجم ارسال می‌کند.</li>
+            <li><b>باج‌افزار (Ransomware):</b> فایل‌های دستگاه را رمزنگاری کرده و درخواست باج می‌کند.</li>
+            <li><b>کرم (Worm):</b> از طریق شبکه‌های اجتماعی یا بلوتوث تکثیر می‌شود.</li>
+            <li><b>تبلیغ‌افزار (Adware):</b> تبلیغات مزاحم نمایش می‌دهد و ممکن است اطلاعات را جمع‌آوری کند.</li>
+            <li><b>ماینر (Cryptominer):</b> از CPU/GPU دستگاه برای استخراج ارز دیجیتال استفاده می‌کند.</li>
+        </ul>
+
+        <h3>📌 روش‌های انتشار بدافزارهای موبایل:</h3>
+        <ul>
+            <li><b>برنامه‌های مخرب در فروشگاه‌های رسمی:</b> Google Play و App Store گاهی حاوی بدافزار هستند.</li>
+            <li><b>فروشگاه‌های شخص ثالث:</b> دانلود از منابع غیررسمی خطرناک است.</li>
+            <li><b>لینک‌های فیشینگ:</b> از طریق پیامک (Smishing) یا ایمیل.</li>
+            <li><b>ربات‌های شبکه‌های اجتماعی:</b> لینک‌های مخرب در پیام‌ها.</li>
+            <li><b>آسیب‌پذیری‌های سیستمی:</b> بهره‌برداری از نقاط ضعف سیستمعامل.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> همیشه برنامه‌ها را از فروشگاه‌های رسمی دانلود کنید و مجوزها را بررسی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: فیشینگ موبایل (Smishing) -->
+    <!-- ============================================================ -->
+    <div class="card" id="mobile-phishing">
+        <h2>📧 فیشینگ موبایل (Smishing)</h2>
+        <p>
+            <b>Smishing</b> (SMS Phishing) نوعی حمله مهندسی اجتماعی است که در آن مهاجم با ارسال پیامک‌های جعلی، کاربران را فریب می‌دهد تا روی لینک‌های مخرب کلیک کنند یا اطلاعات حساس خود را وارد کنند.
+        </p>
+
+        <h3>📌 مثال‌های Smishing:</h3>
+        <ul>
+            <li>پیامک با عنوان "بسته شما آماده دریافت است" و لینک به یک وب‌سایت جعلی.</li>
+            <li>پیامک با عنوان "حساب بانکی شما مسدود شده است" و درخواست ورود به سایت جعلی.</li>
+            <li>پیامک با عنوان "شما برنده یک جایزه شده‌اید" و درخواست اطلاعات شخصی.</li>
+        </ul>
+
+        <h3>📌 تشخیص و مقابله با Smishing:</h3>
+        <ul>
+            <li><b>بررسی فرستنده:</b> شماره‌های ناشناس را جدی نگیرید.</li>
+            <li><b>عدم کلیک روی لینک‌ها:</b> هرگز روی لینک‌های پیامک‌های ناشناس کلیک نکنید.</li>
+            <li><b>تأیید هویت:</b> با بانک یا سازمان مربوطه تماس بگیرید.</li>
+            <li><b>استفاده از فیلترهای اسپم:</b> بسیاری از برنامه‌های پیامک دارای فیلتر Smishing هستند.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Smishing یکی از رایج‌ترین روش‌های فیشینگ در موبایل است و آگاهی کاربران بهترین دفاع است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: جرم‌یابی موبایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="mobile-forensics">
+        <h2>🔍 جرم‌یابی موبایل (Mobile Forensics)</h2>
+        <p>
+            <b>جرم‌یابی موبایل</b> فرآیند جمع‌آوری، حفظ و تحلیل داده‌های دیجیتال از دستگاه‌های موبایل برای استفاده در تحقیقات قانونی است.
+        </p>
+
+        <h3>📌 مراحل جرم‌یابی موبایل:</h3>
+        <ol>
+            <li><b>جداسازی دستگاه:</b> جلوگیری از تغییر داده‌ها (حالت پرواز یا Faraday Bag).</li>
+            <li><b>اکتساب داده:</b> استخراج داده‌ها از حافظه داخلی، کارت حافظه و سیم‌کارت.</li>
+            <li><b>تحلیل:</b> بررسی داده‌های استخراج‌شده برای یافتن شواهد.</li>
+            <li><b>گزارش:</b> تهیه گزارش قانونی از یافته‌ها.</li>
+        </ol>
+
+        <h3>📌 ابزارهای جرم‌یابی موبایل:</h3>
+        <ul>
+            <li><b>Autopsy:</b> پلتفرم تحلیل دیجیتال متن‌باز.</li>
+            <li><b>AccessData FTK:</b> ابزار تجاری تحلیل داده.</li>
+            <li><b>Magnet AXIOM:</b> ابزار تجاری برای جرم‌یابی موبایل.</li>
+            <li><b>Android Data Extraction:</b> با استفاده از <code dir='ltr'>adb</code> و دستورات خط فرمان.</li>
+            <li><b>iOS Data Extraction:</b> با استفاده از iTunes یا ابزارهای تخصصی.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># جمع‌آوری اطلاعات با adb
+adb shell dumpsys > dumpsys_output.txt
+
+# تهیه نسخه پشتیبان از داده‌های اندروید (بدون root)
+adb backup -apk -shared -all -system -f backup.ab
+
+# جمع‌آوری لاگ‌ها
+adb logcat -d > logcat.txt</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> جرم‌یابی موبایل باید با رعایت اصول قانونی و حفظ زنجیره‌امنیت (Chain of Custody) انجام شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: ابزارهای هک موبایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای هک موبایل</h2>
+        <p>
+            ابزارهای متعددی برای تست و هک برنامه‌های موبایل وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>پلتفرم</th><th>کاربرد اصلی</th></tr>
+                <tr>
+                    <td><b>Frida</b></td>
+                    <td>Android, iOS</td>
+                    <td>تزریق کد و تحلیل داینامیک</td>
+                </tr>
+                <tr>
+                    <td><b>Objection</b></td>
+                    <td>Android, iOS</td>
+                    <td>مدیریت runtime و دور زدن SSL Pinning</td>
+                </tr>
+                <tr>
+                    <td><b>MobSF (Mobile Security Framework)</b></td>
+                    <td>Android, iOS</td>
+                    <td>تحلیل استاتیک و داینامیک برنامه‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>drozer</b></td>
+                    <td>Android</td>
+                    <td>تست نفوذ اندروید (چهارچوب)</td>
+                </tr>
+                <tr>
+                    <td><b>Burp Suite</b></td>
+                    <td>Android, iOS</td>
+                    <td>شنود و دستکاری ترافیک (MITM)</td>
+                </tr>
+                <tr>
+                    <td><b>apktool</b></td>
+                    <td>Android</td>
+                    <td>مهندسی معکوس فایل‌های APK</td>
+                </tr>
+                <tr>
+                    <td><b>dex2jar</b></td>
+                    <td>Android</td>
+                    <td>تبدیل DEX به JAR</td>
+                </tr>
+                <tr>
+                    <td><b>jd-gui</b></td>
+                    <td>Android</td>
+                    <td>مشاهده کد جاوا از JAR</td>
+                </tr>
+                <tr>
+                    <td><b>Xposed</b></td>
+                    <td>Android</td>
+                    <td>مدیریت Runtime و دستکاری برنامه‌ها (نیاز به Root)</td>
+                </tr>
+                <tr>
+                    <td><b>Cydia Substrate</b></td>
+                    <td>iOS</td>
+                    <td>دستکاری Runtime (نیاز به Jailbreak)</td>
+                </tr>
+                <tr>
+                    <td><b>iFunBox</b></td>
+                    <td>iOS</td>
+                    <td>مدیریت فایل‌های iOS (Jailbreak)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># مثال استفاده از Frida برای اندروید
+frida -U -f com.example.app -l script.js
+
+# مثال استفاده از Objection برای اندروید
+objection -g com.example.app explore
+
+# اجرای drozer
+drozer console connect</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Frida و Objection دو ابزار قدرتمند برای تحلیل داینامیک برنامه‌های موبایل هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: هوش مصنوعی در امنیت موبایل -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-mobile">
+        <h2>🤖 هوش مصنوعی در امنیت موبایل</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در امنیت موبایل نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در امنیت موبایل:</h3>
+        <ul>
+            <li><b>تشخیص بدافزار:</b> AI می‌تواند بدافزارها را بر اساس رفتار تشخیص دهد.</li>
+            <li><b>تحلیل کد:</b> AI می‌تواند کد برنامه را تحلیل کرده و آسیب‌پذیری‌ها را پیدا کند.</li>
+            <li><b>شناسایی حملات:</b> AI می‌تواند حملات Smishing و فیشینگ را شناسایی کند.</li>
+            <li><b>پیش‌بینی تهدیدات:</b> AI می‌تواند تهدیدات آینده را پیش‌بینی کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Mobile Security:</h3>
+        <ul>
+            <li><b>AI-Based Malware Scanners:</b> مانند Google Play Protect.</li>
+            <li><b>AI-Powered Static Analysis:</b> تحلیل کد با AI.</li>
+            <li><b>AI-Driven Behavioral Analysis:</b> تحلیل رفتار برنامه‌ها با AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در امنیت موبایل مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند بدافزارهای جدید را سریع‌تر شناسایی کند و حملات پیچیده را تشخیص دهد.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با حملات موبایل</h2>
+        <p>
+            برای محافظت از دستگاه‌ها و برنامه‌های موبایل در برابر حملات، کاربران و توسعه‌دهندگان باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات برای کاربران:</h3>
+        <ul>
+            <li><b>به‌روزرسانی سیستمعامل:</b> نصب وصله‌های امنیتی.</li>
+            <li><b>دانلود برنامه از منابع رسمی:</b> فقط از Google Play و App Store.</li>
+            <li><b>بررسی مجوزها:</b> قبل از نصب، مجوزهای درخواستی را بررسی کنید.</li>
+            <li><b>استفاده از قفل صفحه:</b> PIN، الگو، اثر انگشت یا Face ID.</li>
+            <li><b>غیرفعال کردن نصب از منابع ناشناس:</b> در اندروید.</li>
+            <li><b>استفاده از VPN:</b> در شبکه‌های عمومی.</li>
+            <li><b>عدم کلیک روی لینک‌های مشکوک:</b> در پیامک و ایمیل.</li>
+        </ul>
+
+        <h3>📌 اقدامات برای توسعه‌دهندگان:</h3>
+        <ul>
+            <li><b>رمزنگاری داده‌ها:</b> ذخیره‌سازی امن با استفاده از Keystore/Keychain.</li>
+            <li><b>ارتباط امن:</b> استفاده از HTTPS با SSL Pinning.</li>
+            <li><b>احراز هویت قوی:</b> استفاده از OAuth, Biometric.</li>
+            <li><b>مقاومت در برابر مهندسی معکوس:</b> استفاده از ProGuard, Obfuscation.</li>
+            <li><b>جلوگیری از تزریق:</b> فیلتر کردن ورودی‌ها.</li>
+            <li><b>آزمایش امنیتی منظم:</b> تست نفوذ و تحلیل آسیب‌پذیری.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع، ترکیبی از آگاهی کاربر و کدنویسی امن است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – هک برنامه‌های موبایل</h2>
+        <p>
+            در این کارگاه، شما با ابزارهای هک موبایل آشنا خواهید شد و یک سناریوی کامل از تحلیل و نفوذ به یک برنامه موبایل را پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای مهندسی معکوس اندروید.</li>
+            <li>شنود ترافیک با Burp Suite.</li>
+            <li>اجرای تحلیل داینامیک با Frida.</li>
+            <li>مقابله با آسیب‌پذیری‌ها.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> یک برنامه اندروید آزمایشگاهی (مثل OWASP MSTG یا یک برنامه ساده با آسیب‌پذیری).</li>
+            <li><b>ابزارها:</b> apktool, dex2jar, jd-gui, Burp Suite, Frida, Android Studio (اختیاری).</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: مهندسی معکوس یک برنامه</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استخراج کد با apktool
+apktool d target.apk
+
+# تبدیل dex به jar با dex2jar
+d2j-dex2jar target.apk
+
+# مشاهده کد با jd-gui
+jd-gui classes-dex2jar.jar</code></pre>
+        </div>
+
+        <h4>مرحله ۲: شنود ترافیک با Burp Suite</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تنظیم پروکسی Burp روی 127.0.0.1:8080
+# نصب گواهی Burp روی دستگاه (برای HTTPS)
+# اجرای برنامه و مشاهده ترافیک در Burp</code></pre>
+        </div>
+
+        <h4>مرحله ۳: تحلیل داینامیک با Frida</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب Frida روی دستگاه
+# نوشتن اسکریپت Frida برای intercept کردن توابع
+frida -U -f com.example.app -l script.js</code></pre>
+        </div>
+
+        <h4>مرحله ۴: شناسایی و رفع آسیب‌پذیری</h4>
+        <p>
+            بر اساس یافته‌ها، آسیب‌پذیری‌های برنامه را شناسایی کرده و راهکارهای رفع آنها را پیشنهاد دهید.
+        </p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند تحلیل و هک برنامه موبایل تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه امنیت موبایل را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – تحلیل استاتیک:</b>
+                <br>یک برنامه اندروید (مثل OWASP MSTG) را با apktool و jd-gui تحلیل کنید و آسیب‌پذیری‌های کد را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – شنود ترافیک:</b>
+                <br>با استفاده از Burp Suite، ترافیک یک برنامه موبایل را شنود کنید و اطلاعات حساس را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Frida:</b>
+                <br>با استفاده از Frida، یک تابع خاص را در یک برنامه اندروید intercept کنید و خروجی آن را تغییر دهید.
+            </li>
+            <li>
+                <b>تمرین ۴ – مهندسی معکوس iOS:</b>
+                <br>با استفاده از class-dump و Hopper، یک برنامه iOS را تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – ارائه راهکارهای امنیتی:</b>
+                <br>برای یک برنامه موبایل فرضی، یک لیست از اقدامات امنیتی برای مقابله با حملات تهیه کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Android</span></td>
+                    <td>—</td>
+                    <td>سیستمعامل متن‌باز گوگل</td>
+                    <td>هدف اصلی حملات موبایل</td>
+                    <td>گوشی‌های سامسونگ، شیائومی</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">iOS</span></td>
+                    <td>—</td>
+                    <td>سیستمعامل اختصاصی اپل</td>
+                    <td>هدف حملات پیشرفته</td>
+                    <td>iPhone, iPad</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">APK</span></td>
+                    <td><b>A</b>ndroid <b>P</b>ackage <b>K</b>it</td>
+                    <td>فایل نصب اندروید</td>
+                    <td>مهندسی معکوس و تحلیل</td>
+                    <td>app.apk</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IPA</span></td>
+                    <td><b>i</b>OS <b>P</b>ackage <b>A</b>pplication</td>
+                    <td>فایل نصب iOS</td>
+                    <td>مهندسی معکوس و تحلیل</td>
+                    <td>app.ipa</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Jailbreak</span></td>
+                    <td>—</td>
+                    <td>دور زدن محدودیت‌های iOS</td>
+                    <td>دسترسی به سیستم فایل</td>
+                    <td>Jailbreak با Checkra1n</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Root</span></td>
+                    <td>—</td>
+                    <td>دسترسی سطح بالا در اندروید</td>
+                    <td>نصب بدافزار سیستمی</td>
+                    <td>Root با Magisk</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Frida</span></td>
+                    <td>—</td>
+                    <td>ابزار تزریق کد</td>
+                    <td>تحلیل داینامیک</td>
+                    <td><code dir='ltr'>frida -U -f app</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MobSF</span></td>
+                    <td><b>M</b>obile <b>Sec</b>urity <b>F</b>ramework</td>
+                    <td>چارچوب تحلیل امنیت موبایل</td>
+                    <td>تحلیل استاتیک و داینامیک</td>
+                    <td>MobSF web interface</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">OWASP MSTG</span></td>
+                    <td><b>M</b>obile <b>S</b>ecurity <b>T</b>esting <b>G</b>uide</td>
+                    <td>راهنمای تست امنیت موبایل OWASP</td>
+                    <td>مرجع آسیب‌پذیری‌ها</td>
+                    <td>OWASP MSTG</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Smishing</span></td>
+                    <td><b>S</b>MS + Ph<b>ishing</b></td>
+                    <td>فیشینگ از طریق پیامک</td>
+                    <td>سرقت اطلاعات با پیامک</td>
+                    <td>پیامک با لینک مخرب</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSL Pinning</span></td>
+                    <td>—</td>
+                    <td>قفل کردن گواهی SSL</td>
+                    <td>جلوگیری از MITM</td>
+                    <td>Pinning با گواهی خاص</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ProGuard</span></td>
+                    <td>—</td>
+                    <td>ابزار مبهم‌سازی کد اندروید</td>
+                    <td>مقاومت در برابر مهندسی معکوس</td>
+                    <td>ProGuard در gradle</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Keychain</span></td>
+                    <td>—</td>
+                    <td>ذخیره‌ساز امن iOS</td>
+                    <td>ذخیره رمزها و گواهی‌ها</td>
+                    <td>Keychain در iOS</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۷ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۷:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین حوزه‌های امنیت سایبری، یعنی <b>هک پلتفرم‌های موبایل</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>معماری اندروید و iOS</b> و لایه‌های امنیتی آنها.</li>
+            <li><b>OWASP Mobile Top 10</b> و آسیب‌پذیری‌های رایج.</li>
+            <li><b>حملات به اندروید:</b> مهندسی معکوس، MITM، بدافزار، Rooting.</li>
+            <li><b>حملات به iOS:</b> Jailbreak، مهندسی معکوس، Sideloading.</li>
+            <li><b>بدافزارهای موبایل</b> و روش‌های انتشار.</li>
+            <li><b>Smishing</b> و فیشینگ موبایل.</li>
+            <li><b>جرم‌یابی موبایل</b> و ابزارهای آن.</li>
+            <li><b>ابزارهای هک موبایل:</b> Frida, Objection, MobSF, drozer.</li>
+            <li><b>نقش هوش مصنوعی</b> در امنیت موبایل.</li>
+            <li><b>راه‌های مقابله</b> با حملات موبایل.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_18_IoT_and_OT_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۸ – IoT and OT Hacking</a> با تکنیک‌های هک اینترنت اشیا و فناوری عملیاتی آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۷ – Hacking Mobile Platforms | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

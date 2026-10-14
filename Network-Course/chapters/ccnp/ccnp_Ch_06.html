@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۶ CCNP — امنیت زیرساخت (CoPP، uRPF، IPv6 FHS)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-06">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۶ — امنیت زیرساخت (Infrastructure Security)</h1>
+    <div class="meta">
+      <span>📖 ۱۰۰ دقیقه</span>
+      <span>🎯 وزن در ENARSI: بخش Infrastructure Security</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در این فصل وارد <strong>امنیت سطح حرفه‌ای</strong> می‌شویم. مباحث پایه‌ی CCNA
+      (SSH، ACL، Port Security) را رد کرده‌ایم — حالا سراغ ابزارهایی می‌رویم که
+      در شبکه‌های واقعی ISP و Enterprise استفاده می‌شوند:
+      <span class="term" data-term="copp">CoPP</span> برای محافظت از CPU روتر،
+      <span class="term" data-term="urpf">uRPF</span> برای جلوگیری از جعل IP،
+      <strong>IPv6 First Hop Security</strong> برای خنثی کردن حملات IPv6،
+      و <strong>AAA پیشرفته</strong> با TACACS+ و RADIUS.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>سناریوهای حمله واقعی</strong> و چگونگی دفاع در برابر آنهاست.
+      در انتها می‌توانی یک روتر مرزی ISP را کاملاً Hardening کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مرور سه Plane و اهمیت امنیت هرکدام</li>
+      <li>حملات رایج به روتر و سوئیچ</li>
+      <li>AAA پیشرفته — TACACS+ و RADIUS</li>
+      <li>Device Hardening پیشرفته — RBAC، SSH، ACL</li>
+      <li>Control Plane Policing (CoPP)</li>
+      <li>Control Plane Protection (CPPr) — Sub-Interface</li>
+      <li>uRPF — Strict و Loose Mode</li>
+      <li>IPv4 ACL پیشرفته — Time-Based، Reflexive، Dynamic</li>
+      <li>IPv6 Traffic Filter</li>
+      <li>IPv6 First Hop Security (FHS)</li>
+      <li>RA Guard — محافظت از Router Advertisement</li>
+      <li>DHCPv6 Guard و ND Inspection</li>
+      <li>IPv6 Source Guard</li>
+      <li>DMVPN امنیتی + عیب‌یابی</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>اگر یک مهاجم Ping Flood روی روتر بزند، چه اتفاقی می‌افتد و چطور می‌توان دفاع کرد؟</li>
+      <li>uRPF چطور جلوی IP Spoofing را می‌گیرد؟ تفاوت Strict و Loose چیست؟</li>
+      <li>IPv6 First Hop Security چه حملاتی را خنثی می‌کند؟</li>
+      <li>تفاوت Time-Based ACL با ACL معمولی چیست؟</li>
+      <li>در AAA، تفاوت TACACS+ و RADIUS در Authorization چیست؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۶.۱ ==== -->
+    <h3>۶.۱ مرور سه Plane</h3>
+    <p>
+      در CCNP، امنیت را از دید <strong>سه Plane</strong> می‌بینیم. هر Plane
+      سطح حمله و مکانیزم دفاعی متفاوتی دارد:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Plane</th>
+          <th style="padding:6px;border:1px solid var(--border)">ترافیک</th>
+          <th style="padding:6px;border:1px solid var(--border)">حمله رایج</th>
+          <th style="padding:6px;border:1px solid var(--border)">دفاع</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Management</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">SSH، SNMP، Syslog، AAA</td>
+          <td style="padding:6px;border:1px solid var(--border)">Password Attack، SNMP Guess</td>
+          <td style="padding:6px;border:1px solid var(--border)">SSH، AAA، VTY ACL</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Control</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">OSPF، BGP، EIGRP، STP، ARP، ICMP</td>
+          <td style="padding:6px;border:1px solid var(--border)">DoS، Spoofing، Protocol Attack</td>
+          <td style="padding:6px;border:1px solid var(--border)">CoPP، CPPr، uRPF</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Data</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">کاربران</td>
+          <td style="padding:6px;border:1px solid var(--border)">Flood، Malware</td>
+          <td style="padding:6px;border:1px solid var(--border)">ACL، QoS، Firewall</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کلیدی</div>
+      حملات <strong>Control Plane</strong> خطرناک‌ترین هستند — چون مستقیم روی CPU روتر
+      تأثیر می‌گذارند و کل شبکه را از کار می‌اندازند. CoPP مخصوص دفاع در این لایه است.
+    </div>
+
+    <!-- ==== ۶.۲ ==== -->
+    <h3>۶.۲ حملات رایج به روتر و سوئیچ</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">حمله</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">دفاع</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Ping Flood</td>
+          <td style="padding:6px;border:1px solid var(--border)">سیل ICMP Echo — اشباع CPU</td>
+          <td style="padding:6px;border:1px solid var(--border)">CoPP، Rate Limit ICMP</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">SYN Flood</td>
+          <td style="padding:6px;border:1px solid var(--border)">سیل SYN TCP — اشباع Connection Table</td>
+          <td style="padding:6px;border:1px solid var(--border)">CoPP، TCP Intercept</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Routing Protocol Attack</td>
+          <td style="padding:6px;border:1px solid var(--border)">جعل OSPF/BGP Hello — تزریق مسیر جعلی</td>
+          <td style="padding:6px;border:1px solid var(--border)">Authentication، TTL Security</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">IP Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">جعل IP مبدأ</td>
+          <td style="padding:6px;border:1px solid var(--border)">uRPF</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">ARP Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">جعل ARP — MITM</td>
+          <td style="padding:6px;border:1px solid var(--border)">DAI، Port Security</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">DHCP Starvation</td>
+          <td style="padding:6px;border:1px solid var(--border)">مصرف کل Pool آدرس با MAC جعلی</td>
+          <td style="padding:6px;border:1px solid var(--border)">DHCP Snooping، Port Security</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">VLAN Hopping</td>
+          <td style="padding:6px;border:1px solid var(--border)">دسترسی غیرمجاز به VLAN دیگر</td>
+          <td style="padding:6px;border:1px solid var(--border)">Native VLAN اختصاصی، DTP Off</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Rogue DHCP</td>
+          <td style="padding:6px;border:1px solid var(--border)">سرور DHCP جعلی</td>
+          <td style="padding:6px;border:1px solid var(--border)">DHCP Snooping</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">RA Attack (IPv6)</td>
+          <td style="padding:6px;border:1px solid var(--border)">RA جعلی — تغییر Gateway کلاینت‌ها</td>
+          <td style="padding:6px;border:1px solid var(--border)">IPv6 RA Guard</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">DHCPv6 Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">سرور DHCPv6 جعلی</td>
+          <td style="padding:6px;border:1px solid var(--border)">DHCPv6 Guard</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۶.۳ ==== -->
+    <h3>۶.۳ AAA پیشرفته — TACACS+ و RADIUS</h3>
+
+    <p>
+      <span class="term" data-term="aaa">AAA</span> مخفف سه بخش است:
+      <strong>Authentication</strong> (کیستی؟)،
+      <strong>Authorization</strong> (چه کاری می‌توانی؟)،
+      <strong>Accounting</strong> (چه کاری کردی؟).
+    </p>
+
+    <p><strong>مقایسه‌ی دقیق TACACS+ و RADIUS:</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">TACACS+</th>
+          <th style="padding:6px;border:1px solid var(--border)">RADIUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">استاندارد</td><td style="padding:6px;border:1px solid var(--border)">Cisco اختصاصی</td><td style="padding:6px;border:1px solid var(--border)">IETF / RFC 2865</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Transport</td><td style="padding:6px;border:1px solid var(--border)">TCP/49</td><td style="padding:6px;border:1px solid var(--border)">UDP/1812 (Auth)، 1813 (Acct)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">رمزنگاری</td><td style="padding:6px;border:1px solid var(--border)">کل Payload</td><td style="padding:6px;border:1px solid var(--border)">فقط Password (با Shared Secret)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">AAA جدا</td><td style="padding:6px;border:1px solid var(--border)">✅ جدا برای هر سه</td><td style="padding:6px;border:1px solid var(--border)">Auth + Authz ترکیب</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد اصلی</td><td style="padding:6px;border:1px solid var(--border)">Device Admin</td><td style="padding:6px;border:1px solid var(--border)">Network Access (802.1X)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Multiprotocol</td><td style="padding:6px;border:1px solid var(--border)">IP, IPX, AppleTalk</td><td style="padding:6px;border:1px solid var(--border)">فقط IP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Command Authorization</td><td style="padding:6px;border:1px solid var(--border)">✅ در سطح Command</td><td style="padding:6px;border:1px solid var(--border)">❌ محدود</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! ===== پیکربندی کامل AAA با TACACS+ =====
+Router(config)# aaa new-model
+
+! TACACS+ Server
+Router(config)# tacacs server TAC1
+Router(config-server-tacacs)# address ipv4 192.168.1.100
+Router(config-server-tacacs)# key StrongKey@2024
+Router(config-server-tacacs)# exit
+
+! AAA Method Lists
+Router(config)# aaa authentication login default group tacacs+ local
+Router(config)# aaa authentication enable default group tacacs+ enable
+Router(config)# aaa authorization exec default group tacacs+ local if-authenticated
+Router(config)# aaa authorization commands 15 default group tacacs+ local
+Router(config)# aaa accounting exec default start-stop group tacacs+
+Router(config)# aaa accounting commands 15 default start-stop group tacacs+
+
+! Fallback User (اگر سرور از دسترس خارج شد)
+Router(config)# username fallback privilege 15 secret FallbackP@ss
+
+! Local Command Authorization (اگر Server نداری)
+Router(config)# username admin privilege 15 secret AdminP@ss
+Router(config)# username operator privilege 1 secret OperP@ss
+Router(config)# username operator autocommand show ip interface brief
+! کاربر operator فقط این دستور را می‌تواند اجرا کند
+
+! بررسی
+Router# show aaa servers
+Router# show aaa method-lists
+Router# test aaa group tacacs+ admin Pass123 new-code
+
+! ===== پیکربندی AAA با RADIUS =====
+Router(config)# radius server RAD1
+Router(config-radius-server)# address ipv4 192.168.1.101 auth-port 1812 acct-port 1813
+Router(config-radius-server)# key RadiusKey@2024
+Router(config-radius-server)# exit
+
+Router(config)# aaa authentication login default group radius local
+Router(config)# aaa authorization network default group radius</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای مدیریت دستگاه‌های سیسکو، همیشه <strong>TACACS+</strong> را ترجیح بده —
+      چون Command Authorization در سطح دستور را پشتیبانی می‌کند (مثلاً «این کاربر
+      نمی‌تواند <code>write erase</code> بزند»). RADIUS این را ندارد.
+    </div>
+
+    <!-- ==== ۶.۴ ==== -->
+    <h3>۶.۴ Device Hardening پیشرفته — RBAC، SSH، ACL</h3>
+
+    <p><strong>RBAC (Role-Based Access Control):</strong> در IOS-XE، به‌جای
+      Privilege Levelهای قدیمی، می‌توان Viewها را تعریف کرد:</p>
+
+    <pre><code>! تعریف View با دسترسی محدود
+Router(config)# parser view MONITORING
+Router(config-view)# secret MonitorP@ss
+Router(config-view)# commands exec include show version
+Router(config-view)# commands exec include show ip interface
+Router(config-view)# commands exec include show interfaces
+Router(config-view)# commands exec include all show
+Router(config-view)# exit
+
+Router(config)# username monitor view MONITORING secret MonitorP@ss
+
+! بررسی
+Router# show parser view
+Router# show parser view all
+
+! ===== SSH پیشرفته با ACL و Limit =====
+Router(config)# ip ssh version 2
+Router(config)# ip ssh time-out 60
+Router(config)# ip ssh authentication-retries 3
+Router(config)# ip ssh logging events
+
+! RSA Key قوی
+Router(config)# crypto key generate rsa modulus 4096
+
+! محدودسازی VTY به Subnet مدیریتی
+Router(config)# access-list 90 permit 10.10.10.0 0.0.0.255
+Router(config)# access-list 90 deny any log
+
+Router(config)# line vty 0 4
+Router(config-line)# access-class 90 in
+Router(config-line)# transport input ssh
+Router(config-line)# login local
+Router(config-line)# exec-timeout 5 0
+Router(config-line)# logging synchronous</code></pre>
+
+    <p><strong>ACL پیشرفته — Time-Based:</strong></p>
+
+    <pre><code>! تعریف Time Range
+Router(config)# time-range WORK-HOURS
+Router(config-time-range)# periodic weekdays 09:00 to 18:00
+Router(config-time-range)# exit
+
+Router(config)# time-range MAINTENANCE
+Router(config-time-range)# periodic weekend 22:00 to 06:00
+Router(config-time-range)# absolute start 00:00 1 January 2025 end 23:59 31 March 2025
+Router(config-time-range)# exit
+
+! ACL با Time-Based
+Router(config)# ip access-list extended TELNET-RESTRICT
+Router(config-ext-nacl)# permit tcp 10.0.0.0 0.0.0.255 any eq 23 time-range WORK-HOURS
+Router(config-ext-nacl)# deny tcp any any eq 23 log
+Router(config-ext-nacl)# exit
+
+! اعمال روی VTY
+Router(config)# line vty 0 4
+Router(config-line)# access-class TELNET-RESTRICT in
+
+! بررسی
+Router# show time-range
+Router# show access-lists TELNET-RESTRICT</code></pre>
+
+    <!-- ==== ۶.۵ ==== -->
+    <h3>۶.۵ Control Plane Policing (CoPP)</h3>
+
+    <p>
+      <span class="term" data-term="copp">CoPP</span> یک ویژگی است که
+      ترافیک رسیده به <strong>CPU روتر</strong> را Rate Limit می‌کند تا در برابر
+      حملات DoS مقاوم شود. بدون CoPP، یک Flood ساده می‌تواند CPU را ۱۰۰٪ اشغال و
+      روتر را از کار بیندازد.
+    </p>
+
+    <p><strong>مفهوم کلیدی:</strong> ترافیک Control Plane شامل چیست؟</p>
+    <ul>
+      <li>Routing Protocols: OSPF، EIGRP، BGP، RIP</li>
+      <li>Management: SSH، Telnet، SNMP، NTP، Syslog</li>
+      <li>ICMP: Echo، TTL-Exceeded، Unreachable</li>
+      <li>ARP، DHCP، HSRP، VRRP</li>
+      <li>Other: IP Options، Fragments، TTL=0/1</li>
+    </ul>
+
+    <p><strong>سه گام CoPP:</strong></p>
+    <ol>
+      <li>تعریف Class Map برای دسته‌بندی ترافیک</li>
+      <li>تعریف Policy Map برای Rate Limiting هر کلاس</li>
+      <li>اعمال روی Control Plane</li>
+    </ol>
+
+    <pre><code>! ===== گام ۱: ACL برای دسته‌بندی =====
+Router(config)# ip access-list extended ICMP-TRAFFIC
+Router(config-ext-nacl)# permit icmp any any echo
+Router(config-ext-nacl)# permit icmp any any echo-reply
+Router(config-ext-nacl)# exit
+
+Router(config)# ip access-list extended ROUTING-TRAFFIC
+Router(config-ext-nacl)# permit ospf any any
+Router(config-ext-nacl)# permit eigrp any any
+Router(config-ext-nacl)# permit tcp any any eq 179
+Router(config-ext-nacl)# exit
+
+Router(config)# ip access-list extended MGMT-TRAFFIC
+Router(config-ext-nacl)# permit tcp any any eq 22
+Router(config-ext-nacl)# permit udp any any eq 161
+Router(config-ext-nacl)# permit udp any any eq 123
+Router(config-ext-nacl)# exit
+
+! ===== گام ۲: Class Maps =====
+Router(config)# class-map match-any CRITICAL-ROUTING
+Router(config-cmap)# match access-group name ROUTING-TRAFFIC
+Router(config-cmap)# exit
+
+Router(config)# class-map match-any MANAGEMENT
+Router(config-cmap)# match access-group name MGMT-TRAFFIC
+Router(config-cmap)# exit
+
+Router(config)# class-map match-any ICMP-FLOOD
+Router(config-cmap)# match access-group name ICMP-TRAFFIC
+Router(config-cmap)# exit
+
+! ===== گام ۳: Policy Map =====
+Router(config)# policy-map COPP-POLICY
+Router(config-pmap)# class CRITICAL-ROUTING
+Router(config-pmap-c)# police 5000000 conform-action transmit exceed-action drop
+Router(config-pmap-c)# exit
+
+Router(config-pmap)# class MANAGEMENT
+Router(config-pmap-c)# police 2000000 conform-action transmit exceed-action drop
+Router(config-pmap-c)# exit
+
+Router(config-pmap)# class ICMP-FLOOD
+Router(config-pmap-c)# police 128000 conform-action transmit exceed-action drop
+Router(config-pmap-c)# exit
+
+Router(config-pmap)# class class-default
+Router(config-pmap-c)# police 1000000 conform-action transmit exceed-action drop
+Router(config-pmap-c)# exit
+
+! ===== گام ۴: اعمال روی Control Plane =====
+Router(config)# control-plane
+Router(config-cp)# service-policy input COPP-POLICY
+Router(config-cp)# exit
+
+! بررسی
+Router# show policy-map control-plane
+Router# show policy-map control-plane input
+! خروجی: تعداد بسته‌های Conform و Exceed</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار مهم</div>
+      CoPP یک شمشیر دو لبه است. اگر Rate را خیلی پایین بگذاری، پروتکل‌های مسیریابی
+      (OSPF Hello) هم Drop می‌شوند و شبکه از هم می‌پاشد. همیشه اول در Lab تست کن،
+      بعد روی Production.
+    </div>
+
+    <!-- ==== ۶.۶ ==== -->
+    <h3>۶.۶ Control Plane Protection (CPPr)</h3>
+    <p>
+      CPPr یک نسخه‌ی پیشرفته‌تر از CoPP است که اجازه می‌دهد ترافیک Control Plane را
+      به <strong>سه Sub-Interface</strong> تقسیم کنی:
+    </p>
+
+    <ul>
+      <li><strong>Host Sub-Interface:</strong> ترافیک به IPهای خود روتر (SSH، SNMP، ICMP)</li>
+      <li><strong>Transit Sub-Interface:</strong> ترافیک عبوری که قرار است توسط Control Plane پردازش شود (TTL=1، IP Options)</li>
+      <li><strong>CEF-Exception Sub-Interface:</strong> ترافیک استثناء CEF (Fragments، ARP، Unreachable)</li>
+    </ul>
+
+    <pre><code>! Policy Map برای CPPr
+Router(config)# policy-map CPPr-POLICY
+Router(config-pmap)# class HOST-CLASS
+Router(config-pmap-c)# police 500000
+Router(config-pmap)# class TRANSIT-CLASS
+Router(config-pmap-c)# police 200000
+Router(config-pmap)# class CEF-EXCEPTION
+Router(config-pmap-c)# police 100000
+
+! اعمال روی Sub-Interface
+Router(config)# control-plane host
+Router(config-cp-host)# service-policy input CPPr-POLICY
+Router(config-cp-host)# exit
+
+Router(config)# control-plane transit
+Router(config-cp-transit)# service-policy input CPPr-POLICY
+Router(config-cp-transit)# exit
+
+Router(config)# control-plane cef-exception
+Router(config-cp-cef)# service-policy input CPPr-POLICY
+
+! بررسی
+Router# show policy-map control-plane host
+Router# show policy-map control-plane transit
+Router# show policy-map control-plane cef-exception</code></pre>
+
+    <!-- ==== ۶.۷ ==== -->
+    <h3>۶.۷ uRPF — Unicast Reverse Path Forwarding</h3>
+
+    <p>
+      <span class="term" data-term="urpf">uRPF</span> یک ویژگی است که جلوی
+      <strong>IP Spoofing</strong> را می‌گیرد. وقتی بسته‌ای به Interface می‌رسد،
+      روتر بررسی می‌کند که آیا <strong>مسیر برگشت</strong> به Source IP وجود دارد یا نه.
+    </p>
+
+    <p><strong>دو Mode اصلی:</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">شرط</th>
+          <th style="padding:6px;border:1px solid var(--border)">مزیت</th>
+          <th style="padding:6px;border:1px solid var(--border)">عیب</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Strict</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">مسیر برگشت باید از همان Interface باشد که بسته آمده</td>
+          <td style="padding:6px;border:1px solid var(--border)">امن‌تر</td>
+          <td style="padding:6px;border:1px solid var(--border)">در شبکه‌های Asymmetric ممکن است ترافیک مشروع را Drop کند</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Loose</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">فقط مسیر برگشت در جدول باشد (از هر Interface)</td>
+          <td style="padding:6px;border:1px solid var(--border)">با Asymmetric سازگار</td>
+          <td style="padding:6px;border:1px solid var(--border)">کمتر امن</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code>! uRPF Strict Mode (توصیه‌شده روی لبه ISP)
+Router(config)# interface Gi0/1
+Router(config-if)# ip verify unicast source reachable-via rx
+! rx = Strict Mode
+
+! uRPF Loose Mode (برای محیط‌های Asymmetric)
+Router(config)# interface Gi0/1
+Router(config-if)# ip verify unicast source reachable-via any
+! any = Loose Mode
+
+! uRPF با ACL برای استثناءها
+Router(config)# access-list 100 permit ip 10.0.0.0 0.0.0.255 any
+Router(config)# interface Gi0/1
+Router(config-if)# ip verify unicast source reachable-via rx 100 allow-default
+
+! بررسی
+Router# show ip interface Gi0/1
+! ببین: Verify source reachable-via rx
+Router# show ip traffic | include unicast
+Router# show cef interface Gi0/1
+Router# show ip verify source</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      uRPF را همیشه روی <strong>Interfaceهای لبه</strong> (به‌سمت اینترنت یا مشتری)
+      فعال کن. روی Interfaceهای داخلی که مسیریابی Asymmetric دارند، ممکن است
+      مشکل بسازد.
+    </div>
+
+    <!-- ==== ۶.۸ ==== -->
+    <h3>۶.۸ IPv4 ACL پیشرفته — Reflexive و Dynamic</h3>
+
+    <p><strong>Reflexive ACL:</strong> ACLهای رفلکتیو اجازه می‌دهند ترافیک
+      <strong>خروجی</strong> (Outbound) به‌صورت خودکار یک ورودی موقت در ACL
+      ورودی (Inbound) بسازد تا پاسخ‌ها را مجاز کند. مناسب سناریوهایی که
+      Firewall اختصاصی نداریم.</p>
+
+    <pre><code>! Reflexive ACL — اجازه HTTP از داخل، ولی بلاک ورودی از بیرون
+
+! گام ۱: ACL Outbound — برای ترافیک خروجی
+Router(config)# ip access-list extended OUTBOUND
+Router(config-ext-nacl)# permit tcp 10.1.0.0 0.0.255.255 any eq 80 reflect HTTP-TRAFFIC
+Router(config-ext-nacl)# permit tcp 10.1.0.0 0.0.255.255 any eq 443 reflect HTTPS-TRAFFIC
+Router(config-ext-nacl)# exit
+
+! گام ۲: ACL Inbound — با Reflexive Entry
+Router(config)# ip access-list extended INBOUND
+Router(config-ext-nacl)# evaluate HTTP-TRAFFIC
+Router(config-ext-nacl)# evaluate HTTPS-TRAFFIC
+Router(config-ext-nacl)# deny ip any any log
+Router(config-ext-nacl)# exit
+
+! اعمال روی Interfaceها
+Router(config)# interface Gi0/1
+Router(config-if)# ip access-group INBOUND in
+Router(config-if)# exit
+
+Router(config)# interface Gi0/0
+Router(config-if)# ip access-group OUTBOUND out
+
+! بررسی
+Router# show ip access-lists INBOUND
+! ببین: Dynamic Entry — ساخته‌شده برای هر Session</code></pre>
+
+    <!-- ==== ۶.۹ ==== -->
+    <h3>۶.۹ IPv6 Traffic Filter</h3>
+    <p>
+      ACLهای IPv6 مشابه IPv4 هستند ولی تفاوت‌های کلیدی دارند:
+    </p>
+    <ul>
+      <li>پیشوند <code>ipv6</code> به‌جای <code>ip</code></li>
+      <li>Wildcard Mask ندارد — همه‌ی آدرس‌ها با Prefix Length مشخص می‌شوند</li>
+      <li>Implicit Deny در انتها هم وجود دارد</li>
+      <li>پشتیبانی از ICMPv6 و ICMPv6 Message Types</li>
+      <li>Flow Label در IPv6 — برای QoS استفاده می‌شود</li>
+    </ul>
+
+    <pre><code>! ACL IPv6
+Router(config)# ipv6 access-list V6-FILTER
+Router(config-ipv6-acl)# permit tcp 2001:db8:1::/64 any eq 443
+Router(config-ipv6-acl)# permit udp 2001:db8:1::/64 any eq 53
+Router(config-ipv6-acl)# permit icmp 2001:db8:1::/64 any
+Router(config-ipv6-acl)# deny ipv6 any any log
+Router(config-ipv6-acl)# exit
+
+! اعمال روی Interface
+Router(config)# interface Gi0/0
+Router(config-if)# ipv6 traffic-filter V6-FILTER in
+
+! ===== IPv6 Routing Filters =====
+! CoPP برای IPv6
+Router(config)# ipv6 access-list V6-COPP
+Router(config-ipv6-acl)# permit icmp any any router-advertisement
+Router(config-ipv6-acl)# permit icmp any any router-solicitation
+Router(config-ipv6-acl)# permit icmp any any neighbor-advertisement
+Router(config-ipv6-acl)# permit icmp any any neighbor-solicitation
+Router(config-ipv6-acl)# exit
+
+! بررسی
+Router# show ipv6 access-list
+Router# show ipv6 interface Gi0/0
+Router# show ipv6 traffic</code></pre>
+
+    <!-- ==== ۶.۱۰ ==== -->
+    <h3>۶.۱۰ IPv6 First Hop Security (FHS)</h3>
+    <p>
+      IPv6 FHS مجموعه‌ای از ویژگی‌هاست که حملات لایه ۲ در IPv6 را خنثی می‌کند.
+      مشابه DHCP Snooping و DAI در IPv4، ولی برای IPv6.
+    </p>
+
+    <p><strong>حملات IPv6 خاص:</strong></p>
+    <ul>
+      <li><strong>Rogue RA:</strong> ارسال Router Advertisement جعلی — تغییر Default Gateway کلاینت‌ها</li>
+      <li><strong>DHCPv6 Spoofing:</strong> سرور DHCPv6 جعلی</li>
+      <li><strong>ND Spoofing:</strong> جعل Neighbor Discovery — مشابه ARP Spoofing</li>
+      <li><strong>RA Flood:</strong> سیل Router Advertisement — اشباع CPU</li>
+      <li><strong>Prefix Hijacking:</strong> اعلان Prefix غیرمجاز</li>
+    </ul>
+
+    <p><strong>اجزای IPv6 FHS:</strong></p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🛡️ RA Guard</strong>
+        <p style="margin:6px 0">جلوگیری از ارسال RA جعلی — پورت‌های Access به‌عنوان Host علامت‌گذاری می‌شوند.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🛡️ DHCPv6 Guard</strong>
+        <p style="margin:6px 0">جلوگیری از سرور DHCPv6 جعلی — پورت‌ها Trusted/Untrusted.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🛡️ ND Inspection</strong>
+        <p style="margin:6px 0">مشابه DAI — Neighbor Discovery را Inspect می‌کند.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🛡️ IPv6 Source Guard</strong>
+        <p style="margin:6px 0">بررسی منبع IPv6 بر اساس جدول Binding.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🛡️ Destination Guard</strong>
+        <p style="margin:6px 0">Rate Limit ترافیک ND برای مقاصد غیرفعال.</p>
+      </div>
+    </div>
+
+    <!-- ==== ۶.۱۱ ==== -->
+    <h3>۶.۱۱ RA Guard — محافظت از Router Advertisement</h3>
+
+    <pre><code>! RA Guard روی سوئیچ
+Switch(config)# ipv6 nd raguard policy HOST-POLICY
+Switch(config-nd-raguard)# device-role host
+Switch(config-nd-raguard)# exit
+
+! اعمال روی پورت‌های Access
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ipv6 nd raguard attach-policy HOST-POLICY
+Switch(config-if-range)# exit
+
+! روی Uplink به Router (ترافیک RA مجاز)
+Switch(config)# ipv6 nd raguard policy ROUTER-POLICY
+Switch(config-nd-raguard)# device-role router
+Switch(config-nd-raguard)# exit
+
+Switch(config)# interface Gi0/24
+Switch(config-if)# ipv6 nd raguard attach-policy ROUTER-POLICY
+
+! بررسی
+Switch# show ipv6 nd raguard policy
+Switch# show ipv6 nd raguard policy HOST-POLICY
+Switch# show ipv6 nd raguard statistics</code></pre>
+
+    <!-- ==== ۶.۱۲ ==== -->
+    <h3>۶.۱۲ DHCPv6 Guard و ND Inspection</h3>
+
+    <pre><code>! ===== DHCPv6 Guard =====
+Switch(config)# ipv6 dhcp guard policy DHCP-POLICY
+Switch(config-dhcp-guard)# device-role server
+Switch(config-dhcp-guard)# exit
+
+! روی Uplink به Server DHCPv6
+Switch(config)# interface Gi0/24
+Switch(config-if)# ipv6 dhcp guard attach-policy DHCP-POLICY
+
+! روی پورت‌های Access
+Switch(config)# ipv6 dhcp guard policy CLIENT-POLICY
+Switch(config-dhcp-guard)# device-role client
+
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ipv6 dhcp guard attach-policy CLIENT-POLICY
+Switch(config-if-range)# exit
+
+! ===== ND Inspection =====
+! پیش‌نیاز: IPv6 Snooping
+Switch(config)# ipv6 snooping policy ND-POLICY
+Switch(config-snooping-policy)# trusted-port
+
+Switch(config)# interface Gi0/24
+Switch(config-if)# ipv6 snooping attach-policy ND-POLICY
+
+Switch(config)# ipv6 nd inspection policy ND-INSPECT
+Switch(config-nd-inspection)# drop-unsecure
+Switch(config-nd-inspection)# exit
+
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ipv6 nd inspection attach-policy ND-INSPECT
+
+! بررسی
+Switch# show ipv6 dhcp guard policy
+Switch# show ipv6 nd inspection policy
+Switch# show ipv6 snooping policies
+Switch# show ipv6 neighbors binding</code></pre>
+
+    <!-- ==== ۶.۱۳ ==== -->
+    <h3>۶.۱۳ IPv6 Source Guard</h3>
+
+    <pre><code>! IPv6 Source Guard از جدول Binding (DHCPv6 Snooping یا ND) استفاده می‌کند
+
+Switch(config)# interface Gi0/1
+Switch(config-if)# ipv6 source-guard
+
+! یا با Policy
+Switch(config)# ipv6 source-guard policy SOURCE-POLICY
+Switch(config-sisf-sourceguard)# validate address
+Switch(config-sisf-sourceguard)# validate prefix
+
+Switch(config)# interface Gi0/1
+Switch(config-if)# ipv6 source-guard attach-policy SOURCE-POLICY
+
+! بررسی
+Switch# show ipv6 source-guard policy
+Switch# show ipv6 source-guard binding
+Switch# show ipv6 snooping capture-policy</code></pre>
+
+    <!-- ==== ۶.۱۴ ==== -->
+    <h3>۶.۱۴ DMVPN امنیتی و عیب‌یابی</h3>
+
+    <p><strong>نکات امنیتی DMVPN:</strong></p>
+    <ul>
+      <li>همیشه از IPsec Profile + Tunnel Protection استفاده کن</li>
+      <li>PSK را روی Hub به‌صورت Wildcard (0.0.0.0) بگذار</li>
+      <li>در Phase 3، NHRP Shortcut امن است چون IPsec بین Spokeها برقرار می‌شود</li>
+      <li>Routing Protocol روی DMVPN را با Authentication محافظت کن (OSPF MD5، EIGRP MD5)</li>
+    </ul>
+
+    <pre><code>! OSPF MD5 روی DMVPN
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip ospf authentication message-digest
+Hub(config-if)# ip ospf message-digest-key 1 md5 OSPF-Key@2024
+
+! EIGRP Authentication روی DMVPN
+Hub(config)# key chain EIGRP-KEYS
+Hub(config-keychain)# key 1
+Hub(config-keychain-key)# key-string EIGRP-Key@2024
+Hub(config-keychain-key)# exit
+
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip authentication mode eigrp 100 md5
+Hub(config-if)# ip authentication key-chain eigrp 100 EIGRP-KEYS
+
+! بررسی
+Hub# show crypto isakmp sa
+Hub# show crypto ipsec sa
+Hub# show dmvpn
+Hub# show ip nhrp</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      CoPP را همیشه با <code>class class-default</code> ببند — تا هر ترافیک
+      غیرقابل‌طبقه‌بندی هم Rate Limit شود. بدون این، ترافیک ناشناخته
+      می‌تواند CPU را اشباع کند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      uRPF در شبکه‌های Asymmetric (مثل BGP Multihomed یا DMVPN)
+      ممکن است ترافیک مشروع را Drop کند. همیشه اول Loose Mode را تست کن،
+      بعد به Strict مهاجرت کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در IPv6 FHS، یادت باشه که دستگاه‌های شبکه (Router، Switch) در IPv6 از ICMPv6
+      استفاده می‌کنند. اگر ICMPv6 را به‌طور کامل بلاک کنی، IPv6 از کار می‌افتد.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۷ CCNP وارد <span class="term" data-term="sdwan">SD-WAN</span> و
+      <span class="term" data-term="vxlan">VXLAN</span> در سطح حرفه‌ای می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>MACsec (802.1AE)</strong> در لایه ۲ و
+      <strong>SGT (Security Group Tag)</strong> در SD-Access آشنا می‌شوی —
+      در CCIE Security.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — CoPP کامل روی روتر مرزی</h3>
+    <pre><code>! ACL
+ip access-list extended CONTROL-PLANE-CRITICAL
+ permit ospf any any
+ permit eigrp any any
+ permit tcp any any eq 179
+ permit tcp any any eq 22
+ permit udp any any eq 161
+ permit icmp any any echo-reply
+
+ip access-list extended CONTROL-PLANE-NORMAL
+ permit icmp any any
+ permit udp any any eq 53
+ permit udp any any eq 123
+
+! Class Maps
+class-map match-any CRITICAL
+ match access-group name CONTROL-PLANE-CRITICAL
+class-map match-any NORMAL
+ match access-group name CONTROL-PLANE-NORMAL
+
+! Policy Map
+policy-map COPP
+ class CRITICAL
+  police 5000000 conform-action transmit exceed-action drop
+ class NORMAL
+  police 1000000 conform-action transmit exceed-action drop
+ class class-default
+  police 500000 conform-action transmit exceed-action drop
+
+! اعمال
+control-plane
+ service-policy input COPP
+
+! بررسی
+show policy-map control-plane input
+show policy-map control-plane input class CRITICAL</code></pre>
+
+    <h3>مثال ۲ — uRPF + ACL Exception</h3>
+    <pre><code>! ACL برای استثناءهای uRPF
+ip access-list extended URPF-EXCEPTIONS
+ permit ip 10.0.0.0 0.0.0.255 any
+ permit ip 172.16.0.0 0.0.255.255 any
+ deny ip any any
+
+! اعمال uRPF Strict با Exception
+interface Gi0/1
+ ip verify unicast source reachable-via rx URPF-EXCEPTIONS
+ description WAN-to-ISP
+
+! بررسی
+show ip interface Gi0/1 | include verify
+show ip traffic | include unicast
+show cef interface Gi0/1 detail</code></pre>
+
+    <h3>مثال ۳ — IPv6 FHS کامل روی سوئیچ Access</h3>
+    <pre><code>! ===== ۱. IPv6 Snooping =====
+ipv6 snooping policy GLOBAL-SNOOP
+ trusted-port
+!
+interface Gi0/24
+ ipv6 snooping attach-policy GLOBAL-SNOOP
+
+! ===== ۲. RA Guard =====
+ipv6 nd raguard policy HOST-ROLE
+ device-role host
+!
+ipv6 nd raguard policy ROUTER-ROLE
+ device-role router
+!
+interface range Gi0/1-23
+ ipv6 nd raguard attach-policy HOST-ROLE
+!
+interface Gi0/24
+ ipv6 nd raguard attach-policy ROUTER-ROLE
+
+! ===== ۳. DHCPv6 Guard =====
+ipv6 dhcp guard policy DHCP-SERVER
+ device-role server
+!
+ipv6 dhcp guard policy DHCP-CLIENT
+ device-role client
+!
+interface Gi0/24
+ ipv6 dhcp guard attach-policy DHCP-SERVER
+!
+interface range Gi0/1-23
+ ipv6 dhcp guard attach-policy DHCP-CLIENT
+
+! ===== ۴. ND Inspection =====
+ipv6 nd inspection policy ND-POLICY
+ drop-unsecure
+!
+interface range Gi0/1-23
+ ipv6 nd inspection attach-policy ND-POLICY
+
+! ===== ۵. Source Guard =====
+interface range Gi0/1-23
+ ipv6 source-guard
+
+! بررسی
+show ipv6 snooping policies
+show ipv6 nd raguard policy
+show ipv6 dhcp guard policy
+show ipv6 nd inspection policy
+show ipv6 source-guard binding</code></pre>
+
+    <h3>مثال ۴ — Reflexive ACL برای شبکه‌ی کوچک</h3>
+    <pre><code>! Outbound — ترافیک خودی
+ip access-list extended OUTBOUND
+ permit tcp 10.1.0.0 0.0.255.255 any eq 80 reflect HTTP
+ permit tcp 10.1.0.0 0.0.255.255 any eq 443 reflect HTTPS
+ permit tcp 10.1.0.0 0.0.255.255 any eq 22 reflect SSH
+ permit icmp 10.1.0.0 0.0.255.255 any reflect ICMP
+ deny ip any any log
+
+! Inbound — پاسخ‌ها
+ip access-list extended INBOUND
+ evaluate HTTP
+ evaluate HTTPS
+ evaluate SSH
+ evaluate ICMP
+ deny ip any any log
+
+! اعمال
+interface Gi0/0
+ description LAN
+ ip access-group OUTBOUND out
+
+interface Gi0/1
+ description WAN
+ ip access-group INBOUND in
+
+! بررسی
+show ip access-lists OUTBOUND
+show ip access-lists INBOUND
+! ببین Dynamic Entries در INBOUND</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی CoPP با Show Commands</h3>
+    <pre><code>! ببین کلاس‌ها و آمار
+show policy-map control-plane
+show policy-map control-plane input
+show policy-map control-plane input class CRITICAL
+
+! خروجی نمونه:
+! Class-map: CRITICAL (match-any)
+!   15234 packets, 1843567 bytes
+!   5 minute offered rate 12000 bps, drop rate 0 bps
+!   Match: access-group name CONTROL-PLANE-CRITICAL
+!   police:
+!       cir 5000000 bps, bc 156250 bytes
+!       conformed 15234 packets, 1843567 bytes; actions: transmit
+!       exceeded 0 packets, 0 bytes; actions: drop
+!       conformed 5000 bps, exceed 0 bps
+
+! روی روتر با Trafic زیاد
+show policy-map control-plane input class class-default
+! خروجی: تعداد Exceed بالا — نشانه‌ی حمله یا تنظیم اشتباه
+
+! بررسی CPU
+show processes cpu sorted | exclude 0.00
+show processes cpu history
+
+! اگر CPU ۱۰۰٪ است ولی CoPP خوب کار می‌کند:
+! - Rateها را بازبینی کن
+! - یا Rate Limit را در Layer بالاتر (uRPF) بگذار</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3/EVE-NG سه روتر IOS-XE و دو سوئیچ بساز</li>
+      <li>روی روتر Edge، AAA با TACACS+ و Fallback Local پیاده کن (TACACS+ Server شبیه‌سازی‌شده)</li>
+      <li>SSH v2 + RSA 4096 + VTY ACL + exec-timeout پیاده کن</li>
+      <li>یک RBAC View برای کاربر Monitoring بساز</li>
+      <li>Time-Based ACL برای دسترسی Telnet فقط در ساعات کاری</li>
+      <li>CoPP با سه کلاس (Critical، Normal، Default) پیاده کن</li>
+      <li>با یک Ping Flood از یک PC خارجی، پاسخ CoPP را در <code>show policy-map</code> ببین</li>
+      <li>uRPF Strict روی اینترفیس خارجی فعال کن</li>
+      <li>یک IP Spoofing ساده (با hping3 یا اسکریپت Python) انجام بده و ببین uRPF Drop می‌کند</li>
+      <li>Reflexive ACL برای اجازه HTTP از داخل</li>
+      <li>روی سوئیچ Access، IPv6 Snooping + RA Guard + DHCPv6 Guard پیاده کن</li>
+      <li>یک RA جعلی از یک Linux با <code>radvd</code> یا scapy بفرست — ببین RA Guard Drop می‌کند</li>
+      <li>ND Inspection + Source Guard روی پورت‌های Access فعال کن</li>
+      <li>عیب‌یابی: If CoPP باعث قطعی OSPF شد، Rate را بالا ببر</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>CoPP باعث قطعی OSPF/BGP:</strong> Rate خیلی پایین است — پهنای باند پروتکل‌ها را در نظر بگیر.</li>
+      <li><strong>uRPF ترافیک مشروع را Drop می‌کند:</strong> شبکه Asymmetric است — به Loose Mode سوییچ کن.</li>
+      <li><strong>uRPF با DMVPN کار نمی‌کند:</strong> روی Tunnel Interface فعال نکن — فقط روی Physical.</li>
+      <li><strong>Reflexive ACL پاسخ‌ها را نمی‌گیرد:</strong> ACL Inbound باید <code>evaluate</code> داشته باشد و ترتیب مهم است.</li>
+      <li><strong>AAA Fallback کار نمی‌کند:</strong> کاربر Local باید <code>privilege 15</code> داشته باشد و Fallback در Method List تعریف شده باشد.</li>
+      <li><strong>TACACS+ Session قطع می‌شود:</strong> Shared Secret یکسان نیست یا پورت TCP/49 بسته است.</li>
+      <li><strong>IPv6 FHS ترافیک را Drop می‌کند:</strong> پورت Uplink به Router باید Trusted باشد، وگرنه RA نیز بلاک می‌شود.</li>
+      <li><strong>RA Guard روی Uplink فعال است:</strong> باید روی Port Access فعال باشد — نه روی Uplink.</li>
+      <li><strong>DHCPv6 Guard سرور را بلاک می‌کند:</strong> پورت به Server باید <code>device-role server</code> باشد.</li>
+      <li><strong>ND Inspection پیام‌های مشروع را Drop می‌کند:</strong> باید DHCPv6 Snooping Binding Table پر شده باشد.</li>
+      <li><strong>Time-Based ACL همیشه Deny می‌کند:</strong> Time Range اشتباه یا Timezone اشتباه — با <code>show time-range</code> چک کن.</li>
+      <li><strong>RBAC View دسترسی نمی‌دهد:</strong> دستورات را با <code>commands exec include</code> یکی‌یکی اضافه کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="copp">CoPP</span> •
+      <span class="term" data-term="urpf">uRPF</span> •
+      <span class="term" data-term="aaa">AAA</span> •
+      <span class="term" data-term="tacacs">TACACS+</span> •
+      <span class="term" data-term="radius">RADIUS</span> •
+      <span class="term" data-term="ssh">SSH</span> •
+      <span class="term" data-term="acl">ACL</span> •
+      <span class="term" data-term="dmvpn">DMVPN</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-06" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) کدام Plane بیشترین ریسک امنیتی را دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Management</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Control</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Data</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> همه یکسان</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) کدام ابزار مخصوص دفاع از Control Plane است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> ACL</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> NAT</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> CoPP</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> QoS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت اصلی TACACS+ و RADIUS در رمزنگاری چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> RADIUS کل بسته را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> TACACS+ کل Payload، RADIUS فقط Password</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> هیچ‌کدام رمزنگاری نمی‌کنند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) TACACS+ از چه پورت استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> UDP/1812</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> TCP/49</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> UDP/49</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> TCP/1812</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) کدام AAA برای Device Admin بهتر است و چرا؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> RADIUS — سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> هر دو یکسان</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> TACACS+ — Command Authorization جدا دارد</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> RADIUS — امن‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) تفاوت Strict و Loose Mode در uRPF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> Strict فقط برای IPv6</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> Strict: مسیر برگشت از همان Interface — Loose: از هر Interface</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Loose امن‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) CoPP چه چیزی را محدود می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> پهنای باند کاربران</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> ترافیک ورودی به Data Plane</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> ترافیک ارسالی به CPU روتر</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> فقط ICMP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) در CPPr، کدام Sub-Interface برای ترافیک خود روتر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Transit</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Host</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> CEF-Exception</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Data</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) Reflexive ACL برای چه کاربرد دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> Rate Limiting</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> ساخت ورودی موقت برای پاسخ‌ها بر اساس ترافیک خروجی</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Block کردن ARP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) Time-Based ACL چه ویژگی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> فقط در IPv6 کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> بر اساس Time Range اعمال می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> فقط برای Telnet</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> دائمی است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) در IPv6 ACL، Wildcard Mask چگونه است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> مثل IPv4</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> ندارد — از /prefix استفاده می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> ندارد — از Prefix Length استفاده می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> همیشه /128</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) کدام حمله IPv6 کلاینت‌ها را به Gateway جعلی هدایت می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> DNS Spoofing</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Rogue RA</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> ND Flood</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Prefix Hijack</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) RA Guard باید روی کدام پورت‌ها فعال باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> Uplink به Router</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> فقط Trunk</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> Portهای Access (نه Uplink)</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> همه‌ی پورت‌ها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) DHCPv6 Guard به کدام پورت اجازه Server می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> پورت‌های Access</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> پورت Uplink (Trusted)</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> فقط Trunk</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> همه‌ی پورت‌ها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) ND Inspection مشابه کدام ویژگی IPv4 است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> Port Security</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> DHCP Snooping</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> Dynamic ARP Inspection</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> Storm Control</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) در CoPP، اگر Class critical Rate خیلی پایین باشد، چه اتفاقی می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> سرعت بهتر می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> پروتکل‌های مسیریابی Drop می‌شوند و شبکه قطع می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> CPU سریع‌تر می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> هیچ تغییری نمی‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) RBAC در IOS-XE چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> رمزنگاری Password</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> Rate Limiting</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> تعریف View با دسترسی محدود برای هر کاربر</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> Backup Config</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) در DMVPN، امنیت با کدام مکانیزم اعمال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> فقط SSH</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> IPsec Profile + Tunnel Protection</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> فقط ACL</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> فقط HTTP</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک روتر مرزی ISP را کاملاً Hardening کن:</p>
+    <ul>
+      <li><strong>AAA:</strong> با TACACS+ و Fallback Local — سه کاربر (Admin، Operator، Monitor)</li>
+      <li><strong>SSH v2:</strong> RSA 4096، VTY ACL، exec-timeout 5 دقیقه، login block-for</li>
+      <li><strong>Banner:</strong> هشدار قانونی، ورژن، تماس امنیتی</li>
+      <li><strong>RBAC:</strong> View برای هر نقش کاربری</li>
+      <li><strong>Time-Based ACL:</strong> دسترسی مدیریت فقط در ساعات کاری</li>
+      <li><strong>CoPP:</strong> سه کلاس (Critical، Normal، Default) — تست با Ping Flood</li>
+      <li><strong>CPPr:</strong> جداگانه Host، Transit، CEF-Exception</li>
+      <li><strong>uRPF Strict:</strong> روی Interfaceهای خارجی با Exception ACL</li>
+      <li><strong>Reflexive ACL:</strong> اجازه HTTP/HTTPS Outbound، بلاک Inbound</li>
+      <li><strong>IPv6 FHS:</strong> Snooping + RA Guard + DHCPv6 Guard + ND Inspection + Source Guard</li>
+      <li><strong>DMVPN:</strong> با IPsec Profile + OSPF Authentication</li>
+      <li>مستندسازی کامل Security Policy</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Ping Flood واقعی از یک PC مهاجم اجرا کن و آمار CoPP را ببین.</li>
+        <li>با <code>hping3 --spoof</code> یک IP Spoofing انجام بده و uRPF Drop را ببین.</li>
+        <li>با Python یک RA Flood بساز و RA Guard را تست کن.</li>
+        <li>SNMPv3 با Authentication SHA و Encryption AES راه‌اندازی کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>سه Plane:</strong> Management، Control (بیشترین ریسک)، Data</li>
+      <li><strong>TACACS+:</strong> TCP/49، کل Payload، Command Authorization — <strong>RADIUS:</strong> UDP/1812-1813، فقط Password</li>
+      <li><strong>AAA Fallback:</strong> اگر Server نبود، از Local User استفاده کن</li>
+      <li><strong>CoPP:</strong> Rate Limit ترافیک CPU — Class + Policy + Service-Policy Input روی Control-Plane</li>
+      <li><strong>CPPr:</strong> سه Sub-Interface: Host، Transit، CEF-Exception</li>
+      <li><strong>uRPF Strict:</strong> مسیر برگشت باید از همان Interface — <strong>Loose:</strong> از هر Interface</li>
+      <li><strong>uRPF در DMVPN:</strong> فقط روی Physical، نه روی Tunnel</li>
+      <li><strong>Reflexive ACL:</strong> ورودی موقت بر اساس Outbound — با <code>reflect</code> و <code>evaluate</code></li>
+      <li><strong>Time-Based ACL:</strong> با <code>time-range</code> و ترکیب با ACL</li>
+      <li><strong>IPv6 ACL:</strong> بدون Wildcard، با /prefix</li>
+      <li><strong>IPv6 FHS:</strong> RA Guard + DHCPv6 Guard + ND Inspection + Source Guard</li>
+      <li><strong>RA Guard:</strong> روی پورت‌های Access فعال — نه Uplink</li>
+      <li><strong>DHCPv6 Guard:</strong> Uplink = Server، Access = Client</li>
+      <li><strong>ND Inspection:</strong> مشابه DAI — از Binding Table استفاده می‌کند</li>
+      <li><strong>RBAC:</strong> View با دستورات محدود در IOS-XE</li>
+      <li><strong>DMVPN امن:</strong> IPsec Profile + Tunnel Protection + OSPF Authentication</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_05.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-06">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_07.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

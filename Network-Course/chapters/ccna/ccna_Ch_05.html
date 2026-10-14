@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۵ CCNA — مبانی امنیت (SSH، ACL، Port Security)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccna" data-chapter="ccna-05">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📘 فصل ۵ — مبانی امنیت (Security Fundamentals)</h1>
+    <div class="meta">
+      <span>📖 ۸۰ دقیقه</span>
+      <span>🎯 وزن در آزمون: ۱۵٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      تا اینجا شبکه را ساختیم، آدرس دادیم، مسیریابی کردیم و سرویس‌های IP را راه انداختیم.
+      اما شبکه‌ای که امن نباشد، ارزشی ندارد. در این فصل یاد می‌گیری چطور
+      <strong>دستگاه‌های سیسکو را Hardening کنی</strong>، با
+      <span class="term" data-term="acl">ACL</span> ترافیک را کنترل کنی،
+      با <strong>SSH</strong> جایگزین Telnet امن بشی، با <strong>Port Security</strong>
+      جلوی دسترسی غیرمجاز به سوئیچ را بگیری، و حملات رایج لایه ۲ مثل
+      <strong>DHCP Spoofing</strong> و <strong>ARP Spoofing</strong> را خنثی کنی.
+    </p>
+    <p>
+      این فصل، پل بین <strong>کانفیگ عملکردی</strong> و <strong>کانفیگ امن</strong> است.
+      در انتها می‌توانی یک روتر و سوئیچ سازمانی را در برابر حملات پایه مقاوم کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه امنیت و CIA Triad</li>
+      <li>انواع تهدیدات و حملات رایج</li>
+      <li>امنیت Management Plane، Control Plane و Data Plane</li>
+      <li>Hardening دستگاه‌ها: Password، Banner، Timeout</li>
+      <li>پیکربندی SSH (جایگزین Telnet)</li>
+      <li>AAA و روش‌های احراز هویت</li>
+      <li>انواع ACL: Standard، Extended، Named</li>
+      <li>پیکربندی و اعمال ACL</li>
+      <li>Wildcard Mask و محاسبات</li>
+      <li>Port Security پیشرفته</li>
+      <li>DHCP Snooping و ARP Inspection</li>
+      <li>802.1X و BPDU Guard/Root Guard (مرور)</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا استفاده از Telnet در شبکه‌های واقعی ممنوع است؟</li>
+      <li>اگر یک ACL اشتباه روی اینترفیس اعمال شود، چه فاجعه‌ای ممکن است رخ دهد؟</li>
+      <li>یک کارمند با لپ‌تاپ شخصی، پورت شبکه را کشیده — چطور جلوی دسترسی او را بگیریم؟</li>
+      <li>حمله DHCP Spoofing چیست و چگونه یک مهاجم می‌تواند ترافیک کل شبکه را بدزدد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۵.۱ ==== -->
+    <h3>۵.۱ مفاهیم پایه امنیت — CIA Triad</h3>
+    <p>
+      امنیت اطلاعات بر پایه‌ی سه اصل است که به آن <strong>CIA Triad</strong> می‌گویند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">اصل</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">تهدید نمونه</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Confidentiality</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">اطلاعات فقط برای افراد مجاز قابل دسترسی باشد</td>
+          <td style="padding:6px;border:1px solid var(--border)">Eavesdropping، Sniffing</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Integrity</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">داده‌ها بدون اجازه تغییر نکنند</td>
+          <td style="padding:6px;border:1px solid var(--border)">MITM، Tampering</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Availability</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">سرویس همیشه در دسترس باشد</td>
+          <td style="padding:6px;border:1px solid var(--border)">DoS، DDoS، Ransomware</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۵.۲ ==== -->
+    <h3>۵.۲ انواع تهدیدات و حملات رایج</h3>
+
+    <p><strong>دسته‌بندی حملات:</strong></p>
+    <ul>
+      <li><strong>Reconnaissance:</strong> جمع‌آوری اطلاعات (Ping Sweep، Port Scan)</li>
+      <li><strong>Access Attacks:</strong> دسترسی غیرمجاز (Password Attack، Trust Exploitation)</li>
+      <li><strong>DoS/DDoS:</strong> از کار انداختن سرویس</li>
+      <li><strong>Malware:</strong> ویروس، Worm، Trojan، Ransomware</li>
+      <li><strong>Social Engineering:</strong> فریب کاربر (Phishing، Pretexting)</li>
+    </ul>
+
+    <p><strong>حملات خاص لایه ۲:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">حمله</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">دفاع</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">MAC Flooding</td>
+          <td style="padding:6px;border:1px solid var(--border)">پر کردن جدول CAM → سوئیچ Flood می‌کند</td>
+          <td style="padding:6px;border:1px solid var(--border)">Port Security</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">MAC Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">جعل MAC خود به‌عنوان MAC مجاز</td>
+          <td style="padding:6px;border:1px solid var(--border)">Port Security Sticky</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">VLAN Hopping</td>
+          <td style="padding:6px;border:1px solid var(--border)">دسترسی به VLANهای دیگر از طریق Trunk</td>
+          <td style="padding:6px;border:1px solid var(--border)">Native VLAN اختصاصی + <code>switchport mode access</code></td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">DHCP Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">راه‌اندازی DHCP سرور جعلی → دستکاری Gateway</td>
+          <td style="padding:6px;border:1px solid var(--border)">DHCP Snooping</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">ARP Spoofing</td>
+          <td style="padding:6px;border:1px solid var(--border)">جعل ARP → MITM</td>
+          <td style="padding:6px;border:1px solid var(--border)">Dynamic ARP Inspection</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">STP Attack</td>
+          <td style="padding:6px;border:1px solid var(--border)">ارسال BPDU جعلی → تغییر Root Bridge</td>
+          <td style="padding:6px;border:1px solid var(--border)">BPDU Guard، Root Guard</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">CDP/LLDP Recon</td>
+          <td style="padding:6px;border:1px solid var(--border)">افشای اطلاعات دستگاه از طریق CDP</td>
+          <td style="padding:6px;border:1px solid var(--border)">غیرفعال روی پورت‌های Edge</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۵.۳ ==== -->
+    <h3>۵.۳ سه Plane امنیتی</h3>
+    <p>در Cisco IOS، سه Planes داریم که هرکدام سطح حمله جداگانه‌ای دارند:</p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🧠 Management Plane</strong>
+        <p style="margin:6px 0">مدیریت دستگاه — SSH، SNMP، Syslog، AAA. اگر این لایه امن نباشد، کل دستگاه در خطر است.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>⚙️ Control Plane</strong>
+        <p style="margin:6px 0">پروتکل‌های مسیریابی و سوئیچینگ — OSPF، EIGRP، BGP، STP. حمله به این لایه همگرایی شبکه را می‌شکند. دفاع: CoPP.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📦 Data Plane</strong>
+        <p style="margin:6px 0">ترافیک کاربران. حمله: سیل بسته. دفاع: ACL، uRPF، QoS.</p>
+      </div>
+    </div>
+
+    <!-- ==== ۵.۴ ==== -->
+    <h3>۵.۴ Hardening پایه دستگاه‌ها</h3>
+    <p>حداقل‌های امن‌سازی هر روتر/سوئیچ سیسکو:</p>
+
+    <pre><code>! ۱. تنظیم Hostname
+Router(config)# hostname R1
+
+! ۲. رمز Enable (بدون رمز، دستگاه کاملاً بی‌دفاع است)
+Router(config)# enable secret StrongP@ss123
+! enable secret از MD5/SHA استفاده می‌کند، بهتر از enable password
+
+! ۳. رمز خطوط Console و VTY
+Router(config)# line console 0
+Router(config-line)# password ConsoleP@ss
+Router(config-line)# login
+Router(config-line)# exec-timeout 5 0
+Router(config-line)# logging synchronous
+Router(config-line)# exit
+
+Router(config)# line vty 0 4
+Router(config-line)# password VtyP@ss
+Router(config-line)# login
+Router(config-line)# exec-timeout 5 0
+Router(config-line)# transport input ssh
+Router(config-line)# exit
+
+! ۴. رمزنگاری رمزهای Plain-text
+Router(config)# service password-encryption
+
+! ۵. Banner هشدار
+Router(config)# banner motd ^
+*********************************************************
+*  Unauthorized access is prohibited!                  *
+*  All activity is monitored and logged.               *
+*********************************************************
+^
+
+! ۶. رمزگذاری در Config
+Router(config)# service password-encryption
+Router(config)# security passwords min-length 8
+
+! ۷. جلوگیری از تلاش‌های Brute Force
+Router(config)# login block-for 120 attempts 3 within 60
+
+! ۸. غیرفعال کردن سرویس‌های بی‌استفاده
+Router(config)# no ip http server
+Router(config)# no ip http secure-server
+Router(config)# no cdp run
+Router(config)# no ip source-route
+Router(config)# no ip finger
+Router(config)# no service tcp-small-servers
+Router(config)# no service udp-small-servers
+
+! ۹. همگام‌سازی زمان (برای لاگ دقیق)
+Router(config)# clock timezone IRST +3 30
+Router(config)# ntp server pool.ntp.org
+
+! ۱۰. ذخیره
+Router# write memory</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      همیشه از <code>enable secret</code> استفاده کن — نه <code>enable password</code>.
+      چون <code>enable password</code> در Config به‌صورت Plain-text یا با رمزنگاری ضعیف Type 7 ذخیره می‌شود.
+    </div>
+
+    <!-- ==== ۵.۵ ==== -->
+    <h3>۵.۵ پیکربندی SSH (جایگزین Telnet)</h3>
+    <p>
+      SSH ترافیک مدیریتی را رمزنگاری می‌کند، درحالی‌که Telnet تمام داده (شامل رمز)
+      را Plain-text ارسال می‌کند.
+    </p>
+
+    <pre><code>! ===== پیکربندی کامل SSH =====
+
+! ۱. Hostname و Domain Name (الزامی برای RSA Key)
+Router(config)# hostname R1
+Router(config)# ip domain-name example.local
+
+! ۲. تولید کلید RSA (حداقل 1024 بیت، توصیه 2048)
+Router(config)# crypto key generate rsa modulus 2048
+! پیام تأیید: How many bits in the modulus [512]: 2048
+
+! ۳. تعریف کاربر محلی
+Router(config)# username admin privilege 15 secret AdminP@ss123
+
+! ۴. تعیین SSH Version 2
+Router(config)# ip ssh version 2
+
+! ۵. تنظیم Timeout و Authentication Retries
+Router(config)# ip ssh time-out 60
+Router(config)# ip ssh authentication-retries 3
+
+! ۶. محدود کردن VTY به SSH
+Router(config)# line vty 0 4
+Router(config-line)# transport input ssh
+Router(config-line)# login local
+Router(config-line)# exec-timeout 5 0
+Router(config-line)# exit
+
+! ۷. (اختیاری) دسترسی SSH فقط از یک Subnet خاص
+Router(config)# access-list 50 permit 192.168.1.0 0.0.0.255
+Router(config)# line vty 0 4
+Router(config-line)# access-class 50 in
+
+! بررسی
+Router# show ip ssh
+Router# show ssh
+Router# show crypto key mypubkey rsa
+
+! تست از PC
+C:\> ssh -l admin 192.168.1.1</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      اگر <code>transport input ssh</code> را روی VTY ست کنی و SSH به‌درستی پیکربندی نشده باشد،
+      دسترسی از راه دور را برای همیشه از دست می‌دهی! حتماً قبل از این کار SSH را تست کن.
+    </div>
+
+    <!-- ==== ۵.۶ ==== -->
+    <h3>۵.۶ AAA — Authentication, Authorization, Accounting</h3>
+    <p>
+      <span class="term" data-term="aaa">AAA</span> یک چارچوب مدیریت دسترسی است که سه بخش دارد:
+    </p>
+
+    <ul>
+      <li><strong>Authentication:</strong> «تو کی هستی؟» — تأیید هویت</li>
+      <li><strong>Authorization:</strong> «چه کاری می‌تونی بکنی؟» — تعیین سطح دسترسی</li>
+      <li><strong>Accounting:</strong> «چه کاری کردی؟» — ثبت فعالیت‌ها</li>
+    </ul>
+
+    <p><strong>روش‌های پیاده‌سازی:</strong></p>
+    <ul>
+      <li><strong>Local:</strong> روی خود دستگاه (username/password محلی)</li>
+      <li><strong>TACACS+:</strong> سرور اختصاصی سیسکو — کل بسته رمزنگاری می‌شود، TCP/49</li>
+      <li><strong>RADIUS:</strong> استاندارد باز — فقط Password رمزنگاری می‌شود، UDP/1645 یا 1812</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">TACACS+</th>
+          <th style="padding:6px;border:1px solid var(--border)">RADIUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">استاندارد</td><td style="padding:6px;border:1px solid var(--border)">Cisco</td><td style="padding:6px;border:1px solid var(--border)">IETF / RFC</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Transport</td><td style="padding:6px;border:1px solid var(--border)">TCP/49</td><td style="padding:6px;border:1px solid var(--border)">UDP/1812, 1813</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">رمزنگاری</td><td style="padding:6px;border:1px solid var(--border)">کل بسته</td><td style="padding:6px;border:1px solid var(--border)">فقط Password</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">AAA جدا</td><td style="padding:6px;border:1px solid var(--border)">✅ Auth، Authz، Acct جدا</td><td style="padding:6px;border:1px solid var(--border)">Auth و Authz با هم</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد اصلی</td><td style="padding:6px;border:1px solid var(--border)">مدیریت دستگاه‌های سیسکو</td><td style="padding:6px;border:1px solid var(--border)">دسترسی کاربران شبکه (802.1X)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! پیکربندی AAA با TACACS+
+Router(config)# aaa new-model
+Router(config)# tacacs-server host 192.168.1.100 key SharedSecret123
+Router(config)# aaa authentication login default group tacacs+ local
+Router(config)# aaa authorization exec default group tacacs+ local
+Router(config)# aaa accounting exec default start-stop group tacacs+
+Router(config)# username fallback privilege 15 secret FallbackP@ss
+! fallback local: اگر سرور TACACS از دسترس خارج شد، از یوزر محلی استفاده می‌شود
+
+! بررسی
+Router# show aaa servers
+Router# show aaa authentication
+Router# test aaa group tacacs+ admin Pass123 new-code</code></pre>
+
+    <!-- ==== ۵.۷ ==== -->
+    <h3>۵.۷ انواع ACL</h3>
+    <p>
+      <span class="term" data-term="acl">ACL</span> (Access Control List) یک لیست
+      ترتیبی از قوانین Permit/Deny است که ترافیک را فیلتر می‌کند.
+      بدون ACL، هیچ کنترلی روی عبور ترافیک نداریم.
+    </p>
+
+    <p><strong>سه نوع اصلی:</strong></p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📌 Standard ACL</strong>
+        <p style="margin:6px 0">فقط <strong>Source IP</strong> را فیلتر می‌کند.
+        شماره: 1-99 و 1300-1999. باید نزدیک به <strong>Destination</strong> اعمال شود.</p>
+        <pre><code>access-list 10 permit 192.168.1.0 0.0.0.255
+access-list 10 deny any</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📌 Extended ACL</strong>
+        <p style="margin:6px 0">فیلتر کامل: Source، Destination، Protocol، Port.
+        شماره: 100-199 و 2000-2699. باید نزدیک به <strong>Source</strong> اعمال شود.</p>
+        <pre><code>access-list 100 permit tcp 192.168.1.0 0.0.0.255 any eq 80
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 any eq 443
+access-list 100 deny ip any any log</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📌 Named ACL</strong>
+        <p style="margin:6px 0">ACL با اسم توصیفی، ویرایش ساده‌تر (می‌توانی خطی حذف/اضافه کنی).</p>
+        <pre><code>ip access-list extended WEB-ACCESS
+ permit tcp 192.168.1.0 0.0.0.255 any eq 80
+ permit tcp 192.168.1.0 0.0.0.255 any eq 443
+ deny   ip any any log</code></pre>
+      </div>
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ قواعد حیاتی ACL</div>
+      <ul style="margin:6px 0 0">
+        <li>در انتهای هر ACL، <strong>Deny Any</strong> به‌صورت نامرئی وجود دارد</li>
+        <li>ترتیب قوانین بسیار مهم است — از خاص به عام</li>
+        <li>هر ACL جدید باید حداقل یک Permit داشته باشد، وگرنه همه چیز Block می‌شود</li>
+        <li>ویرایش ACL شماره‌دار سخت است — از Named استفاده کن</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۵.۸ ==== -->
+    <h3>۵.۸ اعمال ACL روی اینترفیس</h3>
+
+    <pre><code>! اعمال روی اینترفیس (In یا Out)
+Router(config)# interface Gi0/0
+Router(config-if)# ip access-group 100 in
+Router(config-if)# exit
+
+! Standard ACL نزدیک Destination اعمال می‌شود
+Router(config)# interface Gi0/1
+Router(config-if)# ip access-group 10 out
+
+! بررسی
+Router# show access-lists
+Router# show ip access-lists
+Router# show ip interface Gi0/0
+Router# show ip interface Gi0/0 | include access list</code></pre>
+
+    <p><strong>In vs Out:</strong></p>
+    <ul>
+      <li><strong>In:</strong> ترافیک ورودی به اینترفیس را فیلتر می‌کند — بهینه‌تر است (قبل از پردازش مسیریابی)</li>
+      <li><strong>Out:</strong> ترافیک خروجی از اینترفیس را فیلتر می‌کند</li>
+    </ul>
+
+    <pre><code>! مثال: اجازه HTTP/HTTPS به اینترنت، بلاک بقیه
+Router(config)# ip access-list extended INTERNET-ACCESS
+Router(config-ext-nacl)# permit tcp 192.168.1.0 0.0.0.255 any eq 80
+Router(config-ext-nacl)# permit tcp 192.168.1.0 0.0.0.255 any eq 443
+Router(config-ext-nacl)# permit udp 192.168.1.0 0.0.0.255 any eq 53
+Router(config-ext-nacl)# deny   ip any any log
+Router(config-ext-nacl)# exit
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip access-group INTERNET-ACCESS in</code></pre>
+
+    <!-- ==== ۵.۹ ==== -->
+    <h3>۵.۹ Wildcard Mask — قلب ACL</h3>
+    <p>
+      Wildcard Mask برعکس Subnet Mask است:
+      <strong>0 = باید دقیقاً مطابقت داشته باشد</strong>،
+      <strong>1 = مهم نیست (Don't Care)</strong>.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Subnet Mask</th>
+          <th style="padding:6px;border:1px solid var(--border)">Wildcard Mask</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">255.255.255.255</td><td style="padding:6px;border:1px solid var(--border)">0.0.0.0</td><td style="padding:6px;border:1px solid var(--border)">یک هاست مشخص</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">255.255.255.0</td><td style="padding:6px;border:1px solid var(--border)">0.0.0.255</td><td style="padding:6px;border:1px solid var(--border)">/24</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">255.255.0.0</td><td style="padding:6px;border:1px solid var(--border)">0.0.255.255</td><td style="padding:6px;border:1px solid var(--border)">/16</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">—</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.255</td><td style="padding:6px;border:1px solid var(--border)">هر آدرسی (any)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! معادل‌ها
+access-list 10 permit 192.168.1.5 0.0.0.0
+! = فقط 192.168.1.5
+! می‌توانی بنویسی: access-list 10 permit host 192.168.1.5
+
+access-list 10 permit 0.0.0.0 255.255.255.255
+! = هر آدرسی
+! می‌توانی بنویسی: access-list 10 permit any
+
+! مثال دقیق‌تر — فقط رنج 192.168.1.0 تا 192.168.1.15
+access-list 10 permit 192.168.1.0 0.0.0.15</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 محاسبه‌ی سریع Wildcard</div>
+      Wildcard = 255.255.255.255 منهای Subnet Mask.
+      مثال: /26 → Mask 255.255.255.192 → Wildcard 0.0.0.63
+    </div>
+
+    <!-- ==== ۵.۱۰ ==== -->
+    <h3>۵.۱۰ Port Security پیشرفته</h3>
+    <p>قبلاً پایه‌ی Port Security را دیدیم. اکنون سناریوهای پیشرفته:</p>
+
+    <pre><code>! سناریو: پورت Voice VLAN — اجازه به IP Phone + یک PC
+Switch(config)# interface Gi0/10
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# switchport voice vlan 100
+Switch(config-if)# switchport port-security
+Switch(config-if)# switchport port-security maximum 3
+! یک برای Phone، دو برای PC پشت Phone (داده + صدای نرم‌افزاری)
+Switch(config-if)# switchport port-security mac-address sticky
+Switch(config-if)# switchport port-security violation restrict
+Switch(config-if)# switchport port-security aging time 10
+Switch(config-if)# switchport port-security aging type inactivity
+
+! بازیابی پورت err-disabled
+Switch(config)# errdisable recovery cause psecure-violation
+Switch(config)# errdisable recovery interval 300
+
+! بررسی دقیق
+Switch# show port-security interface Gi0/10
+Switch# show port-security address
+Switch# show port-security
+Port Status : Secure-up
+Violation Mode : Restrict
+Aging Time : 10 mins
+Aging Type : Inactivity
+SecureStatic Address Aging : Disabled
+Maximum MAC Addresses : 3
+Total MAC Addresses : 2
+Configured MAC Addresses : 0
+Sticky MAC Addresses : 2
+Last Source Address:Vlan : 0050.7966.6800:10
+Security Violation Count : 0</code></pre>
+
+    <!-- ==== ۵.۱۱ ==== -->
+    <h3>۵.۱۱ DHCP Snooping</h3>
+    <p>
+      <span class="term" data-term="dhcp-snooping">DHCP Snooping</span> جلوی
+      حملات <strong>Rogue DHCP Server</strong> را می‌گیرد. سوئیچ پورت‌ها را به دو دسته تقسیم می‌کند:
+    </p>
+    <ul>
+      <li><strong>Trusted Port:</strong> پورت به سرور DHCP یا Uplink (اجازه DHCP Offer)</li>
+      <li><strong>Untrusted Port:</strong> پورت‌های Edge (فقط DHCP Discover/Request)</li>
+    </ul>
+
+    <pre><code>! فعال‌سازی سراسری
+Switch(config)# ip dhcp snooping
+Switch(config)# ip dhcp snooping vlan 10,20,30
+
+! تعیین پورت‌های Trusted (به سمت سرور DHCP یا Uplink)
+Switch(config)# interface Gi0/24
+Switch(config-if)# ip dhcp snooping trust
+Switch(config-if)# exit
+
+! (اختیاری) Rate Limiting روی پورت‌های Untrusted
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ip dhcp snooping limit rate 10
+Switch(config-if-range)# exit
+
+! بررسی
+Switch# show ip dhcp snooping
+Switch# show ip dhcp snooping binding
+Switch# show ip dhcp snooping statistics
+
+! نکته: DHCP Snooping خودش جدول MAC-to-IP می‌سازد که DAI از آن استفاده می‌کند</code></pre>
+
+    <!-- ==== ۵.۱۲ ==== -->
+    <h3>۵.۱۲ Dynamic ARP Inspection (DAI)</h3>
+    <p>
+      DAI جلوی <strong>ARP Spoofing</strong> را می‌گیرد. از جدول DHCP Snooping
+      استفاده می‌کند تا بفهمد کدام MAC به کدام IP مجاز است.
+    </p>
+
+    <pre><code>! پیش‌نیاز: DHCP Snooping فعال باشد
+Switch(config)# ip dhcp snooping
+Switch(config)# ip dhcp snooping vlan 10,20
+
+! فعال‌سازی DAI روی VLANها
+Switch(config)# ip arp inspection vlan 10,20
+
+! تعیین پورت‌های Trusted
+Switch(config)# interface Gi0/24
+Switch(config-if)# ip arp inspection trust
+Switch(config-if)# exit
+
+! (اختیاری) Rate Limiting
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ip arp inspection limit rate 15
+Switch(config-if-range)# exit
+
+! (اختیاری) ARP ACL برای هاست‌های Static
+Switch(config)# arp access-list STATIC-HOSTS
+Switch(config-arp-nacl)# permit ip host 192.168.10.5 mac host 0050.7966.6801
+Switch(config-arp-nacl)# exit
+Switch(config)# ip arp inspection filter STATIC-HOSTS vlan 10
+
+! بررسی
+Switch# show ip arp inspection
+Switch# show ip arp inspection statistics
+Switch# show ip arp inspection interfaces</code></pre>
+
+    <!-- ==== ۵.۱۳ ==== -->
+    <h3>۵.۱۳ 802.1X — کنترل دسترسی به پورت</h3>
+    <p>
+      802.1X یک استاندارد IEEE است که احراز هویت را قبل از دسترسی به شبکه انجام می‌دهد.
+      سه مؤلفه دارد:
+    </p>
+    <ul>
+      <li><strong>Supplicant:</strong> کلاینت (PC با نرم‌افزار 802.1X)</li>
+      <li><strong>Authenticator:</strong> سوئیچ</li>
+      <li><strong>Authentication Server:</strong> معمولاً RADIUS</li>
+    </ul>
+
+    <pre><code>! پیکربندی 802.1X روی سوئیچ
+Switch(config)# aaa new-model
+Switch(config)# aaa authentication dot1x default group radius
+Switch(config)# radius-server host 192.168.1.100 key RadiusSecret
+
+Switch(config)# dot1x system-auth-control
+
+Switch(config)# interface Gi0/5
+Switch(config-if)# switchport mode access
+Switch(config-if)# authentication port-control auto
+Switch(config-if)# dot1x pae authenticator
+Switch(config-if)# exit
+
+! بررسی
+Switch# show dot1x all
+Switch# show authentication sessions</code></pre>
+
+    <!-- ==== ۵.۱۴ ==== -->
+    <h3>۵.۱۴ لایه‌های امنیتی اضافی</h3>
+
+    <p><strong>uRPF (Unicast Reverse Path Forwarding):</strong></p>
+    <pre><code>! جلوگیری از IP Spoofing روی اینترفیس خارجی
+Router(config)# interface Gi0/1
+Router(config-if)# ip verify unicast source reachable-via rx
+! rx = Strict Mode (مسیر برگشت باید از همان اینترفیس باشد)
+! any = Loose Mode</code></pre>
+
+    <p><strong>CoPP (Control Plane Policing):</strong></p>
+    <pre><code>! محافظت از CPU روتر در برابر حملات DoS
+Router(config)# class-map match-all CRITICAL
+Router(config-cmap)# match access-group 100
+Router(config-cmap)# exit
+
+Router(config)# policy-map CoPP-POLICY
+Router(config-pmap)# class CRITICAL
+Router(config-pmap-c)# police 8000 conform-action transmit exceed-action drop
+Router(config-pmap)# exit
+
+Router(config)# control-plane
+Router(config-cp)# service-policy input CoPP-POLICY</code></pre>
+
+    <p><strong>IP Source Guard:</strong></p>
+    <pre><code>! فقط به IPهایی که در جدول DHCP Snooping هستند اجازه ترافیک می‌دهد
+Switch(config)# interface Gi0/5
+Switch(config-if)# ip verify source
+! بررسی
+Switch# show ip verify source</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه قبل از اعمال ACL روی اینترفیس Production، آن را در Notepad بنویس و
+      از یک session دیگر تست کن. با یک اشتباه کوچک، خودت را از روتر بیرون می‌اندازی!
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      قبل از <code>transport input ssh</code>، مطمئن شو SSH به‌درستی کار می‌کند.
+      در غیر این صورت، فقط از Console می‌توانی برگردی.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      <code>enable secret</code> + <code>service password-encryption</code> + SSH + Banner +
+      <code>exec-timeout</code> = حداقل امنیت هر دستگاه شبکه. این ۵ مورد را فراموش نکن.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۶ با <span class="term" data-term="sdwan">SDN</span>،
+      REST API و اتوماسیون شبکه آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCNP با <span class="term" data-term="copp">CoPP</span>،
+      <span class="term" data-term="urpf">uRPF</span> و IPv6 First Hop Security
+      سطح امنیت را حرفه‌ای‌تر می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — Hardening کامل یک روتر از صفر</h3>
+    <pre><code>Router> enable
+Router# configure terminal
+Router(config)# hostname EDGE-R1
+EDGE-R1(config)# enable secret StrongP@ss2024
+EDGE-R1(config)# service password-encryption
+EDGE-R1(config)# security passwords min-length 8
+EDGE-R1(config)# ip domain-name company.local
+
+EDGE-R1(config)# username admin privilege 15 secret AdminP@ss
+EDGE-R1(config)# crypto key generate rsa modulus 2048
+EDGE-R1(config)# ip ssh version 2
+
+EDGE-R1(config)# line console 0
+EDGE-R1(config-line)# password ConsoleP@ss
+EDGE-R1(config-line)# login
+EDGE-R1(config-line)# exec-timeout 5 0
+EDGE-R1(config-line)# logging synchronous
+EDGE-R1(config-line)# exit
+
+EDGE-R1(config)# line vty 0 4
+EDGE-R1(config-line)# login local
+EDGE-R1(config-line)# transport input ssh
+EDGE-R1(config-line)# exec-timeout 5 0
+EDGE-R1(config-line)# exit
+
+EDGE-R1(config)# banner motd ^
+*** AUTHORIZED ACCESS ONLY ***
+All activity is logged and monitored.
+^
+EDGE-R1(config)# login block-for 120 attempts 3 within 60
+
+EDGE-R1(config)# no ip http server
+EDGE-R1(config)# no ip http secure-server
+EDGE-R1(config)# no cdp run
+EDGE-R1(config)# no ip source-route
+EDGE-R1(config)# no ip finger
+EDGE-R1(config)# no service tcp-small-servers
+EDGE-R1(config)# no service udp-small-servers
+
+EDGE-R1(config)# ntp server pool.ntp.org
+EDGE-R1(config)# clock timezone IRST +3 30
+
+EDGE-R1(config)# end
+EDGE-R1# write memory</code></pre>
+
+    <h3>مثال ۲ — ACL پیچیده برای شبکه‌ی اداری</h3>
+    <pre><code>! سناریو:
+! - HR (192.168.10.0/24) به همه‌چیز دسترسی دارد
+! - IT (192.168.20.0/24) به همه‌چیز دسترسی دارد
+! - Guest (192.168.30.0/24) فقط HTTP/HTTPS/DNS
+
+Router(config)# ip access-list extended GUEST-ACCESS
+Router(config-ext-nacl)# permit tcp 192.168.30.0 0.0.0.255 any eq 80
+Router(config-ext-nacl)# permit tcp 192.168.30.0 0.0.0.255 any eq 443
+Router(config-ext-nacl)# permit udp 192.168.30.0 0.0.0.255 any eq 53
+Router(config-ext-nacl)# deny   ip 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+Router(config-ext-nacl)# deny   ip 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255
+Router(config-ext-nacl)# permit ip 192.168.30.0 0.0.0.255 any
+Router(config-ext-nacl)# deny   ip any any log
+Router(config-ext-nacl)# exit
+
+Router(config)# interface Gi0/0
+Router(config-if)# ip access-group GUEST-ACCESS in</code></pre>
+
+    <h3>مثال ۳ — SSH با ACL محدودکننده</h3>
+    <pre><code>! فقط از شبکه‌ی مدیریتی اجازه SSH
+Router(config)# access-list 90 permit 10.0.0.0 0.0.0.255
+Router(config)# access-list 90 deny any log
+
+Router(config)# line vty 0 4
+Router(config-line)# access-class 90 in
+Router(config-line)# transport input ssh
+Router(config-line)# login local
+
+! بررسی
+Router# show ip access-lists 90
+Router# show run | section line vty</code></pre>
+
+    <h3>مثال ۴ — پیکربندی کامل DHCP Snooping + DAI</h3>
+    <pre><code>! گام ۱: DHCP Snooping
+Switch(config)# ip dhcp snooping
+Switch(config)# ip dhcp snooping vlan 10,20,30
+Switch(config)# no ip dhcp snooping information option
+! توصیه: غیرفعال کردن Option 82 در شبکه‌های بدون DHCP Server مجزا
+
+Switch(config)# interface Gi0/24
+Switch(config-if)# ip dhcp snooping trust
+Switch(config-if)# exit
+
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ip dhcp snooping limit rate 10
+Switch(config-if-range)# exit
+
+! گام ۲: DAI
+Switch(config)# ip arp inspection vlan 10,20,30
+Switch(config)# interface Gi0/24
+Switch(config-if)# ip arp inspection trust
+Switch(config-if)# exit
+
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ip arp inspection limit rate 15 burst interval 1
+Switch(config-if-range)# exit
+
+! گام ۳: IP Source Guard روی پورت‌های Edge
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# ip verify source
+Switch(config-if-range)# exit
+
+! بررسی
+Switch# show ip dhcp snooping
+Switch# show ip dhcp snooping binding
+Switch# show ip arp inspection
+Switch# show ip verify source</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی ACL</h3>
+    <pre><code>! ACL اشتباه؟ بررسی کن:
+Router# show access-lists
+Router# show ip access-lists
+Router# show ip interface Gi0/0
+! ببین: Inbound access list is ...
+! ببین: Outbound access list is ...
+
+! تست ترافیک با ACL
+Router# show access-lists 100
+Extended IP access list 100
+    10 permit tcp 192.168.1.0 0.0.0.255 any eq 80 (25 matches)
+    20 permit tcp 192.168.1.0 0.0.0.255 any eq 443 (18 matches)
+    30 deny ip any any log (12 matches)   ← 12 بسته Deny شده
+
+! لاگ ترافیک Deny شده
+Router# show logging | include ACL</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در Packet Tracer یک روتر 4331 + یک سوئیچ 2960 + ۳ PC اضافه کن</li>
+      <li>روتر Hostname = EDGE-R1، سوئیچ Hostname = SW1</li>
+      <li>روی هر دو دستگاه: enable secret، username admin، service password-encryption</li>
+      <li>روی هر دو: Banner MOTD با هشدار</li>
+      <li>روی هر دو: SSH فعال کن (RSA 2048، SSH v2، login local، transport input ssh)</li>
+      <li>روی هر دو: exec-timeout 5 0 برای Console و VTY</li>
+      <li>روی روتر: no ip http server، no cdp run، no ip source-route</li>
+      <li>روی سوئیچ: روی پورت‌های Edge، no cdp enable</li>
+      <li>یک ACL Extended بنویس که: PC1 به HTTP/HTTPS اجازه داشته باشد ولی PC2 به Telnet نداشته باشد</li>
+      <li>ACL را روی اینترفیس Gi0/0 روتر اعمال کن (in)</li>
+      <li>روی سوئیچ: Port Security روی پورت PC2 با max=1، sticky، violation=shutdown</li>
+      <li>DHCP Snooping روی VLAN 10 با Gi0/24 به‌عنوان Trusted فعال کن</li>
+      <li>DAI روی VLAN 10 با همان Trusted فعال کن</li>
+      <li>از PC1 با SSH به روتر وصل شو، ACL و Port Security را تست کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>SSH کار نمی‌کند:</strong> Hostname و Domain Name ست شده؟ RSA Key تولید شده؟ <code>ip ssh version 2</code> فعال است؟</li>
+      <li><strong>بعد از transport input ssh قفل شدی:</strong> از Console وارد شو و <code>transport input all</code> بزن.</li>
+      <li><strong>ACL همه ترافیک را Drop می‌کند:</strong> فراموش کردی <code>permit</code> بگذاری یا Order اشتباه است.</li>
+      <li><strong>ACL اعمال نمی‌شود:</strong> چک کن <code>ip access-group</code> روی اینترفیس درست با جهت (in/out) صحیح.</li>
+      <li><strong>Wildcard Mask اشتباه:</strong> اشتباه رایج — <code>0.0.0.0</code> یعنی یک IP، نه هر IP.</li>
+      <li><strong>Port Security پورت را err-disable کرده:</strong> با <code>shutdown</code>/<code>no shutdown</code> بازیابی یا با <code>errdisable recovery</code> خودکار.</li>
+      <li><strong>DHCP Snooping ترافیک را می‌بندد:</strong> اگر Uplink Trusted نباشد، DHCP Clientها IP نمی‌گیرند.</li>
+      <li><strong>DAI ترافیک را Drop می‌کند:</strong> پیش‌نیاز آن DHCP Snooping است و باید Binding داشته باشد.</li>
+      <li><strong>TACACS+ کار نمی‌کند:</strong> Shared Secret دو طرف یکسان باشد، پورت TCP/49 باز باشد.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="acl">ACL</span> •
+      <span class="term" data-term="aaa">AAA</span> •
+      <span class="term" data-term="ssh">SSH</span> •
+      <span class="term" data-term="dhcp-snooping">DHCP Snooping</span> •
+      <span class="term" data-term="dai">DAI</span> •
+      <span class="term" data-term="port-security">Port Security</span> •
+      <span class="term" data-term="bpdu-guard">BPDU Guard</span> •
+      <span class="term" data-term="copp">CoPP</span> •
+      <span class="term" data-term="urpf">uRPF</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccna-05" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) در CIA Triad، کدام اصل به «اطلاعات فقط برای افراد مجاز» اشاره دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Integrity</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Availability</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Confidentiality</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Accountability</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) تفاوت TACACS+ و RADIUS در رمزنگاری چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> RADIUS کل بسته را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> TACACS+ کل بسته، RADIUS فقط Password</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> هیچ‌کدام رمزنگاری نمی‌کنند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) برای فعال‌سازی SSH، کدام مرحله الزامی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> فقط فعال کردن پورت ۲۲</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> تعریف Hostname، Domain Name و تولید RSA Key</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> اجرای <code>ssh enable</code></label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> فقط تعریف Password</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۴) تفاوت Standard ACL و Extended ACL چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> Standard فقط Source، Extended هم Source هم Dest، Protocol و Port را چک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Standard روی Port فیلتر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> Extended فقط Source را چک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هیچ تفاوتی ندارند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) ACLها به‌طور پیش‌فرض چه رفتاری دارند اگر هیچ قانونی مطابقت نکند؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Permit any</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Log only</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Deny Any (به‌صورت نامرئی در انتها)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Drop unknown</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) تفاوت In و Out در اعمال ACL چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> In برای Standard، Out برای Extended</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> In روی ترافیک ورودی، Out روی ترافیک خروجی اینترفیس</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> In فقط برای VTY</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) در Wildcard Mask، مقدار 0.0.0.0 به چه معناست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> هر آدرسی</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> فقط آدرس‌های زوج</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> فقط یک هاست خاص (Exact Match)</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> هیچ آدرسی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۸) کدام دستور، MAC Address یادگرفته‌شده توسط Port Security را در Config ذخیره می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> <code>switchport port-security mac-address sticky</code></label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> <code>port-security save</code></label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> <code>mac sticky enable</code></label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> <code>port save-mac</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) DHCP Snooping چه حمله‌ای را خنثی می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> ARP Spoofing</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> Rogue DHCP Server</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> VLAN Hopping</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> MAC Flooding</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) Dynamic ARP Inspection از چه چیزی برای تأیید نگاشت MAC-IP استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> جدول CAM سوئیچ</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> ARP Cache روتر</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> جدول Binding DHCP Snooping</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> DNS Server</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) تفاوت <code>enable password</code> و <code>enable secret</code> چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> password رمزنگاری قوی‌تری دارد</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> secret با هش قوی (MD5/SHA) ذخیره می‌شود، password با رمزنگاری ضعیف یا Plain</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> password جدیدتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) دستور <code>login block-for 120 attempts 3 within 60</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> هر ۳ دقیقه Login را بلاک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> اگر ۳ تلاش ناموفق در ۶۰ ثانیه رخ دهد، ۱۲۰ ثانیه Login را بلاک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> فقط ۳ کاربر می‌توانند Login کنند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> هر Login ۶۰ ثانیه طول می‌کشد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) در Standard ACL، اعمال باید نزدیک به کدام سمت باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> نزدیک Source</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> نزدیک Destination</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> فرقی نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط روی Loopback</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۴) DHCP Snooping کدام پورت باید Trusted باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> پورت به سمت سرور DHCP یا Uplink</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> همه‌ی پورت‌های Access</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> فقط پورت‌های Trunk</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> هیچ پورتی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) CoPP (Control Plane Policing) چه چیزی را محافظت می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> ترافیک کاربران</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> حافظه‌ی Flash</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> CPU روتر در برابر حملات DoS</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> Backup Configuration</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی سازمانی کوچک امن بساز:</p>
+    <ul>
+      <li>یک روتر Edge + یک سوئیچ L2 + ۳ PC + یک سرور RADIUS (شبیه‌سازی)</li>
+      <li>روی روتر: Hardening کامل (enable secret، SSH v2، Banner، exec-timeout، login block-for)</li>
+      <li>روی روتر: غیرفعال کردن سرویس‌های بی‌استفاده (HTTP، CDP، Finger، Source-Route)</li>
+      <li>روی روتر: ACL Extended که فقط HTTP/HTTPS/DNS را اجازه می‌دهد</li>
+      <li>روی روتر: ACL روی VTY برای محدود کردن SSH به یک Subnet مدیریتی</li>
+      <li>روی سوئیچ: Port Security روی همه‌ی پورت‌های Access (max=2، sticky، restrict)</li>
+      <li>روی سوئیچ: DHCP Snooping فعال روی VLAN 10</li>
+      <li>روی سوئیچ: Dynamic ARP Inspection روی VLAN 10</li>
+      <li>روی سوئیچ: IP Source Guard روی پورت‌های Edge</li>
+      <li>روی روتر: uRPF روی اینترفیس خارجی (Strict Mode)</li>
+      <li>تست: SSH از PC به روتر، بررسی لاگ‌ها، تست ACL</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک حمله Rogue DHCP Server را شبیه‌سازی کن و ببین DHCP Snooping چطور آن را بلاک می‌کند.</li>
+        <li>یک ARP Spoofing از PC مهاجم انجام بده و ببین DAI چطور Drop می‌کند.</li>
+        <li>یک Banner زیبا با نام سازمان و اطلاعات تماس امنیتی طراحی کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>CIA Triad:</strong> Confidentiality، Integrity، Availability</li>
+      <li><strong>سه Plane:</strong> Management، Control، Data — هرکدام دفاع متفاوتی دارند</li>
+      <li><strong>Hardening حداقلی:</strong> enable secret، SSH، Banner، exec-timeout، service password-encryption</li>
+      <li><strong>SSH لازم دارد:</strong> Hostname + Domain + RSA Key + SSH v2 + login local</li>
+      <li><strong>AAA:</strong> Authentication + Authorization + Accounting</li>
+      <li><strong>TACACS+:</strong> TCP/49، کل بسته رمزنگاری — <strong>RADIUS:</strong> UDP/1812، فقط Password</li>
+      <li><strong>Standard ACL:</strong> 1-99، فقط Source، نزدیک Destination</li>
+      <li><strong>Extended ACL:</strong> 100-199، کامل، نزدیک Source</li>
+      <li><strong>ACL Implicit Deny:</strong> در انتهای هر ACL وجود دارد</li>
+      <li><strong>Wildcard:</strong> 0 = Exact، 1 = Don't Care، 255.255.255.255 = any</li>
+      <li><strong>Port Security:</strong> Protect (Drop)، Restrict (Drop+Log)، Shutdown (err-disable)</li>
+      <li><strong>DHCP Snooping:</strong> فقط Trusted اجازه DHCP Offer</li>
+      <li><strong>DAI:</strong> از Binding DHCP Snooping استفاده می‌کند</li>
+      <li><strong>uRPF:</strong> Strict (مسیر برگشت از همان اینترفیس)، Loose (فقط در جدول باشد)</li>
+      <li><strong>CoPP:</strong> محافظت از CPU روتر در برابر DoS</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccna_Ch_04.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccna-05">✅ پایان فصل</button>
+      <a class="btn" href="ccna_Ch_06.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

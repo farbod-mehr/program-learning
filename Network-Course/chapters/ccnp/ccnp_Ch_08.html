@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۸ CCNP — اتوماسیون و برنامه‌پذیری پیشرفته</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-08">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۸ — اتوماسیون و برنامه‌پذیری پیشرفته</h1>
+    <div class="meta">
+      <span>📖 ۱۱۰ دقیقه</span>
+      <span>🎯 وزن در ENCOR: ۱۵٪ Network Programmability</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این <strong>آخرین فصل CCNP</strong> است. در CCNA با اصول اتوماسیون (REST API، JSON،
+      Ansible، Python پایه) آشنا شدی. حالا در سطح حرفه‌ای یاد می‌گیری چطور یک
+      <strong>Pipeline اتوماسیون کامل</strong> بسازی: از نوشتن اسکریپت Python پیشرفته با
+      Netmiko و NAPALM، تا استفاده از NETCONF/RESTCONF با YANG،
+      طراحی Model-Driven Telemetry، و CI/CD برای شبکه.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>NetDevOps عملی</strong> است — بعد از آن می‌توانی
+      به‌عنوان یک Network Automation Engineer کار کنی و زیرساخت‌های مقیاس‌پذیر بسازی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه راه فصل</h2>
+    <ol class="roadmap">
+      <li>مرور معماری SDN و Controller-based</li>
+      <li>Northbound API و Southbound API پیشرفته</li>
+      <li>YANG — زبان مدل‌سازی داده</li>
+      <li>NETCONF — RPC، Datastore، Capabilities</li>
+      <li>RESTCONF — ترکیب HTTP + YANG</li>
+      <li>gNMI و Model-Driven Telemetry</li>
+      <li>Python پیشرفته — Netmiko، NAPALM، Nornir</li>
+      <li>Ansible پیشرفته — Roles، Vault، Tower</li>
+      <li>Terraform و Infrastructure as Code</li>
+      <li>CI/CD Pipeline برای شبکه</li>
+      <li>Cisco DNA Center APIs</li>
+      <li>SD-WAN APIs و Templates</li>
+      <li>Testing و Validation خودکار</li>
+      <li>نقش AI/ML در اتوماسیون شبکه</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت NETCONF و RESTCONF در چیست؟ کدام برای چه سناریوهایی بهتر است؟</li>
+      <li>YANG چطور به عنوان مدل داده در NETCONF/RESTCONF استفاده می‌شود؟</li>
+      <li>gNMI و Model-Driven Telemetry چه چیزی را بهتر از SNMP فراهم می‌کنند؟</li>
+      <li>تفاوت Netmiko و NAPALM در چیست؟ کدام برای Multi-Vendor بهتر است؟</li>
+      <li>چطور می‌توان قبل از Deploy، پیکربندی را در یک محیط Test اعتبارسنجی کرد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۸.۱ ==== -->
+    <h3>۸.۱ مرور معماری SDN و Controller-based</h3>
+    <p>
+      در CCNP، SDN را در سطح معماری می‌بینیم. سه ستون SDN:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🧠 Centralized Control Plane</strong>
+        <p style="margin:6px 0">تصمیم‌گیری متمرکز در Controller — نه در هر دستگاه.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🔌 Programmable Interfaces</strong>
+        <p style="margin:6px 0">APIهای برنامه‌پذیر برای ارتباط با Controller و دستگاه‌ها.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📊 Abstraction</strong>
+        <p style="margin:6px 0">لایه انتزاع — برنامه‌نویس نیاز به دانستن جزئیات سخت‌افزار ندارد.</p>
+      </div>
+    </div>
+
+    <p><strong>سه مدل Controller-based SDN:</strong></p>
+    <ul>
+      <li><strong>Open SDN (OpenFlow):</strong> Controller کل Control Plane را در دست دارد — دستگاه‌ها فقط Forwarding انجام می‌دهند</li>
+      <li><strong>API-based SDN:</strong> Controller از APIهای موجود دستگاه استفاده می‌کند (NETCONF، RESTCONF) — رایج‌ترین مدل امروز</li>
+      <li><strong>Overlay SDN:</strong> Controller فقط Overlay را مدیریت می‌کند — Underlay مستقل است (VXLAN، LISP)</li>
+    </ul>
+
+    <!-- ==== ۸.۲ ==== -->
+    <h3>۸.۲ Northbound API و Southbound API</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Northbound API</th>
+          <th style="padding:6px;border:1px solid var(--border)">Southbound API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">ارتباط</td><td style="padding:6px;border:1px solid var(--border)">Application ↔ Controller</td><td style="padding:6px;border:1px solid var(--border)">Controller ↔ Infrastructure</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربر</td><td style="padding:6px;border:1px solid var(--border)">برنامه‌نویس / DevOps</td><td style="padding:6px;border:1px solid var(--border)">Network Engineer</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نمونه</td><td style="padding:6px;border:1px solid var(--border)">REST API، GraphQL</td><td style="padding:6px;border:1px solid var(--border)">NETCONF، RESTCONF، OpenFlow، gNMI</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Data Format</td><td style="padding:6px;border:1px solid var(--border)">JSON، XML</td><td style="padding:6px;border:1px solid var(--border)">XML (NETCONF)، JSON/XML (RESTCONF)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">هدف</td><td style="padding:6px;border:1px solid var(--border)">Abstraction بالا</td><td style="padding:6px;border:1px solid var(--border)">کنترل جزئیات</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      در Cisco DNA Center:
+      <ul style="margin:6px 0 0">
+        <li>NBI = REST API روی HTTPS با JSON</li>
+        <li>SBI = NETCONF، SNMP، SSH به دستگاه‌ها</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۸.۳ ==== -->
+    <h3>۸.۳ YANG — زبان مدل‌سازی داده</h3>
+    <p>
+      <strong>YANG</strong> (Yet Another Next Generation) زبان استاندارد
+      (RFC 6020) برای توصیف مدل داده در NETCONF و RESTCONF است. YANG مشخص می‌کند
+      هر دستگاه چه پارامترهایی دارد، ساختار آن‌ها چیست، و چه عملیاتی مجاز است.
+    </p>
+
+    <p><strong>ساختار YANG:</strong></p>
+    <ul>
+      <li><strong>Module:</strong> یک فایل YANG شامل چند Container و List</li>
+      <li><strong>Container:</strong> گروهی از Nodeهای مرتبط (مثل Interface)</li>
+      <li><strong>List:</strong> مجموعه‌ای از عناصر با کلید یکتا</li>
+      <li><strong>Leaf:</strong> یک مقدار (مثل IP Address)</li>
+      <li><strong>Leaf-list:</strong> لیست مقادیر</li>
+    </ul>
+
+    <pre><code>// نمونه‌ی ساده YANG — تعریف Interface
+module ietf-interfaces {
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+  prefix if;
+
+  container interfaces {
+    list interface {
+      key "name";
+      leaf name {
+        type string;
+      }
+      leaf description {
+        type string;
+      }
+      leaf enabled {
+        type boolean;
+      }
+      leaf type {
+        type identityref {
+          base interface-type;
+        }
+      }
+    }
+  }
+}</code></pre>
+
+    <p><strong>YANG Models استاندارد مهم:</strong></p>
+    <ul>
+      <li><strong>ietf-interfaces:</strong> Interfaceها</li>
+      <li><strong>ietf-ip:</strong> IPv4 و IPv6</li>
+      <li><strong>ietf-routing:</strong> Routing Table</li>
+      <li><strong>ietf-system:</strong> Hostname، NTP، Users</li>
+      <li><strong>Cisco-IOS-XE-*:</strong> مدل‌های اختصاصی سیسکو</li>
+      <li><strong>openconfig-*:</strong> مدل‌های OpenConfig — Multi-Vendor</li>
+    </ul>
+
+    <pre><code>! مشاهده YANG Modules روی سیسکو
+Router# show yang-modules
+Router# show running-config | format yang
+! پیکربندی به فرمت YANG
+
+! خواندن YANG Module
+Router# show netconf-yang sessions
+Router# show netconf-yang statistics</code></pre>
+
+    <!-- ==== ۸.۴ ==== -->
+    <h3>۸.۴ NETCONF — RPC، Datastore، Capabilities</h3>
+    <p>
+      <strong>NETCONF</strong> (RFC 6241) پروتکل مدیریت شبکه روی SSH/830 است
+      که از YANG برای مدل داده استفاده می‌کند. تراکنشی و Atomic است.
+    </p>
+
+    <p><strong>ساختار NETCONF:</strong></p>
+    <ul>
+      <li><strong>Transport:</strong> SSH/830</li>
+      <li><strong>Messages:</strong> RPC و RPC-Reply — با XML</li>
+      <li><strong>Operations:</strong> get، get-config، edit-config، copy-config، delete-config، lock، unlock، close-session، kill-session</li>
+      <li><strong>Datastores:</strong> running، candidate، startup، intended</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Datastore</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>running</strong></td><td style="padding:6px;border:1px solid var(--border)">پیکربندی فعال — همیشه موجود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>candidate</strong></td><td style="padding:6px;border:1px solid var(--border)">محیط موقت — قبل از اعمال، تست</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>startup</strong></td><td style="padding:6px;border:1px solid var(--border)">پیکربندی ذخیره‌شده — بعد از Reboot</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>intended</strong></td><td style="padding:6px;border:1px solid var(--border)">پیکربندی هدف در IOS-XE (اختصاصی)</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>نمونه‌ی NETCONF RPC — خواندن Interface:</strong></p>
+    <pre><code>&lt;rpc message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"&gt;
+  &lt;get-config&gt;
+    &lt;source&gt;
+      &lt;running/&gt;
+    &lt;/source&gt;
+    &lt;filter&gt;
+      &lt;interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+        &lt;interface&gt;
+          &lt;name&gt;GigabitEthernet0/0&lt;/name&gt;
+        &lt;/interface&gt;
+      &lt;/interfaces&gt;
+    &lt;/filter&gt;
+  &lt;/get-config&gt;
+&lt;/rpc&gt;</code></pre>
+
+    <p><strong>نمونه‌ی NETCONF RPC — تغییر Description:</strong></p>
+    <pre><code>&lt;rpc message-id="102" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"&gt;
+  &lt;edit-config&gt;
+    &lt;target&gt;
+      &lt;running/&gt;
+    &lt;/target&gt;
+    &lt;config&gt;
+      &lt;interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"&gt;
+        &lt;interface&gt;
+          &lt;name&gt;GigabitEthernet0/0&lt;/name&gt;
+          &lt;description&gt;WAN-to-ISP&lt;/description&gt;
+        &lt;/interface&gt;
+      &lt;/interfaces&gt;
+    &lt;/config&gt;
+  &lt;/edit-config&gt;
+&lt;/rpc&gt;</code></pre>
+
+    <pre><code>! فعال‌سازی NETCONF روی سیسکو
+Router(config)# netconf-yang
+Router(config)# netconf-yang agent ssh
+Router(config)# ssh server v2
+
+! بررسی
+Router# show netconf-yang sessions
+Router# show netconf-yang statistics
+Router# show platform software yang-management process
+
+! تست با SSH
+ssh -p 830 -s netconf admin@192.168.1.1</code></pre>
+
+    <!-- ==== ۸.۵ ==== -->
+    <h3>۸.۵ RESTCONF — ترکیب HTTP + YANG</h3>
+    <p>
+      <strong>RESTCONF</strong> (RFC 8040) NETCONF را روی HTTP/HTTPS بازنویسی می‌کند —
+      برای برنامه‌نویس‌ها آسان‌تر و با ابزارهای موجود کار می‌کند.
+    </p>
+
+    <p><strong>نگاشت HTTP Verbs به NETCONF Operations:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">HTTP Verb</th>
+          <th style="padding:6px;border:1px solid var(--border)">NETCONF Op</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">GET</td><td style="padding:6px;border:1px solid var(--border)">get</td><td style="padding:6px;border:1px solid var(--border)">خواندن</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">POST</td><td style="padding:6px;border:1px solid var(--border)">edit-config (create)</td><td style="padding:6px;border:1px solid var(--border)">ایجاد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PUT</td><td style="padding:6px;border:1px solid var(--border)">edit-config (replace)</td><td style="padding:6px;border:1px solid var(--border)">جایگزینی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PATCH</td><td style="padding:6px;border:1px solid var(--border)">edit-config (merge)</td><td style="padding:6px;border:1px solid var(--border)">ادغام</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">DELETE</td><td style="padding:6px;border:1px solid var(--border)">delete-config</td><td style="padding:6px;border:1px solid var(--border)">حذف</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! فعال‌سازی RESTCONF روی سیسکو
+Router(config)# restconf
+Router(config)# ip http secure-server
+Router(config)# ip http authentication local
+Router(config)# username admin privilege 15 secret AdminPass
+
+! ===== نمونه curl Commands =====
+
+! ۱. خواندن لیست Interfaceها
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۲. خواندن IP اینترفیس مشخص
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet0%2F0/ietf-ip:ipv4" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۳. تنظیم Description (PATCH)
+curl -k -X PATCH \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet0%2F0" \
+  -H "Content-Type: application/yang-data+json" \
+  -u "admin:AdminPass" \
+  -d '{
+    "ietf-interfaces:interface": {
+      "name": "GigabitEthernet0/0",
+      "description": "WAN-to-ISP"
+    }
+  }'
+
+! ۴. بررسی وضعیت Operational
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces-state" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۵. لیست YANG Modules
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-yang-library:modules-state" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"</code></pre>
+
+    <!-- ==== ۸.۶ ==== -->
+    <h3>۸.۶ gNMI و Model-Driven Telemetry</h3>
+    <p>
+      <strong>gNMI</strong> (gRPC Network Management Interface) یک پروتکل
+      مدرن گوگل است که بر پایه <strong>gRPC</strong> کار می‌کند و جایگزین
+      سریع‌تر و مقیاس‌پذیرتر NETCONF/RESTCONF برای Telemetry است.
+    </p>
+
+    <p><strong>Model-Driven Telemetry (MDT):</strong> جایگزین SNMP Polling با:</p>
+    <ul>
+      <li><strong>Push Model:</strong> دستگاه خودش داده را می‌فرستد (نه NMS بپرسد)</li>
+      <li><strong>Streaming:</strong> جریان مداوم داده</li>
+      <li><strong>Structured Data:</strong> با YANG Model — JSON، Protobuf</li>
+      <li><strong>مقیاس‌پذیر:</strong> gRPC از HTTP/2 استفاده می‌کند — مناسب هزاران دستگاه</li>
+    </ul>
+
+    <p><strong>دو نوع Subscription:</strong></p>
+    <ul>
+      <li><strong>Dial-in:</strong> Collector به دستگاه وصل می‌شود</li>
+      <li><strong>Dial-out:</strong> دستگاه به Collector وصل می‌شود (برای NAT مناسب‌تر)</li>
+    </ul>
+
+    <pre><code>! ===== پیکربندی Telemetry Dial-out روی IOS-XE =====
+Router(config)# telemetry ietf subscription 1
+Router(config-telemetry)# encoding encode-kvgpb
+! kvgpb = Key-Value gRPC Protobuf
+
+Router(config-telemetry)# filter xpath /interfaces-ios-xe-oper:interfaces/interface/statistics
+Router(config-telemetry)# source-address 192.168.1.1
+Router(config-telemetry)# stream yang-push
+Router(config-telemetry)# update-policy periodic 3000
+! ارسال هر ۳ ثانیه
+
+Router(config-telemetry)# receiver ip address 192.168.1.100 57000 protocol grpc-tcp
+
+! بررسی
+Router# show telemetry ietf subscription all
+Router# show telemetry ietf subscription 1 detail
+Router# show telemetry internal connection
+
+! ===== Dial-in از Python با gNMI =====
+# pip install pygnmi
+from pygnmi.client import gNMIclient
+import json
+
+with gNMIclient(target=("192.168.1.1", 57400),
+                username="admin", password="pass",
+                insecure=True) as gc:
+    # Subscribe
+    sub = {
+        "subscription": [
+            {
+                "path": "interfaces/interface/state/counters",
+                "mode": "sample",
+                "sample_interval": 10000000000  # nanoseconds
+            }
+        ],
+        "mode": "stream",
+        "encoding": "json_ietf"
+    }
+    for response in gc.subscribe2(sub):
+        print(json.dumps(response, indent=2))</code></pre>
+
+    <!-- ==== ۸.۷ ==== -->
+    <h3>۸.۷ Python پیشرفته — Netmiko، NAPALM، Nornir</h3>
+
+    <p><strong>Netmiko:</strong> کتابخانه SSH برای دستگاه‌های شبکه — ساده، محبوب، ولی Single-Vendor.</p>
+    <p><strong>NAPALM:</strong> کتابخانه Multi-Vendor با API یکسان — برای شبکه‌های چندبرندی.</p>
+    <p><strong>Nornir:</strong> فریم‌ورک Python برای اجرای موازی روی صدها دستگاه.</p>
+
+    <pre><code># ===== Netmiko =====
+from netmiko import ConnectHandler
+
+device = {
+    "device_type": "cisco_ios",
+    "host": "192.168.1.1",
+    "username": "admin",
+    "password": "pass",
+    "secret": "enable-secret"
+}
+
+with ConnectHandler(**device) as conn:
+    conn.enable()
+    output = conn.send_command("show ip interface brief")
+    print(output)
+
+    config = [
+        "interface Loopback10",
+        "ip address 10.10.10.1 255.255.255.255",
+        "description Managed by Automation"
+    ]
+    conn.send_config_set(config)
+    conn.save_config()
+
+# ===== NAPALM (Multi-Vendor) =====
+from napalm import get_network_driver
+
+driver = get_network_driver("ios")
+device = driver(
+    hostname="192.168.1.1",
+    username="admin",
+    password="pass"
+)
+
+device.open()
+print(device.get_facts())
+print(device.get_interfaces())
+print(device.get_environment())
+
+config = """
+interface GigabitEthernet0/2
+ description Managed by NAPALM
+ no shutdown
+"""
+device.load_merge_candidate(config=config)
+print(device.compare_config())
+device.commit_config()
+device.close()
+
+# ===== Nornir (Parallel) =====
+from nornir import InitNornir
+from nornir_netmiko.tasks import netmiko_send_command
+from nornir_utils.plugins.functions import print_result
+
+nr = InitNornir(config_file="config.yaml")
+
+result = nr.run(
+    task=netmiko_send_command,
+    command_string="show version"
+)
+print_result(result)
+
+# اجرا روی ۱۰۰ دستگاه به‌صورت موازی
+# فایل config.yaml:
+# inventory:
+#   plugin: SimpleInventory
+#   options:
+#     host_file: "hosts.yaml"
+#     group_file: "groups.yaml"
+# runner:
+#   plugin: threaded
+#   options:
+#     num_workers: 20</code></pre>
+
+    <p><strong>مقایسه‌ی سه کتابخانه:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Netmiko</th>
+          <th style="padding:6px;border:1px solid var(--border)">NAPALM</th>
+          <th style="padding:6px;border:1px solid var(--border)">Nornir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Multi-Vendor</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅✅</td><td style="padding:6px;border:1px solid var(--border)">✅ (با Plugin)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Parallelism</td><td style="padding:6px;border:1px solid var(--border)">دستی</td><td style="padding:6px;border:1px solid var(--border)">دستی</td><td style="padding:6px;border:1px solid var(--border)">✅ Native</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Abstraction</td><td style="padding:6px;border:1px solid var(--border)">CLI</td><td style="padding:6px;border:1px solid var(--border)">Structured</td><td style="padding:6px;border:1px solid var(--border)">Inventory-focused</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">Quick Tasks</td><td style="padding:6px;border:1px solid var(--border)">Multi-Vendor Config</td><td style="padding:6px;border:1px solid var(--border)">Large Scale</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۸.۸ ==== -->
+    <h3>۸.۸ Ansible پیشرفته — Roles، Vault، Tower</h3>
+
+    <p><strong>Ansible Roles:</strong> ساختار ماژولار برای Playbookها.</p>
+
+    <pre><code># ساختار Role
+roles/
+└── cisco_vlan/
+    ├── defaults/main.yml
+    ├── vars/main.yml
+    ├── tasks/main.yml
+    ├── handlers/main.yml
+    ├── templates/vlan_config.j2
+    └── README.md
+
+# tasks/main.yml
+---
+- name: Create VLANs
+  cisco.ios.ios_vlans:
+    config:
+      - name: "{{ item.name }}"
+        vlan_id: "{{ item.id }}"
+    state: merged
+  loop: "{{ vlans }}"
+  notify: save config
+
+# handlers/main.yml
+---
+- name: save config
+  cisco.ios.ios_config:
+    save_when: modified
+
+# استفاده در Playbook
+---
+- hosts: switches
+  roles:
+    - cisco_vlan
+  vars:
+    vlans:
+      - { id: 10, name: HR }
+      - { id: 20, name: IT }</code></pre>
+
+    <p><strong>Ansible Vault:</strong> رمزنگاری Secrets.</p>
+
+    <pre><code># رمزنگاری یک فایل
+ansible-vault encrypt secrets.yml
+
+# ویرایش فایل رمزنگاری‌شده
+ansible-vault edit secrets.yml
+
+# اجرای Playbook با Vault
+ansible-playbook deploy.yml --ask-vault-pass
+
+# یا با فایل Password
+ansible-playbook deploy.yml --vault-password-file ~/.vault_pass
+
+# نمونه‌ی استفاده در Playbook
+---
+- hosts: switches
+  vars_files:
+    - secrets.yml
+  tasks:
+    - name: Configure SNMP
+      cisco.ios.ios_config:
+        lines:
+          - "snmp-server community {{ snmp_ro }} ro"</code></pre>
+
+    <p><strong>Ansible Tower / AWX:</strong> پلتفرم گرافیکی برای مدیریت Ansible.</p>
+    <ul>
+      <li>Web UI — مدیریت Playbookها و Inventory</li>
+      <li>RBAC — دسترسی مبتنی بر Role</li>
+      <li>Scheduling — زمان‌بندی خودکار</li>
+      <li>Logging — ثبت همه‌ی اجراها</li>
+      <li>REST API — یکپارچه با CI/CD</li>
+      <li>Credentials Management — ذخیره امن Password و SSH Key</li>
+    </ul>
+
+    <!-- ==== ۸.۹ ==== -->
+    <h3>۸.۹ Terraform و Infrastructure as Code</h3>
+    <p>
+      <strong>Terraform</strong> (HashiCorp) ابزار IaC با زبان <strong>HCL</strong>
+      است. برای Cloud، SD-WAN و زیرساخت‌های API-driven.
+    </p>
+
+    <pre><code># ===== Terraform — Provider =====
+terraform {
+  required_providers {
+    dnacenter = {
+      source = "cisco-en-programmability/dnacenter"
+      version = "1.0.0"
+    }
+    iosxe = {
+      source = "CiscoDevNet/iosxe"
+    }
+  }
+}
+
+provider "iosxe" {
+  username = var.username
+  password = var.password
+  host     = var.device_host
+}
+
+# ===== Resource — Interface =====
+resource "iosxe_interface_loopback" "loopback10" {
+  name        = 10
+  description = "Managed by Terraform"
+  ipv4_address = "10.10.10.1"
+  ipv4_address_mask = "255.255.255.255"
+}
+
+# ===== Variables =====
+variable "username" {
+  type      = string
+  sensitive = true
+}
+variable "password" {
+  type      = string
+  sensitive = true
+}
+variable "device_host" {
+  type = string
+}</code></pre>
+
+    <pre><code># ===== Terraform Workflow =====
+terraform init          # نصب Providerها
+terraform plan          # نمایش تغییرات
+terraform apply         # اعمال تغییرات
+terraform destroy       # حذف Resourceها
+terraform state list    # لیست Resourceهای مدیریت‌شده
+terraform fmt           # فرمت‌دهی HCL</code></pre>
+
+    <p><strong>مزایای Terraform:</strong></p>
+    <ul>
+      <li>State مدیریت‌شده — می‌داند چه چیزی deploy کرده</li>
+      <li>Idempotent — اجرای دوباره، نتیجه یکسان</li>
+      <li>Plan/Apply — مشاهده پیش از اعمال</li>
+      <li>Multi-Provider — Cloud + Network در یک فایل</li>
+    </ul>
+
+    <!-- ==== ۸.۱۰ ==== -->
+    <h3>۸.۱۰ CI/CD Pipeline برای شبکه</h3>
+    <p>
+      <strong>CI/CD</strong> (Continuous Integration / Continuous Deployment)
+      یک رویکرد DevOps است که تغییرات را به‌صورت خودکار Test و Deploy می‌کند.
+    </p>
+
+    <p><strong>مزایای CI/CD در شبکه:</strong></p>
+    <ul>
+      <li>کاهش خطای انسانی</li>
+      <li>Rollback سریع در صورت مشکل</li>
+      <li>Version Control تمام تغییرات</li>
+      <li>Peer Review قبل از اعمال</li>
+      <li>Test خودکار روی محیط Shakedown</li>
+    </ul>
+
+    <p><strong>ابزارهای CI/CD محبوب:</strong></p>
+    <ul>
+      <li><strong>Git:</strong> مخزن کد و Config</li>
+      <li><strong>GitLab CI/CD:</strong> Pipeline کامل با Runner</li>
+      <li><strong>GitHub Actions:</strong> CI/CD رایگان برای Open Source</li>
+      <li><strong>Jenkins:</strong> ابزار Classic با Pluginهای زیاد</li>
+      <li><strong>Drone CI:</strong> سبک و Container-based</li>
+    </ul>
+
+    <pre><code># ===== نمونه .gitlab-ci.yml =====
+
+stages:
+  - lint
+  - build
+  - test
+  - deploy
+
+variables:
+  ANSIBLE_HOST_KEY_CHECKING: "False"
+
+lint:
+  stage: lint
+  script:
+    - ansible-lint playbooks/
+    - yamllint .
+
+build_config:
+  stage: build
+  script:
+    - python render_templates.py
+  artifacts:
+    paths:
+      - generated_configs/
+
+test_config:
+  stage: test
+  script:
+    - python validate_configs.py
+    - ansible-playbook -i inventory/test playbooks/deploy.yml --check
+
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - ansible-playbook -i inventory/prod playbooks/deploy.yml
+  when: manual</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نمونه Pipeline کامل</div>
+      Developer → Git Push → GitLab Runner →
+      Ansible-lint → Build Config → Deploy on Shakedown → Test →
+      (Approve) → Deploy on Production → Monitor
+    </div>
+
+    <!-- ==== ۸.۱۱ ==== -->
+    <h3>۸.۱۱ Cisco DNA Center APIs</h3>
+    <p>
+      <strong>Cisco DNA Center</strong> REST API کامل برای اتوماسیون ارائه می‌دهد:
+    </p>
+
+    <p><strong>API Categories:</strong></p>
+    <ul>
+      <li><strong>Authentication:</strong> دریافت Token</li>
+      <li><strong>Discovery:</strong> کشف دستگاه‌ها</li>
+      <li><strong>Device Inventory:</strong> مدیریت دستگاه‌ها</li>
+      <li><strong>Site Management:</strong> مدیریت Sites</li>
+      <li><strong>Templates:</strong> PnP و Template Config</li>
+      <li><strong>Task:</strong> پیگیری Taskهای Async</li>
+      <li><strong>Assurance:</strong> Health، Issues، Path Trace</li>
+      <li><strong>SD-Access:</strong> مدیریت Fabric</li>
+    </ul>
+
+    <pre><code># ===== Python SDK — dnacentersdk =====
+# pip install dnacentersdk
+
+from dnacentersdk import DNACenterAPI
+
+dnac = DNACenterAPI(
+    base_url="https://dnac.company.local",
+    username="admin",
+    password="AdminPass",
+    verify=False,
+    version="2.3.5.3"
+)
+
+# ===== لیست همه‌ی Devices =====
+devices = dnac.devices.get_device_list()
+for dev in devices["response"]:
+    print(f"{dev['hostname']} - {dev['managementIpAddress']} - {dev['softwareVersion']}")
+
+# ===== Health Score =====
+health = dnac.health.get_overall_network_health()
+print(f"Network Health: {health[0]['healthScore']}")
+
+# ===== کشف دستگاه جدید =====
+response = dnac.discovery.start_discovery(
+    name="Discover-SW01",
+    discovery_type="SINGLE",
+    ip_address_list="192.168.1.1",
+    protocol="SSH",
+    netconf_port="830",
+    snmp_ro_community="RO",
+    username_list=["admin"]
+)
+print(f"Task ID: {response['response']['taskId']}")
+
+# ===== اعمال Template =====
+template_deploy = dnac.configuration_templates.deploy_template_v2(
+    template_id="a1b2c3d4-....",
+    targetInfo=[{
+        "id": "device-uuid",
+        "type": "MANAGED_DEVICE_UUID",
+        "params": {"vlan_id": "10"}
+    }]
+)
+print(template_deploy)
+
+# ===== پیگیری Task =====
+import time
+task_id = response["response"]["taskId"]
+while True:
+    task = dnac.task.get_task_by_id(task_id)
+    if task["response"]["isError"] is not None:
+        print(f"Task ended: {task['response']['progress']}")
+        break
+    time.sleep(5)</code></pre>
+
+    <!-- ==== ۸.۱۲ ==== -->
+    <h3>۸.۱۲ SD-WAN APIs و Templates</h3>
+    <p>
+      Cisco SD-WAN (Viptela) از vManage REST API پشتیبانی می‌کند:
+    </p>
+
+    <pre><code># ===== احراز هویت vManage =====
+import requests
+
+vmanage = "https://vmanage.company.local"
+session = requests.session()
+
+# Login
+login = session.post(
+    f"{vmanage}/j_security_check",
+    data={"j_username": "admin", "j_password": "pass"},
+    verify=False
+)
+
+# دریافت Token
+token = session.get(f"{vmanage}/dataservice/client/token", verify=False).text
+headers = {"X-XSRF-TOKEN": token}
+
+# ===== لیست Devices =====
+devices = session.get(
+    f"{vmanage}/dataservice/device",
+    headers=headers,
+    verify=False
+).json()
+for dev in devices["data"]:
+    print(f"{dev['host-name']} - {dev['system-ip']} - {dev['reachability']}")
+
+# ===== اعمال Template =====
+# گام ۱: دریافت Template ID
+templates = session.get(
+    f"{vmanage}/dataservice/template/device",
+    headers=headers,
+    verify=False
+).json()
+
+# گام ۲: Attach به دستگاه
+payload = {
+    "deviceTemplateList": [{
+        "templateId": "a1b2c3d4-...",
+        "device": [{
+            "csv-deviceId": "CSV-ID",
+            "csv-deviceIP": "10.0.0.1",
+            "csv-host-name": "vEdge-01"
+        }],
+        "isEdited": False,
+        "isMasterEdited": False
+    }]
+}
+
+response = session.post(
+    f"{vmanage}/dataservice/template/device/config/attachfeature",
+    headers=headers,
+    json=payload,
+    verify=False
+)
+print(response.json())</code></pre>
+
+    <!-- ==== ۸.۱۳ ==== -->
+    <h3>۸.۱۳ Testing و Validation خودکار</h3>
+    <p>
+      قبل از اعمال روی Production، Config را Test کن. ابزارهای محبوب:
+    </p>
+
+    <ul>
+      <li><strong>pyATS / Genie:</strong> فریم‌ورک تست سیسکو (رسمی)</li>
+      <li><strong>BATFISH:</strong> تست پیکربندی با Parsing</li>
+      <li><strong>RESTCONF Validate:</strong> اعتبارسنجی ساختاری YANG</li>
+      <li><strong>Robot Framework:</strong> تست End-to-End</li>
+      <li><strong>pytest:</strong> Framework تست پایتون</li>
+    </ul>
+
+    <pre><code># ===== pyATS / Genie — نمونه =====
+# pip install pyats[full]
+
+from genie.testbed import load
+
+testbed = load("testbed.yml")
+device = testbed.devices["R1"]
+device.connect()
+
+# ===== Parsing =====
+output = device.parse("show ip interface brief")
+print(output)
+
+# ===== بررسی وضعیت Interface =====
+for intf, data in output["interface"].items():
+    if data["status"] != "up":
+        print(f"❌ {intf} is {data['status']}")
+    else:
+        print(f"✅ {intf} is up")
+
+# ===== Learning =====
+device.learn("interface")
+device.learn("ospf")
+device.learn("bgp")
+
+device.disconnect()
+
+# ===== pytest — نمونه =====
+import pytest
+from genie.testbed import load
+
+@pytest.fixture(scope="session")
+def testbed():
+    return load("testbed.yml")
+
+def test_ospf_neighbors(testbed):
+    for name, dev in testbed.devices.items():
+        dev.connect()
+        ospf = dev.learn("ospf")
+        assert ospf.info["vrf"]["default"]["address_family"]["ipv4"]["instance"]["1"]["areas"]["0.0.0.0"]["interfaces"], \
+            f"OSPF not configured on {name}"
+        dev.disconnect()
+
+# اجرا
+# pytest test_ospf.py -v</code></pre>
+
+    <pre><code># ===== BATFISH (پردازش Config) =====
+# pip install batfish
+
+import pybatfish
+from pybatfish.client.session import Session
+
+bf = Session(host="batfish.company.local")
+bf.set_network("prod_network")
+
+bf.init_snapshot("configs/", name="snap1", overwrite=True)
+
+# بررسی Reachability
+result = bf.q.reachability(
+    pathConstraints={"startLocation": "@enter(interface=Gi0/0)",
+                     "endLocation": "@exit(interface=Gi0/1)"}
+).answer()
+print(result.frame())
+
+# بررسی ACL — پیدا کردن ورودی‌های غیرمجاز
+bf.q.searchFilters(
+    filters="ipv4",
+    action="permit",
+    srcIps="0.0.0.0/0"
+).answer().frame()</code></pre>
+
+    <!-- ==== ۸.۱۴ ==== -->
+    <h3>۸.۱۴ نقش AI/ML در اتوماسیون شبکه</h3>
+    <p>
+      AI و ML در شبکه (AIOps) سه کاربرد اصلی دارند:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📊 Anomaly Detection</strong>
+        <p style="margin:6px 0">کشف ترافیک یا رفتاری که از Baseline خارج است — مثل DDoS یا Brute Force.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🔮 Predictive Analytics</strong>
+        <p style="margin:6px 0">پیش‌بینی خرابی دستگاه قبل از وقوع — با تحلیل Trendها و Logها.</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🤖 Generative AI</strong>
+        <p style="margin:6px 0">نوشتن پیکربندی از توضیحات طبیعی — مثلاً «یک VLAN 100 بساز با نام Guest».</p>
+      </div>
+    </div>
+
+    <p><strong>نمونه از Cisco:</strong></p>
+    <ul>
+      <li><strong>DNA Center AI Network Analytics:</strong> کشف Anomaly با ML</li>
+      <li><strong>Cisco AI Canvas:</strong> همبستگی داده‌های شبکه با Business</li>
+      <li><strong>ThousandEyes:</strong> پیش‌بینی مشکلات مسیر اینترنت</li>
+      <li><strong>Cisco AI Defense:</strong> امنیت مبتنی بر AI</li>
+    </ul>
+
+    <pre><code># ===== Anomaly Detection نمونه با scikit-learn =====
+import pandas as pd
+from sklearn.ensemble import IsolationForest
+
+# داده: N نمونه از CPU Usage و Traffic
+data = pd.read_csv("network_metrics.csv")
+
+model = IsolationForest(contamination=0.05, random_state=42)
+data["anomaly"] = model.fit_predict(data[["cpu", "traffic", "latency"]])
+
+# -1 = Anomaly، 1 = Normal
+anomalies = data[data["anomaly"] == -1]
+print(f"Detected {len(anomalies)} anomalies")
+print(anomalies.head())
+
+# ===== Predictive Maintenance =====
+from sklearn.linear_model import LinearRegression
+from datetime import datetime, timedelta
+
+# داده تاریخی: temperature و days_until_failure
+X = data[["temperature", "uptime", "error_count"]].values
+y = data["days_until_failure"].values
+
+model = LinearRegression().fit(X, y)
+# پیش‌بینی برای یک دستگاه
+predicted_days = model.predict([[65, 30, 5]])
+print(f"Predicted days until failure: {predicted_days[0]:.2f}")</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در RESTCONF، همیشه اول با <code>/restconf/data/ietf-yang-library:modules-state</code>
+      لیست YANG Moduleها را بگیر. سپس <code>/restconf/data/&lt;module-name&gt;:&lt;path&gt;</code>
+      را برای خواندن استفاده کن.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      هرگز از RESTCONF/NETCONF در Production استفاده نکن بدون
+      احراز هویت HTTPS. حتماً از Certificate یا Basic Auth با HTTPS استفاده کن —
+      هرگز HTTP ساده.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در CI/CD شبکه، همیشه در Pipeline یک Stage <strong>Validate</strong>
+      داشته باش که Config را با pyATS یا Batfish تست کند —
+      قبل از Deploy روی Production. این تنها راه جلوگیری از فاجعه است.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      حالا با کامل شدن CCNP، می‌توانی به
+      <strong>CCIE Enterprise Infrastructure</strong> فکر کنی که ترکیبی از
+      همه‌ی این مباحث در سطح Expert است.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCIE با <strong>NetDevOps حرفه‌ای</strong>،
+      <strong>Ansible Automation Platform</strong> و
+      <strong>Custom APIs</strong> در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — RESTCONF + Python برای Bulk Config</h3>
+    <pre><code>import requests
+import json
+requests.packages.urllib3.disable_warnings()
+
+def configure_interface(host, username, password, interface, description, ip):
+    url = f"https://{host}/restconf/data/ietf-interfaces:interfaces/interface={interface.replace('/', '%2F')}"
+    headers = {
+        "Content-Type": "application/yang-data+json",
+        "Accept": "application/yang-data+json"
+    }
+    payload = {
+        "ietf-interfaces:interface": {
+            "name": interface,
+            "description": description,
+            "type": "iana-if-type:ethernetCsmacd",
+            "enabled": True,
+            "ietf-ip:ipv4": {
+                "address": [{
+                    "ip": ip,
+                    "netmask": "255.255.255.0"
+                }]
+            }
+        }
+    }
+    response = requests.put(
+        url,
+        headers=headers,
+        json=payload,
+        auth=(username, password),
+        verify=False
+    )
+    print(f"[{host}] {interface}: HTTP {response.status_code}")
+    return response.status_code == 204
+
+# استفاده
+devices = ["192.168.1.1", "192.168.1.2", "192.168.1.3"]
+for dev in devices:
+    configure_interface(dev, "admin", "pass", "Loopback10",
+                       "Managed by API", "10.10.10.1")</code></pre>
+
+    <h3>مثال ۲ — Netmiko + Jinja2 برای پیکربندی چند سوئیچ</h3>
+    <pre><code>from netmiko import ConnectHandler
+from jinja2 import Environment, FileSystemLoader
+
+# ===== Jinja2 Template =====
+template_str = """
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+!
+{% endfor %}
+"""
+
+template = Environment().from_string(template_str)
+config = template.render(vlans=[
+    {"id": 10, "name": "HR"},
+    {"id": 20, "name": "IT"},
+    {"id": 30, "name": "Guest"}
+])
+
+# ===== اعمال روی چند سوئیچ =====
+switches = [
+    {"device_type": "cisco_ios", "host": "192.168.1.10", "username": "admin", "password": "pass"},
+    {"device_type": "cisco_ios", "host": "192.168.1.11", "username": "admin", "password": "pass"},
+    {"device_type": "cisco_ios", "host": "192.168.1.12", "username": "admin", "password": "pass"}
+]
+
+for sw in switches:
+    try:
+        with ConnectHandler(**sw) as conn:
+            output = conn.send_config_set(config.split("\n"))
+            conn.save_config()
+            print(f"✅ {sw['host']} configured")
+    except Exception as e:
+        print(f"❌ {sw['host']}: {e}")</code></pre>
+
+    <h3>مثال ۳ — Nornir + NAPALM برای Multi-Vendor</h3>
+    <pre><code>from nornir import InitNornir
+from nornir_utils.plugins.functions import print_result
+from nornir_napalm.plugins.tasks import napalm_get, napalm_configure
+
+def get_facts(task):
+    result = task.run(task=napalm_get, getters=["facts", "interfaces"])
+    facts = result.result["facts"]
+    task.host["vendor"] = facts["vendor"]
+    task.host["model"] = facts["model"]
+    task.host["uptime"] = facts["uptime"]
+
+def deploy_config(task):
+    if task.host["vendor"] == "Cisco":
+        config = "hostname " + task.host.name
+    elif task.host["vendor"] == "Juniper":
+        config = "set system host-name " + task.host.name
+    else:
+        return
+
+    task.run(task=napalm_configure, configuration=config, replace=False)
+
+nr = InitNornir(config_file="config.yaml")
+
+print("=== Gathering Facts ===")
+result = nr.run(task=get_facts)
+print_result(result)
+
+print("\n=== Deploying Config ===")
+result = nr.run(task=deploy_config)
+print_result(result)</code></pre>
+
+    <h3>مثال ۴ — Ansible Playbook کامل با Roles و Vault</h3>
+    <pre><code># ===== directory structure =====
+# playbook.yml
+# roles/
+#   common/
+#     tasks/main.yml
+#   vlan/
+#     tasks/main.yml
+#   ospf/
+#     tasks/main.yml
+# inventory/hosts.yml
+# group_vars/all.yml
+# secrets.yml (encrypted with Vault)
+
+# ===== playbook.yml =====
+---
+- name: Configure Network Devices
+  hosts: all
+  gather_facts: no
+  vars_files:
+    - secrets.yml
+
+  roles:
+    - common
+    - vlan
+    - ospf
+
+  post_tasks:
+    - name: Save config
+      cisco.ios.ios_config:
+        save_when: modified
+
+# ===== roles/common/tasks/main.yml =====
+---
+- name: Set hostname
+  cisco.ios.ios_config:
+    lines:
+      - "hostname {{ inventory_hostname }}"
+
+- name: Configure NTP
+  cisco.ios.ios_config:
+    lines:
+      - "ntp server {{ ntp_server }}"
+      - "clock timezone IRST +3 30"
+
+- name: Configure SNMP
+  cisco.ios.ios_config:
+    lines:
+      - "snmp-server community {{ vault_snmp_ro }} ro"
+      - "snmp-server host {{ snmp_server }} version 2c {{ vault_snmp_ro }}"
+
+# ===== roles/vlan/tasks/main.yml =====
+---
+- name: Create VLANs
+  cisco.ios.ios_vlans:
+    config: "{{ vlans }}"
+    state: merged
+  notify: save
+
+# ===== roles/ospf/tasks/main.yml =====
+---
+- name: Configure OSPF
+  cisco.ios.ios_ospfv2:
+    config:
+      processes:
+        - process_id: 1
+          router_id: "{{ loopback_ip }}"
+          network:
+            - address: 10.0.0.0
+              wildcard_bits: 0.0.0.255
+              area: 0
+    state: merged
+
+# ===== اجرا =====
+# ansible-playbook -i inventory/hosts.yml playbook.yml --ask-vault-pass</code></pre>
+
+    <h3>مثال ۵ — Pipeline کامل GitLab CI/CD</h3>
+    <pre><code># ===== .gitlab-ci.yml =====
+stages:
+  - lint
+  - build
+  - deploy_test
+  - test
+  - deploy_prod
+
+variables:
+  ANSIBLE_FORCE_COLOR: "true"
+
+# ===== Lint =====
+lint_yaml:
+  stage: lint
+  image: python:3.11
+  before_script:
+    - pip install yamllint ansible-lint
+  script:
+    - yamllint .
+    - ansible-lint playbooks/
+
+lint_python:
+  stage: lint
+  image: python:3.11
+  before_script:
+    - pip install pylint
+  script:
+    - pylint scripts/
+
+# ===== Build =====
+render_configs:
+  stage: build
+  image: python:3.11
+  before_script:
+    - pip install jinja2 pyyaml
+  script:
+    - python scripts/render.py --input data/ --output configs/
+  artifacts:
+    paths:
+      - configs/
+
+# ===== Deploy to Test =====
+deploy_test:
+  stage: deploy_test
+  image: python:3.11
+  before_script:
+    - pip install ansible
+    - ansible-galaxy collection install cisco.ios
+  script:
+    - ansible-playbook -i inventory/test.yml playbooks/deploy.yml
+  environment:
+    name: test
+  only:
+    - develop
+
+# ===== Automated Tests =====
+pytest_test:
+  stage: test
+  image: python:3.11
+  before_script:
+    - pip install pyats[full]
+  script:
+    - pytest tests/ -v --junitxml=report.xml
+  artifacts:
+    reports:
+      junit: report.xml
+  only:
+    - develop
+
+batfish_check:
+  stage: test
+  image: python:3.11
+  before_script:
+    - pip install pybatfish
+  script:
+    - python tests/batfish_validate.py
+  only:
+    - develop
+
+# ===== Deploy to Production =====
+deploy_prod:
+  stage: deploy_prod
+  image: python:3.11
+  before_script:
+    - pip install ansible
+    - ansible-galaxy collection install cisco.ios
+  script:
+    - ansible-playbook -i inventory/prod.yml playbooks/deploy.yml
+  environment:
+    name: production
+  when: manual
+  only:
+    - main</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>Python 3.11+ و pip را نصب کن</li>
+      <li>با <code>pip install netmiko napalm nornir requests pyats[full] pybatfish dnacentersdk</code> کتابخانه‌ها را نصب کن</li>
+      <li>روی ۳ روتر IOS-XE مجازی، NETCONF و RESTCONF را فعال کن</li>
+      <li>با curl یک درخواست RESTCONF GET بزن و لیست Interfaceها را بگیر</li>
+      <li>با Python + requests یک اسکریپت بنویس که Loopback روی هر ۳ روتر بسازد</li>
+      <li>با pyATS، Config هر ۳ روتر را Parse کن و بررسی OSPF انجام بده</li>
+      <li>یک Jinja2 Template برای VLAN بنویس و با Netmiko روی چند سوئیچ اعمال کن</li>
+      <li>با Nornir، یک اسکریپت موازی برای Backup Config بنویس</li>
+      <li>یک Ansible Role بساز: <code>cisco_baseline</code> با NTP، SNMP، Banner</li>
+      <li>Ansible Vault را فعال کن و Passwordهای SNMP را رمزنگاری کن</li>
+      <li>یک GitLab Repo بساز و CI/CD Pipeline با lint + build + test</li>
+      <li>با Batfish، پیکربندی را برای Reachability تست کن</li>
+      <li>در DNA Center Sandbox، با REST API یک Health Check بنویس</li>
+      <li>با Terraform یک Loopback روی یک روتر IOS-XE بساز و destroy کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>RESTCONF 401:</strong> Authentication Basic را در HTTP Header تنظیم کن یا از Token استفاده کن.</li>
+      <li><strong>RESTCONF 404:</strong> مسیر YANG اشتباه — با <code>/ietf-yang-library:modules-state</code> چک کن.</li>
+      <li><strong>NETCONF Session باز نمی‌شود:</strong> SSH/830 باز، User Privilege 15، و <code>netconf-yang</code> فعال.</li>
+      <li><strong>YANG Path اشتباه:</strong> Namespace و Module Name را دقیق بنویس.</li>
+      <li><strong>gNMI Auth Error:</strong> Certificate یا Username/Password اشتباه — Insecure را برای Lab فعال کن.</li>
+      <li><strong>Telemetry Stream قطعه‌قطعه:</strong> UDP بر DNS یا Network از دست می‌رود — از gRPC/TCP استفاده کن.</li>
+      <li><strong>Netmiko Timeout:</strong> <code>device_type</code> درست نیست یا SSH v1/2 مشکل دارد.</li>
+      <li><strong>NAPALM با Device ناسازگار:</strong> Driver مناسب را انتخاب کن (ios، iosxr، junos، eos).</li>
+      <li><strong>Ansible Playbook کند:</strong> از <code>serial</code> و <code>strategy: free</code> برای موازی‌سازی استفاده کن.</li>
+      <li><strong>Ansible Vault باز نمی‌شود:</strong> <code>--vault-password-file</code> را ست کن یا رمز را یادت رفته.</li>
+      <li><strong>Terraform State Conflict:</strong> از Remote Backend (S3، GitLab) استفاده کن و State را Lock کن.</li>
+      <li><strong>CI/CD خطا در Deploy:</strong> Credentialها در CI/CD به‌صورت Secret تعریف شوند، نه در Repo.</li>
+      <li><strong>pyATS Learn Error:</strong> OS Version پشتیبانی نمی‌شود — pyATS را آپدیت کن.</li>
+      <li><strong>Batfish Snapshot خالی:</strong> Config فایل‌ها در فرمت صحیح نبودند.</li>
+      <li><strong>DNA Center Token Expire:</strong> Token را با Refresh هر ۵۰ دقیقه تازه کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="netconf">NETCONF</span> •
+      <span class="term" data-term="restconf">RESTCONF</span> •
+      <span class="term" data-term="yang">YANG</span> •
+      <span class="term" data-term="gnmi">gNMI</span> •
+      <span class="term" data-term="telemetry">Telemetry</span> •
+      <span class="term" data-term="python">Python</span> •
+      <span class="term" data-term="ansible">Ansible</span> •
+      <span class="term" data-term="terraform">Terraform</span> •
+      <span class="term" data-term="cicd">CI/CD</span> •
+      <span class="term" data-term="netdevops">NetDevOps</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-08" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) YANG چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> یک پروتکل شبکه</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> زبان مدل‌سازی داده برای NETCONF/RESTCONF</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> یک ابزار اتوماسیون</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> نام سرور مدیریت</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) NETCONF از چه پورت و فرمتی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> TCP/22 و JSON</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> HTTPS/443 و YAML</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> SSH/830 و XML</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> UDP/161 و MIB</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت RESTCONF و NETCONF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> RESTCONF فقط XML</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> RESTCONF روی HTTPS با JSON/XML و RESTful Verbs</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> NETCONF جدیدتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) در NETCONF، کدام Datastore برای تست قبل از اعمال استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> running</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> startup</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> candidate</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> intended</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) gNMI روی چه چیزی ساخته شده است؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> SOAP</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> gRPC</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> SNMP</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> SSH</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Model-Driven Telemetry با Dial-out چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> سریع‌تر از SNMP</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> بدون رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> از NAT عبور می‌کند — دستگاه به Collector وصل می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> فقط برای IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) تفاوت Netmiko و NAPALM در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Netmiko Multi-Vendor، NAPALM فقط سیسکو</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> NAPALM API یکسان برای چند Vendor، Netmiko SSH-based</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> NAPALM فقط برای Cloud</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) Nornir چه مزیتی نسبت به Netmiko دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> رمزنگاری دارد</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> اجرای موازی Native روی صدها دستگاه</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> فقط برای Juniper</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) Ansible از چه زبانی برای Playbook استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Python</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> YAML</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> JSON</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Ruby</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) Ansible Vault چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> Backup Configuration</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> Rate Limiting</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> رمزنگاری Secrets (Password، Key)</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Rollback خودکار</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) Terraform از چه زبانی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> YAML</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> HCL</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> Python</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> JSON</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) تفاوت Terraform Plan و Apply چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Plan اعمال می‌کند، Apply نشان می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Plan پیش‌نمایش تغییرات، Apply اعمال آنها</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Plan فقط برای Cloud</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) در CI/CD شبکه، کدام مرحله باید قبل از Deploy باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> فقط Lint</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Lint + Build + Test روی محیط Shakedown</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> Backup</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط Monitor</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) pyATS / Genie از چه چیزی برای Parse Output استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> Regex ساده</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> SNMP MIB</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Parsers آماده برای هر Command و OS Version</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> XML Transform</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) Batfish چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> رمزنگاری Config</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> تحلیل Offline Config — Reachability، ACL Check</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> Deploy Config</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> Backup Config</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۶) در DNA Center، برای دریافت Token از کدام API استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> /api/v1/device</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> /api/v1/health</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> /dna/system/api/v1/auth/token</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> /api/v1/login</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۷) vManage SDK برای کدام پلتفرم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> DNA Center</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> Cisco SD-WAN</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> Meraki</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> ACI</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۸) نقش AI/ML در شبکه امروز چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> جایگزینی کامل Engineerها</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> فقط برای امنیت</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> Anomaly Detection، Predictive Analytics، Generative AI برای Config</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> فقط برای Cloud</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل (و دوره CCNP)</h2>
+    <p>یک Pipeline کامل NetDevOps بساز:</p>
+    <ul>
+      <li><strong>Git Repo:</strong> با ساختار <code>inventories/</code>، <code>playbooks/</code>، <code>templates/</code>، <code>tests/</code></li>
+      <li><strong>Jinja2 Templates:</strong> برای VLAN، OSPF، QoS، ACL</li>
+      <li><strong>Ansible Roles:</strong> حداقل ۳ Role: <code>baseline</code>، <code>switching</code>، <code>routing</code></li>
+      <li><strong>Vault:</strong> Passwordهای حساس (SNMP، RADIUS) رمزنگاری‌شده</li>
+      <li><strong>Nornir Script:</strong> Backup روزانه از ۱۰ دستگاه</li>
+      <li><strong>RESTCONF Client:</strong> با Python برای تغییر Interface Description</li>
+      <li><strong>pyATS Tests:</strong> بررسی OSPF Neighbor، Interface Status، Routing Table</li>
+      <li><strong>Batfish:</strong> تحلیل ACL و Reachability قبل از Deploy</li>
+      <li><strong>GitLab CI/CD:</strong> Pipeline با ۵ مرحله: lint → build → deploy_test → test → deploy_prod</li>
+      <li><strong>Terraform:</strong> مدیریت Loopback روی IOS-XE</li>
+      <li><strong>DNA Center API:</strong> خواندن Health Score و گزارش در Slack</li>
+      <li>مستندسازی کامل با README، Architecture Diagram و Runbook</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش نهایی</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Change Request واقعی را از Git تا Production Pipeline کامل اجرا کن.</li>
+        <li>یک Failure عمدی بساز و ببین Rollback چطور کار می‌کند.</li>
+        <li>با Terraform، ۱۰ Loopback روی ۵ روتر بساز و destroy کن.</li>
+        <li>یک Dashboard با Grafana + gNMI Streaming Telemetry بساز.</li>
+        <li>در DNA Center Sandbox، با Python یک Compliance Check بنویس.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>YANG:</strong> زبان مدل‌سازی داده — Module + Container + List + Leaf</li>
+      <li><strong>NETCONF:</strong> SSH/830، XML، RPC، تراکنشی — Datastores: running، candidate، startup</li>
+      <li><strong>RESTCONF:</strong> HTTPS/443، JSON/XML، RESTful — Verbs: GET/POST/PUT/PATCH/DELETE</li>
+      <li><strong>gNMI:</strong> gRPC-based — سریع‌تر برای Telemetry</li>
+      <li><strong>Telemetry:</strong> Push Model — Dial-in/Dial-out — جایگزین SNMP Polling</li>
+      <li><strong>Netmiko:</strong> SSH Library — Single/Simple</li>
+      <li><strong>NAPALM:</strong> Multi-Vendor با API یکسان</li>
+      <li><strong>Nornir:</strong> Framework Python با Parallelism Native</li>
+      <li><strong>Ansible:</strong> Agentless، YAML، Roles، Vault، Tower</li>
+      <li><strong>Terraform:</strong> HCL، State، Plan/Apply، Multi-Provider</li>
+      <li><strong>CI/CD:</strong> lint → build → deploy_test → test → deploy_prod</li>
+      <li><strong>pyATS/Genie:</strong> Framework تست رسمی سیسکو</li>
+      <li><strong>Batfish:</strong> تحلیل Offline Config</li>
+      <li><strong>DNA Center SDK:</strong> dnacentersdk — REST API روی HTTPS</li>
+      <li><strong>vManage API:</strong> برای SD-WAN</li>
+      <li><strong>AIOps:</strong> Anomaly Detection + Predictive + Generative</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_07.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-08">✅ پایان CCNP</button>
+      <a class="btn" href="../mikrotik/mikrotik_Ch_01.html" data-nav-next>شروع MikroTik ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۵: تاریخ، زمان و الگوهای متنی | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۵ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور با تاریخ و ساعت کار کنید و با الگوهای متنی (regex)، متن‌ها را جست‌وجو و اعتبارسنجی کنید.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۵ از ۳۰ — تاریخ، زمان و الگوهای متنی</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۵
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۵ از ۳۰</span>
+    <h1>⏱️ تاریخ، زمان و الگوهای متنی</h1>
+    <p>چطور با تاریخ کار کنیم و الگوهای متنی را پیدا کنیم؟ — <span class="term" data-term="datetime">datetime</span>، <span class="term" data-term="timezone">timezone</span>، <span class="term" data-term="regex">regex</span>، <span class="term" data-term="validation">validation</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در دنیای واقعی، بیشتر برنامه‌ها با <strong>تاریخ و ساعت</strong> و <strong>متن</strong> سر و کار دارند: سیستم‌های سفارش (زمان ثبت)، شبکه‌های اجتماعی (زمان پست)، ابزارهای مدیریت (تاریخ انجام کار)، و اعتبارسنجی ورودی (مثل ایمیل و شماره تلفن). در این فصل یاد می‌گیرید چطور این دو مقوله‌ی مهم را حرفه‌ای مدیریت کنید.</p>
+        <p>با ماژول <code class="inline-code">datetime</code> یاد می‌گیرید زمان را بگیرید، تغییر دهید، فرمت کنید و بین منطقه‌های زمانی تبدیل کنید. با ماژول <code class="inline-code">re</code> (عبارات باقاعده) یاد می‌گیرید الگوهای متنی مثل شماره تلفن یا ایمیل را در یک متن پیدا کنید یا آن‌ها را اعتبارسنجی کنید.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>تاریخ و ساعت فعلی را با <code class="inline-code">datetime</code> بگیرید.</li>
+          <li>تاریخ را با قالب دلخواه فرمت کنید (مثل «۱۴۰۴/۰۱/۱۵»).</li>
+          <li>با <code class="inline-code">timedelta</code> محاسبه‌ی تاریخ انجام دهید (دیروز، هفته‌ی بعد، ...).</li>
+          <li>با <code class="inline-code">zoneinfo</code> بین منطقه‌های زمانی تبدیل کنید.</li>
+          <li>با <code class="inline-code">re</code> الگوهای متنی را پیدا کنید، جایگزین کنید یا استخراج کنید.</li>
+          <li>ورودی‌های کاربر مثل ایمیل، شماره تلفن و کد پستی را اعتبارسنجی کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          این فصل پر از مثال‌های کاربردی است. سعی کنید هر مثال را خودتان تایپ کنید و ببینید خروجی چطور به‌دست می‌آید. به‌خصوص الگوهای regex را که عجیب به‌نظر می‌رسند، با متن‌های مختلف آزمایش کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>datetime</h4><p>تاریخ و ساعت.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>قالب‌بندی و timedelta</h4><p>تبدیل و محاسبه.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>timezone</h4><p>مناطق زمانی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>regex</h4><p>الگوهای متنی + اعتبارسنجی.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا کار با تاریخ و ساعت پیچیده است؟ مگر همه‌جا ساعت یکسان نیست؟</summary>
+          <div class="answer-body"><p>نه! و اینجاست که پیچیدگی شروع می‌شود. هر کشور منطقه‌ی زمانی خودش را دارد (تهران +۳:۳۰، نیویورک -۵). بعضی کشورها ساعت تابستانی دارند (ساعت یک ساعت جلو/عقب می‌رود). به همین دلیل، در برنامه‌های حرفه‌ای همیشه زمان‌ها را به‌صورت <strong>UTC</strong> (زمان جهانی) ذخیره می‌کنند و هنگام نمایش، به منطقه‌ی زمانی کاربر تبدیل می‌کنند. اگر این کار را نکنید، بعداً وقتی برنامه‌تان در چند کشور استفاده شود، مشکل پیش می‌آید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 Regex به‌نظر پیچیده است. آیا واقعاً نیاز است؟ مگر با متدهای ساده‌ی رشته نمی‌شود؟</summary>
+          <div class="answer-body"><p>برای کارهای ساده (مثل چک کردن اینکه کلمه‌ای در متن هست)، متدهای رشته کافی‌اند. اما برای الگوهای پیچیده، regex ضروری می‌شود. مثلاً فرض کنید می‌خواهید همه‌ی شماره تلفن‌های یک متن را پیدا کنید. با متدهای ساده، باید کلمه‌به‌کلمه بگردید. با regex، یک الگو می‌نویسید و همه را یک‌جا پیدا می‌کنید. در اعتبارسنجی هم عالی است: با یک خط، می‌توانید بگویید «آیا این متن شبیه ایمیل است؟».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا از <code dir="ltr">datetime.now()</code> به‌تنهایی استفاده نکنیم؟ چرا timezone مهم است؟</summary>
+          <div class="answer-body"><p><code>datetime.now()</code> فقط تاریخ و ساعت <strong>سیستم محلی</strong> شما را می‌دهد، بدون اینکه مشخص کند این زمان در کدام منطقه‌ی زمانی است. این را <strong>زمان naive</strong> می‌گویند. اگر این زمان را در دیتابیس ذخیره کنید و بعداً سرور شما در منطقه‌ی دیگری باشد، همه‌چیز به‌هم می‌ریزد. راه‌حل: همیشه از <strong>زمان آگاه</strong> (aware) استفاده کنید — یعنی همراه با منطقه‌ی زمانی. معمولاً به شکل UTC ذخیره و نمایش داده می‌شود.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی چهارده فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با توابع، لیست، دیکشنری و رشته‌ها راحت هستید.</li>
+          <li>با ماژول و import کار کرده‌اید (فصل ۱۲).</li>
+          <li>با try/except آشنا هستید (فصل ۱۳).</li>
+          <li>می‌توانید فایل بخوانید و بنویسید (فصل ۱۴).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter15.py</code> در پوشه‌ی پروژه بسازید. برای آزمایش regex، یک ویرایشگر آنلاین regex مثل <code class="inline-code">regex101.com</code> هم می‌تواند کمک کند — ولی همه‌چیز را در کد خودتان تست کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: تاریخ، زمان و الگوهای متنی</h2></div>
+
+        <h3>۱) ماژول <code>datetime</code> — شروع کار با زمان</h3>
+        <p>ماژول <code class="inline-code">datetime</code> در کتابخانه‌ی استاندارد پایتون است. برای استفاده، اول import کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_datetime.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, date, time
+
+# تاریخ و ساعت فعلی
+now = datetime.now()
+print(now)          # 2024-01-15 14:30:25.123456
+
+# فقط تاریخ امروز
+today = date.today()
+print(today)        # 2024-01-15
+
+# اجزای مختلف
+print(now.year)     # 2024
+print(now.month)    # 1 (ژانویه)
+print(now.day)      # 15
+print(now.hour)     # 14
+print(now.minute)   # 30
+print(now.second)   # 25</code></pre>
+        </div>
+        <p>سه کلاس اصلی در ماژول <code class="inline-code">datetime</code>:</p>
+        <ul>
+          <li><code class="inline-code">datetime</code> — هم تاریخ، هم ساعت.</li>
+          <li><code class="inline-code">date</code> — فقط تاریخ (سال، ماه، روز).</li>
+          <li><code class="inline-code">time</code> — فقط ساعت (ساعت، دقیقه، ثانیه).</li>
+        </ul>
+
+        <h4>ساخت تاریخ دلخواه</h4>
+        <div class="code-box">
+          <div class="code-head"><span>custom_date.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, date
+
+# ساخت تاریخ مشخص
+birthday = date(1990, 5, 15)
+print(birthday)             # 1990-05-15
+
+# ساخت تاریخ و ساعت مشخص
+meeting = datetime(2024, 1, 20, 10, 30)
+print(meeting)              # 2024-01-20 10:30:00
+
+# نکته: ماه و روز و... به ترتیب: سال، ماه، روز، ساعت، دقیقه، ثانیه
+print(meeting.weekday())    # 5 (شنبه، اگر 0=دوشنبه باشه)</code></pre>
+        </div>
+
+        <h3>۲) قالب‌بندی تاریخ — <code>strftime</code></h3>
+        <p>تاریخ‌ها معمولاً به فرمت خاصی نمایش داده می‌شوند. با <code class="inline-code">strftime</code> (string format time) می‌توانید قالب دلخواه بسازید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>format_date.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime
+
+now = datetime.now()
+
+print(now.strftime("%Y-%m-%d"))              # 2024-01-15
+print(now.strftime("%d/%m/%Y"))              # 15/01/2024
+print(now.strftime("%H:%M:%S"))              # 14:30:25
+print(now.strftime("%A, %d %B %Y"))          # Monday, 15 January 2024
+print(now.strftime("%Y/%m/%d %H:%M"))        # 2024/01/15 14:30</code></pre>
+        </div>
+        <p>کدهای پرکاربرد در <code class="inline-code">strftime</code>:</p>
+        <ul>
+          <li><code class="inline-code">%Y</code> — سال چهاررقمی (2024)</li>
+          <li><code class="inline-code">%m</code> — ماه دورقمی (01 تا 12)</li>
+          <li><code class="inline-code">%d</code> — روز دورقمی (01 تا 31)</li>
+          <li><code class="inline-code">%H</code> — ساعت ۲۴ساعته (00 تا 23)</li>
+          <li><code class="inline-code">%M</code> — دقیقه</li>
+          <li><code class="inline-code">%S</code> — ثانیه</li>
+          <li><code class="inline-code">%A</code> — نام روز هفته (به انگلیسی)</li>
+          <li><code class="inline-code">%B</code> — نام ماه (به انگلیسی)</li>
+        </ul>
+
+        <h4>تبدیل متن به تاریخ — <code>strptime</code></h4>
+        <p>برعکس <code class="inline-code">strftime</code>، از <code class="inline-code">strptime</code> استفاده می‌کنید تا یک متن را به تاریخ تبدیل کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>parse_date.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime
+
+date_text = "2024-01-15"
+parsed = datetime.strptime(date_text, "%Y-%m-%d")
+print(parsed)          # 2024-01-15 00:00:00
+print(type(parsed))    # &lt;class 'datetime.datetime'&gt;
+
+# با فرمت دیگر
+text2 = "15/01/2024 14:30"
+parsed2 = datetime.strptime(text2, "%d/%m/%Y %H:%M")
+print(parsed2)</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دقت کنید</b>
+          اگر متن با فرمت هماهنگ نباشد، خطای <code class="inline-code">ValueError</code> می‌گیرید. پس همیشه در بلوک <code class="inline-code">try/except</code> قرارش دهید.
+        </div>
+
+        <h3>۳) <code>timedelta</code> — محاسبه با تاریخ</h3>
+        <p>می‌خواهید بدانید «۷ روز بعد چه تاریخی است؟» یا «دو تاریخ چقدر فاصله دارند؟». اینجا <code class="inline-code">timedelta</code> وارد می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>timedelta_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, date, timedelta
+
+today = date.today()
+
+# تاریخ آینده
+next_week = today + timedelta(days=7)
+print(f"یک هفته بعد: {next_week}")
+
+# تاریخ گذشته
+last_month = today - timedelta(days=30)
+print(f"سی روز قبل: {last_month}")
+
+# با ساعت
+now = datetime.now()
+in_3_hours = now + timedelta(hours=3)
+print(f"سه ساعت بعد: {in_3_hours}")
+
+# فاصله‌ی بین دو تاریخ
+birthday = date(1990, 5, 15)
+age_days = (today - birthday).days
+print(f"تعداد روزهای زندگی: {age_days}")
+
+# محاسبه‌ی سن
+age_years = age_days // 365
+print(f"سن تقریبی: {age_years} سال")</code></pre>
+        </div>
+        <p>پارامترهای <code class="inline-code">timedelta</code>:</p>
+        <ul>
+          <li><code class="inline-code">days</code> — روز</li>
+          <li><code class="inline-code">seconds</code> — ثانیه</li>
+          <li><code class="inline-code">hours</code> — ساعت</li>
+          <li><code class="inline-code">minutes</code> — دقیقه</li>
+          <li><code class="inline-code">weeks</code> — هفته</li>
+        </ul>
+
+        <h3>۴) منطقه‌ی زمانی — <code>zoneinfo</code></h3>
+        <p>از پایتون ۳.۹ به بعد، ماژول <code class="inline-code">zoneinfo</code> در کتابخانه‌ی استاندارد وجود دارد. با آن می‌توانید بین منطقه‌های زمانی تبدیل انجام دهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>timezone_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+# زمان جهانی (UTC)
+utc_now = datetime.now(timezone.utc)
+print(f"UTC: {utc_now}")
+
+# تبدیل به منطقه‌ی زمانی تهران
+tehran_tz = ZoneInfo("Asia/Tehran")
+tehran_now = utc_now.astimezone(tehran_tz)
+print(f"تهران: {tehran_now}")
+
+# تبدیل به نیویورک
+ny_tz = ZoneInfo("America/New_York")
+ny_now = utc_now.astimezone(ny_tz)
+print(f"نیویورک: {ny_now}")
+
+# ساخت زمان آگاه مستقیم در منطقه‌ی خاص
+meeting = datetime(2024, 6, 15, 10, 0, tzinfo=tehran_tz)
+print(f"جلسه: {meeting}")</code></pre>
+        </div>
+        <p>خروجی چیزی شبیه این می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">UTC: 2024-01-15 11:00:25.123456+00:00
+تهران: 2024-01-15 14:30:25.123456+03:30
+نیویورک: 2024-01-15 06:00:25.123456-05:00
+جلسه: 2024-06-15 10:00:00+03:30</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 قاعده‌ی طلایی</b>
+          در پروژه‌های واقعی، همیشه زمان‌ها را در دیتابیس به‌صورت <strong>UTC</strong> ذخیره کنید. هنگام نمایش به کاربر، به منطقه‌ی زمانی او تبدیل کنید. این کار باعث می‌شود برنامه‌ی شما در همه‌ی کشورها درست کار کند.
+        </div>
+
+        <h4>تفاوت naive و aware</h4>
+        <p>یک نکته‌ی مهم که اکثر تازه‌کارها با آن دست‌وپنجه نرم می‌کنند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>naive_vs_aware.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+# زمان naive — بدون منطقه‌ی زمانی
+naive = datetime.now()
+print(f"Naive: {naive}")
+print(f"tzinfo: {naive.tzinfo}")     # None
+
+# زمان aware — با منطقه‌ی زمانی
+aware = datetime.now(timezone.utc)
+print(f"Aware: {aware}")
+print(f"tzinfo: {aware.tzinfo}")     # UTC
+
+# تبدیل naive به aware (اگر می‌دانید در کدام منطقه است)
+naive_with_tz = naive.replace(tzinfo=ZoneInfo("Asia/Tehran"))
+print(f"Naive + TZ: {naive_with_tz}")</code></pre>
+        </div>
+        <p><strong>تفاوت:</strong> زمان aware می‌داند در کدام منطقه‌ی زمانی است. زمان naive نمی‌داند. برای کارهای جدی، همیشه از aware استفاده کنید.</p>
+
+        <h3>۵) عبارات باقاعده — شروع کار با <code>re</code></h3>
+        <p>عبارات باقاعده یا <strong>regex</strong>، زبانی برای توصیف الگوهای متنی هستند. مثلاً می‌خواهید بدانید آیا یک متن با شماره تلفن شروع می‌شود، یا همه‌ی ایمیل‌های یک متن را پیدا کنید. برای این کار از ماژول <code class="inline-code">re</code> استفاده می‌کنید.</p>
+        <p>بیایید با یک مثال ساده شروع کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_regex.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+text = "تلفن من ۰۹۱۲۳۴۵۶۷۸۹ است"
+
+# پیدا کردن اولین الگو
+match = re.search(r"\d+", text)
+if match:
+    print(f"پیدا شد: {match.group()}")   # پیدا شد: 09123456789 (البته به فارسی نمایش می‌شود)
+    print(f"موقعیت: {match.start()}")     # موقعیت شروع
+
+# پیدا کردن همه‌ی الگوها
+text2 = "کدها: 123، 456، 789"
+numbers = re.findall(r"\d+", text2)
+print(numbers)                            # ['123', '456', '789']</code></pre>
+        </div>
+        <p>در این مثال، <code class="inline-code">\d+</code> یک الگو است که یعنی «یک یا چند رقم پشت سر هم». حرف <code class="inline-code">r</code> قبل از رشته یعنی raw string — که در regex ضروری است چون کاراکتر <code class="inline-code">\</code> را دست‌نخورده نگه می‌دارد.</p>
+
+        <h4>کاراکترهای خاص در regex</h4>
+        <p>پرکاربردترین کاراکترها:</p>
+        <ul>
+          <li><code class="inline-code">\d</code> — یک رقم (0-9)</li>
+          <li><code class="inline-code">\w</code> — یک کاراکتر کلمه (حرف، رقم، یا _)</li>
+          <li><code class="inline-code">\s</code> — یک فضای خالی (space، tab، newline)</li>
+          <li><code class="inline-code">.</code> — هر کاراکتری به‌جز newline</li>
+          <li><code class="inline-code">+</code> — یک یا چند بار تکرار</li>
+          <li><code class="inline-code">*</code> — صفر یا چند بار تکرار</li>
+          <li><code class="inline-code">?</code> — صفر یا یک بار (اختیاری)</li>
+          <li><code class="inline-code">{n}</code> — دقیقاً n بار</li>
+          <li><code class="inline-code">{n,m}</code> — بین n و m بار</li>
+          <li><code class="inline-code">^</code> — ابتدای رشته</li>
+          <li><code class="inline-code">$</code> — انتهای رشته</li>
+          <li><code class="inline-code">[abc]</code> — یکی از کاراکترهای a، b یا c</li>
+          <li><code class="inline-code">[a-z]</code> — هر حرف کوچک بین a و z</li>
+          <li><code class="inline-code">|</code> — یا (مثلاً <code class="inline-code">cat|dog</code>)</li>
+        </ul>
+
+        <h4>نمونه‌های کاربردی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>regex_examples.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+# 1) پیدا کردن شماره موبایل ایرانی
+text = "تماس بگیر: 09123456789 یا 09351112222"
+phones = re.findall(r"09\d{9}", text)
+print(phones)   # ['09123456789', '09351112222']
+
+# 2) پیدا کردن کد پستی 10 رقمی
+text = "کد پستی: 1234567890"
+codes = re.findall(r"\b\d{10}\b", text)
+print(codes)    # ['1234567890']
+
+# 3) پیدا کردن کلمات با حرف بزرگ
+text = "Python is Great and Fun"
+big_words = re.findall(r"\b[A-Z]\w+", text)
+print(big_words)  # ['Python', 'Great', 'Fun']
+
+# 4) جایگزینی
+text = "من به مدرسه رفتم. مدرسه قشنگ بود."
+new_text = re.sub(r"مدرسه", "خانه", text)
+print(new_text)   # من به خانه رفتم. خانه قشنگ بود.</code></pre>
+        </div>
+
+        <h3>۶) اعتبارسنجی با regex — کاربرد واقعی</h3>
+        <p>یکی از مهم‌ترین کاربردهای regex، اعتبارسنجی ورودی کاربر است. مثلاً می‌خواهید مطمئن شوید کاربر ایمیل معتبری وارد کرده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>email_validation.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+
+def is_valid_email(email):
+    """چک می‌کند ایمیل معتبر است یا نه."""
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(pattern, email))
+
+
+# تست
+emails = [
+    "ali@example.com",       # ✅
+    "ali.reza@example.co",   # ✅
+    "invalid.email",         # ❌
+    "test@",                 # ❌
+    "@example.com",          # ❌
+    "user@domain",           # ❌ (بدون نقطه)
+    "user@domain.c",         # ❌ (پسوند یک‌حرفی)
+]
+
+for email in emails:
+    status = "✅" if is_valid_email(email) else "❌"
+    print(f"{status} {email}")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">✅ ali@example.com
+✅ ali.reza@example.co
+❌ invalid.email
+❌ test@
+❌ @example.com
+❌ user@domain
+❌ user@domain.c</code></pre>
+        </div>
+        <p>الگوی بالا را کلمه‌به‌کلمه بررسی کنیم:</p>
+        <ul>
+          <li><code class="inline-code">^</code> — ابتدای رشته</li>
+          <li><code class="inline-code">[a-zA-Z0-9._%+-]+</code> — یک یا چند کاراکتر مجاز در نام کاربری</li>
+          <li><code class="inline-code">@</code> — علامت @</li>
+          <li><code class="inline-code">[a-zA-Z0-9.-]+</code> — نام دامنه</li>
+          <li><code class="inline-code">\.</code> — یک نقطه</li>
+          <li><code class="inline-code">[a-zA-Z]{2,}</code> — حداقل دو حرف (پسوند دامنه)</li>
+          <li><code class="inline-code">$</code> — انتهای رشته</li>
+        </ul>
+
+        <h4>اعتبارسنجی شماره موبایل ایرانی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>phone_validation.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+
+def is_valid_mobile(phone):
+    """شماره موبایل ایرانی: 09xx تا 09yy، کل 11 رقم."""
+    pattern = r"^09\d{9}$"
+    return bool(re.match(pattern, phone))
+
+
+# تست
+for phone in ["09123456789", "09351112222", "0812345678", "0912345", "abc"]:
+    print(f"{'✅' if is_valid_mobile(phone) else '❌'} {phone}")</code></pre>
+        </div>
+
+        <h3>۷) گروه‌بندی — گرفتن بخش‌های خاص از الگو</h3>
+        <p>گاهی می‌خواهید بخش‌های مختلف یک الگو را جدا کنید. با پرانتز <code class="inline-code">( )</code> گروه می‌سازید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>grouping.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+# تجزیه تاریخ 2024-01-15
+text = "تاریخ جلسه 2024-01-15 است"
+match = re.search(r"(\d{4})-(\d{2})-(\d{2})", text)
+
+if match:
+    print(f"کل: {match.group(0)}")           # 2024-01-15
+    print(f"سال: {match.group(1)}")          # 2024
+    print(f"ماه: {match.group(2)}")          # 01
+    print(f"روز: {match.group(3)}")          # 15
+    
+    # یا با فشرده‌سازی
+    year, month, day = match.groups()
+    print(f"{year}/{month}/{day}")</code></pre>
+        </div>
+
+        <h4>گروه‌بندی نام‌دار</h4>
+        <p>برای خوانایی بیشتر، می‌توانید به گروه‌ها اسم بدهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>named_groups.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import re
+
+pattern = r"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})"
+match = re.search(pattern, "2024-01-15")
+
+if match:
+    print(match.group("year"))    # 2024
+    print(match.group("month"))   # 01
+    print(match.group("day"))     # 15
+    
+    # دسترسی به دیکشنری
+    print(match.groupdict())
+    # {'year': '2024', 'month': '01', 'day': '15'}</code></pre>
+        </div>
+
+        <h3>۸) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>بیایید یک برنامه‌ی «پردازش لاگ» بسازیم که از همه‌ی مفاهیم این فصل استفاده کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>log_analyzer.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""تحلیل‌گر لاگ — با datetime و regex."""
+
+import re
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
+
+# فرض کنید فایل لاگ شامل خطوطی مثل این است:
+SAMPLE_LOG = """
+2024-01-15 14:30:25 [INFO] کاربر علی وارد شد
+2024-01-15 14:31:10 [ERROR] خطا در پرداخت برای کاربر رضا
+2024-01-15 14:32:00 [INFO] کاربر سارا از صفحه اصلی بازدید کرد
+2024-01-15 14:35:45 [ERROR] timeout در اتصال به دیتابیس
+2024-01-15 14:40:00 [WARNING] فضای دیسک کم است
+"""
+
+
+def parse_log_line(line):
+    """یک خط لاگ را به دیکشنری تبدیل می‌کند."""
+    pattern = r"^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+\[(\w+)\]\s+(.+)$"
+    match = re.match(pattern, line.strip())
+    
+    if not match:
+        return None
+    
+    date_str, time_str, level, message = match.groups()
+    
+    try:
+        # تبدیل به datetime
+        dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
+        dt = dt.replace(tzinfo=ZoneInfo("Asia/Tehran"))
+    except ValueError:
+        return None
+    
+    return {
+        "datetime": dt,
+        "level": level,
+        "message": message,
+    }
+
+
+def analyze(log_text):
+    """لاگ را تحلیل می‌کند."""
+    entries = []
+    for line in log_text.strip().split("\n"):
+        parsed = parse_log_line(line)
+        if parsed:
+            entries.append(parsed)
+    
+    if not entries:
+        print("📭 هیچ لاگ معتبری یافت نشد.")
+        return
+    
+    # آمار
+    total = len(entries)
+    levels = {}
+    for entry in entries:
+        levels[entry["level"]] = levels.get(entry["level"], 0) + 1
+    
+    # نمایش
+    print(f"{'=' * 50}")
+    print("           تحلیل لاگ")
+    print(f"{'=' * 50}")
+    print(f"  تعداد کل: {total}")
+    for level, count in levels.items():
+        bar = "█" * count
+        print(f"  {level:8} : {count} {bar}")
+    print(f"{'=' * 50}")
+    
+    # نمایش خطوط ERROR
+    print("\n🚨 خطاها:")
+    for entry in entries:
+        if entry["level"] == "ERROR":
+            print(f"  [{entry['datetime'].strftime('%H:%M:%S')}] {entry['message']}")
+    
+    # میانگین زمانی (فاصله بین اولین و آخرین لاگ)
+    first = entries[0]["datetime"]
+    last = entries[-1]["datetime"]
+    duration = (last - first).total_seconds()
+    print(f"\n⏱  مدت زمان: {int(duration // 60)} دقیقه و {int(duration % 60)} ثانیه")
+
+
+def main():
+    analyze(SAMPLE_LOG)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">==================================================
+           تحلیل لاگ
+==================================================
+  تعداد کل: 5
+  INFO     : 2 ██
+  ERROR    : 2 ██
+  WARNING  : 1 █
+==================================================
+
+🚨 خطاها:
+  [14:31:10] خطا در پرداخت برای کاربر رضا
+  [14:35:45] timeout در اتصال به دیتابیس
+
+⏱  مدت زمان: 9 دقیقه و 35 ثانیه</code></pre>
+        </div>
+        <p>در این مثال، همه‌ی مفاهیم فصل با هم ترکیب شدند:</p>
+        <ul>
+          <li><strong>regex</strong> برای تجزیه‌ی خطوط لاگ.</li>
+          <li><strong>گروه‌بندی</strong> برای جدا کردن اجزا.</li>
+          <li><strong>datetime.strptime</strong> برای تبدیل متن به تاریخ.</li>
+          <li><strong>timezone</strong> برای مشخص کردن منطقه.</li>
+          <li><strong>timedelta</strong> برای محاسبه‌ی فاصله‌ی زمانی.</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه که ورودی‌های مختلف کاربر را با regex اعتبارسنجی می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>validator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""اعتبارسنجی ورودی‌های کاربر — با regex."""
+
+import re
+
+
+VALIDATORS = {
+    "ایمیل": r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+    "موبایل": r"^09\d{9}$",
+    "کد ملی": r"^\d{10}$",
+    "کد پستی": r"^\d{10}$",
+    "نام کاربری": r"^[a-zA-Z][a-zA-Z0-9_]{2,15}$",
+    "رمز عبور قوی": r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$",
+}
+
+
+def validate(kind, value):
+    """یک مقدار را با الگوی داده‌شده اعتبارسنجی می‌کند."""
+    pattern = VALIDATORS.get(kind)
+    if not pattern:
+        return f"❓ نوع «{kind}» پشتیبانی نمی‌شود."
+    
+    if re.match(pattern, value):
+        return f"✅ {kind}: «{value}» معتبر است."
+    return f"❌ {kind}: «{value}» معتبر نیست."
+
+
+def main():
+    print("=" * 50)
+    print("     اعتبارسنجی ورودی‌ها")
+    print("=" * 50)
+    
+    tests = [
+        ("ایمیل", "ali@example.com"),
+        ("ایمیل", "invalid"),
+        ("موبایل", "09123456789"),
+        ("موبایل", "0912345678"),
+        ("کد ملی", "1234567890"),
+        ("نام کاربری", "ali_2024"),
+        ("نام کاربری", "1ali"),
+        ("رمز عبور قوی", "Pass123!"),
+        ("رمز عبور قوی", "weakpass"),
+    ]
+    
+    for kind, value in tests:
+        print(f"  {validate(kind, value)}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">==================================================
+     اعتبارسنجی ورودی‌ها
+==================================================
+  ✅ ایمیل: «ali@example.com» معتبر است.
+  ❌ ایمیل: «invalid» معتبر نیست.
+  ✅ موبایل: «09123456789» معتبر است.
+  ❌ موبایل: «0912345678» معتبر نیست.
+  ✅ کد ملی: «1234567890» معتبر است.
+  ✅ نام کاربری: «ali_2024» معتبر است.
+  ❌ نام کاربری: «1ali» معتبر نیست.
+  ✅ رمز عبور قوی: «Pass123!» معتبر است.
+  ❌ رمز عبور قوی: «weakpass» معتبر نیست.</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته تخصصی</b>
+          الگوی رمز عبور قوی از <strong>lookahead</strong> استفاده می‌کند: <code class="inline-code">(?=.*\d)</code> یعنی «جلوتر نگاه کن، باید حداقل یک عدد وجود داشته باشد». این تکنیک را برای همه‌ی بررسی‌های «باید حداقل یک X داشته باشد» می‌توانید استفاده کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «مدیر تسک‌ها» بسازید که تاریخ‌ها و متن‌ها را پردازش کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">task_manager.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک دیکشنری از تسک‌ها بسازید که هر تسک شامل این فیلدها باشد:
+            <ul>
+              <li><code class="inline-code">title</code> — عنوان تسک</li>
+              <li><code class="inline-code">due_date</code> — تاریخ انجام (به فرمت «۱۴۰۴/۰۱/۲۰»)</li>
+              <li><code class="inline-code">priority</code> — اولویت (بالا/متوسط/پایین)</li>
+              <li><code class="inline-code">tags</code> — تگ‌ها (لیست)</li>
+              <li><code class="inline-code">created_at</code> — زمان ایجاد (خودکار با datetime)</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">add_task(tasks, title, due_date_str, priority, tags)</code> که:
+            <ul>
+              <li>تاریخ را با <code class="inline-code">datetime.strptime</code> پارس کند.</li>
+              <li>اگر تاریخ نامعتبر بود، <code class="inline-code">ValueError</code> بدهد.</li>
+              <li>اولویت را با یک regex یا شرط بررسی کند.</li>
+              <li><code class="inline-code">created_at</code> را با <code class="inline-code">datetime.now(timezone.utc)</code> پر کند.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">days_until_due(task)</code> که تعداد روزهای باقی‌مانده تا موعد را حساب کند (با <code class="inline-code">timedelta</code>).</li>
+          <li>تابع <code class="inline-code">find_by_tag(tasks, tag)</code> که همه‌ی تسک‌های دارای یک تگ را برگرداند.</li>
+          <li>تابع <code class="inline-code">find_by_pattern(tasks, pattern)</code> که با regex در عنوان‌ها جست‌وجو کند.</li>
+          <li>تابع <code class="inline-code">show_report(tasks)</code> که:
+            <ul>
+              <li>تسک‌ها را بر اساس اولویت مرتب کند.</li>
+              <li>روزهای باقی‌مانده تا هر تسک را نشان دهد.</li>
+              <li>تسک‌های عقب‌افتاده (موعد گذشته) را با علامت ⚠️ مشخص کند.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">main()</code> با منوی تعاملی.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>task_manager.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""مدیر تسک‌ها — با datetime و regex."""
+
+import re
+from datetime import datetime, date, timezone
+from zoneinfo import ZoneInfo
+
+
+TASK_DATE_FORMAT = "%Y-%m-%d"
+PRIORITY_PATTERN = r"^(بالا|متوسط|پایین)$"
+TAG_PATTERN = r"^[a-zA-Z\u0600-\u06FF][a-zA-Z0-9_\u0600-\u06FF]*$"
+
+
+def add_task(tasks, title, due_date_str, priority, tags):
+    """تسک جدید اضافه می‌کند."""
+    # اعتبارسنجی عنوان
+    if not title or len(title) < 3:
+        raise ValueError("عنوان تسک باید حداقل ۳ حرف باشد.")
+    
+    # اعتبارسنجی تاریخ
+    try:
+        due_date = datetime.strptime(due_date_str, TASK_DATE_FORMAT).date()
+    except ValueError:
+        raise ValueError(f"تاریخ «{due_date_str}» نامعتبر است. فرمت درست: YYYY-MM-DD")
+    
+    # اعتبارسنجی اولویت
+    if not re.match(PRIORITY_PATTERN, priority):
+        raise ValueError(f"اولویت «{priority}» نامعتبر است. باید بالا، متوسط یا پایین باشد.")
+    
+    # اعتبارسنجی تگ‌ها
+    for tag in tags:
+        if not re.match(TAG_PATTERN, tag):
+            raise ValueError(f"تگ «{tag}» نامعتبر است.")
+    
+    task = {
+        "title": title,
+        "due_date": due_date,
+        "priority": priority,
+        "tags": list(tags),
+        "created_at": datetime.now(timezone.utc),
+    }
+    tasks.append(task)
+    return task
+
+
+def days_until_due(task):
+    """تعداد روزهای باقی‌مانده تا موعد."""
+    today = date.today()
+    return (task["due_date"] - today).days
+
+
+def find_by_tag(tasks, tag):
+    """پیدا کردن تسک‌ها بر اساس تگ."""
+    return [t for t in tasks if tag in t["tags"]]
+
+
+def find_by_pattern(tasks, pattern):
+    """پیدا کردن تسک‌ها با regex در عنوان."""
+    try:
+        compiled = re.compile(pattern, re.IGNORECASE)
+        return [t for t in tasks if compiled.search(t["title"])]
+    except re.error as e:
+        raise ValueError(f"الگوی regex نامعتبر: {e}")
+
+
+def show_report(tasks):
+    """گزارش کاملی از تسک‌ها."""
+    if not tasks:
+        print("📭 هیچ تسکی وجود ندارد.")
+        return
+    
+    # ترتیب اولویت
+    priority_order = {"بالا": 0, "متوسط": 1, "پایین": 2}
+    sorted_tasks = sorted(
+        tasks,
+        key=lambda t: (priority_order.get(t["priority"], 99), t["due_date"])
+    )
+    
+    print(f"\n{'=' * 70}")
+    print(f"           گزارش تسک‌ها ({len(tasks)} تسک)")
+    print(f"{'=' * 70}")
+    print(f"{'#':<4}{'عنوان':<30}{'موعد':<14}{'اولویت':<10}{'باقی‌مانده':<12}")
+    print("-" * 70)
+    
+    for i, task in enumerate(sorted_tasks, start=1):
+        days = days_until_due(task)
+        if days < 0:
+            status = f"⚠️ {abs(days)} روز گذشته"
+        elif days == 0:
+            status = "🔥 امروز"
+        elif days <= 3:
+            status = f"⏰ {days} روز"
+        else:
+            status = f"{days} روز"
+        
+        title = task["title"][:28] + (".." if len(task["title"]) > 28 else "")
+        print(f"{i:<4}{title:<30}{str(task['due_date']):<14}{task['priority']:<10}{status:<12}")
+    
+    print("-" * 70)
+    
+    # خلاصه
+    overdue = [t for t in tasks if days_until_due(t) < 0]
+    if overdue:
+        print(f"\n⚠️ {len(overdue)} تسک عقب‌افتاده دارید!")
+
+
+def main():
+    tasks = []
+    
+    # چند تسک نمونه
+    try:
+        add_task(tasks, "تمرین پایتون", "2024-02-15", "بالا", ["یادگیری"])
+        add_task(tasks, "خرید کتاب", "2024-02-20", "پایین", ["شخصی", "کتاب"])
+        add_task(tasks, "جلسه تیم", "2024-02-10", "بالا", ["کاری"])
+    except ValueError as e:
+        print(f"⚠️ {e}")
+    
+    while True:
+        print("\n" + "=" * 45)
+        print("       مدیر تسک‌ها")
+        print("=" * 45)
+        print("  1. نمایش گزارش")
+        print("  2. افزودن تسک")
+        print("  3. جست‌وجو با تگ")
+        print("  4. جست‌وجو با الگو (regex)")
+        print("  5. خروج")
+        print("-" * 45)
+        
+        choice = input("انتخاب: ").strip()
+        
+        if choice == "1":
+            show_report(tasks)
+        elif choice == "2":
+            try:
+                title = input("عنوان: ").strip()
+                due = input("موعد (YYYY-MM-DD): ").strip()
+                priority = input("اولویت (بالا/متوسط/پایین): ").strip()
+                tags_input = input("تگ‌ها (با کاما): ").strip()
+                tags = [t.strip() for t in tags_input.split(",") if t.strip()]
+                
+                add_task(tasks, title, due, priority, tags)
+                print("✅ تسک اضافه شد.")
+            except ValueError as e:
+                print(f"⚠️ {e}")
+        elif choice == "3":
+            tag = input("تگ: ").strip()
+            results = find_by_tag(tasks, tag)
+            if results:
+                print(f"\n🔍 {len(results)} نتیجه:")
+                for t in results:
+                    print(f"  • {t['title']} ({t['priority']}, {t['due_date']})")
+            else:
+                print(f"❌ تسکی با تگ «{tag}» پیدا نشد.")
+        elif choice == "4":
+            pattern = input("الگوی regex: ").strip()
+            try:
+                results = find_by_pattern(tasks, pattern)
+                if results:
+                    print(f"\n🔍 {len(results)} نتیجه:")
+                    for t in results:
+                        print(f"  • {t['title']}")
+                else:
+                    print(f"❌ نتیجه‌ای پیدا نشد.")
+            except ValueError as e:
+                print(f"⚠️ {e}")
+        elif choice == "5":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">======================================================================
+           گزارش تسک‌ها (3 تسک)
+======================================================================
+#   عنوان                         موعد          اولویت     باقی‌مانده
+----------------------------------------------------------------------
+1   جلسه تیم                       2024-02-10    بالا       ⚠️ 5 روز گذشته
+2   تمرین پایتون                   2024-02-15    بالا       0 روز
+3   خرید کتاب                      2024-02-20    پایین      5 روز
+----------------------------------------------------------------------
+
+⚠️ 1 تسک عقب‌افتاده دارید!</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی</summary>
+          <div class="answer-body">
+            <p>چند نکته‌ی مهم در این راه‌حل:</p>
+            <ol>
+              <li><strong>اعتبارسنجی چندلایه:</strong> هم عنوان، هم تاریخ، هم اولویت و هم تگ‌ها اعتبارسنجی می‌شوند. regex برای اولویت و تگ‌ها استفاده شد.</li>
+              <li><strong>پارس تاریخ با try/except:</strong> اگر کاربر تاریخ را با فرمت اشتباه وارد کند، <code class="inline-code">datetime.strptime</code> خطا می‌دهد و ما آن را به پیام دوستانه تبدیل می‌کنیم.</li>
+              <li><strong>زمان UTC:</strong> <code class="inline-code">created_at</code> با <code class="inline-code">datetime.now(timezone.utc)</code> ذخیره می‌شود — استاندارد حرفه‌ای.</li>
+              <li><strong>مرتب‌سازی چندمتغیره:</strong> با <code class="inline-code">key=lambda t: (...)</code> اولویت اول است، بعد موعد. یعنی تسک‌های بالا اول نشان داده می‌شوند.</li>
+              <li><strong>Regex دینامیک:</strong> کاربر می‌تواند هر الگویی وارد کند. با <code class="inline-code">re.compile()</code> قبل از استفاده، خطاهای الگو گرفته می‌شوند.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">task_manager.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌دانید تفاوت <code class="inline-code">date</code>، <code class="inline-code">datetime</code> و <code class="inline-code">time</code> چیست.</li>
+              <li>می‌توانید تاریخ را با <code class="inline-code">strftime</code> فرمت و با <code class="inline-code">strptime</code> پارس کنید.</li>
+              <li>می‌دانید تفاوت زمان naive و aware چیست.</li>
+              <li>با <code class="inline-code">timedelta</code> محاسبه انجام می‌دهید.</li>
+              <li>با <code class="inline-code">re.findall</code>، <code class="inline-code">re.search</code>، <code class="inline-code">re.sub</code> راحت هستید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ ValueError: time data ... does not match format</b>
+          <p><strong>معنی:</strong> متنی که به <code class="inline-code">strptime</code> داده‌اید، با فرمت هماهنگ نیست.</p>
+          <p><strong>علت:</strong> مثلاً فرمت <code class="inline-code">%Y-%m-%d</code> است ولی متن <code class="inline-code">15/01/2024</code> داده‌اید.</p>
+          <p><strong>راه‌حل:</strong> فرمت را با متن تطبیق دهید. یا با <code class="inline-code">try/except</code> خطا را بگیرید و به کاربر پیام مناسب بدهید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: can't subtract offset-naive and offset-aware datetimes</b>
+          <p><strong>معنی:</strong> نمی‌توانید یک زمان naive را از یک زمان aware کم کنید.</p>
+          <p><strong>علت:</strong> یکی از زمان‌ها tzinfo دارد و دیگری نه.</p>
+          <p><strong>راه‌حل:</strong> هر دو را aware کنید. اگر زمان naive دارید، با <code class="inline-code">.replace(tzinfo=timezone.utc)</code> آگاهش کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ re.error: bad escape \X</b>
+          <p><strong>معنی:</strong> الگوی regex شما خطا دارد.</p>
+          <p><strong>علت:</strong> از کاراکتر escape نامعتبر استفاده کرده‌اید یا پرانتز/براکت باز مانده.</p>
+          <p><strong>راه‌حل:</strong> همیشه پرانتزها و براکت‌ها را چک کنید. از <code class="inline-code">try/except re.error</code> استفاده کنید تا خطای الگو را به کاربر نشان دهید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ regex اول یا آخر رشته را چک نمی‌کند</b>
+          <p><strong>معنی:</strong> فکر می‌کنید فقط وقتی کل متن مطابق است، True می‌دهد، ولی برای بخشی از متن هم True می‌دهد.</p>
+          <p><strong>علت:</strong> از <code class="inline-code">^</code> و <code class="inline-code">$</code> استفاده نکرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> برای اعتبارسنجی کامل، همیشه الگو را با <code class="inline-code">^...$</code> بپوشانید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی <code>r</code> قبل از الگوی regex</b>
+          <p><strong>معنی:</strong> الگوی regex به‌درستی کار نمی‌کند.</p>
+          <p><strong>علت:</strong> بدون <code class="inline-code">r</code>، پایتون <code class="inline-code">\d</code> را به‌عنوان escape نامعتبر تلقی می‌کند و ممکن است خطا یا رفتار عجیب بدهد.</p>
+          <p><strong>راه‌حل:</strong> همیشه قبل از رشته‌ی regex حرف <code class="inline-code">r</code> بگذارید: <code class="inline-code">r"\d+"</code> نه <code class="inline-code">"\d+"</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ regex به‌عنوان جایگزین کامل parser</b>
+          <p><strong>معنی:</strong> از regex برای کارهای پیچیده استفاده می‌کنید و کد غیرقابل نگهداری می‌شود.</p>
+          <p><strong>علت:</strong> regex قدرت دارد، ولی برای پردازش‌های پیچیده (مثل پارس کردن HTML)، ابزارهای بهتری وجود دارد.</p>
+          <p><strong>راه‌حل:</strong> regex را برای الگوهای «ساده و محدود» استفاده کنید. برای کارهای پیچیده، از parserهای اختصاصی (مثل <code class="inline-code">html.parser</code> یا <code class="inline-code">json</code>) استفاده کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ اختلاف ساعت بین سرور و کاربر</b>
+          <p><strong>معنی:</strong> زمان نمایش‌داده‌شده با ساعت کاربر فرق دارد.</p>
+          <p><strong>علت:</strong> از <code class="inline-code">datetime.now()</code> بدون timezone استفاده کرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> همیشه <code class="inline-code">datetime.now(timezone.utc)</code> بگیرید و زمان را در UTC ذخیره کنید. هنگام نمایش، به منطقه‌ی زمانی کاربر تبدیل کنید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+from datetime import date, timedelta
+today = date(2024, 1, 15)
+print(today + timedelta(days=10))
+
+# مورد 2
+from datetime import datetime
+dt = datetime(2024, 1, 15, 14, 30)
+print(dt.strftime("%Y/%m/%d"))
+
+# مورد 3
+import re
+print(re.findall(r"\d+", "من 5 سیب و 3 پرتقال دارم"))
+
+# مورد 4
+import re
+pattern = r"^[a-z]+$"
+print(re.match(pattern, "hello"))
+print(re.match(pattern, "Hello"))
+
+# مورد 5
+from datetime import datetime
+text = "2024-01-15"
+parsed = datetime.strptime(text, "%Y-%m-%d")
+print(parsed.year, parsed.month, parsed.day)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> <code class="inline-code">2024-01-25</code> — ۱۰ روز بعد.</li>
+              <li><strong>مورد ۲:</strong> <code class="inline-code">2024/01/15</code>.</li>
+              <li><strong>مورد ۳:</strong> <code class="inline-code">['5', '3']</code> — دو عدد پیدا شد.</li>
+              <li><strong>مورد ۴:</strong> اولی یک Match object برمی‌گرداند (که truthy است)، دومی <code class="inline-code">None</code> می‌دهد چون H بزرگ است. الگوی ما فقط حروف کوچک می‌پذیرد.</li>
+              <li><strong>مورد ۵:</strong> <code class="inline-code">2024 1 15</code>.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — استخراج اطلاعات از متن</summary>
+          <div class="answer-body">
+            <p>از متن زیر، همه‌ی تاریخ‌ها، ساعت‌ها و مبالغ را استخراج کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>extract_info.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">import re
+
+text = """
+در تاریخ 2024-01-15 ساعت 14:30 خرید انجام شد.
+مبلغ 85000 تومان پرداخت شد.
+در تاریخ 2024-01-20 ساعت 09:15 خرید دوم با مبلغ 120000 تومان انجام شد.
+"""
+
+# استخراج همه‌ی تاریخ‌ها
+dates = re.findall(r"\d{4}-\d{2}-\d{2}", text)
+print(f"تاریخ‌ها: {dates}")
+
+# استخراج همه‌ی ساعت‌ها
+times = re.findall(r"\b\d{2}:\d{2}\b", text)
+print(f"ساعت‌ها: {times}")
+
+# استخراج مبالغ (اعداد بزرگ‌تر از 4 رقم که بعدشون "تومان" هست)
+amounts = re.findall(r"(\d+)\s*تومان", text)
+print(f"مبالغ: {amounts}")
+print(f"مجموع: {sum(int(a) for a in amounts):,} تومان")
+
+# استخراج تاریخ-ساعت با هم
+datetime_pattern = r"(\d{4}-\d{2}-\d{2})\s+ساعت\s+(\d{2}:\d{2})"
+matches = re.findall(datetime_pattern, text)
+print(f"تاریخ و ساعت‌ها:")
+for date_str, time_str in matches:
+    print(f"  {date_str} در ساعت {time_str}")</code></pre>
+            </div>
+            <p><strong>خروجی:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">تاریخ‌ها: ['2024-01-15', '2024-01-20']
+ساعت‌ها: ['14:30', '09:15']
+مبالغ: ['85000', '120000']
+مجموع: 205,000 تومان
+تاریخ و ساعت‌ها:
+  2024-01-15 در ساعت 14:30
+  2024-01-20 در ساعت 09:15</code></pre>
+            </div>
+            <p><strong>نکته:</strong> ترکیب گروه‌بندی با regex، به شما امکان می‌دهد اطلاعات ساختاریافته از متن استخراج کنید. این تکنیک در تحلیل لاگ، پارس ایمیل، و استخراج داده از متن‌های آزاد خیلی کاربرد دارد.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1 — فراموشی r
+import re
+pattern = "\d+"
+result = re.findall(pattern, "abc123")
+print(result)
+
+# خطا 2 — تفریق naive و aware
+from datetime import datetime, timezone
+naive = datetime.now()
+aware = datetime.now(timezone.utc)
+diff = aware - naive   # TypeError!
+
+# خطا 3 — فرمت اشتباه
+from datetime import datetime
+text = "15/01/2024"
+# می‌خواهیم تاریخ را از این متن بگیریم
+parsed = datetime.strptime(text, "%Y-%m-%d")   # ValueError!
+
+# خطا 4 — regex اول و آخر ندارد
+import re
+pattern = r"\d+"
+# می‌خواهیم چک کنیم کل متن فقط عدد است
+result = re.match(pattern, "abc123")
+print(result)   # None نمی‌دهد! Match object می‌دهد</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">r</code> قبل از رشته‌ی regex فراموش شده. راه‌حل: <code class="inline-code">r"\d+"</code>.</li>
+              <li><strong>خطا ۲:</strong> نمی‌توانید naive و aware را از هم کم کنید. راه‌حل: هر دو را aware کنید یا از یک نوع استفاده کنید.</li>
+              <li><strong>خطا ۳:</strong> فرمت <code class="inline-code">%Y-%m-%d</code> با متن <code class="inline-code">15/01/2024</code> هماهنگ نیست. راه‌حل: <code class="inline-code">%d/%m/%Y</code>.</li>
+              <li><strong>خطا ۴:</strong> الگو <code class="inline-code">^\d+$</code> نیست. در <code class="inline-code">re.match</code>، تطبیق از ابتدای رشته شروع می‌شود، ولی چون ابتدای "abc123" با <code class="inline-code">\d+</code> هماهنگ نیست، نتیجه None است. برای اعتبارسنجی کامل از <code class="inline-code">^...$</code> استفاده کنید.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># اصلاح 1
+import re
+pattern = r"\d+"
+result = re.findall(pattern, "abc123")
+print(result)   # ['123']
+
+# اصلاح 2
+from datetime import datetime, timezone
+naive = datetime.now(timezone.utc)   # aware
+aware = datetime.now(timezone.utc)
+diff = aware - naive
+print(diff)
+
+# اصلاح 3
+from datetime import datetime
+text = "15/01/2024"
+parsed = datetime.strptime(text, "%d/%m/%Y")
+print(parsed)
+
+# اصلاح 4
+import re
+pattern = r"^\d+$"
+# برای "123" جواب می‌دهد
+print(re.match(pattern, "123"))     # Match
+# برای "abc123" جواب نمی‌دهد
+print(re.match(pattern, "abc123"))  # None</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-15" data-title="آزمون فصل ۱۵ — تاریخ، زمان و الگوهای متنی" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) برای گرفتن تاریخ و ساعت فعلی، از چه چیزی استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>date.current()</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>datetime.now()</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>time.today()</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>clock.get()</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>datetime.now()</code> تاریخ و ساعت فعلی سیستم را برمی‌گرداند. برای زمان جهانی، <code>datetime.now(timezone.utc)</code>.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) کدام کد، متن <code dir="ltr">"2024-01-15"</code> را به تاریخ تبدیل می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>datetime.parse("2024-01-15")</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>datetime.format("2024-01-15")</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>datetime.strptime("2024-01-15", "%Y-%m-%d")</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>datetime.to_date("2024-01-15")</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>strptime</code> مخفف string parse time است — متن را با فرمت مشخص پارس می‌کند. برعکسش، <code>strftime</code> تاریخ را به متن تبدیل می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) برای پیدا کردن همه‌ی اعداد یک متن، از کدام تابع <code dir="ltr">re</code> استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>re.findall(r"\d+", text)</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>re.search(r"\d+", text)</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>re.match(r"\d+", text)</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>re.get_all(r"\d+", text)</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>re.findall</code> همه‌ی تطبیق‌ها را به‌صورت لیست برمی‌گرداند. <code>re.search</code> فقط اولین مورد را پیدا می‌کند، <code>re.match</code> فقط از ابتدای رشته چک می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) چرا در regex قبل از رشته حرف <code dir="ltr">r</code> می‌گذاریم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">چون اجباری است و بدون آن خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">چون سریع‌تر اجرا می‌شود</button>
+              <button type="button" class="quiz-opt" data-key="c">چون طول رشته را کوتاه می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">تا کاراکترهای <code>\</code> به‌صورت خام نگه داشته شوند و پایتون آن‌ها را escape نکند</button>
+            </div>
+            <div class="quiz-explain">💡 بدون <code>r</code>، پایتون <code>\d</code> و <code>\w</code> را به‌عنوان escape character تفسیر می‌کند. با <code>r</code> (raw string)، رشته دست‌نخورده باقی می‌ماند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) برای ساختن یک زمان «آگاه» (aware)، کدام روش درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>datetime.now()</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>datetime.now(timezone.utc)</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>datetime.utcnow()</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>datetime.today()</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>datetime.now(timezone.utc)</code> یک زمان aware برمی‌گرداند. <code>datetime.now()</code> و <code>datetime.today()</code> naive هستند. <code>datetime.utcnow()</code> هم دیگر توصیه نمی‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۶) برای اضافه کردن ۷ روز به یک تاریخ، از چه چیزی استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>date.today() + timedelta(days=7)</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>date.today() + 7</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>date.today().add_days(7)</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>date.add(date.today(), 7)</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>timedelta</code> برای محاسبه با تاریخ طراحی شده. می‌توانید از <code>days</code>، <code>hours</code>، <code>minutes</code> و... استفاده کنید.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «تحلیل‌گر فایل لاگ»</strong> — یک برنامه‌ی کامل که فایل لاگ یک سرور را می‌خواند، خطاها را استخراج می‌کند و گزارش می‌دهد.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">log_analyzer.py</code> ذخیره شود.</li>
+          <li>از فایل <code class="inline-code">server.log</code> استفاده کنید. اگر وجود ندارد، یک فایل نمونه با محتوای زیر بسازید:
+            <div class="code-box" style="margin-top:8px">
+              <div class="code-head"><span>server.log</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">2024-01-15 14:30:25 [INFO] Server started
+2024-01-15 14:31:10 [INFO] User ali logged in
+2024-01-15 14:32:00 [WARNING] Disk usage at 85%
+2024-01-15 14:33:15 [ERROR] Database connection timeout
+2024-01-15 14:35:45 [INFO] User sara logged in
+2024-01-15 14:40:00 [ERROR] Failed to send email
+2024-01-15 14:45:30 [WARNING] Memory usage at 90%
+2024-01-15 14:50:00 [ERROR] Authentication failed for user reza
+2024-01-15 15:00:00 [INFO] User ali logged out</code></pre>
+            </div>
+          </li>
+          <li>تابع <code class="inline-code">parse_line(line)</code> با regex هر خط را به دیکشنری با این فیلدها تبدیل کند:
+            <ul>
+              <li><code class="inline-code">datetime</code> — زمان به‌صورت aware با UTC یا منطقه‌ی تهران</li>
+              <li><code class="inline-code">level</code> — سطح لاگ (INFO/WARNING/ERROR)</li>
+              <li><code class="inline-code">message</code> — متن پیام</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">load_logs(filepath)</code> که فایل را می‌خواند و لیست دیکشنری‌ها را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">filter_by_level(entries, level)</code> که لاگ‌های یک سطح را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">search_messages(entries, pattern)</code> که با regex در پیام‌ها جست‌وجو می‌کند.</li>
+          <li>تابع <code class="inline-code">stats(entries)</code> که آمار زیر را حساب می‌کند:
+            <ul>
+              <li>تعداد کل لاگ‌ها</li>
+              <li>تعداد هر سطح</li>
+              <li>اولین و آخرین زمان (و مدت کل)</li>
+              <li>میانگین فاصله‌ی بین لاگ‌ها</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">main()</code> با منوی تعاملی که گزینه‌های فیلتر، جست‌وجو، آمار و نمایش همه را ارائه دهد.</li>
+          <li>همه‌ی خطاها (فایل خراب، خط نامعتبر) مدیریت شوند.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     تحلیل‌گر فایل لاگ
+══════════════════════════════════════
+  1. نمایش همه
+  2. فیلتر بر اساس سطح
+  3. جست‌وجو در پیام‌ها
+  4. آمار کلی
+  5. خروج
+──────────────────────────────────────
+
+انتخاب شما: 4
+
+📊 آمار کلی
+──────────────────────────────────────
+  تعداد کل لاگ‌ها: 9
+  INFO    : 4 ████
+  WARNING : 2 ██
+  ERROR   : 3 ███
+
+  اولین لاگ: 2024-01-15 14:30:25
+  آخرین لاگ: 2024-01-15 15:00:00
+  مدت کل  : 29 دقیقه و 35 ثانیه
+  میانگین فاصله: 3.7 دقیقه
+──────────────────────────────────────</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>گزارش خطاهای تکراری (با شمارش).</li>
+            <li>فیلتر بر اساس بازه‌ی زمانی.</li>
+            <li>خروجی CSV از لاگ‌های فیلترشده.</li>
+            <li>نمودار ساده‌ی توزیع سطوح با ستاره.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>ماژول <code class="inline-code">datetime</code> — سه کلاس <code class="inline-code">datetime</code>، <code class="inline-code">date</code>، <code class="inline-code">time</code>.</li>
+          <li>گرفتن زمان فعلی با <code class="inline-code">datetime.now()</code> و <code class="inline-code">date.today()</code>.</li>
+          <li>قالب‌بندی تاریخ با <code class="inline-code">strftime</code> و پارس با <code class="inline-code">strptime</code>.</li>
+          <li>محاسبه با تاریخ‌ها با <code class="inline-code">timedelta</code>.</li>
+          <li>تفاوت زمان naive و aware و چرا اهمیت دارد.</li>
+          <li>منطقه‌های زمانی با <code class="inline-code">zoneinfo</code> و تبدیل بین آن‌ها.</li>
+          <li>عبارات باقاعده (regex) با ماژول <code class="inline-code">re</code>.</li>
+          <li>کاراکترهای مهم regex: <code class="inline-code">\d</code>، <code class="inline-code">\w</code>، <code class="inline-code">\s</code>، <code class="inline-code">+</code>، <code class="inline-code">*</code>، <code class="inline-code">?</code>، <code class="inline-code">^</code>، <code class="inline-code">$</code>.</li>
+          <li>توابع <code class="inline-code">re.findall</code>، <code class="inline-code">re.search</code>، <code class="inline-code">re.match</code>، <code class="inline-code">re.sub</code>.</li>
+          <li>گروه‌بندی در regex با پرانتز و <code class="inline-code">(?P&lt;name&gt;...)</code>.</li>
+          <li>اعتبارسنجی ایمیل، شماره موبایل و کد ملی با regex.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «تاریخ و متن، دو نوع داده‌ای هستند که در ۹۰٪ برنامه‌ها به‌کار می‌آیند. اگر با این دو مسلط شوید، ابزارهای قدرتمندی برای حل مسائل واقعی به دست آورده‌اید.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا از regex برای اعتبارسنجی ایمیل استفاده می‌کنم ولی گاهی اشتباه می‌کند؟</summary><div class="faq-body"><p>Regex فقط می‌تواند <strong>شکل ظاهری</strong> ایمیل را بررسی کند، نه اینکه واقعاً ایمیل وجود دارد. اعتبارسنجی ایمیل کامل، نیاز به ارسال ایمیل تأیید دارد. اما برای فیلتر سریع (مثلاً جلوگیری از اشتباهات تایپی)، regex عالی است.</p></div></details>
+        <details class="faq-item"><summary>تفاوت <code dir="ltr">re.match</code>، <code dir="ltr">re.search</code> و <code dir="ltr">re.fullmatch</code> چیست؟</summary><div class="faq-body"><p><code>re.match</code> فقط از <strong>ابتدای</strong> رشته بررسی می‌کند. <code>re.search</code> در <strong>همه‌ی</strong> رشته جست‌وجو می‌کند. <code>re.fullmatch</code> می‌خواهد <strong>کل</strong> رشته با الگو هماهنگ باشد. برای اعتبارسنجی، معمولاً <code>fullmatch</code> یا <code>match</code> با <code>^...$</code> بهترین است.</p></div></details>
+        <details class="faq-item"><summary>چرا <code dir="ltr">datetime.utcnow()</code> دیگر توصیه نمی‌شود؟</summary><div class="faq-body"><p>چون یک زمان naive برمی‌گرداند (بدون timezone) ولی از نظر معنایی در واقع UTC است. این تناقض باعث باگ می‌شود. به‌جایش از <code>datetime.now(timezone.utc)</code> استفاده کنید که زمان aware می‌دهد.</p></div></details>
+        <details class="faq-item"><summary>آیا regex روی همه‌ی زبان‌ها یکسان است؟</summary><div class="faq-body"><p>تقریباً. اما پایتون چند ویژگی مخصوص خود دارد: <code>(?P&lt;name&gt;...)</code> برای گروه‌های نام‌دار، <code>(?&lt;=...)</code> و <code>(?=...)</code> برای lookahead/lookbehind. موتورهای دیگر (مثل JavaScript یا PCRE) ممکن است سینتکس متفاوتی داشته باشند.</p></div></details>
+        <details class="faq-item"><summary>چطور اعداد فارسی (۱۲۳) را با regex پردازش کنم؟</summary><div class="faq-body"><p>پایتون ۳ به‌طور پیش‌فرض اعداد یونیکد را در <code>\d</code> تشخیص می‌دهد، پس <code>re.findall(r"\d+", "۱۲۳")</code> جواب می‌دهد. اما اگر می‌خواهید فقط اعداد لاتین را بگیرید، از <code>[0-9]</code> استفاده کنید. برای تبدیل، <code>int("۱۲۳")</code> هم کار می‌کند.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۶ با <strong>شی‌گرایی (OOP)</strong> آشنا می‌شوید: چطور داده و رفتار رو در یک واحد به نام <code class="inline-code">class</code> کنار هم قرار بدید. تا اینجا با توابع کار می‌کردیم که «فقط رفتار» داشتن. از فصل بعد، یاد می‌گیرید چطور چیزهایی مثل کاربر، سفارش، محصول رو به‌صورت کلاس‌های مستقل مدل کنید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-15" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-15">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-14/index.html">→ فصل قبلی<br><b>📄 فصل ۱۴</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-16/index.html">فصل بعدی ←<br><b>🏛️ فصل ۱۶: شی‌گرایی پایه</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۵: تاریخ، زمان و الگوهای متنی | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

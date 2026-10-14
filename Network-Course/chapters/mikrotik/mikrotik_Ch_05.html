@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۵ MikroTik — ARP و DHCP</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-05">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۵ — ARP و DHCP</h1>
+    <div class="meta">
+      <span>📖 ۸۵ دقیقه</span>
+      <span>🎯 وزن در MTCNA: بخش کاربردی</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      <span class="term" data-term="arp">ARP</span> و
+      <span class="term" data-term="dhcp">DHCP</span> دو سرویس پایه‌ای هستند که
+      بدون آن‌ها هیچ شبکه‌ای کار نمی‌کند. ARP ترجمه‌ی IP به MAC را انجام می‌دهد
+      و DHCP توزیع خودکار آدرس را.
+    </p>
+    <p>
+      در این فصل یاد می‌گیری این دو سرویس را در RouterOS پیکربندی و عیب‌یابی کنی،
+      از ARP Modes (proxy-arp، local-proxy-arp) تا DHCP Relay، Netwatch،
+      و ابزارهای عیب‌یابی مثل Ping، Traceroute و Profiler.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفهوم ARP و نقش آن در شبکه</li>
+      <li>ARP Table در RouterOS</li>
+      <li>ARP Modes — enabled، disabled، proxy-arp، local-proxy-arp، reply-only</li>
+      <li>Static ARP Entry</li>
+      <li>ARP در Bridge</li>
+      <li>DHCP Server — پیکربندی کامل</li>
+      <li>DHCP Pool و Network</li>
+      <li>DHCP Lease Time و Reservations</li>
+      <li>DHCP Client — پیکربندی</li>
+      <li>DHCP Relay (Relay Agent)</li>
+      <li>DHCP Option — تنظیمات پیشرفته</li>
+      <li>Netwatch — پایش و اسکریپت</li>
+      <li>Ping و Traceroute پیشرفته</li>
+      <li>Profiler و Logging</li>
+      <li>عیب‌یابی ARP و DHCP</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>ARP چطور IP را به MAC ترجمه می‌کند و اگر نتواند چه اتفاقی می‌افتد؟</li>
+      <li>تفاوت proxy-arp و local-proxy-arp در چیست؟</li>
+      <li>DHCP Relay چه زمانی استفاده می‌شود و چطور کار می‌کند؟</li>
+      <li>اگر یک دستگاه IP اشتباه (169.254.x.x) بگیرد، مشکل از کجاست؟</li>
+      <li>Netwatch چطور می‌تواند برای پایش لینک استفاده شود؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۵.۱ ==== -->
+    <h3>۵.۱ مفهوم ARP و نقش آن</h3>
+    <p>
+      <span class="term" data-term="arp">ARP</span> (Address Resolution Protocol)
+      پروتکلی است که <strong>آدرس IP را به آدرس MAC</strong> ترجمه می‌کند.
+      بدون ARP، دستگاه‌های داخل یک شبکه‌ی LAN نمی‌توانند با هم حرف بزنند.
+    </p>
+
+    <p><strong>فرآیند ARP:</strong></p>
+    <ol>
+      <li>دستگاه A می‌خواهد به IP دستگاه B بسته بفرستد</li>
+      <li>ARP Request به‌صورت Broadcast می‌فرستد: «چه کسی IP 192.168.1.10 را دارد؟»</li>
+      <li>دستگاه B با IP مربوطه، ARP Reply (Unicast) پاسخ می‌دهد: «من، با MAC AA:BB:CC:DD:EE:FF»</li>
+      <li>دستگاه A MAC را در ARP Cache ذخیره و بسته را می‌فرستد</li>
+    </ol>
+
+    <pre><code>! ===== مشاهده ARP Table در RouterOS =====
+[admin@MikroTik] > /ip arp print
+
+# خروجی:
+# Flags: X - disabled, I - invalid, H - DHCP, D - dynamic, P - published, C - complete
+# #   ADDRESS         MAC-ADDRESS         INTERFACE   
+# 0 D 192.168.88.10   AA:BB:CC:DD:EE:01   bridge-lan
+# 1 D 192.168.88.11   AA:BB:CC:DD:EE:02   bridge-lan
+# 2 DC 192.168.88.20  00:11:22:33:44:55   bridge-lan
+# 3 H 192.168.88.50   AA:BB:CC:DD:EE:03   bridge-lan
+
+# ستون‌ها:
+# ADDRESS: IP دستگاه
+# MAC-ADDRESS: MAC دستگاه
+# INTERFACE: اینترفیسی که دستگاه از آن دیده می‌شود
+
+# Flags:
+# D = Dynamic (خودکار یاد گرفته شده)
+# H = DHCP (از DHCP Server)
+# C = Complete (تأیید شده)
+# P = Published (برای Proxy ARP)</code></pre>
+
+    <!-- ==== ۵.۲ ==== -->
+    <h3>۵.۲ ARP Table در RouterOS</h3>
+
+    <pre><code># ===== مشاهده و مدیریت ARP Table =====
+
+# مشاهده کامل
+[admin@MikroTik] > /ip arp print
+
+# فقط Entryهای Dynamic
+[admin@MikroTik] > /ip arp print where dynamic
+
+# فقط Entryهای Static
+[admin@MikroTik] > /ip arp print where !dynamic
+
+# فیلتر بر اساس Interface
+[admin@MikroTik] > /ip arp print where interface=ether2
+
+# جستجو با IP مشخص
+[admin@MikroTik] > /ip arp print where address=192.168.1.10
+
+# ===== پاک کردن ARP Table =====
+[admin@MikroTik] > /ip arp remove [find where dynamic]
+
+# یا فقط یک Entry خاص
+[admin@MikroTik] > /ip arp remove [find address=192.168.1.10]
+
+# ===== Static ARP Entry =====
+[admin@MikroTik] > /ip arp add \
+    address=192.168.1.10 \
+    mac-address=AA:BB:CC:DD:EE:FF \
+    interface=ether2 \
+    comment="Server Static ARP"
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip arp print where !dynamic</code></pre>
+
+    <!-- ==== ۵.۳ ==== -->
+    <h3>۵.۳ ARP Modes</h3>
+
+    <p>RouterOS پنج ARP Mode پشتیبانی می‌کند:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>enabled</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">پاسخ به همه‌ی ARP Requestها برای IP خودش</td>
+          <td style="padding:6px;border:1px solid var(--border)">پیش‌فرض — LAN عادی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>disabled</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">به هیچ ARP Requestی پاسخ نمی‌دهد</td>
+          <td style="padding:6px;border:1px solid var(--border)">سناریوهای خاص</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>proxy-arp</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">برای IPهای خارج از Subnet هم پاسخ می‌دهد (با MAC خودش)</td>
+          <td style="padding:6px;border:1px solid var(--border)">وقتی کلاینت‌ها Gateway اشتباه دارند</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>local-proxy-arp</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">فقط برای IPهای داخل همان Subnet، Proxy ARP می‌کند</td>
+          <td style="padding:6px;border:1px solid var(--border)">Split-Subnet، Proxy ARP داخلی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>reply-only</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">فقط به IPهایی که در ARP Table Static هستند پاسخ می‌دهد</td>
+          <td style="padding:6px;border:1px solid var(--border)">امنیت — جلوگیری از ARP Spoofing</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== تنظیم ARP Mode روی Interface =====
+[admin@MikroTik] > /interface ethernet set ether2 arp=enabled
+
+# یا در Bridge
+[admin@MikroTik] > /interface bridge set bridge-lan arp=proxy-arp
+
+# یا در VLAN
+[admin@MikroTik] > /interface vlan set vlan10 arp=enabled
+
+# ===== مشاهده وضعیت =====
+[admin@MikroTik] > /interface ethernet print where name=ether2
+# ببین ستون ARP</code></pre>
+
+    <!-- ==== ۵.۴ ==== -->
+    <h3>۵.۴ proxy-arp و local-proxy-arp — کاربردها</h3>
+
+    <p>
+      <strong>Proxy ARP</strong> یعنی RouterOS به ARP Requestی که برای IP
+      خارج از Subnet خودش است هم پاسخ می‌دهد — با MAC خودش. این کار در سناریوهای
+      خاص بسیار مفید است.
+    </p>
+
+    <pre><code># ===== سناریو ۱: Split Subnet با Proxy ARP =====
+# شبکه‌ی 192.168.1.0/24 بین دو Ethernet تقسیم شده
+
+# ether2: 192.168.1.1/25 (نیمه اول)
+# ether3: 192.168.1.129/25 (نیمه دوم)
+
+# کلاینت‌ها فکر می‌کنند در یک /24 هستند
+# ولی در دو Subnet جدا هستند
+
+[admin@MikroTik] > /interface ethernet set ether2 arp=proxy-arp
+[admin@MikroTik] > /interface ethernet set ether3 arp=proxy-arp
+
+# حالا PC در ether2 (مثلاً 192.168.1.10) که می‌خواهد
+# با PC در ether3 (مثلاً 192.168.1.150) حرف بزند:
+# - ARP Request برای 192.168.1.150 می‌فرستد
+# - RouterOS با MAC ether3 پاسخ می‌دهد
+# - ترافیک از روتر عبور می‌کند
+
+# ===== سناریو ۲: local-proxy-arp برای Inside Subnet =====
+[admin@MikroTik] > /interface bridge set bridge-lan arp=local-proxy-arp
+
+# فقط برای IPهای همان Subnet پاسخ می‌دهد — مفید برای:
+# - Hotspot
+# - PPPoE
+# - جداسازی بدون تغییر Subnet</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار امنیتی</div>
+      Proxy ARP در شبکه‌های Production باید با احتیاط استفاده شود —
+      می‌تواند به حمله‌های MITM کمک کند. از آن فقط در سناریوهای مشخص و کنترل‌شده
+      استفاده کن.
+    </div>
+
+    <!-- ==== ۵.۵ ==== -->
+    <h3>۵.۵ reply-only — جلوگیری از ARP Spoofing</h3>
+
+    <p>
+      حالت <strong>reply-only</strong> بسیار مفید است: RouterOS فقط به
+      IPهایی که در ARP Table Static ثبت شده‌اند پاسخ می‌دهد. این جلوی
+      ARP Spoofing و MAC جعلی را می‌گیرد.
+    </p>
+
+    <pre><code># ===== سناریو: فقط دستگاه‌های ثبت‌شده اجازه ارتباط =====
+
+# گام ۱: Static ARP Entry برای هر دستگاه مجاز
+[admin@MikroTik] > /ip arp add \
+    address=192.168.1.10 \
+    mac-address=AA:BB:CC:DD:EE:01 \
+    interface=ether2
+
+[admin@MikroTik] > /ip arp add \
+    address=192.168.1.11 \
+    mac-address=AA:BB:CC:DD:EE:02 \
+    interface=ether2
+
+# گام ۲: ARP Mode را reply-only کن
+[admin@MikroTik] > /interface ethernet set ether2 arp=reply-only
+
+# ===== نتیجه =====
+# دستگاه‌های ثبت‌شده: ارتباط کامل
+# دستگاه‌های غیرثبت‌شده: ARP Reply نمی‌گیرند → ارتباط قطع
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip arp print where !dynamic
+[admin@MikroTik] > /interface ethernet print where name=ether2</code></pre>
+
+    <!-- ==== ۵.۶ ==== -->
+    <h3>۵.۶ DHCP Server — پیکربندی کامل</h3>
+
+    <p>
+      <span class="term" data-term="dhcp">DHCP</span> (Dynamic Host Configuration Protocol)
+      آدرس IP، Gateway، DNS و سایر پارامترها را به‌صورت خودکار به کلاینت‌ها می‌دهد.
+    </p>
+
+    <p><strong>سه جزء اصلی DHCP در RouterOS:</strong></p>
+    <ol>
+      <li><strong>IP Pool:</strong> محدوده‌ی IPهای قابل تخصیص</li>
+      <li><strong>DHCP Network:</strong> تنظیمات هر Subnet (Gateway، DNS)</li>
+      <li><strong>DHCP Server:</strong> سرویس روی یک Interface</li>
+    </ol>
+
+    <pre><code># ===== پیکربندی کامل DHCP Server =====
+
+# گام ۱: IP Pool
+[admin@MikroTik] > /ip pool add \
+    name=lan-pool \
+    ranges=192.168.88.10-192.168.88.254 \
+    comment="LAN DHCP Range"
+
+# گام ۲: DHCP Network (تنظیمات Subnet)
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.88.0/24 \
+    gateway=192.168.88.1 \
+    dns-server=192.168.88.1 \
+    netmask=24 \
+    comment="LAN Network"
+
+# گام ۳: DHCP Server
+[admin@MikroTik] > /ip dhcp-server add \
+    name=lan-dhcp \
+    interface=bridge-lan \
+    address-pool=lan-pool \
+    lease-time=1d \
+    disabled=no \
+    comment="LAN DHCP Server"
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip dhcp-server print
+[admin@MikroTik] > /ip dhcp-server lease print
+[admin@MikroTik] > /ip dhcp-server lease print detail</code></pre>
+
+    <!-- ==== ۵.۷ ==== -->
+    <h3>۵.۷ DHCP Pool و Network</h3>
+
+    <p><strong>انواع Pool:</strong></p>
+    <ul>
+      <li><strong>Range مشخص:</strong> <code>ranges=192.168.1.10-192.168.1.200</code></li>
+      <li><strong>چند Range:</strong> <code>ranges=192.168.1.10-100,192.168.1.150-200</code></li>
+      <li><strong>کل Subnet:</strong> <code>ranges=192.168.1.0/24</code></li>
+    </ul>
+
+    <pre><code># ===== Pool با چند Range =====
+[admin@MikroTik] > /ip pool add \
+    name=multi-range \
+    ranges=192.168.1.10-100,192.168.1.150-200
+
+# ===== Pool با Next-Pool (Pool بعدی بعد از اتمام این) =====
+[admin@MikroTik] > /ip pool add \
+    name=pool1 \
+    ranges=192.168.1.10-100 \
+    next-pool=pool2
+
+[admin@MikroTik] > /ip pool add \
+    name=pool2 \
+    ranges=192.168.2.10-100
+
+# ===== مشاهده Poolها =====
+[admin@MikroTik] > /ip pool print
+[admin@MikroTik] > /ip pool print detail
+
+# ===== Network — تنظیمات Subnet =====
+# چند Subnet در یک Pool می‌توانند باشند
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.1.0/24 \
+    gateway=192.168.1.1 \
+    dns-server=8.8.8.8,1.1.1.1
+
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.2.0/24 \
+    gateway=192.168.2.1 \
+    dns-server=192.168.2.1</code></pre>
+
+    <!-- ==== ۵.۸ ==== -->
+    <h3>۵.۸ DHCP Lease Time و Reservations</h3>
+
+    <p>
+      <strong>Lease Time</strong> مدت زمانی است که یک Client می‌تواند از IP استفاده کند.
+      بعد از اتمام، باید تمدید کند.
+    </p>
+
+    <pre><code># ===== تنظیم Lease Time =====
+[admin@MikroTik] > /ip dhcp-server set lan-dhcp lease-time=1d
+
+# فرمت‌های مختلف:
+# 1d      → 1 روز
+# 12h     → 12 ساعت
+# 1h30m   → 1 ساعت و 30 دقیقه
+# 30m     → 30 دقیقه
+# 1w      → 1 هفته
+# 00:30:00 → 30 دقیقه
+
+# ===== Static Lease (IP Reservation) =====
+# یک دستگاه همیشه یک IP ثابت بگیرد (بر اساس MAC)
+
+[admin@MikroTik] > /ip dhcp-server lease add \
+    address=192.168.88.100 \
+    mac-address=AA:BB:CC:DD:EE:FF \
+    server=lan-dhcp \
+    comment="Manager Laptop"
+
+# یا اجازه بده IP خودش را از Pool بگیرد
+[admin@MikroTik] > /ip dhcp-server lease add \
+    mac-address=AA:BB:CC:DD:EE:FE \
+    server=lan-dhcp \
+    comment="Reception PC"
+
+# ===== مشاهده Leaseها =====
+[admin@MikroTik] > /ip dhcp-server lease print
+# Flags: X - disabled, R - radius, D - dynamic, W - waiting
+#       H - hotspot, B - blocked
+
+# ===== تبدیل Lease داینامیک به Static =====
+[admin@MikroTik] > /ip dhcp-server lease make-static 0
+
+# ===== حذف Lease =====
+[admin@MikroTik] > /ip dhcp-server lease remove 0
+
+# ===== Block کردن یک Client =====
+[admin@MikroTik] > /ip dhcp-server lease set 0 blocked=yes
+# یا
+[admin@MikroTik] > /ip dhcp-server lease disable 0</code></pre>
+
+    <!-- ==== ۵.۹ ==== -->
+    <h3>۵.۹ DHCP Client — پیکربندی</h3>
+
+    <p>
+      DHCP Client برای دریافت IP از ISP یا سرور DHCP دیگر استفاده می‌شود.
+    </p>
+
+    <pre><code># ===== پیکربندی DHCP Client =====
+[admin@MikroTik] > /ip dhcp-client add \
+    interface=ether1 \
+    disabled=no \
+    comment="WAN from ISP"
+
+# ===== با تنظیمات پیشرفته =====
+[admin@MikroTik] > /ip dhcp-client add \
+    interface=ether1 \
+    use-peer-dns=yes \
+    use-peer-ntp=yes \
+    add-default-route=yes \
+    disabled=no
+
+# پارامترها:
+# use-peer-dns      → استفاده از DNS ISP
+# use-peer-ntp      → استفاده از NTP ISP
+# add-default-route → اضافه کردن Default Route خودکار
+# dhcp-options      → دریافت Optionهای خاص
+
+# ===== مشاهده وضعیت =====
+[admin@MikroTik] > /ip dhcp-client print
+[admin@MikroTik] > /ip dhcp-client print detail
+# ببین: status=bound، address، gateway، dns
+
+# ===== Renew کردن =====
+[admin@MikroTik] > /ip dhcp-client renew 0
+
+# ===== Release کردن =====
+[admin@MikroTik] > /ip dhcp-client release 0
+
+# ===== Client ID =====
+# برخی ISPها به Client ID وابسته هستند
+[admin@MikroTik] > /ip dhcp-client set 0 client-id=my-client-id
+# یا MAC خود Interface را بفرست
+[admin@MikroTik] > /ip dhcp-client set 0 client-id=00:11:22:33:44:55</code></pre>
+
+    <!-- ==== ۵.۱۰ ==== -->
+    <h3>۵.۱۰ DHCP Relay (Relay Agent)</h3>
+
+    <p>
+      اگر سرور DHCP در یک Subnet دیگر باشد، روتر نمی‌تواند Broadcast کلاینت را
+      به آن برساند. راه‌حل: <strong>DHCP Relay</strong>.
+    </p>
+
+    <pre><code># ===== سناریو =====
+# سرور DHCP در شبکه‌ی 10.0.0.0/24 (جایی در شبکه)
+# کلاینت‌ها در شبکه‌ی 192.168.1.0/24
+
+# RouterOS با DHCP Relay درخواست کلاینت را به سرور می‌فرستد
+
+[admin@MikroTik] > /ip dhcp-relay add \
+    name=relay-lan \
+    interface=ether2 \
+    dhcp-server=10.0.0.5 \
+    local-address=192.168.1.1 \
+    disabled=no
+
+# پارامترها:
+# interface       → Interface سمت کلاینت
+# dhcp-server     → IP سرور DHCP
+# local-address   → آدرس روتر در Subnet کلاینت
+# delay           → تأخیر در ارسال (ثانیه)
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip dhcp-relay print
+[admin@MikroTik] > /ip dhcp-relay print detail
+
+# ===== نکات مهم =====
+# - روی Interface سمت کلاینت، DHCP Server نباید فعال باشد
+# - local-address باید در Subnet کلاینت باشد
+# - در سرور DHCP باید Subnet کلاینت تعریف شده باشد</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      DHCP Relay در Cisco معادل <code>ip helper-address</code> است.
+      در MikroTik به‌صورت یک سرویس جداگانه پیکربندی می‌شود.
+    </div>
+
+    <!-- ==== ۵.۱۱ ==== -->
+    <h3>۵.۱۱ DHCP Options — تنظیمات پیشرفته</h3>
+
+    <pre><code># ===== DHCP Optionهای رایج =====
+# Option 1   → Subnet Mask
+# Option 3   → Router (Gateway)
+# Option 6   → DNS Server
+# Option 15  → Domain Name
+# Option 42  → NTP Server
+# Option 66  → TFTP Server
+# Option 67  → Bootfile Name
+# Option 119 → Domain Search List
+# Option 121 → Classless Static Routes
+# Option 150 → TFTP Server (Cisco)
+# Option 252 → WPAD (Proxy)
+
+# ===== ارسال NTP Server به کلاینت‌ها =====
+[admin@MikroTik] > /ip dhcp-server network set 0 \
+    ntp-server=192.168.88.1
+
+# ===== ارسال Domain Name =====
+[admin@MikroTik] > /ip dhcp-server network set 0 \
+    domain=company.local
+
+# ===== ارسال Custom Option =====
+[admin@MikroTik] > /ip dhcp-server option add \
+    name=ntp-server \
+    code=42 \
+    value="'192.168.88.1'"
+
+[admin@MikroTik] > /ip dhcp-server option add \
+    name=tftp-boot \
+    code=66 \
+    value="'192.168.88.5'"
+
+[admin@MikroTik] > /ip dhcp-server option add \
+    name=cisco-phone-tftp \
+    code=150 \
+    value="'192.168.88.10'"
+
+# ===== اعمال Option روی Network =====
+[admin@MikroTik] > /ip dhcp-server network set 0 \
+    dhcp-option=ntp-server,tftp-boot
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip dhcp-server option print
+[admin@MikroTik] > /ip dhcp-server network print detail</code></pre>
+
+    <!-- ==== ۵.۱۲ ==== -->
+    <h3>۵.۱۲ Netwatch — پایش و اسکریپت</h3>
+
+    <p>
+      <span class="term" data-term="netwatch">Netwatch</span> ابزاری برای پایش
+      یک IP یا Host است. اگر Host پاسخ ندهد، می‌تواند اسکریپت اجرا کند.
+    </p>
+
+    <pre><code># ===== پیکربندی پایه Netwatch =====
+[admin@MikroTik] > /tool netwatch add \
+    host=8.8.8.8 \
+    interval=10s \
+    timeout=1s \
+    comment="Monitor Google DNS"
+
+# پارامترها:
+# host      → IP یا Hostname
+# interval  → فاصله بین چک‌ها
+# timeout   → مدت انتظار برای پاسخ
+
+# ===== با اسکریپت =====
+[admin@MikroTik] > /tool netwatch add \
+    host=8.8.8.8 \
+    interval=30s \
+    timeout=1s \
+    up-script="/log info \"Internet is UP\"" \
+    down-script="/log warning \"Internet is DOWN\""
+
+# ===== با نوع پروتکل =====
+[admin@MikroTik] > /tool netwatch add \
+    host=192.168.1.100 \
+    type=tcp-conn \
+    port=443 \
+    interval=10s \
+    comment="Monitor HTTPS Server"
+
+# انواع:
+# icmp      → Ping (پیش‌فرض)
+# tcp-conn  → TCP Connection
+# http-get  → HTTP GET Request
+# simple    → TCP Connect + Close
+# udp       → UDP Packet
+
+# ===== مشاهده وضعیت =====
+[admin@MikroTik] > /tool netwatch print
+# ستون status: up یا down
+
+[admin@MikroTik] > /tool netwatch print detail
+# اطلاعات کامل شامل since، status، comment</code></pre>
+
+    <pre><code># ===== مثال: Failover خودکار با Netwatch =====
+
+# ۱. Netwatch روی ISP-A
+[admin@MikroTik] > /tool netwatch add \
+    host=8.8.8.8 \
+    interval=10s \
+    down-script="/ip route disable [find comment=\"Primary ISP\"]" \
+    up-script="/ip route enable [find comment=\"Primary ISP\"]"
+
+# ۲. روی ISP-B هم مشابه
+[admin@MikroTik] > /tool netwatch add \
+    host=1.1.1.1 \
+    interval=10s \
+    down-script="/ip route disable [find comment=\"Backup ISP\"]" \
+    up-script="/ip route enable [find comment=\"Backup ISP\"]"
+
+# ===== نتیجه =====
+# - اگر ISP-A قطع شود، Default Route آن غیرفعال می‌شود
+# - Backup ISP خودکار فعال می‌شود
+# - وقتی ISP-A برگردد، دوباره فعال می‌شود
+
+# ===== مثال پیشرفته: اعلان با Email =====
+[admin@MikroTik] > /tool netwatch add \
+    host=192.168.1.100 \
+    interval=1m \
+    down-script="
+        /tool e-mail send \
+            to=admin@company.ir \
+            subject=\"Alert: 192.168.1.100 is DOWN\" \
+            body=\"Critical server unreachable\" \
+            server=smtp.gmail.com
+    "</code></pre>
+
+    <!-- ==== ۵.۱۳ ==== -->
+    <h3>۵.۱۳ Ping و Traceroute پیشرفته</h3>
+
+    <pre><code># ===== Ping پیشرفته =====
+[admin@MikroTik] > /ping 8.8.8.8
+
+# با تنظیمات:
+[admin@MikroTik] > /ping 8.8.8.8 \
+    count=10 \
+    interval=1s \
+    size=1500 \
+    src-address=192.168.1.1
+
+# پارامترها:
+# count      → تعداد Ping
+# interval   → فاصله بین Pingها
+# size       → اندازه Payload
+# src-address → آدرس مبدأ
+# interface  → Interface خروجی
+# routing-table → جدول مسیریابی
+
+# ===== Ping از یک Interface خاص =====
+[admin@MikroTik] > /ping 8.8.8.8 interface=ether1
+
+# ===== Ping با Don't Fragment (تست MTU) =====
+[admin@MikroTik] > /ping 8.8.8.8 size=1472 do-not-fragment
+
+# ===== Traceroute =====
+[admin@MikroTik] > /tool traceroute 8.8.8.8
+[admin@MikroTik] > /tool traceroute 8.8.8.8 count=3 timeout=1s
+
+# ===== Traceroute با Protocol =====
+[admin@MikroTik] > /tool traceroute 8.8.8.8 protocol=icmp
+# گزینه‌ها: icmp، udp، tcp
+
+# ===== Bandwidth Test =====
+[admin@MikroTik] > /tool bandwidth-test address=192.168.1.100 \
+    user=admin password=pass \
+    direction=both \
+    duration=10s
+
+# برای کار کردن، در سرور مقابل باید bandwidth-server فعال باشد:
+[admin@Server] > /tool bandwidth-server set enabled=yes</code></pre>
+
+    <!-- ==== ۵.۱۴ ==== -->
+    <h3>۵.۱۴ Profiler و Logging</h3>
+
+    <pre><code># ===== Profiler =====
+# ابزار تحلیل مصرف CPU
+[admin@MikroTik] > /tool profiler
+
+# خروجی:
+# NAME         CPU USAGE
+# ethernet     5.2%
+# firewall     12.3%
+# routing      8.1%
+# wireless     3.4%
+# ...
+
+# با Duration:
+[admin@MikroTik] > /tool profiler duration=10s
+
+# ===== Logging =====
+[admin@MikroTik] > /log print
+[admin@MikroTik] > /log print where topics~"dhcp"
+[admin@MikroTik] > /log print where topics~"arp"
+[admin@MikroTik] > /log print where topics~"error"
+
+# ===== Topics مهم =====
+# dhcp        → رویدادهای DHCP
+# dhcp-error  → خطاهای DHCP
+# arp         → رویدادهای ARP
+# route       → رویدادهای Routing
+# interface   → وضعیت Interface
+# wireless    → رویدادهای Wireless
+# system      → رویدادهای سیستمی
+# error       → خطاها
+# warning     → هشدارها
+# info        → اطلاعات
+# debug       → Debug
+
+# ===== تنظیم Logging به سرور =====
+[admin@MikroTik] > /system logging action add \
+    name=remote \
+    target=remote \
+    remote=192.168.1.100 \
+    remote-port=514
+
+[admin@MikroTik] > /system logging add \
+    topics=dhcp \
+    action=remote
+
+[admin@MikroTik] > /system logging add \
+    topics=arp \
+    action=remote
+
+# ===== مشاهده Logging Rules =====
+[admin@MikroTik] > /system logging print
+[admin@MikroTik] > /system logging action print</code></pre>
+
+    <!-- ==== ۵.۱۵ ==== -->
+    <h3>۵.۱۵ عیب‌یابی ARP و DHCP</h3>
+
+    <pre><code># ===== مشکل: کلاینت IP نمی‌گیرد =====
+
+# ۱. چک کن DHCP Server فعال است
+[admin@MikroTik] > /ip dhcp-server print
+# ببین: disabled=no
+
+# ۲. Pool درست تعریف شده؟
+[admin@MikroTik] > /ip pool print
+# ببین: ranges درست، next-pool اگر لازم
+
+# ۳. Network درست تعریف شده؟
+[admin@MikroTik] > /ip dhcp-server network print
+# ببین: address، gateway، dns درست
+
+# ۴. Interface DHCP Server درست است؟
+[admin@MikroTik] > /ip dhcp-server print detail
+# ببین: interface=bridge-lan (نه یک Interface دیگر)
+
+# ۵. Interface فعال است؟
+[admin@MikroTik] > /interface print
+# ببین: R = Running
+
+# ۶. IP روتر روی Interface درست است؟
+[admin@MikroTik] > /ip address print
+# ببین: IP در همان Subnet DHCP
+
+# ۷. Firewall جلوی DHCP را نگرفته؟
+[admin@MikroTik] > /ip firewall filter print
+# ببین Ruleهای Drop روی UDP/67-68
+
+# ۸. Log را ببین
+[admin@MikroTik] > /log print where topics~"dhcp"
+# پیام‌هایی مثل:
+# - "DHCP server: offering 192.168.88.10 to client..."
+# - "DHCP server: no more addresses in pool" → Pool تمام شده
+
+# ۹. از سمت Client ببین
+[admin@Client] > /ip dhcp-client print detail
+# ببین: status=bound یا status=searching
+
+# ۱۰. Packet Sniffer
+[admin@MikroTik] > /tool sniffer quick interface=bridge-lan
+# پورت UDP/67-68 را فیلتر کن
+
+# ===== مشکل: ARP کار نمی‌کند =====
+[admin@MikroTik] > /ip arp print
+# ببین IP مورد نظر در جدول هست
+
+[admin@MikroTik] > /interface set ether2 arp=enabled
+# اگر reply-only یا disabled است، تغییر بده
+
+[admin@MikroTik] > /log print where topics~"arp"
+# لاگ ARP را ببین</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه در DHCP Network، Gateway و DNS را درست تنظیم کن — این دو، بیشترین
+      تأثیر روی تجربه‌ی کاربر را دارند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار امنیتی</div>
+      در شبکه‌های حساس، از <strong>reply-only</strong> برای ARP استفاده کن
+      و Static ARP برای هر دستگاه مجاز اضافه کن. این جلوی ARP Spoofing را می‌گیرد.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      Netwatch + اسکریپت = Failover خودکار. اگر Default Route به ISP-A قطع شود،
+      Netwatch می‌تواند خودکار به ISP-B سوییچ کند — بدون دخالت انسان.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۶ با <span class="term" data-term="firewall">Firewall</span>،
+      NAT، Connection Tracking و Address-List آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>DHCP Option 82</strong> (Relay Agent Information) می‌توانی
+      DHCP را در محیط‌های پیچیده‌ی ISP کنترل کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — DHCP Server کامل برای دفتر</h3>
+    <pre><code># ===== سناریو: روتر با یک Bridge LAN =====
+
+# ۱. Bridge
+[admin@MikroTik] > /interface bridge add name=br-lan
+[admin@MikroTik] > /interface bridge port
+add bridge=br-lan interface=ether2
+add bridge=br-lan interface=ether3
+add bridge=br-lan interface=ether4
+
+# ۲. IP روتر
+[admin@MikroTik] > /ip address add address=192.168.10.1/24 interface=br-lan
+
+# ۳. Pool
+[admin@MikroTik] > /ip pool add \
+    name=office-pool \
+    ranges=192.168.10.50-192.168.10.200
+
+# ۴. Network
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.10.0/24 \
+    gateway=192.168.10.1 \
+    dns-server=8.8.8.8,1.1.1.1 \
+    domain=office.local \
+    ntp-server=192.168.10.1 \
+    netmask=24
+
+# ۵. DHCP Server
+[admin@MikroTik] > /ip dhcp-server add \
+    name=office-dhcp \
+    interface=br-lan \
+    address-pool=office-pool \
+    lease-time=1d \
+    disabled=no
+
+# ۶. Static Leases برای سرورها
+[admin@MikroTik] > /ip dhcp-server lease add \
+    address=192.168.10.5 \
+    mac-address=AA:BB:CC:DD:EE:01 \
+    comment="File Server"
+
+[admin@MikroTik] > /ip dhcp-server lease add \
+    address=192.168.10.6 \
+    mac-address=AA:BB:CC:DD:EE:02 \
+    comment="Printer"
+
+# ۷. بررسی
+[admin@MikroTik] > /ip dhcp-server lease print
+[admin@MikroTik] > /ip dhcp-server print</code></pre>
+
+    <h3>مثال ۲ — DHCP Relay برای شبکه‌ی Remote</h3>
+    <pre><code># ===== سناریو =====
+# شبکه‌ی مرکزی: 10.0.0.0/24 (سرور DHCP: 10.0.0.5)
+# شبکه‌ی شعبه: 192.168.5.0/24 (روتر: 192.168.5.1)
+
+# در شعبه:
+[admin@Branch] > /ip address add address=192.168.5.1/24 interface=ether2
+
+[admin@Branch] > /ip dhcp-relay add \
+    name=relay-branch \
+    interface=ether2 \
+    dhcp-server=10.0.0.5 \
+    local-address=192.168.5.1 \
+    disabled=no
+
+# در مرکزی (سرور DHCP):
+[admin@Central] > /ip dhcp-server network add \
+    address=192.168.5.0/24 \
+    gateway=192.168.5.1 \
+    dns-server=10.0.0.5
+
+[admin@Central] > /ip pool add \
+    name=branch-pool \
+    ranges=192.168.5.50-192.168.5.200
+
+[admin@Central] > /ip dhcp-server add \
+    name=central-dhcp \
+    interface=ether2 \
+    address-pool=branch-pool,branch-pool2 \
+    disabled=no
+
+# ===== نتیجه =====
+# کلاینت در شعبه، درخواست DHCP می‌فرستد
+# Branch Router آن را به 10.0.0.5 Relay می‌کند
+# سرور IP از branch-pool می‌دهد</code></pre>
+
+    <h3>مثال ۳ — Netwatch برای Failover بین دو ISP</h3>
+    <pre><code># ===== پیکربندی دو ISP =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=1 \
+    comment="Primary ISP"
+
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    distance=5 \
+    comment="Backup ISP"
+
+# ===== Netwatch برای ISP-A =====
+[admin@MikroTik] > /tool netwatch add \
+    host=8.8.8.8 \
+    interval=10s \
+    timeout=2s \
+    down-script="{
+        /ip route disable [find comment=\"Primary ISP\"];
+        /log warning \"ISP-A DOWN - Switching to backup\"
+    }" \
+    up-script="{
+        /ip route enable [find comment=\"Primary ISP\"];
+        /log info \"ISP-A UP - Switching back\"
+    }"
+
+# ===== نتیجه =====
+# اگر 8.8.8.8 پاسخ ندهد:
+# - Primary ISP غیرفعال می‌شود
+# - Backup ISP فعال می‌شود
+# - وقتی 8.8.8.8 پاسخ داد، Primary دوباره فعال می‌شود
+
+# ===== بررسی =====
+[admin@MikroTik] > /tool netwatch print
+[admin@MikroTik] > /ip route print where dst-address="0.0.0.0/0"</code></pre>
+
+    <h3>مثال ۴ — امنیت ARP با reply-only</h3>
+    <pre><code># ===== سناریو: فقط دستگاه‌های مجاز به شبکه دسترسی دارند =====
+
+# ۱. Static ARP برای هر دستگاه مجاز
+[admin@MikroTik] > /ip arp
+add address=192.168.1.10 mac-address=AA:BB:CC:DD:EE:01 interface=ether2 comment="Server"
+add address=192.168.1.11 mac-address=AA:BB:CC:DD:EE:02 interface=ether2 comment="Manager"
+add address=192.168.1.12 mac-address=AA:BB:CC:DD:EE:03 interface=ether2 comment="Reception"
+
+# ۲. ARP Mode را reply-only کن
+[admin@MikroTik] > /interface ethernet set ether2 arp=reply-only
+
+# ===== نتیجه =====
+# - دستگاه‌های بالا: ارتباط کامل
+# - دستگاه‌های ناشناس: ARP Reply نمی‌گیرند → ارتباط قطع
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip arp print where !dynamic
+[admin@MikroTik] > /interface ethernet print where name=ether2
+
+# ===== نکته =====
+# در این حالت، اگر یک دستگاه IP خود را عوض کند،
+# نمی‌تواند ارتباط برقرار کند چون ARP Reply نمی‌گیرد</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی کلاینت IP نمی‌گیرد</h3>
+    <pre><code># ===== چک‌لیست مرحله‌به‌مرحله =====
+
+# ۱. از سمت Client: DHCP Client status
+[admin@Client] > /ip dhcp-client print detail
+# ببین: status=searching (مشکل) یا bound (OK)
+
+# ۲. از سمت سرور: DHCP Server فعال است؟
+[admin@Server] > /ip dhcp-server print
+# ببین: disabled=no
+
+# ۳. سرور روی Interface درست است؟
+[admin@Server] > /ip dhcp-server print detail
+# ببین: interface=bridge-lan
+
+# ۴. Pool و Network درست است؟
+[admin@Server] > /ip pool print
+[admin@Server] > /ip dhcp-server network print
+
+# ۵. آیا Pool تمام شده؟
+[admin@Server] > /ip dhcp-server lease print count-only
+# ببین آیا نزدیک به تعداد Pool است
+
+# ۶. آیا Free Lease هست؟
+[admin@Server] > /ip dhcp-server lease print where status=waiting
+
+# ۷. Firewall:
+[admin@Server] > /ip firewall filter print where chain=input
+# ببین Rule Drop روی UDP/67-68
+
+# ۸. Log:
+[admin@Server] > /log print where topics~"dhcp"
+# پیام‌های مهم:
+# - "no more addresses" → Pool تمام
+# - "DHCP server: offering X to Y" → در حال ارائه
+# - "ignoring request" → Server اشتباه
+
+# ۹. Sniffer:
+[admin@Server] > /tool sniffer quick interface=bridge-lan
+# ترافیک UDP/67-68 را ببین
+
+# ۱۰. بررسی Ping از سرور به Client
+[admin@Server] > /ping 192.168.1.100
+# اگر Client هنوز IP نگرفته، نمی‌توانی ping کنی
+
+# ===== مشکل: IP دریافت می‌شود ولی Internet کار نمی‌کند =====
+# - بررسی Default Route
+[admin@Client] > /ip route print
+
+# - بررسی DNS
+[admin@Client] > /ping google.com
+
+# - بررسی Gateway در DHCP Network
+[admin@Server] > /ip dhcp-server network print detail
+# ببین gateway درست است
+
+# - بررسی NAT
+[admin@Server] > /ip firewall nat print
+# ببین masquerade درست تنظیم شده</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>دو RouterOS در GNS3/EVE-NG بساز</li>
+      <li>روی روتر اول یک Bridge با ۲ پورت Ethernet بساز</li>
+      <li>IP روتر را 192.168.10.1/24 روی Bridge بگذار</li>
+      <li>DHCP Pool بساز با رنج 192.168.10.50-200</li>
+      <li>DHCP Network با gateway و DNS تعریف کن</li>
+      <li>DHCP Server روی Bridge فعال کن</li>
+      <li>یک PC به روتر وصل کن و IP بگیر</li>
+      <li>Static Lease برای PC با MAC مشخص بساز</li>
+      <li>ARP Mode را روی Bridge به reply-only تغییر بده</li>
+      <li>Static ARP برای PC بساز و ارتباط را تست کن</li>
+      <li>یک دستگاه دیگر وصل کن — نباید IP بگیرد</li>
+      <li>ARP Mode را به enabled برگردان و دوباره تست کن</li>
+      <li>Netwatch روی 8.8.8.8 با اسکریپت Log راه‌اندازی کن</li>
+      <li>یک Default Route به ISP شبیه‌سازی‌شده اضافه کن</li>
+      <li>Netwatch را طوری تنظیم کن که Route را Disable/Enable کند</li>
+      <li>با قطعی مصنوعی ISP، Failover را تست کن</li>
+      <li>DHCP Relay را برای یک Subnet دوم راه‌اندازی کن</li>
+      <li>Log تمام رویدادهای DHCP و ARP را در سرور Syslog ببین</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>DHCP IP نمی‌دهد:</strong> Pool خالی، Network اشتباه، یا Server روی Interface غلط.</li>
+      <li><strong>DHCP Pool تمام شده:</strong> Pool را گسترده‌تر کن یا Lease Time را کاهش بده.</li>
+      <li><strong>DHCP Relay کار نمی‌کند:</strong> local-address باید در Subnet کلاینت باشد.</li>
+      <li><strong>ARP Cache پر می‌شود:</strong> ARP Spoofing یا اسکن شبکه — بررسی کن.</li>
+      <li><strong>reply-only روی Bridge:</strong> ARP Mode باید روی خود Bridge تنظیم شود، نه پورت‌های عضو.</li>
+      <li><strong>Proxy ARP مشکل می‌سازد:</strong> با reply-only ترکیب نکن — Conflict.</li>
+      <li><strong>Netwatch همیشه Down:</strong> Host قابل دسترس نیست یا Interval کوتاه است.</li>
+      <li><strong>اسکریپت Netwatch خطا می‌دهد:</strong> مسیرها و کوتیشن‌ها را چک کن — خطای Syntax باعث شکست می‌شود.</li>
+      <li><strong>DHCP Option اعمال نمی‌شود:</strong> Option باید در Network اضافه شود، نه فقط تعریف شود.</li>
+      <li><strong>کلاینت IP اشتباه می‌گیرد (169.254.x.x):</strong> DHCP Server پاسخ نمی‌دهد — Firewall یا Interface را چک کن.</li>
+      <li><strong>Static Lease با MAC اشتباه:</strong> MAC باید دقیقاً مطابق دستگاه باشد.</li>
+      <li><strong>بعد از تغییر ARP Mode، اتصال قطع شد:</strong> از Safe Mode استفاده کن — تغییرات بعد از Logout برمی‌گردند.</li>
+      <li><strong>DHCP Client از ISP IP نمی‌گیرد:</strong> MAC در ISP باید Register شده باشد یا Client ID درست باشد.</li>
+      <li><strong>Netwatch Script اجرا نمی‌شود:</strong> در ستون Run باید فعال باشد — Policy کاربر را چک کن.</li>
+      <li><strong>Profiler کند است:</strong> فقط در زمان نیاز فعال کن — Performance را پایین می‌آورد.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="arp">ARP</span> •
+      <span class="term" data-term="dhcp">DHCP</span> •
+      <span class="term" data-term="dhcp-relay">DHCP Relay</span> •
+      <span class="term" data-term="netwatch">Netwatch</span> •
+      <span class="term" data-term="profiler">Profiler</span> •
+      <span class="term" data-term="syslog">Syslog</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-05" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) ARP چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> ترجمه MAC به IP</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> ترجمه IP به MAC</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> تخصیص IP</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> مسیریابی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) کدام ARP Mode به هیچ ARP Requestی پاسخ نمی‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> enabled</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> proxy-arp</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> disabled</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> reply-only</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت proxy-arp و local-proxy-arp چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> proxy-arp برای IPهای خارج، local-proxy-arp برای IPهای داخل Subnet</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> local-proxy-arp فقط برای IPv6</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> proxy-arp امن‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) reply-only در ARP چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> به همه پاسخ می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> به هیچ‌کس پاسخ نمی‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> فقط به IPهای Static ARP پاسخ می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> فقط برای Broadcast</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) DHCP Server در RouterOS چند جزء اصلی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> فقط یک — Server</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> سه — Pool، Network، Server</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> دو — Pool و Server</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> چهار — Pool، Network، Server، Client</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) کدام فرمت Lease Time درست است؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> 1day</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> 24hours</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> 1d</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> day1</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) دستور اختصاص IP ثابت به یک MAC در DHCP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> <code>/ip dhcp-server add-static</code></label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> <code>/ip dhcp-server lease add mac-address=X address=Y</code></label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> <code>/ip arp add</code></label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> <code>/ip pool reserve</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) DHCP Relay چه زمانی استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> وقتی سرور DHCP در همان شبکه است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> وقتی Client IP نمی‌گیرد</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> وقتی سرور DHCP در یک Subnet دیگر است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> برای رزرو IP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) Netwatch چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> DHCP Server</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> پایش یک Host با اسکریپت‌های Up/Down</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> NAT</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Wireless</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) اگر کلاینت IP 169.254.x.x بگیرد، مشکل از چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> کابل قطع است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> DNS کار نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> DHCP Server پاسخ نمی‌دهد — APIPA</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Gateway اشتباه</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) کدام دستور برای مشاهده ARP Table درست است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> <code>/interface print</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> <code>/ip arp print</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> <code>/ip route print</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> <code>/system resource print</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) Option 42 در DHCP چه چیزی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> DNS Server</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Gateway</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> NTP Server</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Domain Name</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) در DHCP Relay، local-address چه باید باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> IP سرور DHCP</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> IP روتر در Subnet کلاینت</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> IP هر اینترفیس</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> Loopback</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) Profiler چه چیزی را نشان می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> وضعیت Interface</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> جدول مسیریابی</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> مصرف CPU به تفکیک سرویس</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> Wireless Signal</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) برای Failover خودکار بین دو ISP از چه ترکیبی استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> فقط Distance</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Netwatch + Script که Route را Disable/Enable کند</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> فقط Check Gateway</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> DHCP Client</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی کامل با DHCP، ARP و Netwatch بساز:</p>
+    <ul>
+      <li><strong>روتر اصلی</strong> با Bridge LAN و IP Gateway</li>
+      <li><strong>DHCP Server</strong> با Pool مناسب و Lease Time ۱ روز</li>
+      <li><strong>Static Lease</strong> برای حداقل ۳ دستگاه (سرور، چاپگر، مدیریت)</li>
+      <li><strong>DHCP Options</strong> — NTP Server و Domain Name به کلاینت‌ها</li>
+      <li><strong>DHCP Client</strong> روی Interface WAN برای دریافت از ISP</li>
+      <li><strong>DHCP Relay</strong> برای یک Subnet دوم</li>
+      <li><strong>ARP Mode</strong> روی Bridge — reply-only برای امنیت</li>
+      <li><strong>Static ARP</strong> برای دستگاه‌های حساس</li>
+      <li><strong>Netwatch</strong> روی 8.8.8.8 برای پایش اینترنت</li>
+      <li><strong>Netwatch Script</strong> برای Failover بین دو ISP</li>
+      <li><strong>Syslog</strong> به سرور مرکزی برای لاگ DHCP و ARP</li>
+      <li>مستندسازی کامل با Export و دیاگرام شبکه</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Script بنویس که وقتی Pool DHCP نزدیک به اتمام شد، هشدار بفرستد.</li>
+        <li>یک ARP Spoofing ساده از PC بساز و ببین reply-only چطور جلوی آن را می‌گیرد.</li>
+        <li>با Packet Sniffer، فرآیند DORA را در سطح بسته تحلیل کن.</li>
+        <li>Netwatch را با Email Alert ترکیب کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>ARP:</strong> ترجمه IP به MAC با Broadcast/Reply</li>
+      <li><strong>ARP Modes:</strong> enabled، disabled، proxy-arp، local-proxy-arp، reply-only</li>
+      <li><strong>reply-only:</strong> فقط به IPهای Static ARP پاسخ می‌دهد — امنیت بالاتر</li>
+      <li><strong>DHCP Server:</strong> سه جزء — Pool، Network، Server</li>
+      <li><strong>DHCP Pool:</strong> محدوده IPهای قابل تخصیص</li>
+      <li><strong>DHCP Network:</strong> تنظیمات Subnet (Gateway، DNS، NTP، Domain)</li>
+      <li><strong>Lease Time:</strong> فرمت 1d، 12h، 30m، 1w</li>
+      <li><strong>Static Lease:</strong> IP ثابت بر اساس MAC</li>
+      <li><strong>DHCP Client:</strong> دریافت IP از ISP یا سرور دیگر</li>
+      <li><strong>DHCP Relay:</strong> برای سرور DHCP در Subnet دیگر</li>
+      <li><strong>DHCP Options:</strong> 3=Gateway، 6=DNS، 42=NTP، 66=TFTP، 150=Cisco TFTP</li>
+      <li><strong>Netwatch:</strong> پایش Host با اسکریپت Up/Down — Failover خودکار</li>
+      <li><strong>Ping پیشرفته:</strong> count، size، src-address، interface، do-not-fragment</li>
+      <li><strong>Traceroute:</strong> icmp/udp/tcp — تحلیل مسیر</li>
+      <li><strong>Profiler:</strong> تحلیل CPU به تفکیک سرویس</li>
+      <li><strong>Logging:</strong> Topics مختلف — dhcp، arp، wireless، error</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_04.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-05">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_06.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

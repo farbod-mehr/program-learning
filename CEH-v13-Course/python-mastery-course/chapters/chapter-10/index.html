@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 10: توابع - بخش اول: مبانی</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 10: توابع - بخش اول: مبانی</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-09/index.html">قبلی</a>
+            <a href="../chapter-11/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۰: توابع - بخش اول: مبانی</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۰: توابع - بخش اول: مبانی</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی با مبانی پایتون)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر متغیرها و انواع داده (فصل ۲)</li>
+                <li>✅ آشنایی با ساختارهای شرطی و حلقه‌ها (فصل‌های ۴ و ۵)</li>
+                <li>✅ درک اولیه از لیست‌ها و دیکشنری‌ها (فصل‌های ۶ و ۷)</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>توابع</strong> را با <code dir='ltr'>def</code> تعریف کنید.</li>
+                <li>✔️ از <strong>پارامترها و آرگومان‌ها</strong> در توابع استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>return</code></strong> مقدار را از تابع بازگردانید.</li>
+                <li>✔️ از <strong>پارامترهای پیش‌فرض (Default Parameters)</strong> استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>*args</code></strong> و <strong><code dir='ltr'>**kwargs</code></strong> آرگومان‌های متغیر دریافت کنید.</li>
+                <li>✔️ از <strong>Docstring</strong> برای مستندسازی توابع استفاده کنید.</li>
+                <li>✔️ مفهوم <strong>Scope (محدوده)</strong> متغیرها را در توابع درک کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>تصور کنید برنامه‌ای می‌نویسید که باید یک کار را چندین بار انجام دهد. مثلاً محاسبه‌ی مساحت چندین مستطیل مختلف. آیا هر بار کد را تکرار می‌کنید؟ یا یکبار کد را می‌نویسید و هر زمان که نیاز داشتید، آن را فراخوانی می‌کنید؟</p>
+            <p><strong>توابع (Functions)</strong> یکی از مهم‌ترین مفاهیم در هر زبان برنامه‌نویسی هستند. آنها به شما اجازه می‌دهند کد را به <strong>بلوک‌های قابل استفاده‌ی مجدد</strong> تقسیم کنید، از تکرار جلوگیری کنید و برنامه را <strong>سازمان‌یافته‌تر و خواناتر</strong> بسازید.</p>
+            <p>در این فصل با <strong>همه‌ی مبانی توابع</strong> در پایتون آشنا می‌شوید: تعریف تابع، پارامترها، آرگومان‌ها، <code dir='ltr'>return</code>، پارامترهای پیش‌فرض، <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code>، docstring و scope متغیرها. این مبانی پایه‌ی مباحث پیشرفته‌تر مانند توابع لاندا، دکوریتورها و closureها در فصل بعدی هستند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۰.۱ -->
+            <div class="sub-section">
+                <h4>۱۰.۱ تعریف تابع با <code dir='ltr'>def</code> و فراخوانی</h4>
+                <p>توابع با کلمه‌ی کلیدی <strong><code dir='ltr'>def</code></strong> تعریف می‌شوند و با نام تابع و پرانتز فراخوانی می‌شوند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># تعریف یک تابع ساده
+def say_hello():
+    print("سلام دنیا!")
+
+# فراخوانی تابع
+say_hello()  # "سلام دنیا!"
+
+# تابع با پارامتر
+def greet(name):
+    print(f"سلام {name}!")
+
+greet("علی")   # "سلام علی!"
+greet("سارا")  # "سلام سارا!"
+
+# تابع با چند پارامتر
+def add(a, b):
+    result = a + b
+    print(f"{a} + {b} = {result}")
+
+add(5, 3)  # "5 + 3 = 8"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام دنیا!</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span><br>
+                    <span class="highlight">➜</span> <span class="result">5 + 3 = 8</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> در پایتون، توابع قبل از فراخوانی باید تعریف شده باشند. ترتیب تعریف توابع مهم است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع به نام <code dir='ltr'>multiply</code> با دو پارامتر تعریف کنید که حاصلضرب آنها را چاپ کند. سپس تابع را با اعداد مختلف فراخوانی کنید.
+                </div>
+            </div>
+
+            <!-- ۱۰.۲ -->
+            <div class="sub-section">
+                <h4>۱۰.۲ پارامترها و آرگومان‌ها</h4>
+                <ul>
+                    <li><strong>پارامتر (Parameter):</strong> متغیری که در تعریف تابع نوشته می‌شود.</li>
+                    <li><strong>آرگومان (Argument):</strong> مقداری که هنگام فراخوانی به تابع ارسال می‌شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># پارامترها: a و b
+def subtract(a, b):
+    return a - b
+
+# آرگومان‌ها: 10 و 4
+result = subtract(10, 4)
+print(result)  # 6
+
+# آرگومان‌های کلیدواژه‌ای (Keyword Arguments)
+result = subtract(b=4, a=10)  # ترتیب مهم نیست
+print(result)  # 6
+
+# ترکیب آرگومان‌های موقعیتی و کلیدواژه‌ای
+def introduce(name, age, city):
+    print(f"{name}، {age} ساله، اهل {city}")
+
+introduce("علی", 25, "تهران")
+introduce(name="سارا", city="اصفهان", age=30)
+
+# پارامترهای پیش‌فرض (Default Parameters)
+def greet_user(name, greeting="سلام"):
+    print(f"{greeting} {name}!")
+
+greet_user("علی")          # "سلام علی!"
+greet_user("سارا", "خوش آمدید")  # "خوش آمدید سارا!"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">6</span><br>
+                    <span class="highlight">➜</span> <span class="result">علی، 25 ساله، اهل تهران</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> پارامترهای پیش‌فرض باید بعد از پارامترهای بدون پیش‌فرض تعریف شوند. ترتیب مهم است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>create_profile</code> با پارامترهای نام، سن و شهر (با پیش‌فرض "تهران") تعریف کنید و با آرگومان‌های مختلف فراخوانی کنید.
+                </div>
+            </div>
+
+            <!-- ۱۰.۳ -->
+            <div class="sub-section">
+                <h4>۱۰.۳ <code dir='ltr'>return</code> و بازگرداندن مقدار</h4>
+                <p><strong><code dir='ltr'>return</code></strong> مقداری را از تابع به بیرون برمی‌گرداند و اجرای تابع را متوقف می‌کند. اگر <code dir='ltr'>return</code> ننویسید، تابع <code dir='ltr'>None</code> برمی‌گرداند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># تابع با return
+def square(x):
+    return x * x
+
+result = square(5)
+print(result)  # 25
+
+# تابع بدون return
+def print_square(x):
+    print(x * x)
+
+result = print_square(4)  # 16
+print(result)  # None
+
+# return شرطی
+def is_even(number):
+    if number % 2 == 0:
+        return True
+    else:
+        return False
+
+print(is_even(4))  # True
+print(is_even(7))  # False
+
+# return چندین مقدار (به‌صورت تاپل)
+def get_min_max(numbers):
+    return min(numbers), max(numbers)
+
+minimum, maximum = get_min_max([1, 5, 2, 8, 3])
+print(minimum, maximum)  # 1 8</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">25</span><br>
+                    <span class="highlight">➜</span> <span class="result">None</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">1 8</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> بعد از <code dir='ltr'>return</code> هیچ کد دیگری در تابع اجرا نمی‌شود. از این ویژگی برای خروج زودهنگام از تابع استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>calculate_bmi</code> با پارامترهای وزن و قد بنویسید که BMI را محاسبه کند و آن را برگرداند. (فرمول: <code dir='ltr'>weight / (height ** 2)</code>)
+                </div>
+            </div>
+
+            <!-- ۱۰.۴ -->
+            <div class="sub-section">
+                <h4>۱۰.۴ پارامترهای پیش‌فرض و <code dir='ltr'>None</code></h4>
+                <p>پارامترهای پیش‌فرض برای مواقعی که آرگومان ارسال نشود، مقدار پیش‌فرض را استفاده می‌کنند. برای پارامترهای قابل تغییر (مثل لیست) باید از <code dir='ltr'>None</code> استفاده کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># پارامتر پیش‌فرض ساده
+def greet(name, greeting="سلام"):
+    print(f"{greeting} {name}!")
+
+greet("علی")           # "سلام علی!"
+greet("سارا", "خوش آمدید")  # "خوش آمدید سارا!"
+
+# مشکل با پارامترهای قابل تغییر
+def add_item(item, items=[]):
+    items.append(item)
+    return items
+
+print(add_item("سیب"))  # ['سیب']
+print(add_item("موز"))  # ['سیب', 'موز'] ← مشکل! لیست بین فراخوانی‌ها به اشتراک گذاشته می‌شود
+
+# راه‌حل صحیح با None
+def add_item_correct(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items
+
+print(add_item_correct("سیب"))  # ['سیب']
+print(add_item_correct("موز"))  # ['موز']  ← درست
+
+# پارامترهای پیش‌فرض با محاسبه
+def create_user(name, age, city="تهران"):
+    return {"name": name, "age": age, "city": city}
+
+user1 = create_user("علی", 25)
+user2 = create_user("سارا", 30, "اصفهان")
+print(user1)  # {'name': 'علی', 'age': 25, 'city': 'تهران'}
+print(user2)  # {'name': 'سارا', 'age': 30, 'city': 'اصفهان'}</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">['سیب']</span><br>
+                    <span class="highlight">➜</span> <span class="result">['سیب', 'موز']</span><br>
+                    <span class="highlight">➜</span> <span class="result">['سیب']</span><br>
+                    <span class="highlight">➜</span> <span class="result">['موز']</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> برای پارامترهایی که لیست یا دیکشنری هستند، از <code dir='ltr'>None</code> به‌عنوان مقدار پیش‌فرض استفاده کنید و در بدنه تابع، مقدار جدید ایجاد کنید. این کار از اشتراک‌گذاری بین فراخوانی‌ها جلوگیری می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>add_student</code> با پارامترهای نام و لیست نمرات (با پیش‌فرض None) بنویسید که دانش‌آموز را به یک دیکشنری اضافه کند.
+                </div>
+            </div>
+
+            <!-- ۱۰.۵ -->
+            <div class="sub-section">
+                <h4>۱۰.۵ <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> – آرگومان‌های متغیر</h4>
+                <ul>
+                    <li><strong><code dir='ltr'>*args</code></strong>: تعداد نامعلومی آرگومان موقعیتی را به‌صورت تاپل دریافت می‌کند.</li>
+                    <li><strong><code dir='ltr'>**kwargs</code></strong>: تعداد نامعلومی آرگومان کلیدواژه‌ای را به‌صورت دیکشنری دریافت می‌کند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># *args - آرگومان‌های موقعیتی متغیر
+def sum_all(*args):
+    total = 0
+    for num in args:
+        total += num
+    return total
+
+print(sum_all(1, 2, 3))       # 6
+print(sum_all(10, 20, 30, 40)) # 100
+print(sum_all())              # 0
+
+# **kwargs - آرگومان‌های کلیدواژه‌ای متغیر
+def print_info(**kwargs):
+    for key, value in kwargs.items():
+        print(f"{key}: {value}")
+
+print_info(name="علی", age=25, city="تهران")
+# name: علی
+# age: 25
+# city: تهران
+
+# ترکیب پارامترهای معمولی با *args و **kwargs
+def process_data(required, *args, **kwargs):
+    print(f"Required: {required}")
+    print(f"Args: {args}")
+    print(f"Kwargs: {kwargs}")
+
+process_data("مهم", 1, 2, 3, name="علی", age=25)
+# Required: مهم
+# Args: (1, 2, 3)
+# Kwargs: {'name': 'علی', 'age': 25}</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">6</span><br>
+                    <span class="highlight">➜</span> <span class="result">100</span><br>
+                    <span class="highlight">➜</span> <span class="result">name: علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">age: 25</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> ترتیب پارامترها: <code dir='ltr'>def func(a, b, *args, **kwargs)</code>. <code dir='ltr'>*args</code> باید بعد از پارامترهای معمولی و <code dir='ltr'>**kwargs</code> باید در آخر باشد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>create_profile</code> با <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> بنویسید که اطلاعات یک شخص را دریافت و چاپ کند.
+                </div>
+            </div>
+
+            <!-- ۱۰.۶ -->
+            <div class="sub-section">
+                <h4>۱۰.۶ Docstring و مستندسازی توابع</h4>
+                <p><strong>Docstring</strong> یک رشته‌ی مستندسازی است که در اولین خط تابع با سه نقل‌قول نوشته می‌شود. با <code dir='ltr'>help()</code> یا <code dir='ltr'>.__doc__</code> قابل مشاهده است.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>def calculate_area(length, width):
+    """
+    محاسبه مساحت مستطیل
+
+    پارامترها:
+    length (float): طول مستطیل
+    width (float): عرض مستطیل
+
+    بازگشت:
+    float: مساحت مستطیل
+    """
+    return length * width
+
+# مشاهده مستندات
+print(calculate_area.__doc__)
+# یا
+help(calculate_area)
+
+# Docstring چندخطی
+def complex_function(a, b, c=10):
+    """
+    این یک تابع پیچیده است که سه پارامتر دریافت می‌کند.
+
+    :param a: توضیح پارامتر a
+    :param b: توضیح پارامتر b
+    :param c: توضیح پارامتر c (پیش‌فرض: 10)
+    :return: نتیجه‌ی محاسبه
+    """
+    return a + b + c</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">محاسبه مساحت مستطیل</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه برای توابع خود Docstring بنویسید. این کار باعث می‌شود کد شما مستند و قابل‌فهم برای دیگران (و خودتان در آینده) باشد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> تابع <code dir='ltr'>calculate_bmi</code> که قبلاً نوشتید را با Docstring کامل مستند کنید.
+                </div>
+            </div>
+
+            <!-- ۱۰.۷ -->
+            <div class="sub-section">
+                <h4>۱۰.۷ Scope (محدوده) متغیرها در توابع</h4>
+                <ul>
+                    <li><strong>Global Scope:</strong> متغیرهایی که خارج از توابع تعریف می‌شوند.</li>
+                    <li><strong>Local Scope:</strong> متغیرهایی که داخل توابع تعریف می‌شوند.</li>
+                    <li><strong><code dir='ltr'>global</code></strong>: برای دسترسی و تغییر متغیرهای سراسری در داخل تابع.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># متغیر سراسری (Global)
+x = 10
+
+def show_x():
+    print(x)  # دسترسی به متغیر سراسری (فقط خواندن)
+
+show_x()  # 10
+
+def modify_x():
+    x = 20  # ایجاد متغیر محلی جدید (سراسری تغییر نمی‌کند)
+    print(x)
+
+modify_x()  # 20
+print(x)    # 10 (سراسری unchanged)
+
+# استفاده از global برای تغییر متغیر سراسری
+y = 5
+
+def change_y():
+    global y
+    y = 100
+    print(y)
+
+change_y()  # 100
+print(y)    # 100
+
+# متغیرهای محلی در توابع تو در تو
+def outer():
+    outer_var = "outside"
+    
+    def inner():
+        inner_var = "inside"
+        print(outer_var)  # دسترسی به متغیر تابع خارجی
+    
+    inner()
+    # print(inner_var)  # ❌ خطا (دسترسی نداریم)
+
+outer()  # "outside"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">10</span><br>
+                    <span class="highlight">➜</span> <span class="result">20</span><br>
+                    <span class="highlight">➜</span> <span class="result">100</span><br>
+                    <span class="highlight">➜</span> <span class="result">outside</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> استفاده از <code dir='ltr'>global</code> معمولاً توصیه نمی‌شود. بهتر است متغیرها را به‌عنوان پارامتر به توابع ارسال کنید و نتایج را برگردانید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک متغیر سراسری <code dir='ltr'>counter</code> با مقدار ۰ تعریف کنید. یک تابع <code dir='ltr'>increment</code> بنویسید که با استفاده از <code dir='ltr'>global</code> آن را افزایش دهد. سپس تابع را چند بار فراخوانی کنید و مقدار نهایی را چاپ کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک ماشین‌حساب با توابع</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>calculator.py</code> ایجاد کنید.</li>
+                <li>چهار تابع برای عملیات اصلی ریاضی تعریف کنید:
+                    <ul>
+                        <li><code dir='ltr'>add(a, b)</code> → جمع</li>
+                        <li><code dir='ltr'>subtract(a, b)</code> → تفریق</li>
+                        <li><code dir='ltr'>multiply(a, b)</code> → ضرب</li>
+                        <li><code dir='ltr'>divide(a, b)</code> → تقسیم (با بررسی تقسیم بر صفر)</li>
+                    </ul>
+                </li>
+                <li>یک تابع <code dir='ltr'>calculate(operation, a, b)</code> با <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> بنویسید که عملیات مناسب را انتخاب کند.</li>
+                <li>با استفاده از <code dir='ltr'>input()</code> یک منوی تعاملی ایجاد کنید.</li>
+                <li>برای هر تابع Docstring بنویسید.</li>
+                <li>از <code dir='ltr'>return</code> برای بازگرداندن نتایج استفاده کنید.</li>
+                <li>همه‌ی نتایج را با f-strings نمایش دهید.</li>
+            </ol>
+            <div class="live-demo" id="function-demo">
+                <h4>🧮 ماشین‌حساب با توابع</h4>
+                <input type="number" id="num1" placeholder="عدد اول" value="5">
+                <input type="number" id="num2" placeholder="عدد دوم" value="3">
+                <select id="operation">
+                    <option value="add">+ جمع</option>
+                    <option value="subtract">− تفریق</option>
+                    <option value="multiply">× ضرب</option>
+                    <option value="divide">÷ تقسیم</option>
+                </select>
+                <button onclick="calculateFunction()">محاسبه</button>
+                <div class="result-box" id="functionResult">منتظر عملیات...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک تابع <code dir='ltr'>factorial(n)</code> با استفاده از حلقه محاسبه کند.</li>
+                <li>یک تابع <code dir='ltr'>is_prime(n)</code> برای تشخیص عدد اول.</li>
+                <li>یک تابع <code dir='ltr'>get_primes(limit)</code> که با استفاده از <code dir='ltr'>is_prime</code> لیست اعداد اول تا <code dir='ltr'>limit</code> را برگرداند.</li>
+                <li>همه‌ی توابع را با Docstring مستند کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین پارامتر و آرگومان چیست؟</li>
+                <li><code dir='ltr'>return</code> چه تأثیری روی تابع دارد و اگر ننویسیم چه اتفاقی می‌افتد؟</li>
+                <li>چرا باید از <code dir='ltr'>None</code> به‌عنوان مقدار پیش‌فرض برای پارامترهای قابل تغییر استفاده کنیم؟</li>
+                <li><code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> چه کاربردی دارند و چه تفاوتی با هم دارند؟</li>
+                <li>Docstring چیست و چرا باید از آن استفاده کنیم؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر یک تابع صحیح با پارامتر پیش‌فرض است؟<br>
+                    أ) <code dir='ltr'>def func(a, b=2, c)</code>  ب) <code dir='ltr'>def func(a, b=2, c=3)</code>  ج) <code dir='ltr'>def func(a=1, b, c=3)</code>  د) <code dir='ltr'>def func(a, b, c=3, d)</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>def test(x): x = 10; return x; x = 5; print(test(3))</code><br>
+                    أ) 3  ب) 5  ج) 10  د) None</li>
+                <li>کدام یک از موارد زیر برای دریافت تعداد نامعلومی آرگومان کلیدواژه‌ای استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>*args</code>  ب) <code dir='ltr'>**kwargs</code>  ج) <code dir='ltr'>*kwargs</code>  د) <code dir='ltr'>**args</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک تابع <code dir='ltr'>get_user_info()</code> با <code dir='ltr'>input()</code> اطلاعات کاربر (نام، سن، شهر) را دریافت کند و یک دیکشنری برگرداند.</li>
+                <li>یک تابع <code dir='ltr'>display_user_info(user)</code> اطلاعات کاربر را با f-strings نمایش دهد.</li>
+                <li>یک تابع <code dir='ltr'>save_user_info(user, filename)</code> اطلاعات را در یک فایل متنی ذخیره کند (با <code dir='ltr'>open()</code>).</li>
+                <li>همه‌ی توابع را با Docstring مستند کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>توابع</strong> با <code dir='ltr'>def</code> تعریف می‌شوند و کد را قابل استفاده‌ی مجدد می‌کنند.</li>
+                <li>🔹 <strong>پارامترها</strong> ورودی‌های تابع هستند و <strong>آرگومان‌ها</strong> مقادیر ارسال‌شده.</li>
+                <li>🔹 <strong><code dir='ltr'>return</code></strong> مقدار را برمی‌گرداند و تابع را متوقف می‌کند.</li>
+                <li>🔹 <strong>پارامترهای پیش‌فرض</strong> برای مواقعی که آرگومان ارسال نشود، مقدار پیش‌فرض استفاده می‌کنند.</li>
+                <li>🔹 برای پارامترهای قابل تغییر از <strong><code dir='ltr'>None</code></strong> به‌عنوان مقدار پیش‌فرض استفاده کنید.</li>
+                <li>🔹 <strong><code dir='ltr'>*args</code></strong> برای آرگومان‌های موقعیتی متغیر و <strong><code dir='ltr'>**kwargs</code></strong> برای آرگومان‌های کلیدواژه‌ای متغیر.</li>
+                <li>🔹 <strong>Docstring</strong> برای مستندسازی توابع استفاده می‌شود و با <code dir='ltr'>help()</code> قابل مشاهده است.</li>
+                <li>🔹 <strong>Scope</strong> محدوده‌ی دسترسی به متغیرهاست. متغیرهای محلی داخل تابع و سراسری خارج از تابع تعریف می‌شوند.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># تعریف تابع
+def function_name(params):
+    """Docstring"""
+    # code
+    return value
+
+# فراخوانی
+function_name(args)
+
+# پارامتر پیش‌فرض
+def func(a, b=2):
+    return a + b
+
+# *args و **kwargs
+def func(*args, **kwargs):
+    print(args, kwargs)
+
+# Docstring
+def func():
+    """توضیحات تابع"""
+    pass
+
+# Scope
+global_var = 10
+def func():
+    local_var = 20
+    global global_var
+    global_var = 30</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Function (تابع):</strong> بلوک کد قابل استفاده‌ی مجدد.</li>
+                <li><strong>Parameter (پارامتر):</strong> متغیر در تعریف تابع.</li>
+                <li><strong>Argument (آرگومان):</strong> مقدار ارسال‌شده به تابع.</li>
+                <li><strong>return:</strong> بازگرداندن مقدار از تابع.</li>
+                <li><strong>Default Parameter (پارامتر پیش‌فرض):</strong> پارامتری که مقدار پیش‌فرض دارد.</li>
+                <li><strong>*args:</strong> جمع‌آوری آرگومان‌های موقعیتی متغیر به‌صورت تاپل.</li>
+                <li><strong>**kwargs:</strong> جمع‌آوری آرگومان‌های کلیدواژه‌ای متغیر به‌صورت دیکشنری.</li>
+                <li><strong>Docstring:</strong> رشته‌ی مستندسازی تابع.</li>
+                <li><strong>Scope (محدوده):</strong> ناحیه‌ای که متغیر در آن قابل دسترسی است.</li>
+                <li><strong>Global:</strong> متغیر سراسری قابل دسترسی در همه‌جا.</li>
+                <li><strong>Local:</strong> متغیر محلی فقط در داخل تابع قابل دسترسی.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions" target="_blank" rel="noopener noreferrer">Python: Defining Functions</a></li>
+                <li><a href="https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions" target="_blank" rel="noopener noreferrer">Python: More on Functions</a></li>
+                <li><a href="https://realpython.com/defining-your-own-python-function/" target="_blank" rel="noopener noreferrer">Real Python: Defining Functions</a></li>
+                <li><a href="https://www.w3schools.com/python/python_functions.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Functions</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> تعریف تابع با def – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> پارامترها و آرگومان‌ها – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> return و بازگرداندن مقدار – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> پارامترهای پیش‌فرض و None – ۱۵ دقیقه</li>
+                <li><strong>گام ۵:</strong> *args و **kwargs – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> Docstring – ۱۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> Scope متغیرها – ۱۰ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا باید از توابع استفاده کنیم؟ چه مزایایی دارند؟</li>
+                <li>❓ تفاوت بین <code dir='ltr'>return</code> و <code dir='ltr'>print()</code> در یک تابع چیست؟</li>
+                <li>❓ چرا پارامترهای پیش‌فرض باید بعد از پارامترهای بدون پیش‌فرض بیایند؟</li>
+                <li>❓ اگر از <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> در یک تابع استفاده کنیم، ترتیب آنها چگونه باید باشد؟</li>
+                <li>❓ چرا استفاده از <code dir='ltr'>global</code> معمولاً توصیه نمی‌شود؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>:</code> در انتهای خط <code dir='ltr'>def</code> که باعث <code dir='ltr'>SyntaxError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>:</code> بعد از <code dir='ltr'>def</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>return</code> که باعث می‌شود تابع <code dir='ltr'>None</code> برگرداند.<br>
+                    <strong>🔧 راه حل:</strong> اگر نیاز به مقدار خروجی دارید، از <code dir='ltr'>return</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از متغیر سراسری بدون <code dir='ltr'>global</code> در داخل تابع که باعث ایجاد متغیر محلی جدید می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> برای تغییر متغیر سراسری از <code dir='ltr'>global</code> استفاده کنید یا متغیر را به‌عنوان پارامتر ارسال کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از لیست به‌عنوان مقدار پیش‌فرض که باعث اشتراک‌گذاری بین فراخوانی‌ها می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>None</code> به‌عنوان مقدار پیش‌فرض استفاده کنید و در بدنه تابع، لیست جدید ایجاد کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>*</code> در <code dir='ltr'>*args</code> یا <code dir='ltr'>**</code> در <code dir='ltr'>**kwargs</code> که باعث می‌شود به‌عنوان پارامتر معمولی تفسیر شوند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> با ستاره‌ها استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت کتابخانه با توابع</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت کتابخانه با استفاده از توابع بسازید:</p>
+            <ul>
+                <li>یک دیکشنری <code dir='ltr'>library</code> برای ذخیره‌ی کتاب‌ها (کلید: ISBN، مقدار: دیکشنری اطلاعات کتاب) ایجاد کنید.</li>
+                <li>توابع زیر را پیاده‌سازی کنید:
+                    <ul>
+                        <li><code dir='ltr'>add_book(isbn, title, author, year, copies)</code> – افزودن کتاب جدید با پارامترهای پیش‌فرض.</li>
+                        <li><code dir='ltr'>search_book(query)</code> – جستجوی کتاب بر اساس عنوان یا نویسنده (با <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code>).</li>
+                        <li><code dir='ltr'>borrow_book(isbn)</code> – امانت گرفتن کتاب (کاهش تعداد کپی‌ها).</li>
+                        <li><code dir='ltr'>return_book(isbn)</code> – بازگرداندن کتاب (افزایش تعداد کپی‌ها).</li>
+                        <li><code dir='ltr'>display_books()</code> – نمایش همه‌ی کتاب‌ها.</li>
+                        <li><code dir='ltr'>get_summary()</code> – نمایش خلاصه (تعداد کل کتاب‌ها، تعداد کپی‌ها، کتاب‌های موجود).</li>
+                    </ul>
+                </li>
+                <li>برای هر تابع Docstring بنویسید.</li>
+                <li>از <code dir='ltr'>return</code> برای بازگرداندن نتایج استفاده کنید.</li>
+                <li>با حلقه‌ی <code dir='ltr'>while</code> یک منوی تعاملی برای کاربر ایجاد کنید.</li>
+                <li>از <code dir='ltr'>global</code> برای تغییر متغیر سراسری <code dir='ltr'>library</code> استفاده کنید (در صورت نیاز).</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>قابلیت ذخیره‌سازی و بارگذاری کتاب‌ها از یک فایل JSON را اضافه کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code>، یک تابع <code dir='ltr'>filter_books</code> برای فیلتر کردن کتاب‌ها بر اساس معیارهای مختلف (سال، نویسنده و ...) اضافه کنید.</li>
+                    <li>یک تابع <code dir='ltr'>get_borrowed_books</code> برای نمایش لیست کتاب‌های امانت‌گرفته‌شده اضافه کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-09/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-11/index.html" class="btn-demo">رفتن به فصل ۱۱ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی ماشین‌حساب با توابع
+        function calculateFunction() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const operation = document.getElementById('operation').value;
+            const resultBox = document.getElementById('functionResult');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً اعداد معتبر وارد کنید!';
+                return;
+            }
+
+            let result;
+            let symbol;
+
+            function add(a, b) { return a + b; }
+            function subtract(a, b) { return a - b; }
+            function multiply(a, b) { return a * b; }
+            function divide(a, b) {
+                if (b === 0) return 'تقسیم بر صفر!';
+                return a / b;
+            }
+
+            switch (operation) {
+                case 'add':
+                    result = add(num1, num2);
+                    symbol = '+';
+                    break;
+                case 'subtract':
+                    result = subtract(num1, num2);
+                    symbol = '−';
+                    break;
+                case 'multiply':
+                    result = multiply(num1, num2);
+                    symbol = '×';
+                    break;
+                case 'divide':
+                    result = divide(num1, num2);
+                    symbol = '÷';
+                    break;
+                default:
+                    result = 'عملیات نامعتبر';
+            }
+
+            resultBox.className = 'result-box success';
+            resultBox.textContent = `${num1} ${symbol} ${num2} = ${result}`;
+        }
+    </script>
+</body>
+</html>

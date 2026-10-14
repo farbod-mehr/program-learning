@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل ۴: شناسایی و اسکن وب (Scanning &amp; Enumeration) | دوره تخصصی امنیت وب</title>
+    <meta name="description" content="آموزش کامل Scanning و Enumeration وب: Nikto، Nuclei، Wappalyzer، WhatWeb، Burp Spider، OWASP ZAP، testssl.sh و کشف API — با مثال‌های واقعی در آزمایشگاه.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="Nikto, Nuclei, Wappalyzer, Burp Suite, OWASP ZAP, Vulnerability Scanner, SSL Scan, API Discovery">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        #reading-bar {
+            position: fixed; top: 0; right: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #00d97e, #22ffa0);
+            width: 0; z-index: 999; transition: width .1s linear;
+        }
+        .chapter-hero {
+            background: linear-gradient(135deg, #0f172a, #064e3b);
+            color: white; border-radius: 18px; padding: 34px 28px; margin: 26px 0;
+            border: 1px solid #00d97e;
+            position: relative; overflow: hidden;
+        }
+        .chapter-hero::after {
+            content: ''; position: absolute; left: -80px; top: -80px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,217,126,.25), transparent 70%);
+        }
+        .chapter-hero h1 { margin: 6px 0 8px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+        .chapter-hero .chap-num {
+            display: inline-block; background: rgba(0,217,126,.15);
+            border: 1px solid #00d97e; color: #7ee787; padding: 3px 14px;
+            border-radius: 30px; font-size: .85rem; font-weight: 700;
+            position: relative; z-index: 1;
+        }
+        .chapter-hero p.sub { margin: 8px 0 0; opacity: .9; max-width: 820px; position: relative; z-index: 1; }
+        .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+        .meta-chips span {
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+            border-radius: 30px; padding: 4px 14px; font-size: .8rem;
+            display: inline-flex; gap: 6px; align-items: center;
+        }
+        .chapter-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 26px;
+            align-items: start; margin: 26px 0;
+        }
+        .toc-box {
+            position: sticky; top: 70px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+        }
+        .toc-title {
+            background: #0f172a; color: #7ee787; padding: 10px 16px;
+            font-weight: 800; font-size: .95rem;
+        }
+        .toc-list {
+            list-style: none; margin: 0; padding: 8px;
+            max-height: 60vh; overflow-y: auto;
+        }
+        .toc-list a {
+            display: block; color: var(--muted); font-size: .82rem;
+            padding: 7px 10px; border-radius: 8px;
+            border-right: 3px solid transparent; text-decoration: none;
+            transition: .2s;
+        }
+        .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+        .toc-list a.active {
+            background: rgba(0,217,126,.1); color: var(--accent);
+            border-right-color: var(--accent); font-weight: 700;
+        }
+        .toc-actions {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 8px; border-top: 1px dashed var(--line);
+        }
+        .toc-actions button {
+            background: transparent; color: var(--muted);
+            border: 1px solid var(--line); border-radius: 8px;
+            padding: 6px 10px; font-size: .78rem; cursor: pointer;
+            font-family: inherit; transition: .2s;
+        }
+        .toc-actions button:hover { border-color: var(--accent); color: var(--accent); }
+        .pager {
+            display: flex; justify-content: space-between;
+            margin: 30px 0; gap: 12px;
+        }
+        .pager a {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 14px 20px; color: var(--text);
+            text-decoration: none; font-weight: 700; transition: .2s;
+        }
+        .pager a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .done-bar {
+            background: rgba(0,217,126,.08);
+            border: 1px dashed #00d97e; border-radius: 12px;
+            padding: 14px; margin: 22px 0; text-align: center;
+        }
+        #mark-done {
+            background: var(--accent); color: #0b1220;
+            border: none; border-radius: 30px;
+            padding: 10px 28px; font-weight: 800; cursor: pointer;
+            font-family: inherit; margin-top: 8px;
+        }
+        #mark-done.done { background: #059669; color: white; }
+        .callout {
+            border-radius: 10px; padding: 14px 18px; margin: 14px 0;
+            border-right: 6px solid var(--accent); background: var(--surface-2);
+        }
+        .callout.co-warn { background: #3f1d1d; border-right-color: #ef4444; color: #fecaca; }
+        .callout.co-warn strong { color: #fca5a5; }
+        .callout.co-danger { background: #451a1a; border-right-color: #dc2626; color: #fecaca; }
+        .callout.co-tip { background: #0d2818; border-right-color: #00d97e; color: #a7f3d0; }
+        .callout.co-note { background: #1e293b; border-right-color: #3b82f6; color: #cbd5e1; }
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin: 16px 0;
+        }
+        .kpi {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .kpi .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .kpi .lbl { font-size: .82rem; color: var(--muted); }
+        .timeline {
+            list-style: none; padding: 0; margin: 16px 0;
+            border-right: 3px solid var(--accent); padding-right: 20px;
+        }
+        .timeline li { margin: 12px 0; position: relative; }
+        .timeline li::before {
+            content: '●'; color: var(--accent); position: absolute;
+            right: -28px; top: 2px;
+        }
+        .timeline .year { font-weight: 800; color: var(--accent); }
+        .phase-diagram {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 20px; margin: 16px 0;
+            overflow-x: auto;
+        }
+        .phase-diagram pre { background: transparent; border: none; padding: 0; margin: 0; color: var(--text); }
+        .role-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .role-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; transition: .2s;
+        }
+        .role-card:hover { border-color: var(--accent); }
+        .role-card h6 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+        .role-card p { margin: 4px 0; font-size: .85rem; }
+        .role-card .threat-level {
+            display: inline-block; font-size: .7rem; padding: 2px 10px;
+            border-radius: 20px; font-weight: 700; margin-top: 6px;
+        }
+        .threat-low { background: #166534; color: #bbf7d0; }
+        .threat-mid { background: #854d0e; color: #fef08a; }
+        .threat-high { background: #7f1d1d; color: #fecaca; }
+        .quiz-question {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+        }
+        .quiz-question strong { color: var(--accent); }
+        .checklist li { list-style: none; margin: 8px 0; padding-right: 26px; position: relative; }
+        .checklist li::before {
+            content: '☐'; position: absolute; right: 0; color: var(--accent);
+            font-size: 1.1rem;
+        }
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+        .do-box, .dont-box { border-radius: 10px; padding: 14px 18px; }
+        .do-box { background: #0d2818; border: 1px solid #16a34a; }
+        .do-box h6 { color: #4ade80; margin: 0 0 8px; }
+        .dont-box { background: #451a1a; border: 1px solid #dc2626; }
+        .dont-box h6 { color: #f87171; margin: 0 0 8px; }
+        .do-box li, .dont-box li { margin: 6px 0; font-size: .9rem; }
+        .step-number {
+            display: inline-block; background: var(--accent); color: #0b1220;
+            border-radius: 50%; width: 26px; height: 26px; line-height: 26px;
+            text-align: center; font-weight: 800; margin-left: 8px;
+        }
+        .tool-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; margin: 12px 0;
+            border-right: 4px solid var(--accent);
+        }
+        .tool-card h6 { color: var(--accent); margin: 0 0 6px; font-size: 1.05rem; }
+        .tool-card .use-case {
+            font-size: .82rem; color: var(--muted); margin-bottom: 8px;
+        }
+        @media (max-width: 900px) {
+            .chapter-layout { grid-template-columns: 1fr; }
+            .toc-box { position: static; }
+            .do-dont { grid-template-columns: 1fr; }
+        }
+        @media print {
+            .toc-box, .pager, .site-header, .done-bar, .main-nav { display: none !important; }
+            .chapter-layout { grid-template-columns: 1fr; }
+            body { background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div id="reading-bar"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>فصل ۴ از ۲۱ — شناسایی و اسکن وب</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#part-01">📖 شروع فصل</a>
+            <a href="../chapter-03/index.html" id="prev-link">➜ فصل قبل</a>
+            <a href="../chapter-05/index.html" id="next-link">فصل بعد ➜</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chapter-hero">
+            <span class="chap-num">فصل ۴ از ۲۱</span>
+            <h1>📡 شناسایی و اسکن وب (Scanning &amp; Enumeration)</h1>
+            <p class="sub">
+                از فهرست خام Recon تا لیست اولویت‌بندی‌شده آسیب‌پذیری‌ها: یاد بگیرید چطور با Nikto، Nuclei، Wappalyzer،
+                Burp Spider، OWASP ZAP و testssl.sh، هدف را به‌طور کامل کالبدشکافی کنید و پروفایل آسیب‌پذیری حرفه‌ای بسازید.
+            </p>
+            <div class="meta-chips">
+                <span>🎓 سطح: متوسط</span>
+                <span>⏱ ۱۲۰ دقیقه</span>
+                <span>🔑 Nikto</span>
+                <span>🔑 Nuclei</span>
+                <span>🔑 Burp Spider</span>
+                <span>🔑 OWASP ZAP</span>
+                <span>🔑 testssl.sh</span>
+            </div>
+        </div>
+
+        <div class="chapter-layout">
+            <aside class="toc-box">
+                <div class="toc-title">📑 فهرست ۱۴ بخش این فصل</div>
+                <ul class="toc-list">
+                    <li><a href="#part-01">۱. جعبه عنوان و هویت</a></li>
+                    <li><a href="#part-02">۲. پیش‌نیازها و راه‌اندازی محیط</a></li>
+                    <li><a href="#part-03">۳. اهداف یادگیری</a></li>
+                    <li><a href="#part-04">۴. مقدمه: چرا Scanning فراتر از Recon است؟</a></li>
+                    <li><a href="#part-05">۵. مفاهیم کلیدی و واژگان</a></li>
+                    <li><a href="#part-06">۶. ابزارهای Scanning و Enumeration</a></li>
+                    <li><a href="#part-07">۷. کارگاه: اسکن کامل هدف</a></li>
+                    <li><a href="#part-08">۸. تحلیل دفاعی و کاهش سطح حمله</a></li>
+                    <li><a href="#part-09">۹. نکات حرفه‌ای و دام‌های رایج</a></li>
+                    <li><a href="#part-10">۱۰. پرسش و پاسخ و رفع اشکال</a></li>
+                    <li><a href="#part-11">۱۱. جمع‌بندی و نکات طلایی</a></li>
+                    <li><a href="#part-12">۱۲. خودارزیابی و آزمونک</a></li>
+                    <li><a href="#part-13">۱۳. پروژه هفتگی</a></li>
+                    <li><a href="#part-14">۱۴. منابع و گام بعدی</a></li>
+                </ul>
+                <div class="toc-actions">
+                    <button id="btn-open-answers" type="button">🟢 باز کردن همه پاسخ‌ها</button>
+                    <button id="btn-close-answers" type="button">⚪ بستن همه پاسخ‌ها</button>
+                </div>
+            </aside>
+
+            <div class="main-col">
+
+                <!-- بخش ۱: عنوان -->
+                <div class="section-part" id="part-01">
+                    <h3>۱. جعبه عنوان و هویت</h3>
+
+                    <p><strong>📖 عنوان کامل فصل:</strong> شناسایی و اسکن وب (Scanning &amp; Enumeration) — تبدیل اطلاعات خام Recon به پروفایل دقیق آسیب‌پذیری و اولویت‌بندی حمله.</p>
+
+                    <p><strong>🎓 سطح دشواری:</strong> متوسط. این فصل بیشترین حجم ابزار را در دوره دارد و شلوغ‌ترین فاز تست نفوذ را پوشش می‌دهد.</p>
+
+                    <p><strong>⏱ زمان مطالعه:</strong> ۹۰ تا ۱۲۰ دقیقه (اجرای واقعی ابزارها ۲-۴ ساعت زمان می‌برد).</p>
+
+                    <p><strong>🛠 پیش‌نیاز فنی:</strong> فصل‌های ۱ تا ۳ کامل + Burp Suite Community نصب‌شده روی Kali + آشنایی با HTTP Response/Request.</p>
+
+                    <h5>🎯 اهداف کلان این فصل:</h5>
+                    <ol>
+                        <li>اجرای <strong>Nikto</strong> به‌عنوان اسکنر کلاسیک وب‌سرور و تفسیر خروجی.</li>
+                        <li>تسلط بر <strong>Nuclei</strong> — سریع‌ترین و مدرن‌ترین اسکنر آسیب‌پذیری (YAML-based).</li>
+                        <li>پیکربندی <strong>Burp Suite</strong> به‌عنوان پروکسی و اجرای <strong>Spider</strong> برای کشف مسیرها.</li>
+                        <li>استفاده از <strong>OWASP ZAP</strong> برای اسکن خودکار و پویا.</li>
+                        <li>تحلیل <strong>SSL/TLS</strong> با testssl.sh و شناسایی پیکربندی ضعیف.</li>
+                        <li>کشف <strong>API endpoints</strong> و شناسایی نقاط ورود داده.</li>
+                        <li>ساخت <strong>گزارش اولویت‌بندی‌شده آسیب‌پذیری</strong> با امتیاز CVSS.</li>
+                    </ol>
+
+                    <h5>📚 خروجی قابل اندازه‌گیری (پس از این فصل):</h5>
+                    <ul>
+                        <li>یک Nikto scan کامل از هدف Django lab با گزارش خروجی.</li>
+                        <li>یک Nuclei scan با حداقل ۵ نوع Template مختلف.</li>
+                        <li>Burp Spider فعال با Sitemap کامل هدف.</li>
+                        <li>OWASP ZAP Automated Scan با گزارش HTML.</li>
+                        <li>گزارش SSL/TLS با testssl.sh و تست هدرهای امنیتی.</li>
+                        <li>فایل <code>vulnerability-report.md</code> با جدول اولویت‌بندی (CVSS).</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار حقوقی — تفاوت Recon با Scanning:</strong>
+                        در فصل ۳ (Recon)، بیشتر ابزارها <strong>Passive</strong> بودند یا با درخواست‌های محدود کار می‌کردند. ولی در این فصل، همه ابزارها (<strong>Nikto، Nuclei، ZAP، Spider</strong>) هزاران درخواست <strong>Active</strong> می‌فرستند که:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>در لاگ سرور هدف ثبت می‌شود</li>
+                            <li>ممکن است WAF/IPS را فعال کند</li>
+                            <li>ممکن است سرویس‌های آسیب‌پذیر را از کار بیندازد</li>
+                            <li>اگر بدون مجوز باشد، <strong>اثبات قانونی جرم</strong> است (ماده ۱ و ۲ قانون جرایم رایانه‌ای)</li>
+                        </ul>
+                        <strong>فقط روی VMهای آزمایشگاه خودتان یا سرویس‌های آموزشی معتبر اجرا کنید.</strong>
+                    </div>
+                </div>
+
+                <!-- بخش ۲: پیش‌نیازها -->
+                <div class="section-part" id="part-02">
+                    <h3>۲. پیش‌نیازها و راه‌اندازی محیط</h3>
+
+                    <h5>💻 وضعیت لازم از آزمایشگاه:</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>مؤلفه</th><th>وضعیت</th></tr></thead>
+                        <tbody>
+                            <tr><td>Kali Linux</td><td>192.168.56.10 فعال و به‌روز</td></tr>
+                            <tr><td>Windows + Django</td><td>192.168.56.20 با سرور 8000 در حال اجرا</td></tr>
+                            <tr><td>DVWA (اختیاری)</td><td>روی Kali در <code>http://192.168.56.10/dvwa</code></td></tr>
+                            <tr><td>Snapshot</td><td>به نام <code>pre-scanning-baseline</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🛠 نصب و به‌روزرسانی ابزارها:</h5>
+<pre class="code-box"># به‌روزرسانی سیستم
+sudo apt update &amp;&amp; sudo apt upgrade -y
+
+# نصب Nikto (اسکنر کلاسیک)
+sudo apt install -y nikto
+
+# نصب Nuclei (اسکنر مدرن — سریع‌ترین)
+sudo apt install -y nuclei
+# یا از GitHub:
+# go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+
+# نصب testssl.sh (تحلیل SSL/TLS)
+sudo apt install -y testssl.sh
+# یا:
+# git clone https://github.com/drwetter/testssl.sh.git
+
+# نصب WhatWeb (نسخه جدید)
+sudo apt install -y whatweb
+
+# نصب Wapiti (اسکنر وب)
+sudo apt install -y wapiti
+
+# نصب httpx و katana (از ProjectDiscovery)
+go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+go install -v github.com/projectdiscovery/katana/cmd/katana@latest
+
+# نصب Burp Suite Community (نسخه پیشنهادی — Pro اگر دارید)
+# Kali معمولاً از پیش دارد: burpsuite
+
+# بررسی OWASP ZAP (روی Kali از پیش هست)
+which zaproxy
+which zap.sh
+
+# نصب ابزار SSL دیگر
+sudo apt install -y sslscan sslyze
+</pre>
+
+                    <h5>🔧 بررسی نصب و نسخه‌ها:</h5>
+<pre class="code-box">nikto -Version
+nuclei -version
+testssl.sh --version
+whatweb --version
+httpx -version
+katana -version
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته:</strong>
+                        اگر Kali شما خیلی جدید است، ممکن است نسخه‌های ابزارها متفاوت باشد. این طبیعت Kali است. اگر دستور <code>nuclei -version</code> خطا داد، آن را از GitHub دانلود کنید.
+                    </div>
+                </div>
+
+                <!-- بخش ۳: اهداف یادگیری -->
+                <div class="section-part" id="part-03">
+                    <h3>۳. اهداف یادگیری (چه چیزهایی به دست می‌آورید؟)</h3>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حوزه</th><th>هدف مشخص</th><th>معیار سنجش</th><th>وزن</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Web Server Scan</strong></td>
+                                <td>اجرای Nikto و تفسیر خروجی</td>
+                                <td>کشف حداقل ۳ مشکل روی هدف Django</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vulnerability Scan</strong></td>
+                                <td>اجرای Nuclei با چند Template</td>
+                                <td>گزارش با حداقل ۵ Vulnerability منحصر‌به‌فرد</td>
+                                <td>۲۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Proxy &amp; Spider</strong></td>
+                                <td>پیکربندی Burp Suite و Spider</td>
+                                <td>Sitemap کامل + حداقل ۱۰ Endpoint کشف‌شده</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Automated Scan</strong></td>
+                                <td>اجرای OWASP ZAP Automated</td>
+                                <td>گزارش HTML با اولویت‌بندی</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SSL/TLS Analysis</strong></td>
+                                <td>تحلیل testssl.sh + هدرهای امنیتی</td>
+                                <td>گزارش کامل از پیکربندی SSL و Headers</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مستندسازی</strong></td>
+                                <td>گزارش آسیب‌پذیری حرفه‌ای</td>
+                                <td><code>vulnerability-report.md</code> با CVSS</td>
+                                <td>۱۰٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>📌 تفاوت این فصل با فصل قبل — چه چیزی جدید است؟</h5>
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ در فصل ۳ یاد گرفتید:</h6>
+                            <ul>
+                                <li>پیدا کردن هدف (Nmap، Subfinder)</li>
+                                <li>شناسایی تکنولوژی (Wappalyzer)</li>
+                                <li>کشف مسیرهای پایه (Gobuster)</li>
+                                <li>اطلاعات ساختاری هدف</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>🎯 در این فصل یاد می‌گیرید:</h6>
+                            <ul>
+                                <li>یافتن <strong>آسیب‌پذیری‌های واقعی</strong> (نه فقط سرویس‌ها)</li>
+                                <li>شناسایی <strong>پارامترها و ورودی‌های مستعد حمله</strong></li>
+                                <li>تست خودکار <strong>OWASP Top 10</strong></li>
+                                <li>تحلیل <strong>پیکربندی امنیتی</strong> (SSL، Headers، Cookies)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- بخش ۴: مقدمه -->
+                <div class="section-part" id="part-04">
+                    <h3>۴. مقدمه: چرا Scanning فراتر از Recon است؟</h3>
+
+                    <div class="story-box">
+                        <p>📖 <strong>داستان واقعی — نقض Capital One (۲۰۱۹):</strong></p>
+                        <p>مهاجم سابقاً کارمند AWS بود. تیم امنیت Capital One می‌دانست که سرورهای AWS دارند و به‌طور منظم تست نفوذ انجام می‌داد. اما یک نقطه از Scanning را نادیده گرفته بودند: <strong>Server-Side Request Forgery (SSRF)</strong> در یکی از WAFهای اجاره‌ای AWS.</p>
+                        <p style="margin-top: 10px;">مراحل حمله در این سناریو:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>مهاجم یک <strong>Scan کامل پورت</strong> روی IP عمومی Capital One انجام داد و SSRF endpoint را کشف کرد</li>
+                            <li>با <strong>Nikto + Nuclei</strong> متوجه نسخه آسیب‌پذیر WAF شد</li>
+                            <li>با <strong>Burp Suite</strong> پیکربندی SSRF را کشف کرد</li>
+                            <li>به AWS Metadata (169.254.169.254) دسترسی گرفت</li>
+                            <li>نتیجه: <strong>افشای ۱۰۶ میلیون رکورد</strong> کاربران، جریمه ۱۹۰ میلیون دلاری</li>
+                        </ul>
+                        <p style="margin-top: 10px;">اگر Capital One در فاز Scanning، SSRF را شناسایی کرده بود، این فاجعه رخ نمی‌داد. Scanning دقیق = جلوگیری از فاجعه.</p>
+                    </div>
+
+                    <h5>📊 آمار و ارقام — چرا Scanning حیاتی است؟</h5>
+                    <div class="kpi-grid">
+                        <div class="kpi">
+                            <span class="num">۶۰٪</span>
+                            <span class="lbl">آسیب‌پذیری‌ها با اسکن خودکار کشف می‌شوند</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۲.۵x</span>
+                            <span class="lbl">سرعت تست نفوذ با ابزارهای خودکار</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">+۵۰۰۰</span>
+                            <span class="lbl">Template آماده Nuclei</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۱۰۰+</span>
+                            <span class="lbl">اسکن خودکار در Nikto برای هر هدف</span>
+                        </div>
+                    </div>
+
+                    <h5>🎯 سه دلیل بنیادی برای اهمیت Scanning:</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>🎯 کشف آسیب‌پذیری واقعی</h6>
+                            <p>در فصل ۳ فقط ساختار هدف را می‌دیدیم. این فصل، آسیب‌پذیری‌های <strong>قابل بهره‌جویی</strong> را پیدا می‌کند: SQLi، XSS، LFI، Misconfig.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>⏱️ سرعت بی‌نظیر</h6>
+                            <p>یک اسکنر خودکار در ۱۰ دقیقه، کاری را انجام می‌دهد که یک تستر دستی در ۵ ساعت. حساب کنید: ۳۰ برابر سرعت بیشتر.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>📋 مستندسازی استاندارد</h6>
+                            <p>خروجی همه اسکنرها (Nuclei، ZAP) با فرمت CVSS و طبقه‌بندی OWASP است — قابل ارائه مستقیم به مدیران و مشتریان.</p>
+                        </div>
+                    </div>
+
+                    <h5>📜 تایم‌لاین ابزارهای Scanning:</h5>
+                    <ul class="timeline">
+                        <li><span class="year">۲۰۰۰</span> — اولین نسخه Nikto منتشر شد (CIRT.net).</li>
+                        <li><span class="year">۲۰۰۴</span> — Acunetix و Netsparker به‌عنوان اولین اسکنرهای تجاری ظهور کردند.</li>
+                        <li><span class="year">۲۰۱۲</span> — OWASP ZAP پروژه متن‌باز جایگزین Paros Proxy.</li>
+                        <li><span class="year">۲۰۱۳</span> — Burp Suite Community (رایگان) برای همه.</li>
+                        <li><span class="year">۲۰۱۶</span> — Nuclei (ProjectDiscovery) انقلابی در اسکن YAML-based.</li>
+                        <li><span class="year">۲۰۲۰+</span> — اسکنرهای AI-powered (مثل PentestGPT) ظهور کردند.</li>
+                        <li><span class="year">۲۰۲۳+</span> — یکپارچگی اسکنرها با CI/CD (DevSecOps).</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۵: مفاهیم کلیدی -->
+                <div class="section-part" id="part-05">
+                    <h3>۵. مفاهیم کلیدی و واژگان تخصصی</h3>
+
+                    <h5>5.1 — فاز Scanning در چرخه تست نفوذ:</h5>
+                    <div class="phase-diagram">
+<pre>┌────────────────────────────────────────────────────────────────┐
+│           فازهای تست نفوذ (Penetration Testing)                 │
+│                                                                 │
+│  1. Reconnaissance      →  شناسایی اولیه (فصل ۳)              │
+│         ↓                                                       │
+│  2. Scanning           →  اسکن دقیق (فصل ۴ - این فصل)         │
+│         ↓                                                       │
+│  3. Enumeration        →  استخراج جزئیات (فصل ۴ - این فصل)     │
+│         ↓                                                       │
+│  4. Vulnerability      →  تحلیل آسیب‌پذیری (فصل ۴)             │
+│     Analysis                                                    │
+│         ↓                                                       │
+│  5. Exploitation       →  بهره‌جویی (فصل‌های ۵-۱۳)              │
+│         ↓                                                       │
+│  6. Post-Exploit       →  حفظ دسترسی و گسترش                   │
+│         ↓                                                       │
+│  7. Reporting          →  گزارش نهایی                          │
+└────────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>5.2 — تفاوت Scanning، Enumeration و Vulnerability Assessment:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>فاز</th><th>هدف</th><th>خروجی</th><th>ابزار نمونه</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Port Scanning</strong></td>
+                                <td>یافتن پورت‌های باز و سرویس‌ها</td>
+                                <td>فهرست پورت‌ها + نسخه سرویس</td>
+                                <td>Nmap، masscan</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Enumeration</strong></td>
+                                <td>استخراج جزئیات هر سرویس</td>
+                                <td>کاربران، مسیرها، Endpoints</td>
+                                <td>Gobuster، Enum4linux، smbclient</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Web Scanning</strong></td>
+                                <td>اسکن سطح وب برای آسیب‌پذیری</td>
+                                <td>گزارش آسیب‌پذیری‌های ساده</td>
+                                <td>Nikto، Wapiti</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vulnerability Assessment</strong></td>
+                                <td>تحلیل جامع آسیب‌پذیری</td>
+                                <td>گزارش با CVSS و Remediation</td>
+                                <td>Nuclei، OpenVAS، Nessus</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.3 — واژه‌نامه تخصصی این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>واژه</th><th>معنی</th><th>کاربرد</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Nuclei Template</td><td>فایل YAML تعریف اسکن</td><td>یک اسکن خاص (مثلاً CVE-2021-44228)</td></tr>
+                            <tr><td>Spider</td><td>خزنده وب برای کشف مسیرها</td><td>Burp Spider، ZAP Spider</td></tr>
+                            <tr><td>Active Scan</td><td>ارسال درخواست‌های فعال با Payload</td><td>Nuclei، ZAP Active</td></tr>
+                            <tr><td>Passive Scan</td><td>تحلیل ترافیک بدون ارسال Payload مخرب</td><td>ZAP Passive، Burp Passive</td></tr>
+                            <tr><td>Vulnerability DB</td><td>پایگاه داده آسیب‌پذیری</td><td>CVE، NVD</td></tr>
+                            <tr><td>False Positive</td><td>هشدار اشتباه (آسیب‌پذیری نیست)</td><td>همیشه باید تأیید دستی شود</td></tr>
+                            <tr><td>False Negative</td><td>آسیب‌پذیری که اسکنر ندید</td><td>نیاز به تست دستی</td></tr>
+                            <tr><td>Payload</td><td>رشته مخرب برای تست</td><td>SQLi، XSS، SSRF</td></tr>
+                            <tr><td>Rate Limiting</td><td>محدودیت درخواست در ثانیه</td><td>Rate limit اسکنر برای فرار از WAF</td></tr>
+                            <tr><td>WAF Bypass</td><td>دور زدن Web Application Firewall</td><td>تکنیک‌های Encoding، Obfuscation</td></tr>
+                            <tr><td>SSL/TLS Audit</td><td>تحلیل پیکربندی SSL</td><td>testssl.sh، sslyze</td></tr>
+                            <tr><td>Security Headers</td><td>هدرهای امنیتی HTTP</td><td>CSP، HSTS، X-Frame-Options</td></tr>
+                            <tr><td>API Discovery</td><td>کشف Endpoints API</td><td>Swagger، OpenAPI، Postman</td></tr>
+                            <tr><td>CI/CD Integration</td><td>یکپارچگی با خط لوله DevOps</td><td>DevSecOps، GitHub Actions</td></tr>
+                            <tr><td>Attack Chain</td><td>زنجیره بهره‌جویی</td><td>ترکیب چند آسیب‌پذیری</td></tr>
+                            <tr><td>Severity Score</td><td>امتیاز شدت (CVSS)</td><td>Critical، High، Medium، Low</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.4 — چرخه Scanning حرفه‌ای:</h5>
+                    <div class="phase-diagram">
+<pre>┌────────────────────────────────────────────────────────────┐
+│               Scanning &amp; Enumeration Cycle                │
+│                                                            │
+│  1. Configuration    →  تنظیم Burp/ZAP + Proxy            │
+│         ↓                                                  │
+│  2. Passive Scan     →  تحلیل ترافیک (بدون Payload)      │
+│         ↓                                                  │
+│  3. Spider/Crawl     →  کشف همه Endpoints و پارامترها    │
+│         ↓                                                  │
+│  4. Active Scan      →  ارسال Payload برای تست           │
+│         ↓                                                  │
+│  5. Custom Scan      →  اسکن اختصاصی با Nuclei Templates │
+│         ↓                                                  │
+│  6. SSL/TLS Audit    →  testssl.sh                       │
+│         ↓                                                  │
+│  7. Header Check     →  Security Headers                 │
+│         ↓                                                  │
+│  8. Manual Verify    →  تأیید آسیب‌پذیری‌های خودکار       │
+│         ↓                                                  │
+│  9. Document         →  گزارش با CVSS                   │
+└────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قانون طلایی Scanning:</strong>
+                        «اسکنر خودکار، پیشنهاد می‌دهد؛ انسان تأیید می‌کند.» — هر هشدار خودکار باید <strong>دستی تأیید</strong> شود تا False Positive حذف شود.
+                    </div>
+                </div>
+
+                <!-- بخش ۶: ابزارها -->
+                <div class="section-part" id="part-06">
+                    <h3>۶. ابزارهای Scanning و Enumeration</h3>
+
+                    <p>در این بخش، ۸ ابزار اصلی فاز Scanning را با جزئیات یاد می‌گیریم. هر ابزار با کاربرد، دستور، مثال و تحلیل.</p>
+
+                    <!-- ابزار ۱: Nikto -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۱: Nikto (اسکنر کلاسیک وب)</h6>
+                        <p class="use-case">کاربرد: اسکن سریع ۶۵۰۰+ آسیب‌پذیری شناخته‌شده، فایل‌های حساس، پیکربندی نادرست</p>
+
+                        <h5>اسکن پایه:</h5>
+<pre class="code-box"># اسکن ساده
+nikto -h http://192.168.56.20:8000
+
+# ذخیره در فرمت‌های مختلف
+nikto -h http://192.168.56.20:8000 -o nikto_report.html -Format html
+nikto -h http://192.168.56.20:8000 -o nikto_report.xml -Format xml
+nikto -h http://192.168.56.20:8000 -o nikto_report.txt -Format txt
+
+# اسکن سریع‌تر (بدون تست همه)
+nikto -h http://192.168.56.20:8000 -Tuning 123bde
+
+# اسکن با پروکسی (از طریق Burp)
+nikto -h http://192.168.56.20:8000 -useproxy http://127.0.0.1:8080
+
+# اسکن با Header دلخواه (دور زدن WAF ساده)
+nikto -h http://192.168.56.20:8000 -useragent &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64)&quot;
+
+# اجرای موازی (سریع‌تر)
+nikto -h http://192.168.56.20:8000 -maxtime 10m -Pause 0
+</pre>
+
+                        <h5>گزینه‌های Tuning (فیلتر اسکن):</h5>
+                        <table class="objectives-table">
+                            <thead><tr><th>کد</th><th>نوع تست</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td>فایل‌های جالب (Interesting Files)</td></tr>
+                                <tr><td>2</td><td>پیکربندی نادرست (Misconfiguration)</td></tr>
+                                <tr><td>3</td><td>افشای اطلاعات (Info Disclosure)</td></tr>
+                                <tr><td>4</td><td>Injection (XSS، SQL، Script)</td></tr>
+                                <tr><td>5</td><td>فایل‌های از راه دور (Remote Retrieval)</td></tr>
+                                <tr><td>6</td><td>DoS (خطرناک — پرهیز کنید)</td></tr>
+                                <tr><td>7</td><td>اجرای دستور از راه دور</td></tr>
+                                <tr><td>8</td><td>اجرای SQL از راه دور</td></tr>
+                                <tr><td>9</td><td>LFI/RFI</td></tr>
+                                <tr><td>0</td><td>آپلود فایل</td></tr>
+                                <tr><td>a</td><td>شناسایی تکنولوژی</td></tr>
+                                <tr><td>b</td><td>شناسایی Software نسخه</td></tr>
+                                <tr><td>c</td><td>اجرای دستور از راه دور</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h5>تفسیر خروجی Nikto:</h5>
+<pre class="code-box">- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          192.168.56.20
++ Target Hostname:    192.168.56.20
++ Target Port:        8000
++ Start Time:         2026-XX-XX XX:XX:XX
+---------------------------------------------------------------------------
++ Server: WSGIServer/0.2 CPython/3.10.4
++ /robots.txt: Entry &#39;/admin/&#39; is not allowed
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined.
++ /admin/: Admin login page/section found.
++ /static/: Directory indexing found.
++ OSVDB-3233: /icons/README: Apache default file found.
++ 8542 requests: 0 error(s) and 3 item(s) reported
++ End Time:           2026-XX-XX XX:XX:XX (45 seconds)
+---------------------------------------------------------------------------
+</pre>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ نکته مهم:</strong>
+                            Nikto بسیار پر سروصدا (noisy) است — هزاران درخواست می‌فرستد. روی هدف تولیدی بدون مجوز <strong>جرم</strong> است. همیشه <code>-useproxy</code> برای دیدن ترافیک در Burp استفاده کنید.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۲: Nuclei -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۲: Nuclei (اسکنر مدرن YAML-based)</h6>
+                        <p class="use-case">کاربرد: سریع‌ترین اسکنر آسیب‌پذیری با ۵۰۰۰+ Template آماده</p>
+
+                        <h5>۱) راه‌اندازی اولیه:</h5>
+<pre class="code-box"># به‌روزرسانی Templateها (بسیار مهم — روزانه اجرا کنید)
+nuclei -update-templates
+
+# بررسی نسخه
+nuclei -version
+
+# فهرست Templateها
+nuclei -tl
+
+# شمارش کل Templateها
+nuclei -tl | wc -l
+# خروجی: حدود 5000+ Template
+</pre>
+
+                        <h5>۲) اسکن‌های پایه:</h5>
+<pre class="code-box"># اسکن ساده یک هدف
+nuclei -u http://192.168.56.20:8000
+
+# اسکن با شدت بالا (Critical + High)
+nuclei -u http://192.168.56.20:8000 -severity critical,high
+
+# اسکن همه شدت‌ها
+nuclei -u http://192.168.56.20:8000 -severity critical,high,medium,low,info
+
+# ذخیره نتایج در چند فرمت
+nuclei -u http://192.168.56.20:8000 \
+    -o nuclei_results.txt \
+    -json-export nuclei_results.json \
+    -markdown-export nuclei_md/
+
+# اسکن با HTML report
+nuclei -u http://192.168.56.20:8000 -html-export nuclei_report.html
+</pre>
+
+                        <h5>۳) اسکن‌های تخصصی بر اساس Tag:</h5>
+<pre class="code-box"># فقط CVEها
+nuclei -u http://192.168.56.20:8000 -tags cve
+
+# فقط تکنولوژی Django
+nuclei -u http://192.168.56.20:8000 -tags django
+
+# فقط Misconfiguration
+nuclei -u http://192.168.56.20:8000 -tags misconfig
+
+# فقط Exposure (فایل‌های حساس)
+nuclei -u http://192.168.56.20:8000 -tags exposure
+
+# اسکن با چند تگ ترکیبی
+nuclei -u http://192.168.56.20:8000 -tags cve,misconfig,exposure
+
+# اسکن دسته خاص (Templates یک پوشه)
+nuclei -u http://192.168.56.20:8000 \
+    -t ~/nuclei-templates/http/misconfiguration/
+</pre>
+
+                        <h5>۴) اسکن‌های سریع و بهینه:</h5>
+<pre class="code-box"># افزایش سرعت (توجه به Rate Limit)
+nuclei -u http://192.168.56.20:8000 -rate-limit 150 -concurrency 25
+
+# با پروکسی (از طریق Burp)
+nuclei -u http://192.168.56.20:8000 -proxy http://127.0.0.1:8080
+
+# اسکن چند هدف از فایل
+nuclei -l targets.txt -severity critical,high -o results.txt
+
+# با هدرهای دلخواه
+nuclei -u http://192.168.56.20:8000 \
+    -H &quot;X-Forwarded-For: 127.0.0.1&quot; \
+    -H &quot;User-Agent: Mozilla/5.0&quot;
+</pre>
+
+                        <h5>۵) نوشتن Template سفارشی (نمونه):</h5>
+<pre class="code-box"># ~/custom-templates/django-debug.yaml
+id: django-debug-check
+
+info:
+  name: Django DEBUG Mode Detection
+  author: your-name
+  severity: high
+  description: بررسی فعال بودن DEBUG در Django
+
+requests:
+  - method: GET
+    path:
+      - &quot;{{BaseURL}}/this-path-does-not-exist-xyz&quot;
+    matchers:
+      - type: word
+        words:
+          - &quot;DisallowedHost&quot;
+          - &quot;DEBUG = True&quot;
+          - &quot;You&#39;re seeing this error because you have&quot;
+        condition: or
+</pre>
+
+                        <p>اجرای Template سفارشی:</p>
+<pre class="code-box">nuclei -u http://192.168.56.20:8000 -t ~/custom-templates/django-debug.yaml
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 چرا Nuclei انقلابی است؟</strong>
+                            <ul style="margin: 6px 0 0 0;">
+                                <li>سرعت: ۱۰ برابر Nikto (به‌خاطر Go)</li>
+                                <li>انعطاف: هر کسی می‌تواند Template بنویسد (حتی شما)</li>
+                                <li>دقیق: False Positive کم (با matchers دقیق)</li>
+                                <li>پویا: ۵۰۰۰+ Template + هر روز به‌روز</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۳: Burp Suite Spider -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۳: Burp Suite — Spider و Proxy</h6>
+                        <p class="use-case">کاربرد: پروکسی رهگیری + خزنده وب برای کشف Endpoints</p>
+
+                        <h5>۱) پیکربندی Burp به‌عنوان پروکسی:</h5>
+                        <ol>
+                            <li>Burp Suite را باز کنید: <code>burpsuite</code> در ترمینال Kali.</li>
+                            <li>به تب <strong>Proxy → Options</strong> بروید.</li>
+                            <li>پروکسی پیش‌فرض: <code>127.0.0.1:8080</code> (معمولاً فعال است).</li>
+                            <li>در Firefox Kali، تنظیمات پروکسی:
+                                <ul>
+                                    <li>Preferences → Network Settings → Settings</li>
+                                    <li>Manual proxy configuration: HTTP Proxy: 127.0.0.1, Port: 8080</li>
+                                    <li>✅ Also use this proxy for HTTPS</li>
+                                </ul>
+                            </li>
+                            <li>در مرورگر، به <code>http://burp</code> بروید و CA Certificate را دانلود و نصب کنید (برای HTTPS).</li>
+                        </ol>
+
+                        <h5>۲) اجرای Spider:</h5>
+<pre class="code-box"># مرحله ۱: در مرورگر، سایت هدف را باز کنید
+# http://192.168.56.20:8000
+
+# مرحله ۲: در Burp، تب Target → Sitemap باز کنید
+# همه Endpoints یک‌جا نمایش داده می‌شوند
+
+# مرحله ۳: راست‌کلیک روی دامنه → Spider this host
+# Burp خودش شروع می‌کند به کشف تمام لینک‌ها
+
+# مرحله ۴: در تب Spider → Options، سرعت را تنظیم کنید
+# (به هدف فشار نیاورید)
+
+# مرحله ۵: بعد از اتمام، Sitemap کامل Endpoints را دارد
+</pre>
+
+                        <h5>۳) Live Passive Scan (Burp Pro — یا Community محدود):</h5>
+<pre class="code-box"># Burp به‌طور خودکار در حین مرور، ترافیک را تحلیل می‌کند
+# نتایج در تب Dashboard → Issue Activity نمایش داده می‌شوند
+
+# در Burp Community:
+# - Passive Scan رایگان است
+# - Active Scan محدود به Intruder/Repeater است
+</pre>
+
+                        <h5>۴) استفاده از Repeater برای تست دستی:</h5>
+<pre class="code-box"># ۱) روی یک درخواست در Proxy History راست‌کلیک کنید
+# ۲) Send to Repeater
+# ۳) در تب Repeater، درخواست را تغییر دهید و Send کنید
+# ۴) پاسخ را تحلیل کنید
+
+# مثال: تغییر پارامتر id از 1 به 2 برای تست IDOR
+GET /api/users?id=1 HTTP/1.1
+# تغییر به:
+GET /api/users?id=2 HTTP/1.1
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 نکته Burp Community:</strong>
+                            نسخه رایگان Burp، Spider و Active Scan محدودی دارد. برای این فصل کافی است. نسخه Pro (~475$ در سال) تمام قابلیت‌ها را دارد.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۴: OWASP ZAP -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۴: OWASP ZAP (اسکنر متن‌باز)</h6>
+                        <p class="use-case">کاربرد: جایگزین رایگان و متن‌باز Burp Pro + اسکن خودکار</p>
+
+                        <h5>۱) راه‌اندازی ZAP:</h5>
+<pre class="code-box"># راه‌اندازی GUI
+zaproxy
+# یا نسخه headless
+zap.sh -daemon -host 0.0.0.0 -port 8090 -config api.key=changeme
+</pre>
+
+                        <h5>۲) Automated Scan (ساده‌ترین روش):</h5>
+                        <ol>
+                            <li>ZAP را باز کنید.</li>
+                            <li>روی <strong>Automated Scan</strong> کلیک کنید.</li>
+                            <li>URL هدف را وارد کنید: <code>http://192.168.56.20:8000</code></li>
+                            <li>روی <strong>Attack</strong> کلیک کنید.</li>
+                            <li>صبر کنید (ZAP خودش Spider و Active Scan انجام می‌دهد).</li>
+                            <li>در تب <strong>Alerts</strong> نتایج را ببینید.</li>
+                        </ol>
+
+                        <h5>۳) اسکن از خط فرمان (Headless):</h5>
+<pre class="code-box"># اسکن ساده با ZAP CLI
+zap-cli quick-scan -s all -r http://192.168.56.20:8000
+
+# اسکن با گزارش HTML
+zap-cli quick-scan -s all -r http://192.168.56.20:8000 \
+    --output zap_report.html \
+    --format html
+
+# فقط Spider
+zap-cli spider http://192.168.56.20:8000
+
+# فقط Active Scan (روی URLs کشف‌شده)
+zap-cli active-scan http://192.168.56.20:8000
+
+# دریافت گزارش
+zap-cli report -o report.html -f html
+</pre>
+
+                        <h5>۴) پیکربندی Authentication (برای سایت‌های نیازمند Login):</h5>
+<pre class="code-box"># در ZAP GUI:
+# 1. Site tree → راست‌کلیک روی دامنه → Authentication
+# 2. Method: Form-based authentication
+# 3. Login URL: http://target/login
+# 4. Username field: username
+# 5. Password field: password
+# 6. Logged-in indicator: (متن نمایش‌داده‌شده بعد از لاگین)
+
+# 5) خروجی HTML با همه Alerts
+# Report → Generate HTML Report
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 تفاوت ZAP و Burp:</strong>
+                            <ul style="margin: 6px 0 0 0;">
+                                <li><strong>ZAP:</strong> کاملاً رایگان، متن‌باز، Automation قوی‌تر</li>
+                                <li><strong>Burp Pro:</strong> UX بهتر، Plugin بیشتر، Active Scan قوی‌تر</li>
+                            </ul>
+                            حرفه‌ای‌ها معمولاً هر دو را دارند.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۵: testssl.sh -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۵: testssl.sh (تحلیل SSL/TLS)</h6>
+                        <p class="use-case">کاربرد: تحلیل جامع پیکربندی SSL/TLS و کشف ضعف‌های رمزنگاری</p>
+
+                        <h5>۱) اجرای تست:</h5>
+<pre class="code-box"># تست ساده
+testssl.sh https://192.168.56.20:8443
+
+# تست کامل با همه بررسی‌ها
+testssl.sh --full https://example.com
+
+# تست با سرعت بالا (موازی)
+testssl.sh --parallel --full https://example.com
+
+# ذخیره خروجی
+testssl.sh --log --jsonfile ssl_report.json https://example.com
+testssl.sh --htmlfile ssl_report.html https://example.com
+</pre>
+
+                        <h5>۲) تفسیر خروجی نمونه:</h5>
+<pre class="code-box"> Testing protocols via sockets
+
+ SSLv2      not offered (OK)
+ SSLv3      not offered (OK)
+ TLS 1.0    not offered (OK)
+ TLS 1.1    not offered (OK)
+ TLS 1.2    offered (OK)
+ TLS 1.3    offered (OK)
+
+ Testing cipher categories
+
+ NULL ciphers             not offered (OK)
+ anonymous NULL ciphers   not offered (OK)
+ export ciphers           not offered (OK)
+
+ Testing server preferences
+
+ Has server cipher order?     yes (OK)
+ Negotiated protocol          TLSv1.3
+ Negotiated cipher            TLS_AES_256_GCM_SHA384
+
+ Testing HTTP header response @ &quot;/&quot;
+
+ HTTP Status Code            200 OK
+ HTTP clock skew             +0 sec from localtime
+
+ Testing vulnerabilities
+
+ Heartbleed (CVE-2014-0160)     not vulnerable (OK)
+ CCS (CVE-2014-0224)           not vulnerable (OK)
+ Ticketbleed (CVE-2016-9244)   not vulnerable (OK)
+ ROBOT                         not vulnerable (OK)
+ Secure Renegotiation (RFC 5746) supported (OK)
+</pre>
+
+                        <h5>۳) ابزارهای مکمل SSL:</h5>
+<pre class="code-box"># sslscan — ساده‌تر
+sslscan 192.168.56.20:8443
+
+# sslyze — تحلیل دقیق‌تر
+sslyze --regular 192.168.56.20:8443
+
+# nmap SSL scripts
+sudo nmap --script ssl-enum-ciphers,ssl-cert -p 443,8443 192.168.56.20
+
+# openssl دستی
+openssl s_client -connect 192.168.56.20:8443 -tls1_2
+echo | openssl s_client -connect 192.168.56.20:8443 2&gt;/dev/null | openssl x509 -noout -dates
+</pre>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ نکته:</strong>
+                            بسیاری از آسیب‌پذیری‌ها مثل <strong>Heartbleed (CVE-2014-0160)</strong>، <strong>POODLE</strong>، <strong>BEAST</strong> فقط از طریق تحلیل SSL کشف می‌شوند. <strong>testssl.sh اولین ابزار</strong> برای این کار است.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۶: Wapiti -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۶: Wapiti (اسکنر وب Python-based)</h6>
+                        <p class="use-case">کاربرد: اسکن وب با تکنیک Black-Box (بدون نیاز به کد)</p>
+
+                        <h5>اجرای Wapiti:</h5>
+<pre class="code-box"># اسکن ساده
+wapiti -u http://192.168.56.20:8000 -o wapiti_report
+
+# اسکن کامل با همه ماژول‌ها
+wapiti -u http://192.168.56.20:8000 -m all
+
+# اسکن با ماژول‌های خاص
+wapiti -u http://192.168.56.20:8000 -m sql,xss,exec,file
+
+# ذخیره در HTML و JSON
+wapiti -u http://192.168.56.20:8000 -f html -o report.html
+wapiti -u http://192.168.56.20:8000 -f json -o report.json
+
+# اسکن با احراز هویت
+wapiti -u http://192.168.56.20:8000 \
+    --auth-user admin \
+    --auth-password admin123 \
+    --auth-method post
+</pre>
+
+                        <h5>ماژول‌های Wapiti:</h5>
+<pre class="code-box">sql      →  SQL Injection
+xss      →  Cross Site Scripting
+file     →  File Inclusion (LFI/RFI)
+exec     →  Command Execution
+crlf     →  CRLF Injection
+htaccess →  htaccess Bypass
+backup   →  Backup Files
+brute    →  Brute Force (Login)
+buster   →  Directory Busting
+csrf     →  CSRF
+ssrf     →  SSRF
+nikto    →  Nikto Integration
+</pre>
+                    </div>
+
+                    <!-- ابزار ۷: httpx و katana -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۷: httpx و katana (ProjectDiscovery)</h6>
+                        <p class="use-case">کاربرد: تحلیل HTTP سریع + Crawl مدرن</p>
+
+                        <h5>۱) httpx — تحلیل سریع HTTP:</h5>
+<pre class="code-box"># بررسی سریع یک لیست از هاست‌ها
+cat subdomains.txt | httpx
+
+# با نمایش Status Code و Title
+cat subdomains.txt | httpx -sc -title
+
+# ذخیره همه اطلاعات (Status، Title، Tech)
+cat subdomains.txt | httpx -sc -title -td -o httpx_results.txt
+
+# بررسی یک URL خاص
+echo &quot;http://192.168.56.20:8000&quot; | httpx -sc -title -td -server
+
+# بررسی Security Headers
+echo &quot;http://192.168.56.20:8000&quot; | httpx -sc -server -headers
+
+# با خروجی JSON
+cat subdomains.txt | httpx -json -o httpx.json
+</pre>
+
+                        <h5>۲) katana — Crawler مدرن:</h5>
+<pre class="code-box"># Crawl ساده
+katana -u http://192.168.56.20:8000 -o katana_urls.txt
+
+# با JavaScript rendering (کندتر ولی کامل‌تر)
+katana -u http://192.168.56.20:8000 -jc -o katana_urls.txt
+
+# با تشخیص فرم‌ها
+katana -u http://192.168.56.20:8000 -fx -o katana_urls.txt
+
+# سرعت بالا با عمق محدود
+katana -u http://192.168.56.20:8000 -d 3 -c 20 -o katana_urls.txt
+
+# با پروکسی (Burp)
+katana -u http://192.168.56.20:8000 -proxy http://127.0.0.1:8080
+
+# با فیلتر فقط 200 OK
+katana -u http://192.168.56.20:8000 -f qurl -o clean_urls.txt
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 زنجیره حرفه‌ای:</strong>
+                            <code>subfinder | httpx | katana | nuclei</code>
+                            <ul style="margin: 6px 0 0 0;">
+                                <li>subfinder → کشف زیردامنه‌ها</li>
+                                <li>httpx → فیلتر زنده‌ها + اطلاعات سریع</li>
+                                <li>katana → کشف URLs</li>
+                                <li>nuclei → اسکن آسیب‌پذیری</li>
+                            </ul>
+                            این ترکیب، هسته Recon+Scan حرفه‌ای مدرن است.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۸: API Discovery -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۸: API Discovery (کشف Endpoints API)</h6>
+                        <p class="use-case">کاربرد: کشف Endpoints API و تست REST</p>
+
+                        <h5>۱) کشف Endpoints رایج:</h5>
+<pre class="code-box"># با Gobuster، مسیرهای API
+gobuster dir -u http://192.168.56.20:8000 \
+    -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+    -t 30
+
+# با FFUF
+ffuf -u http://192.168.56.20:8000/api/FUZZ \
+    -w /usr/share/seclists/Discovery/Web-Content/api/objects.txt
+
+# Wordlistهای API
+ls /usr/share/seclists/Discovery/Web-Content/api/
+</pre>
+
+                        <h5>۲) کشف Swagger/OpenAPI:</h5>
+<pre class="code-box"># مسیرهای رایج
+curl http://192.168.56.20:8000/swagger.json
+curl http://192.168.56.20:8000/swagger.yaml
+curl http://192.168.56.20:8000/api/swagger.json
+curl http://192.168.56.20:8000/api/docs/
+curl http://192.168.56.20:8000/openapi.json
+
+# ابزار خودکار
+nuclei -u http://192.168.56.20:8000 -tags swagger
+nuclei -u http://192.168.56.20:8000 -tags openapi
+</pre>
+
+                        <h5>۳) تست API با Burp Repeater:</h5>
+<pre class="code-box"># درخواست نمونه API
+GET /api/v1/users HTTP/1.1
+Host: 192.168.56.20:8000
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+# تست‌های رایج:
+GET /api/users          → لیست کاربران
+GET /api/users/1        → کاربر 1
+GET /api/users/999      → کاربر ناموجود
+POST /api/users         → ساخت کاربر
+PUT /api/users/1        → ویرایش
+DELETE /api/users/1     → حذف
+</pre>
+                    </div>
+                </div>
+
+                <!-- بخش ۷: کارگاه -->
+                <div class="section-part" id="part-07">
+                    <h3>۷. کارگاه عملی (اجرا در آزمایشگاه شما)</h3>
+
+                    <div class="workshop-box">
+                        <h5>🛠️ هدف کارگاه: اسکن کامل هدف Django Lab</h5>
+                        <p>در این کارگاه، تمام ۸ ابزار بالا را روی هدف <code>192.168.56.20:8000</code> اجرا می‌کنید و یک گزارش آسیب‌پذیری حرفه‌ای می‌سازید.</p>
+                    </div>
+
+                    <h4><span class="step-number">۱</span> آماده‌سازی</h4>
+<pre class="code-box"># پوشه کاری
+mkdir -p ~/scanning-lab/chapter-04
+cd ~/scanning-lab/chapter-04
+
+# Snapshot جدید از هر VM بگیرید
+# نام: pre-scanning-baseline
+
+# تست اتصال
+curl -I http://192.168.56.20:8000/
+ping -c 2 192.168.56.20
+</pre>
+
+                    <h4><span class="step-number">۲</span> Nikto Scan</h4>
+<pre class="code-box"># اسکن پایه با ذخیره در همه فرمت‌ها
+nikto -h http://192.168.56.20:8000 \
+    -o nikto_report.html -Format html \
+    -maxtime 10m
+
+# تبدیل به TXT
+nikto -h http://192.168.56.20:8000 -o nikto_report.txt -Format txt
+
+# بررسی خروجی
+cat nikto_report.txt
+
+# نتایج مورد انتظار روی Django lab:
+# • Server Header افشاگر
+# • /admin/ پیدا شده
+# • /static/ با Directory Listing
+# • هدرهای امنیتی غایب
+</pre>
+
+                    <h4><span class="step-number">۳</span> Nuclei Scan</h4>
+<pre class="code-box"># ۱) به‌روزرسانی Templateها
+nuclei -update-templates
+
+# ۲) اسکن کامل با همه شدت‌ها
+nuclei -u http://192.168.56.20:8000 \
+    -severity critical,high,medium,low \
+    -o nuclei_results.txt \
+    -json-export nuclei_results.json \
+    -stats \
+    -rate-limit 100
+
+# ۳) اسکن تخصصی Django
+nuclei -u http://192.168.56.20:8000 \
+    -tags django,misconfig,exposure \
+    -o nuclei_django.txt
+
+# ۴) نگاه به نتایج
+cat nuclei_results.txt
+cat nuclei_django.txt
+</pre>
+
+                    <h4><span class="step-number">۴</span> Burp Suite Spider</h4>
+<pre class="code-box"># ۱) Burp را باز کنید
+burpsuite &amp;
+
+# ۲) در Burp: Proxy → Options را چک کنید
+#    Bind to: 127.0.0.1, Port: 8080
+
+# ۳) در Firefox: تنظیمات پروکسی → Manual → 127.0.0.1:8080
+
+# ۴) سایت هدف را در مرورگر باز کنید:
+#    http://192.168.56.20:8000
+
+# ۵) در Burp: Target → Sitemap
+#    راست‌کلیک روی دامنه → Spider this host
+
+# ۶) در Spider → Options، تنظیمات را چک کنید
+#    - Maximum link depth: 5
+#    - Throttle: 100ms
+
+# ۷) صبر کنید تا تمام شود
+
+# ۸) Sitemap کامل را ذخیره کنید:
+#    Target → Save selected items → sitemap.xml
+</pre>
+
+                    <h4><span class="step-number">۵</span> OWASP ZAP Automated Scan</h4>
+<pre class="code-box"># ۱) ZAP را در حالت Daemon
+zap.sh -daemon -host 127.0.0.1 -port 8090 -config api.key=labkey
+
+# ۲) اجرای Automated Scan
+zap-cli --zap-url http://127.0.0.1 --zap-port 8090 --zap-api-key labkey \
+    quick-scan \
+    -s all \
+    -r http://192.168.56.20:8000 \
+    --output zap_report.html \
+    --format html
+
+# ۳) نگاه به گزارش
+firefox zap_report.html
+
+# ۴) یا اگر zap-cli نصب نیست:
+pip3 install --user zap-cli
+</pre>
+
+                    <h4><span class="step-number">۶</span> SSL/TLS و هدرهای امنیتی</h4>
+<pre class="code-box"># ۱) تست SSL
+testssl.sh --log --jsonfile ssl_report.json http://192.168.56.20:8000
+# (اگر HTTPS دارد) testssl.sh --full https://192.168.56.20:8443
+
+# ۲) بررسی هدرهای امنیتی
+curl -sI http://192.168.56.20:8000/ | tee headers.txt
+
+# ۳) تحلیل هدرها با اسکریپت
+cat headers.txt | grep -iE &quot;(strict-transport|x-frame|x-content-type|content-security|referrer)&quot;
+
+# ۴) بررسی Cookies
+curl -sI http://192.168.56.20:8000/ | grep -i cookie
+
+# انتظار: نباید None باشد اگر HttpOnly و Secure تنظیم شده باشد
+</pre>
+
+                    <h4><span class="step-number">۷</span> ساخت گزارش آسیب‌پذیری</h4>
+<pre class="code-box"># جمع‌آوری همه یافته‌ها
+cat nikto_report.txt nuclei_results.txt &gt; all-findings.txt
+
+# ساخت vulnerability-report.md
+nano vulnerability-report.md
+</pre>
+
+                    <p><strong>ساختار گزارش:</strong></p>
+<pre class="code-box"># Vulnerability Report — Django Lab
+## تاریخ: 1405/XX/XX
+## تحلیل‌گر: [نام شما]
+## هدف: 192.168.56.20:8000
+
+### 1. خلاصه اجرایی
+- 5 آسیب‌پذیری یافت شد
+- 1 مورد Critical، 2 مورد High، 2 مورد Medium
+
+### 2. جدول آسیب‌پذیری‌ها
+| # | یافته | شدت | منبع کشف | ابزار | CVE | Remediation |
+|---|-------|-----|-----------|-------|-----|-------------|
+| 1 | Django DEBUG Mode | High | Nuclei | nuclei-tag django | - | DEBUG=False |
+| 2 | Missing HSTS | Medium | testssl | testssl.sh | - | SECURE_HSTS_SECONDS |
+| 3 | Server Header Disclosure | Low | Nikto | nikto | - | Nginx server_tokens off |
+| 4 | /admin/ Accessible | High | Nikto | nikto | - | تغییر مسیر admin |
+| 5 | X-Frame-Options Missing | Medium | Nikto | nikto | - | X_FRAME_OPTIONS = DENY |
+
+### 3. جزئیات هر یافته
+#### یافته 1: Django DEBUG Mode فعال است
+- **شدت:** High (CVSS 7.5)
+- **شرح:** با ارسال درخواست با Host نامعتبر، صفحه خطای Django نمایش داده می‌شود و اطلاعات حساس (تنظیمات، مسیر فایل‌ها، متغیرهای محیطی) افشا می‌شود.
+- **PoC:**
+  curl -H &quot;Host: invalid&quot; http://192.168.56.20:8000/
+- **Fix:** در settings.py: DEBUG = False
+- **تأیید Fix:** بعد از تغییر، همان درخواست باید 400 بدهد
+
+### 4. فایل‌های خام
+- nikto_report.html
+- nuclei_results.json
+- zap_report.html
+- ssl_report.json
+- headers.txt
+</pre>
+                </div>
+
+                <!-- بخش ۸: تحلیل دفاعی -->
+                <div class="section-part" id="part-08">
+                    <h3>۸. تحلیل دفاعی و کاهش سطح حمله (Attack Surface Reduction)</h3>
+
+                    <p>حالا از دید مدافع: چطور جلوی هر ابزار Scanning را بگیریم؟</p>
+
+                    <h5>🛡️ چک‌لیست دفاعی — در برابر هر ابزار:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>ابزار</th><th>دفاع ۱</th><th>دفاع ۲</th><th>دفاع ۳</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Nikto</strong></td>
+                                <td>حذف Bannerها</td>
+                                <td>Rate Limit (Cloudflare)</td>
+                                <td>WAF با ModSecurity</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nuclei</strong></td>
+                                <td>Patch به‌روز</td>
+                                <td>Disable debug mode</td>
+                                <td>Custom WAF rules</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Burp Spider</strong></td>
+                                <td>Robots.txt محتاطانه</td>
+                                <td>Rate Limiting</td>
+                                <td>Authentication پیچیده</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ZAP Automated</strong></td>
+                                <td>CSRF Token قوی</td>
+                                <td>Secure Cookies</td>
+                                <td>Input Validation دقیق</td>
+                            </tr>
+                            <tr>
+                                <td><strong>testssl.sh</strong></td>
+                                <td>TLS 1.2+ فقط</td>
+                                <td>Disable weak ciphers</td>
+                                <td>HSTS طولانی</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wapiti</strong></td>
+                                <td>WAF برای SQLi/XSS</td>
+                                <td>CSP قوی</td>
+                                <td>Parameterized Queries</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔐 نمونه پیکربندی‌های دفاعی:</h5>
+
+                    <div class="creative-box">
+                        <h6>🔹 Nginx — کاهش Attack Surface و مسدودسازی اسکنرها</h6>
+<pre class="code-box"># /etc/nginx/nginx.conf
+http &#123;
+    server_tokens off;  # حذف نسخه Nginx
+    
+    # Rate Limiting برای جلوگیری از Scannerها
+    limit_req_zone $binary_remote_addr zone=scan_limit:10m rate=10r/s;
+    limit_req_zone $binary_remote_addr zone=api_limit:10m rate=30r/s;
+    
+    # مسدودسازی User-Agentهای اسکنرها
+    map $http_user_agent $block_scanner &#123;
+        default 0;
+        ~*nikto 1;
+        ~*nuclei 1;
+        ~*nmap 1;
+        ~*sqlmap 1;
+        ~*dirbuster 1;
+        ~*gobuster 1;
+        ~*zap 1;
+        ~*burpsuite 1;
+    &#125;
+    
+    server &#123;
+        listen 443 ssl http2;
+        server_name target.local;
+        
+        # مسدودسازی اسکنرها
+        if ($block_scanner) &#123;
+            return 403;
+        &#125;
+        
+        # Rate Limiting
+        location / &#123;
+            limit_req zone=scan_limit burst=20 nodelay;
+            limit_req_status 429;
+            proxy_pass http://127.0.0.1:8000;
+        &#125;
+        
+        location /api/ &#123;
+            limit_req zone=api_limit burst=50 nodelay;
+            proxy_pass http://127.0.0.1:8000;
+        &#125;
+        
+        # هدرهای امنیتی
+        add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains; preload&quot; always;
+        add_header X-Frame-Options &quot;DENY&quot; always;
+        add_header X-Content-Type-Options &quot;nosniff&quot; always;
+        add_header Referrer-Policy &quot;strict-origin-when-cross-origin&quot; always;
+        add_header Content-Security-Policy &quot;default-src &#39;self&#39;; script-src &#39;self&#39;&quot; always;
+        add_header Permissions-Policy &quot;geolocation=(), microphone=()&quot; always;
+    &#125;
+&#125;
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 Django — سخت‌سازی برای مقاومت در برابر اسکن</h6>
+<pre class="code-box"># settings.py — برای production
+DEBUG = False
+ALLOWED_HOSTS = [&#39;target.local&#39;, &#39;www.target.local&#39;]
+
+# هدرهای امنیتی
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = &#39;DENY&#39;
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = &#39;Strict&#39;
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False  # باید False باشد برای فرم‌های AJAX
+
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [&#39;https://target.local&#39;]
+
+# Rate Limiting (نیاز به django-ratelimit)
+INSTALLED_APPS += [&#39;django_ratelimit&#39;]
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 ModSecurity + OWASP CRS — لایه WAF</h6>
+<pre class="code-box"># /etc/modsecurity/modsecurity.conf
+SecRuleEngine On
+
+# Paranoia Level (1-4) — بالاتر = امن‌تر ولی بیشتر False Positive
+SecAction &quot;id:900000,phase:1,nolog,pass,t:none,setvar:tx.paranoia_level=2&quot;
+
+# Anomaly Scoring Mode
+SecAction &quot;id:900000,phase:1,nolog,pass,t:none,setvar:tx.inbound_anomaly_score_threshold=5&quot;
+
+# بلاک کردن اسکنرها بر اساس User-Agent
+SecRule REQUEST_HEADERS:User-Agent &quot;@pmFromFile scanners-user-agents.data&quot; \
+    &quot;id:900001,phase:1,deny,status:403,msg:&#39;Scanner detected&#39;&quot;
+
+# Rate Limiting (DDoS)
+SecAction &quot;id:900002,phase:1,pass,nolog,setvar:tx.rate_limit=100&quot;
+
+# OWASP Core Rule Set
+Include /etc/modsecurity/crs/crs-setup.conf
+Include /etc/modsecurity/crs/rules/*.conf
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 تشخیص Scannerها با تحلیل لاگ</h6>
+<pre class="code-box"># اسکریپت تشخیص خودکار Scannerها در Nginx log
+#!/bin/bash
+LOG=/var/log/nginx/access.log
+
+echo &quot;=== تشخیص Scannerها در 1 ساعت گذشته ===&quot;
+
+# ۱) تعداد درخواست به ازای هر IP
+echo &quot;&quot;
+echo &quot;Top 10 IPها:&quot;
+awk &#39;{print $1}&#39; $LOG | sort | uniq -c | sort -rn | head -10
+
+# ۲) درخواست‌های 404 زیاد (نشانه Dir Busting)
+echo &quot;&quot;
+echo &quot;IPهای مشکوک (404 زیاد):&quot;
+awk &#39;$9 == 404 {print $1}&#39; $LOG | sort | uniq -c | sort -rn | head -10
+
+# ۳) User-Agentهای مشکوک
+echo &quot;&quot;
+echo &quot;User-Agentهای مشکوک:&quot;
+grep -iE &quot;(nikto|nuclei|nmap|sqlmap|gobuster|dirbuster|zap|burp)&quot; $LOG | \
+    awk -F&#39;&quot;&#39; &#39;{print $6}&#39; | sort | uniq -c | sort -rn
+
+# ۴) درخواست به مسیرهای حساس
+echo &quot;&quot;
+echo &quot;دسترسی به مسیرهای حساس:&quot;
+grep -E &quot;/(admin|\.env|\.git|config|backup|phpinfo)&quot; $LOG | \
+    awk &#39;{print $1, $7}&#39; | sort -u
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده «Stack Minimalism»:</strong>
+                        هر سرویس، هر پورت، هر فایل اضافی = Attack Surface اضافه. حداقل نگه دارید و اسکنرها را بی‌نتیجه بگذارید.
+                    </div>
+                </div>
+
+                <!-- بخش ۹: نکات حرفه‌ای -->
+                <div class="section-part" id="part-09">
+                    <h3>۹. نکات حرفه‌ای و دام‌های رایج</h3>
+
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ کارهای حرفه‌ای:</h6>
+                            <ul>
+                                <li>Burp را جلوی همه ابزارها بگذارید (ترافیک کامل)</li>
+                                <li>Nuclei Templateها را روزانه به‌روزرسانی کنید</li>
+                                <li>همه خروجی‌ها را در Git نگه دارید</li>
+                                <li>هر هشدار خودکار را دستی تأیید کنید</li>
+                                <li>ZAP را در حالت Daemon برای اسکن خودکار</li>
+                                <li>testssl.sh را روی همه HTTPSها اجرا کنید</li>
+                                <li>API Discovery را با Gobuster انجام دهید</li>
+                                <li>گزارش با CVSS و Remediation دقیق بنویسید</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>❌ دام‌های رایج:</h6>
+                            <ul>
+                                <li>اجرای Nikto بدون Proxy (نمی‌بینید چه می‌فرستد)</li>
+                                <li>اعتماد کورکورانه به خروجی خودکار (FP زیاد)</li>
+                                <li>نادیده گرفتن False Positive (اعتبار از دست می‌رود)</li>
+                                <li>Active Scan روی هدف تولیدی (جرم)</li>
+                                <li>اجرای ZAP Active بدون Auth (همه چیز 401 می‌شود)</li>
+                                <li>فراموش کردن SSL Scan (شایع‌ترین غفلت)</li>
+                                <li>Rate Limit بیش از حد (بان شدن IP)</li>
+                                <li>گزارش بدون CVSS (نیمه‌کاره)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5>🎓 نکات پیشرفته:</h5>
+
+                    <h6>۱) زنجیره حرفه‌ای خودکار:</h6>
+<pre class="code-box"># اسکریپت زنجیره‌ای: از Subfinder تا Nuclei
+#!/bin/bash
+TARGET=$1
+OUTDIR=&quot;recon-$TARGET-$(date +%Y%m%d)&quot;
+mkdir -p $OUTDIR
+
+echo &quot;[+] Subdomain Enumeration...&quot;
+subfinder -d $TARGET -silent -o $OUTDIR/subs.txt
+
+echo &quot;[+] Filtering live hosts...&quot;
+cat $OUTDIR/subs.txt | httpx -silent -sc -title -o $OUTDIR/live.txt
+
+echo &quot;[+] Crawling URLs...&quot;
+cat $OUTDIR/live.txt | awk &#39;&#123;print $1&#125;&#39; | katana -silent -o $OUTDIR/urls.txt
+
+echo &quot;[+] Vulnerability Scan...&quot;
+nuclei -l $OUTDIR/live.txt -severity critical,high -o $OUTDIR/vulns.txt
+
+echo &quot;[+] SSL/TLS Audit...&quot;
+while read url; do
+    testssl.sh --log $url &gt; $OUTDIR/ssl-$(echo $url | md5sum).txt
+done &lt; $OUTDIR/live.txt
+
+echo &quot;[+] Done. Results in $OUTDIR/&quot;
+ls -la $OUTDIR/
+</pre>
+
+                    <h6>۲) کار با Authenticated Scans:</h6>
+<pre class="code-box"># برای اپلیکیشن‌های نیازمند Login، باید Session Cookie را بدهیم:
+
+# ۱) در Burp، Login کنید و Cookie را از Proxy History بردارید
+# ۲) با Nuclei:
+nuclei -u http://target.com \
+    -H &quot;Cookie: sessionid=abc123; csrftoken=xyz789&quot; \
+    -H &quot;Authorization: Bearer eyJhbGc...&quot;
+
+# ۳) با Nikto:
+nikto -h http://target.com \
+    -Cgidirs all \
+    -cookies &quot;sessionid=abc123&quot;
+
+# ۴) با ZAP — از Authentication Config استفاده کنید (بخش ۶ ابزار ۴)
+</pre>
+
+                    <h6>۳) Bypass WAF برای Scanning:</h6>
+<pre class="code-box"># اگر WAF اسکن شما را بلاک کرد، تکنیک‌های زیر:
+
+# ۱) Rate Limit پایین
+nuclei -u http://target.com -rate-limit 5 -concurrency 2
+
+# ۲) تغییر User-Agent تصادفی
+nuclei -u http://target.com -H &quot;User-Agent: Mozilla/5.0 ...&quot;
+
+# ۳) X-Forwarded-For برای مخفی‌سازی IP
+nuclei -u http://target.com -H &quot;X-Forwarded-For: 127.0.0.1&quot;
+
+# ۴) اضافه کردن Delay
+nuclei -u http://target.com -rl 10 -timeout 10
+
+# ۵) اسکن از IPهای Proxy مختلف (tor + proxychains)
+proxychains nuclei -u http://target.com
+</pre>
+
+                    <h6>۴) تحلیل False Positive:</h6>
+<pre class="code-box"># هر هشدار خودکار، دستی چک کنید.
+# مثال: Nuclei یک هشدار SQLi می‌دهد.
+
+# ۱) خودتان با Burp Repeater تست کنید
+# ۲) از ابزار تأیید استفاده کنید:
+sqlmap -u &quot;http://target.com/page?id=1&quot; --batch --level=3 --risk=2
+
+# ۳) بررسی رفتار سرور:
+curl -v &quot;http://target.com/page?id=1&#39;&quot;
+curl -v &quot;http://target.com/page?id=1%27&quot;
+
+# اگر پیام SQL error دید → تأیید شد
+# اگر همان صفحه 200 داد → احتمالاً False Positive
+</pre>
+
+                    <h6>۵) حرفه‌ای‌ترین زنجیره (Framework-based):</h6>
+<pre class="code-box"># استفاده از Recon-ng برای زنجیره کامل
+recon-ng
+
+# یا Vajra (ابزار Automated Recon)
+git clone https://github.com/r3c0n/Vajra.git
+cd Vajra
+./vajra.sh -u http://target.com
+
+# یا Sn1per
+git clone https://github.com/1N3/Sn1per
+sudo bash install.sh
+sniper -t http://target.com -m stealth
+</pre>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار درباره Automated Scanning:</strong>
+                        ابزارهای خودکار مثل ZAP Automated و Wapiti می‌توانند سرویس‌های آسیب‌پذیر (مخصوصاً قدیمی) را از کار بیندازند. همیشه:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>روی هدف آزمایشگاه شروع کنید</li>
+                            <li>Rate Limit پایین بگذارید</li>
+                            <li>Exclude Paths حساس (مثل <code>/delete/*</code>)</li>
+                            <li>اگر تولیدی است، قبل از هر کاری مجوز کتبی بگیرید</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۰: پرسش و پاسخ -->
+                <div class="section-part" id="part-10">
+                    <h3>۱۰. پرسش و پاسخ و رفع اشکال</h3>
+
+                    <div class="qa-box">
+                        <h5>❓ سوالات متداول این فصل:</h5>
+
+                        <details>
+                            <summary>تفاوت Nikto و Nuclei چیست؟ کدام را انتخاب کنم؟</summary>
+                            <p>
+                                <strong>Nikto:</strong> قدیمی، کند، پر سروصدا، ولی جامع — ۶۵۰۰+ چک آماده روی سرور.<br>
+                                <strong>Nuclei:</strong> مدرن، سریع، کم سروصدا، با ۵۰۰۰+ Template پویا و قابل سفارشی‌سازی.<br>
+                                <strong>توصیه:</strong> اول Nuclei (سریع و دقیق)، بعد Nikto (برای چک‌های سرور).
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا Nuclei خطا «no templates found» می‌دهد؟</summary>
+                            <p>
+                                چک‌لیست:
+                                <br>۱) <code>nuclei -update-templates</code> اجرا شده؟
+                                <br>۲) به اینترنت دسترسی دارید؟ (برای دانلود اولیه)
+                                <br>۳) پوشه templates کجاست؟ <code>ls ~/nuclei-templates/</code>
+                                <br>۴) اگر پشت Proxy هستید، <code>-update-templates -proxy</code>.
+                                <br>۵) گاهی دسترسی مستقیم به GitHub مشکل است — از <code>-t</code> با Templates محلی استفاده کنید.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>Burp به‌عنوان Proxy روی Kali کار نمی‌کند. مشکل چیست؟</summary>
+                            <p>
+                                چک‌لیست:
+                                <br>۱) Burp روی 8080 گوش می‌دهد؟ (Proxy → Options)
+                                <br>۲) Firefox تنظیم شده؟ (Manual proxy → 127.0.0.1:8080)
+                                <br>۳) CA Certificate نصب شده؟ (برای HTTPS)
+                                <br>۴) فایروال Kali جلو را گرفته؟ <code>sudo ufw status</code>
+                                <br>۵) در Burp: Intercept is off (راست‌کلیک روی دکمه Intercept).
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>ZAP Automated Scan روی هدف ما هیچ چیزی پیدا نمی‌کند!</summary>
+                            <p>
+                                دلایل احتمالی:
+                                <br>۱) Django lab ما خیلی امن است (احتمال کم)
+                                <br>۲) ZAP فقط سطح اول را اسکن کرده (باید Spider هم انجام دهد)
+                                <br>۳) Authentication لازم است و ZAP لاگین نیست
+                                <br>۴) Input Validation سمت Django، Payloadها را رد می‌کند
+                                <br>راه‌حل: DVWA را هم به ZAP بدهید (این یکی پر از آسیب‌پذیری است).
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا testssl.sh زمان اجرا این‌قدر طول می‌کشد؟</summary>
+                            <p>
+                                testssl.sh سخت‌گیرانه همه cipher suiteها را تست می‌کند (بیش از ۱۰۰ ترکیب). راه‌حل:
+                                <br>• <code>testssl.sh --fast https://target.com</code> (فقط cipherهای مهم)
+                                <br>• <code>testssl.sh --parallel</code> (موازی)
+                                <br>• <code>testssl.sh --openssl=/usr/bin/openssl</code> (نسخه سریع‌تر)
+                                <br>• فقط بخش خاص: <code>testssl.sh --protocols</code>
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>گزارش Nuclei حجم زیادی دارد. چطور فیلتر کنم؟</summary>
+                            <p>
+                                فیلترهای کاربردی:
+                                <br>• <code>-severity critical,high</code> — فقط مهم‌ها
+                                <br>• <code>-tags cve,misconfig</code> — فقط یک دسته
+                                <br>• <code>-exclude-tags dos,fuzz</code> — حذف تست‌های خطرناک
+                                <br>• <code>-json-export</code> و بعد <code>jq</code> برای فیلتر دقیق
+                                <br>• <code>-silent</code> — فقط نتیجه، بدون لاگ
+                            </p>
+                        </details>
+                    </div>
+
+                    <h5>🐛 خطاهای رایج و رفع آن‌ها:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>خطا / مشکل</th><th>علت</th><th>راه‌حل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>nikto: command not found</code></td>
+                                <td>Nikto نصب نیست</td>
+                                <td><code>sudo apt install nikto</code></td>
+                            </tr>
+                            <tr>
+                                <td>Nuclei: <code>cannot find template</code></td>
+                                <td>Templates قدیمی/نصب نشده</td>
+                                <td><code>nuclei -update-templates</code></td>
+                            </tr>
+                            <tr>
+                                <td>Burp: <code>Port 8080 already in use</code></td>
+                                <td>پورت مشغول</td>
+                                <td>تغییر پورت یا kill PID: <code>netstat -tlnp | grep 8080</code></td>
+                            </tr>
+                            <tr>
+                                <td>ZAP: <code>Connection refused to API</code></td>
+                                <td>Daemon اجرا نشده یا API key اشتباه</td>
+                                <td>بررسی: <code>ps aux | grep zap</code>، API key در دستور</td>
+                            </tr>
+                            <tr>
+                                <td>testssl.sh: <code>no such file</code></td>
+                                <td>هدف HTTPS ندارد</td>
+                                <td>testssl.sh فقط برای HTTPS است — ابتدا HTTPS را فعال کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Nuclei: <code>too many open files</code></td>
+                                <td>Concurrency بالا</td>
+                                <td>کاهش: <code>-concurrency 10</code> یا <code>ulimit -n 4096</code></td>
+                            </tr>
+                            <tr>
+                                <td>Nikto: <code>Target not responding</code></td>
+                                <td>هدف خاموش یا Firewall</td>
+                                <td>پینگ + curl تست کنید</td>
+                            </tr>
+                            <tr>
+                                <td>ZAP Spider همه چیز را نمی‌بیند</td>
+                                <td>JavaScript rendering فعال نیست</td>
+                                <td>در ZAP: Selenium/Chrome headless فعال کنید</td>
+                            </tr>
+                            <tr>
+                                <td>همه اسکنرها یکسان جواب می‌دهند</td>
+                                <td>WAF بلاک کرده</td>
+                                <td>Rate Limit پایین، تغییر User-Agent، یا WAF bypass</td>
+                            </tr>
+                            <tr>
+                                <td>Burp: <code>SSL Error — PKIX path building failed</code></td>
+                                <td>CA Certificate نصب نشده</td>
+                                <td>در Firefox: <code>http://burp</code> → دانلود CA → نصب</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۱۱: جمع‌بندی -->
+                <div class="section-part" id="part-11">
+                    <h3>۱۱. جمع‌بندی و نکات طلایی</h3>
+
+                    <div class="summary-box">
+                        <h5>📌 خلاصه نکات کلیدی این فصل:</h5>
+                        <ul>
+                            <li>🔹 <strong>Scanning</strong> فاز بین Recon و Exploitation است — کشف آسیب‌پذیری واقعی، نه فقط ساختار.</li>
+                            <li>🔹 <strong>Nikto</strong> اسکنر کلاسیک (۶۵۰۰+ چک)، <strong>Nuclei</strong> اسکنر مدرن (۵۰۰۰+ Template پویا).</li>
+                            <li>🔹 <strong>Burp Spider</strong> و <strong>OWASP ZAP</strong> برای کشف Endpoints و اسکن خودکار.</li>
+                            <li>🔹 <strong>testssl.sh</strong> برای تحلیل SSL/TLS — شایع‌ترین غفلت در تست نفوذ.</li>
+                            <li>🔹 <strong>httpx</strong> و <strong>katana</strong> برای فیلتر سریع هاست‌ها و Crawl.</li>
+                            <li>🔹 <strong>Burp Proxy جلوی همه ابزارها</strong> — ترافیک کامل را ببینید.</li>
+                            <li>🔹 <strong>هر هشدار خودکار باید دستی تأیید شود</strong> — False Positive بدون تأیید، اعتبار را از بین می‌برد.</li>
+                            <li>🔹 <strong>گزارش حرفه‌ای</strong> با CVSS = نیمی از ارزش کار شما.</li>
+                            <li>🔹 <strong>Rate Limit پایین</strong> شروع کنید، فقط در صورت لزوم بالا ببرید.</li>
+                            <li>🔹 <strong>Stack Minimalism</strong> بهترین دفاع است.</li>
+                        </ul>
+                    </div>
+
+                    <h5>🎓 چرا این فصل، ستون فقرات حرفه‌ای شدن است؟</h5>
+                    <p>در مصاحبه‌های امنیت، سوال کلاسیک است:</p>
+                    <blockquote style="border-right: 3px solid var(--accent); padding-right: 16px; color: var(--muted);">
+                        «اگر هدفی به شما بدهند، اولین کارتان چیست؟»
+                    </blockquote>
+                    <p>
+                        پاسخ ناشیانه: «Nmap می‌زنم.»<br>
+                        پاسخ حرفه‌ای: «Passive Recon با OSINT، بعد Burp Proxy برای مشاهده ترافیک، بعد Nuclei برای اسکن سریع، Nikto برای بررسی سرور، testssl.sh برای SSL و در نهایت تجزیه‌وتحلیل با CVSS.»
+                    </p>
+                    <p>این تفاوت، بین «کسی که tutorial دیده» و «کسی که می‌داند چطور کار کند» است.</p>
+
+                    <div class="callout co-tip">
+                        <strong>📎 پل به فصل بعد:</strong>
+                        در فصل ۵، با لیست آسیب‌پذیری‌های کشف‌شده، وارد فاز <strong>Exploitation</strong> می‌شویم:
+                        <strong>Burp Intruder، Hydra، Medusa، و اولین حملات واقعی</strong>. یاد می‌گیرید چطور یک آسیب‌پذیری را از «شکار» به «بهره‌جویی» تبدیل کنید.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۲: خودارزیابی -->
+                <div class="section-part" id="part-12">
+                    <h3>۱۲. خودارزیابی و آزمونک</h3>
+
+                    <div class="self-assessment">
+                        <h5>⭐ چک‌لیست خودارزیابی (صادق باشید):</h5>
+                        <ul class="checklist">
+                            <li>Nikto را با خروجی HTML/TXT روی هدف اجرا کردم.</li>
+                            <li>Nuclei را با ۳ Tag مختلف (django, cve, misconfig) اجرا کردم.</li>
+                            <li>Template سفارشی Nuclei نوشتم.</li>
+                            <li>Burp Proxy را روی Firefox تنظیم کردم و ترافیک را دیدم.</li>
+                            <li>Burp Spider را اجرا کردم و Sitemap کامل گرفتم.</li>
+                            <li>OWASP ZAP را با گزارش HTML اجرا کردم.</li>
+                            <li>testssl.sh را روی هدف اجرا کردم.</li>
+                            <li>هدرهای امنیتی را با curl بررسی کردم.</li>
+                            <li>گزارش <code>vulnerability-report.md</code> با CVSS ساختم.</li>
+                            <li>همه یافته‌ها را دستی تأیید کردم (بدون FP).</li>
+                        </ul>
+                    </div>
+
+                    <h5>📝 آزمونک فصل (۵ سؤال):</h5>
+
+                    <div class="quiz-question">
+                        <strong>۱.</strong> کدام ابزار مدرن‌ترین و سریع‌ترین اسکنر آسیب‌پذیری است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Nikto</li>
+                            <li>ب) Nuclei</li>
+                            <li>ج) Wapiti</li>
+                            <li>د) OWASP ZAP</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۲.</strong> برای کشف Endpoints API، بهترین ابزار کدام است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Nikto</li>
+                            <li>ب) testssl.sh</li>
+                            <li>ج) Burp Spider یا katana</li>
+                            <li>د) sslscan</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۳.</strong> testssl.sh چه چیزی را تحلیل می‌کند؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) SQL Injection</li>
+                            <li>ب) پیکربندی SSL/TLS و cipher suites</li>
+                            <li>ج) Cross-Site Scripting</li>
+                            <li>د) Directory Listing</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۴.</strong> چرا باید Burp را جلوی همه ابزارهای Scanning بگذاریم؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) سرعت را کم می‌کند</li>
+                            <li>ب) برای مشاهده کامل ترافیک ارسالی و دریافتی</li>
+                            <li>ج) نیازی نیست</li>
+                            <li>د) WAF را دور می‌زند</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۵.</strong> بهترین دفاع در برابر ابزارهای Scanning چیست؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) نصب آنتی‌ویروس</li>
+                            <li>ب) Rate Limit + WAF + کاهش Stack Minimalism</li>
+                            <li>ج) تغییر پورت سرور</li>
+                            <li>د) خاموش کردن سرور</li>
+                        </ul>
+                    </div>
+
+                    <details>
+                        <summary>✅ نمایش پاسخ‌های صحیح</summary>
+                        <div style="padding: 10px 16px 14px;">
+                            <p><strong>۱. ب</strong> — Nuclei (Go-based، ۵۰۰۰+ Template، سرعت بالا).</p>
+                            <p><strong>۲. ج</strong> — Burp Spider و katana تخصصی برای کشف URLs و Endpoints.</p>
+                            <p><strong>۳. ب</strong> — testssl.sh فقط SSL/TLS را تحلیل می‌کند (Heartbleed، POODLE، Cipherها).</p>
+                            <p><strong>۴. ب</strong> — Proxy اجازه می‌دهد ترافیک کامل را ببینید و دستی تأیید کنید.</p>
+                            <p><strong>۵. ب</strong> — ترکیب Rate Limit + WAF + Stack Minimalism بهترین استراتژی دفاعی است.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- بخش ۱۳: پروژه هفتگی -->
+                <div class="section-part" id="part-13">
+                    <h3>۱۳. پروژه هفتگی (تمرین مستقل)</h3>
+
+                    <div class="weekly-project">
+                        <h5>🏆 پروژه هفتگی: «گزارش اسکن جامع سه هدف»</h5>
+
+                        <p><strong>هدف:</strong> یک گزارش حرفه‌ای از Scanning سه هدف مختلف بسازید و آن را با استانداردهای صنعتی مقایسه کنید.</p>
+
+                        <h6>اهداف:</h6>
+                        <ol>
+                            <li><strong>هدف ۱:</strong> Django Lab خودتان (192.168.56.20:8000) — سطح امنیت متوسط</li>
+                            <li><strong>هدف ۲:</strong> DVWA با امنیت Low (192.168.56.10/dvwa)</li>
+                            <li><strong>هدف ۳:</strong> DVWA با امنیت High (همان، ولی سطح امنیت تغییر یافته)</li>
+                        </ol>
+
+                        <h6>مراحل اجرا:</h6>
+                        <ol>
+                            <li>برای هر هدف، <strong>۸ ابزار Scanning</strong> را اجرا کنید (Nikto، Nuclei، Burp Spider، ZAP، testssl.sh، Wapiti، httpx، API Discovery).</li>
+                            <li>همه خروجی‌ها را در <code>~/scanning-project/</code> ذخیره کنید.</li>
+                            <li>هر یافته را دستی تأیید کنید (به جز FP).</li>
+                            <li>امتیاز CVSS هر آسیب‌پذیری را محاسبه کنید.</li>
+                            <li>یک گزارش <code>comparative-scan-report.md</code> بسازید.</li>
+                        </ol>
+
+                        <h6>ساختار گزارش نهایی:</h6>
+<pre class="code-box"># Comparative Scan Report
+
+## ۱. خلاصه اجرایی
+- سه هدف اسکن‌شده
+- آمار کلی: تعداد آسیب‌پذیری هر هدف
+
+## ۲. جدول مقایسه
+| معیار | Django Lab | DVWA Low | DVWA High |
+|-------|-----------|----------|-----------|
+| تعداد پورت باز | ۱ | ... | ... |
+| تعداد یافته‌های Critical | 0 | 5+ | 1 |
+| تعداد یافته‌های High | 1 | 8+ | 3 |
+| Headers امنیتی غایب | 3 | 5 | 5 |
+| TLS Issues | 0 | 0 | 0 |
+
+## ۳. تحلیل هر هدف
+### Django Lab
+- نقاط قوت: ...
+- نقاط ضعف: ...
+- آسیب‌پذیری‌های کلیدی: ...
+
+### DVWA Low
+- پر از آسیب‌پذیری عمدی
+- Ideal for learning exploitation
+
+### DVWA High
+- پیچیده‌تر، سطح بالاتر
+- Needs manual verification
+
+## ۴. درس‌ها
+- کدام ابزارها بهترین بازدهی داشتند؟
+- چند False Positive داشتیم؟
+- چه چیزی از دست رفت که دستی پیدا کردیم؟
+
+## ۵. توصیه‌های عمومی
+- برای هر هدف، ۳ توصیه Remediation
+</pre>
+
+                        <h6>خروجی مورد انتظار:</h6>
+                        <ul>
+                            <li>📄 سه <code>target-scan-report.md</code></li>
+                            <li>📊 یک <code>comparative-scan-report.md</code></li>
+                            <li>📁 پوشه سازمان‌یافته با تمام خروجی‌ها</li>
+                            <li>🎯 فهرست اولویت‌بندی‌شده آسیب‌پذیری‌ها با CVSS</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;"><strong>💼 نکته:</strong> این گزارش، حرفه‌ای‌ترین قطعه پورتفولیوی شماست. در مصاحبه، با ارائه این سند، شما را از ۹۰٪ متقاضیان متمایز می‌کند.</p>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۴: منابع -->
+                <div class="section-part" id="part-14">
+                    <h3>۱۴. منابع تکمیلی و گام بعدی</h3>
+
+                    <div class="resources-box">
+                        <h5>📚 منابع ضروری:</h5>
+                        <table class="objectives-table">
+                            <thead>
+                                <tr><th>منبع</th><th>کاربرد</th><th>لینک</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nuclei Templates</td>
+                                    <td>مرجع ۵۰۰۰+ Template آماده</td>
+                                    <td><a href="https://github.com/projectdiscovery/nuclei-templates" target="_blank" rel="noopener">github.com/projectdiscovery/nuclei-templates</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OWASP ZAP Docs</td>
+                                    <td>مستندات رسمی ZAP</td>
+                                    <td><a href="https://www.zaproxy.org/docs/" target="_blank" rel="noopener">zaproxy.org/docs</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Burp Suite Docs</td>
+                                    <td>مستندات رسمی Burp</td>
+                                    <td><a href="https://portswigger.net/burp/documentation" target="_blank" rel="noopener">portswigger.net/burp</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OWASP WSTG — Configuration</td>
+                                    <td>مرجع تست پیکربندی</td>
+                                    <td><a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/" target="_blank" rel="noopener">owasp.org/WSTG</a></td>
+                                </tr>
+                                <tr>
+                                    <td>testssl.sh Docs</td>
+                                    <td>مستندات testssl.sh</td>
+                                    <td><a href="https://testssl.sh/" target="_blank" rel="noopener">testssl.sh</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Security Headers</td>
+                                    <td>ابزار تحلیل هدرها</td>
+                                    <td><a href="https://securityheaders.com/" target="_blank" rel="noopener">securityheaders.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>SSL Labs</td>
+                                    <td>تحلیل SSL آنلاین</td>
+                                    <td><a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener">ssllabs.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CVSS Calculator</td>
+                                    <td>محاسبه امتیاز CVSS</td>
+                                    <td><a href="https://www.first.org/cvss/calculator/3.1" target="_blank" rel="noopener">first.org/cvss</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5>📖 کتاب‌های توصیه‌شده:</h5>
+                    <ul>
+                        <li>📕 <strong>The Web Application Hacker&#39;s Handbook</strong> — فصل ۷ (Attacking Application Architecture)</li>
+                        <li>📗 <strong>Mastering Modern Web Penetration Testing</strong> — Prakhar Prasad</li>
+                        <li>📘 <strong>Web Security Testing Cookbook</strong> — Paco Hope &amp; Ben Walther</li>
+                        <li>📙 <strong>Bug Bounty Bootcamp</strong> — Vickie Li (فصل‌های مربوط به Scanning)</li>
+                        <li>📓 <strong>Hands-On Bug Hunting for Penetration Testers</strong> — Joseph Marshall</li>
+                    </ul>
+
+                    <h5>🎯 گام بعدی (فصل ۵):</h5>
+                    <p>در فصل ۵، با لیست آسیب‌پذیری‌های کشف‌شده، وارد فاز <strong>Exploitation</strong> می‌شویم:</p>
+                    <ul>
+                        <li>⚔️ <strong>Burp Intruder:</strong> حمله به پارامترها با Payloadهای مختلف</li>
+                        <li>⚔️ <strong>Hydra و Medusa:</strong> Brute Force Login</li>
+                        <li>⚔️ <strong>Authentication Attacks:</strong> Credential Stuffing، Session Hijacking، MFA Bypass</li>
+                        <li>⚔️ <strong>تأیید آسیب‌پذیری:</strong> از هشدار به PoC واقعی</li>
+                        <li>⚔️ <strong>گزارش Exploit:</strong> مستندسازی بهره‌جویی</li>
+                    </ul>
+                    <p>در پایان فصل ۵، شما <strong>اولین بهره‌جویی واقعی</strong> در آزمایشگاه خودتان انجام داده‌اید — یک لحظه حساس و فراموش‌نشدنی در مسیر امنیت.</p>
+
+                    <div class="callout co-tip">
+                        <strong>💡 تمرین اختیاری این هفته:</strong>
+                        در TryHackMe، اتاق زیر را کامل کنید:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li><strong>Nmap</strong> — تمرین پیشرفته اسکن</li>
+                            <li><strong>Vulnerability Scanner</strong> — با Nuclei و OpenVAS</li>
+                            <li><strong>Burp Suite Basics</strong> — تمرین Proxy و Repeater</li>
+                        </ul>
+                        این اتاق‌ها در محیط کاملاً قانونی و آموزشی برگزار می‌شوند و پیش‌نیاز عالی برای فصل ۵ هستند.
+                    </div>
+                </div>
+
+                <div class="done-bar">
+                    <span style="font-weight:800;color:#7ee787">🎯 این فصل را خواندید؟ پیشرفت خود را ذخیره کنید:</span><br>
+                    <button id="mark-done" data-chapter="ch-04" type="button">✔️ این فصل را تمام کردم</button>
+                </div>
+
+                <div class="pager">
+                    <a href="../chapter-03/index.html" id="prev-link">➜ فصل قبل</a>
+                    <a href="../../index.html">🗂️ فهرست فصل‌ها</a>
+                    <a href="../chapter-05/index.html" id="next-link">فصل بعد ➜</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵</p>
+            <p style="font-size:.85rem;color:var(--muted)">این محتوا صرفاً برای آموزش در محیط آزمایشگاه ایزوله تهیه شده است. مسئولیت استفاده نادرست بر عهده کاربر است.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

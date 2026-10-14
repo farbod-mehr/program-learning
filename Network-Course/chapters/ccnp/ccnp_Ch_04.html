@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۴ CCNP — زیرساخت لایه ۳ (EIGRP، OSPF، BGP، PBR)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-04">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۴ — زیرساخت لایه ۳ (Layer 3 Infrastructure)</h1>
+    <div class="meta">
+      <span>📖 ۱۲۰ دقیقه</span>
+      <span>🎯 وزن در ENCOR: بخش اصلی ۳۰٪ Infrastructure</span>
+      <span>🧩 ۲۰ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این <strong>سنگین‌ترین فصل CCNP</strong> است. سه پروتکل مسیریابی اصلی
+      (<span class="term" data-term="eigrp">EIGRP</span>،
+      <span class="term" data-term="ospf">OSPF</span>،
+      <span class="term" data-term="bgp">BGP</span>) را در سطح حرفه‌ای بررسی می‌کنیم:
+      از الگوریتم‌های انتخاب مسیر و متریک‌ها، تا Load Balancing،
+      Redistribution، Route Filtering و Policy-Based Routing.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>چرایی</strong> است، نه فقط پیکربندی — چرا EIGRP Feasible Successor را قبل از محاسبه DUAL چک می‌کند،
+      چرا OSPF Area 0 اجباری است، و چرا BGP تصمیم می‌گیرد مسیر از یک همسایه را ترجیح دهد.
+      در پایان، می‌توانی یک شبکه‌ی چندپروتکلی را کاملاً طراحی و عیب‌یابی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مرور پروتکل‌های Distance Vector vs Link State</li>
+      <li>EIGRP — متریک ترکیبی و K-Values</li>
+      <li>EIGRP — DUAL، Feasible Distance، Feasible Successor</li>
+      <li>EIGRP — Classic Mode vs Named Mode</li>
+      <li>EIGRP — Stub، Summarization، Load Balancing</li>
+      <li>OSPF — Link State، LSA Types، Area Types</li>
+      <li>OSPF — ABR، ASBR، Virtual Link</li>
+      <li>OSPF — Network Types و Neighbor States</li>
+      <li>OSPF — Summarization و Path Preference</li>
+      <li>BGP — eBGP vs iBGP، AS، Path Attributes</li>
+      <li>BGP — Best Path Selection Algorithm</li>
+      <li>BGP — Route Reflector و Confederation</li>
+      <li>Redistribution بین پروتکل‌ها و Route Filtering</li>
+      <li>Policy-Based Routing (PBR)</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا EIGRP مسیرهای Feasible Successor را قبل از محاسبه DUAL استفاده می‌کند؟</li>
+      <li>تفاوت ABR و ASBR در OSPF چیست؟</li>
+      <li>چرا OSPF به Area 0 نیاز دارد و Virtual Link چه زمانی استفاده می‌شود؟</li>
+      <li>در BGP، ترتیب اولویت Path Attributes برای انتخاب بهترین مسیر چیست؟</li>
+      <li>چرا Redistribution بدون Route Filtering خطرناک است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۴.۱ ==== -->
+    <h3>۴.۱ Distance Vector vs Link State</h3>
+    <p>
+      دو خانواده‌ی اصلی پروتکل‌های مسیریابی داخلی (IGP) که هرکدام منطق متفاوتی دارند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Distance Vector</th>
+          <th style="padding:6px;border:1px solid var(--border)">Link State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پروتکل‌ها</td><td style="padding:6px;border:1px solid var(--border)">RIP، EIGRP (Hybrid)</td><td style="padding:6px;border:1px solid var(--border)">OSPF، IS-IS</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">اطلاعات</td><td style="padding:6px;border:1px solid var(--border)">فقط Next Hop و Metric</td><td style="padding:6px;border:1px solid var(--border)">کل توپولوژی (LSA + LSDB)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">الگوریتم</td><td style="padding:6px;border:1px solid var(--border)">Bellman-Ford / DUAL</td><td style="padding:6px;border:1px solid var(--border)">Dijkstra (SPF)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">همگرایی</td><td style="padding:6px;border:1px solid var(--border)">متوسط — EIGRP سریع</td><td style="padding:6px;border:1px solid var(--border)">سریع</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Resource</td><td style="padding:6px;border:1px solid var(--border)">کم</td><td style="padding:6px;border:1px solid var(--border)">بیشتر (CPU + Memory)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">دید کلی</td><td style="padding:6px;border:1px solid var(--border)">محلی</td><td style="padding:6px;border:1px solid var(--border)">کامل</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Autonomous System (AS):</strong> یک دامنه‌ی مدیریتی واحد که با یک شماره ASN مشخص می‌شود — IGPها درون AS و EGP (BGP) بین ASها کار می‌کنند.</p>
+
+    <!-- ==== ۴.۲ ==== -->
+    <h3>۴.۲ EIGRP — متریک و K-Values</h3>
+    <p>
+      <span class="term" data-term="eigrp">EIGRP</span> (Enhanced Interior Gateway Routing Protocol)
+      یک پروتکل <strong>پیشرفته‌ی Distance Vector</strong> است که سیسکو آن را به‌عنوان
+      <em>Advanced Distance Vector</em> یا <em>Hybrid</em> معرفی می‌کند.
+    </p>
+
+    <p><strong>متریک ترکیبی EIGRP</strong> بر پایه‌ی ۵ پارامتر است:</p>
+    <ul>
+      <li><strong>Bandwidth:</strong> پهنای باند کمترین لینک در مسیر</li>
+      <li><strong>Delay:</strong> مجموع تأخیر لینک‌ها</li>
+      <li><strong>Reliability:</strong> قابلیت اطمینان (K4)</li>
+      <li><strong>Load:</strong> بار لینک (K2)</li>
+      <li><strong>MTU:</strong> حداکثر اندازه بسته (استفاده نمی‌شود)</li>
+    </ul>
+
+    <p><strong>K-Values پیش‌فرض:</strong></p>
+    <pre><code>K1=1 (Bandwidth)   → فعال
+K2=0 (Load)        → غیرفعال
+K3=1 (Delay)       → فعال
+K4=0 (Reliability) → غیرفعال
+K5=0 (MTU)         → غیرفعال
+
+فرمول ساده‌شده:
+Metric = 256 × [(10^7 / Bandwidth_min) + (Delay_sum / 10)]</code></pre>
+
+    <pre><code>! تغییر K-Values (به‌ندرت پیشنهاد می‌شود)
+Router(config)# router eigrp 100
+Router(config-router)# metric weights 0 1 0 1 0 0
+
+! بررسی
+Router# show ip protocols
+Router# show ip eigrp topology
+Router# show interface Gi0/0
+! ببین: BW, DLY, reliability, load, MTU</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      K-Values باید در همه‌ی روترهای EIGRP یکسان باشد. اگر متفاوت باشد،
+      همسایگی EIGRP تشکیل نمی‌شود و در Log پیام
+      <code>%DUAL-5-NBRCHANGE: K-value mismatch</code> می‌آید.
+    </div>
+
+    <!-- ==== ۴.۳ ==== -->
+    <h3>۴.۳ EIGRP — DUAL، FD و FS</h3>
+    <p>
+      قلب EIGRP الگوریتم <strong>DUAL (Diffusing Update Algorithm)</strong> است
+      که مسیرهای Loop-Free را تضمین می‌کند.
+    </p>
+
+    <p><strong>مفاهیم کلیدی:</strong></p>
+    <ul>
+      <li><strong>FD (Feasible Distance):</strong> بهترین متریک تا مقصد (Metric محلی)</li>
+      <li><strong>RD (Reported Distance):</strong> متریکی که همسایه اعلان می‌کند</li>
+      <li><strong>Successor:</strong> بهترین Next Hop به مقصد (در جدول مسیریابی نصب می‌شود)</li>
+      <li><strong>Feasible Successor (FS):</strong> Next Hop پشتیبان که شرط <strong>Feasibility Condition</strong> را دارد</li>
+      <li><strong>FC (Feasibility Condition):</strong> RD از همسایه < FD محلی → مسیر Loop-Free</li>
+    </ul>
+
+    <p><strong>جدول Topology EIGRP:</strong></p>
+    <ul>
+      <li>مسیرهای Successor در Routing Table نصب می‌شوند</li>
+      <li>مسیرهای Feasible Successor در Topology Table نگه داشته می‌شوند</li>
+      <li>اگر Successor از بین برود، FS بلافاصله جایگزین می‌شود (بدون Query)</li>
+      <li>اگر FS نباشد، Router وارد حالت <strong>Active</strong> می‌شود و Query می‌فرستد (<strong>SIA</strong> = Stuck in Active)</li>
+    </ul>
+
+    <pre><code>! بررسی جدول Topology EIGRP
+Router# show ip eigrp topology
+! P = Passive (پایدار) — A = Active (در حال Query)
+
+Router# show ip eigrp topology 10.0.0.0/24
+! خروجی:
+!   P 10.0.0.0/24, 1 successors, FD is 28160
+!     via 10.1.1.2 (28160/21760), Gi0/1
+!         ↑FD  ↑RD
+!   P 10.0.0.0/24, 1 successors, FD is 28160
+!     via 10.1.2.2 (30720/28160), Gi0/2  ← Feasible Successor
+!         ↑FD   ↑RD (28160 < FD اصلی 28160 → شرط FC برقرار؟ باید RD < FD اصلی)
+
+! مشاهده فقط Successorها (Routing Table)
+Router# show ip route eigrp
+
+! مشاهده فقط Feasible Successorها
+Router# show ip eigrp topology all-links</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      شرط FC می‌گوید: <strong>RD همسایه &lt; FD محلی</strong>.
+      یعنی همسایه‌ای که مسیرش بهتر از خودم است، حتماً Loop-Free است.
+      این قانون، نیاز به محاسبه‌ی پیچیده را در ۹۰٪ سناریوها از بین می‌برد.
+    </div>
+
+    <!-- ==== ۴.۴ ==== -->
+    <h3>۴.۴ EIGRP — Classic Mode vs Named Mode</h3>
+    <p>
+      EIGRP دو شکل پیکربندی دارد:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📜 Classic Mode (قدیمی)</strong>
+        <p style="margin:6px 0">پیکربندی با <code>router eigrp [AS]</code> — همه‌ی تنظیمات در سطح Router Process.</p>
+        <pre><code>Router(config)# router eigrp 100
+Router(config-router)# network 10.0.0.0 0.0.0.255
+Router(config-router)# no auto-summary
+Router(config-router)# passive-interface Gi0/0
+Router(config-router)# variance 2</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📦 Named Mode (مدرن)</strong>
+        <p style="margin:6px 0">پیکربندی با <code>router eigrp [NAME]</code> و Address Families — استاندارد امروز و پیشنهاد CCNP.</p>
+        <pre><code>Router(config)# router eigrp COMPANY
+Router(config-router)# address-family ipv4 unicast autonomous-system 100
+Router(config-router-af)# network 10.0.0.0 0.0.0.255
+Router(config-router-af)# af-interface Gi0/0
+Router(config-router-af-interface)# passive-interface
+Router(config-router-af-interface)# exit
+Router(config-router-af)# topology base
+Router(config-router-af-topology)# variance 2
+Router(config-router-af-topology)# exit</code></pre>
+      </div>
+    </div>
+
+    <p><strong>مزایای Named Mode:</strong></p>
+    <ul>
+      <li>پشتیبانی از IPv4 و IPv6 در یک Process</li>
+      <li>پیکربندی Interface-level (AF-Interface)</li>
+      <li>پشتیبانی از VRF و Multi-Topology</li>
+      <li>ساختار سلسله‌مراتبی و مرتب</li>
+    </ul>
+
+    <!-- ==== ۴.۵ ==== -->
+    <h3>۴.۵ EIGRP — Stub، Summarization، Load Balancing</h3>
+
+    <p><strong>EIGRP Stub:</strong> اگر روتری فقط یک مسیر خروجی دارد (مثل شعبه)،
+      می‌توانی آن را Stub کنی. با این کار روتر به Hub اعلام می‌کند که برای شبکه‌های
+      دیگر Query نپذیرد.</p>
+
+    <pre><code>! EIGRP Stub
+Router(config)# router eigrp 100
+Router(config-router)# eigrp stub connected summary
+! گزینه‌ها: connected، static، summary، redistributed، receive-only
+
+! بررسی
+Router# show ip eigrp neighbors detail
+! ببین: Stub Peer Status</code></pre>
+
+    <p><strong>Summarization در EIGRP:</strong> روی Interface یا در AF-Interface:</p>
+
+    <pre><code>! Classic Mode — روی Interface
+Router(config)# interface Gi0/1
+Router(config-if)# ip summary-address eigrp 100 10.0.0.0 255.255.0.0
+
+! Named Mode — در AF-Interface
+Router(config-router-af)# af-interface Gi0/1
+Router(config-router-af-interface)# summary-address 10.0.0.0 255.255.0.0</code></pre>
+
+    <p><strong>Load Balancing EIGRP:</strong></p>
+    <ul>
+      <li><strong>Equal Cost (پیش‌فرض):</strong> تا ۴ مسیر هم‌متریک — با <code>maximum-paths</code> تا ۱۶</li>
+      <li><strong>Unequal Cost (Variance):</strong> با <code>variance X</code> — مسیرهایی که متریک آن‌ها تا X برابر بهترین باشد، Load Balancing می‌شوند</li>
+    </ul>
+
+    <pre><code>! Equal Cost LB
+Router(config-router)# maximum-paths 8
+
+! Unequal Cost LB
+Router(config-router)# variance 2
+! هر مسیری که متریکش ≤ 2 × FD باشد، در Load Balancing شرکت می‌کند
+! شرط FC همچنان باید برقرار باشد
+
+! بررسی
+Router# show ip route 10.0.0.0
+! ببین: 2 subnets, ...
+Router# show ip protocols
+! ببین: Number of routes in AS</code></pre>
+
+    <!-- ==== ۴.۶ ==== -->
+    <h3>۴.۶ OSPF — Link State، LSA Types، Area Types</h3>
+
+    <p>
+      <span class="term" data-term="ospf">OSPF</span> با ساختن <strong>LSDB
+      (Link State Database)</strong> یکسان در همه‌ی روترهای یک Area،
+      و اجرای الگوریتم <strong>Dijkstra</strong>، درخت کوتاه‌ترین مسیر
+      (SPF Tree) را می‌سازد.
+    </p>
+
+    <p><strong>انواع LSA در OSPF:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Type</th>
+          <th style="padding:6px;border:1px solid var(--border)">نام</th>
+          <th style="padding:6px;border:1px solid var(--border)">منتشرکننده</th>
+          <th style="padding:6px;border:1px solid var(--border)">محدوده</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">Router LSA</td><td style="padding:6px;border:1px solid var(--border)">هر روتر</td><td style="padding:6px;border:1px solid var(--border)">داخل Area</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">Network LSA</td><td style="padding:6px;border:1px solid var(--border)">DR</td><td style="padding:6px;border:1px solid var(--border)">داخل Area</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">Summary LSA</td><td style="padding:6px;border:1px solid var(--border)">ABR</td><td style="padding:6px;border:1px solid var(--border)">بین Area</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">4</td><td style="padding:6px;border:1px solid var(--border)">ASBR Summary</td><td style="padding:6px;border:1px solid var(--border)">ABR</td><td style="padding:6px;border:1px solid var(--border)">بین Area</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">5</td><td style="padding:6px;border:1px solid var(--border)">External LSA</td><td style="padding:6px;border:1px solid var(--border)">ASBR</td><td style="padding:6px;border:1px solid var(--border)">کل OSPF Domain</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">7</td><td style="padding:6px;border:1px solid var(--border)">NSSA External</td><td style="padding:6px;border:1px solid var(--border)">ASBR در NSSA</td><td style="padding:6px;border:1px solid var(--border)">داخل NSSA</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>انواع Area در OSPF:</strong></p>
+    <ul>
+      <li><strong>Backbone (Area 0):</strong> اجباری — همه‌ی Areaهای دیگر باید به آن متصل باشند</li>
+      <li><strong>Standard Area:</strong> Area معمولی با LSA 1, 2, 3, 4, 5</li>
+      <li><strong>Stub Area:</strong> بدون LSA 5 (External) — Default Route جایگزین</li>
+      <li><strong>Totally Stubby:</strong> فقط Default Route — بدون LSA 3, 4, 5 (فقط Cisco)</li>
+      <li><strong>NSSA (Not-So-Stubby Area):</strong> مثل Stub ولی می‌تواند External بفرستد (LSA 7)</li>
+      <li><strong>Totally NSSA:</strong> مثل Totally Stubby + LSA 7</li>
+    </ul>
+
+    <pre><code>! پیکربندی Area Types
+! Stub
+Router(config-router)# area 10 stub
+
+! Totally Stubby (روی ABR)
+Router(config-router)# area 10 stub no-summary
+
+! NSSA
+Router(config-router)# area 10 nssa
+
+! Totally NSSA (روی ABR)
+Router(config-router)# area 10 nssa no-summary
+
+! بررسی
+Router# show ip ospf database
+Router# show ip ospf
+Router# show ip ospf border-routers</code></pre>
+
+    <!-- ==== ۴.۷ ==== -->
+    <h3>۴.۷ OSPF — ABR، ASBR، Virtual Link</h3>
+
+    <p><strong>ABR (Area Border Router):</strong> روتری که در دو یا چند Area عضویت دارد.
+      خلاصه‌سازی (Summarization) بین Areaها و توزیع LSA Type 3 انجام می‌دهد.</p>
+
+    <p><strong>ASBR (Autonomous System Boundary Router):</strong> روتری که
+      Redistribution (تزریق مسیر خارجی) انجام می‌دهد. LSA Type 5 منتشر می‌کند.</p>
+
+    <p><strong>Backbone Router:</strong> روتری که حداقل یک اینترفیس در Area 0 دارد.</p>
+
+    <p><strong>Internal Router:</strong> همه‌ی اینترفیس‌هایش در یک Area غیر از 0.</p>
+
+    <p><strong>Virtual Link:</strong> زمانی استفاده می‌شود که یک Area به Area 0
+      <strong>مستقیم</strong> متصل نیست. Virtual Link یک تونل منطقی بین دو ABR می‌سازد
+      که از یک Transit Area عبور می‌کند.</p>
+
+    <pre><code>! Virtual Link — بین R1 و R2 که هر دو ABR هستند
+! سناریو: Area 20 به Area 0 وصل نیست، از Area 10 عبور می‌کند
+
+! روی R1 (نزدیک Area 0)
+R1(config)# router ospf 1
+R1(config-router)# area 10 virtual-link 2.2.2.2
+! 2.2.2.2 = Router ID روتر R2
+
+! روی R2 (نزدیک Area 20)
+R2(config)# router ospf 1
+R2(config-router)# area 10 virtual-link 1.1.1.1
+! 1.1.1.1 = Router ID روتر R1
+
+! بررسی
+Router# show ip ospf virtual-links
+Router# show ip ospf neighbor</code></pre>
+
+    <!-- ==== ۴.۸ ==== -->
+    <h3>۴.۸ OSPF — Network Types و Neighbor States</h3>
+
+    <p><strong>انواع Network در OSPF:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">DR/BDR</th>
+          <th style="padding:6px;border:1px solid var(--border)">Hello/Dead</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Broadcast</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">10s / 40s</td><td style="padding:6px;border:1px solid var(--border)">Ethernet</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Point-to-Point</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">10s / 40s</td><td style="padding:6px;border:1px solid var(--border)">Serial، GRE</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Non-Broadcast (NBMA)</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">30s / 120s</td><td style="padding:6px;border:1px solid var(--border)">Frame Relay</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Point-to-Multipoint</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">30s / 120s</td><td style="padding:6px;border:1px solid var(--border)">Hub-Spoke</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Point-to-Multipoint NBMA</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">30s / 120s</td><td style="padding:6px;border:1px solid var(--border)">Legacy</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! تعیین Network Type دستی
+Router(config)# interface Gi0/0
+Router(config-if)# ip ospf network point-to-point
+! یا broadcast، non-broadcast، point-to-multipoint
+
+! نکته: در نقطه‌به‌نقطه واقعی (Serial)، OSPF خودکار Point-to-Point می‌شود
+! در Ethernet خودکار Broadcast می‌شود</code></pre>
+
+    <p><strong>Neighbor States (۷ مرحله):</strong></p>
+    <ol>
+      <li><strong>Down:</strong> هیچ Hello دریافت نشده</li>
+      <li><strong>Init:</strong> Hello دریافت شده ولی Router ID ما در آن نیست</li>
+      <li><strong>2-Way:</strong> Hello تبادل کامل — وضعیت پایدار در DROther↔DROther</li>
+      <li><strong>ExStart:</strong> انتخاب Master/Slave (بالاترین Router ID = Master)</li>
+      <li><strong>Exchange:</strong> تبادل DBD (Database Description)</li>
+      <li><strong>Loading:</strong> تبادل LSR/LSU برای اطلاعات کامل</li>
+      <li><strong>Full:</strong> همسایگی کامل — LSDB یکسان</li>
+    </ol>
+
+    <!-- ==== ۴.۹ ==== -->
+    <h3>۴.۹ OSPF — Summarization و Path Preference</h3>
+
+    <p><strong>Summarization (Inter-Area) — فقط روی ABR:</strong></p>
+    <pre><code>Router(config)# router ospf 1
+Router(config-router)# area 10 range 10.0.0.0 255.0.0.0
+! خلاصه‌سازی 10.0.0.0/8 از Area 10 به Area 0
+
+! External Summarization (روی ASBR)
+Router(config-router)# summary-address 192.168.0.0 255.255.0.0</code></pre>
+
+    <p><strong>Path Preference در OSPF — ترتیب انتخاب مسیر:</strong></p>
+    <ol>
+      <li><strong>Intra-Area (O):</strong> مسیر داخل همان Area — بالاترین اولویت</li>
+      <li><strong>Inter-Area (O IA):</strong> مسیر از Area دیگر</li>
+      <li><strong>External Type 1 (E1):</strong> متریک = Cost داخلی + Cost خارجی</li>
+      <li><strong>External Type 2 (E2 — پیش‌فرض):</strong> فقط متریک خارجی — Cost داخلی نادیده</li>
+    </ol>
+
+    <pre><code>! Redistribution به OSPF با E1 به‌جای E2
+Router(config)# router ospf 1
+Router(config-router)# redistribute static subnets metric-type 1
+
+! تنظیم متریک External
+Router(config-router)# redistribute eigrp 100 subnets metric 100 metric-type 2
+
+! بررسی
+Router# show ip route ospf
+! ببین: O، O IA، O E1، O E2</code></pre>
+
+    <!-- ==== ۴.۱۰ ==== -->
+    <h3>۴.۱۰ BGP — eBGP vs iBGP، AS، Path Attributes</h3>
+
+    <p>
+      <span class="term" data-term="bgp">BGP</span> (Border Gateway Protocol) یک
+      پروتکل <strong>Path Vector</strong> است که بین Autonomous Systemها کار می‌کند
+      و بر پایه‌ی <strong>TCP/179</strong> اجرا می‌شود.
+    </p>
+
+    <p><strong>تفاوت eBGP و iBGP:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">eBGP</th>
+          <th style="padding:6px;border:1px solid var(--border)">iBGP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">AS</td><td style="padding:6px;border:1px solid var(--border)">متفاوت</td><td style="padding:6px;border:1px solid var(--border)">یکسان</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">AD پیش‌فرض</td><td style="padding:6px;border:1px solid var(--border)">20</td><td style="padding:6px;border:1px solid var(--border)">200</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">TTL</td><td style="padding:6px;border:1px solid var(--border)">1 (پیش‌فرض)</td><td style="padding:6px;border:1px solid var(--border)">نامحدود منطقی (بدون TTL=1)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">AS_PATH</td><td style="padding:6px;border:1px solid var(--border)">قبل از ارسال، AS خود را اضافه می‌کند</td><td style="padding:6px;border:1px solid var(--border)">بدون تغییر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Next Hop</td><td style="padding:6px;border:1px solid var(--border)">خودش را می‌گذارد</td><td style="padding:6px;border:1px solid var(--border)">Next Hop را حفظ می‌کند</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Loop Prevention</td><td style="padding:6px;border:1px solid var(--border)">AS_PATH</td><td style="padding:6px;border:1px solid var(--border)">Split Horizon (بدون RR)</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>چهار دسته‌ی Path Attributes:</strong></p>
+    <ul>
+      <li><strong>Well-Known Mandatory:</strong> باید در همه‌ی Updateها باشند — AS_PATH، NEXT_HOP، ORIGIN</li>
+      <li><strong>Well-Known Discretionary:</strong> باید شناخته شوند ولی اجباری نیستند — LOCAL_PREF، ATOMIC_AGGREGATE</li>
+      <li><strong>Optional Transitive:</strong> می‌توانند منتقل شوند — AGGREGATOR، COMMUNITY</li>
+      <li><strong>Optional Non-Transitive:</strong> منتقل نمی‌شوند — MED، ORIGINATOR_ID، CLUSTER_LIST</li>
+    </ul>
+
+    <pre><code>! پیکربندی eBGP
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.2 remote-as 65002
+Router(config-router)# network 10.0.0.0 mask 255.255.255.0
+
+! پیکربندی iBGP (داخل AS)
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 10.1.1.2 remote-as 65001
+Router(config-router)# neighbor 10.1.1.2 update-source Loopback0
+Router(config-router)# neighbor 10.1.1.2 next-hop-self
+! next-hop-self برای iBGP ضروری است — وگرنه Next Hop خارجی می‌شود
+
+! بررسی
+Router# show ip bgp summary
+Router# show ip bgp neighbors
+Router# show ip bgp</code></pre>
+
+    <!-- ==== ۴.۱۱ ==== -->
+    <h3>۴.۱۱ BGP — Best Path Selection Algorithm</h3>
+
+    <p>
+      BGP برای انتخاب بهترین مسیر، ۱۱ مرحله را به ترتیب چک می‌کند. هر مرحله
+      اگر مسیر برنده مشخص کند، بررسی متوقف می‌شود:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">#</th>
+          <th style="padding:6px;border:1px solid var(--border)">معیار</th>
+          <th style="padding:6px;border:1px solid var(--border)">اولویت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">Weight (Cisco Only)</td><td style="padding:6px;border:1px solid var(--border)">بالاتر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">Local Preference</td><td style="padding:6px;border:1px solid var(--border)">بالاتر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">Locally Originated</td><td style="padding:6px;border:1px solid var(--border)">Network/Redistribute/Static</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">4</td><td style="padding:6px;border:1px solid var(--border)">AS_PATH Length</td><td style="padding:6px;border:1px solid var(--border)">کوتاه‌تر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">5</td><td style="padding:6px;border:1px solid var(--border)">Origin</td><td style="padding:6px;border:1px solid var(--border)">IGP &gt; EGP &gt; Incomplete</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">6</td><td style="padding:6px;border:1px solid var(--border)">MED (Multi-Exit Discriminator)</td><td style="padding:6px;border:1px solid var(--border)">پایین‌تر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">7</td><td style="padding:6px;border:1px solid var(--border)">eBGP &gt; iBGP</td><td style="padding:6px;border:1px solid var(--border)">eBGP ترجیح دارد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">8</td><td style="padding:6px;border:1px solid var(--border)">IGP Metric به Next Hop</td><td style="padding:6px;border:1px solid var(--border)">کمتر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">9</td><td style="padding:6px;border:1px solid var(--border)">Oldest Path (eBGP)</td><td style="padding:6px;border:1px solid var(--border)">قدیمی‌تر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">10</td><td style="padding:6px;border:1px solid var(--border)">Lowest Router ID</td><td style="padding:6px;border:1px solid var(--border)">پایین‌تر = بهتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">11</td><td style="padding:6px;border:1px solid var(--border)">Lowest Neighbor IP</td><td style="padding:6px;border:1px solid var(--border)">پایین‌تر = بهتر</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی برای حفظ</div>
+      <strong>W</strong>e <strong>L</strong>ove <strong>O</strong>ranges <strong>A</strong>s <strong>O</strong>range <strong>M</strong>an <strong>E</strong>very <strong>I</strong>n <strong>O</strong>ld <strong>R</strong>oads... <br>
+      (Weight، Local Pref، Originate، AS Path، Origin، MED، eBGP، IGP، Oldest، Router ID، Neighbor IP)
+    </div>
+
+    <pre><code>! تنظیم Weight روی یک روتر
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.2 weight 200
+
+! تنظیم Local Preference (معمولاً روی ASBR)
+Router(config)# route-map SET-LP permit 10
+Router(config-route-map)# set local-preference 150
+Router(config-router)# neighbor 203.0.113.2 route-map SET-LP in
+
+! تنظیم MED (به سمت ISP دیگر)
+Router(config)# route-map SET-MED permit 10
+Router(config-route-map)# set metric 100
+Router(config-router)# neighbor 203.0.113.2 route-map SET-MED out
+
+! بررسی
+Router# show ip bgp
+! ببین: Weight, Local Pref, Metric, AS Path, Origin</code></pre>
+
+    <!-- ==== ۴.۱۲ ==== -->
+    <h3>۴.۱۲ BGP — Route Reflector و Confederation</h3>
+
+    <p>
+      <strong>مشکل iBGP Full-Mesh:</strong> در iBGP، هر روتر باید با همه‌ی
+      روترهای دیگر iBGP Peer باشد (چون مسیرهای iBGP یادگرفته‌شده به iBGP دیگر Forward نمی‌شوند).
+      این باعث می‌شود N×(N-1)/2 Session لازم باشد.
+    </p>
+
+    <p><strong>راه‌حل ۱: Route Reflector (RR)</strong></p>
+    <ul>
+      <li>یک یا چند روتر به‌عنوان RR — روترهای دیگر Client آن</li>
+      <li>RR مسیرهای یک Client را به Clientهای دیگر بازتاب می‌دهد (Reflect)</li>
+      <li>Loop Prevention با <code>ORIGINATOR_ID</code> و <code>CLUSTER_LIST</code></li>
+    </ul>
+
+    <pre><code>! Route Reflector
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 10.1.1.2 route-reflector-client
+Router(config-router)# neighbor 10.1.1.3 route-reflector-client
+Router(config-router)# neighbor 10.1.1.4 route-reflector-client
+
+! بررسی
+Router# show ip bgp neighbors 10.1.1.2 | include Route-Reflector
+! ببین: Route-Reflector Client: yes</code></pre>
+
+    <p><strong>راه‌حل ۲: Confederation</strong></p>
+    <ul>
+      <li>تقسیم یک AS بزرگ به چند Sub-AS (خصوصی: 64512-65535)</li>
+      <li>داخل هر Sub-AS، Full-Mesh iBGP</li>
+      <li>بین Sub-ASها، eBGP Session (ولی از دید بیرون یک AS هستند)</li>
+    </ul>
+
+    <pre><code>! Confederation
+Router(config)# router bgp 65001
+Router(config-router)# bgp confederation identifier 100
+Router(config-router)# bgp confederation peers 65002 65003
+Router(config-router)# neighbor 10.1.1.2 remote-as 65002</code></pre>
+
+    <!-- ==== ۴.۱۳ ==== -->
+    <h3>۴.۱۳ Redistribution و Route Filtering</h3>
+
+    <p><strong>Redistribution:</strong> تزریق مسیرهای یک پروتکل به پروتکل دیگر.
+      مثال: OSPF به EIGRP، Static به BGP.
+    </p>
+
+    <p><strong>خطرات Redistribution بدون Filtering:</strong></p>
+    <ul>
+      <li>Route Loops — مسیر از A به B و برگردانده شود</li>
+      <li>Suboptimal Routing</li>
+      <li>افزایش جدول مسیریابی (بدون کنترل)</li>
+    </ul>
+
+    <pre><code>! Redistribution OSPF → EIGRP
+Router(config)# router eigrp 100
+Router(config-router)# redistribute ospf 1 metric 10000 100 255 1 1500
+! metric bandwidth delay reliability load MTU
+
+! Redistribution EIGRP → OSPF
+Router(config)# router ospf 1
+Router(config-router)# redistribute eigrp 100 subnets metric 100 metric-type 2
+
+! Redistribution با Route Map
+Router(config)# route-map OSPF-TO-EIGRP permit 10
+Router(config-route-map)# match ip address prefix-list ALLOWED
+Router(config-route-map)# set metric 10000 100 255 1 1500
+Router(config-route-map)# set tag 100
+
+Router(config)# router eigrp 100
+Router(config-router)# redistribute ospf 1 route-map OSPF-TO-EIGRP
+
+! Route Filtering با Prefix-List
+Router(config)# ip prefix-list ALLOWED seq 10 permit 10.0.0.0/8 le 24
+Router(config)# ip prefix-list ALLOWED seq 20 permit 172.16.0.0/12 le 24
+Router(config)# ip prefix-list ALLOWED seq 100 deny 0.0.0.0/0 le 32
+
+! Filtering OSPF
+Router(config)# router ospf 1
+Router(config-router)# distribute-list prefix ALLOWED in
+
+! Filtering BGP
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.2 prefix-list ALLOWED in
+! یا
+Router(config-router)# neighbor 203.0.113.2 route-map FILTER in</code></pre>
+
+    <!-- ==== ۴.۱۴ ==== -->
+    <h3>۴.۱۴ Policy-Based Routing (PBR)</h3>
+
+    <p>
+      <span class="term" data-term="pbr">PBR</span> یا Policy-Based Routing
+      به شما اجازه می‌دهد <strong>بر اساس سیاست</strong> (نه جدول مسیریابی معمولی)
+      تصمیم بگیرید بسته از کدام مسیر برود.
+    </p>
+
+    <p><strong>کاربردهای PBR:</strong></p>
+    <ul>
+      <li>هدایت ترافیک خاص از یک لینک مشخص (مثلاً ترافیک HTTP از ISP A، بقیه از ISP B)</li>
+      <li>Marking برای QoS (Next Hop بر اساس DSCP)</li>
+      <li>Force Route به یک روتر خاص برای Inspection</li>
+      <li>Load Balancing در Dual-Homed</li>
+    </ul>
+
+    <pre><code>! ===== PBR نمونه: هدایت ترافیک HTTP از یک لینک =====
+
+! گام ۱: تعریف ACL یا Prefix-List برای Match
+Router(config)# ip access-list extended HTTP-TRAFFIC
+Router(config-ext-nacl)# permit tcp 10.1.0.0 0.0.255.255 any eq 80
+Router(config-ext-nacl)# permit tcp 10.1.0.0 0.0.255.255 any eq 443
+Router(config-ext-nacl)# exit
+
+! گام ۲: تعریف Route Map
+Router(config)# route-map PBR-HTTP permit 10
+Router(config-route-map)# match ip address HTTP-TRAFFIC
+Router(config-route-map)# set ip next-hop 203.0.113.2
+Router(config-route-map)# exit
+
+! گام ۳: اعمال روی اینترفیس (In)
+Router(config)# interface Gi0/0
+Router(config-if)# ip policy route-map PBR-HTTP
+
+! بررسی
+Router# show route-map PBR-HTTP
+Router# show ip policy
+Router# debug ip policy
+
+! ===== PBR برای Locally-Generated Traffic =====
+Router(config)# ip local policy route-map PBR-HTTP
+! ترافیک تولیدشده توسط خود روتر هم از PBR پیروی می‌کند</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      PBR فقط روی ترافیک <strong>Inbound</strong> اعمال می‌شود — یعنی بسته‌ای که
+      وارد اینترفیس می‌شود. برای ترافیک Outbound، باید روی اینترفیس مقابل اعمال کنی.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در EIGRP، همیشه <code>show ip eigrp topology</code> را با <code>show ip route eigrp</code>
+      مقایسه کن. تفاوت این دو، تعداد Feasible Successorهای ذخیره‌شده را نشان می‌دهد.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار Redistribution</div>
+      هرگز Redistribution را بدون Route Filtering انجام نده. حداقل با یک Prefix-List
+      کنترل کن چه چیزی تزریق می‌شود. استفاده از Tag هم توصیه می‌شود.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در BGP، Weight و Local Preference را همه‌جا نمی‌توان تغییر داد:
+      <ul style="margin:6px 0 0">
+        <li><strong>Weight</strong>: فقط روی همان روتر محلی تأثیر دارد — از آن برای ترجیح یک ISP استفاده کن</li>
+        <li><strong>Local Pref</strong>: در کل AS منتشر می‌شود — از آن برای Policy کل AS استفاده کن</li>
+      </ul>
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۵ CCNP وارد <span class="term" data-term="mpls">MPLS</span> و
+      <span class="term" data-term="dmvpn">DMVPN</span> می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در ENARSI عیب‌یابی EIGRP Stuck-in-Active،
+      OSPF Virtual Link و BGP Policy در سناریوهای واقعی ISP بررسی می‌شود.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — EIGRP Named Mode با Summarization</h3>
+    <pre><code>Router(config)# router eigrp COMPANY
+Router(config-router)# address-family ipv4 unicast autonomous-system 100
+Router(config-router-af)# network 10.0.0.0 0.0.0.255
+Router(config-router-af)# af-interface Gi0/1
+Router(config-router-af-interface)# summary-address 10.0.0.0 255.0.0.0
+Router(config-router-af-interface)# exit
+Router(config-router-af)# topology base
+Router(config-router-af-topology)# variance 2
+Router(config-router-af-topology)# maximum-paths 4
+Router(config-router-af-topology)# exit
+Router(config-router-af)# exit
+
+! بررسی
+Router# show ip eigrp topology
+Router# show ip route eigrp</code></pre>
+
+    <h3>مثال ۲ — OSPF چندناحیه‌ای با Summarization</h3>
+    <pre><code>! R1 = ABR بین Area 0 و Area 10
+R1(config)# router ospf 1
+R1(config-router)# router-id 1.1.1.1
+R1(config-router)# network 10.0.0.0 0.0.0.3 area 0
+R1(config-router)# network 10.1.0.0 0.0.255.255 area 10
+R1(config-router)# area 10 range 10.1.0.0 255.255.0.0
+R1(config-router)# area 10 stub no-summary
+
+! R2 = روتر داخلی Area 10
+R2(config)# router ospf 1
+R2(config-router)# router-id 2.2.2.2
+R2(config-router)# network 10.1.1.0 0.0.0.255 area 10
+R2(config-router)# area 10 stub
+
+! بررسی
+R1# show ip ospf database summary
+R1# show ip ospf border-routers</code></pre>
+
+    <h3>مثال ۳ — eBGP با ISP و Filtering</h3>
+    <pre><code>! پیش‌نیاز: Static Route به ISP و Loopback
+Router(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
+
+! BGP
+Router(config)# router bgp 65001
+Router(config-router)# bgp log-neighbor-changes
+Router(config-router)# neighbor 203.0.113.1 remote-as 65002
+Router(config-router)# neighbor 203.0.113.1 description ISP-PRIMARY
+Router(config-router)# network 10.0.0.0 mask 255.255.255.0
+
+! Filtering — فقط Prefixهای خودمان را به ISP اعلان کن
+Router(config)# ip prefix-list OUR-NETS seq 10 permit 10.0.0.0/24
+Router(config)# ip prefix-list OUR-NETS seq 20 deny 0.0.0.0/0 le 32
+
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.1 prefix-list OUR-NETS out
+
+! بررسی
+Router# show ip bgp summary
+Router# show ip bgp neighbors 203.0.113.1 advertised-routes
+Router# show ip bgp</code></pre>
+
+    <h3>مثال ۴ — Redistribution دوطرفه با Route Map و Tag</h3>
+    <pre><code>! ===== OSPF → EIGRP =====
+Router(config)# route-map OSPF-TO-EIGRP deny 5
+Router(config-route-map)# match tag 100
+! مسیرهایی که از EIGRP آمده‌اند، برنگردانده شوند (Loop Prevention)
+
+Router(config)# route-map OSPF-TO-EIGRP permit 10
+Router(config-route-map)# set metric 10000 100 255 1 1500
+Router(config-route-map)# set tag 200
+
+! ===== EIGRP → OSPF =====
+Router(config)# route-map EIGRP-TO-OSPF deny 5
+Router(config-route-map)# match tag 200
+
+Router(config)# route-map EIGRP-TO-OSPF permit 10
+Router(config-route-map)# set metric 100
+Router(config-route-map)# set metric-type 2
+Router(config-route-map)# set tag 100
+
+! اعمال
+Router(config)# router eigrp 100
+Router(config-router)# redistribute ospf 1 route-map OSPF-TO-EIGRP
+
+Router(config)# router ospf 1
+Router(config-router)# redistribute eigrp 100 subnets route-map EIGRP-TO-OSPF
+
+! بررسی
+Router# show ip route
+Router# show route-map
+Router# show ip eigrp topology | include Tag</code></pre>
+
+    <h3>مثال ۵ — PBR برای Dual-Homed</h3>
+    <pre><code>! سناریو: روتر با دو ISP، ترافیک VoIP از ISP-A و بقیه از ISP-B
+
+! ACL برای Match کردن VoIP
+Router(config)# ip access-list extended VOIP-TRAFFIC
+Router(config-ext-nacl)# permit udp any any range 16384 32767
+Router(config-ext-nacl)# permit tcp any any eq 5060
+Router(config-ext-nacl)# exit
+
+! Route Map
+Router(config)# route-map PBR-VOIP permit 10
+Router(config-route-map)# match ip address VOIP-TRAFFIC
+Router(config-route-map)# set ip next-hop verify-availability 203.0.113.2 1 track 1
+Router(config-route-map)# set ip next-hop 203.0.113.3
+! اگر ISP-A از دسترس خارج شد، به ISP-B برود
+
+! اعمال روی اینترفیس داخل
+Router(config)# interface Gi0/0
+Router(config-if)# ip policy route-map PBR-VOIP
+
+! ترافیک خود روتر
+Router(config)# ip local policy route-map PBR-VOIP
+
+! بررسی
+Router# show ip policy
+Router# show route-map PBR-VOIP
+Router# show track
+Router# debug ip policy</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3/EVE-NG پنج روتر IOS-XE بساز (R1 تا R5)</li>
+      <li>R1-R2-R3 با EIGRP AS 100 در یک AS داخلی</li>
+      <li>R3-R4-R5 با OSPF Area 0 در AS دیگر</li>
+      <li>R3 به‌عنوان ASBR بین EIGRP و OSPF — Redistribution دوطرفه با Route Map و Tag</li>
+      <li>OSPF چندناحیه‌ای: R3-R4 در Area 0، R4-R5 در Area 10</li>
+      <li>R4 به‌عنوان ABR با Summarization برای Area 10</li>
+      <li>EIGRP Variance برای Load Balancing بین R1 و R3</li>
+      <li>یک BGP Session با یک ISP شبیه‌سازی‌شده روی R1 (AS 65002)</li>
+      <li>Prefix-List برای فیلتر اعلان به ISP</li>
+      <li>BGP Weight و Local Preference برای ترجیح یک ISP بر دیگری</li>
+      <li>Route Reflector برای iBGP داخل AS (اگر چند روتر iBGP داری)</li>
+      <li>PBR روی R1 برای هدایت VoIP از ISP-A و داده از ISP-B</li>
+      <li>عیب‌یابی: Routing Loop در Redistribution، SIA در EIGRP، Virtual Link در OSPF</li>
+      <li>تأیید نهایی با <code>traceroute</code> از PC به چند مقصد</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>EIGRP همسایه نمی‌شود:</strong> AS Number، K-Values، Authentication، Network Statement یا Passive-Interface اشتباه.</li>
+      <li><strong>EIGRP SIA (Stuck in Active):</strong> Query پاسخ نمی‌گیرد — Stub Config یا Filtering اضافه کن.</li>
+      <li><strong>EIGRP Variance کار نمی‌کند:</strong> Feasibility Condition برقرار نیست — حتی با Variance بالا، FS لازم است.</li>
+      <li><strong>OSPF همسایه نمی‌شود:</strong> Area ID، Hello/Dead، Authentication، MTU، Network Type یکسان نیست.</li>
+      <li><strong>OSPF Router ID تکراری:</strong> پیام <code>%OSPF-4-DUP_RTRID_NBR</code> — Router ID دستی و یکتا تعریف کن.</li>
+      <li><strong>OSPF Virtual Link کار نمی‌کند:</strong> Router ID باید یکتا و در Transit Area باشد.</li>
+      <li><strong>BGP Session Up نمی‌شود:</strong> TCP/179 باز، Remote AS درست، Update-Source و TTL Check.</li>
+      <li><strong>BGP Route اعلان نمی‌شود:</strong> Network Statement با Mask، Redistribute یا Aggregate.</li>
+      <li><strong>iBGP Loop Prevention:</strong> بدون Route Reflector، iBGP مسیر را به iBGP دیگر Forward نمی‌کند — Full-Mesh یا RR لازم است.</li>
+      <li><strong>BGP Best Path اشتباه:</strong> ترتیب Weight → Local Pref → Origin → AS Path → Origin → MED را چک کن.</li>
+      <li><strong>Redistribution Loop:</strong> بدون Tag و Route Map، مسیرها بین دو پروتکل Loop می‌شوند.</li>
+      <li><strong>PBR کار نمی‌کند:</strong> روی اینترفیس Inbound اعمال شده؟ ACL Match دقیق است؟ Local Policy برای ترافیک روتر فعال است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="eigrp">EIGRP</span> •
+      <span class="term" data-term="ospf">OSPF</span> •
+      <span class="term" data-term="bgp">BGP</span> •
+      <span class="term" data-term="pbr">PBR</span> •
+      <span class="term" data-term="route-redistribution">Redistribution</span> •
+      <span class="term" data-term="administrative-distance">AD</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۲۰ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-04" data-duration="1200">
+    <h2>🧠 آزمون پایان فصل (۲۰ سوال)</h2>
+    <div class="quiz-timer">۲۰:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) در EIGRP، شرط Feasible Successor چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> FD همسایه &lt; RD محلی</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> RD همسایه &lt; FD محلی</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> RD همسایه = FD محلی</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> RD همسایه &gt; FD محلی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) کدام K-Value در EIGRP پیش‌فرض فعال است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> K1، K2</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> K2، K3</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> K1، K3 (Bandwidth + Delay)</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> K1، K2، K3، K4، K5</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت Classic Mode و Named Mode در EIGRP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Classic جدیدتر است</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Named Mode از Address Families و Interface-level Config پشتیبانی می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Named Mode کندتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) در EIGRP Unequal Cost Load Balancing با کدام دستور فعال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> <code>maximum-paths</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> <code>load-balance</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> <code>variance X</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> <code>unequal-cost</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) تفاوت ABR و ASBR در OSPF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> ABR مسیر خارجی می‌گیرد، ASBR بین Areaها</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> ABR بین دو یا چند Area، ASBR تزریق مسیر خارجی</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> ASBR فقط در Area 0</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) کدام LSA توسط ABR منتشر می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> LSA Type 1</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> LSA Type 2</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> LSA Type 3 (Summary)</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> LSA Type 7</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) چرا OSPF به Area 0 نیاز دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> برای رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Area 0 ستون فقرات است و همه‌ی Areaها باید به آن متصل باشند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> برای کاهش Cost</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> برای IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۸) ترتیب States در OSPF کدام است؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Down → Init → 2-Way → ExStart → Exchange → Loading → Full</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Init → Down → Full</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Down → Full → Loading</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Exchange → Init → Down</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) کدام Area فقط Default Route به داخل می‌فرستد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Stub</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> NSSA</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> Totally Stubby</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Backbone</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) BGP از چه پورت TCP استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> TCP/89</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> TCP/179</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> UDP/179</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۱) تفاوت eBGP و iBGP در AD پیش‌فرض چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> eBGP=20، iBGP=200</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> eBGP=200، iBGP=20</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> هر دو 20</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> هر دو 200</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) اولین معیار در Best Path Selection BGP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Local Preference</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> AS_PATH</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Weight (Cisco Only)</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> MED</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) کدام Path Attribute در کل AS منتشر می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> Weight</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Local Preference</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> MED</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> Next Hop</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) MED پایین‌تر بهتر است یا بالاتر؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> بالاتر</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> هر دو یکسان</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> پایین‌تر = بهتر (ترجیح داده می‌شود)</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> بستگی به AS دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) چرا Route Reflector استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> افزایش پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> کاهش نیاز iBGP Full-Mesh</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> رمزنگاری BGP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> IPv6 Support</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۶) در Redistribution، کدام ابزار برای جلوگیری از Loop استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> ACL</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> Prefix-List فقط</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Route Map + Tag</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> SNMP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۷) PBR روی کدام جهت ترافیک اعمال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> Outbound</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> Inbound</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> هر دو</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> فقط Loopback</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۸) دستور <code>area 10 stub no-summary</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> فقط Stub معمولی</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> NSSA</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> Totally Stubby — فقط Default Route</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> Backbone</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۹) در eBGP، TTL پیش‌فرض بسته چقدر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q19" value="0"> 64</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="1"> 1 (فقط Direct Neighbor)</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="2"> 255</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="3"> 0</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲۰) OSPF External Type 1 (E1) چه تفاوتی با E2 دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q20" value="0"> E1 از LSA 7 استفاده می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="1"> E2 سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="2"> E1: Cost داخلی + خارجی | E2: فقط Cost خارجی</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="3"> E1 فقط در NSSA</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی چندپروتکلی با Redistribution و Policy طراحی کن:</p>
+    <ul>
+      <li><strong>داخل AS 65001:</strong> ۳ روتر با EIGRP Named Mode</li>
+      <li><strong>ASBR (R3):</strong> Redistribution دوطرفه با Route Map و Tag بین EIGRP و OSPF</li>
+      <li><strong>داخل AS 65002:</strong> ۳ روتر OSPF چندناحیه‌ای (Area 0 و Area 10)</li>
+      <li><strong>ABR (R4):</strong> Summarization برای Area 10 و Totally Stubby</li>
+      <li><strong>iBGP:</strong> Full-Mesh داخل AS 65001 با Route Reflector</li>
+      <li><strong>eBGP:</strong> با یک ISP شبیه‌سازی‌شده (AS 65010) روی R1</li>
+      <li><strong>Policy:</strong> ترجیح یک ISP با Weight روی R1</li>
+      <li><strong>Prefix-List:</strong> فقط Prefixهای خودی به ISP اعلان شود</li>
+      <li><strong>PBR:</strong> ترافیک HTTP از ISP-A، VoIP از ISP-B</li>
+      <li><strong>Variance EIGRP:</strong> Load Balancing بین دو مسیر</li>
+      <li>مستندسازی کامل با Diagram، IP Plan و Policy Matrix</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Routing Loop عمدی در Redistribution بساز و با Route Map حل کن.</li>
+        <li>یک BGP Policy برای جلوگیری از Transit Traffic پیاده کن.</li>
+        <li>OSPF Virtual Link ایجاد کن تا یک Area بدون اتصال مستقیم به Area 0 متصل شود.</li>
+        <li>EIGRP SIA عمدی بساز و با Stub حل کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>EIGRP متریک:</strong> BW + Delay (K1، K3) با Weight 256</li>
+      <li><strong>EIGRP FD vs RD:</strong> FD محلی، RD از همسایه — شرط FC: RD &lt; FD</li>
+      <li><strong>EIGRP State:</strong> Passive (پایدار) — Active (Query در جریان)</li>
+      <li><strong>EIGRP Stub:</strong> برای شعبه‌های تک‌لینکی — جلوگیری از SIA</li>
+      <li><strong>EIGRP Variance:</strong> Unequal Cost Load Balancing (با شرط FC)</li>
+      <li><strong>OSPF LSA:</strong> Type 1 (Router)، 2 (Network)، 3 (Summary)، 5 (External)، 7 (NSSA)</li>
+      <li><strong>OSPF Areas:</strong> Backbone، Stub، Totally Stubby، NSSA، Totally NSSA</li>
+      <li><strong>ABR:</strong> بین Areaها — <strong>ASBR:</strong> تزریق External</li>
+      <li><strong>OSPF States:</strong> Down → Init → 2-Way → ExStart → Exchange → Loading → Full</li>
+      <li><strong>OSPF Path Preference:</strong> Intra &gt; Inter &gt; E1 &gt; E2</li>
+      <li><strong>BGP:</strong> TCP/179، Path Vector، eBGP AD=20، iBGP AD=200</li>
+      <li><strong>BGP Best Path:</strong> Weight &gt; Local Pref &gt; Originate &gt; AS Path &gt; Origin &gt; MED &gt; eBGP &gt; IGP Metric &gt; Oldest &gt; Router ID</li>
+      <li><strong>BGP Attributes:</strong> Well-Known (Mandatory/Discretionary)، Optional (Transitive/Non-Transitive)</li>
+      <li><strong>Route Reflector:</strong> کاهش iBGP Full-Mesh با ORIGINATOR_ID و CLUSTER_LIST</li>
+      <li><strong>Redistribution:</strong> همیشه با Route Map + Tag + Prefix-List</li>
+      <li><strong>PBR:</strong> Inbound Only، با Route Map و Local Policy برای ترافیک روتر</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_03.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-04">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_05.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

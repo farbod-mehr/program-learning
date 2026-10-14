@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۷: رشته‌ها و متن — کار با متن در پایتون | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۷ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور با متن‌ها کار کنید — طول، بریدن، جست‌وجو، جایگزینی و f-string — ساده و عملی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۷ از ۳۰ — رشته‌ها و متن</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🐣 شروع و مبانی ← فصل ۷
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۷ از ۳۰</span>
+    <h1>🧵 رشته‌ها و متن — کار با متن در پایتون</h1>
+    <p>چطور متن‌ها را بشکنیم، جست‌وجو کنیم، عوض کنیم و قالب‌بندی کنیم؟ — <span class="term" data-term="string">string</span>، <span class="term" data-term="slicing">slicing</span>، <span class="term" data-term="indexing">indexing</span>، <span class="term" data-term="f-string">f-string</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۰ دقیقه</span>
+      <span class="pill">🎓 کاملاً مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در فصل‌های قبل با عددها زیاد کار کردیم. اما اگر دقت کنید، <strong>بیشتر برنامه‌های واقعی با متن کار می‌کنند</strong>: نام کاربر، پیام، آدرس ایمیل، جمله، پاراگراف، کد پستی، شماره تلفن. حتی وقتی از کاربر ورودی می‌گیریم، <code class="inline-code">input()</code> همیشه متن برمی‌گرداند — این را در فصل ۳ دیدیم.</p>
+        <p>در این فصل یاد می‌گیرید با متن‌ها مثل یک حرفه‌ای کار کنید. متن را بشکنید، به بخش‌های مختلفش دسترسی پیدا کنید، جست‌وجو کنید، عوض کنید، و با f-string متن‌های پویا بسازید. این مهارت‌ها در همه‌ی فصل‌های بعدی، هر روز به‌کارتان می‌آید.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>طول یک متن را با <code class="inline-code">len()</code> پیدا کنید.</li>
+          <li>به هر کاراکتر متن دسترسی داشته باشید (ایندکس).</li>
+          <li>بخش‌هایی از متن را ببرید (slicing).</li>
+          <li>از متدهای پرکاربرد متن مثل <code class="inline-code">upper()</code>، <code class="inline-code">strip()</code>، <code class="inline-code">replace()</code>، <code class="inline-code">split()</code> و <code class="inline-code">join()</code> استفاده کنید.</li>
+          <li>با f-string متن‌های پویا و خوانا بسازید.</li>
+          <li>بدانید چرا متن‌ها در پایتون «تغییرناپذیر» هستند و این چه معنایی دارد.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          در این فصل، فقط <strong>متدهای پرکاربرد</strong> متن را یاد می‌گیرید. پایتون ده‌ها متد دیگر برای متن دارد که هر کدام سر جای خودشان می‌آیند. اگر بعداً به متد خاصی نیاز پیدا کردید، با جست‌وجو در مستندات یا به‌خاطر آوردن اسمش پیدا می‌شود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>دسترسی</h4><p>len و ایندکس.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>برش</h4><p>Slicing.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>متدها</h4><p>upper، strip، replace، split.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>f-string</h4><p>متن‌های پویا.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا ایندکس از صفر شروع می‌شود و نه یک؟</summary>
+          <div class="answer-body"><p>این تصمیم از زبان C به پایتون و بسیاری از زبان‌ها آمده. دلیلش این است که «ایندکس» در واقع «فاصله از شروع» را می‌سنجد. کاراکتر اول در فاصله‌ی صفر از شروع است (یعنی هیچ‌چیز نباید جلو بروی). کاراکتر دوم در فاصله‌ی یک. این منطق، در محاسبات حافظه و پیاده‌سازی‌های سطح پایین ساده‌تر است. کمی عجیب به‌نظر می‌رسد اما خیلی زود عادت می‌کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا متن‌ها را «تغییرناپذیر» می‌گویند؟ مگر نمی‌شود متن را عوض کرد؟</summary>
+          <div class="answer-body"><p>می‌شود، اما نه با دست‌کاری مستقیم. فرض کنید نوشته‌اید <code class="inline-code">name = "علی"</code>. اگر بنویسید <code class="inline-code">name = "رضا"</code>، در واقع یک متن جدید ساختی و اسم قبلی از بین رفت. اما نمی‌توانی بنویسی <code class="inline-code">name[0] = "ر"</code> — یعنی نمی‌توانی کاراکتر خاصی را در متن موجود عوض کنی. برای تغییر یک کاراکتر، باید متن جدید بسازی. این ویژگی «تغییرناپذیر بودن» نام دارد و مزایایی دارد (که در ادامه کمی توضیح می‌دهیم).</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 f-string چیست و چرا از آن استفاده کنیم؟</summary>
+          <div class="answer-body"><p>روش مدرن و ساده‌ی پایتون برای گذاشتن متغیرها داخل متن. کافی است یک <code class="inline-code">f</code> قبل از گیومه بگذارید و متغیرها را داخل <code class="inline-code">{ }</code> بنویسید: <code class="inline-code">f"سلام {name}"</code>. خیلی خواناتر از روش‌های قدیمی است و از پایتون ۳.۶ به بعد پیشنهاد می‌شود.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی شش فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با <code class="inline-code">print()</code>، متغیر و انواع داده راحت هستید.</li>
+          <li>با شرط‌ها و حلقه‌ها کار کرده‌اید.</li>
+          <li>می‌دانید متن (str) چیست — از فصل ۳.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter07.py</code> در پوشه‌ی پروژه بسازید. هر مثال را در همان تایپ کنید. متن‌ها را عوض کنید و ببینید خروجی چطور عوض می‌شود.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: کار با متن</h2></div>
+
+        <h3>۱) یادآوری — متن چیست؟</h3>
+        <p>متن یا همان <strong>رشته (string)</strong>، دنباله‌ای از کاراکترها است که داخل گیومه قرار می‌گیرد. می‌تواند حروف، اعداد، علامت، فاصله یا ترکیبی از همه باشد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>strings_basic.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">name = "علی"
+city = 'تهران'
+message = "سلام دنیا!"
+phone = "09123456789"
+empty = ""
+
+print(name)
+print(city)
+print(message)
+print("طول پیام:", len(message))</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">علی
+تهران
+سلام دنیا!
+طول پیام: 10</code></pre>
+        </div>
+        <p>نکته‌ی مهم: هر چیزی داخل گیومه، متن است — حتی اگر شبیه عدد باشد. <code class="inline-code">"09123456789"</code> متن است، نه عدد.</p>
+
+        <h3>۲) طول متن با len</h3>
+        <p>تابع <code class="inline-code">len()</code> به شما می‌گوید یک متن چند کاراکتر دارد — شامل فاصله‌ها و علائم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>length_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">greeting = "سلام"
+print(len(greeting))     # 4 (س + ل + ا + م)
+
+message = "سلام دنیا!"
+print(len(message))      # 10 (حتی ! و فاصله هم حساب می‌شوند)
+
+empty = ""
+print(len(empty))        # 0</code></pre>
+        </div>
+
+        <h3>۳) ایندکس — دسترسی به یک کاراکتر خاص</h3>
+        <p>هر کاراکتر در متن یک شماره دارد به نام <strong>ایندکس</strong>. ایندکس از <strong>صفر</strong> شروع می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>indexing.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">word = "Python"
+#       012345  (ایندکس‌ها)
+
+print(word[0])    # P  (اولین کاراکتر، ایندکس 0)
+print(word[1])    # y
+print(word[2])    # t
+print(word[5])    # n  (آخرین کاراکتر)</code></pre>
+        </div>
+        <p>نکته‌ی مهم: <strong>ایندکس از صفر شروع می‌شود، اما آخرین کاراکتر در ایندکس len-1 است.</strong> یعنی برای "Python" که ۶ کاراکتر دارد، ایندکس‌ها ۰ تا ۵ هستند — نه ۱ تا ۶.</p>
+
+        <h4>ایندکس منفی — از آخر بشمار</h4>
+        <p>پایتون یک ویژگی زیبا دارد: می‌توانید از ایندکس منفی استفاده کنید و از آخر بشمارید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>negative_index.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">word = "Python"
+
+print(word[-1])   # n  (آخرین کاراکتر)
+print(word[-2])   # o  (یکی به آخر)
+print(word[-3])   # h</code></pre>
+        </div>
+        <p>یعنی <code class="inline-code">-1</code> = آخرین کاراکتر، <code class="inline-code">-2</code> = یکی قبل از آخر، و همینطور تا اول.</p>
+
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار</b>
+          اگر به ایندکسی دسترسی داشته باشید که وجود ندارد، خطای <code class="inline-code">IndexError</code> می‌گیرید. مثال: <code class="inline-code">word[100]</code> روی "Python". همیشه مطمئن شوید ایندکس در محدوده‌ی ۰ تا len-1 (یا منفی از -1 تا -len) است.
+        </div>
+
+        <h3>۴) برش یا Slicing — گرفتن بخشی از متن</h3>
+        <p><strong>Slicing</strong> یا «برش»، به شما اجازه می‌دهد بخشی از یک متن را جدا کنید. ساختارش این است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار slicing</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">متن[start:stop:step]
+# start → از کجا شروع کن (شامل)
+# stop  → تا کجا برو (شامل نمی‌شود!)
+# step  → با چه گامی (پیش‌فرض: 1)</code></pre>
+        </div>
+        <p>مثال‌های ساده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>slicing_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">text = "Python"
+
+print(text[0:3])    # Pyt   (از 0 تا 2، شامل 3 نمی‌شود)
+print(text[2:5])    # tho   (از 2 تا 4)
+print(text[:3])     # Pyt   (از ابتدا تا 2)
+print(text[3:])     # hon   (از 3 تا آخر)
+print(text[:])      # Python (کل متن)
+
+# با step
+numbers = "0123456789"
+print(numbers[0:10:2])   # 02468  (هر 2 تا یکی)
+print(numbers[::3])      # 0369   (کل متن با گام 3)</code></pre>
+        </div>
+
+        <h4>معکوس کردن متن با slicing</h4>
+        <p>یک ترفند جالب: اگر step منفی باشد، متن معکوس می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>reverse.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">word = "Python"
+print(word[::-1])   # nohtyP  (معکوس!)</code></pre>
+        </div>
+        <p>این یک ترفند رایج در پایتون است. ساختار <code class="inline-code">[::-1]</code> یعنی «از ابتدا تا آخر، ولی به عقب برو».</p>
+
+        <h3>۵) متدهای پرکاربرد متن</h3>
+        <p>پایتون ده‌ها متد برای کار با متن دارد. اینجا پرکاربردترین‌هایشان را یاد می‌گیرید. ساختار متدها این‌طور است: <code class="inline-code">متن.متد()</code>.</p>
+
+        <h4>الف) تغییر بزرگی و کوچکی حروف — upper، lower</h4>
+        <div class="code-box">
+          <div class="code-head"><span>case_methods.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">message = "Hello Python"
+
+print(message.upper())    # HELLO PYTHON
+print(message.lower())    # hello python</code></pre>
+        </div>
+        <p><strong>کاربرد واقعی:</strong> برای مقایسه‌ی متن‌ها بدون توجه به بزرگی/کوچکی حروف. مثلاً در سیستم ورود، می‌خواهید "Ali" و "ali" و "ALI" همه یکسان حساب شوند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>case_compare.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">username = input("نام کاربری: ")
+
+if username.lower() == "ali":
+    print("خوش آمدید!")
+else:
+    print("کاربر ناشناس.")</code></pre>
+        </div>
+
+        <h4>ب) حذف فاصله‌های اضافی — strip، lstrip، rstrip</h4>
+        <p>وقتی از کاربر ورودی می‌گیرید، ممکن است بی‌خودی فاصله اضافه بزند. <code class="inline-code">strip()</code> فاصله‌های ابتدا و انتها را حذف می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>strip_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">name = "   علی   "
+print(repr(name))           # '   علی   ' (فاصله‌ها دیده می‌شوند)
+print(repr(name.strip()))   # 'علی'
+print(repr(name.lstrip()))  # 'علی   ' (فقط چپ)
+print(repr(name.rstrip()))  # '   علی' (فقط راست)
+
+# نکته: strip حرف وسط را دست نمی‌زند
+messy = "  سلام  دنیا  "
+print(messy.strip())        # "سلام  دنیا" (فاصله وسط می‌ماند)</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 عادت طلایی</b>
+          هر وقت از کاربر <code class="inline-code">input()</code> می‌گیرید، همیشه <code class="inline-code">.strip()</code> را در انتها اضافه کنید. چون اگر کاربر سهواً Space بزند، متن شما با فاصله ذخیره می‌شود و مقایسه‌ها اشتباه می‌شوند: <code class="inline-code">name = input("نام: ").strip()</code>.
+        </div>
+
+        <h4>ج) جایگزینی متن — replace</h4>
+        <div class="code-box">
+          <div class="code-head"><span>replace_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">text = "من عاشق پایتون هستم. پایتون فوق‌العاده است."
+new_text = text.replace("پایتون", "Python")
+print(new_text)
+# من عاشق Python هستم. Python فوق‌العاده است.
+
+# حذف یک کاراکتر (جایگزین کردن با متن خالی)
+cleaned = "a-b-c-d".replace("-", "")
+print(cleaned)   # abcd</code></pre>
+        </div>
+        <p><strong>نکته مهم:</strong> <code class="inline-code">replace</code> متن اصلی را تغییر نمی‌دهد — یک متن جدید می‌سازد و برمی‌گرداند. برای دیدن تغییر، باید نتیجه را در متغیری ذخیره کنید یا چاپش کنید.</p>
+
+        <h4>د) جدا کردن متن — split</h4>
+        <p><code class="inline-code">split()</code> یک متن را بر اساس یک جداکننده به چند تکه تقسیم می‌کند و یک لیست برمی‌گرداند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>split_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">sentence = "من به مدرسه می‌روم"
+words = sentence.split()
+print(words)
+# ['من', 'به', 'مدرسه', 'می‌روم']
+
+# با جداکننده مشخص
+csv_line = "علی,25,تهران"
+parts = csv_line.split(",")
+print(parts)
+# ['علی', '25', 'تهران']
+
+# فقط اولین جداکننده
+text = "a:b:c:d"
+print(text.split(":", 1))
+# ['a', 'b:c:d']</code></pre>
+        </div>
+        <p>اگر به <code class="inline-code">split()</code> هیچ جداکننده‌ای ندهید، روی فاصله‌ها تقسیم می‌کند.</p>
+
+        <h4>ه) به هم چسباندن — join</h4>
+        <p>عملکرد <code class="inline-code">join</code> برعکس <code class="inline-code">split</code> است. یک لیست از متن‌ها را می‌گیرد و با یک جداکننده به هم می‌چسباند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>join_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">words = ["من", "به", "مدرسه", "می‌روم"]
+sentence = " ".join(words)
+print(sentence)   # من به مدرسه می‌روم
+
+# با جداکننده دلخواه
+fruits = ["سیب", "موز", "پرتقال"]
+print(" و ".join(fruits))    # سیب و موز و پرتقال
+print(", ".join(fruits))     # سیب, موز, پرتقال
+
+# برای چسباندن بدون فاصله
+letters = ["P", "y", "t", "h", "o", "n"]
+print("".join(letters))      # Python</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          ساختار <code class="inline-code">.join()</code> ممکن است عجیب به نظر برسد: <code class="inline-code">"جداکننده".join(لیست)</code>. یعنی «جداکننده» قبل از join می‌آید. اولش عجیب است، اما در فصل ۹ (لیست) بیشتر با آن کار می‌کنیم و دستتان می‌آید.
+        </div>
+
+        <h4>و) جست‌وجو — find و in</h4>
+        <div class="code-box">
+          <div class="code-head"><span>find_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">text = "من به مدرسه می‌روم"
+
+# find: ایندکس اولین جا که پیدا می‌شود (یا -1 اگر نبود)
+print(text.find("مدرسه"))   # 6
+print(text.find("دانشگاه"))  # -1
+
+# in: چک می‌کند که آیا وجود دارد یا نه
+print("مدرسه" in text)      # True
+print("دانشگاه" in text)     # False
+
+# ترکیب با شرط
+if "مدرسه" in text:
+    print("کلمه مدرسه در متن هست.")</code></pre>
+        </div>
+        <p><strong>کدام را استفاده کنیم؟</strong> اگر فقط می‌خواهید بدانید چیزی وجود دارد یا نه، از <code class="inline-code">in</code> استفاده کنید — خواناتر است. اگر به مکان دقیقش نیاز دارید، از <code class="inline-code">find</code>.</p>
+
+        <h3>۶) f-string — متن‌های پویا و خوانا</h3>
+        <p>تا اینجا متن را در متغیر می‌گذاشتیم یا با <code class="inline-code">+</code> به هم می‌چسباندیم. اما یک روش بسیار بهتر وجود دارد: <strong>f-string</strong>. قبل از گیومه یک <code class="inline-code">f</code> بگذارید و متغیرها را داخل <code class="inline-code">{ }</code> بنویسید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>f_string_intro.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">name = "علی"
+age = 25
+city = "تهران"
+
+# روش قدیمی
+old = "سلام " + name + "! تو " + str(age) + " سالته و در " + city + " زندگی می‌کنی."
+print(old)
+
+# با f-string — خیلی تمیزتر
+new = f"سلام {name}! تو {age} سالته و در {city} زندگی می‌کنی."
+print(new)</code></pre>
+        </div>
+        <p>خروجی هر دو یکسان است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سلام علی! تو 25 سالته و در تهران زندگی می‌کنی.</code></pre>
+        </div>
+
+        <h4>محاسبه مستقیم داخل f-string</h4>
+        <p>حتی می‌توانید داخل <code class="inline-code">{ }</code> محاسبه انجام دهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>f_string_calc.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">price = 25000
+count = 3
+
+print(f"قیمت کل: {price * count} تومان")
+# قیمت کل: 75000 تومان
+
+name = "رضا"
+print(f"سلام {name.upper()}!")
+# سلام رضا!  (ولی با حروف بزرگ، در انگلیسی)
+
+# شرط یک‌خطی داخل f-string
+score = 85
+print(f"وضعیت: {'قبول' if score >= 60 else 'رد'}")
+# وضعیت: قبول</code></pre>
+        </div>
+
+        <h4>قالب‌بندی اعداد — قطع اعشار</h4>
+        <p>اگر عدد اعشاری دارید و می‌خواهید با تعداد مشخصی رقم چاپ کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>f_string_format.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">pi = 3.14159265
+
+print(f"پی: {pi:.2f}")      # پی: 3.14   (دو رقم اعشار)
+print(f"پی: {pi:.4f}")      # پی: 3.1416 (چهار رقم اعشار)
+
+price = 1234567
+print(f"قیمت: {price:,}")   # قیمت: 1,234,567  (جداکننده هزارگان)
+
+percent = 0.756
+print(f"درصد: {percent:.1%}")  # درصد: 75.6%</code></pre>
+        </div>
+
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          از f-string برای همه‌ی متن‌های پویا استفاده کنید — به‌جای <code class="inline-code">+</code> و <code class="inline-code">str()</code> و <code class="inline-code">.format()</code>. خواناتر است، سریع‌تر است، و کم اشتباه‌تر. اگر یادتان رفت <code class="inline-code">f</code> بگذارید، متغیرها به‌عنوان متن ساده چاپ می‌شوند و به‌جای مقدارشان، اسم‌شان را می‌بینید.
+        </div>
+
+        <h3>۷) متن تغییرناپذیر است</h3>
+        <p>یک نکته‌ی مهم که باید بدانید: متن‌ها در پایتون <strong>تغییرناپذیر (immutable)</strong> هستند. یعنی نمی‌توانید یک کاراکتر خاص را در متن موجود عوض کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>immutable.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">name = "علی"
+
+# این خطا می‌دهد:
+# name[0] = "ا"   ← TypeError: 'str' object does not support item assignment
+
+# راه درست: یک متن جدید بسازید
+new_name = "ا" + name[1:]
+print(new_name)   # الی</code></pre>
+        </div>
+        <p>در واقع، وقتی می‌نویسید <code class="inline-code">name = "رضا"</code>، پایتون یک متن جدید می‌سازد و اسم <code class="inline-code">name</code> را به آن اشاره می‌دهد — متن قبلی دست‌نخورده می‌ماند.</p>
+        <p><strong>چرا مهم است؟</strong> چون در فصل ۹ (لیست‌ها) خواهید دید که لیست‌ها تغییرپذیرند. تفاوت این دو، گاهی باعث باگ‌های عجیب می‌شود. الان فقط این را بدانید که متن‌ها را نمی‌توان مستقیماً تغییر داد.</p>
+
+        <h3>۸) کاربرد واقعی — پاک‌سازی و تحلیل متن</h3>
+        <p>بیایید همه‌ی آموخته‌ها را در یک برنامه‌ی واقعی به‌کار بگیریم: یک برنامه که نام و ایمیل کاربر را می‌گیرد، آن‌ها را پاک‌سازی و تحلیل می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>text_analyzer.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># تحلیل و پاک‌سازی متن ورودی
+
+print("=" * 40)
+print("     تحلیل‌گر متن")
+print("=" * 40)
+print()
+
+# گرفتن ورودی (با strip برای حذف فاصله‌های اضافه)
+name = input("نام خود را وارد کنید: ").strip()
+email = input("ایمیل خود را وارد کنید: ").strip().lower()
+
+# تحلیل نام
+print()
+print("-" * 40)
+print(f"  نام پاک‌سازی‌شده: {name}")
+print(f"  طول نام: {len(name)} کاراکتر")
+print(f"  حرف اول: {name[0]}")
+print(f"  حرف آخر: {name[-1]}")
+
+# تحلیل ایمیل
+print()
+print(f"  ایمیل: {email}")
+
+# بررسی معتبر بودن ساده
+if "@" in email:
+    parts = email.split("@")
+    username = parts[0]
+    domain = parts[1]
+
+    print(f"  نام کاربری: {username}")
+    print(f"  دامنه: {domain}")
+
+    # بررسی نوع دامنه
+    if domain.endswith(".com"):
+        print(f"  نوع: تجاری (.com)")
+    elif domain.endswith(".ir"):
+        print(f"  نوع: ایرانی (.ir)")
+    elif domain.endswith(".org"):
+        print(f"  نوع: سازمانی (.org)")
+    else:
+        print(f"  نوع: ناشناخته")
+else:
+    print("  ⚠️ ایمیل نامعتبر است (باید @ داشته باشد)")
+
+print("-" * 40)</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+     تحلیل‌گر متن
+========================================
+
+نام خود را وارد کنید:   علی  
+ایمیل خود را وارد کنید:  Ali@Example.COM
+
+----------------------------------------
+  نام پاک‌سازی‌شده: علی
+  طول نام: 3 کاراکتر
+  حرف اول: ع
+  حرف آخر: ی
+
+  ایمیل: ali@example.com
+  نام کاربری: ali
+  دامنه: example.com
+  نوع: تجاری (.com)
+----------------------------------------</code></pre>
+        </div>
+        <p>در این برنامه چند کار مفید انجام شد:</p>
+        <ul>
+          <li>با <code class="inline-code">strip()</code> فاصله‌های اضافه‌ی ورودی پاک شد.</li>
+          <li>با <code class="inline-code">lower()</code> ایمیل کوچک شد (چون ایمیل به بزرگی و کوچکی حساس نیست).</li>
+          <li>با <code class="inline-code">len()</code> طول نام بررسی شد.</li>
+          <li>با ایندکس <code class="inline-code">[0]</code> و <code class="inline-code">[-1]</code>، حرف اول و آخر نام پیدا شد.</li>
+          <li>با <code class="inline-code">in</code> بررسی شد که @ در ایمیل هست یا نه.</li>
+          <li>با <code class="inline-code">split()</code> ایمیل به دو بخش تقسیم شد.</li>
+          <li>با <code class="inline-code">endswith()</code> پسوند دامنه بررسی شد.</li>
+          <li>همه‌چیز با f-string زیبا چاپ شد.</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی «سازنده‌ی نام کاربری» — از نام کامل، یک نام کاربری مناسب می‌سازد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>username_generator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># سازنده نام کاربری — تمرین متدهای متن
+
+print("=" * 40)
+print("     سازنده نام کاربری")
+print("=" * 40)
+print()
+
+full_name = input("نام و نام خانوادگی خود را وارد کنید: ").strip()
+
+# جدا کردن نام و نام خانوادگی با split
+parts = full_name.split()
+
+if len(parts) >= 2:
+    first = parts[0]
+    last = parts[1]
+
+    # ساخت نام کاربری: حرف اول نام + نام خانوادگی، همه با حروف کوچک
+    # مثال: "علی محمدی" → "a.mohammadi" (در اینجا با لاتین)
+    username_base = first[0] + last
+    username_base = username_base.lower()
+
+    # حذف فاصله‌های اضافی و جایگزینی
+    username = username_base.replace(" ", "")
+
+    print()
+    print("-" * 40)
+    print(f"  نام شما: {full_name}")
+    print(f"  نام کاربری پیشنهادی: {username}")
+    print(f"  طول نام کاربری: {len(username)} کاراکتر")
+    print(f"  نسخه با حروف بزرگ: {username.upper()}")
+    print("-" * 40)
+else:
+    print()
+    print("⚠️ لطفاً نام و نام خانوادگی کامل وارد کنید (با فاصله).")</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+     سازنده نام کاربری
+========================================
+
+نام و نام خانوادگی خود را وارد کنید: Ali Mohammadi
+
+----------------------------------------
+  نام شما: Ali Mohammadi
+  نام کاربری پیشنهادی: amohammadi
+  طول نام کاربری: 10 کاراکتر
+  نسخه با حروف بزرگ: AMOHAMMADI
+----------------------------------------</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این برنامه را با اسم‌های مختلف (فارسی و انگلیسی) امتحان کنید. خواهید دید که:
+          <ul style="margin-top:8px">
+            <li>برای اسم‌های فارسی، خروجی به‌هم‌ریخته است — چون حروف فارسی به‌تنهایی معنی ندارند. اما اصل کار پایتون درست است.</li>
+            <li>اگر نام کاربر یک‌کلمه‌ای بدهد (مثل "Ali")، برنامه پیام خطا می‌دهد — چون <code class="inline-code">split()</code> فقط یک تکه برمی‌گرداند و شرط <code class="inline-code">len(parts) &gt;= 2</code> رد می‌شود.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>برنامه‌ای به نام «تحلیل‌گر جمله» بسازید که یک جمله از کاربر می‌گیرد و اطلاعات مختلفی درباره‌اش نمایش می‌دهد:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">sentence_analyzer.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک جمله از کاربر بگیرید (با <code class="inline-code">strip()</code> پاک‌سازی کنید).</li>
+          <li>اگر جمله خالی بود، پیام خطا بدهید و برنامه را تمام کنید.</li>
+          <li>اطلاعات زیر را نمایش دهید:
+            <ul>
+              <li>طول جمله (تعداد کاراکترها) با <code class="inline-code">len()</code></li>
+              <li>تعداد کلمات (با <code class="inline-code">split()</code> و <code class="inline-code">len()</code>)</li>
+              <li>اولین کاراکتر جمله (با ایندکس <code class="inline-code">[0]</code>)</li>
+              <li>آخرین کاراکتر جمله (با ایندکس <code class="inline-code">[-1]</code>)</li>
+              <li>نسخه‌ی کاملاً با حروف بزرگ (با <code class="inline-code">upper()</code>)</li>
+              <li>نسخه‌ی معکوس جمله (با slicing <code class="inline-code">[::-1]</code>)</li>
+            </ul>
+          </li>
+          <li>از کاربر بپرسید دنبال چه کلمه‌ای می‌گردد، و با <code class="inline-code">in</code> بررسی کنید که آیا آن کلمه در جمله هست یا نه.</li>
+          <li>اگر کلمه پیدا شد، با <code class="inline-code">find()</code> ایندکس اولین جای آن را نمایش دهید.</li>
+          <li>خروجی را با خط‌های جداکننده و f-string زیبا کنید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>sentence_analyzer.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># تحلیل‌گر جمله — تمرین متدهای متن
+
+print("=" * 45)
+print("       تحلیل‌گر جمله")
+print("=" * 45)
+print()
+
+sentence = input("یک جمله بنویسید: ").strip()
+
+# بررسی معتبر بودن ورودی
+if not sentence:
+    print("⚠️ جمله خالی است. لطفاً متن وارد کنید.")
+else:
+    # طول‌ها
+    length = len(sentence)
+    words = sentence.split()
+    word_count = len(words)
+
+    print()
+    print("-" * 45)
+    print(f"  جمله شما: {sentence}")
+    print("-" * 45)
+
+    print(f"  📏 طول جمله (کاراکتر): {length}")
+    print(f"  📝 تعداد کلمات: {word_count}")
+
+    print(f"  🔤 اولین کاراکتر: '{sentence[0]}'")
+    print(f"  🔤 آخرین کاراکتر: '{sentence[-1]}'")
+
+    print(f"  🔠 با حروف بزرگ: {sentence.upper()}")
+    print(f"  🔄 معکوس: {sentence[::-1]}")
+
+    print("-" * 45)
+
+    # جست‌وجو
+    search_word = input("دنبال چه کلمه‌ای می‌گردید؟ ").strip()
+
+    if search_word in sentence:
+        position = sentence.find(search_word)
+        print(f"  ✅ کلمه '{search_word}' پیدا شد در موقعیت {position}")
+    else:
+        print(f"  ❌ کلمه '{search_word}' در جمله یافت نشد.")
+
+    print("-" * 45)</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       تحلیل‌گر جمله
+=============================================
+
+یک جمله بنویسید: من امروز به مدرسه رفتم
+
+---------------------------------------------
+  جمله شما: من امروز به مدرسه رفتم
+---------------------------------------------
+  📏 طول جمله (کاراکتر): 22
+  📝 تعداد کلمات: 5
+  🔤 اولین کاراکتر: 'م'
+  🔤 آخرین کاراکتر: 'م'
+  🔠 با حروف بزرگ: من امروز به مدرسه رفتم
+  🔄 معکوس: م ت ف ر ه د س م ه ب ز و م ا ن م
+---------------------------------------------
+دنبال چه کلمه‌ای می‌گردید؟ مدرسه
+  ✅ کلمه 'مدرسه' پیدا شد در موقعیت 11
+---------------------------------------------</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی</summary>
+          <div class="answer-body">
+            <p>سه نکته در این راه‌حل:</p>
+            <ol>
+              <li><strong>بررسی ورودی خالی:</strong> با <code class="inline-code">if not sentence:</code> بررسی می‌کنیم که کاربر متن خالی وارد نکرده. این همان truthy/falsy از فصل ۵ است.</li>
+              <li><strong>ترتیب خروجی با f-string:</strong> از f-string برای همه‌ی پیام‌های پویا استفاده کردیم — خیلی تمیزتر از <code class="inline-code">+</code> است.</li>
+              <li><strong>ترکیب in و find:</strong> اول با <code class="inline-code">in</code> بررسی می‌کنیم که کلمه وجود دارد یا نه، بعد در صورت وجود با <code class="inline-code">find</code> موقعیتش را پیدا می‌کنیم. این الگو (اول چک، بعد عمل) در برنامه‌نویسی رایج است.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">sentence_analyzer.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌دانید چرا ایندکس از صفر شروع می‌شود و چرا <code class="inline-code">[0]</code> اولین کاراکتر است.</li>
+              <li>با <code class="inline-code">len()</code>, <code class="inline-code">upper()</code>, <code class="inline-code">lower()</code>, <code class="inline-code">strip()</code>, <code class="inline-code">replace()</code>, <code class="inline-code">split()</code>, <code class="inline-code">join()</code> راحت هستید.</li>
+              <li>می‌توانید با f-string متن‌های پویا بسازید.</li>
+              <li>می‌دانید که متن‌ها تغییرناپذیرند و نمی‌توان <code class="inline-code">sentence[0] = "x"</code> نوشت.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ IndexError: string index out of range</b>
+          <p><strong>معنی:</strong> «ایندکسی که استفاده کردید، در متن وجود ندارد».</p>
+          <p><strong>علت:</strong> مثلاً روی متن "Python" (که ۶ کاراکتر دارد و ایندکس‌های ۰ تا ۵)، بنویسید <code class="inline-code">word[10]</code>.</p>
+          <p><strong>راه‌حل:</strong> همیشه مطمئن شوید ایندکس در محدوده‌ی ۰ تا len-1 (یا منفی از -1 تا -len) است. با <code class="inline-code">len(word)</code> طول را چک کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: 'str' object does not support item assignment</b>
+          <p><strong>معنی:</strong> «نمی‌توانی یک کاراکتر متن را مستقیماً عوض کنی».</p>
+          <p><strong>علت:</strong> نوشته‌اید <code class="inline-code">name[0] = "ا"</code>.</p>
+          <p><strong>راه‌حل:</strong> متن تغییرناپذیر است. یک متن جدید بسازید: <code class="inline-code">new = "ا" + name[1:]</code> یا از <code class="inline-code">replace</code> استفاده کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی <code dir='ltr'>f</code> در f-string</b>
+          <p><strong>معنی:</strong> به‌جای مقدار متغیر، اسمش چاپ می‌شود.</p>
+          <p><strong>علت:</strong> نوشته‌اید <code class="inline-code">"سلام {name}"</code> به‌جای <code class="inline-code">f"سلام {name}"</code>.</p>
+          <p><strong>راه‌حل:</strong> قبل از گیومه، حتماً <code class="inline-code">f</code> بگذارید (حروف کوچک، چسبیده به گیومه).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ strip فقط فاصله‌های ابتدا و انتها را حذف می‌کند</b>
+          <p><strong>معنی:</strong> انتظار داشتید همه‌ی فاصله‌ها حذف شوند، اما نشدند.</p>
+          <p><strong>علت:</strong> <code class="inline-code">strip()</code> فقط کاراکترهای ابتدا و انتها را حذف می‌کند.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید همه‌ی فاصله‌های داخل متن حذف شوند، از <code class="inline-code">replace(" ", "")</code> استفاده کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ بررسی درست نبودن بررسی متن</b>
+          <p><strong>معنی:</strong> شرط <code class="inline-code">if "کلمه" in "کلمه دیگر":</code> پاسخ درست نمی‌دهد.</p>
+          <p><strong>علت:</strong> <code class="inline-code">in</code> بررسی می‌کند که آیا متن اول <strong>داخل</strong> متن دوم هست یا نه — نه برابری!</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید برابری دقیق را چک کنید، از <code class="inline-code">==</code> استفاده کنید: <code class="inline-code">if text1 == text2:</code>. اگر می‌خواهید ببینید کلمه‌ای در جمله هست یا نه، <code class="inline-code">in</code> درست است.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ تفاوت <code dir='ltr'>find</code> و <code dir='ltr'>in</code></b>
+          <p><strong>معنی:</strong> شرط با <code class="inline-code">find</code> اشتباه کار می‌کند.</p>
+          <p><strong>علت:</strong> <code class="inline-code">find</code> ایندکس برمی‌گرداند (مثلاً ۰ به بالا) یا <code class="inline-code">-1</code> اگر پیدا نشد. اما ایندکس ۰ یک مقدار falsy است!</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید وجود کلمه را چک کنید، از <code class="inline-code">in</code> استفاده کنید — نه <code class="inline-code">find</code>. مثال اشتباه: <code class="inline-code">if text.find("علی"):</code> — اگر علی در ابتدا باشد، ایندکس ۰ می‌شود که falsy است و شرط اجرا نمی‌شود. راه درست: <code class="inline-code">if "علی" in text:</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ پیام خطای عجیب در f-string با فارسی</b>
+          <p><strong>معنی:</strong> ممکن است متن فارسی در f-string به‌هم ریخته به‌نظر برسد.</p>
+          <p><strong>علت:</strong> در بعضی ترمینال‌های ویندوز، متن فارسی به‌درستی نمایش داده نمی‌شود.</p>
+          <p><strong>راه‌حل:</strong> در ترمینال ویندوز، دستور <code class="inline-code">chcp 65001</code> را بزنید تا به UTF-8 سوییچ کند. یا در VS Code از ترمینال PowerShell استفاده کنید که فارسی را بهتر پشتیبانی می‌کند.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">text = "Python"
+print(text[0])
+print(text[-1])
+print(text[1:4])
+print(text[:3])
+print(text[2:])
+print(len(text))
+
+word = "Hello"
+print(word.lower())
+print(word.upper())
+print(word.replace("l", "L"))</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><code class="inline-code">text[0]</code> → <code class="inline-code">P</code> (اولین کاراکتر)</li>
+              <li><code class="inline-code">text[-1]</code> → <code class="inline-code">n</code> (آخرین)</li>
+              <li><code class="inline-code">text[1:4]</code> → <code class="inline-code">yth</code> (از ۱ تا ۳)</li>
+              <li><code class="inline-code">text[:3]</code> → <code class="inline-code">Pyt</code></li>
+              <li><code class="inline-code">text[2:]</code> → <code class="inline-code">thon</code></li>
+              <li><code class="inline-code">len(text)</code> → <code class="inline-code">6</code></li>
+              <li><code class="inline-code">word.lower()</code> → <code class="inline-code">hello</code></li>
+              <li><code class="inline-code">word.upper()</code> → <code class="inline-code">HELLO</code></li>
+              <li><code class="inline-code">word.replace("l", "L")</code> → <code class="inline-code">HeLLo</code> (همه‌ی l به L تبدیل می‌شوند)</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — شمارش کاراکتر</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که یک متن از کاربر بگیرد و تعداد کاراکتر «ا» (الف) را در آن بشمارد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>count_char.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">text = input("یک متن بنویسید: ")
+
+count = 0
+for char in text:
+    if char == "ا":
+        count = count + 1
+
+print(f"تعداد کاراکتر 'ا' در متن: {count}")</code></pre>
+            </div>
+            <p><strong>روش جایگزین (بدون حلقه):</strong> با متد <code class="inline-code">count()</code>:</p>
+            <div class="code-box">
+              <div class="code-head"><span>count_char_v2.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">text = input("یک متن بنویسید: ")
+count = text.count("ا")
+print(f"تعداد کاراکتر 'ا': {count}")</code></pre>
+            </div>
+            <p><strong>نکته:</strong> در پایتون راه‌های متعددی برای یک کار وجود دارد. حلقه‌ی <code class="inline-code">for</code> اینجا کار می‌کند، اما <code class="inline-code">count()</code> کوتاه‌تر است. همیشه قبل از نوشتن حلقه، بپرسید «آیا پایتون متد آماده برای این کار دارد؟».</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">name = "Python"
+print(name[10])
+
+text = "Hello"
+text[0] = "h"
+
+greeting = "سلام {name}"
+print(greeting)
+
+word = "Test"
+print(word.upper)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱ — خط ۲:</strong> <code class="inline-code">name[10]</code> روی "Python" (۶ کاراکتر) خطای <code class="inline-code">IndexError</code> می‌دهد. ایندکس معتبر ۰ تا ۵ است.</li>
+              <li><strong>خطا ۲ — خط ۵:</strong> <code class="inline-code">text[0] = "h"</code> خطای <code class="inline-code">TypeError</code> می‌دهد چون متن تغییرناپذیر است. راه‌حل: <code class="inline-code">text = "h" + text[1:]</code>.</li>
+              <li><strong>خطا ۳ — خط ۷:</strong> <code class="inline-code">f</code> در ابتدای رشته نیست. متغیر چاپ نمی‌شود و به‌جای مقدارش، اسمش چاپ می‌شود. راه‌حل: <code class="inline-code">f"سلام {name}"</code>.</li>
+              <li><strong>خطا ۴ — خط ۱۰:</strong> <code class="inline-code">word.upper</code> بدون پرانتز است. باید <code class="inline-code">word.upper()</code> باشد. بدون پرانتز، خود تابع چاپ می‌شود نه نتیجه‌اش.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">name = "Python"
+print(name[5])              # n
+
+text = "Hello"
+text = "h" + text[1:]        # heLLo (چون Hello حرف اول H را عوض کردیم)
+print(text)
+
+name = "علی"
+greeting = f"سلام {name}"     # یا f-string
+print(greeting)
+
+word = "Test"
+print(word.upper())          # TEST</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-07" data-title="آزمون فصل ۷ — رشته‌ها و متن" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) خروجی <code dir="ltr">"Python"[0]</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">y</button>
+              <button type="button" class="quiz-opt" data-key="b">P</button>
+              <button type="button" class="quiz-opt" data-key="c">n</button>
+              <button type="button" class="quiz-opt" data-key="d">خطا می‌دهد</button>
+            </div>
+            <div class="quiz-explain">💡 ایندکس در پایتون از صفر شروع می‌شود. کاراکتر اول <code dir='ltr'>P</code> در ایندکس ۰ است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) خروجی <code dir="ltr">"Python"[1:4]</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">Pyt</button>
+              <button type="button" class="quiz-opt" data-key="b">ytho</button>
+              <button type="button" class="quiz-opt" data-key="c">yth</button>
+              <button type="button" class="quiz-opt" data-key="d">tho</button>
+            </div>
+            <div class="quiz-explain">💡 Slicing از ایندکس start شروع می‌شود و تا stop-1 ادامه می‌دهد. یعنی ایندکس‌های ۱، ۲، ۳ را می‌گیرد که می‌شود: y، t، h.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) تفاوت <code dir="ltr">upper()</code> و <code dir="ltr">lower()</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">upper به حروف بزرگ، lower به حروف کوچک تبدیل می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="c">upper برای فارسی، lower برای انگلیسی</button>
+              <button type="button" class="quiz-opt" data-key="d">upper فقط در ابتدای متن کار می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>upper()</code> همه‌ی حروف لاتین را به بزرگ، و <code dir='ltr'>lower()</code> به کوچک تبدیل می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) <code dir="ltr">strip()</code> چه کاری انجام می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">همه‌ی فاصله‌ها را حذف می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">فقط فاصله‌های ابتدا و انتهای متن را حذف می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">متن را به کلمات تقسیم می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">متن را برعکس می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>strip()</code> فاصله‌های ابتدا و انتها را حذف می‌کند — اما فاصله‌های وسط متن دست‌نخورده می‌مانند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۵) برای چاپ متغیر <code dir="ltr">name</code> داخل متن، کدام درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">"سلام {name}"</button>
+              <button type="button" class="quiz-opt" data-key="b">"سلام (name)"</button>
+              <button type="button" class="quiz-opt" data-key="c">"سلام $name"</button>
+              <button type="button" class="quiz-opt" data-key="d">f"سلام {name}"</button>
+            </div>
+            <div class="quiz-explain">💡 f-string یعنی <code dir='ltr'>f"..."</code> با متغیرها داخل <code dir='ltr'>{ }</code>. اگر <code dir='ltr'>f</code> فراموش شود، به‌جای مقدار متغیر، اسمش چاپ می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) خروجی <code dir="ltr">len("Python")</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">5</button>
+              <button type="button" class="quiz-opt" data-key="b">6</button>
+              <button type="button" class="quiz-opt" data-key="c">7</button>
+              <button type="button" class="quiz-opt" data-key="d">0</button>
+            </div>
+            <div class="quiz-explain">💡 "Python" شش کاراکتر دارد: P، y، t، h، o، n. پس طولش ۶ است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «کارت ویزیت متنی»</strong> — برنامه‌ای که اطلاعات کاربر را می‌گیرد، پاک‌سازی می‌کند و یک کارت ویزیت قالب‌بندی‌شده چاپ می‌کند.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">business_card.py</code> ذخیره شده باشد.</li>
+          <li>اطلاعات زیر از کاربر گرفته شود (همه با <code class="inline-code">strip()</code> پاک‌سازی شوند):
+            <ul>
+              <li>نام کامل</li>
+              <li>ایمیل (با <code class="inline-code">lower()</code> به حروف کوچک تبدیل شود)</li>
+              <li>شماره تلفن (با <code class="inline-code">replace()</code> کاراکترهای غیرعددی مثل خط تیره یا فاصله حذف شود)</li>
+              <li>حرفه یا شغل</li>
+            </ul>
+          </li>
+          <li>اطلاعات زیر را نمایش دهید:
+            <ul>
+              <li>نام کامل</li>
+              <li>شغل</li>
+              <li>ایمیل (پاک‌سازی‌شده)</li>
+              <li>شماره تلفن (پاک‌سازی‌شده)</li>
+              <li>ایمیل باید با <code class="inline-code">@</code> نمایش داده شود و اگر نداشت، پیام هشدار چاپ شود.</li>
+              <li>طول نام کامل به کاراکتر چاپ شود.</li>
+            </ul>
+          </li>
+          <li>خروجی نهایی در قالب یک کارت با خط‌های جداکننده و f-string زیبا چاپ شود.</li>
+          <li>اگر نام خالی بود، پیام خطا داده شود و برنامه متوقف شود.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+        کارت ویزیت
+══════════════════════════════════════
+
+  نام         : علی محمدی
+  حرفه        : مهندس نرم‌افزار
+  ایمیل       : ali@example.com
+  تلفن        : 09123456789
+
+  طول نام: 10 کاراکتر
+
+══════════════════════════════════════</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از اجرای موفق، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>اگر شماره تلفن با ۰ شروع نشد، خودتان یک ۰ به اولش اضافه کنید.</li>
+            <li>نسخه‌ی مخفی‌شده‌ی ایمیل را چاپ کنید: مثلاً <code class="inline-code">ali@e*******.com</code> (با slicing و replace).</li>
+            <li>یک خط اضافه کنید که ایمیل را از دامنه جدا کند.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>متن یعنی دنباله‌ای از کاراکترها که در گیومه قرار می‌گیرد.</li>
+          <li>با <code class="inline-code">len()</code> طول متن را پیدا کنید.</li>
+          <li>با ایندکس <code class="inline-code">[i]</code> به یک کاراکتر خاص دسترسی پیدا کنید — از صفر شروع می‌شود.</li>
+          <li>با ایندکس منفی <code class="inline-code">[-1]</code> از آخر بشمارید.</li>
+          <li>با Slicing (<code class="inline-code">[start:stop]</code>) بخشی از متن را ببرید.</li>
+          <li>با <code class="inline-code">[::-1]</code> متن را معکوس کنید.</li>
+          <li>با متدهای پرکاربرد: <code class="inline-code">upper()</code>، <code class="inline-code">lower()</code>، <code class="inline-code">strip()</code>، <code class="inline-code">replace()</code>، <code class="inline-code">split()</code>، <code class="inline-code">join()</code>، <code class="inline-code">find()</code>، <code class="inline-code">count()</code>، <code class="inline-code">endswith()</code>.</li>
+          <li>با <code class="inline-code">in</code> بررسی کنید که چیزی در متن هست یا نه.</li>
+          <li>با f-string متن‌های پویا و خوانا بسازید.</li>
+          <li>اعداد اعشاری را با <code class="inline-code">:.2f</code> قالب‌بندی کنید و هزارگان را با <code class="inline-code">:,</code> جدا کنید.</li>
+          <li>متن‌ها تغییرناپذیرند و نمی‌توان یک کاراکتر خاص را عوض کرد.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «برنامه‌های واقعی با متن کار می‌کنند. اگر با متن‌ها راحت باشید، نیمی از کارهای روزمره‌ی برنامه‌نویسی را بلدید.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا متدها با نقطه کار می‌کنند؟ (<code dir="ltr">name.upper()</code>)</summary><div class="faq-body"><p>چون این متدها به خود شیء متن چسبیده‌اند. یعنی «متن name، متد upper خودت را اجرا کن». به این ساختار «متد» می‌گویند. توابع آزاد مثل <code dir='ltr'>len()</code> و <code dir='ltr'>print()</code> قبل از متن می‌آیند چون به شیء خاصی چسبیده نیستند.</p></div></details>
+        <details class="faq-item"><summary>آیا متدهای متن روی متن اصلی تأثیر می‌گذارند؟</summary><div class="faq-body"><p>خیر. چون متن تغییرناپذیر است، همه‌ی متدها یک <strong>متن جدید</strong> برمی‌گردانند و متن اصلی دست‌نخورده می‌ماند. باید نتیجه را در متغیر ذخیره کنید: <code dir='ltr'>name = name.upper()</code>.</p></div></details>
+        <details class="faq-item"><summary>تفاوت <code dir="ltr">find</code> و <code dir="ltr">index</code> چیست؟</summary><div class="faq-body"><p>هر دو ایندکس اولین جایی که متن پیدا می‌شود را برمی‌گردانند. اما اگر پیدا نشد، <code dir='ltr'>find</code> مقدار <code dir='ltr'>-1</code> برمی‌گرداند ولی <code dir='ltr'>index</code> خطای <code dir='ltr'>ValueError</code> می‌دهد. <code dir='ltr'>find</code> دوستانه‌تر است چون خطا نمی‌دهد.</p></div></details>
+        <details class="faq-item"><summary>چرا از f-string به‌جای <code dir="ltr">+</code> استفاده کنیم؟</summary><div class="faq-body"><p>سه دلیل: (۱) کوتاه‌تر و خواناتر است؛ (۲) نیازی به <code dir='ltr'>str()</code> برای تبدیل عدد نیست؛ (۳) سریع‌تر اجرا می‌شود چون پایتون آن را یک‌بار پردازش می‌کند. تنها عیبش این است که یک‌بار یادش بگیرید تا عادت شود.</p></div></details>
+        <details class="faq-item"><summary>آیا pایتون متد آماده‌ای برای چک کردن ایمیل معتبر دارد؟</summary><div class="faq-body"><p>نه، اعتبارسنجی درست ایمیل پیچیده است و کتابخانه‌ی جداگانه لازم دارد. اما یک بررسی ساده با <code dir='ltr'>@</code> و <code dir='ltr'>.</code> می‌تواند ۹۰٪ ایمیل‌های نامعتبر را تشخیص دهد. راه‌حل حرفه‌ای در فصل‌های میانی معرفی می‌شود.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۸ با <strong>توابع</strong> آشنا می‌شوید: چطور کد را در قطعه‌های قابل استفاده‌ی مجدد بسته‌بندی کنید. تا اینجا همه‌ی کدها یکجا و خط به خط اجرا می‌شدند؛ از فصل بعد، یاد می‌گیرید کدتان را به تکه‌های کوچک و قابل استفاده تقسیم کنید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-07" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-07">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-06/index.html">→ فصل قبلی<br><b>🔁 فصل ۶</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-08/index.html">فصل بعدی ←<br><b>🧩 فصل ۸: توابع و دامنه</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۷: رشته‌ها و متن | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

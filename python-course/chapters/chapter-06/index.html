@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۶: حلقه‌ها — تکرار هوشمند | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۶ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور یک کار را چند بار تکرار کنید — for، while، range و کنترل حلقه با مثال‌های ساده و کاربردی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۶ از ۳۰ — حلقه‌ها</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🐣 شروع و مبانی ← فصل ۶
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۶ از ۳۰</span>
+    <h1>🔁 حلقه‌ها — تکرار هوشمند</h1>
+    <p>چطور یک کار را چند بار تکرار کنیم بدون کپی-پیست؟ — <span class="term" data-term="for">for</span>، <span class="term" data-term="while">while</span>، <span class="term" data-term="range">range</span>، <span class="term" data-term="break">break</span>، <span class="term" data-term="continue">continue</span>، <span class="term" data-term="loop">loop</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۵ دقیقه</span>
+      <span class="pill">🎓 کاملاً مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تصور کنید می‌خواهید عددهای ۱ تا ۱۰۰ را چاپ کنید. آیا می‌خواهید ۱۰۰ خط <code class="inline-code">print()</code> بنویسید؟ قطعاً نه! اینجاست که <strong>حلقه‌ها</strong> وارد می‌شوند. حلقه به کامپیوتر می‌گوید: «این کار را ۱۰۰ بار تکرار کن» — بدون اینکه خودتان تایپ کنید.</p>
+        <p>حلقه‌ها، یکی از قدرتمندترین ابزارهای برنامه‌نویسی هستند. هر برنامه‌ی واقعی که با داده کار می‌کند — از خواندن فایل و پردازش لیست، تا تکرار یک بازی تا زمانی که کاربر خارج شود — از حلقه استفاده می‌کند. بدون حلقه‌ها، برنامه‌نویسی عملاً غیرممکن است.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با <code class="inline-code">for</code> یک کار را روی یک محدوده از اعداد تکرار کنید.</li>
+          <li>با <code class="inline-code">range()</code> محدوده‌ی تکرار را مشخص کنید.</li>
+          <li>با <code class="inline-code">while</code> تا زمانی که یک شرط برقرار است، تکرار کنید.</li>
+          <li>با <code class="inline-code">break</code> حلقه را زودتر تمام کنید.</li>
+          <li>با <code class="inline-code">continue</code> از یک تکرار بپرید و به بعدی بروید.</li>
+          <li>حلقه‌های بی‌نهایت را بشناسید و از آن‌ها جلوگیری کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          در این فصل، پایه‌ای‌ترین شکل حلقه‌ها را یاد می‌گیرید. مفاهیم پیشرفته‌تر مثل <code class="inline-code">enumerate</code>، <code class="inline-code">zip</code> و list comprehension در فصل‌های ۹ تا ۱۱ می‌آیند. الان فقط روی اصول تمرکز کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>for و range</h4><p>تکرار روی اعداد.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>while</h4><p>تکرار تا زمانی که...</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>break و continue</h4><p>کنترل دقیق‌تر حلقه.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>حلقه تو در تو</h4><p>حلقه داخل حلقه.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 کِی از <code dir="ltr">for</code> استفاده کنم و کِی از <code dir="ltr">while</code>؟</summary>
+          <div class="answer-body"><p>قاعده‌ی ساده: اگر <strong>تعداد تکرارها را از قبل می‌دانید</strong>، از <code class="inline-code">for</code> استفاده کنید. اگر <strong>تکرار بسته به یک شرط است</strong> و نمی‌دانید دقیقاً چند بار طول می‌کشد، از <code class="inline-code">while</code> استفاده کنید. مثلاً «۱۰ بار چاپ کن» → <code class="inline-code">for</code>؛ «تا وقتی رمز عبور درست نیامده، ادامه بده» → <code class="inline-code">while</code>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا حلقه‌های بی‌نهایت خطرناکند؟</summary>
+          <div class="answer-body"><p>چون اگر شرط توقف هرگز برقرار نشود، برنامه <strong>همیشه در حال اجرا</strong> می‌ماند — کامپیوتر شما با ۱۰۰٪ پردازنده کار می‌کند، داغ می‌شود و دیگر کاری نمی‌تواند انجام دهد. برای بستنش باید <kbd>Ctrl</kbd>+<kbd>C</kbd> بزنید یا پنجره را ببندید. برای جلوگیری، همیشه مطمئن شوید شرط داخل حلقه <strong>بالاخره</strong> False می‌شود.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت <code dir="ltr">break</code> و <code dir="ltr">continue</code> چیست؟</summary>
+          <div class="answer-body"><p><code class="inline-code">break</code> حلقه را <strong>کاملاً تمام می‌کند</strong> و برنامه از بعد از حلقه ادامه پیدا می‌کند. اما <code class="inline-code">continue</code> فقط <strong>از این یکی تکرار می‌پرد</strong> و به تکرار بعدی می‌رود؛ حلقه ادامه پیدا می‌کند. مثال: در یک حلقه که اعداد ۱ تا ۱۰ را چاپ می‌کند، اگر <code class="inline-code">break</code> روی عدد ۵ بزنیم، فقط تا ۴ چاپ می‌شود. اگر <code class="inline-code">continue</code> بزنیم، ۵ را نمی‌بیند ولی به ۶ و ۷ و ۸ تا ۱۰ ادامه می‌دهد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی پنج فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با <code class="inline-code">print()</code>، کامنت و تورفتگی کاملاً راحت هستید.</li>
+          <li>متغیرها و انواع داده (int، float، str، bool) را می‌شناسید.</li>
+          <li>عملگرهای مقایسه‌ای و منطقی را می‌دانید.</li>
+          <li>با شرط‌ها (<code class="inline-code">if</code>، <code class="inline-code">elif</code>، <code class="inline-code">else</code>) راحت هستید.</li>
+        </ul>
+        <p>حلقه‌ها معمولاً با شرط‌ها ترکیب می‌شوند. اگر شرط‌ها را نمی‌دانید، لطفاً ابتدا فصل ۵ را مرور کنید.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter06.py</code> در پوشه‌ی پروژه بسازید. هر مثال را در همان تایپ کنید. به‌خصوص در حلقه‌ها، تایپ کردن و دیدن خروجی (مثلاً چاپ اعداد ۱ تا ۱۰ در ۱۰ خط) تجربه‌ی مهمی است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: حلقه‌ها</h2></div>
+
+        <h3>۱) حلقه چیست؟ — دستور «چند بار تکرار کن»</h3>
+        <p>یک <strong>حلقه (loop)</strong> قطعه‌ای از کد است که چندین بار اجرا می‌شود، بدون اینکه شما آن را چند بار بنویسید. به‌جای این‌که بنویسید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>بدون حلقه</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("سلام")
+print("سلام")
+print("سلام")
+print("سلام")
+print("سلام")</code></pre>
+        </div>
+        <p>می‌نویسید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>با حلقه</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(5):
+    print("سلام")</code></pre>
+        </div>
+        <p>و همین یک قطعه‌ی کوتاه، دقیقاً همان کار را انجام می‌دهد. حالا اگر بخواهید ۱۰۰۰ بار چاپ کنید؟ فقط عدد را عوض می‌کنید: <code class="inline-code">range(1000)</code>. بدون حلقه، باید ۱۰۰۰ خط می‌نوشتید. قدرت حلقه‌ها همین است.</p>
+
+        <h3>۲) حلقه <code dir='ltr'>for</code> — تکرار روی یک محدوده</h3>
+        <p>حلقه‌ی <code class="inline-code">for</code> برای موقعیت‌هایی است که می‌دانید چند بار می‌خواهید تکرار کنید. ساختار کلی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار for</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for متغیر in محدوده:
+    # بدنه‌ی حلقه (با تورفتگی 4 فاصله)
+    دستور1
+    دستور2</code></pre>
+        </div>
+        <p>ساده‌ترین مثال:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_for.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(5):
+    print("سلام")
+    print("شماره:", i)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سلام
+شماره: 0
+سلام
+شماره: 1
+سلام
+شماره: 2
+سلام
+شماره: 3
+سلام
+شماره: 4</code></pre>
+        </div>
+        <p>بخوانیدش: «برای هر i در محدوده‌ی [۰ تا ۴]، این دو خط را اجرا کن». متغیر <code class="inline-code">i</code> در هر تکرار یک مقدار جدید می‌گیرد.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          <code class="inline-code">i</code> مخفف <em>index</em> (اندیس) است. هرچند می‌توانید هر نامی بگذارید، عادت کنید اسم معنادار انتخاب کنید. مثلاً اگر روی اعداد ۱ تا ۱۰ تکرار می‌کنید، اسم <code class="inline-code">number</code> بهتر است. اگر شماره‌ی تکرار مدنظر است، <code class="inline-code">i</code> خوب است.
+        </div>
+
+        <h3>۳) تابع <code dir='ltr'>range()</code> — محدوده‌ی اعداد</h3>
+        <p>تابع <code class="inline-code">range()</code> محدوده‌ی اعداد را مشخص می‌کند. سه شکل استفاده دارد:</p>
+
+        <h4>الف) <code dir='ltr'>range(n)</code> — از صفر تا n-1</h4>
+        <div class="code-box">
+          <div class="code-head"><span>range_single.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(5):
+    print(i)
+# خروجی: 0، 1، 2، 3، 4</code></pre>
+        </div>
+        <p><strong>نکته مهم:</strong> <code class="inline-code">range(5)</code> پنج عدد تولید می‌کند — از ۰ تا ۴. عدد ۵ شامل نمی‌شود! این یکی از شایع‌ترین اشتباهات تازه‌کارهاست.</p>
+
+        <h4>ب) <code dir='ltr'>range(start, stop)</code> — از start تا stop-1</h4>
+        <div class="code-box">
+          <div class="code-head"><span>range_two.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(2, 7):
+    print(i)
+# خروجی: 2، 3، 4، 5، 6</code></pre>
+        </div>
+        <p>از ۲ شروع می‌کند تا ۶ (چون ۷ شامل نمی‌شود).</p>
+
+        <h4>ج) <code dir='ltr'>range(start, stop, step)</code> — با گام مشخص</h4>
+        <div class="code-box">
+          <div class="code-head"><span>range_three.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(0, 10, 2):
+    print(i)
+# خروجی: 0، 2، 4، 6، 8
+
+for i in range(10, 0, -1):
+    print(i)
+# خروجی: 10، 9، 8، 7، 6، 5، 4، 3، 2، 1</code></pre>
+        </div>
+        <p>عدد سوم، «گام» است: چند-چند جلو برو. اگر منفی باشد، از بزرگ به کوچک می‌رود.</p>
+
+        <div class="callout tip">
+          <b class="title">💡 چگونه از range درست استفاده کنیم؟</b>
+          اگر می‌خواهید ۱ تا ۱۰ را چاپ کنید، <strong>اشتباه</strong> این است که بنویسید <code class="inline-code">range(10)</code> (چون می‌شود ۰ تا ۹). <strong>درست</strong> این است: <code class="inline-code">range(1, 11)</code>. یعنی «از ۱ شروع کن تا قبل از ۱۱».
+        </div>
+
+        <h3>۴) حلقه <code dir='ltr'>while</code> — تکرار تا زمانی که شرط برقرار است</h3>
+        <p>حلقه‌ی <code class="inline-code">while</code> برای موقعیت‌هایی است که نمی‌دانید چند بار باید تکرار شود — تا وقتی که یک شرط برقرار باشد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار while</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">while شرط:
+    # بدنه (با تورفتگی)
+    دستور1
+    دستور2</code></pre>
+        </div>
+        <p>مثال ساده — شمارش معکوس:</p>
+        <div class="code-box">
+          <div class="code-head"><span>countdown.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">number = 5
+while number > 0:
+    print(number)
+    number = number - 1
+print("پرتاب!")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">5
+4
+3
+2
+1
+پرتاب!</code></pre>
+        </div>
+        <p>بخوانیدش: «تا وقتی که <code class="inline-code">number</code> بزرگ‌تر از صفر است، چاپش کن و یکی کم کن». وقتی <code class="inline-code">number</code> می‌شود صفر، شرط رد می‌شود و حلقه تمام می‌شود.</p>
+        <p>نکته‌ی کلیدی: <strong>باید مقدار متغیر داخل حلقه عوض شود</strong>، وگرنه شرط هیچ‌وقت رد نمی‌شود و حلقه بی‌نهایت ادامه پیدا می‌کند.</p>
+
+        <div class="callout danger">
+          <b class="title">⚠️ هشدار مهم</b>
+          در حلقه‌ی <code class="inline-code">while</code>، اگر فراموش کنید متغیر را تغییر دهید، برنامه‌تان در حلقه‌ی بی‌نهایت گیر می‌کند. مثال اشتباه:
+          <div class="code-box" style="margin-top:8px">
+            <div class="code-head"><span>حلقه بی‌نهایت — اشتباه</span><span class="lang">Python</span></div>
+            <pre class="code"><code dir='ltr' data-lang="python">number = 5
+while number > 0:
+    print(number)
+    # ← فراموش شده: number = number - 1</code></pre>
+          </div>
+          این برنامه تا ابد ۵ چاپ می‌کند. برای متوقف کردنش، <kbd>Ctrl</kbd>+<kbd>C</kbd> بزنید.
+        </div>
+
+        <h3>۵) کنترل حلقه — <code dir='ltr'>break</code> و <code dir='ltr'>continue</code></h3>
+        <p>گاهی می‌خواهید وسط حلقه، کنترل بیشتری داشته باشید. دو ابزار برای این کار وجود دارد:</p>
+
+        <h4>الف) <code dir='ltr'>break</code> — حلقه را کاملاً تمام کن</h4>
+        <p>وقتی به <code class="inline-code">break</code> می‌رسید، پایتون فوراً از حلقه خارج می‌شود و به کد بعد از حلقه می‌رود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>break_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(1, 11):
+    print(i)
+    if i == 5:
+        break
+print("پایان")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">1
+2
+3
+4
+5
+پایان</code></pre>
+        </div>
+        <p>وقتی i به ۵ رسید، <code class="inline-code">break</code> اجرا شد و حلقه تمام شد. عددهای ۶ تا ۱۰ چاپ نشدند.</p>
+
+        <h4>ب) <code dir='ltr'>continue</code> — از این تکرار بپر و برو بعدی</h4>
+        <p>وقتی به <code class="inline-code">continue</code> می‌رسید، پایتون بقیه‌ی کد در آن تکرار را رد می‌کند و به تکرار بعدی می‌رود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>continue_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i)
+print("پایان")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">1
+2
+4
+5
+پایان</code></pre>
+        </div>
+        <p>عدد ۳ چاپ نشد، اما حلقه ادامه پیدا کرد تا ۵.</p>
+
+        <div class="callout tip">
+          <b class="title">💡 تفاوت ساده</b>
+          <code class="inline-code">break</code> = «بس کن! برو بیرون». <code class="inline-code">continue</code> = «این یکی رو رد کن، بقیه رو ادامه بده».
+        </div>
+
+        <h3>۶) حلقه‌های تو در تو (Nested Loops)</h3>
+        <p>می‌توانید داخل یک حلقه، حلقه‌ی دیگری هم داشته باشید. این کار برای کارهایی مثل چاپ جدول ضرب یا الگوهای پیچیده به‌کار می‌آید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>nested_loop.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(1, 4):
+    for j in range(1, 4):
+        print(f"{i} × {j} = {i * j}")
+    print("---")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">1 × 1 = 1
+1 × 2 = 2
+1 × 3 = 3
+---
+2 × 1 = 2
+2 × 2 = 4
+2 × 3 = 6
+---
+3 × 1 = 3
+3 × 2 = 6
+3 × 3 = 9
+---</code></pre>
+        </div>
+        <p>برای هر بار اجرای حلقه‌ی بیرونی (i)، حلقه‌ی داخلی (j) کامل اجرا می‌شود. یعنی ۳ بار بیرونی × ۳ بار داخلی = ۹ بار کل. </p>
+
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار</b>
+          حلقه‌های تو در تو می‌توانند خیلی سریع تعداد تکرارها را زیاد کنند. اگر ۳ حلقه‌ی تو در تو داشته باشید که هر کدام ۱۰۰ بار اجرا شوند، جمعاً یک میلیون تکرار می‌شود. پس با احتیاط استفاده کنید و همیشه تعداد را حساب کنید.
+        </div>
+
+        <h3>۷) مثال‌های ترکیبی — همه‌چیز در کنار هم</h3>
+        <p>بیایید چند مثال واقعی ببینیم که همه‌ی مفاهیم را کنار هم می‌آورند:</p>
+
+        <h4>الف) جمع اعداد ۱ تا ۱۰۰</h4>
+        <div class="code-box">
+          <div class="code-head"><span>sum_1_to_100.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">total = 0
+for i in range(1, 101):
+    total = total + i
+print("جمع اعداد 1 تا 100:", total)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">جمع اعداد 1 تا 100: 5050</code></pre>
+        </div>
+
+        <h4>ب) چاپ اعداد زوج</h4>
+        <div class="code-box">
+          <div class="code-head"><span>even_numbers.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">for i in range(1, 21):
+    if i % 2 == 0:
+        print(i)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">2
+4
+6
+8
+10
+12
+14
+16
+18
+20</code></pre>
+        </div>
+
+        <h4>ج) رمز عبور — تا زمانی که درست نشده</h4>
+        <div class="code-box">
+          <div class="code-head"><span>password_loop.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">SECRET = "python123"
+
+while True:
+    password = input("رمز عبور را وارد کنید: ")
+    if password == SECRET:
+        print("✅ درست است! خوش آمدید.")
+        break
+    else:
+        print("❌ اشتباه! دوباره امتحان کنید.")</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">رمز عبور را وارد کنید: hello
+❌ اشتباه! دوباره امتحان کنید.
+رمز عبور را وارد کنید: test
+❌ اشتباه! دوباره امتحان کنید.
+رمز عبور را وارد کنید: python123
+✅ درست است! خوش آمدید.</code></pre>
+        </div>
+        <p>این یکی از الگوهای بسیار رایج است: <code class="inline-code">while True</code> با یک <code class="inline-code">break</code> در داخلش. یعنی «تا ابد تکرار کن، مگر اینکه با break از داخل بزنی بیرون».</p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی کامل که تعداد زیادی از مفاهیم این فصل را در خود دارد — جدول ضرب:</p>
+        <div class="code-box">
+          <div class="code-head"><span>multiplication_table.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># جدول ضرب — تمرین حلقه‌های تو در تو
+
+print("=" * 40)
+print("        جدول ضرب")
+print("=" * 40)
+print()
+
+# حلقه بیرونی برای سطرها
+for i in range(1, 6):
+    # حلقه داخلی برای ستون‌ها
+    for j in range(1, 6):
+        print(f"{i} × {j} = {i * j}")
+    print("-" * 20)
+
+print()
+print("پایان جدول.")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+        جدول ضرب
+========================================
+
+1 × 1 = 1
+1 × 2 = 2
+1 × 3 = 3
+1 × 4 = 4
+1 × 5 = 5
+--------------------
+2 × 1 = 2
+2 × 2 = 4
+2 × 3 = 6
+2 × 4 = 8
+2 × 5 = 10
+--------------------
+3 × 1 = 3
+3 × 2 = 6
+3 × 3 = 9
+3 × 4 = 12
+3 × 5 = 15
+--------------------
+4 × 1 = 4
+4 × 2 = 8
+4 × 3 = 12
+4 × 4 = 16
+4 × 5 = 20
+--------------------
+5 × 1 = 5
+5 × 2 = 10
+5 × 3 = 15
+5 × 4 = 20
+5 × 5 = 25
+--------------------
+
+پایان جدول.</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این برنامه را تایپ کنید و اجرا کنید. سپس محدوده‌ی حلقه‌ها را عوض کنید (<code class="inline-code">range(1, 11)</code> به‌جای <code class="inline-code">range(1, 6)</code>) و ببینید جدول چطور بزرگ‌تر می‌شود. این تغییر دادن، کلید یادگیری است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «مجموع اعداد زوج و فرد» بسازید که همه‌ی مفاهیم این فصل را کنار هم به‌کار بگیرد:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">even_odd_sum.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>از کاربر دو عدد بگیرید (عدد شروع و عدد پایان). با <code class="inline-code">int()</code> تبدیل کنید.</li>
+          <li>دو متغیر <code class="inline-code">sum_even = 0</code> و <code class="inline-code">sum_odd = 0</code> بسازید.</li>
+          <li>یک حلقه با <code class="inline-code">range</code> از عدد شروع تا عدد پایان (شامل خودش) بسازید. راهنما: از <code class="inline-code">range(start, end + 1)</code> استفاده کنید.</li>
+          <li>در هر تکرار:
+            <ul>
+              <li>اگر عدد زوج بود، به <code class="inline-code">sum_even</code> اضافه کنید.</li>
+              <li>اگر عدد فرد بود، به <code class="inline-code">sum_odd</code> اضافه کنید.</li>
+            </ul>
+          </li>
+          <li>اگر عددی صفر بود، از آن بگذرید (با <code class="inline-code">continue</code>). این مورد در عدد صفر منطقی است، چون نه زوج است نه فرد به‌طور معمول (هرچند از نظر ریاضی صفر زوج است — اینجا فقط برای تمرین continue این را اضافه می‌کنیم).</li>
+          <li>بعد از حلقه، مجموع زوج‌ها، مجموع فردها و جمع کل را چاپ کنید.</li>
+          <li>اگر عدد شروع بزرگ‌تر از عدد پایان بود، با یک پیام مناسب این حالت را مدیریت کنید (راهنما: قبل از حلقه بررسی کنید).</li>
+          <li>خروجی را با خط‌های جداکننده زیبا کنید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>even_odd_sum.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مجموع اعداد زوج و فرد در یک محدوده — تمرین حلقه‌ها
+
+print("=" * 40)
+print("  مجموع اعداد زوج و فرد")
+print("=" * 40)
+print()
+
+start_text = input("عدد شروع: ")
+end_text = input("عدد پایان: ")
+
+start = int(start_text)
+end = int(end_text)
+
+# بررسی معتبر بودن محدوده
+if start > end:
+    print("⚠️ عدد شروع باید کوچک‌تر یا مساوی عدد پایان باشد.")
+else:
+    sum_even = 0
+    sum_odd = 0
+
+    # حلقه از start تا end (شامل خود end)
+    for number in range(start, end + 1):
+        # صفر را نادیده بگیر
+        if number == 0:
+            continue
+
+        # بررسی زوج یا فرد
+        if number % 2 == 0:
+            sum_even = sum_even + number
+        else:
+            sum_odd = sum_odd + number
+
+    total = sum_even + sum_odd
+
+    # نمایش نتایج
+    print()
+    print("-" * 40)
+    print(f"  محدوده بررسی‌شده: {start} تا {end}")
+    print("-" * 40)
+    print(f"  مجموع زوج‌ها : {sum_even}")
+    print(f"  مجموع فردها  : {sum_odd}")
+    print(f"  مجموع کل    : {total}")
+    print("-" * 40)</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا با محدوده‌ی ۱ تا ۱۰:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">========================================
+  مجموع اعداد زوج و فرد
+========================================
+
+عدد شروع: 1
+عدد پایان: 10
+
+----------------------------------------
+  محدوده بررسی‌شده: 1 تا 10
+----------------------------------------
+  مجموع زوج‌ها : 30
+  مجموع فردها  : 25
+  مجموع کل    : 55
+----------------------------------------</code></pre>
+            </div>
+            <p>چرا؟ زوج‌ها: ۲ + ۴ + ۶ + ۸ + ۱۰ = ۳۰. فردها: ۱ + ۳ + ۵ + ۷ + ۹ = ۲۵. مجموع کل = ۵۵.</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی در این راه‌حل</summary>
+          <div class="answer-body">
+            <p>سه نکته‌ی مهم در این راه‌حل:</p>
+            <ol>
+              <li><strong>بررسی محدوده قبل از حلقه:</strong> ابتدا چک می‌کنیم که محدوده‌ی معتبری داریم. اگر start بزرگ‌تر از end بود، هیچ حلقه‌ای اجرا نمی‌شود (چون range خالی می‌شود) و برنامه پیام می‌دهد. این «guard clause» در سطح حلقه است.</li>
+              <li><strong>استفاده از <code class="inline-code">continue</code>:</strong> در این مثال، <code class="inline-code">continue</code> فقط برای صفر است. اگر هیچ‌وقت عدد صفر وارد نشود، continue هیچ تأثیری ندارد. اما وقتی صفر وسط اعداد بیاید، از آن می‌گذرد.</li>
+              <li><strong>ترتیب شرط‌ها:</strong> ابتدا صفر را چک کردیم (با continue)، بعد زوج/فرد. اگر ترتیب را برعکس می‌گذاشتیم، صفر به‌عنوان زوج در <code class="inline-code">sum_even</code> حساب می‌شد (که در نهایت چیزی را تغییر نمی‌داد چون صفر اضافه کردن فرقی ندارد).</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">even_odd_sum.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌دانید چرا <code class="inline-code">range(1, 11)</code> اعداد ۱ تا ۱۰ را می‌دهد، نه ۱ تا ۱۱.</li>
+              <li>تفاوت <code class="inline-code">for</code> و <code class="inline-code">while</code> را کاملاً می‌فهمید.</li>
+              <li>می‌دانید چه زمانی از <code class="inline-code">break</code> و چه زمانی از <code class="inline-code">continue</code> استفاده کنید.</li>
+              <li>می‌توانید تشخیص دهید که یک حلقه‌ی بی‌نهایت چه زمانی رخ می‌دهد.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید. هر کدام را خوب بشناسید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ حلقه‌ی بی‌نهایت — برنامه هیچ‌وقت تمام نمی‌شود</b>
+          <p><strong>معنی:</strong> برنامه در حال اجرا است، ولی هرگز متوقف نمی‌شود.</p>
+          <p><strong>علت:</strong> در حلقه‌ی <code class="inline-code">while</code>، شرط هیچ‌وقت رد نمی‌شود. مثلاً فراموش کرده‌اید متغیر را داخل حلقه تغییر دهید.</p>
+          <p><strong>راه‌حل:</strong> همیشه بررسی کنید که چه چیزی شرط را به سمت <code class="inline-code">False</code> می‌برد. متغیرهای حلقه باید در بدنه به‌روزرسانی شوند. برای متوقف کردنش، <kbd>Ctrl</kbd>+<kbd>C</kbd> بزنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خروجی‌های عجیب — اعداد ۰ تا ۹ به‌جای ۱ تا ۱۰</b>
+          <p><strong>معنی:</strong> محدوده‌ی حلقه اشتباه است.</p>
+          <p><strong>علت:</strong> <code class="inline-code">range(10)</code> یعنی «۰ تا ۹»، نه «۱ تا ۱۰».</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید ۱ تا ۱۰ را داشته باشید، از <code class="inline-code">range(1, 11)</code> استفاده کنید. قاعده‌ی طلایی: <code class="inline-code">range(start, stop)</code> — عدد stop <strong>شامل نمی‌شود</strong>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ IndentationError در حلقه</b>
+          <p><strong>معنی:</strong> بدنه‌ی حلقه تورفتگی ندارد یا اشتباه دارد.</p>
+          <p><strong>علت:</strong> بعد از <code class="inline-code">for ...:</code> یا <code class="inline-code">while ...:</code>، خط بعدی باید ۴ فاصله تورفتگی داشته باشد.</p>
+          <p><strong>راه‌حل:</strong> تمام بدنه‌ی حلقه (خطوطی که باید تکرار شوند) را با ۴ فاصله تورفتگی بنویسید. خطی که تورفتگی ندارد، بعد از حلقه حساب می‌شود.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ break حلقه را تمام نمی‌کند</b>
+          <p><strong>معنی:</strong> break کار می‌کند، ولی نه آن‌طور که انتظار داشتید.</p>
+          <p><strong>علت:</strong> در حلقه‌های تو در تو، <code class="inline-code">break</code> فقط از <strong>یک</strong> حلقه بیرون می‌آید — یعنی حلقه‌ی داخلی. حلقه‌ی بیرونی ادامه پیدا می‌کند.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید از هر دو حلقه بیرون بیایید، باید از یک متغیر پرچم (flag) استفاده کنید یا توابع را به کار ببرید (که در فصل ۸ یاد می‌گیرید).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ متغیر حلقه بیرون از حلقه هم قابل استفاده است، اما مقدار عجیبی دارد</b>
+          <p><strong>معنی:</strong> بعد از پایان حلقه، متغیر حلقه آخرین مقدارش را نگه می‌دارد.</p>
+          <p><strong>علت:</strong> در پایتون، متغیر حلقه بعد از حلقه از بین نمی‌رود.</p>
+          <p><strong>راه‌حل:</strong> اگر بعد از حلقه به متغیر حلقه نیاز ندارید، این رفتار مشکلی نیست. اگر لازم است مقدار اولیه را نگه دارید، قبل از حلقه آن را در متغیر دیگری ذخیره کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ تغییر دادن لیست در حالی که در حال پیمایش آن هستید</b>
+          <p><strong>معنی:</strong> برنامه رفتار غیرمنتظره‌ای دارد.</p>
+          <p><strong>علت:</strong> این یک دام پیشرفته است که با لیست‌ها (فصل ۹) پیش می‌آید. الان نیازی نیست نگرانش باشید.</p>
+          <p><strong>راه‌حل:</strong> اگر بعداً با این مشکل مواجه شدید، در فصل ۹ توضیح خواهیم داد چطور آن را حل کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ در حلقه‌ی while از <code dir="ltr">==</code> با float استفاده می‌کنید</b>
+          <p><strong>معنی:</strong> حلقه هرگز تمام نمی‌شود یا خیلی کند پیش می‌رود.</p>
+          <p><strong>علت:</strong> اعداد اعشاری در کامپیوتر دقت دقیق ندارند. <code class="inline-code">0.1 + 0.2</code> ممکن است دقیقاً <code class="inline-code">0.3</code> نباشد.</p>
+          <p><strong>راه‌حل:</strong> به‌جای <code class="inline-code">while x == 0.3:</code> از مقایسه‌ی بزرگ‌تر یا کوچک‌تر استفاده کنید: <code class="inline-code">while x &lt; 0.3:</code>. این یک ترفند مهم در برنامه‌نویسی است.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید. سپس اجرا کنید و جواب‌ها را بررسی کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+for i in range(3):
+    print(i)
+
+# مورد 2
+for i in range(2, 5):
+    print(i)
+
+# مورد 3
+for i in range(0, 10, 3):
+    print(i)
+
+# مورد 4
+total = 0
+for i in range(1, 5):
+    total = total + i
+print(total)
+
+# مورد 5
+x = 0
+while x < 3:
+    print("x =", x)
+    x = x + 1</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> ۰، ۱، ۲</li>
+              <li><strong>مورد ۲:</strong> ۲، ۳، ۴</li>
+              <li><strong>مورد ۳:</strong> ۰، ۳، ۶، ۹</li>
+              <li><strong>مورد ۴:</strong> 10 (1+2+3+4)</li>
+              <li><strong>مورد ۵:</strong> "x = 0"، "x = 1"، "x = 2" (چون وقتی x=3 می‌شود، شرط رد است)</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — چاپ اعداد زوج</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که اعداد زوج بین ۱ تا ۲۰ را چاپ کند. <strong>دو راه</strong> برای این کار وجود دارد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>راه اول — با if</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">for i in range(1, 21):
+    if i % 2 == 0:
+        print(i)</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>راه دوم — با step در range</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">for i in range(2, 21, 2):
+    print(i)</code></pre>
+            </div>
+            <p><strong>کدام بهتر است؟</strong> راه دوم کوتاه‌تر و پایتونیک‌تر است — چون از قبل می‌دانیم می‌خواهیم روی زوج‌ها حرکت کنیم. راه اول انعطاف‌پذیرتر است — اگر بخواهید شرط پیچیده‌تری اضافه کنید، راحت‌تر است. هر دو درست‌اند.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — سه خطا</summary>
+          <div class="answer-body">
+            <p>این کد سه خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1
+for i in range(5)
+    print(i)
+
+# خطا 2
+x = 5
+while x > 0:
+    print(x)
+
+# خطا 3
+for i in range(1, 6):
+if i == 3:
+    continue
+print(i)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> بعد از <code class="inline-code">range(5)</code>، دو-نقطه <code class="inline-code">:</code> فراموش شده. باید <code class="inline-code">for i in range(5):</code> باشد.</li>
+              <li><strong>خطا ۲:</strong> این یک حلقه‌ی بی‌نهایت است! متغیر <code class="inline-code">x</code> هرگز تغییر نمی‌کند، پس شرط <code class="inline-code">x &gt; 0</code> همیشه True است. باید داخل حلقه <code class="inline-code">x = x - 1</code> داشته باشیم.</li>
+              <li><strong>خطا ۳:</strong> خط <code class="inline-code">if i == 3:</code> تورفتگی ندارد. باید داخل حلقه باشد (۴ فاصله). همچنین خط بعدی <code class="inline-code">continue</code> باید داخل if باشد (۸ فاصله). و <code class="inline-code">print(i)</code> هم باید داخل حلقه باشد (۴ فاصله).</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">for i in range(5):
+    print(i)
+
+x = 5
+while x > 0:
+    print(x)
+    x = x - 1
+
+for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i)</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-06" data-title="آزمون فصل ۶ — حلقه‌ها" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) خروجی <code dir="ltr">for i in range(3): print(i)</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">1، 2، 3</button>
+              <button type="button" class="quiz-opt" data-key="b">0، 1، 2</button>
+              <button type="button" class="quiz-opt" data-key="c">0، 1، 2، 3</button>
+              <button type="button" class="quiz-opt" data-key="d">3</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>range(3)</code> از صفر شروع می‌کند و <strong>سه</strong> عدد تولید می‌کند: ۰، ۱، ۲. عدد ۳ شامل نمی‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) کدام حلقه برای موقعیتی مناسب‌تر است که نمی‌دانید چند بار باید تکرار شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">for</button>
+              <button type="button" class="quiz-opt" data-key="b">range</button>
+              <button type="button" class="quiz-opt" data-key="c">while</button>
+              <button type="button" class="quiz-opt" data-key="d">loop</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>for</code> برای وقتی است که تعداد تکرارها را می‌دانید. <code dir='ltr'>while</code> برای وقتی که تکرار بسته به یک شرط است و معلوم نیست چند بار طول می‌کشد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) تفاوت <code dir="ltr">break</code> و <code dir="ltr">continue</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="b"><code dir='ltr'>break</code> کل حلقه را تمام می‌کند، <code dir='ltr'>continue</code> فقط از این تکرار می‌پرد</button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>continue</code> کل حلقه را تمام می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>break</code> فقط برای while است</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>break</code> = «بس کن!». <code dir='ltr'>continue</code> = «این یکی رو رد کن، بقیه رو ادامه بده».</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) خروجی <code dir="ltr">for i in range(1, 10, 3): print(i)</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">1، 2، 3</button>
+              <button type="button" class="quiz-opt" data-key="b">1، 2، 3، 4، 5، 6، 7، 8، 9</button>
+              <button type="button" class="quiz-opt" data-key="c">0، 3، 6، 9</button>
+              <button type="button" class="quiz-opt" data-key="d">1، 4، 7</button>
+            </div>
+            <div class="quiz-explain">💡 از ۱ شروع می‌کند، گام ۳ است، پس: ۱، ۴، ۷. عدد ۱۰ شامل نمی‌شود و عدد ۱۰ هم که آخرین عدد ممکن است ولی ۱۰ بزرگ‌تر از ۹ (stop) است، پس چاپ نمی‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۵) چه زمانی یک حلقه‌ی <code dir="ltr">while</code> بی‌نهایت می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">وقتی شرط هیچ‌وقت به False تغییر نمی‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">وقتی break در آن نباشد</button>
+              <button type="button" class="quiz-opt" data-key="c">وقتی over 1000 بار تکرار شود</button>
+              <button type="button" class="quiz-opt" data-key="d">وقتی continue در آن باشد</button>
+            </div>
+            <div class="quiz-explain">💡 حلقه‌ی while تا زمانی تکرار می‌شود که شرط True باشد. اگر شرط هیچ‌وقت False نشود (مثلاً فراموش کنید متغیر را تغییر دهید)، حلقه بی‌نهایت می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) خروجی این کد چیست؟<br><code dir="ltr">total = 0<br>for i in range(1, 4):<br>&nbsp;&nbsp;&nbsp;&nbsp;total = total + i<br>print(total)</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">3</button>
+              <button type="button" class="quiz-opt" data-key="b">6</button>
+              <button type="button" class="quiz-opt" data-key="c">10</button>
+              <button type="button" class="quiz-opt" data-key="d">0</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>range(1, 4)</code> می‌دهد ۱، ۲، ۳. مجموع = 1 + 2 + 3 = 6.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «بازی حدس عدد — نسخه‌ی تکرارشونده»</strong> — همان بازی حدس عددی که در فصل قبل ساختیم، این بار با حلقه‌ها تا کاربر هر چند بار که لازم شد، حدس بزند.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">guess_game_v2.py</code> ذخیره شده باشد.</li>
+          <li>عدد جادویی به‌صورت ثابت <code class="inline-code">42</code> در ذهن برنامه باشد.</li>
+          <li>از کاربر بپرسید حدسش چیست.</li>
+          <li>اگر بزرگ‌تر از ۴۲ بود، پیام «عدد شما بزرگ‌تر است».</li>
+          <li>اگر کوچک‌تر از ۴۲ بود، پیام «عدد شما کوچک‌تر است».</li>
+          <li>اگر مساوی بود، پیام «آفرین! درست حدس زدی» و با <code class="inline-code">break</code> از حلقه بیرون بیایید.</li>
+          <li>تعداد حدس‌های کاربر را بشمارید و در پایان نمایش دهید.</li>
+          <li>اگر تعداد حدس‌ها از ۷ بیشتر شد، پیام «بازی تمام! تعداد حدس‌هایت زیاد شد» و با <code class="inline-code">break</code> بازی را تمام کنید. (راهنما: این را با ترکیب <code class="inline-code">if attempts &gt;= 7</code> و <code class="inline-code">break</code> انجام دهید.)</li>
+        </ul>
+        <p><strong>ساختار پیشنهادی:</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>guess_game_v2.py — شروع</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""بازی حدس عدد — نسخه‌ی تکرارشونده."""
+
+SECRET = 42
+MAX_ATTEMPTS = 7
+
+print("=" * 40)
+print("      بازی حدس عدد (نسخه 2)")
+print("=" * 40)
+print(f"عدد من بین 1 تا 100 است. {MAX_ATTEMPTS} تلاش داری.")
+print()
+
+attempts = 0
+
+# حلقه‌ی اصلی بازی
+while True:
+    guess = int(input("حدس بزن: "))
+    attempts = attempts + 1
+
+    if guess == SECRET:
+        print(f"🎉 آفرین! در {attempts} تلاش درست حدس زدی.")
+        break
+    elif guess > SECRET:
+        print("❄️ عدد من کوچک‌تر است.")
+    else:
+        print("🔥 عدد من بزرگ‌تر است.")
+
+    if attempts >= MAX_ATTEMPTS:
+        print(f"😔 باختی! عدد درست {SECRET} بود.")
+        break
+
+print()
+print("پایان بازی.")</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که نسخه‌ی ساده کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>حداقل و حداکثر حدس‌های ممکن را در ابتدا چاپ کنید.</li>
+            <li>اگر کاربر عددی خارج از بازه‌ی ۱ تا ۱۰۰ وارد کرد، آن را به‌عنوان حدس حساب نکنید (با <code class="inline-code">continue</code>).</li>
+            <li>بعد از هر حدس، نمایش دهید چقدر باقی‌مانده: «۳ تلاش دیگر داری».</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>حلقه چیست و چرا برای برنامه‌نویسی ضروری است.</li>
+          <li>حلقه‌ی <code class="inline-code">for</code> برای وقتی که تعداد تکرارها معلوم است.</li>
+          <li>تابع <code class="inline-code">range()</code> با سه شکل: تک‌آرگومان، دو‌آرگومان، سه‌آرگومان.</li>
+          <li>نکته‌ی طلایی <code class="inline-code">range(start, stop)</code>: عدد stop <strong>شامل نمی‌شود</strong>.</li>
+          <li>حلقه‌ی <code class="inline-code">while</code> برای وقتی که تکرار بسته به یک شرط است.</li>
+          <li>خطر حلقه‌ی بی‌نهایت و چطور از آن جلوگیری کنید.</li>
+          <li><code class="inline-code">break</code> برای خروج کامل از حلقه.</li>
+          <li><code class="inline-code">continue</code> برای رد کردن یک تکرار.</li>
+          <li>حلقه‌های تو در تو، برای کارهای چندلایه مثل جدول ضرب.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «حلقه‌ها به شما اجازه می‌دهند یک کار را هزار بار تکرار کنید، بدون اینکه هزار خط کد بنویسید. اینجاست که برنامه‌نویسی، جادویی می‌شود.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا عدد پایانی در <code dir="ltr">range</code> شامل نمی‌شود؟</summary><div class="faq-body"><p>این یکی از تصمیمات طراحی پایتون است که کمی عجیب به نظر می‌رسد اما دلایلی دارد. یک دلیل مهم: وقتی می‌خواهید طول یک دنباله را بیان کنید، <code dir='ltr'>range(len(list))</code> مستقیم کار می‌کند — چون ایندکس‌ها از صفر تا len-1 هستند. در فصل ۹ (لیست‌ها) این را بیشتر می‌بینید.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم داخل حلقه، حلقه‌ی دیگری داشته باشم؟ تا چند سطح؟</summary><div class="faq-body"><p>بله، می‌توانید. اما توصیه می‌شود از بیش از ۲ یا ۳ سطح پرهیز کنید. اگر مجبورید بیشتر از ۳ سطح بنویسید، احتمالاً کدتان نیاز به بازنویسی دارد — مثلاً به‌جای ۳ حلقه، از توابع استفاده کنید (که در فصل ۸ یاد می‌گیرید).</p></div></details>
+        <details class="faq-item"><summary>چطور می‌توانم از یک حلقه‌ی بی‌نهایت بیرون بیایم؟</summary><div class="faq-body"><p>اگر در ترمینال هستید، <kbd>Ctrl</kbd>+<kbd>C</kbd> را بزنید — این کار برنامه را متوقف می‌کند. در VS Code اگر ترمینال داخلی است، روی همان ترمینال کلیک کنید و <kbd>Ctrl</kbd>+<kbd>C</kbd>. اگر خیلی سنگین شده، پنجره‌ی ترمینال را ببندید.</p></div></details>
+        <details class="faq-item"><summary>چرا از <code dir="ltr">while True</code> استفاده کنیم؟ مگر خطرناک نیست؟</summary><div class="faq-body"><p>خود <code dir='ltr'>while True</code> خطرناک نیست، به شرطی که در داخلش راه خروج داشته باشید. الگوی رایج: یک حلقه‌ی بی‌نهایت به‌عمد، و از داخل با <code dir='ltr'>break</code> بیرون بیایید. این الگو در بازی‌ها، سیستم‌های منو، سرویس‌ها و... بسیار رایج است.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم مقدار حلقه را در طول حلقه تغییر دهم؟</summary><div class="faq-body"><p>در <code dir='ltr'>for</code>، خیر — هر تکرار مقدار جدید از range (یا مجموعه) می‌گیرد و تغییرات شما نادیده گرفته می‌شود. اما در <code dir='ltr'>while</code>، بله — چون خودتان متغیر را مدیریت می‌کنید. این یکی از تفاوت‌های مهم دو نوع حلقه است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۷ با <strong>رشته‌ها و متن</strong> آشنا می‌شوید: چطور متن‌ها را بشکنیم، جست‌وجو کنیم، بچسبانیم، فرمت کنیم. تا اینجا با اعداد کار می‌کردیم؛ از فصل بعد، متن‌ها را جدی می‌گیریم — چون بیشتر برنامه‌های واقعی با متن کار می‌کنند.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-06" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-06">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-05/index.html">→ فصل قبلی<br><b>🔀 فصل ۵</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-07/index.html">فصل بعدی ←<br><b>🧵 فصل ۷: رشته‌ها و متن</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۶: حلقه‌ها | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

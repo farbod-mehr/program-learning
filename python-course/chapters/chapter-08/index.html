@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۸: توابع — قطعه‌های قابل استفاده مجدد | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۸ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید کدتان را به تابع‌های کوچک و قابل استفاده مجدد تقسیم کنید — def، پارامتر، return، پیش‌فرض و scope.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۸ از ۳۰ — توابع</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🐣 شروع و مبانی ← فصل ۸
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۸ از ۳۰</span>
+    <h1>🧩 توابع — قطعه‌های قابل استفاده مجدد</h1>
+    <p>چطور کدمان را به قطعه‌های کوچک تقسیم کنیم؟ — <span class="term" data-term="def">def</span>، <span class="term" data-term="parameter">parameter</span>، <span class="term" data-term="return">return</span>، <span class="term" data-term="scope">scope</span>، <span class="term" data-term="docstring">docstring</span>، <span class="term" data-term="function">function</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۰ دقیقه</span>
+      <span class="pill">🎓 کاملاً مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا برنامه‌هایمان یک سری دستور پشت سر هم بودند که از بالا به پایین اجرا می‌شدند. اما وقتی برنامه‌ها بزرگ‌تر می‌شوند، این روش جواب نمی‌دهد. کد طولانی می‌شود، تکرار زیاد می‌شود، و پیدا کردن اشتباهات سخت می‌شود.</p>
+        <p>راه‌حل حرفه‌ای‌ها، <strong>توابع</strong> است. تابع یعنی یک قطعه‌ی کوچک از کد که یک کار مشخص انجام می‌دهد و می‌توانید هر وقت لازم شد صدایش بزنید — بدون کپی-پیست کردن. این فصل، شما را از سطح «نوشتن اسکریپت» به سطح «طراحی برنامه» می‌برد.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با <code class="inline-code">def</code> یک تابع جدید بسازید.</li>
+          <li>با <strong>پارامتر</strong> اطلاعاتی به تابع بفرستید.</li>
+          <li>با <code class="inline-code">return</code> نتیجه‌ای از تابع بگیرید.</li>
+          <li>با <strong>پارامتر پیش‌فرض</strong> تابع‌های انعطاف‌پذیر بسازید.</li>
+          <li>با <strong>scope</strong> (دامنه) متغیرها آشنا شوید و تفاوت local و global را بفهمید.</li>
+          <li>برای تابع‌هایتان <strong>مستند (docstring)</strong> بنویسید.</li>
+          <li>از الگوی <code class="inline-code">if __name__ == "__main__":</code> استفاده کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          توابع، پایه‌ی همه چیز در برنامه‌نویسی است. از این فصل به بعد، تقریباً هر کد جدی که می‌نویسید، حداقل یک تابع خواهد داشت. پس این فصل را با دقت بخوانید و هر مثال را خودتان تایپ و اجرا کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>def</h4><p>تعریف تابع.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>پارامتر و return</h4><p>ورودی و خروجی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>scope</h4><p>دامنه‌ی متغیرها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>ساختار حرفه‌ای</h4><p>main , docstring.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا از تابع استفاده کنیم؟ مگر نمی‌شود همه‌چیز را یکجا نوشت؟</summary>
+          <div class="answer-body"><p>تصور کنید یک برنامه‌ی ۱۰۰۰ خطی دارید که در ۲۰ جای مختلف، یک محاسبه‌ی تکراری انجام می‌دهد. اگر بخواهید آن محاسبه را تغییر دهید، باید ۲۰ جا را اصلاح کنید. اما اگر آن محاسبه در یک تابع باشد، فقط یک جا عوض می‌کنید و همه‌جا اعمال می‌شود. تابع‌ها به شما کمک می‌کنند: (۱) کد را یک‌بار بنویسید و بارها استفاده کنید، (۲) برنامه را به قطعه‌های منطقی تقسیم کنید، (۳) پیدا کردن اشتباهات را آسان‌تر کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت پارامتر و آرگومان چیست؟</summary>
+          <div class="answer-body"><p>این یک سوال کلاسیک است. <strong>پارامتر</strong> متغیری است که در <strong>تعریف</strong> تابع می‌نویسید: <code class="inline-code">def greet(name):</code> — اینجا name پارامتر است. <strong>آرگومان</strong> مقداری است که در زمان <strong>صدا زدن</strong> تابع می‌فرستید: <code class="inline-code">greet("علی")</code> — اینجا «علی» آرگومان است. در فارسی روزمره، بیشتر اوقات هر دو را «پارامتر» می‌گویند و مشکلی هم پیش نمی‌آید. اما دانستن این تفاوت، در مصاحبه‌های فنی به‌کار می‌آید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت return و print چیست؟ هر دو که یک چیز چاپ می‌کنند!</summary>
+          <div class="answer-body"><p>سوال بسیار مهمی است. <code class="inline-code">print</code> فقط چیزی <strong>نشان می‌دهد</strong> — بعد از چاپ، آن مقدار از بین می‌رود و نمی‌توانید از آن استفاده کنید. اما <code class="inline-code">return</code> مقدار را <strong>برمی‌گرداند</strong> به کدی که تابع را صدا زده — می‌توانید آن را در متغیری ذخیره کنید، به تابع دیگری بفرستید یا داخل محاسبه‌ی دیگر به‌کار ببرید. به‌عبارتی: print برای کاربر است، return برای برنامه.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی هفت فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با <code class="inline-code">print()</code>، تورفتگی و کامنت کاملاً راحت هستید.</li>
+          <li>متغیرها، انواع داده و عملگرها را می‌شناسید.</li>
+          <li>شرط‌ها (<code class="inline-code">if</code>/<code class="inline-code">elif</code>/<code class="inline-code">else</code>) و حلقه‌ها (<code class="inline-code">for</code>/<code class="inline-code">while</code>) را می‌دانید.</li>
+          <li>با رشته‌ها و متدهایشان (مثل <code class="inline-code">upper</code>، <code class="inline-code">strip</code>، <code class="inline-code">split</code>) راحت هستید.</li>
+        </ul>
+        <p>اگر این پیش‌نیازها را ندارید، لطفاً ابتدا فصل‌های قبلی را مرور کنید. توابع، از این پایه‌ها استفاده می‌کنند.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter08.py</code> در پوشه‌ی پروژه بسازید. هر مثال را در همان تایپ و اجرا کنید. به‌خصوص در مورد توابع، تغییر دادن پارامترها و دیدن نتیجه‌ها، تجربه‌ی مهمی است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: توابع</h2></div>
+
+        <h3>۱) تابع چیست؟ — یک قطعه‌ی کد با اسم</h3>
+        <p>تابع (function) قطعه‌ای از کد است که یک <strong>کار مشخص</strong> انجام می‌دهد و اسمی دارد. وقتی این اسم را صدا می‌زنید، کدی که داخلش نوشته‌اید، اجرا می‌شود. تابع مثل یک دکمه است: شما می‌دانید وقتی این دکمه را بزنید چه اتفاقی می‌افتد، ولی نیازی نیست از درونش خبر داشته باشید.</p>
+        <p>فرض کنید می‌خواهید در چند جای مختلف برنامه، یک پیام خوش‌آمد چاپ کنید. بدون تابع، این می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>بدون تابع — تکراری</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("=" * 30)
+print("خوش آمدید!")
+print("=" * 30)
+
+name = "علی"
+print(f"سلام {name}!")
+print("=" * 30)
+
+# این الگو را دوباره و دوباره می‌نویسیم...</code></pre>
+        </div>
+        <p>با تابع، یک‌بار می‌نویسیم، چند بار استفاده می‌کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>با تابع — یک‌بار بنویس، چند بار استفاده کن</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def show_welcome():
+    print("=" * 30)
+    print("خوش آمدید!")
+    print("=" * 30)
+
+# حالا هر وقت خواستیم، صدا می‌زنیم
+show_welcome()
+show_welcome()
+show_welcome()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">==============================
+خوش آمدید!
+==============================
+==============================
+خوش آمدید!
+==============================
+==============================
+خوش آمدید!
+==============================</code></pre>
+        </div>
+
+        <h3>۲) <code dir='ltr'>def</code> — ساخت اولین تابع</h3>
+        <p>برای ساختن تابع از کلمه‌ی <code class="inline-code">def</code> (مخفف define یعنی «تعریف کن») استفاده می‌کنیم. ساختار:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار def</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def نام_تابع():
+    # بدنه‌ی تابع (با تورفتگی 4 فاصله)
+    دستور1
+    دستور2</code></pre>
+        </div>
+        <p>چهار نکته‌ی مهم در ساختار بالا:</p>
+        <ol>
+          <li>بعد از اسم تابع، <strong>پرانتز</strong> می‌آید.</li>
+          <li>بعد از پرانتز، علامت <strong>دو-نقطه</strong> <code class="inline-code">:</code>.</li>
+          <li>بدنه‌ی تابع با <strong>تورفتگی</strong> (۴ فاصله) نوشته می‌شود.</li>
+          <li>اگر تابع را صدا نزنید، هیچ اتفاقی نمی‌افتد. تعریف تابع به‌تنهایی کاری انجام نمی‌دهد.</li>
+        </ol>
+        <p>مهم‌ترین نکته‌ی عملی: <strong>یک تابع، فقط یک کار انجام دهد</strong>. اگر اسم تابع شما شامل «و» است (مثلاً «محاسبه و چاپ کن»)، بهتر است به دو تابع جدا تقسیم شود.</p>
+
+        <h3>۳) پارامتر — فرستادن اطلاعات به تابع</h3>
+        <p>تابع <code class="inline-code">show_welcome()</code> همیشه یک چیز می‌گفت. اما بیشتر اوقات می‌خواهیم تابع با اطلاعات مختلف کار کند. مثلاً بخواهیم به هر کس با اسم خودش سلام کند. برای این کار از <strong>پارامتر</strong> استفاده می‌کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>تابع با پارامتر</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def greet(name):
+    print(f"سلام {name}!")
+
+greet("علی")
+greet("رضا")
+greet("سارا")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سلام علی!
+سلام رضا!
+سلام سارا!</code></pre>
+        </div>
+        <p>بخوانیدش: «یک تابع به نام greet بساز که یک پارامتر به نام name می‌گیرد. هر وقت این تابع را با یک متن صدا زدی، همان متن جای name می‌نشیند و پیام چاپ می‌شود.»</p>
+
+        <h4>تابع با چند پارامتر</h4>
+        <p>تابع می‌تواند چند پارامتر بگیرد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>multiple_params.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def introduce(name, age, city):
+    print(f"من {name} هستم، {age} ساله و ساکن {city}.")
+
+introduce("علی", 25, "تهران")
+introduce("رضا", 30, "شیراز")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">من علی هستم، 25 ساله و ساکن تهران.
+من رضا هستم، 30 ساله و ساکن شیراز.</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دقت کنید</b>
+          ترتیب پارامترها مهم است. وقتی تابع را صدا می‌زنید، پایتون مقادیر را به ترتیب جای پارامترها می‌گذارد. یعنی <code class="inline-code">introduce("علی", 25, "تهران")</code> یعنی name = "علی"، age = 25، city = "تهران". اگر ترتیب را عوض کنید، خروجی عجیب می‌شود.
+        </div>
+
+        <h3>۴) <code dir='ltr'>return</code> — گرفتن نتیجه از تابع</h3>
+        <p>تا اینجا تابع‌هایمان فقط چیزی چاپ می‌کردند. اما بیشتر اوقات می‌خواهیم تابع یک <strong>نتیجه</strong> بدهد تا در جای دیگر استفاده کنیم. برای این کار از <code class="inline-code">return</code> استفاده می‌کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_return.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def add(a, b):
+    return a + b
+
+# نتیجه تابع را در متغیر ذخیره می‌کنیم
+result = add(5, 3)
+print(result)             # 8
+
+# یا داخل محاسبه‌ی دیگر
+total = add(10, 20) + add(1, 2)
+print(total)              # 33
+
+# یا داخل f-string
+print(f"جمع: {add(7, 8)}")  # جمع: 15</code></pre>
+        </div>
+
+        <h4>تفاوت print و return</h4>
+        <p>این یکی از مهم‌ترین تفاوت‌هاست و خیلی از تازه‌کارها با آن اشتباه می‌کنند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>print_vs_return.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def add_with_print(a, b):
+    print(a + b)
+
+def add_with_return(a, b):
+    return a + b
+
+# با print
+x = add_with_print(5, 3)
+# چاپ می‌شود 8، اما x مقدار None دارد!
+print("مقدار x:", x)      # مقدار x: None
+
+# با return
+y = add_with_return(5, 3)
+# چیزی چاپ نمی‌شود، اما y مقدار دارد
+print("مقدار y:", y)      # مقدار y: 8</code></pre>
+        </div>
+        <p>پس وقتی می‌خواهید فقط چیزی نشان دهید، از <code class="inline-code">print</code> استفاده کنید. وقتی می‌خواهید نتیجه را برای استفاده‌ی بعدی برگردانید، از <code class="inline-code">return</code>. و اغلب، بهترین کار این است که تابع شما <code class="inline-code">return</code> کند و چاپ کردن را به عهده‌ی کدی بگذارید که تابع را صدا زده.</p>
+
+        <h4>return تابع را تمام می‌کند</h4>
+        <p>وقتی به <code class="inline-code">return</code> می‌رسید، تابع فوراً تمام می‌شود. کد بعد از return اجرا نمی‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>return_ends.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def check_number(x):
+    if x > 0:
+        return "مثبت"
+    if x < 0:
+        return "منفی"
+    return "صفر"
+
+print(check_number(5))     # مثبت
+print(check_number(-3))    # منفی
+print(check_number(0))     # صفر</code></pre>
+        </div>
+        <p>در این تابع، اگر x بزرگ‌تر از صفر باشد، همان‌جا return «مثبت» اجرا می‌شود و تابع تمام می‌شود. کدهای بعدی نادیده گرفته می‌شوند.</p>
+
+        <h3>۵) پارامتر پیش‌فرض — تابع‌های انعطاف‌پذیر</h4>
+        <p>گاهی می‌خواهید یک پارامتر اختیاری باشد و اگر کاربر آن را نداد، یک مقدار پیش‌فرض استفاده شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>default_params.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def greet(name, greeting="سلام"):
+    print(f"{greeting} {name}!")
+
+# بدون greeting — از پیش‌فرض استفاده می‌شود
+greet("علی")                     # سلام علی!
+
+# با greeting — جای پیش‌فرض را می‌گیرد
+greet("رضا", "درود")             # درود رضا!
+greet("سارا", "خوش آمدی")         # خوش آمدی سارا!</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 قاعده مهم</b>
+          پارامترهای پیش‌فرض، باید <strong>بعد از</strong> پارامترهای اجباری بیایند. یعنی این خطا است: <code class="inline-code">def f(a=1, b):</code>. اما این درست است: <code class="inline-code">def f(a, b=1):</code>. دلیلش این است که پایتون نمی‌تواند تشخیص دهد کدام مقدار برای کدام پارامتر است.
+        </div>
+
+        <h3>۶) Scope — دامنه‌ی متغیرها</h3>
+        <p>یک نکته‌ی مهم درباره‌ی متغیرها: متغیری که <strong>داخل</strong> تابع تعریف می‌کنید، <strong>خارج</strong> از تابع وجود ندارد. به این «دامنه» یا <strong>scope</strong> می‌گویند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>scope_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def my_function():
+    local_var = "من داخل تابع هستم"
+    print(local_var)
+
+my_function()
+# print(local_var)   ← خطا می‌دهد: NameError
+
+# اما متغیرهای سراسری (بیرون) در تابع دیده می‌شوند
+global_var = "من بیرون هستم"
+
+def show_global():
+    print(global_var)     # این کار می‌کند
+
+show_global()             # من بیرون هستم</code></pre>
+        </div>
+        <p>سه نکته‌ی مهم:</p>
+        <ul>
+          <li><strong>متغیر محلی (local):</strong> داخل تابع تعریف می‌شود، فقط داخل تابع دیده می‌شود.</li>
+          <li><strong>متغیر سراسری (global):</strong> بیرون تابع تعریف می‌شود، داخل تابع <strong>خوانده</strong> می‌شود ولی نباید تغییرش داد.</li>
+          <li><strong>قاعده‌ی طلایی:</strong> تا می‌توانید، از متغیرهای سراسری استفاده نکنید. تابع باید خودکفا باشد. این باعث می‌شود باگ‌های پنهان کمتر پیش بیایند.</li>
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار</b>
+          اگر داخل تابع بنویسید <code class="inline-code">global x</code> و بعد <code class="inline-code">x = 5</code>، می‌توانید متغیر سراسری را تغییر دهید. اما این کار تقریباً همیشه نشانه‌ی طراحی ضعیف است. به‌جای این کار، از پارامتر و return استفاده کنید.
+        </div>
+
+        <h4>مثال عملی scope — چرا مهم است؟</h4>
+        <div class="code-box">
+          <div class="code-head"><span>scope_why.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">counter = 0
+
+def increment():
+    counter = counter + 1     # ← خطا!
+    return counter
+
+# UnboundLocalError: local variable 'counter'
+# referenced before assignment</code></pre>
+        </div>
+        <p>این کد خطا می‌دهد چون پایتون فکر می‌کند <code class="inline-code">counter</code> یک متغیر محلی است (چون داخل تابع به آن مقدار می‌دهید)، اما قبل از اینکه تعریفش کنید، می‌خواهید از آن استفاده کنید. راه‌حل درست:</p>
+        <div class="code-box">
+          <div class="code-head"><span>scope_fixed.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def increment(counter):
+    counter = counter + 1
+    return counter
+
+count = 0
+count = increment(count)
+count = increment(count)
+print(count)     # 2</code></pre>
+        </div>
+        <p>به‌جای اینکه تابع بخواهد متغیر بیرونی را تغییر دهد، مقدار را <strong>به‌عنوان پارامتر می‌گیرد</strong> و <strong>نتیجه را برمی‌گرداند</strong>. این الگو، استاندارد طلایی توابع خوب است.</p>
+
+        <h3>۷) Docstring — مستندسازی تابع</h3>
+        <p>حتماً شنیده‌اید که کد خوب باید مستند باشد. برای تابع‌ها، بهترین روش مستندسازی <strong>docstring</strong> است — یک متن چندخطی که بعد از خط <code class="inline-code">def</code> نوشته می‌شود و با سه گیومه <code class="inline-code">"""</code> مشخص می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_docstring.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def calculate_average(numbers):
+    """میانگین یک لیست از اعداد را حساب می‌کند.
+
+    ورودی:
+        numbers: یک لیست از اعداد
+
+    خروجی:
+        میانگین به‌صورت یک عدد اعشاری
+    """
+    return sum(numbers) / len(numbers)
+
+# استفاده
+scores = [18, 15, 20, 17]
+print(calculate_average(scores))   # 17.5
+
+# دیدن مستندات تابع
+help(calculate_average)</code></pre>
+        </div>
+        <p>وقتی <code class="inline-code">help(calculate_average)</code> را اجرا کنید، متن داخل docstring نمایش داده می‌شود. همچنین در VS Code وقتی موس را روی اسم تابع نگه دارید، همان متن به‌عنوان راهنما نشان داده می‌شود.</p>
+        <p>یک docstring خوب، سه چیز را توضیح می‌دهد:</p>
+        <ul>
+          <li>تابع چه کاری انجام می‌دهد (یک خط خلاصه)</li>
+          <li>چه پارامترهایی می‌گیرد</li>
+          <li>چه چیزی برمی‌گرداند</li>
+        </ul>
+
+        <h3>۸) ساختار حرفه‌ای — main , <code dir='ltr'>if __name__</code></h3>
+        <p>یک الگوی حرفه‌ای که در همه‌ی برنامه‌های جدی پایتون می‌بینید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>professional_structure.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""برنامه نمونه با ساختار حرفه‌ای."""
+
+
+def greet(name):
+    """به کاربر سلام می‌کند."""
+    return f"سلام {name}!"
+
+
+def farewell(name):
+    """به کاربر خداحافظی می‌کند."""
+    return f"خداحافظ {name}!"
+
+
+def main():
+    """نقطه‌ی ورود برنامه."""
+    print(greet("علی"))
+    print("در حال انجام کارها...")
+    print(farewell("علی"))
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>این ساختار چه فایده‌ای دارد؟</p>
+        <ul>
+          <li>همه‌ی منطق برنامه داخل <code class="inline-code">main()</code> قرار دارد — نقطه‌ی ورود مشخص.</li>
+          <li>توابع کوچک، هر کدام یک کار مشخص انجام می‌دهند.</li>
+          <li><code class="inline-code">if __name__ == "__main__":</code> یعنی «اگر این فایل مستقیماً اجرا شد، main را صدا بزن». اگر این فایل در فایل دیگری import شود، main اجرا نمی‌شود — فقط توابع در دسترس قرار می‌گیرند.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 این چرا مهم است؟</b>
+          وقتی برنامه‌تان بزرگ‌تر می‌شود و به چند فایل تقسیم می‌شود، این الگو حیاتی می‌شود. اگر نداشته باشید، import کردن یک فایل، کل کد آن را اجرا می‌کند — که معمولاً چیزی نیست که می‌خواهید.
+        </div>
+
+        <h3>۹) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>بیایید یک برنامه‌ی کامل با توابع بنویسیم — یک ماشین‌حساب BMI که با توابع سازماندهی شده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>bmi_calculator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""محاسبه‌گر BMI — با ساختار حرفه‌ای."""
+
+
+def get_positive_float(prompt):
+    """یک عدد اعشاری مثبت از کاربر می‌گیرد.
+
+    تا زمانی که کاربر عدد معتبر وارد نکند، ادامه می‌دهد.
+    """
+    while True:
+        try:
+            value = float(input(prompt))
+            if value > 0:
+                return value
+            print("⚠️ لطفاً یک عدد مثبت وارد کنید.")
+        except ValueError:
+            print("⚠️ لطفاً یک عدد معتبر وارد کنید.")
+
+
+def calculate_bmi(weight, height):
+    """شاخص توده‌ی بدنی را حساب می‌کند.
+
+    پارامترها:
+        weight: وزن به کیلوگرم
+        height: قد به متر
+
+    خروجی:
+        مقدار BMI به‌صورت یک عدد اعشاری
+    """
+    return weight / (height ** 2)
+
+
+def classify_bmi(bmi):
+    """دسته‌بندی BMI را برمی‌گرداند."""
+    if bmi < 18.5:
+        return "کمبود وزن"
+    if bmi < 25:
+        return "وزن نرمال"
+    if bmi < 30:
+        return "اضافه وزن"
+    return "چاقی"
+
+
+def main():
+    """نقطه‌ی ورود برنامه."""
+    print("=" * 40)
+    print("        محاسبه‌گر BMI")
+    print("=" * 40)
+    print()
+
+    weight = get_positive_float("وزن شما (کیلوگرم): ")
+    height = get_positive_float("قد شما (متر): ")
+
+    bmi = calculate_bmi(weight, height)
+    category = classify_bmi(bmi)
+
+    print()
+    print("-" * 40)
+    print(f"  BMI شما: {bmi:.2f}")
+    print(f"  دسته‌بندی: {category}")
+    print("-" * 40)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>در این برنامه، هر تابع یک مسئولیت مشخص دارد:</p>
+        <ul>
+          <li><code class="inline-code">get_positive_float</code>: گرفتن ورودی معتبر از کاربر.</li>
+          <li><code class="inline-code">calculate_bmi</code>: محاسبه‌ی BMI — بدون هیچ چاپ یا ورودی.</li>
+          <li><code class="inline-code">classify_bmi</code>: تشخیص دسته‌بندی — فقط یک مقدار را به یک متن تبدیل می‌کند.</li>
+          <li><code class="inline-code">main</code>: هماهنگ‌کننده — توابع را به ترتیب صدا می‌زند.</li>
+        </ul>
+        <p>هر تابع را می‌توانید مستقل تست کنید. این، قدرت واقعی توابع است.</p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی «دستیار متنی» که با توابع ساخته شده و چندین متد رشته‌ای را با هم ترکیب می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>text_helper.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""دستیار متن — چند تابع کاربردی برای متن."""
+
+
+def count_words(text):
+    """تعداد کلمات یک متن را برمی‌گرداند."""
+    return len(text.split())
+
+
+def count_chars(text, ignore_spaces=True):
+    """تعداد کاراکترهای متن را می‌شمارد.
+
+    پارامتر اختیاری ignore_spaces: اگر True باشد، فاصله‌ها شمرده نمی‌شوند.
+    """
+    if ignore_spaces:
+        text = text.replace(" ", "")
+    return len(text)
+
+
+def reverse_text(text):
+    """متن را برعکس می‌کند."""
+    return text[::-1]
+
+
+def title_case(text):
+    """اولین حرف هر کلمه را بزرگ می‌کند (در انگلیسی)."""
+    return text.title()
+
+
+def show_report(text):
+    """گزارش کاملی از یک متن نمایش می‌دهد."""
+    print("=" * 45)
+    print("       تحلیل متن")
+    print("=" * 45)
+    print(f"  متن اصلی      : {text}")
+    print(f"  تعداد کلمات   : {count_words(text)}")
+    print(f"  تعداد کاراکتر : {count_chars(text)}")
+    print(f"  با فاصله      : {count_chars(text, ignore_spaces=False)}")
+    print(f"  معکوس         : {reverse_text(text)}")
+    print("=" * 45)
+
+
+def main():
+    """نقطه‌ی ورود برنامه."""
+    text = input("یک متن بنویسید: ").strip()
+
+    if not text:
+        print("⚠️ متن خالی است.")
+        return
+
+    show_report(text)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">یک متن بنویسید: من امروز به مدرسه رفتم
+
+=============================================
+       تحلیل متن
+=============================================
+  متن اصلی      : من امروز به مدرسه رفتم
+  تعداد کلمات   : 5
+  تعداد کاراکتر : 18
+  با فاصله      : 22
+  معکوس         : م ت ف ر ه د س م ه ب ز و م ا ن م
+=============================================</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          توجه کنید که هر تابع فقط <strong>یک کار</strong> انجام می‌دهد و <strong>یک مقدار برمی‌گرداند</strong>. تابع <code class="inline-code">count_chars</code> چاپ نمی‌کند، فقط عدد برمی‌گرداند. چاپ توسط <code class="inline-code">show_report</code> انجام می‌شود. این تفکیک مسئولیت‌ها، کد شما را تمیز و قابل تست می‌کند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «مدیر حقوق» بسازید که از چندین تابع استفاده کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">salary_manager.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>تابعی به نام <code class="inline-code">get_number(prompt)</code> بسازید که یک عدد از کاربر بگیرد و اگر نامعتبر بود، دوباره بپرسد. برای این کار از <code class="inline-code">try/except</code> استفاده کنید (در فصل قبل تا حدودی دیدید — اینجا استفاده‌ی ساده‌اش کافی است).</li>
+          <li>تابعی به نام <code class="inline-code">calculate_tax(salary)</code> بسازید که مالیات را بر اساس قوانین ساده حساب کند:
+            <ul>
+              <li>حقوق کمتر از ۱۰,۰۰۰,۰۰۰ → صفر مالیات</li>
+              <li>حقوق ۱۰ تا ۳۰ میلیون → ۱۰٪ مالیات</li>
+              <li>حقوق بالای ۳۰ میلیون → ۲۰٪ مالیات</li>
+            </ul>
+          </li>
+          <li>تابعی به نام <code class="inline-code">calculate_net(salary, tax)</code> بسازید که حقوق خالص را برگرداند: <code class="inline-code">salary - tax</code>.</li>
+          <li>تابعی به نام <code class="inline-code">show_payslip(name, salary, tax, net)</code> بسازید که یک فیش حقوقی زیبا چاپ کند.</li>
+          <li>تابع <code class="inline-code">main()</code> بسازید که این‌ها را به ترتیب صدا بزند.</li>
+          <li>در پایان، الگوی <code class="inline-code">if __name__ == "__main__":</code> را اضافه کنید.</li>
+          <li>برای هر تابع یک docstring کوتاه بنویسید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>salary_manager.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""مدیر حقوق — محاسبه‌ی مالیات و حقوق خالص."""
+
+
+def get_number(prompt):
+    """یک عدد معتبر از کاربر می‌گیرد."""
+    while True:
+        try:
+            value = float(input(prompt))
+            return value
+        except ValueError:
+            print("⚠️ لطفاً یک عدد معتبر وارد کنید.")
+
+
+def calculate_tax(salary):
+    """مالیات را بر اساس حقوق محاسبه می‌کند."""
+    if salary < 10_000_000:
+        return 0
+    if salary < 30_000_000:
+        return salary * 0.10
+    return salary * 0.20
+
+
+def calculate_net(salary, tax):
+    """حقوق خالص را برمی‌گرداند."""
+    return salary - tax
+
+
+def show_payslip(name, salary, tax, net):
+    """فیش حقوقی را چاپ می‌کند."""
+    print()
+    print("=" * 45)
+    print("           فیش حقوقی ماهانه")
+    print("=" * 45)
+    print(f"  نام کارمند    : {name}")
+    print(f"  حقوق پایه     : {salary:,.0f} تومان")
+    print(f"  مالیات        : {tax:,.0f} تومان")
+    print(f"  حقوق خالص     : {net:,.0f} تومان")
+    print("=" * 45)
+
+
+def main():
+    """نقطه‌ی ورود برنامه."""
+    name = input("نام کارمند: ").strip() or "ناشناس"
+    salary = get_number("حقوق ماهانه (تومان): ")
+
+    tax = calculate_tax(salary)
+    net = calculate_net(salary, tax)
+
+    show_payslip(name, salary, tax, net)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">نام کارمند: علی محمدی
+حقوق ماهانه (تومان): 25000000
+
+=============================================
+           فیش حقوقی ماهانه
+=============================================
+  نام کارمند    : علی محمدی
+  حقوق پایه     : 25,000,000 تومان
+  مالیات        : 2,500,000 تومان
+  حقوق خالص     : 22,500,000 تومان
+=============================================</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی این راه‌حل</summary>
+          <div class="answer-body">
+            <p>چهار نکته‌ی مهم در این راه‌حل:</p>
+            <ol>
+              <li><strong>هر تابع یک کار:</strong> <code class="inline-code">get_number</code> فقط عدد می‌گیرد، <code class="inline-code">calculate_tax</code> فقط مالیات حساب می‌کند، <code class="inline-code">show_payslip</code> فقط چاپ می‌کند. این تفکیک مسئولیت، تست و نگهداری را آسان می‌کند.</li>
+              <li><strong>بدون متغیر سراسری:</strong> همه‌ی داده‌ها از طریق پارامتر می‌روند و از طریق return برمی‌گردند. هیچ متغیری بیرون تابع تعریف نشده.</li>
+              <li><strong>f-string با فرمت‌بندی:</strong> <code class="inline-code">:.0f</code> برای حذف اعشار و <code class="inline-code">:,</code> برای جداکننده‌ی هزارگان — از فصل ۷.</li>
+              <li><strong>الگوی حرفه‌ای:</strong> main و <code class="inline-code">if __name__ == "__main__"</code> در پایان.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">salary_manager.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>هر تابع را می‌توانید مستقل فراخوانی کنید و نتیجه‌ی درست بگیرید.</li>
+              <li>می‌دانید تفاوت <code class="inline-code">return</code> و <code class="inline-code">print</code> چیست.</li>
+              <li>می‌توانید پارامتر پیش‌فرض بسازید و از آن استفاده کنید.</li>
+              <li>می‌دانید چرا متغیر داخل تابع، بیرون از آن قابل دسترسی نیست.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموش کردن فراخوانی تابع</b>
+          <p><strong>معنی:</strong> تابع را تعریف کرده‌اید، اما صدا نزده‌اید، پس هیچ اتفاقی نمی‌افتد.</p>
+          <p><strong>علت:</strong> نوشته‌اید <code class="inline-code">def my_function():</code> اما هرگز <code class="inline-code">my_function()</code> را صدا نزده‌اید.</p>
+          <p><strong>راه‌حل:</strong> تعریف تابع، کاری انجام نمی‌دهد — فقط به پایتون می‌گوید «این تابع وجود دارد». برای اجرا، باید صدا بزنید: <code class="inline-code">my_function()</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ NameError: name 'x' is not defined (در scope)</b>
+          <p><strong>معنی:</strong> متغیری که در تابع تعریف شده، بیرون از آن قابل دسترسی نیست.</p>
+          <p><strong>علت:</strong> متغیر محلی است و در دامنه‌ی بیرونی وجود ندارد.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید مقدار را بیرون داشته باشید، با <code class="inline-code">return</code> برگردانید: <code class="inline-code">result = my_function()</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: my_function() missing 1 required positional argument</b>
+          <p><strong>معنی:</strong> تابع انتظار پارامتر دارد، اما شما هیچ‌کدام را نفرستادید.</p>
+          <p><strong>علت:</strong> تابعی که <code class="inline-code">def greet(name)</code> است را به‌صورت <code class="inline-code">greet()</code> صدا زده‌اید.</p>
+          <p><strong>راه‌حل:</strong> همه‌ی پارامترهای اجباری را بفرستید: <code class="inline-code">greet("علی")</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: non-default argument follows default argument</b>
+          <p><strong>معنی:</strong> پارامتر پیش‌فرض قبل از پارامتر اجباری آمده.</p>
+          <p><strong>علت:</strong> <code class="inline-code">def f(a=1, b):</code> — این خطا است.</p>
+          <p><strong>راه‌حل:</strong> اول پارامترهای اجباری، بعد پیش‌فرض: <code class="inline-code">def f(a, b=1):</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ UnboundLocalError</b>
+          <p><strong>معنی:</strong> می‌خواهید از یک متغیر سراسری داخل تابع استفاده کنید، اما پایتون فکر می‌کند محلی است.</p>
+          <p><strong>علت:</strong> مثلاً نوشته‌اید <code class="inline-code">counter = counter + 1</code> بدون اینکه <code class="inline-code">counter</code> پارامتر باشد.</p>
+          <p><strong>راه‌حل:</strong> <code class="inline-code">counter</code> را به‌عنوان پارامتر بگیرید و با return برگردانید. <strong>هرگز</strong> از global استفاده نکنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموش کردن return</b>
+          <p><strong>معنی:</strong> تابع مقداری برمی‌گرداند، اما مقدار None است.</p>
+          <p><strong>علت:</strong> تابعی که باید return بدهد، فقط print دارد.</p>
+          <p><strong>راه‌حل:</strong> اگر تابع باید نتیجه بدهد، حتماً از <code class="inline-code">return</code> استفاده کنید. اگر می‌خواهید چیزی چاپ کنید، از <code class="inline-code">print</code> استفاده کنید. بهترین کار: تابع return کند، و کد بیرونی چاپ کند.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ کد بعد از return اجرا نمی‌شود</b>
+          <p><strong>معنی:</strong> دستورهای بعد از return، هیچ‌وقت اجرا نمی‌شوند.</p>
+          <p><strong>علت:</strong> <code class="inline-code">return</code> تابع را کاملاً تمام می‌کند.</p>
+          <p><strong>راه‌حل:</strong> کدهایی که بعد از return نوشته‌اید را حذف کنید یا به قبل از return منتقل کنید. VS Code این کدها را خاکستری نشان می‌دهد.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+def greet():
+    print("سلام")
+
+greet()
+greet()
+
+# مورد 2
+def add(a, b):
+    return a + b
+
+print(add(3, 4))
+print(add(10, 20))
+
+# مورد 3
+def show(x):
+    print(x * 2)
+
+result = show(5)
+print("خروجی:", result)
+
+# مورد 4
+def check(x):
+    if x > 0:
+        return "مثبت"
+    return "منفی یا صفر"
+
+print(check(5))
+print(check(-3))</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> دو بار «سلام» چاپ می‌شود.</li>
+              <li><strong>مورد ۲:</strong> ۷ و ۳۰ چاپ می‌شود.</li>
+              <li><strong>مورد ۳:</strong> «10» و «خروجی: None». چرا None؟ چون <code class="inline-code">show</code> فقط print دارد و return ندارد. به‌طور پیش‌فرض None برمی‌گرداند.</li>
+              <li><strong>مورد ۴:</strong> «مثبت» و «منفی یا صفر».</li>
+            </ul>
+            <p><strong>درس مهم:</strong> مورد ۳ نشان می‌دهد که print و return دو چیز متفاوتند. تابعی که return ندارد، مقدار <code class="inline-code">None</code> برمی‌گرداند.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — تابع BMI</summary>
+          <div class="answer-body">
+            <p>سه تابع بنویسید که با هم کار کنند و BMI را حساب کنند و دسته‌بندی کنند:</p>
+            <div class="code-box">
+              <div class="code-head"><span>bmi.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">def calculate_bmi(weight, height):
+    """شاخص توده بدنی را حساب می‌کند."""
+    return weight / (height ** 2)
+
+
+def classify_bmi(bmi):
+    """دسته‌بندی BMI را برمی‌گرداند."""
+    if bmi < 18.5:
+        return "کمبود وزن"
+    if bmi < 25:
+        return "وزن نرمال"
+    if bmi < 30:
+        return "اضافه وزن"
+    return "چاقی"
+
+
+def main():
+    weight = float(input("وزن (کیلوگرم): "))
+    height = float(input("قد (متر): "))
+
+    bmi = calculate_bmi(weight, height)
+    category = classify_bmi(bmi)
+
+    print(f"BMI شما: {bmi:.2f}")
+    print(f"دسته‌بندی: {category}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p><strong>نکته:</strong> تابع <code class="inline-code">calculate_bmi</code> هیچ چیزی چاپ نمی‌کند، فقط عدد برمی‌گرداند. تابع <code class="inline-code">classify_bmi</code> هم همینطور. چاپ کردن، کار <code class="inline-code">main</code> است. این تفکیک، تست تابع‌ها را آسان می‌کند.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1
+def greet
+    print("سلام")
+
+# خطا 2
+def add(a, b=5, c):
+    return a + b + c
+
+# خطا 3
+def show():
+    x = 10
+
+show()
+print(x)
+
+# خطا 4
+def get_value():
+    return 5
+    print("این خط هرگز اجرا نمی‌شود")</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> بعد از <code class="inline-code">def greet</code>، پرانتز و دو-نقطه فراموش شده. باید <code class="inline-code">def greet():</code> باشد.</li>
+              <li><strong>خطا ۲:</strong> پارامتر پیش‌فرض <code class="inline-code">b=5</code> قبل از پارامتر اجباری <code class="inline-code">c</code> آمده. باید <code class="inline-code">def add(a, c, b=5):</code> یا <code class="inline-code">def add(a, b, c=5):</code> باشد.</li>
+              <li><strong>خطا ۳:</strong> متغیر <code class="inline-code">x</code> داخل تابع <code class="inline-code">show</code> تعریف شده، پس بیرون تابع وجود ندارد. راه‌حل: <code class="inline-code">return</code> استفاده کنید یا داخل تابع چاپش کنید.</li>
+              <li><strong>خطا ۴:</strong> دستور <code class="inline-code">print</code> بعد از <code class="inline-code">return</code> هرگز اجرا نمی‌شود. باید قبل از <code class="inline-code">return</code> بیاید یا حذفش کنید.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">def greet():
+    print("سلام")
+
+
+def add(a, c, b=5):
+    return a + b + c
+
+
+def show():
+    x = 10
+    return x
+
+value = show()
+print(value)
+
+
+def get_value():
+    return 5</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-08" data-title="آزمون فصل ۸ — توابع" data-pass="60">
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۱) کدام کلیدواژه برای <strong>تعریف</strong> یک تابع در پایتون استفاده می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">function</button>
+              <button type="button" class="quiz-opt" data-key="b">defn</button>
+              <button type="button" class="quiz-opt" data-key="c">def</button>
+              <button type="button" class="quiz-opt" data-key="d">fun</button>
+            </div>
+            <div class="quiz-explain">💡 در پایتون برای تعریف تابع از <code dir='ltr'>def</code> (مخفف define) استفاده می‌کنیم.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) تفاوت <code dir="ltr">print</code> و <code dir="ltr">return</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="b"><code dir='ltr'>print</code> فقط نمایش می‌دهد، <code dir='ltr'>return</code> مقدار را برای استفاده‌ی بعدی برمی‌گرداند</button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>return</code> فقط برای اعداد است</button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>print</code> سریع‌تر است</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>print</code> مقدار را نشان می‌دهد و تمام. <code dir='ltr'>return</code> مقدار را به کد فراخوان برمی‌گرداند تا در جای دیگری استفاده شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) خروجی این کد چیست؟<br><code dir="ltr">def add(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;return a + b<br><br>print(add(3, 4))</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">34</button>
+              <button type="button" class="quiz-opt" data-key="b">7</button>
+              <button type="button" class="quiz-opt" data-key="c">a + b</button>
+              <button type="button" class="quiz-opt" data-key="d">None</button>
+            </div>
+            <div class="quiz-explain">💡 تابع، جمع ۳ و ۴ را حساب می‌کند و ۷ را return می‌کند. سپس <code dir='ltr'>print</code> آن ۷ را چاپ می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۴) کدام یک از این‌ها تعریف <strong>معتبر</strong> تابع است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code dir='ltr'>def f(a=1, b):</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code dir='ltr'>function f():</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>def f(a, b=1):</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>def f[]:</code></button>
+            </div>
+            <div class="quiz-explain">💡 پارامترهای پیش‌فرض باید <strong>بعد از</strong> پارامترهای اجباری بیایند. گزینه‌ی «الف» این قاعده را رعایت نکرده است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۵) اگر یک تابع داخلش <code dir="ltr">return</code> نداشته باشد، چه چیزی برمی‌گرداند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">صفر</button>
+              <button type="button" class="quiz-opt" data-key="b">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="c">یک رشته‌ی خالی</button>
+              <button type="button" class="quiz-opt" data-key="d">None</button>
+            </div>
+            <div class="quiz-explain">💡 در پایتون، هر تابعی که به‌طور صریح return نکند، به‌طور پیش‌فرض مقدار <code dir='ltr'>None</code> برمی‌گرداند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) متغیری که داخل تابع تعریف می‌شود، از بیرون قابل دسترسی است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">بله، همیشه</button>
+              <button type="button" class="quiz-opt" data-key="b">خیر، فقط داخل تابع قابل دسترسی است</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط اگر نامش _ داشته باشد</button>
+              <button type="button" class="quiz-opt" data-key="d">بستگی به سیستم‌عامل دارد</button>
+            </div>
+            <div class="quiz-explain">💡 متغیرهای محلی (local) فقط داخل تابع دیده می‌شوند. برای دسترسی از بیرون، باید مقدار را با <code dir='ltr'>return</code> برگردانید.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «دستیار دانشجو»</strong> — یک برنامه‌ی منویی که با توابع ساخته شده و چند ابزار مفید برای دانشجو دارد.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">student_helper.py</code> ذخیره شود.</li>
+          <li>برنامه شامل این توابع باشد:
+            <ul>
+              <li><code class="inline-code">show_menu()</code> — منوی گزینه‌ها را چاپ کند.</li>
+              <li><code class="inline-code">calculate_average(grades)</code> — میانگین یک لیست نمره را برگرداند.</li>
+              <li><code class="inline-code">find_max(grades)</code> — بالاترین نمره را برگرداند.</li>
+              <li><code class="inline-code">find_min(grades)</code> — پایین‌ترین نمره را برگرداند.</li>
+              <li><code class="inline-code">get_grades()</code> — از کاربر بخواهد چند نمره وارد کند و یک لیست برگرداند.</li>
+              <li><code class="inline-code">show_report(grades)</code> — با استفاده از توابع قبلی، یک گزارش کامل نمایش دهد.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">main()</code> یک حلقه‌ی منو داشته باشد که تا کاربر «خروج» را انتخاب نکند ادامه یابد.</li>
+          <li>هر تابع یک docstring داشته باشد.</li>
+          <li>اگر لیست نمرات خالی بود، تابع‌ها پیام مناسب بدهند (یا مقدار None برگردانند).</li>
+          <li>از f-string و قالب‌بندی اعداد استفاده شود.</li>
+          <li>در پایان، الگوی <code class="inline-code">if __name__ == "__main__":</code> اضافه شود.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     دستیار دانشجو
+══════════════════════════════════════
+
+  1. وارد کردن نمرات
+  2. نمایش گزارش
+  3. خروج
+
+انتخاب: 1
+چند نمره دارید؟ 4
+نمره 1: 18
+نمره 2: 15.5
+نمره 3: 20
+نمره 4: 17
+
+نمرات ذخیره شد. ✅
+
+انتخاب: 2
+
+──────────────────────────────────────
+  گزارش نمرات
+──────────────────────────────────────
+  تعداد نمرات : 4
+  میانگین     : 17.63
+  بالاترین    : 20.00
+  پایین‌ترین   : 15.50
+──────────────────────────────────────
+
+انتخاب: 3
+خداحافظ! 👋</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که برنامه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>ذخیره‌ی نمرات در یک متغیر سراسری — بعداً که با فایل کار می‌کنید، در فایل ذخیره‌اش می‌کنید.</li>
+            <li>یک تابع برای تشخیص نمره‌ی حرفی (A، B، C، D، F) اضافه کنید.</li>
+            <li>امکان حذف یک نمره از لیست با متد <code class="inline-code">remove</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>تابع چیست و چرا برای برنامه‌نویسی ضروری است.</li>
+          <li>با <code class="inline-code">def</code> تابع تعریف کنید.</li>
+          <li>پارامتر برای فرستادن اطلاعات به تابع.</li>
+          <li><code class="inline-code">return</code> برای برگرداندن نتیجه — و تفاوتش با <code class="inline-code">print</code>.</li>
+          <li>پارامترهای پیش‌فرض و قاعده‌ی ترتیبشان.</li>
+          <li>Scope یا دامنه‌ی متغیرها (local و global).</li>
+          <li>چرا از متغیرهای سراسری باید پرهیز کرد و راه‌حل جایگزین.</li>
+          <li>Docstring برای مستندسازی تابع.</li>
+          <li>الگوی <code class="inline-code">main()</code> و <code class="inline-code">if __name__ == "__main__":</code>.</li>
+          <li>هر تابع باید یک کار مشخص انجام دهد (اصل Single Responsibility).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «توابع، ستون فقرات برنامه‌نویسی حرفه‌ای هستند. کد خوب، مجموعه‌ای از توابع کوچک است که هر کدام یک کار را خوب انجام می‌دهند — نه یک بلوک بزرگ و درهم.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا حتماً باید تابع تعریف کنم یا می‌توانم همه‌چیز را یکجا بنویسم؟</summary><div class="faq-body"><p>برای برنامه‌های کوچک (زیر ۳۰ خط)، می‌توانید یکجا بنویسید. اما از همان ابتدا به توابع عادت کنید. برنامه‌های واقعی معمولاً صدها یا هزاران خط هستند و بدون توابع غیرقابل مدیریت می‌شوند.</p></div></details>
+        <details class="faq-item"><summary>چه زمانی از <code dir="ltr">return</code> استفاده کنم و چه زمانی از <code dir="ltr">print</code>؟</summary><div class="faq-body"><p>قاعده‌ی ساده: تابعی که <strong>محاسبه</strong> انجام می‌دهد، <code dir='ltr'>return</code> کند. تابعی که <strong>نمایش</strong> می‌دهد، <code dir='ltr'>print</code> کند. این تفکیک باعث می‌شود تابع‌هایتان قابل تست باشند و در جای مختلف به‌کار بروند.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم تابعی بنویسم که تابع دیگری را صدا بزند؟</summary><div class="faq-body"><p>بله، این کار کاملاً رایج است. در همین فصل دیدید که <code dir='ltr'>show_report</code> از <code dir='ltr'>count_words</code> و <code dir='ltr'>count_chars</code> استفاده می‌کرد. این کار باعث می‌شود کد شما به قطعه‌های کوچک و قابل تست تقسیم شود.</p></div></details>
+        <details class="faq-item"><summary>تفاوت پارامتر و آرگومان چیست؟</summary><div class="faq-body"><p>پارامتر در <strong>تعریف</strong> تابع می‌آید: <code dir='ltr'>def greet(name)</code> — name پارامتر است. آرگومان در زمان <strong>فراخوانی</strong> می‌آید: <code dir='ltr'>greet("علی")</code> — «علی» آرگومان است. در گفتگوی روزمره، معمولاً هر دو را پارامتر می‌گویند.</p></div></details>
+        <details class="faq-item"><summary>آیا برای هر تابع کوچک باید docstring بنویسم؟</summary><div class="faq-body"><p>برای تابع‌های خیلی ساده مثل <code dir='ltr'>def add(a, b): return a+b</code>، docstring اضافی است — اسم تابع خودش همه‌چیز را می‌گوید. اما برای تابع‌های پیچیده‌تر یا هر تابعی که ممکن است در آینده فراموشش کنید، docstring یک خطی کافی است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۹ با <strong>لیست‌ها و تاپل‌ها</strong> آشنا می‌شوید: چطور چند مقدار را در یک متغیر نگه دارید، چطور در آن‌ها جست‌وجو کنید، اضافه و حذف کنید. تا اینجا فقط با یک مقدار در هر متغیر کار می‌کردیم. از فصل بعد، با مجموعه‌ها کار می‌کنیم — و اینجاست که قدرت واقعی پایتون را می‌بینید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-08" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-08">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-07/index.html">→ فصل قبلی<br><b>🧵 فصل ۷</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-09/index.html">فصل بعدی ←<br><b>📋 فصل ۹: لیست و تاپل</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۸: توابع | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

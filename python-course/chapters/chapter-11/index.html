@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۱: Comprehension و Iterator — کوتاه‌نویسی حرفه‌ای | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۱ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور کد را کوتاه‌تر و سریع‌تر بنویسید — list comprehension، dict comprehension، enumerate، zip و generator.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۱ از ۳۰ — Comprehension و Iterator</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۱
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۱ از ۳۰</span>
+    <h1>🧠 Comprehension و Iterator — کوتاه‌نویسی حرفه‌ای</h1>
+    <p>چطور کد کوتاه‌تر، سریع‌تر و پایتونیک‌تر بنویسیم؟ — <span class="term" data-term="comprehension">comprehension</span>، <span class="term" data-term="iterable">iterable</span>، <span class="term" data-term="iterator">iterator</span>، <span class="term" data-term="generator">generator</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۷۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا با حلقه‌ها، لیست‌ها، دیکشنری‌ها و توابع کار کرده‌اید. مثلاً برای ساخت یک لیست از مربع‌های اعداد، احتمالاً کدی مثل این نوشته‌اید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>روش سنتی</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">squares = []
+for x in range(10):
+    squares.append(x ** 2)</code></pre>
+        </div>
+        <p>این کد درست است، اما خیلی طولانی. پایتون یک روش کوتاه‌تر و حرفه‌ای‌تر دارد که در همین فصل یاد می‌گیرید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>با comprehension — خیلی تمیزتر</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">squares = [x ** 2 for x in range(10)]</code></pre>
+        </div>
+        <p>این یکی از زیبایی‌های پایتون است که کد شما را کوتاه‌تر، سریع‌تر و خواناتر می‌کند. علاوه بر این، در این فصل با دو تابع بسیار مفید برای پیمایش پیشرفته (<code class="inline-code">enumerate</code> و <code class="inline-code">zip</code>) و همچنین مفهوم <strong>generator</strong> (مولد) آشنا می‌شوید.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با <strong>list comprehension</strong> لیست بسازید، در یک خط.</li>
+          <li>با <strong>dict comprehension</strong> دیکشنری بسازید.</li>
+          <li>شرط داخل comprehension بگذارید و فیلتر کنید.</li>
+          <li>با <code class="inline-code">enumerate</code> روی لیست با ایندکس حرکت کنید.</li>
+          <li>با <code class="inline-code">zip</code> دو لیست را با هم پیمایش کنید.</li>
+          <li>با <strong>generator expression</strong> داده را به‌صورت تنبل (lazy) پردازش کنید.</li>
+          <li>تفاوت <strong>iterable</strong> و <strong>iterator</strong> را بفهمید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          این فصل، شما را از یک برنامه‌نویس «کارآموز» به یک برنامه‌نویس «پایتونیک» تبدیل می‌کند. در مصاحبه‌های فنی، استفاده‌ی درست از comprehension یکی از نشانه‌های برنامه‌نویس خبره است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>List Comprehension</h4><p>ساخت لیست در یک خط.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>شرط و فیلتر</h4><p>comprehension با if.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>dict و set</h4><p>comprehension برای همه.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>enum، zip، generator</h4><p>ابزارهای تکمیلی.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 آیا کوتاه‌تر همیشه بهتر است؟</summary>
+          <div class="answer-body"><p>خیر! کوتاه‌تر بودن کد، همیشه به معنی بهتر بودن نیست. اگر کد کوتاه‌تر، <strong>خوانا نباشد</strong> یا <strong>منطقش پیچیده باشد</strong>، نوشتنش به شکل سنتی بهتر است. قاعده‌ی طلایی: <em>comprehension را فقط وقتی استفاده کنید که منطق ساده و در یک خط جا شود.</em> اگر نیاز دارید شرط‌های زیادی چک کنید یا کارهای پیچیده انجام دهید، از حلقه‌ی معمولی استفاده کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 generator و لیست چه تفاوتی دارند؟ مگر هر دو لیست اعداد تولید نمی‌کنند؟</summary>
+          <div class="answer-body"><p>تفاوت کلیدی این است: یک <strong>لیست</strong> همه‌ی اعضا را همان لحظه در حافظه ذخیره می‌کند. اما یک <strong>generator</strong> اعضا را <em>یکی‌یکی و در لحظه‌ی نیاز</em> تولید می‌کند. اگر بخواهید ۱ میلیون عدد را تولید کنید، لیست تمام آن‌ها را در حافظه می‌ریزد (مثلاً ۸ مگابایت)، اما generator فقط یک عدد در هر لحظه دارد (چند بایت). برای داده‌های کوچک تفاوت مهم نیست، اما برای داده‌های بزرگ، generator ناجی است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 <code dir="ltr">enumerate</code> چه کار می‌کند که <code dir="ltr">range</code> نمی‌کند؟</summary>
+          <div class="answer-body"><p>فرض کنید می‌خواهید روی لیستی از اسم‌ها حرکت کنید و همزمان ایندکس و مقدار را داشته باشید. با <code class="inline-code">range(len(names))</code> باید دستی به <code class="inline-code">names[i]</code> دسترسی پیدا کنید. اما <code class="inline-code">enumerate</code> این کار را در یک قدم انجام می‌دهد: <code class="inline-code">for i, name in enumerate(names):</code> — هم ایندکس، هم مقدار، آماده. خواناتر، کوتاه‌تر، پایتونیک‌تر.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی ده فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>حلقه‌ها (فصل ۶)، توابع (فصل ۸)، لیست و تاپل (فصل ۹)، دیکشنری (فصل ۱۰) را کامل یاد گرفته‌اید.</li>
+          <li>با <code class="inline-code">for</code>، <code class="inline-code">if</code> و ساختمان‌های داده راحت هستید.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter11.py</code> در پوشه‌ی پروژه بسازید. Comprehension را باید زیاد تایپ کنید تا دستتان بیاید. اولین بارها ممکن است عجیب به‌نظر برسد، اما بعد از چند بار، عاشقش می‌شوید!
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: Comprehension و Iterator</h2></div>
+
+        <h3>۱) List Comprehension — ساخت لیست در یک خط</h3>
+        <p>بیایید با یک مثال شروع کنیم. فرض کنید می‌خواهید لیستی از مربع اعداد ۰ تا ۹ بسازید. راه سنتی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>traditional.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">squares = []
+for x in range(10):
+    squares.append(x ** 2)
+
+print(squares)
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</code></pre>
+        </div>
+        <p>حالا همان کار با <strong>list comprehension</strong>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>comprehension.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">squares = [x ** 2 for x in range(10)]
+print(squares)
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</code></pre>
+        </div>
+        <p>دقیقاً همان نتیجه، ولی در یک خط. ساختار کلی list comprehension:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار کلی</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">[عبارت for متغیر in iterable]</code></pre>
+        </div>
+        <p>سه بخش دارد:</p>
+        <ul>
+          <li><strong>عبارت</strong>: کاری که روی هر عضو انجام می‌دهید (مثلاً <code class="inline-code">x ** 2</code>).</li>
+          <li><strong>for متغیر in iterable</strong>: روی چی حلقه می‌زنید (مثلاً <code class="inline-code">range(10)</code>).</li>
+          <li><strong>براکت [ ]</strong>: یعنی نتیجه یک لیست خواهد بود.</li>
+        </ul>
+        <p>مثال‌های ساده‌ی بیشتر:</p>
+        <div class="code-box">
+          <div class="code-head"><span>more_examples.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># مربع اعداد
+squares = [x ** 2 for x in range(1, 6)]
+print(squares)   # [1, 4, 9, 16, 25]
+
+# دو برابر اعداد
+doubles = [x * 2 for x in range(5)]
+print(doubles)   # [0, 2, 4, 6, 8]
+
+# تبدیل حروف به بزرگ
+names = ["ali", "reza", "sara"]
+upper_names = [name.upper() for name in names]
+print(upper_names)   # ['ALI', 'REZA', 'SARA']
+
+# طول هر کلمه
+words = ["cat", "python", "hello"]
+lengths = [len(w) for w in words]
+print(lengths)   # [3, 6, 5]</code></pre>
+        </div>
+
+        <h3>۲) Comprehension با شرط — فیلتر کردن</h3>
+        <p>می‌توانید یک شرط <code class="inline-code">if</code> در انتهای comprehension اضافه کنید تا فقط اعضایی که شرط را برآورده می‌کنند، در نتیجه باشند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_if.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># فقط اعداد زوج
+evens = [x for x in range(10) if x % 2 == 0]
+print(evens)   # [0, 2, 4, 6, 8]
+
+# فقط اعداد بزرگ‌تر از 5
+big = [x for x in range(10) if x > 5]
+print(big)   # [6, 7, 8, 9]
+
+# اسم‌هایی که با «س» شروع می‌شوند
+names = ["سارا", "علی", "سهیل", "رضا", "سمیرا"]
+s_names = [n for n in names if n.startswith("س")]
+print(s_names)   # ['سارا', 'سهیل', 'سمیرا']</code></pre>
+        </div>
+        <p>ساختار با شرط:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار با شرط</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">[عبارت for متغیر in iterable if شرط]</code></pre>
+        </div>
+        <p>یعنی: «برای هر عضو در iterable، اگر شرط برقرار بود، عبارت را در لیست بگذار».</p>
+
+        <h4>ترکیب تبدیل و فیلتر</h4>
+        <div class="code-box">
+          <div class="code-head"><span>combined.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># مربع اعداد زوج
+even_squares = [x ** 2 for x in range(10) if x % 2 == 0]
+print(even_squares)
+# [0, 4, 16, 36, 64]
+
+# اسم‌های کوچک‌شده از اسم‌های بلند
+words = ["Python", "is", "very", "powerful"]
+long_lower = [w.lower() for w in words if len(w) > 3]
+print(long_lower)
+# ['python', 'very', 'powerful']</code></pre>
+        </div>
+
+        <h4>if/else داخل comprehension</h4>
+        <p>همچنین می‌توانید مقدار جایگزین برای حالت non-matching هم بدهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>if_else_comprehension.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># اعداد زوج را «زوج» و فرد را «فرد» کن
+labels = ["زوج" if x % 2 == 0 else "فرد" for x in range(5)]
+print(labels)
+# ['زوج', 'فرد', 'زوج', 'فرد', 'زوج']
+
+# در این حالت، شرط قبل از for می‌آید
+# ساختار: [A if شرط else B for متغیر in iterable]</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دقت کنید</b>
+          دو نوع استفاده از <code class="inline-code">if</code> در comprehension وجود دارد:
+          <ul style="margin-top:8px">
+            <li><strong>فیلتر:</strong> <code class="inline-code">[x for x in items if x &gt; 5]</code> — <code class="inline-code">if</code> بعد از for می‌آید.</li>
+            <li><strong>شرط مقداری:</strong> <code class="inline-code">[A if cond else B for x in items]</code> — <code class="inline-code">if</code> قبل از for می‌آید.</li>
+          </ul>
+        </div>
+
+        <h3>۳) Dict Comprehension — ساخت دیکشنری در یک خط</h3>
+        <p>همان ایده، اما برای دیکشنری. با کروشه و دو-نقطه:</p>
+        <div class="code-box">
+          <div class="code-head"><span>dict_comp.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># عدد → مربعش
+squares = {x: x ** 2 for x in range(5)}
+print(squares)
+# {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# اسم → طول
+names = ["علی", "رضا", "سارا"]
+name_lengths = {name: len(name) for name in names}
+print(name_lengths)
+# {'علی': 3, 'رضا': 3, 'سارا': 4}
+
+# با شرط
+even_squares = {x: x ** 2 for x in range(10) if x % 2 == 0}
+print(even_squares)
+# {0: 0, 2: 4, 4: 16, 6: 36, 8: 64}</code></pre>
+        </div>
+        <p>ساختار کلی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار dict comprehension</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">{کلید: مقدار for متغیر in iterable}
+{کلید: مقدار for متغیر in iterable if شرط}</code></pre>
+        </div>
+
+        <h4>مثال واقعی: شمارش کلمات در یک خط</h4>
+        <p>در فصل ۱۰، برای شمارش کلمات از حلقه استفاده کردیم. حالا با comprehension می‌توانیم یک دیکشنری ساده بسازیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>word_lengths.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">text = "python is great and python is fun"
+words = text.split()
+unique_words = set(words)
+
+# دیکشنری: هر کلمه یکتا → تعداد تکرارش
+counts = {word: words.count(word) for word in unique_words}
+print(counts)
+# {'python': 2, 'is': 2, 'great': 1, 'and': 1, 'fun': 1}</code></pre>
+        </div>
+
+        <h3>۴) Set Comprehension — مجموعه در یک خط</h3>
+        <p>برای ساختن set هم همین سینتکس کار می‌کند، فقط با کروشه‌ی بدون دو-نقطه:</p>
+        <div class="code-box">
+          <div class="code-head"><span>set_comp.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># مربع اعداد یکتا
+squares = {x ** 2 for x in range(-3, 4)}
+print(squares)   # {0, 1, 4, 9}
+
+# حروف یکتای یک متن
+letters = {c for c in "hello world" if c != " "}
+print(letters)   # {'h', 'e', 'l', 'o', 'w', 'r', 'd'}</code></pre>
+        </div>
+        <p>توجه: چون set اعضای تکراری نمی‌پذیرد، اگر comprehension اعضای تکراری تولید کند، خودکار حذف می‌شوند.</p>
+
+        <h3>۵) <code>enumerate()</code> — ایندکس و مقدار با هم</h3>
+        <p>یکی از رایج‌ترین نیازها: حرکت روی یک لیست، ولی همزمان دانستن ایندکس. راه سنتی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>بدون enumerate</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">names = ["علی", "رضا", "سارا"]
+for i in range(len(names)):
+    print(f"{i}: {names[i]}")</code></pre>
+        </div>
+        <p>با <code class="inline-code">enumerate</code>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_enumerate.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">names = ["علی", "رضا", "سارا"]
+for i, name in enumerate(names):
+    print(f"{i}: {name}")
+
+# خروجی:
+# 0: علی
+# 1: رضا
+# 2: سارا</code></pre>
+        </div>
+        <p>حتی می‌توانید شمارش را از عدد دیگری شروع کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>start_from_1.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">names = ["علی", "رضا", "سارا"]
+for i, name in enumerate(names, start=1):
+    print(f"{i}. {name}")
+
+# خروجی:
+# 1. علی
+# 2. رضا
+# 3. سارا</code></pre>
+        </div>
+        <p>ترفند مفید برای شماره‌گذاری لیست، از ۱ به‌جای ۰.</p>
+
+        <h3>۶) <code>zip()</code> — حرکت روی چند لیست با هم</h3>
+        <p><code class="inline-code">zip</code> دو یا چند لیست را «به هم زیپ» می‌کند و اعضای متناظر را کنار هم می‌گذارد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>zip_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">names = ["علی", "رضا", "سارا"]
+ages = [25, 30, 28]
+cities = ["تهران", "شیراز", "اصفهان"]
+
+for name, age, city in zip(names, ages, cities):
+    print(f"{name} ({age} ساله، {city})")
+
+# خروجی:
+# علی (25 ساله، تهران)
+# رضا (30 ساله، شیراز)
+# سارا (28 ساله، اصفهان)</code></pre>
+        </div>
+        <p>حتی می‌توانید <code class="inline-code">zip</code> را برای ساخت دیکشنری استفاده کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>zip_to_dict.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">names = ["علی", "رضا", "سارا"]
+ages = [25, 30, 28]
+
+age_dict = dict(zip(names, ages))
+print(age_dict)
+# {'علی': 25, 'رضا': 30, 'سارا': 28}</code></pre>
+        </div>
+        <p>این ترفند خیلی مفید است: وقتی دو لیست متناظر دارید و می‌خواهید یک دیکشنری بسازید، <code class="inline-code">dict(zip(keys, values))</code> کوتاه‌ترین راه است.</p>
+        <div class="callout warn">
+          <b class="title">⚠️ نکته</b>
+          اگر طول لیست‌ها متفاوت باشد، <code class="inline-code">zip</code> به کوتاه‌ترین لیست می‌چسبد. یعنی اگر یکی ۳ عضو و دیگری ۵ عضو داشته باشد، فقط ۳ جفت ساخته می‌شود.
+        </div>
+
+        <h3>۷) Generator Expression — بدون ذخیره در حافظه</h3>
+        <p>حالا یک مفهوم مهم: <strong>generator expression</strong>. این خیلی شبیه list comprehension است، اما با پرانتز <code class="inline-code">( )</code> به‌جای براکت <code class="inline-code">[ ]</code>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>list_vs_generator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># List comprehension — همه در حافظه
+squares_list = [x ** 2 for x in range(1000000)]
+
+# Generator expression — تنبل
+squares_gen = (x ** 2 for x in range(1000000))
+
+print(squares_list[:5])            # [0, 1, 4, 9, 16]
+print(squares_gen)                 # <generator object ...>
+
+# برای دیدن اعضای generator باید یکی‌یکی مصرفش کنید
+for i, sq in enumerate(squares_gen):
+    print(sq)
+    if i >= 4:
+        break
+# 0
+# 1
+# 4
+# 9
+# 16</code></pre>
+        </div>
+        <p><strong>تفاوت کلیدی:</strong> لیست، همه‌ی اعضا را <em>همان لحظه</em> می‌سازد و در حافظه نگه می‌دارد. generator، اعضا را <em>یکی‌یکی و در لحظه‌ی نیاز</em> تولید می‌کند. برای داده‌های بزرگ، این تفاوت خیلی مهم است.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          generator را نمی‌توانید دو بار مصرف کنید! اگر یک بار روی آن حلقه بزنید، تمام می‌شود و بار دوم خالی است. مثل یک بطری آب است که وقتی سرازیرش کردی، دیگر آبی در آن نیست.
+        </div>
+
+        <h4>استفاده از generator برای مجموع، max، min</h4>
+        <p>توابع آماده‌ای مثل <code class="inline-code">sum</code>، <code class="inline-code">max</code>، <code class="inline-code">min</code> می‌توانند مستقیم روی generator کار کنند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>gen_direct.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># مجموع مربع اعداد 1 تا 100، بدون ذخیره در حافظه
+total = sum(x ** 2 for x in range(1, 101))
+print(total)   # 338350
+
+# بزرگ‌ترین عدد زوج کمتر از 1000
+biggest_even = max(x for x in range(1000) if x % 2 == 0)
+print(biggest_even)   # 998</code></pre>
+        </div>
+        <p>این الگو در پروژه‌های واقعی خیلی استفاده می‌شود چون باعث صرفه‌جویی در حافظه می‌شود.</p>
+
+        <h3>۸) Iterable و Iterator — یک نگاه سریع</h3>
+        <p>حالا که با حلقه‌ها راحت هستید، بیایید دو مفهوم زیربنایی را بفهمیم:</p>
+        <ul>
+          <li><strong>Iterable:</strong> هر چیزی که می‌توان روی آن حلقه زد. لیست، تاپل، رشته، دیکشنری، set، range، و... همه iterable هستند.</li>
+          <li><strong>Iterator:</strong> شیئی که یکی‌یکی اعضا را بیرون می‌دهد. هر iterable می‌تواند یک iterator بدهد.</li>
+        </ul>
+        <p>تفاوت را با مثال ببینیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>iterable_iterator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># لیست، iterable است
+my_list = [1, 2, 3]
+
+# تبدیل به iterator
+it = iter(my_list)
+
+# یکی‌یکی اعضا را بگیر
+print(next(it))   # 1
+print(next(it))   # 2
+print(next(it))   # 3
+
+# اگر باز هم next کنی، خطا می‌دهد:
+# print(next(it))   # StopIteration</code></pre>
+        </div>
+        <p>حلقه‌ی <code class="inline-code">for</code> پشت صحنه همین کار را انجام می‌دهد: اول <code class="inline-code">iter()</code> می‌سازد، بعد با <code class="inline-code">next()</code> اعضا را می‌گیرد تا به <code class="inline-code">StopIteration</code> برسد.</p>
+        <p><strong>چرا مهم است؟</strong> چون generator هم یک iterator است. و این توضیح می‌دهد که چرا generator یک‌بارمصرف است — چون بعد از <code class="inline-code">StopIteration</code>، دیگر چیزی برای دادن ندارد.</p>
+        <div class="callout info">
+          <b class="title">📌 نکته</b>
+          نیازی نیست همیشه با <code class="inline-code">iter</code> و <code class="inline-code">next</code> کار کنید — پایتون این را پشت صحنه انجام می‌دهد. اما دانستن این مفاهیم باعث می‌شود درک عمیق‌تری از حلقه‌ها و generator داشته باشید.
+        </div>
+
+        <h3>۹) تابع با <code>yield</code> — generator function</h3>
+        <p>یک تابع معمولی با <code class="inline-code">return</code> یک بار مقدار می‌دهد. اما اگر بخواهید یک تابع بنویسید که <em>چند مقدار</em> یکی‌یکی تولید کند، از <code class="inline-code">yield</code> استفاده می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>generator_function.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def countdown(n):
+    """از n تا 1 می‌شمارد و یکی‌یکی تحویل می‌دهد."""
+    while n > 0:
+        yield n
+        n -= 1
+
+# استفاده در حلقه
+for num in countdown(5):
+    print(num)
+# 5
+# 4
+# 3
+# 2
+# 1</code></pre>
+        </div>
+        <p>تفاوت <code class="inline-code">yield</code> با <code class="inline-code">return</code>:</p>
+        <ul>
+          <li><code class="inline-code">return</code>: تابع را کاملاً تمام می‌کند و یک مقدار برمی‌گرداند.</li>
+          <li><code class="inline-code">yield</code>: تابع را «معلق» می‌کند، یک مقدار بیرون می‌دهد، و اگر دوباره صدایش بزنند، از همان‌جا ادامه می‌دهد.</li>
+        </ul>
+        <p>به این نوع تابع می‌گویند <strong>generator function</strong>. وقتی صدا زده می‌شود، یک generator برمی‌گرداند که می‌توان رویش حلقه زد.</p>
+
+        <h4>مثال کاربردی: خواندن فایل‌های بزرگ به‌صورت تکه‌تکه</h4>
+        <div class="code-box">
+          <div class="code-head"><span>read_large_file.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def read_lines(filepath):
+    """خط‌های یک فایل را یکی‌یکی تحویل می‌دهد."""
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            yield line.strip()
+
+
+# استفاده — بدون بارگذاری کل فایل در حافظه
+for line in read_lines("big_data.txt"):
+    print(line)
+    # پردازش هر خط
+</code></pre>
+        </div>
+        <p>این الگو، ستون فقرات کار با فایل‌های بزرگ است. حتی اگر فایل ۱۰ گیگابایت باشد، این کد مشکلی ندارد چون هر لحظه فقط یک خط در حافظه است.</p>
+
+        <h3>۱۰) کدام را استفاده کنیم؟ — راهنمای انتخاب</h3>
+        <p>بعد از این‌همه ابزار، ممکن است سؤال کنید کدام را انتخاب کنید. اینجا یک راهنمای ساده:</p>
+        <ul>
+          <li><strong>list comprehension</strong>: برای ساخت لیست در یک خط، وقتی منطق ساده است.</li>
+          <li><strong>dict comprehension</strong>: برای ساخت دیکشنری از یک iterable.</li>
+          <li><strong>generator expression</strong>: وقتی داده بزرگ است یا فقط می‌خواهید یک بار روی آن حرکت کنید.</li>
+          <li><strong>for معمولی</strong>: وقتی منطق پیچیده است، چند مرحله دارد، یا خوانایی بهتری می‌دهد.</li>
+        </ul>
+        <p>قاعده‌ی طلایی: <strong>اگر comprehension را در یک نگاه می‌فهمید، استفاده کنید؛ اگر نه، به for معمولی برگردید</strong>.</p>
+
+        <h3>۱۱) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>برنامه‌ای که یک متن را تحلیل می‌کند و از تمام ابزارهای این فصل استفاده می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>text_analyzer.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""تحلیل‌گر متن — با comprehension و ابزارهای پیشرفته."""
+
+
+def analyze_words(words):
+    """گزارش کاملی از لیست کلمات تهیه می‌کند."""
+    # فقط کلمات بلندتر از 3 حرف
+    long_words = [w for w in words if len(w) > 3]
+
+    # همه به حروف کوچک
+    lower_words = [w.lower() for w in words]
+
+    # کلمات یکتا
+    unique_words = {w.lower() for w in words}
+
+    # طول هر کلمه
+    word_lengths = {w: len(w) for w in set(words)}
+
+    return {
+        "total": len(words),
+        "long_count": len(long_words),
+        "unique_count": len(unique_words),
+        "long_words": long_words,
+        "unique_words": unique_words,
+        "word_lengths": word_lengths,
+    }
+
+
+def main():
+    print("=" * 45)
+    print("       تحلیل‌گر متن")
+    print("=" * 45)
+
+    text = input("یک متن بنویسید:\n").strip()
+
+    if not text:
+        print("⚠️ متن خالی است.")
+        return
+
+    words = text.split()
+    report = analyze_words(words)
+
+    print()
+    print("-" * 45)
+    print(f"  تعداد کلمات          : {report['total']}")
+    print(f"  کلمات بلند (> 3 حرف) : {report['long_count']}")
+    print(f"  کلمات یکتا            : {report['unique_count']}")
+    print("-" * 45)
+
+    print("\n  📝 کلمات بلند:")
+    for word in report["long_words"]:
+        print(f"      • {word}")
+
+    print("\n  🎯 کلمات یکتا (اولین 5 تا):")
+    for word in list(report["unique_words"])[:5]:
+        print(f"      • {word}")
+
+    print("\n  📊 طول کلمات:")
+    for word, length in report["word_lengths"].items():
+        print(f"      {word}: {length}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       تحلیل‌گر متن
+=============================================
+یک متن بنویسید:
+python is great and python is fun
+
+---------------------------------------------
+  تعداد کلمات          : 7
+  کلمات بلند (> 3 حرف) : 3
+  کلمات یکتا            : 5
+---------------------------------------------
+
+  📝 کلمات بلند:
+      • python
+      • great
+      • python
+
+  🎯 کلمات یکتا (اولین 5 تا):
+      • python
+      • fun
+      • and
+      • is
+      • great
+
+  📊 طول کلمات:
+      python: 6
+      fun: 3
+      and: 3
+      is: 2
+      great: 5</code></pre>
+        </div>
+        <p>در این مثال، همه‌ی ابزارهای این فصل در کنار هم به‌کار گرفته شدند:</p>
+        <ul>
+          <li><strong>list comprehension</strong> برای فیلتر کردن و تبدیل.</li>
+          <li><strong>set comprehension</strong> برای استخراج کلمات یکتا.</li>
+          <li><strong>dict comprehension</strong> برای ساخت نگاشت کلمه → طول.</li>
+          <li>همه در یک تابع با docstring.</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه که از <code class="inline-code">zip</code> و <code class="inline-code">enumerate</code> برای ساخت یک جدول زیبا استفاده می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>student_table.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ساخت جدول از لیست‌های متناظر."""
+
+
+def main():
+    names = ["علی محمدی", "رضا احمدی", "سارا رضایی", "مریم کریمی"]
+    scores = [18.5, 15.0, 19.5, 17.0]
+    majors = ["کامپیوتر", "برق", "کامپیوتر", "عمران"]
+
+    print("=" * 65)
+    print(f"{'#':<4}{'نام':<20}{'نمره':<10}{'رشته':<15}{'وضعیت':<12}")
+    print("=" * 65)
+
+    # روش سنتی با range
+    # for i in range(len(names)):
+    #     name = names[i]
+    #     ...
+
+    # روش پایتونیک با enumerate + zip
+    for i, (name, score, major) in enumerate(
+        zip(names, scores, majors), start=1
+    ):
+        status = "قبول" if score >= 10 else "مردود"
+        # ترازبندی چپ با :<N
+        print(f"{i:<4}{name:<20}{score:<10}{major:<15}{status:<12}")
+
+    print("=" * 65)
+
+    # آمار با comprehension
+    passed = [s for s in scores if s >= 10]
+    failed = [s for s in scores if s < 10]
+    avg = sum(scores) / len(scores)
+
+    print(f"\n  📊 آمار:")
+    print(f"      قبول‌شده: {len(passed)} نفر")
+    print(f"      مردود  : {len(failed)} نفر")
+    print(f"      میانگین: {avg:.2f}")
+
+    # دیکشنری: رشته → لیست نمرات
+    by_major = {}
+    for name, score, major in zip(names, scores, majors):
+        by_major.setdefault(major, []).append(score)
+
+    print(f"\n  📚 میانگین به تفکیک رشته:")
+    for major, scores_list in by_major.items():
+        major_avg = sum(scores_list) / len(scores_list)
+        print(f"      {major}: {major_avg:.2f}")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">=================================================================
+#   نام                 نمره      رشته           وضعیت
+=================================================================
+1   علی محمدی           18.5      کامپیوتر        قبول
+2   رضا احمدی           15.0      برق             قبول
+3   سارا رضایی          19.5      کامپیوتر        قبول
+4   مریم کریمی          17.0      عمران           قبول
+=================================================================
+
+  📊 آمار:
+      قبول‌شده: 4 نفر
+      مردود  : 0 نفر
+      میانگین: 17.50
+
+  📚 میانگین به تفکیک رشته:
+      کامپیوتر: 19.00
+      برق: 15.00
+      عمران: 17.00</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          ترفند <code class="inline-code">f"{name:&lt;20}"</code> برای ترازبندی چپ با عرض ۲۰ کاراکتر است. این بسیار مفید است برای ساخت خروجی‌های جدولی تمیز. برای راست‌چین از <code class="inline-code">&gt;</code> و برای وسط‌چین از <code class="inline-code">^</code> استفاده کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «تحلیل‌گر فایل نمرات» بسازید که تمام ابزارهای این فصل را در خود داشته باشد:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">grade_analyzer.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک لیست از اعداد نمره بسازید (حداقل ۱۰ نمره‌ی مختلف بین ۰ تا ۲۰).</li>
+          <li>با <strong>list comprehension</strong> این لیست‌های جدید را بسازید:
+            <ul>
+              <li>نمرات قبول‌شده (بزرگ‌تر یا مساوی ۱۰)</li>
+              <li>نمرات تبدیل‌شده به مقیاس ۱۰۰ (یعنی ضربدر ۵)</li>
+              <li>نمرات گرد‌شده به نزدیک‌ترین عدد صحیح (با <code class="inline-code">round(n)</code>)</li>
+            </ul>
+          </li>
+          <li>با <strong>dict comprehension</strong> یک دیکشنری بسازید که به هر نمره، یک برچسب حرفی بدهد: A، B، C، D، F. مثلاً: <code class="inline-code">{18.5: "A", 15.0: "B", ...}</code>.</li>
+          <li>با <strong>set comprehension</strong> یک set از «برچسب‌های یکتای» به‌کاررفته بسازید.</li>
+          <li>تابع <code class="inline-code">show_report(scores)</code> بسازید که:
+            <ul>
+              <li>تعداد نمرات، میانگین، بیشترین و کمترین را با generator expression حساب کند: <code class="inline-code">sum(s for s in scores)</code>.</li>
+              <li>توزیع برچسب‌ها را با dict comprehension نمایش دهد: <code class="inline-code">{label: count for label in unique_labels}</code>.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">find_ranks(scores)</code> بسازید که هر نمره را با رتبه‌اش (از ۱) نمایش دهد. راهنما: از <code class="inline-code">sorted</code> و <code class="inline-code">enumerate</code> استفاده کنید.</li>
+          <li>در <code class="inline-code">main()</code>، همه‌ی این‌ها را در قالب یک گزارش زیبا چاپ کنید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>grade_analyzer.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""تحلیل‌گر نمرات — با comprehension در همه اشکال."""
+
+
+def score_to_letter(score):
+    """نمره را به برچسب حرفی تبدیل می‌کند."""
+    if score >= 18:
+        return "A"
+    if score >= 15:
+        return "B"
+    if score >= 12:
+        return "C"
+    if score >= 10:
+        return "D"
+    return "F"
+
+
+def show_report(scores):
+    """گزارش کامل نمرات را نمایش می‌دهد."""
+    print("\n" + "=" * 50)
+    print("           تحلیل نمرات")
+    print("=" * 50)
+
+    # آمار پایه با generator expression
+    total = sum(s for s in scores)
+    avg = total / len(scores)
+    maximum = max(s for s in scores)
+    minimum = min(s for s in scores)
+
+    print(f"  تعداد نمرات  : {len(scores)}")
+    print(f"  میانگین      : {avg:.2f}")
+    print(f"  بیشترین      : {maximum}")
+    print(f"  کمترین       : {minimum}")
+    print("-" * 50)
+
+    # نمرات قبول‌شده با list comprehension
+    passed = [s for s in scores if s >= 10]
+    print(f"\n  ✅ قبول‌شده‌ها ({len(passed)}): {passed}")
+
+    # نمرات به مقیاس 100
+    scaled = [s * 5 for s in scores]
+    print(f"\n  📈 مقیاس 100  : {scaled}")
+
+    # گرد‌شده
+    rounded = [round(s) for s in scores]
+    print(f"  🔄 گرد‌شده    : {rounded}")
+
+    # دیکشنری: نمره → برچسب
+    labels = {s: score_to_letter(s) for s in scores}
+    print(f"\n  🏷️  برچسب‌ها:")
+    for score, label in labels.items():
+        print(f"      {score} → {label}")
+
+    # برچسب‌های یکتا با set comprehension
+    unique_labels = {score_to_letter(s) for s in scores}
+    print(f"\n  🎯 برچسب‌های یکتا: {sorted(unique_labels)}")
+
+    # توزیع برچسب‌ها
+    distribution = {
+        label: sum(1 for s in scores if score_to_letter(s) == label)
+        for label in unique_labels
+    }
+    print(f"\n  📊 توزیع:")
+    for label in sorted(distribution.keys()):
+        count = distribution[label]
+        bar = "█" * count
+        print(f"      {label}: {count} {bar}")
+
+
+def find_ranks(scores):
+    """نمرات را از بزرگ به کوچک مرتب و رتبه‌بندی می‌کند."""
+    print(f"\n  🏆 رتبه‌بندی (بالاترین اول):")
+    # مرتب‌سازی نزولی
+    ranked = sorted(scores, reverse=True)
+    for i, score in enumerate(ranked, start=1):
+        print(f"      {i}. {score}")
+
+
+def main():
+    # نمرات نمونه
+    scores = [18.5, 15.0, 19.5, 17.0, 12.5, 8.0, 10.0, 14.0, 16.5, 13.0]
+
+    show_report(scores)
+    find_ranks(scores)
+
+    print("\n" + "=" * 50)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>خروجی:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">==================================================
+           تحلیل نمرات
+==================================================
+  تعداد نمرات  : 10
+  میانگین      : 14.40
+  بیشترین      : 19.5
+  کمترین       : 8.0
+--------------------------------------------------
+
+  ✅ قبول‌شده‌ها (9): [18.5, 15.0, 19.5, 17.0, 12.5, 10.0, 14.0, 16.5, 13.0]
+
+  📈 مقیاس 100  : [92.5, 75.0, 97.5, 85.0, 62.5, 40.0, 50.0, 70.0, 82.5, 65.0]
+  🔄 گرد‌شده    : [18, 15, 20, 17, 12, 8, 10, 14, 16, 13]
+
+  🏷️  برچسب‌ها:
+      18.5 → A
+      15.0 → B
+      19.5 → A
+      17.0 → B
+      12.5 → C
+      8.0 → F
+      10.0 → D
+      14.0 → C
+      16.5 → B
+      13.0 → C
+
+  🎯 برچسب‌های یکتا: ['A', 'B', 'C', 'D', 'F']
+
+  📊 توزیع:
+      A: 2 ██
+      B: 3 ███
+      C: 3 ███
+      D: 1 █
+      F: 1 █
+
+  🏆 رتبه‌بندی (بالاترین اول):
+      1. 19.5
+      2. 18.5
+      3. 17.0
+      4. 16.5
+      5. 15.0
+      6. 14.0
+      7. 13.0
+      8. 12.5
+      9. 10.0
+      10. 8.0
+
+==================================================</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی</summary>
+          <div class="answer-body">
+            <p>در این راه‌حل از همه‌ی ابزارهای فصل استفاده شد:</p>
+            <ol>
+              <li><strong>list comprehension</strong> برای فیلتر (<code class="inline-code">passed</code>) و تبدیل (<code class="inline-code">scaled</code>, <code class="inline-code">rounded</code>).</li>
+              <li><strong>dict comprehension</strong> برای ساخت نگاشت نمره → برچسب.</li>
+              <li><strong>set comprehension</strong> برای استخراج برچسب‌های یکتا.</li>
+              <li><strong>generator expression</strong> داخل <code class="inline-code">sum()</code>، <code class="inline-code">max()</code>، <code class="inline-code">min()</code> — بدون ذخیره در حافظه.</li>
+              <li><strong>enumerate</strong> با <code class="inline-code">start=1</code> برای رتبه‌بندی از ۱.</li>
+              <li><strong>sum(1 for s in scores if ...)</strong> برای شمارش در توزیع.</li>
+            </ol>
+            <p>نکته‌ی جالب: در توزیع برچسب‌ها، از generator expression داخل <code class="inline-code">sum</code> استفاده شد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>شمارش با generator</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">sum(1 for s in scores if score_to_letter(s) == label)</code></pre>
+            </div>
+            <p>این یعنی: «برای هر نمره، اگر برچسبش برابر label بود، ۱ بگذار، و همه را جمع کن». یک روش تمیز برای شمارش شرطی.</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">grade_analyzer.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>با <strong>list comprehension</strong>، <strong>dict comprehension</strong> و <strong>set comprehension</strong> راحت هستید.</li>
+              <li>می‌دانید شرط قبل و بعد از <code class="inline-code">for</code> در comprehension چه تفاوتی دارد.</li>
+              <li>با <code class="inline-code">enumerate</code> و <code class="inline-code">zip</code> کار کرده‌اید.</li>
+              <li>تفاوت list و generator expression را می‌دانید.</li>
+              <li>می‌دانید چه زمانی از comprehension استفاده <strong>نکنید</strong>.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError در comprehension (براکت یا پرانتز اشتباه)</b>
+          <p><strong>معنی:</strong> پایتون سینتکس comprehension را تشخیص نمی‌دهد.</p>
+          <p><strong>علت:</strong> جایی از براکت، پرانتز یا دو-نقطه را اشتباه گذاشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> حتماً بررسی کنید:
+          <ul>
+            <li>list → <code class="inline-code">[...]</code></li>
+            <li>dict → <code class="inline-code">{k: v for ...}</code></li>
+            <li>set → <code class="inline-code">{...}</code> (بدون دو-نقطه)</li>
+            <li>generator → <code class="inline-code">(...)</code></li>
+          </ul></p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ NameError در comprehension</b>
+          <p><strong>معنی:</strong> متغیری که داخل comprehension استفاده کرده‌اید، تعریف نشده.</p>
+          <p><strong>علت:</strong> مثلاً نوشته‌اید <code class="inline-code">[y for x in range(5)]</code> — y هیچ‌جا تعریف نشده.</p>
+          <p><strong>راه‌حل:</strong> مطمئن شوید متغیرِ بعد از <code class="inline-code">for</code>، همانی است که در ابتدای comprehension استفاده می‌کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ generator یک‌بارمصرف است</b>
+          <p><strong>معنی:</strong> بار دوم که روی generator حلقه می‌زنید، خالی است.</p>
+          <p><strong>علت:</strong> generator فقط می‌تواند یک بار مصرف شود.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید چند بار روی داده حرکت کنید، آن را به <code class="inline-code">list(gen)</code> تبدیل کنید یا از همان ابتدا list comprehension بسازید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ StopIteration روی generator</b>
+          <p><strong>معنی:</strong> می‌خواهید بیشتر از اعضای موجود از generator بگیرید.</p>
+          <p><strong>علت:</strong> روی generator بی‌محافظ <code class="inline-code">next()</code> صدا زده‌اید.</p>
+          <p><strong>راه‌حل:</strong> از <code class="inline-code">next(gen, default)</code> استفاده کنید یا با <code class="inline-code">for</code> مصرفش کنید تا خودش مدیریت کند.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ comprehension غیرخوانا</b>
+          <p><strong>معنی:</strong> کد شما کار می‌کند، اما سخت فهم است.</p>
+          <p><strong>علت:</strong> comprehension را برای منطق پیچیده استفاده کرده‌اید — مثلاً دو for تو در تو با دو شرط.</p>
+          <p><strong>راه‌حل:</strong> اگر comprehension بیشتر از ۸۰ کاراکتر می‌شود یا بیش از یک <code class="inline-code">for</code> دارد، احتمالاً بهتر است به <code class="inline-code">for</code> معمولی برگردید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ zip با لیست‌های ناهمتا</b>
+          <p><strong>معنی:</strong> zip فقط تا کوتاه‌ترین لیست پیش می‌رود.</p>
+          <p><strong>علت:</strong> طول لیست‌ها متفاوت است و فکر می‌کنید همه اعضا پیمایش می‌شوند.</p>
+          <p><strong>راه‌حل:</strong> قبل از zip، طول‌ها را چک کنید: <code class="inline-code">if len(a) != len(b): print("طول‌ها فرق دارند")</code>. یا از <code class="inline-code">itertools.zip_longest</code> استفاده کنید (پیشرفته).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ dict comprehension با کلید تکراری</b>
+          <p><strong>معنی:</strong> اگر در dict comprehension کلید تکراری تولید شود، فقط آخرین مقدار می‌ماند.</p>
+          <p><strong>علت:</strong> dict نمی‌تواند کلید تکراری داشته باشد.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید همه‌ی مقادیر با یک کلید را نگه دارید، از دیکشنری لیست استفاده کنید (مثل <code class="inline-code">defaultdict(list)</code>) که در فصل‌های پیشرفته می‌بینید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+result = [x * 2 for x in range(5)]
+print(result)
+
+# مورد 2
+result = [x for x in range(10) if x % 3 == 0]
+print(result)
+
+# مورد 3
+words = ["hello", "hi", "hey", "world"]
+result = [w.upper() for w in words if len(w) > 2]
+print(result)
+
+# مورد 4
+result = {x: x ** 2 for x in range(4)}
+print(result)
+
+# مورد 5
+result = {x for x in [1, 2, 2, 3, 3, 3]}
+print(result)
+
+# مورد 6
+names = ["a", "b", "c"]
+ages = [10, 20, 30]
+result = dict(zip(names, ages))
+print(result)
+
+# مورد 7
+letters = ["a", "b", "c"]
+for i, letter in enumerate(letters, start=1):
+    print(i, letter)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> [0, 2, 4, 6, 8]</li>
+              <li><strong>مورد ۲:</strong> [0, 3, 6, 9]</li>
+              <li><strong>مورد ۳:</strong> ['HELLO', 'HEY', 'WORLD'] (hi فقط ۲ حرف دارد و رد می‌شود)</li>
+              <li><strong>مورد ۴:</strong> {0: 0, 1: 1, 2: 4, 3: 9}</li>
+              <li><strong>مورد ۵:</strong> {1, 2, 3} — تکراری‌ها حذف شدند.</li>
+              <li><strong>مورد ۶:</strong> {'a': 10, 'b': 20, 'c': 30}</li>
+              <li><strong>مورد ۷:</strong> 1 a / 2 b / 3 c (هر کدام در یک خط)</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — تبدیل کد سنتی به comprehension</summary>
+          <div class="answer-body">
+            <p>هر کد سنتی زیر را به comprehension تبدیل کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>سنتی → comprehension</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># 1) لیست اعداد بزرگ‌تر از 5
+# سنتی
+result = []
+for x in range(10):
+    if x > 5:
+        result.append(x)
+
+# comprehension
+result = [x for x in range(10) if x > 5]
+
+
+# 2) دیکشنری عدد → دوبرابر
+# سنتی
+result = {}
+for x in range(5):
+    result[x] = x * 2
+
+# comprehension
+result = {x: x * 2 for x in range(5)}
+
+
+# 3) اسم‌ها به حروف کوچک
+# سنتی
+names = ["Ali", "Reza", "Sara"]
+result = []
+for name in names:
+    result.append(name.lower())
+
+# comprehension
+result = [name.lower() for name in names]
+
+
+# 4) طول کلمات بلند
+# سنتی
+words = ["python", "hi", "world", "ok"]
+result = []
+for w in words:
+    if len(w) > 3:
+        result.append(len(w))
+
+# comprehension
+result = [len(w) for w in words if len(w) > 3]</code></pre>
+            </div>
+            <p><strong>نکته:</strong> وقتی کد سنتی را به comprehension تبدیل می‌کنید، سه چیز را از هم جدا کنید: ۱) چه کاری روی هر عضو انجام می‌شود؛ ۲) روی چه چیزی حلقه می‌زنید؛ ۳) چه شرطی دارید. سپس در قالب comprehension بچینید.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1 — استفاده از y بدون تعریف
+result = [y * 2 for x in range(5)]
+
+# خطا 2 — براکت اشتباه برای dict
+result = [k: v for k, v in [("a", 1), ("b", 2)]]
+
+# خطا 3 — generator را دو بار مصرف می‌کنیم
+gen = (x * 2 for x in range(3))
+print(list(gen))     # [0, 2, 4]
+print(list(gen))     # خالی! چون مصرف شده
+
+# خطا 4 — comprehension با دو for تو در تو، غیرخوانا
+result = [x * y for x in range(3) for y in range(3) if x != y if x + y > 2]</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">NameError</code>. متغیر y جایی تعریف نشده. باید <code class="inline-code">[x * 2 for x in range(5)]</code> باشد.</li>
+              <li><strong>خطا ۲:</strong> برای dict comprehension باید از <code class="inline-code">{ }</code> استفاده شود، نه <code class="inline-code">[ ]</code>. راه‌حل: <code class="inline-code">{k: v for k, v in [("a", 1), ("b", 2)]}</code>.</li>
+              <li><strong>خطا ۳:</strong> generator یک‌بارمصرف است. اگر می‌خواهید دو بار مصرف کنید، به لیست تبدیلش کنید: <code class="inline-code">values = list(x * 2 for x in range(3))</code> — بعد <code class="inline-code">values</code> را هر چند بار استفاده کنید.</li>
+              <li><strong>خطا ۴:</strong> کاملاً غیرخوانا. دو for تو در تو + دو شرط در یک خط. راه‌حل: به <code class="inline-code">for</code> معمولی برگردید:
+              <div class="code-box" style="margin-top:8px">
+                <div class="code-head"><span>نسخه‌ی خوانا</span><span class="lang">Python</span></div>
+                <pre class="code"><code dir='ltr' data-lang="python">result = []
+for x in range(3):
+    for y in range(3):
+        if x != y and x + y > 2:
+            result.append(x * y)</code></pre>
+              </div>
+              </li>
+            </ul>
+            <p><strong>درس مهم:</strong> comprehension برای کد <em>ساده</em> است. اگر منطق پیچیده شد، به for معمولی برگردید — خوانایی مهم‌تر از کوتاهی است.</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-11" data-title="آزمون فصل ۱۱ — Comprehension و Iterator" data-pass="60">
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۱) خروجی <code dir="ltr">[x * 2 for x in range(4)]</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">[0, 1, 2, 3]</button>
+              <button type="button" class="quiz-opt" data-key="b">[2, 4, 6]</button>
+              <button type="button" class="quiz-opt" data-key="c">[0, 2, 4, 6]</button>
+              <button type="button" class="quiz-opt" data-key="d">[1, 2, 3, 4]</button>
+            </div>
+            <div class="quiz-explain">💡 <code>range(4)</code> می‌دهد ۰، ۱، ۲، ۳. هر کدام در ۲ ضرب می‌شود: ۰، ۲، ۴، ۶.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) کدام یک یک list comprehension معتبر است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>{x for x in range(5)}</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>[x for x in range(5)]</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>(x for x in range(5))</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>{x: x for x in range(5)}</code></button>
+            </div>
+            <div class="quiz-explain">💡 list comprehension با <code>[ ]</code> ساخته می‌شود. <code>{...}</code> برای set یا dict، و <code>(...)</code> برای generator است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) خروجی <code dir="ltr">{x: x ** 2 for x in range(3)}</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">{0: 0, 1: 1, 2: 4}</button>
+              <button type="button" class="quiz-opt" data-key="b">[0, 1, 4]</button>
+              <button type="button" class="quiz-opt" data-key="c">{0, 1, 4}</button>
+              <button type="button" class="quiz-opt" data-key="d">خطا می‌دهد</button>
+            </div>
+            <div class="quiz-explain">💡 dict comprehension با <code>{k: v for ...}</code> ساخته می‌شود. کلید x است و مقدار x² .</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۴) تفاوت اصلی <strong>list</strong> و <strong>generator expression</strong> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="b">list همه در حافظه ذخیره می‌کند، generator یکی‌یکی و در لحظه‌ی نیاز تولید می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">generator سریع‌تر است ولی حافظه بیشتری می‌گیرد</button>
+              <button type="button" class="quiz-opt" data-key="d">list فقط اعداد می‌پذیرد</button>
+            </div>
+            <div class="quiz-explain">💡 تفاوت کلیدی: list کل داده را در حافظه دارد، اما generator داده را <strong>تنبل</strong> (lazy) و یکی‌یکی تولید می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۵) خروجی این کد چیست؟<br><code dir="ltr">names = ["a", "b"]<br>ages = [10, 20]<br>for n, a in zip(names, ages):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(n, a)</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">a 10 / a 20 / b 10 / b 20</button>
+              <button type="button" class="quiz-opt" data-key="b">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط a 10</button>
+              <button type="button" class="quiz-opt" data-key="d">a 10 / b 20</button>
+            </div>
+            <div class="quiz-explain">💡 <code>zip</code> اعضای متناظر دو لیست را کنار هم می‌گذارد. دو لیست دو عضوی داریم، پس دو جفت ساخته می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) برای پیمایش لیست همراه با <strong>ایندکس</strong>، کدام تابع مناسب است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">zip</button>
+              <button type="button" class="quiz-opt" data-key="b">enumerate</button>
+              <button type="button" class="quiz-opt" data-key="c">len</button>
+              <button type="button" class="quiz-opt" data-key="d">range</button>
+            </div>
+            <div class="quiz-explain">💡 <code>enumerate</code> به‌طور خودکار ایندکس و مقدار را کنار هم می‌دهد: <code>for i, item in enumerate(my_list):</code>.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «تحلیل‌گر متن پیشرفته»</strong> — برنامه‌ای که یک متن می‌گیرد و تحلیل جامعی از آن ارائه می‌دهد، با استفاده از تمام ابزارهای این فصل.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">advanced_analyzer.py</code> ذخیره شود.</li>
+          <li>تابع <code class="inline-code">get_words(text)</code>: متن را به لیست کلمات تبدیل می‌کند (با <code class="inline-code">lower()</code> و <code class="inline-code">split()</code>).</li>
+          <li>تابع <code class="inline-code">long_words(words, min_len=4)</code>: با list comprehension، فقط کلمات با طول مشخص را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">word_lengths(words)</code>: با dict comprehension، نگاشت کلمه → طول را می‌سازد.</li>
+          <li>تابع <code class="inline-code">unique_words(words)</code>: با set comprehension، کلمات یکتا را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">word_frequencies(words)</code>: با dict comprehension و <code class="inline-code">.count()</code>، تعداد تکرار هر کلمه را برمی‌گرداند (فقط کلمات یکتا).</li>
+          <li>تابع <code class="inline-code">top_words(freq, n=5)</code>: با <code class="inline-code">sorted</code> روی <code class="inline-code">items()</code>، n کلمه‌ی پرتکرار را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">show_letter_summary(words)</code>: با <code class="inline-code">Counter</code> یا حلقه، توزیع حروف اول کلمات را نشان دهد (می‌توانید از یک dict comprehension ساده استفاده کنید).</li>
+          <li>تابع <code class="inline-code">indexed_words(words)</code>: با <code class="inline-code">enumerate</code>، کلمات را با ایندکس چاپ کند.</li>
+          <li>تابع <code class="inline-code">show_report(text)</code>: همه‌ی تحلیل‌ها را در قالب یک گزارش زیبا چاپ کند.</li>
+          <li>در یک جای برنامه، حداقل یک <strong>generator expression</strong> استفاده شود (مثلاً برای مجموع طول کلمات).</li>
+          <li>هر تابع یک docstring داشته باشد.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     تحلیل‌گر متن پیشرفته
+══════════════════════════════════════
+
+متن: Python is great and python is fun
+
+──────────────────────────────────────
+  📊 آمار کلی
+──────────────────────────────────────
+  تعداد کلمات     : 7
+  کلمات یکتا      : 5
+  مجموع طول کلمات : 26
+  میانگین طول     : 3.71
+
+──────────────────────────────────────
+  📝 کلمات بلند (> 3 حرف)
+──────────────────────────────────────
+  • python
+  • great
+  • python
+
+──────────────────────────────────────
+  🎯 5 کلمه پرتکرار
+──────────────────────────────────────
+  1. python — 2 بار
+  2. is — 2 بار
+  3. great — 1 بار
+  4. fun — 1 بار
+  5. and — 1 بار
+
+──────────────────────────────────────
+  📍 کلمات با ایندکس
+──────────────────────────────────────
+  0: python
+  1: is
+  2: great
+  3: and
+  4: python
+  5: is
+  6: fun
+
+══════════════════════════════════════</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>نمایش توزیع حرف اول کلمات (مثلاً «کلمات با پ شروع: 2»).</li>
+            <li>پیدا کردن طولانی‌ترین کلمه.</li>
+            <li>پیدا کردن کلماتی که فقط یک بار آمده‌اند (hapax).</li>
+            <li>استفاده از generator برای پردازش فایل‌های بزرگ — یعنی خواندن متن از فایل با <code class="inline-code">yield</code>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li><strong>list comprehension</strong> برای ساخت لیست در یک خط: <code class="inline-code">[x**2 for x in range(10)]</code>.</li>
+          <li>افزودن شرط به comprehension برای فیلتر: <code class="inline-code">[x for x in items if x &gt; 5]</code>.</li>
+          <li>حالت if/else در comprehension: <code class="inline-code">[A if cond else B for x in items]</code>.</li>
+          <li><strong>dict comprehension</strong> برای ساخت دیکشنری در یک خط.</li>
+          <li><strong>set comprehension</strong> برای ساخت مجموعه در یک خط.</li>
+          <li><strong>generator expression</strong> — همان ایده، ولی با <code class="inline-code">( )</code> و تنبل (بدون ذخیره در حافظه).</li>
+          <li><code class="inline-code">enumerate()</code> برای پیمایش با ایندکس.</li>
+          <li><code class="inline-code">zip()</code> برای پیمایش همزمان چند لیست.</li>
+          <li>مفهوم <strong>iterable</strong> و <strong>iterator</strong> و تفاوتشان.</li>
+          <li>تابع با <code class="inline-code">yield</code> (generator function) برای تولید داده‌ی بزرگ به‌صورت تنبل.</li>
+          <li>کِی از comprehension استفاده کنیم و کِی نه.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «comprehension ابزار قدرتمندی است، اما فقط وقتی استفاده کنید که <strong>خوانا</strong> باشد. کد کوتاه ولی گیج‌کننده، بدتر از کد بلند ولی واضح است.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا comprehension از for معمولی سریع‌تر است؟</summary><div class="faq-body"><p>بله، معمولاً. چون پایتون می‌تواند comprehension را بهینه‌تر اجرا کند. اما این تفاوت در داده‌های کوچک قابل توجه نیست. برای داده‌های بزرگ، generator می‌تواند از نظر حافظه هم مفید باشد. اما مهم‌ترین دلیل استفاده از comprehension، خوانایی و پایتونیک بودن است، نه فقط سرعت.</p></div></details>
+        <details class="faq-item"><summary>چند سطح for تو در تو در comprehension مجاز است؟</summary><div class="faq-body"><p>فنی می‌توانید چند سطح داشته باشید، ولی توصیه نمی‌شود. اگر بیش از دو <code>for</code> دارید، تقریباً همیشه بهتر است به <code>for</code> معمولی برگردید. کدی که در یک نگاه فهمیده نشود، دشمن شماست.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم در comprehension از تابع استفاده کنم؟</summary><div class="faq-body"><p>بله، همین توصیه می‌شود! مثلاً <code>[len(w) for w in words]</code> یا <code>[w.upper() for w in words]</code>. اگر منطق پیچیده دارید، بهتر است آن را در یک تابع جدا بنویسید و در comprehension صدایش بزنید.</p></div></details>
+        <details class="faq-item"><summary>تفاوت generator و list comprehension فقط در سینتکس است؟</summary><div class="faq-body"><p>خیر. تفاوت اصلی در <strong>رفتار</strong> است: list comprehension کل داده را یک‌جا در حافظه می‌سازد، اما generator تنبل است و یکی‌یکی داده می‌دهد. یکی از کاربردهای مهم: اگر داده بی‌نهایت باشد (مثلاً generator که همیشه عدد تولید می‌کند)، فقط با generator می‌توانید کار کنید.</p></div></details>
+        <details class="faq-item"><summary>آیا generator را می‌توان در comprehension استفاده کرد؟</summary><div class="faq-body"><p>بله. مثلاً <code>[x*2 for x in my_generator]</code> کار می‌کند. اما توجه کنید که مصرف کردن generator در comprehension، آن را تمام می‌کند. بعد از این کار، اگر دوباره روی generator حلقه بزنید، خالی است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۲ با <strong>ماژول و بسته</strong> آشنا می‌شوید: چطور کدتان را به فایل‌های مختلف تقسیم کنید، از ماژول‌های آماده‌ی پایتون استفاده کنید و کتابخانه‌های دیگران را وارد پروژه‌تان کنید. تا اینجا همه‌ی کدها در یک فایل بودند؛ از فصل بعد، یاد می‌گیرید چطور پروژه‌های بزرگ را سازمان‌دهی کنید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-11" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-11">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-10/index.html">→ فصل قبلی<br><b>🗂️ فصل ۱۰</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-12/index.html">فصل بعدی ←<br><b>🧱 فصل ۱۲: ماژول و بسته</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۱: Comprehension و Iterator | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

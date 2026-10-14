@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۳ CCNP — زیرساخت لایه ۲ (Layer 2 Infrastructure)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-03">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۳ — زیرساخت لایه ۲ (Layer 2 Infrastructure)</h1>
+    <div class="meta">
+      <span>📖 ۸۵ دقیقه</span>
+      <span>🎯 وزن در ENCOR: بخشی از ۳۰٪ Infrastructure</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در CCNA با پایه‌های VLAN، Trunk و STP آشنا شدی. در این فصل، همان مباحث را
+      در سطح <strong>حرفه‌ای و عیب‌یابی عمیق</strong> بررسی می‌کنیم:
+      <strong>Trunking پیشرفته</strong> با VTP و DTP،
+      <strong>RSTP</strong> و <strong>MSTP</strong> با تمام جزئیات،
+      <strong>EtherChannel</strong> در لایه ۲ و ۳،
+      و ابزارهای عیب‌یابی مثل <strong>SPAN/RSPAN</strong> و
+      <strong>Storm Control</strong>.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>سناریوهای واقعی</strong> است — چرا RSTP سریع‌تر از STP است،
+      چطور با MSTP بین چند VLAN تعادل بار ایجاد کنیم، و چطور مشکلات لایه ۲ را
+      در محیط‌های Production عیب‌یابی کنیم.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مرور سریع VLAN و Trunk</li>
+      <li>VTP — Vlan Trunking Protocol و ۳ Mode</li>
+      <li>DTP — Dynamic Trunking Protocol و خطرات امنیتی</li>
+      <li>Native VLAN و 802.1Q — عمیق</li>
+      <li>STP — مرور Port Roles و States</li>
+      <li>RSTP — Port Roles جدید و مکانیزم همگرایی سریع</li>
+      <li>RSTP — Proposal/Agreement و Sync</li>
+      <li>MSTP — مفهوم Instance و Region</li>
+      <li>MSTP — Load Balancing بین Instanceها</li>
+      <li>EtherChannel L2 — LACP و PAgP پیشرفته</li>
+      <li>EtherChannel L3 — Routed Port Channel</li>
+      <li>ابزارهای عیب‌یابی: SPAN، RSPAN، ERSPAN، Storm Control</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا VTP در برخی سناریوها خطرناک است؟</li>
+      <li>تفاوت RSTP با STP کلاسیک در چیست و چطور همگرایی به زیر ۱ ثانیه می‌رسد؟</li>
+      <li>MSTP چطور به Load Balancing بین چند VLAN کمک می‌کند؟</li>
+      <li>تفاوت EtherChannel لایه ۲ و لایه ۳ در چیست؟</li>
+      <li>چطور می‌توان ترافیک یک پورت خاص را برای تحلیل در Wireshark کپی کرد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۳.۱ ==== -->
+    <h3>۳.۱ مرور سریع VLAN و Trunk</h3>
+    <p>
+      در CCNA پایه‌ی این مباحث را دیدی. در اینجا نکات پیشرفته و تفاوت‌های سطح CCNP را می‌بینیم:
+    </p>
+
+    <ul>
+      <li><strong>VLAN Range:</strong> Normal (1-1005) و Extended (1006-4094)</li>
+      <li><strong>VLAN 1:</strong> Default — هیچ‌وقت برای Data استفاده نکن</li>
+      <li><strong>VLAN 1002-1005:</strong> رزرو FDDI/Token Ring (Legacy)</li>
+      <li><strong>Trunk:</strong> از 802.1Q روی همه‌ی پورت‌های Uplink</li>
+      <li><strong>Native VLAN:</strong> فریم‌های بدون Tag — همیشه با VLAN اختصاصی (مثل 999) عوض کن</li>
+      <li><strong>Allowed VLANs:</strong> فقط VLANهای موردنیاز را روی Trunk مجاز کن</li>
+    </ul>
+
+    <pre><code>! پیکربندی Trunk بهینه
+Switch(config)# interface Gi0/24
+Switch(config-if)# switchport trunk encapsulation dot1q
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk native vlan 999
+Switch(config-if)# switchport trunk allowed vlan 10,20,30,999
+Switch(config-if)# switchport nonegotiate
+! nonegotiate: DTP را خاموش می‌کند (امنیت)
+
+! بررسی
+Switch# show interfaces trunk
+Switch# show interfaces Gi0/24 switchport</code></pre>
+
+    <!-- ==== ۳.۲ ==== -->
+    <h3>۳.۲ VTP — Vlan Trunking Protocol</h3>
+    <p>
+      VTP یک پروتکل سیسکو است که اطلاعات VLAN را بین سوئیچ‌ها همگام می‌کند.
+      مزیت: مدیریت متمرکز VLANها. عیب: اگر اشتباه پیکربندی شود، می‌تواند
+      کل VLAN Database را پاک کند.
+    </p>
+
+    <p><strong>سه Mode اصلی VTP:</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">ایجاد/تغییر VLAN</th>
+          <th style="padding:6px;border:1px solid var(--border)">Forward VTP</th>
+          <th style="padding:6px;border:1px solid var(--border)">Sync با دیگران</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Server</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Client</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Transparent</td><td style="padding:6px;border:1px solid var(--border)">✅ (فقط محلی)</td><td style="padding:6px;border:1px solid var(--border)">✅ (بدون اعمال)</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>سه نسخه VTP:</strong></p>
+    <ul>
+      <li><strong>VTPv1:</strong> فقط Normal VLANs (1-1005)</li>
+      <li><strong>VTPv2:</strong> پشتیبانی از Token Ring + Versionهای بهتر (پیش‌فرض سیسکو)</li>
+      <li><strong>VTPv3:</strong> Extended VLANs، Primary Server، Authentication قوی، Mode Off</li>
+    </ul>
+
+    <pre><code>! پیکربندی VTP Server
+Switch(config)# vtp domain COMPANY
+Switch(config)# vtp mode server
+Switch(config)# vtp version 3
+Switch(config)# vtp password StrongVTPPass
+Switch(config)# vtp pruning
+! pruning: VLANهای بی‌استفاده به Trunk فرستاده نمی‌شوند
+
+! بررسی
+Switch# show vtp status
+Switch# show vtp password
+Switch# show vtp counters</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ خطر VTP</div>
+      اگر یک سوئیچ با Revision Number بالاتر به شبکه اضافه شود، VLAN Database
+      کل شبکه را پاک می‌کند. همیشه:
+      <ul style="margin:6px 0 0">
+        <li>VTP Domain را یکتا و غیرپیش‌فرض بگذار</li>
+        <li>Password قوی تنظیم کن</li>
+        <li>روی سوئیچ‌های Edge از VTP Mode Transparent یا Off استفاده کن</li>
+        <li>قبل از اضافه کردن سوئیچ جدید، Revision آن را ریست کن</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۳.۳ ==== -->
+    <h3>۳.۳ DTP — Dynamic Trunking Protocol</h3>
+    <p>
+      DTP پروتکل سیسکو برای مذاکره‌ی خودکار حالت Trunk است. <strong>خطر امنیتی جدی</strong>
+      دارد — یک مهاجم می‌تواند با ارسال DTP Frame، پورت Access را Trunk کند و به همه‌ی VLANها دسترسی بگیرد.
+    </p>
+
+    <p><strong>حالت‌های DTP روی پورت:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Access</td><td style="padding:6px;border:1px solid var(--border)">همیشه Access — DTP غیرفعال</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Trunk</td><td style="padding:6px;border:1px solid var(--border)">همیشه Trunk — DTP فعال</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Dynamic Auto</td><td style="padding:6px;border:1px solid var(--border)">منتظر DTP از طرف مقابل — پاسخ می‌دهد ولی ابتکار نمی‌کند</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Dynamic Desirable</td><td style="padding:6px;border:1px solid var(--border)">ابتکار می‌کند و DTP می‌فرستد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Nonegotiate</td><td style="padding:6px;border:1px solid var(--border)">DTP کاملاً خاموش — بهترین گزینه امنیتی</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! غیرفعال کردن DTP روی پورت
+Switch(config)# interface Gi0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport nonegotiate
+
+! روی Trunk
+Switch(config)# interface Gi0/24
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport nonegotiate
+
+! بررسی
+Switch# show dtp interface Gi0/24
+! DTP information for GigabitEthernet0/24:
+! TOS/TAS/TNS: TRUNK/ON/TRUNK
+! TOT/TAT/TNT: 802.1Q/802.1Q/802.1Q
+! Neighbor address 1: ...
+! Local device ID: ...</code></pre>
+
+    <!-- ==== ۳.۴ ==== -->
+    <h3>۳.۴ Native VLAN و 802.1Q — عمیق</h3>
+    <p>
+      Native VLAN روی Trunk یعنی VLANی که فریم‌های آن بدون Tag فرستاده می‌شوند.
+      اگر Native VLAN دو طرف Trunk یکسان نباشد، پیام CDP Error می‌آید و
+      ترافیک VLANهای دیگر ممکن است دچار مشکل شود.
+    </p>
+
+    <p><strong>حملات Native VLAN:</strong></p>
+    <ul>
+      <li><strong>VLAN Hopping با Double Tagging:</strong> مهاجم فریم با دو Tag 802.1Q می‌فرستد — سوئیچ اول Tag خارجی را (Native) حذف می‌کند و Tag داخلی باقی می‌ماند → دسترسی به VLAN غیرمجاز</li>
+      <li><strong>راه دفاع:</strong> Native VLAN = VLAN بی‌استفاده (999)، Trunk کردن Native VLAN روی Access Ports (تگ زدن Native روی پورت کاربر)</li>
+    </ul>
+
+    <pre><code>! Defense در برابر Double Tagging
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# switchport mode access
+Switch(config-if-range)# switchport access vlan 10
+Switch(config-if-range)# switchport nonegotiate
+
+! Native VLAN اختصاصی
+Switch(config)# interface Gi0/24
+Switch(config-if)# switchport trunk native vlan 999
+
+! vlan dot1q tag native — تگ زدن Native روی Trunk
+Switch(config)# vlan dot1q tag native
+! با این دستور، Native VLAN هم Tag می‌شود — Double Tagging نمی‌گیرد</code></pre>
+
+    <!-- ==== ۳.۵ ==== -->
+    <h3>۳.۵ STP — مرور Port Roles و States</h3>
+    <p>
+      STP کلاسیک (802.1D) با ۵ State و ۳ Port Role کار می‌کند و برای همگرایی
+      ۳۰ تا ۵۰ ثانیه زمان می‌برد.
+    </p>
+
+    <p><strong>Port Roles در STP کلاسیک:</strong></p>
+    <ul>
+      <li><strong>Root Port (RP):</strong> بهترین پورت هر سوئیچ غیر Root به سمت Root</li>
+      <li><strong>Designated Port (DP):</strong> پورتی که ترافیک را به سمت Root هدایت می‌کند</li>
+      <li><strong>Blocking Port (BP):</strong> مسدود برای جلوگیری از Loop</li>
+    </ul>
+
+    <p><strong>Port States:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">State</th>
+          <th style="padding:6px;border:1px solid var(--border)">مدت</th>
+          <th style="padding:6px;border:1px solid var(--border)">داده</th>
+          <th style="padding:6px;border:1px solid var(--border)">MAC Learning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Blocking</td><td style="padding:6px;border:1px solid var(--border)">۲۰s</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Listening</td><td style="padding:6px;border:1px solid var(--border)">۱۵s</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Learning</td><td style="padding:6px;border:1px solid var(--border)">۱۵s</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Forwarding</td><td style="padding:6px;border:1px solid var(--border)">—</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Disabled</td><td style="padding:6px;border:1px solid var(--border)">—</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۳.۶ ==== -->
+    <h3>۳.۶ RSTP — Rapid Spanning Tree Protocol (802.1w)</h3>
+    <p>
+      RSTP (که در سیسکو با نام <strong>Rapid PVST+</strong> پیاده می‌شود) همگرایی را
+      به <strong>زیر ۱ ثانیه</strong> می‌رساند — با سه تغییر اساسی نسبت به STP کلاسیک:
+    </p>
+
+    <ol>
+      <li><strong>Port Roles جدید:</strong> Alternate و Backup جایگزین Blocking شدند</li>
+      <li><strong>Port States جدید:</strong> Discarding جای Blocking، Listening و Disabled</li>
+      <li><strong>مکانیزم Proposal/Agreement:</strong> Handshake بین سوئیچ‌ها برای رسیدن سریع به Forwarding</li>
+    </ol>
+
+    <p><strong>Port Roles در RSTP:</strong></p>
+    <ul>
+      <li><strong>Root Port:</strong> مثل STP کلاسیک</li>
+      <li><strong>Designated Port:</strong> مثل STP کلاسیک</li>
+      <li><strong>Alternate Port:</strong> پورت پشتیبان برای Root — در صورت شکست مسیر اصلی فعال می‌شود (جایگزین Blocking)</li>
+      <li><strong>Backup Port:</strong> پورت پشتیبان برای Designated — در سناریوهای Hub (نادر)</li>
+    </ul>
+
+    <p><strong>Port States در RSTP:</strong></p>
+    <ul>
+      <li><strong>Discarding:</strong> نه یاد می‌گیرد نه Forward (جایگزین Blocking، Listening، Disabled)</li>
+      <li><strong>Learning:</strong> یاد می‌گیرد ولی Forward نمی‌کند</li>
+      <li><strong>Forwarding:</strong> کاملاً فعال</li>
+    </ul>
+
+    <pre><code>! فعال‌سازی RSTP
+Switch(config)# spanning-tree mode rapid-pvst
+
+! بررسی
+Switch# show spanning-tree
+Switch# show spanning-tree vlan 10
+Switch# show spanning-tree vlan 10 detail
+Switch# show spanning-tree summary</code></pre>
+
+    <!-- ==== ۳.۷ ==== -->
+    <h3>۳.۷ RSTP — Proposal/Agreement و Sync</h3>
+    <p>
+      مکانیزم اصلی سرعت RSTP، Handshake بین سوئیچ‌هاست که از BPDU Flag استفاده می‌کند:
+    </p>
+
+    <p><strong>فرآیند:</strong></p>
+    <ol>
+      <li>سوئیچ Root <strong>Proposal</strong> می‌فرستد (BPDU با Flag Proposal)</li>
+      <li>سوئیچ دریافت‌کننده، پورت‌های غیرEdge خود را Sync (Block) می‌کند</li>
+      <li>سوئیچ دریافت‌کننده <strong>Agreement</strong> برمی‌گرداند (BPDU با Flag Agreement)</li>
+      <li>پورت به‌سرعت به Forwarding می‌رود</li>
+    </ol>
+
+    <pre><code>! اجزای کلیدی RSTP
+- Sync: فرآیند Block کردن پورت‌های Downstream برای همگرایی سریع
+- Proposal: پیشنهاد از سمت Root
+- Agreement: تأیید از سمت Downstream
+- Edge Port: پورتی که به Endpoint وصل است (مثل PortFast در STP)
+- Link Type: Point-to-Point یا Shared (Hub)
+
+! بررسی
+Switch# show spanning-tree interface Gi0/1 detail
+! ببین: Edge Port: Enabled, Link Type: Point-to-Point</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      RSTP نیازمند <strong>Full-Duplex Link</strong> و <strong>Point-to-Point</strong> است
+      تا همگرایی سریع داشته باشد. روی Hub یا لینک Half-Duplex، به STP کلاسیک برمی‌گردد.
+    </div>
+
+    <!-- ==== ۳.۸ ==== -->
+    <h3>۳.۸ MSTP — Multiple Spanning Tree Protocol (802.1s)</h3>
+    <p>
+      MSTP یا <strong>MST</strong> یک نسخه‌ی پیشرفته است که اجازه می‌دهد
+      <strong>چند VLAN را به یک Instance</strong> نگاشت کنیم. این کار باعث:
+    </p>
+    <ul>
+      <li>کاهش بار پردازشی (به‌جای یک STP برای هر VLAN)</li>
+      <li>Load Balancing بین Instanceهای مختلف</li>
+      <li>پشتیبانی از تعداد بالای VLAN</li>
+    </ul>
+
+    <p><strong>مفاهیم کلیدی MSTP:</strong></p>
+    <ul>
+      <li><strong>MST Instance (MSTI):</strong> یک توپولوژی STP مجزا — چند VLAN در یک Instance</li>
+      <li><strong>MST Region:</strong> گروهی از سوئیچ‌ها با پیکربندی MST یکسان</li>
+      <li><strong>IST (Internal Spanning Tree):</strong> Instance 0 — پیش‌فرض، همه‌ی VLANها را در بر می‌گیرد</li>
+      <li><strong>CST (Common Spanning Tree):</strong> بین Regionها — مثل STP کلاسیک بین MST و PVST</li>
+    </ul>
+
+    <p><strong>پارامترهای یکسان‌ساز Region:</strong></p>
+    <ol>
+      <li><strong>Name:</strong> نام Region</li>
+      <li><strong>Revision Number:</strong> شماره Revision</li>
+      <li><strong>VLAN-to-Instance Mapping:</strong> جدول نگاشت</li>
+    </ol>
+
+    <pre><code>! پیکربندی MSTP
+Switch(config)# spanning-tree mode mst
+
+Switch(config)# spanning-tree mst configuration
+Switch(config-mst)# name COMPANY-MST
+Switch(config-mst)# revision 1
+Switch(config-mst)# instance 1 vlan 10,20,30
+Switch(config-mst)# instance 2 vlan 40,50,60
+Switch(config-mst)# exit
+
+! تعیین Root برای هر Instance
+Switch(config)# spanning-tree mst 1 root primary
+Switch(config)# spanning-tree mst 2 root secondary
+
+! بررسی
+Switch# show spanning-tree mst configuration
+Switch# show spanning-tree mst 1
+Switch# show spanning-tree mst 2
+Switch# show spanning-tree mst</code></pre>
+
+    <!-- ==== ۳.۹ ==== -->
+    <h3>۳.۹ MSTP — Load Balancing</h3>
+    <p>
+      با MSTP می‌توان بین چند لینک، تعادل بار ایجاد کرد. مثال:
+      دو سوئیچ با دو لینک متصل — Instance 1 از لینک اول، Instance 2 از لینک دوم عبور کند.
+    </p>
+
+    <pre><code>! سناریو: SW1 و SW2 با دو لینک Gi0/23 و Gi0/24
+! SW1: Root برای MSTI 1، Secondary برای MSTI 2
+! SW2: Root برای MSTI 2، Secondary برای MSTI 1
+
+! ===== SW1 =====
+SW1(config)# spanning-tree mst 1 root primary
+SW1(config)# spanning-tree mst 2 root secondary
+
+! ===== SW2 =====
+SW2(config)# spanning-tree mst 1 root secondary
+SW2(config)# spanning-tree mst 2 root primary
+
+! نتیجه: ترافیک MSTI 1 از یک لینک و MSTI 2 از لینک دیگر
+! بررسی
+SW1# show spanning-tree mst 1
+SW1# show spanning-tree mst 2</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در MSTP، همه‌ی سوئیچ‌های یک Region باید:
+      <ul style="margin:6px 0 0">
+        <li>Name یکسان داشته باشند</li>
+        <li>Revision Number یکسان داشته باشند</li>
+        <li>VLAN-to-Instance Mapping یکسان داشته باشند</li>
+      </ul>
+      اگر یکی از اینها متفاوت باشد، سوئیچ به Region دیگری می‌رود و همگرایی MSTP به STP ساده برمی‌گردد.
+    </div>
+
+    <!-- ==== ۳.۱۰ ==== -->
+    <h3>۳.۱۰ EtherChannel لایه ۲ — LACP و PAgP</h3>
+    <p>
+      EtherChannel یعنی تجمیع چند لینک فیزیکی به یک لینک منطقی. در CCNP،
+      جزئیات بیشتر و پروتکل‌های مختلف را می‌بینیم.
+    </p>
+
+    <p><strong>سه روش ایجاد EtherChannel:</strong></p>
+    <ul>
+      <li><strong>LACP (802.3ad):</strong> استاندارد باز — حالت‌های Active و Passive</li>
+      <li><strong>PAgP:</strong> اختصاصی سیسکو — حالت‌های Desirable و Auto</li>
+      <li><strong>Static (On):</strong> بدون مذاکره — <strong>توصیه نمی‌شود</strong></li>
+    </ul>
+
+    <p><strong>قوانین مهم EtherChannel:</strong></p>
+    <ul>
+      <li>همه‌ی پورت‌ها باید <strong>هم‌سرعت</strong> و <strong>هم‌Duplex</strong> باشند</li>
+      <li>همه در یک VLAN (Access) یا همه Trunk با همان Allowed VLANs</li>
+      <li>همه در یک Mode (Access یا Trunk) — نه مخلوط</li>
+      <li>حداکثر ۸ پورت فعال + ۸ پورت Standby در LACP</li>
+      <li>Load Balancing بر اساس MAC/IP/Port — با <code>port-channel load-balance</code></li>
+    </ul>
+
+    <pre><code>! EtherChannel L2 با LACP
+Switch(config)# interface range Gi0/23-24
+Switch(config-if-range)# shutdown
+Switch(config-if-range)# switchport mode trunk
+Switch(config-if-range)# switchport trunk native vlan 999
+Switch(config-if-range)# switchport trunk allowed vlan 10,20,30,999
+Switch(config-if-range)# channel-protocol lacp
+Switch(config-if-range)# channel-group 1 mode active
+Switch(config-if-range)# no shutdown
+Switch(config-if-range)# exit
+
+! پیکربندی Load Balancing
+Switch(config)# port-channel load-balance src-dst-ip
+! گزینه‌ها: src-mac, dst-mac, src-dst-mac, src-ip, dst-ip, src-dst-ip, src-port, dst-port, src-dst-port
+
+! بررسی
+Switch# show etherchannel summary
+Switch# show etherchannel 1 port-channel
+Switch# show etherchannel load-balance
+Switch# show interfaces port-channel 1</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      اگر یک EtherChannel به‌درستی Up نشود، احتمالاً:
+      <ul style="margin:6px 0 0">
+        <li>پورت‌ها هم‌سرعت نیستند</li>
+        <li>Duplex متفاوت است</li>
+        <li>VLANهای Allowed متفاوتند</li>
+        <li>حالت Mode یکسان نیست (یک طرف Active، طرف دیگر Passive OK؛ دو طرف Passive نه)</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۳.۱۱ ==== -->
+    <h3>۳.۱۱ EtherChannel لایه ۳ — Routed Port Channel</h3>
+    <p>
+      می‌توان EtherChannel را در لایه ۳ هم ساخت — با <code>no switchport</code>
+      روی پورت‌های فیزیکی، و IP دادن به Port-Channel Interface.
+    </p>
+
+    <pre><code>! EtherChannel L3
+Switch(config)# interface range Gi0/23-24
+Switch(config-if-range)# no switchport
+Switch(config-if-range)# channel-group 1 mode active
+Switch(config-if-range)# exit
+
+Switch(config)# interface Port-channel 1
+Switch(config-if)# no switchport
+Switch(config-if)# ip address 10.1.1.1 255.255.255.252
+
+! بررسی
+Switch# show etherchannel summary
+Switch# show ip interface brief
+Switch# show ip route
+
+! نکته: اینترفیس Port-channel باید no switchport باشد و IP داشته باشد
+! اینترفیس‌های فیزیکی داخلش نباید IP داشته باشند</code></pre>
+
+    <p><strong>مزیت EtherChannel L3:</strong> پهنای باند بالاتر بین دو سوئیچ L3،
+      با Load Balancing بهتر از یک لینک.</p>
+
+    <!-- ==== ۳.۱۲ ==== -->
+    <h3>۳.۱۲ ابزارهای عیب‌یابی — SPAN، RSPAN، Storm Control</h3>
+
+    <p><strong>SPAN (Switched Port Analyzer):</strong> کپی کردن ترافیک یک پورت
+      به پورت دیگر برای تحلیل با Wireshark.</p>
+
+    <pre><code>! SPAN Local
+Switch(config)# monitor session 1 source interface Gi0/1 both
+! both = در هر دو جهت (rx و tx)
+! می‌توانی rx یا tx هم بگذاری
+
+Switch(config)# monitor session 1 destination interface Gi0/10
+
+! بررسی
+Switch# show monitor session 1
+Switch# show monitor session all
+
+! حذف
+Switch(config)# no monitor session 1</code></pre>
+
+    <p><strong>RSPAN (Remote SPAN):</strong> ارسال ترافیک به یک سوئیچ دیگر
+      در VLAN اختصاصی.</p>
+
+    <pre><code>! RSPAN — روی سوئیچ مبدأ
+Switch(config)# vlan 999
+Switch(config-vlan)# remote-span
+Switch(config-vlan)# exit
+
+Switch(config)# monitor session 1 source interface Gi0/1 both
+Switch(config)# monitor session 1 destination remote vlan 999
+
+! روی سوئیچ مقصد
+Switch(config)# monitor session 1 source remote vlan 999
+Switch(config)# monitor session 1 destination interface Gi0/10
+
+! بررسی
+Switch# show monitor session all</code></pre>
+
+    <p><strong>ERSPAN (Encapsulated RSPAN):</strong> ارسال ترافیک در قالب GRE
+      بین سوئیچ‌ها با IP — برای سناریوهای دور و روی L3.</p>
+
+    <pre><code>! ERSPAN — فقط روی پلتفرم‌های خاص
+Switch(config)# monitor session 1 type erspan-source
+Switch(config-mon-erspan-src)# source interface Gi0/1
+Switch(config-mon-erspan-src)# destination
+Switch(config-mon-erspan-src-dst)# erspan-id 10
+Switch(config-mon-erspan-src-dst)# ip address 10.10.10.10
+Switch(config-mon-erspan-src-dst)# origin ip address 10.10.10.1</code></pre>
+
+    <p><strong>Storm Control:</strong> محدودسازی Broadcast/Unknown Unicast/Multicast
+      برای جلوگیری از Broadcast Storm.</p>
+
+    <pre><code>! Storm Control
+Switch(config)# interface Gi0/1
+Switch(config-if)# storm-control broadcast level 20
+! 20% = اگر نرخ Broadcast به ۲۰٪ رسید، Drop کن
+
+Switch(config-if)# storm-control multicast level 30
+Switch(config-if)# storm-control unicast level 25
+
+! (اختیاری) وقتی از حد گذشت، پورت Shutdown شود
+Switch(config-if)# storm-control action shutdown
+! یا trap
+
+! بررسی
+Switch# show storm-control
+Switch# show storm-control broadcast</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Storm Control در محیط‌های Production حتماً فعال باش — یک Broadcast Storm
+      می‌تواند کل شبکه را در چند ثانیه از کار بیندازد.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در Trunk، همیشه <code>switchport nonegotiate</code> بزن — DTP را کاملاً خاموش کن.
+      یک مهاجم می‌تواند با DTP Frame پورت Access را Trunk کند و به همه‌ی VLANها دسترسی بگیرد.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار VTP</div>
+      VTP می‌تواند خطرناک باشد. سوئیچ جدید با Revision Number بالاتر،
+      VLAN Database کل شبکه را پاک می‌کند. از VTPv3 با Password و Mode Transparent
+      روی Edgeها استفاده کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در MSTP، قبل از پیکربندی، یک نقشه‌ی کامل از Region و Instanceها بکش.
+      یک تغییر کوچک در Name یا Revision، می‌تواند سوئیچ را به Region دیگری بفرستد.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۴ CCNP وارد <span class="term" data-term="ospf">OSPF</span> چندناحیه‌ای،
+      <span class="term" data-term="eigrp">EIGRP</span> و
+      <span class="term" data-term="bgp">BGP</span> پیشرفته می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در ENARSI، عیب‌یابی STP در محیط‌های Multi-Vendor و
+      <span class="term" data-term="vxlan">VXLAN</span> EVPN را در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — پیکربندی کامل Trunk بهینه و امن</h3>
+    <pre><code>Switch(config)# interface Gi0/24
+Switch(config-if)# switchport trunk encapsulation dot1q
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk native vlan 999
+Switch(config-if)# switchport trunk allowed vlan 10,20,30,99,999
+Switch(config-if)# switchport nonegotiate
+Switch(config-if)# spanning-tree guard root
+! Root Guard: اگر سوئیچ مقابل Root Bridge شود، پورت مسدود می‌شود
+Switch(config-if)# exit
+
+Switch(config)# interface range Gi0/1-23
+Switch(config-if-range)# switchport mode access
+Switch(config-if-range)# switchport access vlan 10
+Switch(config-if-range)# switchport nonegotiate
+Switch(config-if-range)# spanning-tree portfast
+Switch(config-if-range)# spanning-tree bpduguard enable
+Switch(config-if-range)# storm-control broadcast level 20
+Switch(config-if-range)# exit
+
+! چک نهایی
+Switch# show interfaces trunk
+Switch# show spanning-tree</code></pre>
+
+    <h3>مثال ۲ — VTPv3 امن با Primary Server</h3>
+    <pre><code>Switch(config)# vtp domain COMPANY
+Switch(config)# vtp version 3
+Switch(config)# vtp mode server
+Switch(config)# vtp password StrongVTP@2024 secret
+Switch(config)# vtp pruning
+
+! تعیین Primary Server (فقط VTPv3)
+Switch# vtp primary vlan
+! یا vtp primary mst
+
+! بررسی
+Switch# show vtp status
+! ببین: VTP Operating Mode: Server
+!        Configuration Revision: X
+!        Primary ID: ...
+
+! روی سوئیچ‌های Edge
+Switch(config)# vtp mode transparent
+! Transparent: تغییرات VLAN را Forward می‌کند ولی اعمال نمی‌کند
+! امن‌تر برای Edgeها</code></pre>
+
+    <h3>مثال ۳ — RSTP با PortFast و BPDU Guard</h3>
+    <pre><code>! فعال‌سازی RSTP
+Switch(config)# spanning-tree mode rapid-pvst
+
+! PortFast سراسری روی پورت‌های Edge
+Switch(config)# spanning-tree portfast default
+Switch(config)# spanning-tree portfast bpduguard default
+
+! یا روی هر پورت
+Switch(config)# interface Gi0/1
+Switch(config-if)# spanning-tree portfast
+Switch(config-if)# spanning-tree bpduguard enable
+
+! Root Bridge دستی
+Switch(config)# spanning-tree vlan 10 root primary
+Switch(config)# spanning-tree vlan 20 root secondary
+
+! بررسی
+Switch# show spanning-tree
+Switch# show spanning-tree interface Gi0/1 detail
+! ببین: Edge Port: Enabled, BPDU Guard: Enabled</code></pre>
+
+    <h3>مثال ۴ — MSTP Load Balancing کامل</h3>
+    <pre><code>! روی همه‌ی سوئیچ‌های Region، همان پیکربندی:
+Switch(config)# spanning-tree mode mst
+Switch(config)# spanning-tree mst configuration
+Switch(config-mst)# name CAMPUS
+Switch(config-mst)# revision 1
+Switch(config-mst)# instance 1 vlan 10,20,30,40
+Switch(config-mst)# instance 2 vlan 50,60,70,80
+Switch(config-mst)# exit
+
+! SW1
+SW1(config)# spanning-tree mst 1 root primary
+SW1(config)# spanning-tree mst 2 root secondary
+
+! SW2
+SW2(config)# spanning-tree mst 1 root secondary
+SW2(config)# spanning-tree mst 2 root primary
+
+! بررسی
+SW1# show spanning-tree mst configuration
+SW1# show spanning-tree mst 1
+SW1# show spanning-tree mst 2
+! در MSTI 1 ببین: Root Bridge خودت
+! در MSTI 2 ببین: Alternate در یک لینک</code></pre>
+
+    <h3>مثال ۵ — RSPAN برای تحلیل ترافیک از راه دور</h3>
+    <pre><code>! ===== سوئیچ مبدأ (ترافیکی که می‌خواهیم) =====
+Source_SW(config)# vlan 999
+Source_SW(config-vlan)# remote-span
+Source_SW(config-vlan)# exit
+
+Source_SW(config)# monitor session 1 source interface Gi0/1 both
+Source_SW(config)# monitor session 1 destination remote vlan 999
+
+! Trunk بین دو سوئیچ باید VLAN 999 را حمل کند
+Source_SW(config)# interface Gi0/24
+Source_SW(config-if)# switchport trunk allowed vlan add 999
+
+! ===== سوئیچ مقصد (تحلیل) =====
+Dest_SW(config)# vlan 999
+Dest_SW(config-vlan)# remote-span
+Dest_SW(config-vlan)# exit
+
+Dest_SW(config)# interface Gi0/24
+Dest_SW(config-if)# switchport trunk allowed vlan add 999
+
+Dest_SW(config)# monitor session 1 source remote vlan 999
+Dest_SW(config)# monitor session 1 destination interface Gi0/10
+
+! ===== اتصال Wireshark به Gi0/10 سوئیچ مقصد =====
+! همه‌ی ترافیک Gi0/1 سوئیچ مبدأ را می‌بینی</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3 یا EVE-NG چهار سوئیچ IOS-XE بساز (SW1، SW2، SW3، SW4)</li>
+      <li>SW1 و SW2 را با دو لینک به هم وصل کن (Gi0/23 و Gi0/24)</li>
+      <li>روی هر دو، RSTP را فعال کن و Root Bridge برای VLAN 10 و 20 تعیین کن</li>
+      <li>EtherChannel با LACP روی دو لینک بین SW1 و SW2 بساز</li>
+      <li>VTPv3 روی SW1 به‌عنوان Primary Server پیکربندی کن</li>
+      <li>SW3 و SW4 را به‌عنوان VTP Client یا Transparent تنظیم کن</li>
+      <li>VLAN 10, 20, 30, 99, 999 بساز و روی Trunkها مجاز کن</li>
+      <li>MSTP با ۲ Instance پیکربندی کن و Load Balancing بین آنها برقرار کن</li>
+      <li>SW3 و SW4 را با دو لینک به SW1/SW2 وصل کن — MSTP را بررسی کن</li>
+      <li>روی همه‌ی پورت‌های Access، PortFast + BPDU Guard + Storm Control فعال کن</li>
+      <li>SPAN Local از یک پورت به یک PC با Wireshark راه‌اندازی کن</li>
+      <li>RSPAN بین دو سوئیچ راه‌اندازی کن و ترافیک VLAN 10 را از راه دور تحلیل کن</li>
+      <li>یک Native VLAN Mismatch عمدی بساز و پیام CDP Error را ببین</li>
+      <li>عیب‌یابی کامل: EtherChannel Down، MSTP Region Mismatch، Trunk Down</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>EtherChannel Up نمی‌شود:</strong> سرعت، Duplex، Mode، VLAN، Allowed VLANs باید یکسان باشند.</li>
+      <li><strong>Native VLAN Mismatch:</strong> در <code>show cdp neighbors detail</code> خودش را نشان می‌دهد.</li>
+      <li><strong>VTP Revision Number بالا:</strong> سوئیچ جدید را در حالت Transparent یا با Revision صفر اضافه کن.</li>
+      <li><strong>MSTP Region Mismatch:</strong> Name، Revision و Mapping باید یکسان باشند.</li>
+      <li><strong>STP Loop:</strong> BPDU Guard و Root Guard باید روی پورت‌های Edge فعال باشند.</li>
+      <li><strong>PortFast روی Trunk:</strong> فاجعه — PortFast فقط روی Access، همیشه BPDU Guard فعال.</li>
+      <li><strong>DTP Security:</strong> <code>switchport nonegotiate</code> روی همه‌ی پورت‌ها.</li>
+      <li><strong>SPAN ترافیک را Drop می‌کند:</strong> ممکن است پورت Destination Overload شده باشد — از RSPAN یا ERSPAN استفاده کن.</li>
+      <li><strong>Storm Control بیش از حد تهاجمی:</strong> ممکن است ترافیک مشروع را Drop کند — Threshold را درست تنظیم کن.</li>
+      <li><strong>RSTP کند کار می‌کند:</strong> Link Type باید Point-to-Point باشد — روی Hub یا Half-Duplex، به STP برمی‌گردد.</li>
+      <li><strong>VLAN Hopping:</strong> Native VLAN اختصاصی + <code>vlan dot1q tag native</code>.</li>
+      <li><strong>STP تغییر Root Bridge ناخواسته:</strong> Root Guard روی پورت‌های Downstream فعال کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="stp">STP</span> •
+      <span class="term" data-term="rstp">RSTP</span> •
+      <span class="term" data-term="etherchannel">EtherChannel</span> •
+      <span class="term" data-term="lacp">LACP</span> •
+      <span class="term" data-term="pagp">PAgP</span> •
+      <span class="term" data-term="portfast">PortFast</span> •
+      <span class="term" data-term="bpdu-guard">BPDU Guard</span> •
+      <span class="term" data-term="root-guard">Root Guard</span> •
+      <span class="term" data-term="native-vlan">Native VLAN</span> •
+      <span class="term" data-term="vlan">VLAN</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-03" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) در VTP، کدام Mode می‌تواند VLAN ایجاد کند ولی Sync نمی‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Server</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Transparent</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Client</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Off</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) خطر اصلی VTP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> کاهش سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> پهنای باند بالا</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> سوئیچ با Revision بالاتر می‌تواند کل VLAN Database را پاک کند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> رمزنگاری ضعیف</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) چرا DTP خطرناک است؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> پهنای باند مصرف می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> می‌تواند پورت Access را به Trunk تبدیل کند — دسترسی به همه VLANها</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> فقط روی سیسکو کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> کند است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) Native VLAN Mismatch چه پیامی می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> Error در Log</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Shutdown پورت</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> CDP Error در Neighbor Detail</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هیچ پیامی نمی‌دهد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۵) در STP کلاسیک، ترتیب States چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Blocking → Listening → Learning → Forwarding</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Learning → Blocking → Forwarding</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Forwarding → Learning → Blocking</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Listening → Blocking → Forwarding</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) تفاوت اصلی RSTP و STP کلاسیک چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> RSTP جدیدتر است</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> RSTP از IPv6 استفاده می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Port Roles/States جدید + مکانیزم Proposal/Agreement — همگرایی زیر ۱ ثانیه</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> RSTP فقط روی Wireless</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) در RSTP، Alternate Port چه نقشی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> پورت اصلی Root</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> پورت پشتیبان برای Root — در صورت شکست مسیر اصلی فعال می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> همان Designated</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> فقط برای Trunk</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) در MSTP، پارامترهای یکسان‌ساز Region کدامند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> فقط Name</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> فقط Revision</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Name + Revision + VLAN-to-Instance Mapping</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> فقط IP Management</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) MSTP چگونه Load Balancing می‌سازد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> با افزایش پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> با نگاشت VLANها به Instanceهای مختلف و Root متفاوت</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> با QoS</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> با Aggregation</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۰) حداقل شرط Up شدن EtherChannel چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> سرعت، Duplex، Mode و VLANها یکسان</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> فقط سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> فقط VLAN</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> فقط پروتکل یکسان</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) در LACP، دو طرف Passive می‌توانند EtherChannel بسازند؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> بله</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> فقط اگر Static باشد</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> خیر — حداقل یک طرف باید Active باشد</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> فقط روی Trunk</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) در EtherChannel لایه ۳، پورت فیزیکی چه پیکربندی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> IP مستقیم</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> <code>no switchport</code> و بدون IP — IP روی Port-channel</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Trunk</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Access</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) SPAN برای چه استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> مسیریابی</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> کپی ترافیک یک پورت به پورت دیگر برای تحلیل</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> Load Balancing</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) تفاوت SPAN و RSPAN در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> RSPAN روی یک سوئیچ است</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> SPAN از راه دور کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> RSPAN بین سوئیچ‌ها با VLAN اختصاصی، SPAN فقط روی یک سوئیچ</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) Storm Control چه چیزی را محدود می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> پهنای باند کل</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Broadcast، Unknown Unicast و Multicast ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> فقط VoIP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط IPv6</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک Campus کامل با MSTP و EtherChannel طراحی کن:</p>
+    <ul>
+      <li><strong>۴ سوئیچ:</strong> ۲ Core/Distribution و ۲ Access</li>
+      <li><strong>EtherChannel L2</strong> بین دو Core و بین Core و Access (LACP)</li>
+      <li><strong>MSTP</strong> با ۳ Instance: VLAN 10-20 (MSTI 1)، VLAN 30-40 (MSTI 2)، VLAN 50-60 (MSTI 3)</li>
+      <li><strong>Load Balancing:</strong> هر Instance روی یک EtherChannel متفاوت Root داشته باشد</li>
+      <li><strong>VTPv3</strong> با Primary Server روی Core1 و Transparent روی Access</li>
+      <li><strong>Trunk</strong> روی EtherChannelها با Native VLAN 999</li>
+      <li><strong>Native VLAN Tagging</strong> (<code>vlan dot1q tag native</code>) برای جلوگیری از Double Tagging</li>
+      <li><strong>DTP غیرفعال</strong> روی همه‌ی پورت‌ها</li>
+      <li><strong>PortFast + BPDU Guard</strong> روی همه‌ی پورت‌های Access</li>
+      <li><strong>Storm Control</strong> روی پورت‌های Access با محدودیت ۲۰٪</li>
+      <li><strong>SPAN + RSPAN</strong> برای تحلیل ترافیک یک VLAN خاص</li>
+      <li>مستندسازی کامل توپولوژی + VLAN Plan + STP Topology</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Loop عمدی بساز (دو کابل بین دو Access) و ببین MSTP چطور Block می‌کند.</li>
+        <li>یک Native VLAN Mismatch عمدی بساز و پیام CDP را در Log ببین.</li>
+        <li>یک EtherChannel اشتباه پیکربندی کن (سرعت متفاوت) و ببین چطور Up نمی‌شود.</li>
+        <li>ارتقاء از PVST+ به MSTP را با Down Time صفر انجام بده.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>VLAN:</strong> Normal (1-1005) + Extended (1006-4094)</li>
+      <li><strong>VTP:</strong> Server (ایجاد و Sync)، Client (Sync)، Transparent (فقط محلی)، Off</li>
+      <li><strong>VTPv3:</strong> Extended VLANs، Primary Server، Authentication قوی</li>
+      <li><strong>DTP:</strong> خطرناک — همیشه <code>switchport nonegotiate</code></li>
+      <li><strong>Native VLAN:</strong> همیشه VLAN اختصاصی (999)، <code>vlan dot1q tag native</code></li>
+      <li><strong>STP کلاسیک:</strong> Blocking (۲۰s) → Listening (۱۵s) → Learning (۱۵s) → Forwarding</li>
+      <li><strong>RSTP:</strong> Port Roles جدید (Alternate، Backup)، States جدید (Discarding)، Proposal/Agreement</li>
+      <li><strong>MSTP:</strong> Instance برای گروهی از VLANها، Load Balancing، Region با ۳ پارامتر یکسان</li>
+      <li><strong>EtherChannel:</strong> LACP (Active/Passive)، PAgP (Desirable/Auto)، Static</li>
+      <li><strong>EtherChannel L3:</strong> <code>no switchport</code> + IP روی Port-channel</li>
+      <li><strong>Load Balancing:</strong> <code>port-channel load-balance src-dst-ip</code></li>
+      <li><strong>PortFast:</strong> فقط روی Access، همیشه با BPDU Guard</li>
+      <li><strong>Root Guard:</strong> روی پورت‌های Downstream برای جلوگیری از Root ناخواسته</li>
+      <li><strong>SPAN:</strong> Local — <strong>RSPAN:</strong> بین سوئیچ‌ها با VLAN اختصاصی — <strong>ERSPAN:</strong> روی L3 با GRE</li>
+      <li><strong>Storm Control:</strong> محدودسازی Broadcast/Unknown Unicast/Multicast</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_02.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-03">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_04.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

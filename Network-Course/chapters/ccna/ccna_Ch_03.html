@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۳ CCNA — اتصال IP (مسیریابی، OSPF، FHRP)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccna" data-chapter="ccna-03">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📘 فصل ۳ — اتصال IP (IP Connectivity)</h1>
+    <div class="meta">
+      <span>📖 ۹۰ دقیقه</span>
+      <span>🎯 وزن در آزمون: ۲۵٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این فصل، <strong>قلب CCNA</strong> است — با ۲۵٪ وزن، بیشترین سهم را در آزمون دارد.
+      از اینجا وارد دنیای <strong>مسیریابی</strong> می‌شویم: چطور روتر تصمیم می‌گیرد بسته را کجا بفرستد،
+      چطور جدول مسیریابی را می‌خوانیم، <strong>مسیرهای استاتیک</strong> را پیکربندی می‌کنیم،
+      و با <strong>OSPFv2</strong> (پروتکل داینامیک استاندارد) مسیرها را خودکار یاد می‌گیریم.
+      در پایان با <strong>FHRP</strong> (HSRP و VRRP) افزونگی Gateway می‌سازیم.
+    </p>
+    <p>
+      بعد از این فصل، می‌توانی دو یا سه روتر را با مسیریابی استاتیک و OSPF به هم متصل کنی
+      و ترافیک را بین شبکه‌های مختلف عبور بدهی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>نقش روتر و تفاوت با سوئیچ لایه ۳</li>
+      <li>ساختار جدول مسیریابی و ستون‌ها</li>
+      <li>مفاهیم Next Hop، Metric، Administrative Distance</li>
+      <li>مسیر مستقیم (Connected) و Local</li>
+      <li>Default Route و کاربرد آن</li>
+      <li>مسیریابی استاتیک: Network، Host، Floating</li>
+      <li>مقایسه‌ی استاتیک و داینامیک</li>
+      <li>OSPFv2 — مفاهیم پایه و ویژگی‌ها</li>
+      <li>OSPF: Neighbor Adjacency و همسایگی</li>
+      <li>OSPF: Router ID، DR/BDR، انواع شبکه</li>
+      <li>OSPF: Metric (Cost) و انتخاب مسیر</li>
+      <li>FHRP: HSRP، VRRP و افزونگی Gateway</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>وقتی روتر بسته‌ای می‌گیرد که مقصدش را نمی‌شناسد، چه می‌کند؟</li>
+      <li>اگر به یک مقصد دو مسیر داشته باشیم — یکی استاتیک و یکی OSPF — کدام انتخاب می‌شود؟</li>
+      <li>چرا OSPF در شبکه‌های بزرگ بهتر از استاتیک است؟</li>
+      <li>اگر روتر اصلی Gateway از کار بیفتد، کاربران چطور بدون تغییر تنظیمات به اینترنت وصل می‌مانند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۳.۱ ==== -->
+    <h3>۳.۱ نقش روتر و مسیریابی</h3>
+    <p>
+      <strong>روتر</strong> یک دستگاه لایه ۳ است که شبکه‌های مختلف را به هم وصل می‌کند.
+      وظیفه‌ی اصلی آن، هدایت بسته‌های IP بین شبکه‌ها بر اساس <strong>جدول مسیریابی</strong> است.
+      تفاوت اصلی با سوئیچ لایه ۳ در این است که سوئیچ L3 برای <strong>داخل</strong> شبکه
+      (Inter-VLAN) استفاده می‌شود ولی روتر برای <strong>بین</strong> شبکه‌ها (WAN، اینترنت).
+    </p>
+    <p><strong>سه قدم اساسی مسیریابی:</strong></p>
+    <ol>
+      <li><strong>Path Determination:</strong> انتخاب بهترین مسیر برای هر مقصد</li>
+      <li><strong>Packet Forwarding:</strong> ارسال بسته به اینترفیس خروجی درست</li>
+      <li><strong>Path Maintenance:</strong> به‌روزرسانی مسیرها هنگام تغییر توپولوژی</li>
+    </ol>
+
+    <!-- ==== ۳.۲ ==== -->
+    <h3>۳.۲ ساختار جدول مسیریابی</h3>
+    <p>
+      قلب همه‌چیز در یک روتر، <strong>Routing Table</strong> است. هر ردیف این جدول یک
+      مقصد و اطلاعات مسیر تا آن مقصد را نشان می‌دهد.
+    </p>
+
+    <pre><code>Router# show ip route
+
+Codes: L - local, C - connected, S - static, R - RIP,
+       O - OSPF, D - EIGRP, * - candidate default
+
+Gateway of last resort is 10.0.0.1 to network 0.0.0.0
+
+S*   0.0.0.0/0 [1/0] via 10.0.0.1
+C    192.168.10.0/24 is directly connected, Gi0/0
+L    192.168.10.1/32 is directly connected, Gi0/0
+O    192.168.20.0/24 [110/2] via 10.0.0.2, 00:05:23, Gi0/1
+S    192.168.30.0/24 [1/0] via 10.0.0.3
+C    10.0.0.0/30 is directly connected, Gi0/1
+L    10.0.0.1/32 is directly connected, Gi0/1</code></pre>
+
+    <p><strong>خواندن هر ردیف:</strong></p>
+    <ul>
+      <li><strong>حرف اول (Code):</strong> نوع مسیر — C، L، S، O، D و...</li>
+      <li><strong>شبکه/پرفیکس:</strong> مقصد (مثلاً 192.168.20.0/24)</li>
+      <li><strong>[AD/Metric]:</strong> در براکت — Administrative Distance و متریک پروتکل</li>
+      <li><strong>via:</strong> آدرس Next Hop (روتر بعدی)</li>
+      <li><strong>Interface:</strong> اینترفیس خروجی (مثلاً Gi0/1)</li>
+    </ul>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ Codes مهم</div>
+      <ul style="margin:6px 0 0">
+        <li><strong>C — Connected:</strong> شبکه‌ای که اینترفیس روتر در آن قرار دارد</li>
+        <li><strong>L — Local:</strong> IP خود اینترفیس روتر (پرفیکس /32)</li>
+        <li><strong>S — Static:</strong> مسیر دستی تعریف‌شده</li>
+        <li><strong>S* — Default Static:</strong> مسیر پیش‌فرض استاتیک</li>
+        <li><strong>O — OSPF:</strong> مسیر یادگرفته‌شده از OSPF</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۳.۳ ==== -->
+    <h3>۳.۳ Next Hop، Metric و Administrative Distance</h3>
+
+    <p><strong>Next Hop:</strong> آدرس IP روتر بعدی که بسته باید به آن فرستاده شود.</p>
+
+    <p><strong>Metric:</strong> هزینه‌ی مسیر تا مقصد. واحد آن بسته به پروتکل فرق دارد:</p>
+    <ul>
+      <li>OSPF → Cost (بر اساس پهنای باند)</li>
+      <li>EIGRP → متریک ترکیبی (Bandwidth + Delay + ...)</li>
+      <li>RIP → Hop Count</li>
+    </ul>
+
+    <p><strong>Administrative Distance (AD):</strong> میزان اعتماد روتر به یک پروتکل مسیریابی.
+      عدد کمتر = اعتماد بیشتر. اگر دو پروتکل مسیر یکسانی یاد بگیرند، AD کمتر برنده است.</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">منبع مسیر</th>
+          <th style="padding:6px;border:1px solid var(--border)">AD پیش‌فرض</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Connected</td><td style="padding:6px;border:1px solid var(--border)">0</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Static</td><td style="padding:6px;border:1px solid var(--border)">1</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">eBGP</td><td style="padding:6px;border:1px solid var(--border)">20</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">EIGRP (Internal)</td><td style="padding:6px;border:1px solid var(--border)">90</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">OSPF</td><td style="padding:6px;border:1px solid var(--border)">110</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">RIP</td><td style="padding:6px;border:1px solid var(--border)">120</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">iBGP</td><td style="padding:6px;border:1px solid var(--border)">200</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      اگر یک مقصد هم با مسیر استاتیک (AD=1) و هم با OSPF (AD=110) در جدول باشد،
+      همیشه <strong>استاتیک</strong> انتخاب می‌شود — چون AD کمتر دارد.
+    </div>
+
+    <!-- ==== ۳.۴ ==== -->
+    <h3>۳.۴ مسیر مستقیم (Connected) و Local</h3>
+    <p>
+      به‌محض پیکربندی IP روی یک اینترفیس و زدن <code>no shutdown</code>، روتر خودش دو مسیر اضافه می‌کند:
+    </p>
+    <ul>
+      <li><strong>Connected (C):</strong> کل Subnet اینترفیس (مثلاً 192.168.1.0/24)</li>
+      <li><strong>Local (L):</strong> فقط IP خود اینترفیس با پرفیکس /32</li>
+    </ul>
+
+    <pre><code>Router(config)# interface Gi0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# no shutdown
+
+! نتیجه در جدول:
+C    192.168.1.0/24 is directly connected, Gi0/0
+L    192.168.1.1/32 is directly connected, Gi0/0</code></pre>
+
+    <!-- ==== ۳.۵ ==== -->
+    <h3>۳.۵ Default Route</h3>
+    <p>
+      Default Route (مسیر پیش‌فرض) مسیری است که روتر وقتی <strong>هیچ مسیر دیگری</strong>
+      برای یک مقصد پیدا نکرد، استفاده می‌کند. معمولاً برای اتصال به اینترنت به‌کار می‌رود.
+    </p>
+
+    <pre><code>! Default Route — Next Hop
+Router(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.1
+
+! Default Route — Interface
+Router(config)# ip route 0.0.0.0 0.0.0.0 Gi0/1
+
+! در جدول:
+S*   0.0.0.0/0 [1/0] via 10.0.0.1</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      ستاره‌ی کنار S (<code>S*</code>) یعنی این مسیر به‌عنوان Default Candidate علامت‌گذاری شده است.
+    </div>
+
+    <!-- ==== ۳.۶ ==== -->
+    <h3>۳.۶ مسیریابی استاتیک — انواع</h3>
+
+    <p><strong>سه نوع مسیر استاتیک اصلی:</strong></p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🌐 Network Route</strong>
+        <p style="margin:6px 0">مسیر استاتیک به یک Subnet کامل.</p>
+        <pre><code>Router(config)# ip route 192.168.20.0 255.255.255.0 10.0.0.2</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🎯 Host Route</strong>
+        <p style="margin:6px 0">مسیر به یک هاست خاص با پرفیکس /32.</p>
+        <pre><code>Router(config)# ip route 192.168.20.5 255.255.255.255 10.0.0.2</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🔀 Floating Static Route</strong>
+        <p style="margin:6px 0">مسیر پشتیبان با AD بالاتر که فقط وقتی مسیر اصلی از بین رفت نصب می‌شود.</p>
+        <pre><code>! مسیر پشتیبان با AD=200 (بالاتر از OSPF=110)
+Router(config)# ip route 192.168.20.0 255.255.255.0 10.0.0.3 200</code></pre>
+      </div>
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      Floating Static Route فقط زمانی در جدول ظاهر می‌شود که AD آن <strong>بالاتر</strong> از
+      مسیر اصلی باشد. اگر AD را اشتباه بدهی، ممکن است همیشه فعال شود و مشکل بسازد.
+    </div>
+
+    <!-- ==== ۳.۷ ==== -->
+    <h3>۳.۷ مقایسه‌ی مسیریابی استاتیک و داینامیک</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">استاتیک</th>
+          <th style="padding:6px;border:1px solid var(--border)">داینامیک</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیکربندی</td><td style="padding:6px;border:1px solid var(--border)">دستی</td><td style="padding:6px;border:1px solid var(--border)">خودکار</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مناسب برای</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌های کوچک، Default Route</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌های بزرگ و پویا</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">CPU/Memory</td><td style="padding:6px;border:1px solid var(--border)">کم</td><td style="padding:6px;border:1px solid var(--border)">بیشتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">همگرایی</td><td style="padding:6px;border:1px solid var(--border)">❌ ندارد</td><td style="padding:6px;border:1px solid var(--border)">✅ دارد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مقیاس‌پذیری</td><td style="padding:6px;border:1px solid var(--border)">❌ پایین</td><td style="padding:6px;border:1px solid var(--border)">✅ بالا</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۳.۸ ==== -->
+    <h3>۳.۸ OSPFv2 — مفاهیم پایه</h3>
+    <p>
+      <span class="term" data-term="ospf">OSPF</span> (Open Shortest Path First) یک پروتکل
+      مسیریابی <strong>Link-State</strong> است که استاندارد باز دارد و امروزه
+      محبوب‌ترین پروتکل IGP در شبکه‌های سازمانی است.
+    </p>
+
+    <p><strong>ویژگی‌های کلیدی:</strong></p>
+    <ul>
+      <li>الگوریتم <strong>Dijkstra (SPF)</strong> برای محاسبه‌ی بهترین مسیر</li>
+      <li>متریک آن <strong>Cost</strong> است (بر اساس پهنای باند)</li>
+      <li>AD پیش‌فرض: <strong>110</strong></li>
+      <li>پشتیبانی از <strong>VLSM</strong> و <strong>CIDR</strong></li>
+      <li>همگرایی سریع (کمتر از ۱۰ ثانیه در شبکه‌های معمولی)</li>
+      <li>استفاده از <strong>Multicast</strong> برای تبادل اطلاعات:
+        224.0.0.5 (AllSPFRouters) و 224.0.0.6 (AllDRouters)</li>
+      <li>پروتکل انتقال: IP با شماره‌ی پروتکل <strong>89</strong></li>
+    </ul>
+
+    <!-- ==== ۳.۹ ==== -->
+    <h3>۳.۹ OSPF — همسایگی (Neighbor Adjacency)</h3>
+    <p>
+      دو روتر OSPF ابتدا باید <strong>همسایه</strong> شوند، بعد <strong>همگرا</strong>.
+      این فرآیند ۷ مرحله دارد (از Down تا Full)، اما در عمل مهم‌ترین‌ها:
+    </p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">State</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Down</td><td style="padding:6px;border:1px solid var(--border)">هیچ Hello دریافت نشده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Init</td><td style="padding:6px;border:1px solid var(--border)">Hello دریافت شد ولی Router ID ما در آن نیست</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2-Way</td><td style="padding:6px;border:1px solid var(--border)">تبادل Hello کامل — وضعیت پایدار در Broadcast</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">ExStart/Exchange</td><td style="padding:6px;border:1px solid var(--border)">انتخاب Master/Slave و تبادل DBD</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Loading</td><td style="padding:6px;border:1px solid var(--border)">تبادل LSR/LSU برای اطلاعات کامل</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Full</td><td style="padding:6px;border:1px solid var(--border)">همسایگی کامل و آماده‌ی مسیریابی</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>شرایط لازم برای تشکیل همسایگی:</strong></p>
+    <ul>
+      <li>یکسان بودن <strong>Area ID</strong></li>
+      <li>یکسان بودن <strong>Hello Interval</strong> و <strong>Dead Interval</strong></li>
+      <li>یکسان بودن <strong>Subnet Mask</strong> (در Broadcast Networks)</li>
+      <li>یکسان بودن <strong>Authentication</strong></li>
+      <li>یکسان بودن <strong>MTU</strong> (در حالت Exchange)</li>
+      <li>یکسان بودن <strong>Network Type</strong></li>
+    </ul>
+
+    <pre><code>! پیکربندی OSPFv2 روی روتر
+Router(config)# router ospf 1
+Router(config-router)# router-id 1.1.1.1
+Router(config-router)# network 192.168.10.0 0.0.0.255 area 0
+Router(config-router)# network 10.0.0.0 0.0.0.3 area 0
+Router(config-router)# exit
+
+! بررسی
+Router# show ip ospf neighbor
+Router# show ip ospf interface brief
+Router# show ip protocols</code></pre>
+
+    <!-- ==== ۳.۱۰ ==== -->
+    <h3>۳.۱۰ OSPF — Router ID، DR و BDR</h3>
+
+    <p><strong>Router ID:</strong> شناسه‌ی یکتای هر روتر در OSPF — یک آدرس IP به شکل
+      x.x.x.x. نحوه‌ی انتخاب:</p>
+    <ol>
+      <li>اگر دستی تعریف شده باشد → همان</li>
+      <li>وگرنه → بالاترین IP Loopback</li>
+      <li>وگرنه → بالاترین IP اینترفیس فعال فیزیکی</li>
+    </ol>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ Router ID تکراری</div>
+      اگر دو روتر Router ID یکسان داشته باشند، همسایگی OSPF برقرار نمی‌شود
+      و در لاگ پیام <code>%OSPF-4-DUP_RTRID_NBR</code> ثبت می‌شود.
+      حتماً Router ID را دستی و یکتا تعریف کن.
+    </div>
+
+    <p><strong>DR و BDR:</strong> در شبکه‌های Broadcast (مثل Ethernet)، OSPF یک روتر را
+      به‌عنوان DR (Designated Router) و یکی را BDR (Backup DR) انتخاب می‌کند تا
+      تعداد ارتباطات Full Mesh کاهش پیدا کند (N×(N-1)/2 → N×2).</p>
+
+    <p><strong>معیار انتخاب DR/BDR:</strong></p>
+    <ol>
+      <li>بالاترین <strong>Interface Priority</strong> (پیش‌فرض 1، صفر = عدم شرکت)</li>
+      <li>در صورت مساوی بودن، بالاترین <strong>Router ID</strong></li>
+    </ol>
+
+    <pre><code>! تعیین Priority برای انتخاب DR
+Router(config)# interface Gi0/0
+Router(config-if)# ip ospf priority 100
+
+! بررسی DR/BDR
+Router# show ip ospf interface Gi0/0
+! ببین: Designated Router, Backup Designated Router
+
+! حالت‌های همسایگی DR/BDR
+Router# show ip ospf neighbor
+! DR-Other ↔ DR/BDR : حالت Full
+! DR-Other ↔ DR-Other : حالت 2-Way</code></pre>
+
+    <!-- ==== ۳.۱۱ ==== -->
+    <h3>۳.۱۱ OSPF — Metric (Cost) و انتخاب مسیر</h3>
+    <p>
+      OSPF از <strong>Cost</strong> به‌عنوان متریک استفاده می‌کند. فرمول پیش‌فرض سیسکو:
+    </p>
+
+    <pre><code>Cost = Reference Bandwidth / Interface Bandwidth
+
+Reference Bandwidth (پیش‌فرض سیسکو) = 100 Mbps
+
+نمونه‌ها:
+- Ethernet (10 Mbps)  → Cost = 100/10 = 10
+- FastEthernet (100)  → Cost = 100/100 = 1
+- GigabitEthernet     → Cost = 100/1000 = 0.1 → 1 (حداقل 1)
+- Serial (1.544 Mbps) → Cost = 100/1.544 = 64</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      در شبکه‌های مدرن با پهنای باند بالای ۱۰۰Mbps، Reference Bandwidth پیش‌فرض
+      دیگر معنادار نیست. آن را با <code>auto-cost reference-bandwidth 10000</code>
+      به ۱۰Gbps ارتقا بده.
+    </div>
+
+    <pre><code>! تغییر Reference Bandwidth
+Router(config-router)# auto-cost reference-bandwidth 10000
+
+! تعیین Cost دستی روی اینترفیس
+Router(config-if)# ip ospf cost 5
+
+! بررسی Cost
+Router# show ip ospf interface Gi0/0
+! خروجی شامل: Cost: 1
+
+! بررسی مسیر OSPF
+Router# show ip route ospf
+O    192.168.20.0/24 [110/2] via 10.0.0.2, Gi0/1
+!                                      ↑
+!                                      Cost کل مسیر</code></pre>
+
+    <!-- ==== ۳.۱۲ ==== -->
+    <h3>۳.۱۲ FHRP — HSRP و VRRP</h3>
+    <p>
+      <strong>First Hop Redundancy Protocol</strong> یک IP و MAC مجازی بین چند روتر
+      می‌سازد تا اگر روتر اصلی قطع شد، کاربران بدون تغییر تنظیمات Gateway همچنان
+      به اینترنت وصل بمانند.
+    </p>
+
+    <p><strong>سه FHRP اصلی:</strong></p>
+    <ul>
+      <li><strong>HSRP</strong> — اختصاصی سیسکو</li>
+      <li><strong>VRRP</strong> — استاندارد باز (RFC 3768)</li>
+      <li><strong>GLBP</strong> — اختصاصی سیسکو، با Load Balancing</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">HSRP</th>
+          <th style="padding:6px;border:1px solid var(--border)">VRRP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">استاندارد</td><td style="padding:6px;border:1px solid var(--border)">اختصاصی سیسکو</td><td style="padding:6px;border:1px solid var(--border)">IEEE/RFC — باز</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">IP مجازی</td><td style="padding:6px;border:1px solid var(--border)">جدا از روترهای فیزیکی</td><td style="padding:6px;border:1px solid var(--border)">مالک روی یکی از روترها</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Active/Standby</td><td style="padding:6px;border:1px solid var(--border)">Active, Standby</td><td style="padding:6px;border:1px solid var(--border)">Master, Backup</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">MAC مجازی</td><td style="padding:6px;border:1px solid var(--border)">0000.0c07.acXX</td><td style="padding:6px;border:1px solid var(--border)">0000.5e00.01XX</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیش‌فرض Priority</td><td style="padding:6px;border:1px solid var(--border)">100</td><td style="padding:6px;border:1px solid var(--border)">100</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! پیکربندی HSRP روی روتر اصلی
+R1(config)# interface Gi0/0
+R1(config-if)# ip address 192.168.10.2 255.255.255.0
+R1(config-if)# standby 1 ip 192.168.10.1
+R1(config-if)# standby 1 priority 110
+R1(config-if)# standby 1 preempt
+R1(config-if)# no shutdown
+
+! پیکربندی روی روتر پشتیبان
+R2(config)# interface Gi0/0
+R2(config-if)# ip address 192.168.10.3 255.255.255.0
+R2(config-if)# standby 1 ip 192.168.10.1
+R2(config-if)# standby 1 priority 100
+R2(config-if)# standby 1 preempt
+R2(config-if)# no shutdown
+
+! بررسی وضعیت
+R1# show standby brief
+R1# show standby
+! باید ببینی:
+! Interface  Grp  Pri P State   Active         Standby        Virtual IP
+! Gi0/0      1    110 P Active  local          192.168.10.3   192.168.10.1</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      دستور <code>preempt</code> باعث می‌شود روتری که Priority بالاتری دارد
+      همیشه نقش Active را پس بگیرد. اگر آن را نزنی، بعد از یک بار Failover،
+      روتر فعال فعلی همان می‌ماند تا خودش قطع شود.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه قبل از تعریف مسیر استاتیک، با <code>show ip route</code> مطمئن شو
+      مسیر Connected وجود دارد. اکثر خطاها از نبودِ مسیر Connected می‌آید.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      از AD دستی روی Static Route فقط در Floating Static استفاده کن،
+      وگرنه ممکن است با OSPF قاطی شود و مسیریابی به‌هم بریزد.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      همیشه Router ID را در OSPF <strong>دستی</strong> تعریف کن — مخصوصاً اگر IP Loopback
+      تغییرپذیر است. این ۹۰٪ مشکلات Router ID تکراری را حل می‌کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۴ با <span class="term" data-term="nat">NAT</span>،
+      <span class="term" data-term="dhcp">DHCP</span> و
+      <span class="term" data-term="acl">ACL</span> آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCNP با <span class="term" data-term="eigrp">EIGRP</span>،
+      <span class="term" data-term="bgp">BGP</span> و
+      <span class="term" data-term="pbr">PBR</span> مسیریابی را در سطح حرفه‌ای یاد می‌گیری.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — پیکربندی کامل مسیرهای استاتیک</h3>
+    <pre><code>Router(config)# ip route 192.168.20.0 255.255.255.0 10.0.0.2
+Router(config)# ip route 192.168.30.0 255.255.255.0 10.0.0.2
+Router(config)# ip route 192.168.40.0 255.255.255.0 10.0.0.3
+Router(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.1
+
+! بررسی
+Router# show ip route static
+Router# show ip route 192.168.20.0</code></pre>
+
+    <h3>مثال ۲ — Floating Static Route به‌عنوان پشتیبان OSPF</h3>
+    <pre><code>! مسیر اصلی با OSPF یاد گرفته می‌شود (AD=110)
+! مسیر پشتیبان استاتیک با AD بالاتر (مثلاً 200)
+Router(config)# ip route 192.168.20.0 255.255.255.0 10.0.0.99 200
+
+! تا وقتی OSPF مسیر دارد، Floating نصب نمی‌شود.
+! به‌محض قطع OSPF، مسیر استاتیک ظاهر می‌شود.</code></pre>
+
+    <h3>مثال ۳ — پیکربندی کامل OSPF تک‌ناحیه</h3>
+    <pre><code>Router(config)# router ospf 1
+Router(config-router)# router-id 1.1.1.1
+Router(config-router)# network 10.0.0.0 0.0.0.3 area 0
+Router(config-router)# network 192.168.10.0 0.0.0.255 area 0
+Router(config-router)# passive-interface Gi0/0
+Router(config-router)# exit
+
+! passive-interface روی پورت‌های LAN که همسایه نداریم.
+! بررسی:
+Router# show ip ospf neighbor
+Router# show ip ospf interface brief
+Router# show ip route ospf</code></pre>
+
+    <h3>مثال ۴ — پیکربندی HSRP روی دو روتر</h3>
+    <pre><code>! R1 (Active)
+R1(config)# interface Gi0/0
+R1(config-if)# ip address 192.168.1.2 255.255.255.0
+R1(config-if)# standby 1 ip 192.168.1.1
+R1(config-if)# standby 1 priority 150
+R1(config-if)# standby 1 preempt
+R1(config-if)# standby 1 track Gi0/1 50
+! اگر Gi0/1 قطع شد، Priority ۵۰ واحد کم می‌شود
+
+! R2 (Standby)
+R2(config)# interface Gi0/0
+R2(config-if)# ip address 192.168.1.3 255.255.255.0
+R2(config-if)# standby 1 ip 192.168.1.1
+R2(config-if)# standby 1 priority 100
+R2(config-if)# standby 1 preempt
+
+! بررسی
+R1# show standby brief
+R2# show standby brief</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی OSPF Neighbor</h3>
+    <pre><code>! اگر همسایه تشکیل نمی‌شود:
+Router# show ip ospf neighbor         ! وضعیت State
+Router# show ip ospf interface Gi0/0  ! پارامترهای محلی
+Router# debug ip ospf adj             ! مشاهده‌ی پیام‌های OSPF
+Router# show ip ospf                  ! اطلاعات کلی
+Router# show ip protocols             ! AD و Router ID
+
+! چک‌لیست اشکال‌یابی:
+! 1. Area ID یکسان؟
+! 2. Hello/Dead Interval یکسان؟
+! 3. Subnet Mask یکسان؟
+! 4. Authentication یکسان؟
+! 5. Network Type یکسان؟
+! 6. MTU یکسان؟
+! 7. Router ID تکراری نباشد؟</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در Packet Tracer سه روتر Cisco 4331 اضافه کن (R1, R2, R3)</li>
+      <li>R1 با R2 از طریق /30 و R2 با R3 از طریق /30 وصل کن</li>
+      <li>پشت هر روتر یک شبکه LAN با /24 در نظر بگیر (192.168.10/20/30.0)</li>
+      <li>روی همه‌ی روترها Router ID یکتا تعریف کن (1.1.1.1, 2.2.2.2, 3.3.3.3)</li>
+      <li>OSPF Process 1 را فعال کن و شبکه‌ها را در Area 0 اعلان کن</li>
+      <li>روی اینترفیس‌های LAN، <code>passive-interface</code> بگذار</li>
+      <li>با <code>show ip ospf neighbor</code> همسایگی Full را تأیید کن</li>
+      <li>با <code>show ip route ospf</code> مسیرهای یادگرفته‌شده را ببین</li>
+      <li>پینگ از PC پشت R1 به PC پشت R3 بزن</li>
+      <li>روی R1 یک Default Route به سمت اینترنت (شبیه‌سازی) اضافه کن</li>
+      <li>Default Route را با <code>default-information originate</code> در OSPF منتشر کن</li>
+      <li>روی R1 و R3 HSRP با Group 1 پیاده کن</li>
+      <li>با <code>show standby brief</code> نقش Active/Standby را ببین</li>
+      <li>روتر Active را خاموش کن و در کمتر از ۱۰ ثانیه ارتباط را تأیید کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>مسیر استاتیک نصب نمی‌شود:</strong> Next Hop باید در جدول باشد و از طریق Connected قابل دسترسی باشد.</li>
+      <li><strong>OSPF همسایه نمی‌شود:</strong> ۷ شرط بالا را چک کن (Area, Hello/Dead, Mask, Auth, MTU, Network Type, Router ID).</li>
+      <li><strong>Router ID تکراری:</strong> پیام <code>%OSPF-4-DUP_RTRID_NBR</code> در لاگ.</li>
+      <li><strong>DR اشتباه انتخاب شده:</strong> با Priority روی اینترفیس یا ری‌استارت OSPF (با <code>clear ip ospf process</code>) اصلاح کن.</li>
+      <li><strong>Cost همیشه 1:</strong> Reference Bandwidth پیش‌فرض پایین است — به ۱۰Gbps تغییر بده.</li>
+      <li><strong>Floating Static همیشه فعال:</strong> AD را کمتر از مسیر اصلی داده‌ای — AD بالاتر لازم است.</li>
+      <li><strong>HSRP Failover نمی‌کند:</strong> مطمئن شو <code>preempt</code> روی هر دو روتر فعال است.</li>
+      <li><strong>FHRP Packet Dropped:</strong> اگر IP مجازی پینگ نمی‌شود، مطمئن شو Group Number یکسان است.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="ospf">OSPF</span> •
+      <span class="term" data-term="hsrp">HSRP</span> •
+      <span class="term" data-term="vrrp">VRRP</span> •
+      <span class="term" data-term="eigrp">EIGRP</span> •
+      <span class="term" data-term="bgp">BGP</span> •
+      <span class="term" data-term="nat">NAT</span> •
+      <span class="term" data-term="subnetting">Subnetting</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccna-03" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) تفاوت مسیریابی استاتیک و داینامیک چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> استاتیک فقط برای IPv6 است</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> استاتیک دستی و بدون همگرایی، داینامیک خودکار و مقیاس‌پذیر</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> داینامیک فقط برای شبکه‌های کوچک مناسب است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) در OSPF، چرا Router ID باید یکتا باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> برای رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> برای بهبود سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> چون Router ID شناسه‌ی روتر در توپولوژی است و تکراری بودن همسایگی را می‌شکند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> چون سیسکو اینطور خواسته</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) HSRP چگونه High Availability ایجاد می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> با بالا بردن پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> با ساخت یک IP مجازی بین دو یا چند روتر</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> با رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> با فشرده‌سازی داده</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) دستور <code>standby 1 preempt</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> IP مجازی را تغییر می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Priority را صفر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> روتری با Priority بالاتر می‌تواند نقش Active را پس بگیرد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> Group را غیرفعال می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) تفاوت HSRP و VRRP در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> VRRP فقط روی سوئیچ کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> HSRP اختصاصی سیسکو، VRRP استاندارد باز</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> HSRP بدون Priority کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Floating Static Route چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> افزایش سرعت مسیر</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> جایگزین Default Route</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> پشتیبان مسیر اصلی با AD بالاتر</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> مسیر به Loopback</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) Default Route چیست و چه زمانی استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> مسیر به Loopback</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> مسیر پیش‌فرض (0.0.0.0/0) برای مقاصدی که مسیر مشخص ندارند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> مسیر به Broadcast</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> مسیر فقط برای IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) در OSPF، DR و BDR چه نقشی دارند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> مسیریابی به اینترنت</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> کاهش تعداد ارتباطات OSPF در شبکه‌های Broadcast</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> ترجمه آدرس</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۹) دستور <code>show ip ospf neighbor</code> چه اطلاعاتی می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> لیست همسایه‌ها و State آن‌ها (Full، 2-Way و...)</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> محتوای جدول MAC</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> تنظیمات NAT</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> وضعیت HSRP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) Administrative Distance (AD) چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> پهنای باند اینترفیس</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> میزان اعتماد روتر به یک منبع مسیریابی — عدد کمتر = اعتماد بیشتر</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> تعداد Hop تا مقصد</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> زمان همگرایی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) اگر یک مقصد هم با Static (AD=1) و هم با OSPF (AD=110) در جدول باشد، کدام انتخاب می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> OSPF</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> هر دو — Load Balancing</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> Static — چون AD کمتر است</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> بستگی به Metric دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) متریک OSPF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Hop Count</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Cost (بر اساس پهنای باند)</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Bandwidth + Delay</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Reliability</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) در OSPF، دو روتر با Priority یکسان — کدام DR می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> هر دو DR می‌شوند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> هیچ‌کدام</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> روتری که Router ID بالاتری دارد</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> روتری که IP بالاتری روی اینترفیس دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۴) کدام دستور Default Route استاتیک را می‌سازد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> <code>ip route 0.0.0.0 0.0.0.0 10.0.0.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> <code>ip default 10.0.0.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> <code>route default 10.0.0.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> <code>ip route default 10.0.0.1</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) مزیت Passive Interface در OSPF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> حذف مسیر OSPF</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> افزایش Cost</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> جلوگیری از ارسال Hello روی پورت‌هایی که همسایه ندارند (مثل LAN)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> رمزنگاری OSPF</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی سه‌روتری سازمانی طراحی و پیاده‌سازی کن:</p>
+    <ul>
+      <li>سه روتر Cisco 4331 به‌صورت زنجیره‌ای (R1↔R2↔R3)</li>
+      <li>پشت هر روتر یک LAN با /24 (192.168.10/20/30.0)</li>
+      <li>هر روتر یک Loopback با IP مثل 1.1.1.1، 2.2.2.2، 3.3.3.3</li>
+      <li>OSPF Process 1 با Area 0 در همه‌ی لینک‌ها</li>
+      <li>Router ID دستی و یکتا برای هر روتر</li>
+      <li>passive-interface روی اینترفیس‌های LAN</li>
+      <li>مسیر پیش‌فرض به سمت اینترنت (شبیه‌سازی) با <code>default-information originate</code></li>
+      <li>Floating Static Route به‌عنوان پشتیبان لینک بین R1 و R2 (AD=200)</li>
+      <li>HSRP روی R1 و R2 برای Gateway LAN</li>
+      <li>Ping از PC پشت R1 به PC پشت R3 تأیید شود</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>Reference Bandwidth OSPF را به 10Gbps ارتقا بده و تغییر Cost را ببین.</li>
+        <li>با <code>debug ip ospf adj</code> فرآیند تشکیل همسایگی را در کنسول تماشا کن.</li>
+        <li>یک Router ID تکراری عمدی بساز و پیام خطا در لاگ را ببین.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>جدول مسیریابی:</strong> Code، مقصد، [AD/Metric]، via، Interface</li>
+      <li><strong>Connected:</strong> C (کل Subnet) + L (IP اینترفیس /32)</li>
+      <li><strong>Static:</strong> Network، Host، Floating (با AD بالاتر)</li>
+      <li><strong>Default Route:</strong> <code>ip route 0.0.0.0 0.0.0.0 [Next Hop]</code></li>
+      <li><strong>AD پیش‌فرض:</strong> Connected=0، Static=1، EIGRP=90، OSPF=110، RIP=120</li>
+      <li><strong>OSPF:</strong> Link-State، Dijkstra، Cost، Multicast 224.0.0.5</li>
+      <li><strong>OSPF State:</strong> Down → Init → 2-Way → ExStart → Exchange → Loading → Full</li>
+      <li><strong>Router ID:</strong> دستی > بالاترین Loopback > بالاترین IP فیزیکی</li>
+      <li><strong>DR/BDR:</strong> بالاترین Priority، در صورت تساوی Router ID بالاتر</li>
+      <li><strong>HSRP:</strong> اختصاصی سیسکو، Active/Standby، MAC=0000.0c07.acXX</li>
+      <li><strong>VRRP:</strong> استاندارد باز، Master/Backup، MAC=0000.5e00.01XX</li>
+      <li><strong>preempt:</strong> پس‌گیری خودکار نقش Active توسط Priority بالاتر</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccna_Ch_02.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccna-03">✅ پایان فصل</button>
+      <a class="btn" href="ccna_Ch_04.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

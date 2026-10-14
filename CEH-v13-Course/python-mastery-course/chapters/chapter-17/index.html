@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 17: برنامه‌نویسی شی‌گرا - بخش اول: مفاهیم پایه</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .class-diagram {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+            border: 1px solid #2d2d44;
+        }
+        .class-diagram .keyword {
+            color: #ffd43b;
+        }
+        .class-diagram .class-name {
+            color: #34d399;
+        }
+        .class-diagram .method {
+            color: #60a5fa;
+        }
+        .class-diagram .attribute {
+            color: #f472b6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 17: برنامه‌نویسی شی‌گرا - بخش اول: مفاهیم پایه</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-16/index.html">قبلی</a>
+            <a href="../chapter-18/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۷: برنامه‌نویسی شی‌گرا - بخش اول: مفاهیم پایه</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۷: برنامه‌نویسی شی‌گرا - بخش اول: مفاهیم پایه</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی پایتون)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی پایتون (فصل‌های ۱ تا ۱۶)</li>
+                <li>✅ آشنایی با توابع و دیکشنری‌ها</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ مفهوم <strong>برنامه‌نویسی شی‌گرا (OOP)</strong> را توضیح دهید.</li>
+                <li>✔️ <strong>کلاس‌ها</strong> را با <code dir='ltr'>class</code> تعریف کنید.</li>
+                <li>✔️ <strong>اشیاء (Objects)</strong> را از کلاس‌ها ایجاد کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>__init__</code></strong> برای مقداردهی اولیه استفاده کنید.</li>
+                <li>✔️ <strong>ویژگی‌ها (Attributes)</strong> و <strong>متدها (Methods)</strong> را تعریف و استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>self</code></strong> و نقش آن در کلاس‌ها آشنا شوید.</li>
+                <li>✔️ از <strong>متدهای جادویی (Magic Methods)</strong> مانند <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> استفاده کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>تا اینجا با برنامه‌نویسی <strong>رویه‌ای (Procedural)</strong> کار کرده‌اید – توابع و داده‌ها از هم جدا بودند. اما در دنیای واقعی، همه‌چیز به‌صورت <strong>شیء (Object)</strong> وجود دارد: یک ماشین دارای ویژگی‌ها (رنگ، مدل، سرعت) و رفتارها (روشن شدن، حرکت کردن، توقف) است. یک دانش‌آموز دارای ویژگی‌ها (نام، سن، نمرات) و رفتارها (مطالعه کردن، امتحان دادن) است.</p>
+            <p><strong>برنامه‌نویسی شی‌گرا (Object-Oriented Programming - OOP)</strong> یک پارادایم است که به شما اجازه می‌دهد داده‌ها و توابع مرتبط را در کنار هم، در قالب <strong>کلاس‌ها (Classes)</strong> و <strong>اشیاء (Objects)</strong> سازماندهی کنید. این روش باعث می‌شود کد شما <strong>ساختاریافته‌تر، قابل‌استفاده‌ی مجدد و قابل‌نگهداری‌تر</strong> شود.</p>
+            <p>در این فصل با <strong>همه‌ی مفاهیم پایه‌ی OOP</strong> در پایتون آشنا می‌شوید: تعریف کلاس، ایجاد شیء، ویژگی‌ها، متدها، <code dir='ltr'>self</code>، <code dir='ltr'>__init__</code> و متدهای جادویی. این مبانی پایه‌ی مباحث پیشرفته‌تر مانند وراثت، چندریختی و کپسوله‌سازی در فصل بعدی هستند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۷.۱ -->
+            <div class="sub-section">
+                <h4>۱۷.۱ مقدمه‌ای بر برنامه‌نویسی شی‌گرا (OOP)</h4>
+                <p><strong>برنامه‌نویسی شی‌گرا (OOP)</strong> یک سبک برنامه‌نویسی است که در آن کد به‌صورت <strong>اشیاء</strong> سازماندهی می‌شود. هر شیء شامل <strong>داده‌ها (ویژگی‌ها)</strong> و <strong>رفتارها (متدها)</strong> است.</p>
+                <ul>
+                    <li><strong>کلاس (Class):</strong> یک طرح یا قالب برای ایجاد اشیاء. مانند یک نقشه برای ساختن خانه.</li>
+                    <li><strong>شیء (Object):</strong> یک نمونه از کلاس. مانند یک خانه‌ی واقعی که از روی نقشه ساخته شده است.</li>
+                    <li><strong>ویژگی (Attribute):</strong> داده‌ای که وضعیت یک شیء را توصیف می‌کند.</li>
+                    <li><strong>متد (Method):</strong> تابعی که رفتار یک شیء را تعریف می‌کند.</li>
+                </ul>
+                <p><strong>مزایای OOP:</strong></p>
+                <ul>
+                    <li><strong>کپسوله‌سازی (Encapsulation):</strong> داده‌ها و توابع مرتبط در یکجا جمع می‌شوند.</li>
+                    <li><strong>ارث‌بری (Inheritance):</strong> کلاس‌ها می‌توانند از کلاس‌های دیگر ارث‌بری کنند.</li>
+                    <li><strong>چندریختی (Polymorphism):</strong> متدهای یکسان می‌توانند رفتارهای متفاوتی داشته باشند.</li>
+                    <li><strong>قابل استفاده‌ی مجدد:</strong> کد را می‌توان در پروژه‌های مختلف استفاده کرد.</li>
+                </ul>
+                <div class="class-diagram">
+                    <span class="keyword">class</span> <span class="class-name">Car</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="attribute">- brand: str</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="attribute">- model: str</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="attribute">- year: int</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="attribute">- speed: int</span><br>
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="method">+ __init__(brand, model, year)</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="method">+ accelerate()</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="method">+ brake()</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="method">+ get_info()</span><br>
+                    }
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> OOP یکی از محبوب‌ترین پارادایم‌های برنامه‌نویسی است و در زبان‌های مختلفی مانند Java، C++، Python و C# استفاده می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> سه شیء در دنیای واقعی (مثل کتاب، دانش‌آموز، گوشی) را انتخاب کنید و ویژگی‌ها و رفتارهای هرکدام را لیست کنید.
+                </div>
+            </div>
+
+            <!-- ۱۷.۲ -->
+            <div class="sub-section">
+                <h4>۱۷.۲ تعریف کلاس با <code dir='ltr'>class</code></h4>
+                <p>در پایتون، کلاس‌ها با کلمه‌ی کلیدی <strong><code dir='ltr'>class</code></strong> تعریف می‌شوند. نام کلاس معمولاً با <strong>حرف بزرگ</strong> شروع می‌شود (PascalCase).</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># تعریف یک کلاس ساده
+class Car:
+    pass  # کلاس خالی
+
+# ایجاد یک شیء از کلاس
+my_car = Car()
+print(type(my_car))  # <class '__main__.Car'>
+
+# کلاس با ویژگی‌ها و متدها
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def greet(self):
+        return f"سلام، من {self.name} هستم و {self.age} سال دارم."
+
+# ایجاد شیء
+person1 = Person("علی", 25)
+print(person1.greet())  # "سلام، من علی هستم و 25 سال دارم."</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">&lt;class '__main__.Car'&gt;</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام، من علی هستم و 25 سال دارم.</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> نام کلاس‌ها باید به‌صورت <strong>PascalCase</strong> (با حرف بزرگ) نوشته شوند تا از توابع و متغیرها متمایز شوند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس به نام <code dir='ltr'>Book</code> تعریف کنید که دارای ویژگی‌های <code dir='ltr'>title</code> و <code dir='ltr'>author</code> باشد. سپس یک شیء از آن ایجاد کنید.
+                </div>
+            </div>
+
+            <!-- ۱۷.۳ -->
+            <div class="sub-section">
+                <h4>۱۷.۳ <code dir='ltr'>__init__</code> و مقداردهی اولیه</h4>
+                <p>متد <strong><code dir='ltr'>__init__</code></strong> یک متد ویژه (جادویی) است که هنگام ایجاد یک شیء، به‌طور خودکار فراخوانی می‌شود. از آن برای <strong>مقداردهی اولیه</strong> ویژگی‌های شیء استفاده می‌شود.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>self</code></strong>: ارجاع به خود شیء. اولین پارامتر همه‌ی متدهای کلاس است.</li>
+                    <li><strong><code dir='ltr'>__init__</code></strong>: سازنده (Constructor) کلاس.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Student:
+    def __init__(self, name, grade, student_id):
+        self.name = name
+        self.grade = grade
+        self.student_id = student_id
+        self.is_active = True  # مقدار پیش‌فرض
+    
+    def get_info(self):
+        return f"دانش‌آموز: {self.name}, کلاس: {self.grade}, شماره: {self.student_id}"
+
+# ایجاد اشیاء با مقادیر مختلف
+student1 = Student("علی", 10, "S001")
+student2 = Student("سارا", 11, "S002")
+
+print(student1.get_info())  # "دانش‌آموز: علی, کلاس: 10, شماره: S001"
+print(student2.is_active)   # True</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">دانش‌آموز: علی, کلاس: 10, شماره: S001</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> پارامتر <code dir='ltr'>self</code> به‌طور خودکار توسط پایتون ارسال می‌شود و شما نیازی به ارسال آن ندارید. همه‌ی متدهای کلاس باید حداقل یک پارامتر (معمولاً <code dir='ltr'>self</code>) داشته باشند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>Product</code> با ویژگی‌های <code dir='ltr'>name</code>، <code dir='ltr'>price</code> و <code dir='ltr'>stock</code> تعریف کنید و در <code dir='ltr'>__init__</code> آنها را مقداردهی کنید. سپس یک شیء ایجاد کنید.
+                </div>
+            </div>
+
+            <!-- ۱۷.۴ -->
+            <div class="sub-section">
+                <h4>۱۷.۴ ویژگی‌ها (Attributes) و متدها (Methods)</h4>
+                <ul>
+                    <li><strong>ویژگی‌ها (Attributes):</strong> داده‌هایی که وضعیت شیء را ذخیره می‌کنند. با <code dir='ltr'>self.attribute_name</code> تعریف و دسترسی پیدا می‌کنند.</li>
+                    <li><strong>متدها (Methods):</strong> توابعی که رفتار شیء را تعریف می‌کنند. اولین پارامتر آنها <code dir='ltr'>self</code> است.</li>
+                </ul>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">📊</span>
+                        <span class="name">ویژگی (Attribute)</span>
+                        <span class="desc">داده‌ی ذخیره‌شده در شیء</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">⚙️</span>
+                        <span class="name">متد (Method)</span>
+                        <span class="desc">رفتار و عملکرد شیء</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner          # ویژگی
+        self.balance = balance      # ویژگی
+        self.transactions = []      # ویژگی (لیست)
+    
+    def deposit(self, amount):      # متد
+        if amount > 0:
+            self.balance += amount
+            self.transactions.append(f"+{amount}")
+            return True
+        return False
+    
+    def withdraw(self, amount):     # متد
+        if 0 < amount <= self.balance:
+            self.balance -= amount
+            self.transactions.append(f"-{amount}")
+            return True
+        return False
+    
+    def get_balance(self):          # متد
+        return self.balance
+    
+    def get_history(self):          # متد
+        return self.transactions
+
+# استفاده
+account = BankAccount("علی", 1000)
+account.deposit(500)
+account.withdraw(200)
+print(account.get_balance())   # 1300
+print(account.get_history())   # ['+500', '-200']</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">1300</span><br>
+                    <span class="highlight">➜</span> <span class="result">['+500', '-200']</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> متدها می‌توانند ویژگی‌ها را تغییر دهند، محاسبات انجام دهند، و نتایج را برگردانند. از متدها برای <strong>کپسوله‌سازی</strong> منطق مربوط به شیء استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> به کلاس <code dir='ltr'>Product</code> یک متد <code dir='ltr'>sell(quantity)</code> اضافه کنید که موجودی را کاهش دهد و در صورت کمبود موجودی، پیام خطا برگرداند.
+                </div>
+            </div>
+
+            <!-- ۱۷.۵ -->
+            <div class="sub-section">
+                <h4>۱۷.۵ <code dir='ltr'>self</code> و نقش آن در کلاس‌ها</h4>
+                <p><strong><code dir='ltr'>self</code></strong> یک ارجاع به <strong>نمونه‌ی فعلی</strong> (شیء) کلاس است. با استفاده از <code dir='ltr'>self</code> می‌توانید به ویژگی‌ها و متدهای دیگر همان شیء دسترسی پیدا کنید.</p>
+                <ul>
+                    <li><code dir='ltr'>self</code> اولین پارامتر تمام متدهای کلاس است.</li>
+                    <li>نام <code dir='ltr'>self</code> یک قرارداد است (می‌توانید از نام دیگری استفاده کنید، اما <code dir='ltr'>self</code> استاندارد است).</li>
+                    <li>برای دسترسی به ویژگی‌ها و متدها، از <code dir='ltr'>self.attribute</code> و <code dir='ltr'>self.method()</code> استفاده کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Circle:
+    def __init__(self, radius):
+        self.radius = radius
+    
+    def area(self):
+        return 3.14159 * self.radius ** 2  # self.radius به ویژگی دسترسی دارد
+    
+    def perimeter(self):
+        return 2 * 3.14159 * self.radius
+    
+    def scale(self, factor):
+        self.radius *= factor  # تغییر ویژگی
+        return self.area()     # فراخوانی متد دیگر
+
+c = Circle(5)
+print(c.area())           # 78.53975
+print(c.perimeter())      # 31.4159
+c.scale(2)                # شعاع ۲ برابر می‌شود
+print(c.radius)           # 10
+print(c.area())           # 314.159</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">78.53975</span><br>
+                    <span class="highlight">➜</span> <span class="result">31.4159</span><br>
+                    <span class="highlight">➜</span> <span class="result">10</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>self</code> به شما امکان می‌دهد بین ویژگی‌های مختلف و متغیرهای محلی تفاوت قائل شوید. همیشه از <code dir='ltr'>self</code> برای دسترسی به ویژگی‌های شیء استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> در کلاس <code dir='ltr'>BankAccount</code>، یک متد <code dir='ltr'>transfer</code> بنویسید که به یک شیء دیگر و مبلغ را دریافت کند و موجودی را بین دو حساب جابه‌جا کند.
+                </div>
+            </div>
+
+            <!-- ۱۷.۶ -->
+            <div class="sub-section">
+                <h4>۱۷.۶ متدهای جادویی (Magic Methods) – <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code></h4>
+                <p><strong>متدهای جادویی</strong> متدهای ویژه‌ای هستند که با <code dir='ltr'>__</code> شروع و خاتمه می‌یابند. آنها رفتارهای خاصی را برای اشیاء تعریف می‌کنند.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>__str__</code></strong>: نمایش <strong>خوانا</strong>ی شیء برای کاربر. با <code dir='ltr'>print()</code> و <code dir='ltr'>str()</code> فراخوانی می‌شود.</li>
+                    <li><strong><code dir='ltr'>__repr__</code></strong>: نمایش <strong>توسعه‌دهنده‌ای</strong> (غیرابهامی) از شیء. برای دیباگ استفاده می‌شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def __str__(self):
+        return f"Person: {self.name} (سن: {self.age})"
+    
+    def __repr__(self):
+        return f"Person('{self.name}', {self.age})"
+
+p = Person("علی", 25)
+print(p)           # Person: علی (سن: 25)  ← __str__
+print(str(p))      # Person: علی (سن: 25)
+print(repr(p))     # Person('علی', 25)      ← __repr__
+
+# در لیست‌ها و REPL
+people = [Person("سارا", 30), Person("رضا", 28)]
+print(people)      # [Person('سارا', 30), Person('رضا', 28)]
+
+# سایر متدهای جادویی
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+    
+    def __len__(self):
+        return len(self.title)  # طول عنوان
+    
+    def __eq__(self, other):
+        if not isinstance(other, Book):
+            return False
+        return self.title == other.title and self.author == other.author
+
+book1 = Book("پایتون", "علی رضایی")
+book2 = Book("پایتون", "علی رضایی")
+print(len(book1))        # 6 (تعداد حروف)
+print(book1 == book2)    # True</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Person: علی (سن: 25)</span><br>
+                    <span class="highlight">➜</span> <span class="result">Person('علی', 25)</span><br>
+                    <span class="highlight">➜</span> <span class="result">6</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه <code dir='ltr'>__str__</code> را برای نمایش خوانا و <code dir='ltr'>__repr__</code> را برای نمایش توسعه‌دهنده‌ای پیاده‌سازی کنید. این کار دیباگ را بسیار آسان‌تر می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> کلاس <code dir='ltr'>Book</code> را با <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> کامل کنید. همچنین یک متد <code dir='ltr'>__eq__</code> برای مقایسه بر اساس عنوان و نویسنده اضافه کنید.
+                </div>
+            </div>
+
+            <!-- ۱۷.۷ -->
+            <div class="sub-section">
+                <h4>۱۷.۷ متدهای جادویی بیشتر – <code dir='ltr'>__add__</code>، <code dir='ltr'>__len__</code> و <code dir='ltr'>__getitem__</code></h4>
+                <p>متدهای جادویی دیگری نیز وجود دارند که رفتار اشیاء را در عملگرها و عملیات خاص تعریف می‌کنند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def __add__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x + other.x, self.y + other.y)
+        return NotImplemented
+    
+    def __sub__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x - other.x, self.y - other.y)
+        return NotImplemented
+    
+    def __mul__(self, scalar):
+        if isinstance(scalar, (int, float)):
+            return Vector(self.x * scalar, self.y * scalar)
+        return NotImplemented
+    
+    def __str__(self):
+        return f"Vector({self.x}, {self.y})"
+
+v1 = Vector(2, 3)
+v2 = Vector(4, 5)
+v3 = v1 + v2      # __add__
+v4 = v2 - v1      # __sub__
+v5 = v1 * 3       # __mul__
+
+print(v3)  # Vector(6, 8)
+print(v4)  # Vector(2, 2)
+print(v5)  # Vector(6, 9)
+
+# __len__ و __getitem__ برای رفتار شبیه به لیست
+class Playlist:
+    def __init__(self, songs):
+        self.songs = songs
+    
+    def __len__(self):
+        return len(self.songs)
+    
+    def __getitem__(self, index):
+        return self.songs[index]
+    
+    def __setitem__(self, index, value):
+        self.songs[index] = value
+    
+    def __contains__(self, item):
+        return item in self.songs
+
+playlist = Playlist(["song1", "song2", "song3"])
+print(len(playlist))      # 3
+print(playlist[1])        # "song2"
+playlist[1] = "new_song"
+print(playlist[1])        # "new_song"
+print("song1" in playlist)  # True</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Vector(6, 8)</span><br>
+                    <span class="highlight">➜</span> <span class="result">Vector(2, 2)</span><br>
+                    <span class="highlight">➜</span> <span class="result">3</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> با پیاده‌سازی متدهای جادویی، می‌توانید اشیاء خود را مانند انواع داخلی پایتون (لیست، عدد و ...) رفتار دهید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>Matrix</code> برای ماتریس‌های ۲×۲ بسازید و متدهای <code dir='ltr'>__add__</code>، <code dir='ltr'>__sub__</code> و <code dir='ltr'>__mul__</code> را برای آن پیاده‌سازی کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک سیستم مدیریت کتاب با کلاس‌ها</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>library_system.py</code> ایجاد کنید.</li>
+                <li>یک کلاس <code dir='ltr'>Book</code> با ویژگی‌های <code dir='ltr'>title</code>، <code dir='ltr'>author</code>، <code dir='ltr'>isbn</code> و <code dir='ltr'>is_borrowed</code> تعریف کنید.</li>
+                <li>متدهای <code dir='ltr'>borrow()</code> و <code dir='ltr'>return_book()</code> را برای تغییر وضعیت امانت اضافه کنید.</li>
+                <li>یک کلاس <code dir='ltr'>Library</code> با ویژگی‌های <code dir='ltr'>books</code> (لیست کتاب‌ها) و متدهای زیر بسازید:
+                    <ul>
+                        <li><code dir='ltr'>add_book(book)</code> – افزودن کتاب</li>
+                        <li><code dir='ltr'>remove_book(isbn)</code> – حذف کتاب با ISBN</li>
+                        <li><code dir='ltr'>search_by_title(title)</code> – جستجوی کتاب با عنوان</li>
+                        <li><code dir='ltr'>search_by_author(author)</code> – جستجوی کتاب با نویسنده</li>
+                        <li><code dir='ltr'>list_available()</code> – لیست کتاب‌های موجود</li>
+                        <li><code dir='ltr'>borrow_book(isbn)</code> – امانت گرفتن کتاب</li>
+                        <li><code dir='ltr'>return_book(isbn)</code> – بازگرداندن کتاب</li>
+                    </ul>
+                </li>
+                <li>برای <code dir='ltr'>Book</code> متدهای <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> را پیاده‌سازی کنید.</li>
+                <li>برای <code dir='ltr'>Library</code> متد <code dir='ltr'>__len__</code> (تعداد کتاب‌ها) را اضافه کنید.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> برای کاربر ایجاد کنید.</li>
+            </ol>
+            <div class="live-demo" id="oop-demo">
+                <h4>📚 شبیه‌ساز سیستم کتابخانه</h4>
+                <button onclick="runOOPDemo()">▶️ اجرای دمو</button>
+                <div class="result-box" id="oopResult">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک کلاس <code dir='ltr'>Student</code> با ویژگی‌های نام، سن، نمرات (لیست) و متدهای زیر بسازید:</p>
+            <ul>
+                <li><code dir='ltr'>add_score(score)</code> – افزودن نمره</li>
+                <li><code dir='ltr'>get_average()</code> – محاسبه‌ی میانگین نمرات</li>
+                <li><code dir='ltr'>get_grade()</code> – تعیین نمره‌ی حرفی (A, B, C, D, F)</li>
+                <li><code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> را پیاده‌سازی کنید.</li>
+                <li><code dir='ltr'>__lt__</code> (کمتر از) را برای مقایسه بر اساس میانگین نمرات اضافه کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین کلاس و شیء چیست؟</li>
+                <li><code dir='ltr'>self</code> چه نقشی در کلاس‌های پایتون دارد؟</li>
+                <li><code dir='ltr'>__init__</code> چه زمانی فراخوانی می‌شود و چه کاربردی دارد؟</li>
+                <li>تفاوت بین <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> چیست؟</li>
+                <li>چهار اصل اصلی برنامه‌نویسی شی‌گرا کدام‌اند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای تعریف یک کلاس استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>def class</code>  ب) <code dir='ltr'>class</code>  ج) <code dir='ltr'>object</code>  د) <code dir='ltr'>new class</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>class Test: pass; t = Test(); print(type(t))</code><br>
+                    أ) <code dir='ltr'>&lt;class 'Test'&gt;</code>  ب) <code dir='ltr'>&lt;class '__main__.Test'&gt;</code>  ج) <code dir='ltr'>&lt;class 'object'&gt;</code>  د) <code dir='ltr'>&lt;class 'type'&gt;</code></li>
+                <li>کدام متد جادویی برای نمایش رشته‌ای خوانا از شیء استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>__repr__</code>  ب) <code dir='ltr'>__str__</code>  ج) <code dir='ltr'>__init__</code>  د) <code dir='ltr'>__call__</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک کلاس <code dir='ltr'>Temperature</code> با ویژگی‌های <code dir='ltr'>celsius</code> و متدهای زیر بسازید:</p>
+            <ul>
+                <li><code dir='ltr'>to_fahrenheit()</code> – تبدیل به فارنهایت</li>
+                <li><code dir='ltr'>to_kelvin()</code> – تبدیل به کلوین</li>
+                <li><code dir='ltr'>__str__</code> برای نمایش خوانا</li>
+                <li><code dir='ltr'>__add__</code> برای جمع دو دما (بر حسب سلسیوس)</li>
+                <li><code dir='ltr'>__lt__</code> برای مقایسه‌ی دو دما</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>کلاس</strong> یک قالب برای ایجاد اشیاء است.</li>
+                <li>🔹 <strong>شیء</strong> یک نمونه از کلاس است که ویژگی‌ها و متدهای خود را دارد.</li>
+                <li>🔹 <strong><code dir='ltr'>__init__</code></strong> متد سازنده برای مقداردهی اولیه.</li>
+                <li>🔹 <strong><code dir='ltr'>self</code></strong> ارجاع به نمونه‌ی فعلی شیء.</li>
+                <li>🔹 <strong>ویژگی‌ها</strong> داده‌های شیء و <strong>متدها</strong> رفتارهای شیء هستند.</li>
+                <li>🔹 <strong>متدهای جادویی</strong> مانند <code dir='ltr'>__str__</code>، <code dir='ltr'>__repr__</code>، <code dir='ltr'>__add__</code> و <code dir='ltr'>__len__</code> رفتارهای خاصی را تعریف می‌کنند.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir='ltr'><code dir='ltr'># تعریف کلاس
+class ClassName:
+    def __init__(self, params):
+        self.attribute = params
+    
+    def method(self):
+        return self.attribute
+
+# ایجاد شیء
+obj = ClassName(value)
+
+# متدهای جادویی
+__str__(self)   # نمایش خوانا
+__repr__(self)  # نمایش توسعه‌دهنده‌ای
+__add__(self, other)  # +
+__len__(self)   # len()
+__eq__(self, other)   # ==</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>OOP (Object-Oriented Programming):</strong> برنامه‌نویسی شی‌گرا.</li>
+                <li><strong>Class (کلاس):</strong> قالب برای ایجاد اشیاء.</li>
+                <li><strong>Object (شیء):</strong> نمونه‌ای از یک کلاس.</li>
+                <li><strong>Attribute (ویژگی):</strong> داده‌ای که وضعیت شیء را توصیف می‌کند.</li>
+                <li><strong>Method (متد):</strong> تابعی که رفتار شیء را تعریف می‌کند.</li>
+                <li><strong>self:</strong> ارجاع به نمونه‌ی فعلی شیء.</li>
+                <li><strong>__init__:</strong> متد سازنده (Constructor).</li>
+                <li><strong>Magic Method (متد جادویی):</strong> متد ویژه با <code dir='ltr'>__</code>.</li>
+                <li><strong>Encapsulation (کپسوله‌سازی):</strong> پنهان کردن جزئیات داخلی.</li>
+                <li><strong>Inheritance (ارث‌بری):</strong> به‌ارث‌بردن ویژگی‌ها و متدها.</li>
+                <li><strong>Polymorphism (چندریختی):</strong> رفتارهای متفاوت برای یک متد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/classes.html" target="_blank" rel="noopener noreferrer">Python: Classes</a></li>
+                <li><a href="https://realpython.com/python3-object-oriented-programming/" target="_blank" rel="noopener noreferrer">Real Python: OOP</a></li>
+                <li><a href="https://www.w3schools.com/python/python_classes.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Classes</a></li>
+                <li><a href="https://docs.python.org/3/reference/datamodel.html#special-method-names" target="_blank" rel="noopener noreferrer">Python: Special Method Names</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> مقدمه‌ای بر OOP – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> تعریف کلاس با class – ۱۰ دقیقه</li>
+                <li><strong>گام ۳:</strong> __init__ و مقداردهی اولیه – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> ویژگی‌ها و متدها – ۱۵ دقیقه</li>
+                <li><strong>گام ۵:</strong> self و نقش آن – ۱۰ دقیقه</li>
+                <li><strong>گام ۶:</strong> متدهای جادویی (__str__, __repr__) – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> متدهای جادویی بیشتر (__add__, __len__, ...) – ۱۵ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ اگر کلاس را به‌عنوان "قالب" در نظر بگیریم، شیء چه چیزی است؟</li>
+                <li>❓ چرا از <code dir='ltr'>self</code> برای دسترسی به ویژگی‌ها استفاده می‌کنیم؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code> وجود دارد و هرکدام چه زمانی استفاده می‌شوند؟</li>
+                <li>❓ اگر <code dir='ltr'>__init__</code> را در کلاس تعریف نکنیم، چه اتفاقی می‌افتد؟</li>
+                <li>❓ چرا باید از متدهای جادویی استفاده کنیم؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>self</code> در متدها که باعث <code dir='ltr'>TypeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همه‌ی متدهای کلاس باید حداقل یک پارامتر (معمولاً <code dir='ltr'>self</code>) داشته باشند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>self</code> در دسترسی به ویژگی‌ها که باعث ایجاد متغیر محلی می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> برای دسترسی به ویژگی‌ها، همیشه از <code dir='ltr'>self.attribute</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>return</code> در متدها که باعث می‌شود <code dir='ltr'>None</code> برگردانند.<br>
+                    <strong>🔧 راه حل:</strong> اگر متد باید مقداری برگرداند، از <code dir='ltr'>return</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>==</code> برای مقایسه‌ی اشیاء بدون پیاده‌سازی <code dir='ltr'>__eq__</code> که مقایسه‌ی مرجع انجام می‌دهد.<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه‌ی محتوایی، متد <code dir='ltr'>__eq__</code> را پیاده‌سازی کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> تعریف متدهای جادویی با نام اشتباه (مثلاً <code dir='ltr'>__str__</code> به‌جای <code dir='ltr'>__str__</code> که خطا می‌دهد).<br>
+                    <strong>🔧 راه حل:</strong> نام متدهای جادویی را دقیقاً با دو <code dir='ltr'>__</code> در ابتدا و انتها بنویسید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت کاربران با کلاس‌ها</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت کاربران با استفاده از کلاس‌ها بسازید:</p>
+            <ul>
+                <li>یک کلاس <code dir='ltr'>User</code> با ویژگی‌های:
+                    <ul>
+                        <li><code dir='ltr'>username</code> – نام کاربری</li>
+                        <li><code dir='ltr'>password</code> – رمز عبور (ذخیره‌سازی هش‌شده)</li>
+                        <li><code dir='ltr'>email</code> – ایمیل</li>
+                        <li><code dir='ltr'>is_active</code> – وضعیت فعال/غیرفعال</li>
+                        <li><code dir='ltr'>created_at</code> – تاریخ ایجاد (با <code dir='ltr'>datetime</code>)</li>
+                    </ul>
+                </li>
+                <li>متدهای <code dir='ltr'>User</code>:
+                    <ul>
+                        <li><code dir='ltr'>change_password(old, new)</code> – تغییر رمز با بررسی رمز قدیمی</li>
+                        <li><code dir='ltr'>toggle_active()</code> – تغییر وضعیت فعال/غیرفعال</li>
+                        <li><code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code></li>
+                        <li><code dir='ltr'>__eq__</code> – مقایسه بر اساس نام کاربری</li>
+                    </ul>
+                </li>
+                <li>یک کلاس <code dir='ltr'>UserManager</code> با ویژگی‌های <code dir='ltr'>users</code> (لیست کاربران) و متدهای:
+                    <ul>
+                        <li><code dir='ltr'>add_user(username, password, email)</code> – افزودن کاربر جدید</li>
+                        <li><code dir='ltr'>remove_user(username)</code> – حذف کاربر</li>
+                        <li><code dir='ltr'>find_user(username)</code> – جستجوی کاربر</li>
+                        <li><code dir='ltr'>list_users()</code> – نمایش همه‌ی کاربران</li>
+                        <li><code dir='ltr'>save_to_file(filename)</code> – ذخیره‌سازی در فایل JSON</li>
+                        <li><code dir='ltr'>load_from_file(filename)</code> – بارگذاری از فایل JSON</li>
+                    </ul>
+                </li>
+                <li>استفاده از <code dir='ltr'>__len__</code> برای تعداد کاربران.</li>
+                <li>استفاده از <code dir='ltr'>__getitem__</code> برای دسترسی به کاربران با اندیس.</li>
+                <li>مدیریت خطاها (کاربر تکراری، کاربر وجود ندارد و ...).</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> برای کاربر ایجاد کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 main.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>با استفاده از ماژول <code dir='ltr'>hashlib</code>، رمز عبور را به‌صورت هش ذخیره کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>datetime</code>، تاریخ آخرین ورود کاربر را ذخیره کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>__lt__</code>، کاربران را بر اساس تاریخ ایجاد مرتب کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>property</code> (در بخش بعدی)، یک ویژگی محاسباتی برای تعداد روزهای عضویت اضافه کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-16/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-18/index.html" class="btn-demo">رفتن به فصل ۱۸ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© २०۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی سیستم کتابخانه
+        function runOOPDemo() {
+            const resultBox = document.getElementById('oopResult');
+
+            // شبیه‌سازی کلاس Book
+            class Book {
+                constructor(title, author, isbn) {
+                    this.title = title;
+                    this.author = author;
+                    this.isbn = isbn;
+                    this.isBorrowed = false;
+                }
+                borrow() {
+                    if (this.isBorrowed) return false;
+                    this.isBorrowed = true;
+                    return true;
+                }
+                returnBook() {
+                    if (!this.isBorrowed) return false;
+                    this.isBorrowed = false;
+                    return true;
+                }
+                toString() {
+                    return `${this.title} - ${this.author} (${this.isBorrowed ? '📤 امانت' : '📚 موجود'})`;
+                }
+            }
+
+            // شبیه‌سازی کلاس Library
+            class Library {
+                constructor() {
+                    this.books = [];
+                }
+                addBook(book) {
+                    this.books.push(book);
+                }
+                listAvailable() {
+                    return this.books.filter(b => !b.isBorrowed);
+                }
+                getTotal() {
+                    return this.books.length;
+                }
+            }
+
+            // ایجاد کتاب‌ها
+            const library = new Library();
+            const books = [
+                new Book("پایتون مقدماتی", "علی رضایی", "978-1-234-56789-0"),
+                new Book("برنامه‌نویسی شی‌گرا", "سارا محمدی", "978-1-234-56789-1"),
+                new Book("داده‌کاوی با پایتون", "رضا کریمی", "978-1-234-56789-2")
+            ];
+            books.forEach(b => library.addBook(b));
+
+            // امانت گرفتن یک کتاب
+            books[0].borrow();
+
+            const available = library.listAvailable();
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                📚 سیستم کتابخانه (شبیه‌سازی)
+
+                تعداد کل کتاب‌ها: ${library.getTotal()}
+                کتاب‌های موجود: ${available.length}
+
+                📖 لیست کتاب‌ها:
+                ${books.map((b, i) => `${i+1}. ${b.toString()}`).join('<br>')}
+
+                📤 کتاب امانت‌گرفته‌شده: "${books[0].title}"
+                ✅ عملیات با موفقیت انجام شد!
+            `.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

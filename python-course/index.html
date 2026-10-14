@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دوره تخصصی صفر تا صد پایتون | از مبتدی تا حرفه‌ای</title>
+<meta name="description" content="مسیر پروژه‌محور فارسی از صفر مطلق تا توسعه‌دهنده حرفه‌ای پایتون — ۳۰ فصل، آزمون تعاملی، واژه‌نامه هوشمند و داشبورد یادگیری.">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/theme.css">
+
+<!-- ─── تعیین تم پیش از رنگ‌آمیزی صفحه (جلوگیری از سوسوی تم) ─── -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('djc_theme_v1');
+    if (!t) {
+      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+    var f = localStorage.getItem('djc_font_v1');
+    if (f) document.documentElement.setAttribute('data-font', f);
+  } catch (e) { /* localStorage غیرفعال — تم پیش‌فرض روشن */ }
+})();
+</script>
+
+<!-- ─── استایل ادیتور حرفه‌ای (in-page) ─── -->
+<style>
+/* ═══════════════════════════════════════════════════════════
+   ادیتور کد هیرو — طراحی IDE واقعی
+   از prefix با specificity بالا استفاده می‌کنیم تا بر style.css مقدم باشیم
+   ═══════════════════════════════════════════════════════════ */
+
+html body[data-page="home"] .hero-editor {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: 420px;
+  border-radius: 20px;
+  background: #0a0f1c;
+  border: 1px solid rgba(255, 255, 255, .08);
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, .85),
+    0 0 0 1px rgba(55, 118, 171, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .06);
+  overflow: hidden;
+  font-family: var(--mono);
+  direction: ltr;
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1), box-shadow .4s;
+}
+html body[data-page="home"] .hero-editor:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 40px 80px -30px rgba(0, 0, 0, .9),
+    0 0 0 1px rgba(55, 118, 171, .18),
+    0 0 60px -20px rgba(55, 118, 171, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+/* ─── حالت آماده: هاله طلایی ظریف ─── */
+html body[data-page="home"] .hero-editor.is-ready {
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, .85),
+    0 0 0 1px rgba(255, 211, 67, .25),
+    0 0 80px -20px rgba(255, 211, 67, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+/* ─── حالت اجرا: هاله سبز ─── */
+html body[data-page="home"] .hero-editor.is-running {
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, .85),
+    0 0 0 1px rgba(16, 185, 129, .35),
+    0 0 80px -20px rgba(16, 185, 129, .35),
+    inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+/* ══════ نوار بالای ادیتور (chrome) ══════ */
+html body[data-page="home"] .hero-editor .editor-chrome {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  min-height: 44px;
+  background: linear-gradient(180deg, #101827 0%, #0d1421 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+  position: relative;
+}
+html body[data-page="home"] .hero-editor .editor-chrome::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(55, 118, 171, .5),
+    rgba(255, 211, 67, .5),
+    rgba(55, 118, 171, .5),
+    transparent);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity .5s;
+}
+html body[data-page="home"] .hero-editor.is-ready .editor-chrome::after,
+html body[data-page="home"] .hero-editor.is-running .editor-chrome::after {
+  opacity: 1;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* چراغ‌های ترافیک */
+html body[data-page="home"] .hero-editor .dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+html body[data-page="home"] .hero-editor .dot-r,
+html body[data-page="home"] .hero-editor .dot-y,
+html body[data-page="home"] .hero-editor .dot-g {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: transform .3s, box-shadow .3s;
+}
+html body[data-page="home"] .hero-editor .dot-r { background: #ff5f56; }
+html body[data-page="home"] .hero-editor .dot-y { background: #ffbd2e; }
+html body[data-page="home"] .hero-editor .dot-g { background: #27c93f; }
+html body[data-page="home"] .hero-editor:hover .dot-r { box-shadow: 0 0 8px rgba(255, 95, 86, .7); }
+html body[data-page="home"] .hero-editor:hover .dot-y { box-shadow: 0 0 8px rgba(255, 189, 46, .7); }
+html body[data-page="home"] .hero-editor:hover .dot-g { box-shadow: 0 0 8px rgba(39, 201, 63, .7); }
+
+/* تب فایل */
+html body[data-page="home"] .hero-editor .editor-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  flex: 1;
+  min-width: 0;
+}
+html body[data-page="home"] .hero-editor .editor-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: .72rem;
+  font-family: var(--mono);
+  color: #cbd5e1;
+  background: rgba(55, 118, 171, .14);
+  border: 1px solid rgba(55, 118, 171, .28);
+  border-radius: 8px;
+  white-space: nowrap;
+  letter-spacing: .02em;
+  position: relative;
+  transition: all .25s;
+}
+html body[data-page="home"] .hero-editor .editor-tab::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--py-yellow);
+  box-shadow: 0 0 6px rgba(255, 211, 67, .7);
+  flex-shrink: 0;
+}
+html body[data-page="home"] .hero-editor.is-running .editor-tab::before {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, .8);
+  animation: pulse-ring 1s infinite;
+}
+
+/* وضعیت Python */
+html body[data-page="home"] .hero-editor .editor-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+html body[data-page="home"] .hero-editor .status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, .1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, .22);
+  border-radius: 30px;
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  font-family: var(--mono);
+  transition: all .3s;
+}
+html body[data-page="home"] .hero-editor .status-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  flex-shrink: 0;
+  animation: pulse-ring 2.2s infinite;
+}
+html body[data-page="home"] .hero-editor.is-ready .status-pill {
+  background: rgba(255, 211, 67, .12);
+  color: var(--py-yellow);
+  border-color: rgba(255, 211, 67, .3);
+}
+html body[data-page="home"] .hero-editor.is-ready .status-pill::before,
+html body[data-page="home"] .hero-editor.is-running .status-pill::before {
+  background: var(--py-yellow);
+  box-shadow: 0 0 8px var(--py-yellow);
+}
+html body[data-page="home"] .hero-editor.is-running .status-pill {
+  background: rgba(255, 211, 67, .14);
+  color: var(--py-yellow);
+  border-color: rgba(255, 211, 67, .4);
+}
+
+/* ══════ فضای کاری (شماره خطوط + کد) ══════ */
+html body[data-page="home"] .hero-editor .editor-workspace {
+  display: flex;
+  flex: 1;
+  overflow: auto;
+  background: #0a0f1c;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .12) transparent;
+}
+html body[data-page="home"] .hero-editor .editor-workspace::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+html body[data-page="home"] .hero-editor .editor-workspace::-webkit-scrollbar-track {
+  background: transparent;
+}
+html body[data-page="home"] .hero-editor .editor-workspace::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .1);
+  border-radius: 4px;
+}
+html body[data-page="home"] .hero-editor .editor-workspace::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, .22);
+}
+
+/* ستون شماره خطوط */
+html body[data-page="home"] .hero-editor .editor-gutter {
+  flex-shrink: 0;
+  padding: 18px 12px 18px 16px;
+  font-family: var(--mono);
+  font-size: .82rem;
+  line-height: 1.9;
+  color: #334155;
+  text-align: right;
+  user-select: none;
+  direction: ltr;
+  background: rgba(0, 0, 0, .18);
+  border-right: 1px solid rgba(255, 255, 255, .04);
+  white-space: pre;
+  transition: color .3s;
+}
+html body[data-page="home"] .hero-editor.is-ready .editor-gutter {
+  color: #475569;
+}
+
+/* بدنه کد */
+html body[data-page="home"] .hero-editor .editor-body {
+  flex: 1;
+  padding: 18px 20px !important;
+  margin: 0;
+  font-size: .82rem;
+  line-height: 1.9;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: visible;
+  background: transparent;
+  min-width: 0;
+}
+html body[data-page="home"] .hero-editor .editor-body code {
+  font-family: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* نشانگر تایپ */
+html body[data-page="home"] .hero-editor .editor-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  background: var(--py-yellow);
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  border-radius: 1px;
+  animation: editor-blink 1s steps(2) infinite;
+  box-shadow: 0 0 8px rgba(255, 211, 67, .7);
+}
+html body[data-page="home"] .hero-editor.is-ready .editor-cursor,
+html body[data-page="home"] .hero-editor.is-running .editor-cursor {
+  display: none;
+}
+
+/* رنگ‌آمیزی نحوی */
+html body[data-page="home"] .hero-editor .c-comment { color: #64748b; font-style: italic; }
+html body[data-page="home"] .hero-editor .c-str     { color: #86efac; }
+html body[data-page="home"] .hero-editor .c-kw      { color: #c084fc; font-weight: 700; }
+html body[data-page="home"] .hero-editor .c-num     { color: #fbbf24; }
+
+/* ══════ پنل خروجی ══════ */
+html body[data-page="home"] .hero-editor .editor-output {
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  background: #05080f;
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .5s cubic-bezier(.4, 0, .2, 1),
+              padding .5s cubic-bezier(.4, 0, .2, 1);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .12) transparent;
+}
+html body[data-page="home"] .hero-editor .editor-output.show {
+  max-height: 260px;
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+}
+html body[data-page="home"] .hero-editor .editor-output::-webkit-scrollbar {
+  width: 6px;
+}
+html body[data-page="home"] .hero-editor .editor-output::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .1);
+  border-radius: 3px;
+}
+
+html body[data-page="home"] .hero-editor .output-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #86efac;
+  direction: rtl;
+}
+html body[data-page="home"] .hero-editor .output-head::before {
+  content: '▶';
+  color: #10b981;
+  animation: pulse-ring 1.8s infinite;
+}
+html body[data-page="home"] .hero-editor .output-badge {
+  margin-right: auto;
+  padding: 2px 8px;
+  background: rgba(16, 185, 129, .12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, .25);
+  border-radius: 30px;
+  font-size: .58rem;
+  letter-spacing: .1em;
+  font-family: var(--mono);
+}
+
+html body[data-page="home"] .hero-editor #editor-output-body {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: .78rem;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--mono);
+  direction: ltr;
+  text-align: left;
+}
+html body[data-page="home"] .hero-editor #editor-output-body .out-line {
+  display: block;
+  opacity: 0;
+  transform: translateX(-8px);
+  animation: out-line-in .4s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+html body[data-page="home"] .hero-editor #editor-output-body .out-green  { color: #86efac; }
+html body[data-page="home"] .hero-editor #editor-output-body .out-yellow { color: var(--py-yellow); }
+html body[data-page="home"] .hero-editor #editor-output-body .out-dim    { color: #64748b; font-style: italic; }
+
+/* ══════ نوار راهنما ══════ */
+html body[data-page="home"] .hero-editor .editor-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, rgba(255, 211, 67, .06), rgba(255, 211, 67, .02));
+  border-top: 1px solid rgba(255, 211, 67, .18);
+  color: var(--py-yellow);
+  font-size: .76rem;
+  font-family: var(--font);
+  direction: rtl;
+  font-weight: 600;
+  transition: all .35s cubic-bezier(.4, 0, .2, 1);
+  position: relative;
+}
+html body[data-page="home"] .hero-editor .editor-hint::before {
+  content: '';
+  position: absolute;
+  top: -1px; right: 0; left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 211, 67, .5), transparent);
+  opacity: .6;
+}
+html body[data-page="home"] .hero-editor .editor-hint .hint-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--py-yellow);
+  animation: pulse-ring 1.8s infinite;
+  flex-shrink: 0;
+}
+html body[data-page="home"] .hero-editor .editor-hint .hint-keys {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: .68rem;
+  opacity: .75;
+}
+html body[data-page="home"] .hero-editor .editor-hint kbd {
+  background: rgba(255, 211, 67, .12);
+  border: 1px solid rgba(255, 211, 67, .3);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: .62rem;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+html body[data-page="home"] .hero-editor.is-ready .editor-hint {
+  background: linear-gradient(90deg, rgba(255, 211, 67, .12), rgba(255, 211, 67, .04));
+  border-top-color: rgba(255, 211, 67, .35);
+}
+html body[data-page="home"] .hero-editor.is-running .editor-hint {
+  background: linear-gradient(90deg, rgba(16, 185, 129, .1), rgba(16, 185, 129, .02));
+  border-top-color: rgba(16, 185, 129, .3);
+  color: #86efac;
+}
+html body[data-page="home"] .hero-editor.is-running .editor-hint .hint-dot {
+  background: #86efac;
+  box-shadow: 0 0 8px rgba(134, 239, 172, .7);
+}
+html body[data-page="home"] .hero-editor .editor-hint.hidden {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  border-top-width: 0;
+}
+
+/* ══════ دکمه پالس آماده ══════ */
+html body[data-page="home"] .hero-v3 .btn.ready-pulse {
+  animation: ready-btn-pulse 2s ease-in-out infinite;
+}
+@keyframes ready-btn-pulse {
+  0%, 100% {
+    box-shadow:
+      0 10px 26px -10px rgba(255, 211, 67, .7),
+      inset 0 1px 0 rgba(255, 255, 255, .5);
+  }
+  50% {
+    box-shadow:
+      0 10px 30px -4px rgba(255, 211, 67, 1),
+      0 0 0 8px rgba(255, 211, 67, .18),
+      inset 0 1px 0 rgba(255, 255, 255, .5);
+  }
+}
+
+/* ══════ واکنش‌گرایی ادیتور ══════ */
+@media (max-width: 900px) {
+  html body[data-page="home"] .hero-editor { min-height: 340px; }
+}
+@media (max-width: 560px) {
+  html body[data-page="home"] .hero-editor { min-height: 300px; border-radius: 16px; }
+  html body[data-page="home"] .hero-editor .editor-body { font-size: .74rem; padding: 14px 14px !important; }
+  html body[data-page="home"] .hero-editor .editor-gutter { font-size: .74rem; padding: 14px 8px 14px 12px; }
+  html body[data-page="home"] .hero-editor .editor-chrome { min-height: 40px; }
+  html body[data-page="home"] .hero-editor .dots { padding: 0 12px; }
+  html body[data-page="home"] .hero-editor .dot-r,
+  html body[data-page="home"] .hero-editor .dot-y,
+  html body[data-page="home"] .hero-editor .dot-g { width: 9px; height: 9px; }
+  html body[data-page="home"] .hero-editor .editor-tab { font-size: .64rem; padding: 6px 10px; }
+  html body[data-page="home"] .hero-editor .editor-status { padding: 0 10px; }
+  html body[data-page="home"] .hero-editor .status-pill { font-size: .56rem; padding: 3px 8px; }
+  html body[data-page="home"] .hero-editor .editor-hint { font-size: .7rem; padding: 10px 14px; }
+  html body[data-page="home"] .hero-editor .editor-hint .hint-keys { display: none; }
+}
+@media (max-width: 420px) {
+  html body[data-page="home"] .hero-editor { min-height: 260px; }
+  html body[data-page="home"] .hero-editor .editor-body { font-size: .68rem; }
+  html body[data-page="home"] .hero-editor .editor-gutter { font-size: .68rem; padding: 12px 6px 12px 10px; }
+  html body[data-page="home"] .hero-editor .editor-tab { font-size: .58rem; padding: 5px 8px; }
+}
+
+/* ══════ کاهش حرکت ══════ */
+@media (prefers-reduced-motion: reduce) {
+  html body[data-page="home"] .hero-editor { transition: none; }
+  html body[data-page="home"] .hero-editor .editor-cursor { animation: none; }
+  html body[data-page="home"] .hero-editor #editor-output-body .out-line {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+</style>
+</head>
+<body data-page="home">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#chapters">پرش به فهرست فصل‌ها</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="index.html">🐍 دوره تخصصی پایتون <small style="font-size:.65em;opacity:.7;font-weight:400">از صفر تا حرفه‌ای</small></a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="#about">درباره دوره</a>
+      <a href="#dashboard">داشبورد من</a>
+      <a href="#chapters">فصل‌ها</a>
+      <a href="glossary.html">واژه‌نامه جامع</a>
+      <a href="#guide">راهنما</a>
+      <a href="#faq">پرسش‌ها</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════ هیرو ═══════════════ -->
+  <section class="hero-v3">
+    <span class="orb o1" aria-hidden="true"></span>
+    <span class="orb o2" aria-hidden="true"></span>
+    <span class="orb o3" aria-hidden="true"></span>
+
+    <div class="hero-v3-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> مسیر پروژه‌محور • ۱۰۰٪ آفلاین</span>
+        <h1>از اولین <span class="accent">خط کد</span> تا مهندس نرم‌افزار پایتون.</h1>
+        <p class="lede">
+          ۳۰ فصل استاندارد، آزمون تعاملی نمره‌دار، واژه‌نامه هوشمند هاور و داشبورد یادگیری —
+          همه در مرورگر شما، بدون نیاز به اینترنت.
+        </p>
+        <div class="cta">
+          <a class="btn" href="chapters/chapter-01/index.html" data-hero-start>🚀 شروع از فصل ۱</a>
+          <a class="btn ghost" href="#chapters">🗂️ همه فصل‌ها</a>
+          <a class="btn ghost" href="glossary.html">📚 واژه‌نامه</a>
+        </div>
+      </div>
+
+      <!-- ─── ادیتور کد هیرو ─── -->
+      <div class="hero-editor" id="hero-editor">
+        <!-- نوار بالای ادیتور -->
+        <div class="editor-chrome">
+          <span class="dots" aria-hidden="true">
+            <span class="dot-r"></span>
+            <span class="dot-y"></span>
+            <span class="dot-g"></span>
+          </span>
+          <span class="editor-tabs">
+            <span class="editor-tab">hello_python.py</span>
+          </span>
+          <span class="editor-status">
+            <span class="status-pill">Python 3.12</span>
+          </span>
+        </div>
+
+        <!-- فضای کاری: شماره خطوط + بدنه کد -->
+        <div class="editor-workspace">
+          <div class="editor-gutter" id="editor-gutter" aria-hidden="true">1</div>
+          <pre class="editor-body"><code id="editor-code"></code><span class="editor-cursor" aria-hidden="true"></span></pre>
+        </div>
+
+        <!-- پنل خروجی -->
+        <div class="editor-output" id="editor-output" hidden>
+          <div class="output-head">
+            <span>خروجی برنامه</span>
+            <span class="output-badge">stdout</span>
+          </div>
+          <pre id="editor-output-body"></pre>
+        </div>
+
+        <!-- نوار راهنما -->
+        <div class="editor-hint" id="editor-hint">
+          <span class="hint-dot" aria-hidden="true"></span>
+          <span>در حال آماده‌سازی محیط پایتون...</span>
+          <span class="hint-keys" aria-hidden="true">
+            <kbd>Ctrl</kbd>+<kbd>Enter</kbd>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <!-- ═══════════════ آمار ═══════════════ -->
+  <div class="stats-v3 reveal">
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(55,118,171,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(55,118,171,.15), rgba(55,118,171,.05));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(55,118,171,.4);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">📚</span>
+      <span class="num">۳۰</span>
+      <span class="lbl">فصل آموزشی</span>
+    </div>
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(124,58,237,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(124,58,237,.15), rgba(124,58,237,.05));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(124,58,237,.4);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">🧩</span>
+      <span class="num">۱۶</span>
+      <span class="lbl">بخش هر فصل</span>
+    </div>
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(255,211,67,.08) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(255,211,67,.22), rgba(255,211,67,.06));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(230,184,0,.4);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">💡</span>
+      <span class="num" id="stat-terms">۰</span>
+      <span class="lbl">واژه تخصصی</span>
+    </div>
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(16,185,129,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(16,185,129,.15), rgba(16,185,129,.05));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(16,185,129,.4);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">📝</span>
+      <span class="num">۱۸۰</span>
+      <span class="lbl">پرسش آزمون</span>
+    </div>
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(59,130,246,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(59,130,246,.15), rgba(59,130,246,.05));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(59,130,246,.4);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">⏱️</span>
+      <span class="num">۳۰۰۰</span>
+      <span class="lbl">دقیقه محتوا</span>
+    </div>
+
+    <div class="stat-v3" style="
+      background:linear-gradient(135deg,
+        rgba(220,38,38,.05) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="ico" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:44px;height:44px;border-radius:12px;
+        background:linear-gradient(135deg, rgba(220,38,38,.13), rgba(220,38,38,.04));
+        font-size:1.3rem;
+        box-shadow:0 6px 14px -6px rgba(220,38,38,.35);
+        transition:transform .3s cubic-bezier(.4,0,.2,1)">🔒</span>
+      <span class="num">۱۰۰٪</span>
+      <span class="lbl">آفلاین</span>
+    </div>
+
+  </div>
+  <!-- ═══════════════ شروع سریع ═══════════════ -->
+  <div class="qs-v3 reveal">
+
+    <!-- ۱) تازه‌کار، از صفر — آبی (برند اصلی) -->
+    <a class="qs-item" href="chapters/chapter-01/index.html" style="
+      border-color:rgba(55,118,171,.25);
+      background:linear-gradient(135deg,
+        rgba(55,118,171,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="qs-ico" style="
+        background:linear-gradient(135deg, #3776ab, #4a8ac4);
+        box-shadow:0 8px 18px -8px rgba(55,118,171,.6)">🐣</span>
+      <div style="flex:1;min-width:0">
+        <b>تازه‌کارم، از صفر</b>
+        <span>فصل ۱ — نصب و راه‌اندازی</span>
+      </div>
+      <span aria-hidden="true" style="
+        color:#3776ab;font-weight:900;font-size:1.1rem;
+        opacity:.5;transition:all .3s">←</span>
+    </a>
+
+    <!-- ۲) داشبورد — بنفش -->
+    <a class="qs-item" href="#dashboard" style="
+      border-color:rgba(124,58,237,.25);
+      background:linear-gradient(135deg,
+        rgba(124,58,237,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="qs-ico" style="
+        background:linear-gradient(135deg, #7c3aed, #a78bfa);
+        box-shadow:0 8px 18px -8px rgba(124,58,237,.6)">📊</span>
+      <div style="flex:1;min-width:0">
+        <b>داشبورد یادگیری</b>
+        <span>پیشرفت و نمرات من</span>
+      </div>
+      <span aria-hidden="true" style="
+        color:#7c3aed;font-weight:900;font-size:1.1rem;
+        opacity:.5;transition:all .3s">←</span>
+    </a>
+
+    <!-- ۳) واژه‌نامه — سبز -->
+    <a class="qs-item" href="glossary.html" style="
+      border-color:rgba(16,185,129,.25);
+      background:linear-gradient(135deg,
+        rgba(16,185,129,.06) 0%,
+        transparent 60%),
+        var(--surface)">
+      <span class="qs-ico" style="
+        background:linear-gradient(135deg, #10b981, #34d399);
+        box-shadow:0 8px 18px -8px rgba(16,185,129,.6)">📖</span>
+      <div style="flex:1;min-width:0">
+        <b>واژه‌نامه جامع</b>
+        <span>همه اصطلاحات یکجا</span>
+      </div>
+      <span aria-hidden="true" style="
+        color:#10b981;font-weight:900;font-size:1.1rem;
+        opacity:.5;transition:all .3s">←</span>
+    </a>
+
+    <!-- ۴) مسیر پیشنهادی — زرد (پایتون) -->
+    <a class="qs-item" href="#roadmap" style="
+      border-color:rgba(230,184,0,.3);
+      background:linear-gradient(135deg,
+        rgba(255,211,67,.1) 0%,
+        transparent 60%),
+        var(--surface);
+      position:relative">
+      <span aria-hidden="true" style="
+        position:absolute;top:10px;left:10px;
+        background:linear-gradient(135deg, #ffd343, #f7b500);
+        color:#10233b;font-size:.6rem;font-weight:900;
+        padding:2px 8px;border-radius:30px;
+        letter-spacing:.3px;
+        box-shadow:0 4px 10px -4px rgba(230,184,0,.6)">توصیه‌شده</span>
+      <span class="qs-ico" style="
+        background:linear-gradient(135deg, #ffd343, #f7b500);
+        box-shadow:0 8px 18px -8px rgba(230,184,0,.7);
+        color:#10233b">🗺️</span>
+      <div style="flex:1;min-width:0">
+        <b>مسیر پیشنهادی</b>
+        <span>۴ سطح یادگیری پیوسته</span>
+      </div>
+      <span aria-hidden="true" style="
+        color:#e6b800;font-weight:900;font-size:1.1rem;
+        opacity:.5;transition:all .3s">←</span>
+    </a>
+
+  </div>
+
+  <!-- ─── بهبود ظرافت‌های hover (یک‌بار در پایین صفحه) ─── -->
+  <style>
+  body[data-page="home"] .stat-v3:hover .ico {
+    transform: scale(1.1) rotate(-6deg) !important;
+  }
+  body[data-page="home"] .qs-item:hover > span[aria-hidden="true"]:last-child {
+    opacity: 1 !important;
+    transform: translateX(-6px);
+  }
+  body[data-page="home"] .qs-item {
+    transition: all .3s cubic-bezier(.4, 0, .2, 1);
+  }
+  body[data-page="home"] .qs-item:hover {
+    transform: translateY(-4px);
+  }
+  </style>
+
+  <!-- ═══════════════ چرا پایتون؟ ═══════════════ -->
+  <section class="panel reveal" id="about" style="position:relative;overflow:hidden">
+
+    <!-- هاله‌های دکوراتیو -->
+    <span aria-hidden="true" style="
+      position:absolute;top:-80px;right:-80px;
+      width:240px;height:240px;border-radius:50%;
+      background:radial-gradient(circle, rgba(55,118,171,.12), transparent 70%);
+      pointer-events:none;z-index:0"></span>
+    <span aria-hidden="true" style="
+      position:absolute;bottom:-100px;left:-60px;
+      width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle, rgba(255,211,67,.1), transparent 70%);
+      pointer-events:none;z-index:0"></span>
+
+    <!-- سر بخش -->
+    <div style="position:relative;z-index:1;max-width:720px">
+      <span style="
+        display:inline-flex;align-items:center;gap:8px;
+        background:var(--accent-soft);color:var(--accent-dark);
+        font-size:.72rem;font-weight:800;letter-spacing:.4px;
+        padding:5px 14px;border-radius:30px;margin-bottom:14px">
+        <span style="
+          width:6px;height:6px;border-radius:50%;
+          background:var(--accent);
+          box-shadow:0 0 0 0 rgba(55,118,171,.6);
+          animation:pulse-ring 2.2s infinite"></span>
+        چرا پایتون؟
+      </span>
+      <h2 style="margin:0 0 14px;font-size:1.5rem;font-weight:900;line-height:1.35;letter-spacing:-.02em">
+        زبان شماره یک دنیا — <span style="
+          background:linear-gradient(135deg, var(--py-blue), var(--py-yellow));
+          -webkit-background-clip:text;background-clip:text;
+          -webkit-text-fill-color:transparent">یک مهارت، بی‌نهایت مسیر</span>
+      </h2>
+      <p style="margin:0 0 28px;color:var(--muted);line-height:2;font-size:.94rem">
+        از هوش مصنوعی و علم داده تا وب، خودکارسازی و DevOps — پایتون در همه صنایع حضور دارد.
+        یادگیری آن یعنی سرمایه‌گذاری روی مهارتی که سال‌ها به کارتان می‌آید.
+      </p>
+    </div>
+
+    <!-- کارت‌های مزیت -->
+    <div class="why-v3" style="position:relative;z-index:1;margin-top:8px">
+
+      <div class="why-card-v3">
+        <span class="ico-lg">🤖</span>
+        <h4>هوش مصنوعی و علم داده</h4>
+        <p>قلب اکوسیستم داده و یادگیری ماشین — از تحلیل پایه تا مدل‌های زبانی بزرگ.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">numpy</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">pandas</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">pytorch</code>
+        </div>
+      </div>
+
+      <div class="why-card-v3">
+        <span class="ico-lg">🌐</span>
+        <h4>وب و API مدرن</h4>
+        <p>ساخت سریع سرویس‌های وب و REST API با کدی تمیز و قابل نگهداری.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">fastapi</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">django</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">flask</code>
+        </div>
+      </div>
+
+      <div class="why-card-v3">
+        <span class="ico-lg">⚙️</span>
+        <h4>خودکارسازی و ابزارسازی</h4>
+        <p>از اسکریپت‌های کوچک روزمره تا خط لوله‌های CI/CD و ابزارهای DevOps.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">pathlib</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">subprocess</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">click</code>
+        </div>
+      </div>
+
+      <div class="why-card-v3">
+        <span class="ico-lg">🚀</span>
+        <h4>ساده، خوانا، حرفه‌ای</h4>
+        <p>سینتکس تمیزی که به شما یاد می‌دهد مثل یک مهندس فکر کنید — نه فقط کد بزنید.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">pep8</code>
+          <code style="
+            font-family:var(--mono);font-size:.68rem;
+            background:var(--surface);color:var(--accent);
+            border:1px solid var(--line);border-radius:6px;
+            padding:2px 8px;direction:ltr">type hints</code>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- نوار پایین: استناد به آمار جهانی -->
+    <div style="
+      position:relative;z-index:1;
+      margin-top:28px;padding-top:22px;
+      border-top:1px dashed var(--line);
+      display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;
+      font-size:.78rem;color:var(--muted);font-weight:600">
+      <span style="display:inline-flex;align-items:center;gap:6px">
+        <span style="
+          width:6px;height:6px;border-radius:50%;
+          background:var(--accent)"></span>
+        پرکاربردترین زبان در GitHub
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px">
+        <span style="
+          width:6px;height:6px;border-radius:50%;
+          background:var(--py-yellow)"></span>
+        محبوب‌ترین زبان برای آموزش
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:6px">
+        <span style="
+          width:6px;height:6px;border-radius:50%;
+          background:#10b981"></span>
+        بهترین انتخاب برای شروع
+      </span>
+      <a href="chapters/chapter-01/index.html" style="
+        margin-right:auto;
+        color:var(--accent);text-decoration:none;font-weight:800;
+        display:inline-flex;align-items:center;gap:6px;
+        transition:gap .25s">
+        شروع از فصل ۱ <span aria-hidden="true">←</span>
+      </a>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════ قالب ۱۶ بخشی ═══════════════ -->
+  <div class="panel reveal">
+    <h2>📚 هر فصل دقیقاً چگونه است؟</h2>
+    <p style="color:var(--muted);max-width:700px;line-height:1.95">
+      هر فصل از یک <strong>قالب ۱۶ بخشی استاندارد</strong> پیروی می‌کند تا نه چیزی از قلم بیفتد و نه سردرگم شوید.
+      بخش‌های ✨ با امکانات تعاملی.
+    </p>
+    <div class="timeline-16">
+      <div class="tl-item"><span class="tl-num">۱</span><h5>چشم‌انداز فصل</h5><p>اهداف و جایگاه</p></div>
+      <div class="tl-item"><span class="tl-num">۲</span><h5>نقشه راه</h5><p>مسیر فصل</p></div>
+      <div class="tl-item"><span class="tl-num">۳</span><h5>محرک ذهنی</h5><p>سؤال + پاسخ</p></div>
+      <div class="tl-item"><span class="tl-num">۴</span><h5>پیش‌نیازها</h5><p>آماده‌سازی</p></div>
+      <div class="tl-item"><span class="tl-num">۵</span><h5>آموزش مفاهیم</h5><p>گام‌به‌گام</p></div>
+      <div class="tl-item"><span class="tl-num">۶</span><h5>مثال عملی</h5><p>کد اجرایی</p></div>
+      <div class="tl-item"><span class="tl-num">۷</span><h5>کارگاه عملی</h5><p>تمرین هدایت‌شده</p></div>
+      <div class="tl-item"><span class="tl-num">۸</span><h5>پاسخ کارگاه</h5><p>حل کامل</p></div>
+      <div class="tl-item"><span class="tl-num">۹</span><h5>خطاهای رایج</h5><p>و راه‌حل</p></div>
+      <div class="tl-item"><span class="tl-num">۱۰</span><h5>تمرین تثبیت</h5><p>با پاسخ</p></div>
+      <div class="tl-item tl-star"><span class="tl-num">۱۱</span><h5>آزمون تعاملی ✨</h5><p>نمره‌دار</p></div>
+      <div class="tl-item"><span class="tl-num">۱۲</span><h5>پروژه فصل</h5><p>عملی</p></div>
+      <div class="tl-item"><span class="tl-num">۱۳</span><h5>جمع‌بندی</h5><p>دستاوردها</p></div>
+      <div class="tl-item"><span class="tl-num">۱۴</span><h5>سؤالات متداول</h5><p>و گام بعدی</p></div>
+      <div class="tl-item tl-star"><span class="tl-num">۱۵</span><h5>واژه‌نامه ✨</h5><p>خودکار</p></div>
+      <div class="tl-item tl-star"><span class="tl-num">۱۶</span><h5>یادداشت من ✨</h5><p>ذخیره خودکار</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:22px">
+      <b class="title">💡 نکته طلایی</b>
+      در «کارگاه عملی» اول خودتان تلاش کنید. هر واژه خط‌چین‌دار را هاور کنید (در موبایل لمس کنید) تا ترجمه و توضیحش فوراً ظاهر شود.
+    </div>
+  </div>
+
+  <!-- ═══════════════ داشبورد ═══════════════ -->
+  <section class="panel reveal" id="dashboard" style="position:relative;overflow:hidden">
+  
+    <!-- هاله‌های دکوراتیو -->
+    <span aria-hidden="true" style="
+      position:absolute;top:-100px;left:-80px;
+      width:260px;height:260px;border-radius:50%;
+      background:radial-gradient(circle, rgba(55,118,171,.12), transparent 70%);
+      pointer-events:none;z-index:0"></span>
+    <span aria-hidden="true" style="
+      position:absolute;bottom:-120px;right:-60px;
+      width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle, rgba(124,58,237,.08), transparent 70%);
+      pointer-events:none;z-index:0"></span>
+  
+    <!-- سر بخش -->
+    <div style="position:relative;z-index:1;max-width:720px;margin-bottom:24px">
+      <span style="
+        display:inline-flex;align-items:center;gap:8px;
+        background:var(--accent-soft);color:var(--accent-dark);
+        font-size:.72rem;font-weight:800;letter-spacing:.4px;
+        padding:5px 14px;border-radius:30px;margin-bottom:14px">
+        <span style="
+          width:6px;height:6px;border-radius:50%;
+          background:var(--accent);
+          animation:pulse-ring 2.2s infinite"></span>
+        داشبورد شخصی
+      </span>
+      <h2 style="margin:0 0 10px;font-size:1.5rem;font-weight:900;line-height:1.35;letter-spacing:-.02em">
+        پیشرفت شما، <span style="
+          background:linear-gradient(135deg, var(--py-blue), var(--py-yellow));
+          -webkit-background-clip:text;background-clip:text;
+          -webkit-text-fill-color:transparent">در یک نگاه</span>
+      </h2>
+      <p style="margin:0;color:var(--muted);line-height:2;font-size:.92rem">
+        پیشرفت مطالعه، نمرات آزمون‌ها و رکوردهای شما به‌صورت خودکار در مرورگر ذخیره می‌شود —
+        بدون ثبت‌نام و بدون ارسال داده به سرور.
+      </p>
+    </div>
+  
+    <!-- ═══ نوار پیشرفت اصلی ═══ -->
+    <div class="dash-progress" style="
+      position:relative;z-index:1;
+      background:linear-gradient(135deg,
+        rgba(55,118,171,.06) 0%,
+        transparent 60%),
+        var(--surface-2);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:22px 24px;
+      margin:0 0 20px">
+  
+      <div class="dash-progress-row" style="
+        display:flex;justify-content:space-between;
+        align-items:center;gap:16px;flex-wrap:wrap;
+        margin-bottom:14px">
+  
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="
+            display:inline-flex;align-items:center;justify-content:center;
+            width:32px;height:32px;border-radius:10px;
+            background:linear-gradient(135deg, #3776ab, #4a8ac4);
+            color:#fff;font-size:.95rem;
+            box-shadow:0 6px 14px -6px rgba(55,118,171,.55)">🎯</span>
+          <span style="
+            font-size:.94rem;font-weight:800;color:var(--ink);
+            letter-spacing:-.01em">پیشرفت کلی دوره</span>
+        </div>
+      
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <b id="dash-pct" style="
+            font-size:1.75rem;font-weight:900;letter-spacing:-.03em;
+            background:linear-gradient(135deg, var(--py-blue), var(--py-yellow));
+            -webkit-background-clip:text;background-clip:text;
+            -webkit-text-fill-color:transparent;
+            line-height:1">۰٪</b>
+          <span style="
+            font-size:.82rem;color:var(--muted);font-weight:700;
+            font-family:var(--mono)">
+            <span id="dash-done">۰/۳۰</span> فصل
+          </span>
+        </div>
+      </div>
+    
+      <!-- نوار پیشرفت با نشانگر -->
+      <div style="
+        position:relative;
+        height:14px;
+        background:var(--line);
+        border-radius:30px;
+        overflow:hidden">
+        <div class="dash-bar-fill" id="dash-fill" style="
+          height:100%;width:0;border-radius:30px;
+          background:linear-gradient(90deg, var(--py-blue), var(--py-yellow));
+          background-size:200% 100%;
+          transition:width 1s cubic-bezier(.4,0,.2,1);
+          position:relative;overflow:hidden"></div>
+      </div>
+    
+      <!-- راهنمای مقیاس -->
+      <div style="
+        display:flex;justify-content:space-between;
+        margin-top:10px;
+        font-size:.68rem;font-weight:700;
+        color:var(--muted);font-family:var(--mono);
+        letter-spacing:.03em">
+        <span>۰٪</span>
+        <span>۵۰٪</span>
+        <span>۱۰۰٪</span>
+      </div>
+    </div>
+  
+    <!-- ═══ کارت‌های آماری ═══ -->
+    <div class="dash-grid" style="
+      position:relative;z-index:1;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:14px;
+      margin-bottom:22px">
+  
+      <!-- آزمون‌ها — سبز -->
+      <div class="dash-card" style="
+        position:relative;
+        background:linear-gradient(135deg,
+          rgba(16,185,129,.06) 0%,
+          transparent 60%),
+          var(--surface-2);
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:20px 18px 18px;
+        transition:all .3s cubic-bezier(.4,0,.2,1);
+        overflow:hidden">
+        <span style="
+          display:inline-flex;align-items:center;justify-content:center;
+          width:38px;height:38px;border-radius:11px;
+          background:linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.06));
+          font-size:1.15rem;
+          box-shadow:0 6px 14px -6px rgba(16,185,129,.4);
+          margin-bottom:12px">✅</span>
+        <div style="
+          font-size:.76rem;color:var(--muted);font-weight:700;
+          margin-bottom:8px;letter-spacing:-.01em">آزمون‌های داده‌شده</div>
+        <b id="dash-quizzes" style="
+          display:block;
+          font-size:1.85rem;font-weight:900;
+          color:#059669;letter-spacing:-.03em;line-height:1">۰</b>
+      </div>
+    
+      <!-- میانگین — بنفش -->
+      <div class="dash-card" style="
+        position:relative;
+        background:linear-gradient(135deg,
+          rgba(124,58,237,.06) 0%,
+          transparent 60%),
+          var(--surface-2);
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:20px 18px 18px;
+        transition:all .3s cubic-bezier(.4,0,.2,1);
+        overflow:hidden">
+        <span style="
+          display:inline-flex;align-items:center;justify-content:center;
+          width:38px;height:38px;border-radius:11px;
+          background:linear-gradient(135deg, rgba(124,58,237,.18), rgba(124,58,237,.06));
+          font-size:1.15rem;
+          box-shadow:0 6px 14px -6px rgba(124,58,237,.4);
+          margin-bottom:12px">📈</span>
+        <div style="
+          font-size:.76rem;color:var(--muted);font-weight:700;
+          margin-bottom:8px;letter-spacing:-.01em">میانگین بهترین نمرات</div>
+        <b id="dash-avg" style="
+          display:block;
+          font-size:1.85rem;font-weight:900;
+          color:#7c3aed;letter-spacing:-.03em;line-height:1">—</b>
+      </div>
+    
+      <!-- واژه‌ها — آبی -->
+      <div class="dash-card" style="
+        position:relative;
+        background:linear-gradient(135deg,
+          rgba(55,118,171,.06) 0%,
+          transparent 60%),
+          var(--surface-2);
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:20px 18px 18px;
+        transition:all .3s cubic-bezier(.4,0,.2,1);
+        overflow:hidden">
+        <span style="
+          display:inline-flex;align-items:center;justify-content:center;
+          width:38px;height:38px;border-radius:11px;
+          background:linear-gradient(135deg, rgba(55,118,171,.18), rgba(55,118,171,.06));
+          font-size:1.15rem;
+          box-shadow:0 6px 14px -6px rgba(55,118,171,.4);
+          margin-bottom:12px">💡</span>
+        <div style="
+          font-size:.76rem;color:var(--muted);font-weight:700;
+          margin-bottom:8px;letter-spacing:-.01em">واژه‌های واژه‌نامه</div>
+        <b id="dash-terms" style="
+          display:block;
+          font-size:1.85rem;font-weight:900;
+          color:#3776ab;letter-spacing:-.03em;line-height:1">۰</b>
+      </div>
+    
+    </div>
+  
+    <!-- ═══ بخش بهترین نمره‌ها ═══ -->
+    <div id="dash-scores" style="
+      position:relative;z-index:1;
+      padding-top:22px;
+      border-top:1px dashed var(--line)">
+      <!-- محتوای این بخش توسط app.js پر می‌شود -->
+    </div>
+  
+  </section>
+  
+  <!-- ─── بهبود ظرافت‌های hover (یک‌بار در پایین صفحه) ─── -->
+  <style>
+  body[data-page="home"] .dash-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--py-blue) !important;
+    box-shadow: 0 16px 34px -16px rgba(55, 118, 171, .3);
+  }
+  
+  /* اسکرول‌بار افقی جدول نمرات */
+  body[data-page="home"] #dash-scores h4 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  body[data-page="home"] #dash-scores .dash-empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: .88rem;
+    padding: 28px 20px;
+    background: linear-gradient(135deg, rgba(55,118,171,.04), rgba(124,58,237,.04));
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    margin: 0;
+    line-height: 1.95;
+  }
+  body[data-page="home"] #dash-scores .dash-score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  body[data-page="home"] #dash-scores .dash-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: .84rem;
+    transition: all .25s cubic-bezier(.4, 0, .2, 1);
+  }
+  body[data-page="home"] #dash-scores .dash-score:hover {
+    border-color: var(--py-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -10px rgba(55, 118, 171, .3);
+  }
+  body[data-page="home"] #dash-scores .dash-score-id {
+    font-weight: 700;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: .82rem;
+  }
+  body[data-page="home"] #dash-scores .dash-score-val {
+    margin-right: auto;
+    font-weight: 900;
+    font-family: var(--mono);
+    font-size: .95rem;
+  }
+  body[data-page="home"] #dash-scores .dash-score-val.good { color: #10b981; }
+  body[data-page="home"] #dash-scores .dash-score-val.bad { color: #dc2626; }
+  body[data-page="home"] #dash-scores .dash-score-tries {
+    color: var(--muted);
+    font-size: .72rem;
+    font-family: var(--mono);
+  }
+  
+  /* ریسپانسیو */
+  @media (max-width: 720px) {
+    body[data-page="home"] .dash-grid {
+      grid-template-columns: 1fr !important;
+    }
+    body[data-page="home"] #dash-scores .dash-score-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  </style>
+
+  <!-- ═══════════════ مسیر یادگیری ═══════════════ -->
+  <div class="panel reveal" id="roadmap">
+    <h2>🗺️ مسیر یادگیری پیشنهادی</h2>
+    <p style="color:var(--muted)">۳۰ فصل در چهار سطح پیوسته؛ ترتیب را رعایت کنید و هر مثال را اجرا و تغییر دهید.</p>
+    <div class="level-track-v3">
+      <div class="level-step-v3">
+        <span class="lv-num">سطح ۰ • شروع</span>
+        <h4>فصل ۱ تا ۸</h4>
+        <p>محیط، سینتکس، متغیر، شرط، حلقه، رشته و تابع.</p>
+        <span class="lv-bar"></span>
+      </div>
+      <div class="level-step-v3">
+        <span class="lv-num">سطح ۱ • ساختار</span>
+        <h4>فصل ۹ تا ۱۵</h4>
+        <p>ساختمان داده، ماژول، خطا، فایل و زمان.</p>
+        <span class="lv-bar"></span>
+      </div>
+      <div class="level-step-v3">
+        <span class="lv-num">سطح ۲ • کاربردی</span>
+        <h4>فصل ۱۶ تا ۲۳</h4>
+        <p>شی‌گرایی، تست، پایگاه داده، وب و داده.</p>
+        <span class="lv-bar"></span>
+      </div>
+      <div class="level-step-v3">
+        <span class="lv-num">سطح ۳ • حرفه‌ای</span>
+        <h4>فصل ۲۴ تا ۳۰</h4>
+        <p>هم‌روندی، امنیت، کارایی، استقرار و پروژه.</p>
+        <span class="lv-bar"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ قابلیت‌ها ═══════════════ -->
+  <div class="panel reveal" id="features">
+    <h2>✨ قابلیت‌های این نسخه</h2>
+    <div class="feature-grid-v3">
+      <div class="feat-v3 new"><b>🖱️ واژه‌نامه هاور</b>روی هر واژه تخصصی موس را ببرید: ترجمه + توضیح + لینک.</div>
+      <div class="feat-v3 new"><b>📖 واژه‌نامه پایان فصل</b>هر فصل، فهرست خودکار واژه‌هایش را با جست‌وجو می‌سازد.</div>
+      <div class="feat-v3 new"><b>🌐 واژه‌نامه جامع</b>صفحه مستقل با دسته‌بندی + جست‌وجوی زنده فارسی/انگلیسی.</div>
+      <div class="feat-v3 new"><b>📝 آزمون نمره‌دار</b>بازخورد فوری، توضیح، زمان‌سنج، حد نصاب و ذخیره رکورد.</div>
+      <div class="feat-v3 new"><b>🚩 نشان‌کردن پرسش</b>پرسش‌های شک‌برانگیز را علامت بزنید و بعداً مرور کنید.</div>
+      <div class="feat-v3 new"><b>📊 داشبورد</b>پیشرفت، نمرات، میانگین و بهترین رکورد در یک نگاه.</div>
+      <div class="feat-v3 new"><b>🌙 حالت تاریک</b>یک‌کلیک یا کلید <kbd>d</kbd>، با ذخیره انتخاب شما.</div>
+      <div class="feat-v3 new"><b>🔠 اندازه فونت</b>سه سطح متن برای مطالعه راحت‌تر روی هر نمایشگری.</div>
+      <div class="feat-v3 new"><b>📓 یادداشت شخصی</b>هر فصل دفترچه خودش را دارد؛ خودکار ذخیره می‌شود.</div>
+      <div class="feat-v3 new"><b>🎨 هایلایت کد</b>رنگ‌آمیزی خودکار Python و Bash بدون کتابخانه خارجی.</div>
+      <div class="feat-v3 new"><b>⌨️ میان‌برها</b>جست‌وجو <kbd>/</kbd>، تم <kbd>d</kbd>، راهنما <kbd>?</kbd>، پیمایش با فلش‌ها.</div>
+      <div class="feat-v3"><b>🔍 جست‌وجو + فیلتر</b>جست‌وجوی زنده بین فصل‌ها + فیلتر بر اساس ۴ سطح.</div>
+      <div class="feat-v3"><b>📋 کپی کد</b>دکمه کپی روی همه بلوک‌های کد با عنوان و زبان.</div>
+      <div class="feat-v3"><b>💾 ذخیره پیشرفت</b>علامت «تمام‌شده» در مرورگر و روی کارت فصل‌ها.</div>
+      <div class="feat-v3"><b>🖨️ چاپ تمیز</b>حالت پرینت بدون نوارها و دکمه‌ها، با شکست مناسب صفحه.</div>
+      <div class="feat-v3"><b>📱 واکنش‌گرا</b>کامپیوتر، تبلت و موبایل؛ بدون وابستگی به اینترنت.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ فهرست فصل‌ها ═══════════════ -->
+  <div id="chapters" style="scroll-margin-top:80px" class="reveal">
+    <h2 class="cat-title" style="margin-top:44px">📂 فهرست کامل ۳۰ فصل</h2>
+    <div class="search-box">
+      <input id="chapter-search" type="search" placeholder="جست‌وجو بین فصل‌ها... (مثلاً: لیست، API، کلاس)" aria-label="جست‌وجوی فصل‌ها">
+      <span class="kbd-hint">/</span>
+    </div>
+    <div class="chip-row" role="group" aria-label="فیلتر بخش‌ها">
+      <button type="button" class="filter-chip" data-cat="1">🐣 مبانی</button>
+      <button type="button" class="filter-chip" data-cat="2">🧱 ساختمان داده</button>
+      <button type="button" class="filter-chip" data-cat="3">🛠️ کاربردی</button>
+      <button type="button" class="filter-chip" data-cat="4">🚀 حرفه‌ای</button>
+    </div>
+    <p id="no-result" style="display:none;text-align:center;color:var(--muted);padding:30px">😔 فصلی با این مشخصات پیدا نشد؛ عبارت دیگری را امتحان کنید.</p>
+    <div class="cat-wrap"><h3 class="cat-title cat-head" id="cat1">🐣 شروع و مبانی</h3><p class="cat-desc">نصب، سینتکس، متغیر، نوع داده و کنترل جریان.</p><div class="grid"><a class="card" data-cat="1" data-id="ch-01" data-search="نصب python و ابزارها نصب python، اجرای مفسر، vs code، ترمینال و venv — install، interpreter، terminal، vscode، venv، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-01/index.html"><span class="done-mark" data-id="ch-01"></span><h3><span class="ico">🐣</span> نصب Python و ابزارها</h3><p class="dsc">نصب Python، اجرای مفسر، VS Code، ترمینال و venv — install، interpreter، terminal، vscode، venv، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-01"></span></div></a><a class="card" data-cat="1" data-id="ch-02" data-search="سینتکس و اولین برنامه print، کامنت، تورفتگی، خطای syntax و اجرای فایل — syntax، print، comment، indentation، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-02/index.html"><span class="done-mark" data-id="ch-02"></span><h3><span class="ico">🔤</span> سینتکس و اولین برنامه</h3><p class="dsc">print، کامنت، تورفتگی، خطای Syntax و اجرای فایل — syntax، print، comment، indentation، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-02"></span></div></a><a class="card" data-cat="1" data-id="ch-03" data-search="متغیرها و نوع داده متغیر، int، float، str، bool، تبدیل نوع و none — types، int، float، string، boolean، none، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-03/index.html"><span class="done-mark" data-id="ch-03"></span><h3><span class="ico">📦</span> متغیرها و نوع داده</h3><p class="dsc">متغیر، int، float، str، bool، تبدیل نوع و None — types، int، float، string، boolean، none، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-03"></span></div></a><a class="card" data-cat="1" data-id="ch-04" data-search="عملگرها و عبارت‌ها حسابی، مقایسه‌ای، منطقی، انتساب و اولویت عملگرها — operator، arithmetic، comparison، boolean، expression، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-04/index.html"><span class="done-mark" data-id="ch-04"></span><h3><span class="ico">➕</span> عملگرها و عبارت‌ها</h3><p class="dsc">حسابی، مقایسه‌ای، منطقی، انتساب و اولویت عملگرها — operator، arithmetic، comparison، boolean، expression، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-04"></span></div></a><a class="card" data-cat="1" data-id="ch-05" data-search="شرط و تصمیم‌گیری if، elif، else، شرط تو در تو و الگوی guard clause — if، elif، else، condition، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-05/index.html"><span class="done-mark" data-id="ch-05"></span><h3><span class="ico">🔀</span> شرط و تصمیم‌گیری</h3><p class="dsc">if، elif، else، شرط تو در تو و الگوی guard clause — if، elif، else، condition، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-05"></span></div></a><a class="card" data-cat="1" data-id="ch-06" data-search="حلقه‌ها for، while، range، break، continue و حلقه تو در تو — for، while، range، break، continue، loop، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-06/index.html"><span class="done-mark" data-id="ch-06"></span><h3><span class="ico">🔁</span> حلقه‌ها</h3><p class="dsc">for، while، range، break، continue و حلقه تو در تو — for، while، range، break، continue، loop، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-06"></span></div></a><a class="card" data-cat="1" data-id="ch-07" data-search="رشته‌ها و متن ایندکس، slicing، متدها، f-string، unicode و قالب‌بندی — string، slicing، indexing، f string، unicode، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-07/index.html"><span class="done-mark" data-id="ch-07"></span><h3><span class="ico">🧵</span> رشته‌ها و متن</h3><p class="dsc">ایندکس، slicing، متدها، f-string، Unicode و قالب‌بندی — string، slicing، indexing، f string، unicode، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-07"></span></div></a><a class="card" data-cat="1" data-id="ch-08" data-search="توابع و دامنه def، پارامتر، return، پیش‌فرض، scope و docstring — def، parameter، return، scope، docstring، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-08/index.html"><span class="done-mark" data-id="ch-08"></span><h3><span class="ico">🧩</span> توابع و دامنه</h3><p class="dsc">def، پارامتر، return، پیش‌فرض، scope و docstring — def، parameter، return، scope، docstring، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-1">🎓 مبتدی</span><span class="quiz-badge" data-quiz-for="ch-08"></span></div></a></div></div><div class="cat-wrap"><h3 class="cat-title cat-head" id="cat2">🧱 ساختمان داده و توابع</h3><p class="cat-desc">رشته، لیست، دیکشنری، تابع، ماژول و خطا.</p><div class="grid"><a class="card" data-cat="2" data-id="ch-09" data-search="لیست و تاپل list، tuple، unpacking، slicing، متدها و کپی — list، tuple، unpacking، mutable، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-09/index.html"><span class="done-mark" data-id="ch-09"></span><h3><span class="ico">📋</span> لیست و تاپل</h3><p class="dsc">list، tuple، unpacking، slicing، متدها و کپی — list، tuple، unpacking، mutable، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-09"></span></div></a><a class="card" data-cat="2" data-id="ch-10" data-search="دیکشنری و مجموعه dict، set، کلید، comprehension و شمارش — dictionary، set، key، comprehension، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-10/index.html"><span class="done-mark" data-id="ch-10"></span><h3><span class="ico">🗂️</span> دیکشنری و مجموعه</h3><p class="dsc">dict، set، کلید، comprehension و شمارش — dictionary، set، key، comprehension، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-10"></span></div></a><a class="card" data-cat="2" data-id="ch-11" data-search="comprehension و iterator list/dict comprehension، iterable، iterator و generator — comprehension، iterable، iterator، generator، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-11/index.html"><span class="done-mark" data-id="ch-11"></span><h3><span class="ico">🧠</span> Comprehension و Iterator</h3><p class="dsc">list/dict comprehension، iterable، iterator و generator — comprehension، iterable، iterator، generator، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-11"></span></div></a><a class="card" data-cat="2" data-id="ch-12" data-search="ماژول و بسته import، ساخت ماژول، package، __name__ و pip — import، package، pip، namespace، python، variable، function، error، debug، test، module، class، object، file، code " href="chapters/chapter-12/index.html"><span class="done-mark" data-id="ch-12"></span><h3><span class="ico">🧱</span> ماژول و بسته</h3><p class="dsc">import، ساخت ماژول، package، __name__ و pip — import، package، pip، namespace، python، variable، function، error، debug، test، module، class، object، file، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-12"></span></div></a><a class="card" data-cat="2" data-id="ch-13" data-search="استثنا و خطایابی try، except، else، finally، raise و logging — exception، try، except، finally، raise، logging، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-13/index.html"><span class="done-mark" data-id="ch-13"></span><h3><span class="ico">🛡️</span> استثنا و خطایابی</h3><p class="dsc">try، except، else، finally، raise و logging — exception، try، except، finally، raise، logging، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-13"></span></div></a><a class="card" data-cat="2" data-id="ch-14" data-search="فایل و مسیر خواندن و نوشتن، encoding، pathlib، csv و json — file، pathlib، encoding، csv، json، python، variable، function، error، debug، test، module، class، object، package، code " href="chapters/chapter-14/index.html"><span class="done-mark" data-id="ch-14"></span><h3><span class="ico">📄</span> فایل و مسیر</h3><p class="dsc">خواندن و نوشتن، encoding، pathlib، CSV و JSON — file، pathlib، encoding، csv، json، python، variable، function، error، debug، test، module، class، object، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-14"></span></div></a><a class="card" data-cat="2" data-id="ch-15" data-search="تاریخ، زمان و الگوهای متنی datetime، timezone، re و اعتبارسنجی متن — datetime، timezone، regex، validation، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-15/index.html"><span class="done-mark" data-id="ch-15"></span><h3><span class="ico">⏱️</span> تاریخ، زمان و الگوهای متنی</h3><p class="dsc">datetime، timezone، re و اعتبارسنجی متن — datetime، timezone، regex، validation، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-15"></span></div></a></div></div><div class="cat-wrap"><h3 class="cat-title cat-head" id="cat3">🛠️ برنامه‌نویسی کاربردی</h3><p class="cat-desc">فایل، تست، شی‌گرایی، پایگاه داده و وب.</p><div class="grid"><a class="card" data-cat="3" data-id="ch-16" data-search="شی‌گرایی پایه class، object، attribute، method، self و constructor — class، object، attribute، method، self، init، python، variable، function، error، debug، test، module، file، package، code " href="chapters/chapter-16/index.html"><span class="done-mark" data-id="ch-16"></span><h3><span class="ico">🏛️</span> شی‌گرایی پایه</h3><p class="dsc">class، object، attribute، method، self و constructor — class، object، attribute، method، self، init، python، variable، function، error، debug، test، module، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-16"></span></div></a><a class="card" data-cat="3" data-id="ch-17" data-search="وراثت و طراحی شی‌گرا inheritance، composition، polymorphism، property و dataclass — inheritance، composition، polymorphism، property، dataclass، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-17/index.html"><span class="done-mark" data-id="ch-17"></span><h3><span class="ico">🧬</span> وراثت و طراحی شی‌گرا</h3><p class="dsc">inheritance، composition، polymorphism، property و dataclass — inheritance، composition، polymorphism، property، dataclass، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-17"></span></div></a><a class="card" data-cat="3" data-id="ch-18" data-search="تست‌نویسی حرفه‌ای unittest، pytest، fixture، mock و پوشش تست — unittest، pytest، fixture، mock، coverage، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-18/index.html"><span class="done-mark" data-id="ch-18"></span><h3><span class="ico">🧪</span> تست‌نویسی حرفه‌ای</h3><p class="dsc">unittest، pytest، fixture، mock و پوشش تست — unittest، pytest، fixture، mock، coverage، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-18"></span></div></a><a class="card" data-cat="3" data-id="ch-19" data-search="پایگاه داده با sqlite sql، اتصال، جدول، crud، transaction و parameterized query — sqlite، sql، crud، transaction، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-19/index.html"><span class="done-mark" data-id="ch-19"></span><h3><span class="ico">🗃️</span> پایگاه داده با SQLite</h3><p class="dsc">SQL، اتصال، جدول، CRUD، transaction و parameterized query — sqlite، sql، crud، transaction، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-2">🎓 متوسط</span><span class="quiz-badge" data-quiz-for="ch-19"></span></div></a><a class="card" data-cat="3" data-id="ch-20" data-search="http و مصرف api http، request، response، json، status code و requests — http، api، request، response، status code، requests، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-20/index.html"><span class="done-mark" data-id="ch-20"></span><h3><span class="ico">🌐</span> HTTP و مصرف API</h3><p class="dsc">HTTP، request، response، JSON، status code و requests — http، api، request، response، status code، requests، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-20"></span></div></a><a class="card" data-cat="3" data-id="ch-21" data-search="ساخت api با fastapi route، schema، validation، dependency و openapi — fastapi، route، schema، validation، openapi، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-21/index.html"><span class="done-mark" data-id="ch-21"></span><h3><span class="ico">🔌</span> ساخت API با FastAPI</h3><p class="dsc">route، schema، validation، dependency و OpenAPI — fastapi، route، schema، validation، openapi، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-21"></span></div></a><a class="card" data-cat="3" data-id="ch-22" data-search="تحلیل داده با numpy و pandas array، dataframe، پاک‌سازی، groupby و خروجی — numpy، pandas، dataframe، groupby، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-22/index.html"><span class="done-mark" data-id="ch-22"></span><h3><span class="ico">📊</span> تحلیل داده با NumPy و Pandas</h3><p class="dsc">array، DataFrame، پاک‌سازی، groupby و خروجی — numpy، pandas، dataframe، groupby، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-22"></span></div></a><a class="card" data-cat="3" data-id="ch-23" data-search="تصویرسازی داده matplotlib، نمودار، عنوان، محور و ذخیره تصویر — matplotlib، chart، axis، visualization، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-23/index.html"><span class="done-mark" data-id="ch-23"></span><h3><span class="ico">📈</span> تصویرسازی داده</h3><p class="dsc">matplotlib، نمودار، عنوان، محور و ذخیره تصویر — matplotlib، chart، axis، visualization، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-23"></span></div></a></div></div><div class="cat-wrap"><h3 class="cat-title cat-head" id="cat4">🚀 حرفه‌ای و پروژه</h3><p class="cat-desc">هم‌روندی، API، داده، امنیت، استقرار و پروژه نهایی.</p><div class="grid"><a class="card" data-cat="4" data-id="ch-24" data-search="هم‌روندی و async thread، process، asyncio، coroutine و await — thread، process، asyncio، coroutine، await، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-24/index.html"><span class="done-mark" data-id="ch-24"></span><h3><span class="ico">⚡</span> هم‌روندی و Async</h3><p class="dsc">thread، process، asyncio، coroutine و await — thread، process، asyncio، coroutine، await، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-24"></span></div></a><a class="card" data-cat="4" data-id="ch-25" data-search="امنیت برنامه‌های python secret، hash، injection، اعتبارسنجی، وابستگی و محیط امن — security، secret، hash، injection، validation، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-25/index.html"><span class="done-mark" data-id="ch-25"></span><h3><span class="ico">🔒</span> امنیت برنامه‌های Python</h3><p class="dsc">secret، hash، injection، اعتبارسنجی، وابستگی و محیط امن — security، secret، hash، injection، validation، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-25"></span></div></a><a class="card" data-cat="4" data-id="ch-26" data-search="کارایی و پروفایل‌سازی پیچیدگی، timeit، profiling، caching و بهینه‌سازی — performance، complexity، profiling، caching، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-26/index.html"><span class="done-mark" data-id="ch-26"></span><h3><span class="ico">🚀</span> کارایی و پروفایل‌سازی</h3><p class="dsc">پیچیدگی، timeit، profiling، caching و بهینه‌سازی — performance، complexity، profiling، caching، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-26"></span></div></a><a class="card" data-cat="4" data-id="ch-27" data-search="بسته‌بندی و کیفیت پروژه pyproject، dependency، lint، format، type hint و مستندسازی — pyproject، dependency، lint، formatter، type hint، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-27/index.html"><span class="done-mark" data-id="ch-27"></span><h3><span class="ico">📦</span> بسته‌بندی و کیفیت پروژه</h3><p class="dsc">pyproject، dependency، lint، format، type hint و مستندسازی — pyproject، dependency، lint، formatter، type hint، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-27"></span></div></a><a class="card" data-cat="4" data-id="ch-28" data-search="استقرار و docker environment، docker، config، logging و deployment — docker، environment، config، deployment، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-28/index.html"><span class="done-mark" data-id="ch-28"></span><h3><span class="ico">☁️</span> استقرار و Docker</h3><p class="dsc">environment، Docker، config، logging و deployment — docker، environment، config، deployment، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-28"></span></div></a><a class="card" data-cat="4" data-id="ch-29" data-search="الگوهای طراحی و معماری solid، layering، adapter، service، repository و clean architecture — solid، design pattern، adapter، service، repository، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-29/index.html"><span class="done-mark" data-id="ch-29"></span><h3><span class="ico">🧰</span> الگوهای طراحی و معماری</h3><p class="dsc">SOLID، layering، adapter، service، repository و clean architecture — solid، design pattern، adapter، service، repository، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-29"></span></div></a><a class="card" data-cat="4" data-id="ch-30" data-search="پروژه نهایی صفر تا صد تحلیل مسئله، طراحی، پیاده‌سازی، تست، مستندات و استقرار — project، architecture، testing، deployment، python، variable، function، error، debug، test، module، class، object، file، package، code " href="chapters/chapter-30/index.html"><span class="done-mark" data-id="ch-30"></span><h3><span class="ico">🏆</span> پروژه نهایی صفر تا صد</h3><p class="dsc">تحلیل مسئله، طراحی، پیاده‌سازی، تست، مستندات و استقرار — project، architecture، testing، deployment، python، variable، function، error، debug، test، module، class، object، file، package، code</p><div class="card-meta"><span class="pill time">⏱ ۱۰۰ دقیقه</span><span class="pill lvl-3">🎓 پیشرفته</span><span class="quiz-badge" data-quiz-for="ch-30"></span></div></a></div></div>
+  </div>
+
+  <!-- ═══════════════ راهنما ═══════════════ -->
+  <div class="panel reveal" id="guide">
+    <h2>💻 راهنمای استفاده از دوره</h2>
+    <h3>۱) نحوه اجرا</h3>
+    <p>پوشه پروژه را دانلود و از حالت فشرده خارج کنید، سپس <code dir="ltr" class="inline-code">index.html</code> را با دابل‌کلیک در مرورگر باز کنید. هیچ اینترنت، نصب یا سروری لازم نیست.</p>
+    <h3>۲) بهترین روش مطالعه</h3>
+    <ul>
+      <li>در هر فصل اول «نقشه راه» را بخوانید تا بدانید کجا هستید.</li>
+      <li>هر واژه خط‌چین‌دار را هاور کنید تا معنی‌اش را ببینید.</li>
+      <li>کدهای بخش «مثال عملی» را <strong>خودتان تایپ و اجرا کنید</strong>.</li>
+      <li>در «کارگاه عملی» اول تلاش کنید، بعد پاسخ را باز کنید.</li>
+      <li>پس از مطالعه، «آزمون تعاملی» را بدهید؛ زیر ۶۰٪ = مطالعه دوباره.</li>
+      <li>یادداشت‌ها را در بخش ۱۶ بنویسید؛ خودکار ذخیره می‌شود.</li>
+      <li>در پایان، دکمه «این فصل را تمام کردم» را بزنید. ✔</li>
+    </ul>
+    <h3>۳) اگر به مشکل خوردید</h3>
+    <p>
+      بیشتر خطاهای مبتدیان در بخش «خطاهای رایج» هر فصل آمده است. اگر خطایی خارج از آن دیدید،
+      متن خطا را جست‌وجو کنید؛ احتمالاً در
+      <a href="https://docs.python.org/3/" rel="noopener">مستندات رسمی Python</a> پیدا می‌شود.
+    </p>
+  </div>
+
+  <!-- ═══════════════ پرسش‌های رایج ═══════════════ -->
+  <div class="panel reveal" id="faq">
+    <h2>❓ پرسش‌های رایج درباره دوره</h2>
+    <details class="faq-item"><summary>این دوره از چه سطحی شروع می‌شود؟</summary><div class="faq-body"><p>از صفر مطلق؛ سپس با تمرین‌های پیوسته به مباحث حرفه‌ای می‌رسد.</p></div></details>
+    <details class="faq-item"><summary>آیا پروژه دارد؟</summary><div class="faq-body"><p>بله؛ هر فصل تمرین و پروژه دارد و فصل پایانی یک پروژه جامع است.</p></div></details>
+    <details class="faq-item"><summary>نسخه پیشنهادی پایتون چیست؟</summary><div class="faq-body"><p>Python 3.12 یا نسخه جدیدتر پایدار پیشنهاد می‌شود.</p></div></details>
+    <details class="faq-item"><summary>آیا پیشرفت من ذخیره می‌شود؟</summary><div class="faq-body"><p>بله؛ همه چیز به‌صورت خودکار در مرورگر خودتان (localStorage) ذخیره می‌شود — بدون ثبت‌نام.</p></div></details>
+    <details class="faq-item"><summary>نیاز به اینترنت دارم؟</summary><div class="faq-body"><p>خیر. کل دوره ۱۰۰٪ آفلاین کار می‌کند.</p></div></details>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>🐍 دوره تخصصی پایتون — از صفر تا حرفه‌ای</h4>
+        <p style="font-size:.88rem;margin:0;line-height:1.9">دوره فارسی، پروژه‌محور و حرفه‌ای صفر تا صد پایتون.</p>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="chapters/chapter-01/index.html">📖 شروع دوره (فصل ۱)</a></li>
+          <li><a href="glossary.html">📚 واژه‌نامه جامع</a></li>
+          <li><a href="#dashboard">📊 داشبورد من</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>منابع رسمی</h4>
+        <ul>
+          <li><a href="https://docs.python.org/3/" rel="noopener">📘 مستندات Python</a></li>
+          <li><a href="https://peps.python.org/pep-0008/" rel="noopener">📐 سبک‌نامه PEP 8</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">© ۱۴۰۵ — دوره تخصصی پایتون</div>
+  </div>
+</footer>
+
+<!-- ─── ابزارهای شناور ─── -->
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<!-- ─── مودال میان‌برها ─── -->
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تمرکز روی جست‌وجو</span><kbd>/</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی (در صفحه فصل)</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی (در صفحه فصل)</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ</span><kbd>Esc</kbd></div>
+    <p style="font-size:.8rem;color:var(--muted)">در فیلدهای متنی، میان‌برها غیرفعال‌اند تا راحت تایپ کنید.</p>
+    <button type="button" class="btn" data-close-modal style="width:100%">بستن</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     اسکریپت‌های اصلی
+     ═══════════════════════════════════════════════════════════ -->
+
+<script src="assets/js/course-config.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/app.js"></script>
+
+<!-- ─── Hero Editor: تایپ کد پایتون + شماره خطوط + اجرای انیمیشنی ─── -->
+<script>
+(function () {
+  'use strict';
+
+  var editorEl = document.getElementById('hero-editor');
+  if (!editorEl) return;
+
+  var codeEl     = document.getElementById('editor-code');
+  var gutterEl   = document.getElementById('editor-gutter');
+  var outputEl   = document.getElementById('editor-output');
+  var outputBody = document.getElementById('editor-output-body');
+  var hintEl     = document.getElementById('editor-hint');
+  var startBtn   = document.querySelector('[data-hero-start]');
+
+  /* ─── کد پایتون برای تایپ ─── */
+  var CODE_LINES = [
+    '# hello_python.py',
+    'def greet(name: str) -> str:',
+    '    return f"سلام {name}! 🐍"',
+    '',
+    'user = "دوست عزیز"',
+    'print("خوش آمدی به دوره پایتون")',
+    'print(greet(user))',
+    '',
+    'for i in range(3):',
+    '    print(f"▪ آماده یادگیری {i + 1}")'
+  ];
+  var FULL_CODE = CODE_LINES.join('\n');
+
+  /* ─── خروجی شبیه‌سازی‌شده ─── */
+  var OUTPUT_LINES = [
+    { text: 'خوش آمدی به دوره پایتون', cls: 'out-green' },
+    { text: 'سلام دوست عزیز! 🐍', cls: 'out-yellow' },
+    { text: '▪ آماده یادگیری ۱', cls: '' },
+    { text: '▪ آماده یادگیری ۲', cls: '' },
+    { text: '▪ آماده یادگیری ۳', cls: '' },
+    { text: '── پایان اجرا با موفقیت ──', cls: 'out-dim' }
+  ];
+
+  /* ─── رنگ‌آمیزی نحوی ─── */
+  var KEYWORDS = 'def|return|for|in|range|print|str|int|float|if|elif|else|import|from|as|class|while|try|except|finally|with|lambda|True|False|None|and|or|not|is|len|self|yield|pass|break|continue';
+  var HL_RE = new RegExp(
+    '(#[^\\n]*)' +
+    '|(f?&quot;[^&\\n]*&quot;|f?&#39;[^&\\n]*&#39;' +
+      '|f?&quot;[^&\\n]*$|f?&#39;[^&\\n]*$)' +
+    '|\\b(' + KEYWORDS + ')\\b' +
+    '|\\b(\\d+)\\b',
+    'g'
+  );
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function highlight(text) {
+    var html = escapeHtml(text);
+    return html.replace(HL_RE, function (m, cm, str, kw, num) {
+      if (cm)  return '<span class="c-comment">' + cm + '</span>';
+      if (str) return '<span class="c-str">' + str + '</span>';
+      if (kw)  return '<span class="c-kw">' + kw + '</span>';
+      if (num) return '<span class="c-num">' + num + '</span>';
+      return m;
+    });
+  }
+
+  /* ─── به‌روزرسانی شماره خطوط ─── */
+  function updateGutter(text) {
+    var lines = 1;
+    for (var i = 0; i < text.length; i++) {
+      if (text.charAt(i) === '\n') lines++;
+    }
+    var out = '';
+    for (var j = 1; j <= lines; j++) {
+      out += j + (j < lines ? '\n' : '');
+    }
+    gutterEl.textContent = out;
+  }
+
+  /* ─── تایپ کاراکتر به کاراکتر ─── */
+  var reduceMotion = window.matchMedia &&
+                     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var typedText = '';
+  var typingDone = false;
+
+  function finishTyping() {
+    if (typingDone) return;
+    typedText = FULL_CODE;
+    codeEl.innerHTML = highlight(typedText);
+    updateGutter(typedText);
+    typingDone = true;
+    editorEl.classList.add('is-ready');
+    if (hintEl) {
+      var t = hintEl.querySelector('span:not(.hint-dot):not(.hint-keys)');
+      if (t) t.textContent = 'کد آماده اجرا — روی «شروع از فصل ۱» بزن';
+    }
+    if (startBtn) startBtn.classList.add('ready-pulse');
+  }
+
+  function typeStep(i) {
+    if (i >= FULL_CODE.length) { finishTyping(); return; }
+    var ch = FULL_CODE.charAt(i);
+    typedText += ch;
+    codeEl.innerHTML = highlight(typedText);
+    updateGutter(typedText);
+
+    var delay = 22;
+    if (ch === '\n')                          delay = 220;
+    else if (ch === ' ')                      delay = 40;
+    else if (/[:(),=+\[\]{}<>]/.test(ch))     delay = 60;
+    delay += Math.random() * 30;
+
+    setTimeout(function () { typeStep(i + 1); }, delay);
+  }
+
+  /* ─── مقدار اولیه گاتر ─── */
+  updateGutter('');
+
+  if (reduceMotion) {
+    finishTyping();
+  } else {
+    setTimeout(function () { typeStep(0); }, 500);
+  }
+
+  /* ─── اجرای انیمیشنی روی کلیک دکمه ─── */
+  if (!startBtn) return;
+  var isRunning = false;
+
+  function runAnimation() {
+    if (isRunning) return;
+    isRunning = true;
+
+    /* اگر کاربر وسط تایپ کلیک کرد، فوری کامل کن */
+    if (!typingDone) finishTyping();
+
+    editorEl.classList.add('is-running');
+    if (hintEl) hintEl.classList.add('hidden');
+    startBtn.classList.remove('ready-pulse');
+
+    /* نمایش پنل خروجی */
+    outputEl.hidden = false;
+    requestAnimationFrame(function () { outputEl.classList.add('show'); });
+
+    /* چاپ خط به خط */
+    var i = 0;
+    (function printNext() {
+      if (i >= OUTPUT_LINES.length) {
+        setTimeout(function () {
+          window.location.href = startBtn.getAttribute('href');
+        }, 1100);
+        return;
+      }
+      var line = OUTPUT_LINES[i];
+      var span = document.createElement('span');
+      span.className = 'out-line ' + (line.cls || '');
+      span.textContent = '> ' + line.text;
+      outputBody.appendChild(span);
+      outputEl.scrollTop = outputEl.scrollHeight;
+      i++;
+      setTimeout(printNext, 400);
+    })();
+  }
+
+  startBtn.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    runAnimation();
+  });
+
+  /* ─── میان‌بر Ctrl+Enter هم اجرا کنه ─── */
+  document.addEventListener('keydown', function (ev) {
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
+      /* فقط اگر ادیتور در viewport باشد */
+      var rect = editorEl.getBoundingClientRect();
+      if (rect.bottom > 0 && rect.top < window.innerHeight) {
+        ev.preventDefault();
+        runAnimation();
+      }
+    }
+  });
+})();
+</script>
+
+<!-- ─── اسکرول ریوایل — ظاهر شدن نرم بخش‌ها هنگام ورود به viewport ─── -->
+<script>
+(function () {
+  'use strict';
+  var reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+
+  reveals.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

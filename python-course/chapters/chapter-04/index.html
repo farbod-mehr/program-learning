@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۴: عملگرها — چطور با مقادیر کار کنیم | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۴ دوره تخصصی صفر تا صد پایتون: عملگرهای حسابی، مقایسه‌ای و منطقی + اولویت آن‌ها — ساده، عملی و کاربردی برای تازه‌کارها.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۴ از ۳۰ — عملگرها</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🐣 شروع و مبانی ← فصل ۴
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۴ از ۳۰</span>
+    <h1>➕ عملگرها — چطور با مقادیر کار کنیم</h1>
+    <p>جمع، تفریق، مقایسه، منطق و اولویت — <span class="term" data-term="operator">operator</span>، <span class="term" data-term="arithmetic">arithmetic</span>، <span class="term" data-term="comparison">comparison</span>، <span class="term" data-term="boolean">boolean</span>، <span class="term" data-term="expression">expression</span>، <span class="term" data-term="python">python</span>، <span class="term" data-term="variable">variable</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۵۵ دقیقه</span>
+      <span class="pill">🎓 کاملاً مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در فصل‌های قبلی یاد گرفتیم چطور مقادیر را در متغیرها ذخیره کنیم. اما یک برنامه‌ی واقعی فقط مقادیر را نگه نمی‌دارد — <strong>روی آن‌ها کار می‌کند</strong>: جمع و تفریق می‌کند، دو مقدار را با هم مقایسه می‌کند، شرط‌های منطقی می‌سازد. ابزارهایی که این کارها را انجام می‌دهند، <strong>عملگر</strong> نام دارند.</p>
+        <p>این فصل، جعبه‌ابزار شما را کامل می‌کند. بدون عملگرها، کد شما فقط یک سری اعداد و متن است که هیچ‌کاری انجام نمی‌دهد. با عملگرها، برنامه‌ی شما واقعاً «فکر» می‌کند: می‌تواند حساب کند، تصمیم بگیرد و منطق واقعی داشته باشد.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با اعداد، چهار عمل اصلی (جمع، تفریق، ضرب، تقسیم) و چند عمل دیگر انجام دهید.</li>
+          <li>دو مقدار را با هم مقایسه کنید و بفهمید برابرند، بزرگ‌ترند یا کوچک‌تر.</li>
+          <li>با <code class="inline-code">and</code>، <code class="inline-code">or</code>، <code class="inline-code">not</code> شرط‌های منطقی بسازید.</li>
+          <li>مقدار یک متغیر را با عملگرهای ترکیبی مثل <code class="inline-code">+=</code> به‌طور خلاصه به‌روزرسانی کنید.</li>
+          <li>بدانید پایتون به ترتیب، کدام عملگر را اول محاسبه می‌کند.</li>
+          <li>با پرانتز، اولویت‌ها را کنترل کنید تا خروجی همان‌طور باشد که می‌خواهید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          این فصل، پیش‌نیاز مستقیم <strong>فصل ۵ (شرط و تصمیم‌گیری)</strong> است. بدون درک عملگرهای مقایسه‌ای و منطقی، فصل ۵ معنی ندارد. پس این فصل را جدی بگیرید و هر مثال را خودتان تایپ و اجرا کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>عملگرهای حسابی</h4><p>جمع، تفریق، ضرب، تقسیم.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>عملگرهای مقایسه</h4><p>بررسی برابری و بزرگی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>عملگرهای منطقی</h4><p>and، or، not.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>اولویت و پرانتز</h4><p>ترتیب محاسبه.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا پایتون دو نوع تقسیم دارد؟ (<code dir="ltr">/</code> و <code dir="ltr">//</code>)</summary>
+          <div class="answer-body"><p>چون گاهی می‌خواهید نتیجه با اعشار باشد (مثلاً ۷ ÷ ۲ = ۳.۵)، و گاهی فقط عدد صحیح کار می‌کند (مثلاً «چند بار عدد ۲ داخل ۷ جا می‌شود؟» → ۳ بار). با <code class="inline-code">/</code> جواب اعشاری می‌گیرید، با <code class="inline-code">//</code> جواب صحیح و بریده‌شده. فصل‌های بعدی می‌بینید که هرکدام جای خودشان را دارند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت <code dir="ltr">=</code> و <code dir="ltr">==</code> چیست؟ یکسان به‌نظر می‌رسند!</summary>
+          <div class="answer-body"><p>این یکی از مهم‌ترین تفاوت‌هاست. <code class="inline-code">=</code> یک علامت <strong>انتساب</strong> است: «این مقدار را داخل متغیر بریز». <code class="inline-code">==</code> یک علامت <strong>مقایسه</strong> است: «آیا این دو مقدار برابرند؟» و جواب بله/خیر می‌دهد. مثال: <code class="inline-code">x = 5</code> یعنی «۵ را در x بگذار»، ولی <code class="inline-code">x == 5</code> یعنی «آیا x برابر ۵ است؟».</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا باید اولویت عملگرها را بدانم؟ مگر ریاضی فرق دارد؟</summary>
+          <div class="answer-body"><p>اصول همان اصول ریاضی دبستان است، اما پایتون چند عملگر دارد که در ریاضی معمولی نیستند (مثل <code class="inline-code">%</code> و <code class="inline-code">**</code>). اگر ترتیب را ندانید، خروجی اشتباه می‌گیرید. مثلاً <code class="inline-code">2 + 3 * 4</code> در پایتون می‌شود <code class="inline-code">14</code> نه <code class="inline-code">20</code>، چون ضرب اول محاسبه می‌شود. اگر می‌خواهید اول جمع انجام شود، باید پرانتز بگذارید: <code class="inline-code">(2 + 3) * 4</code>.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی سه فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>می‌دانید چطور فایل پایتون بسازید، ذخیره کنید و اجرا کنید.</li>
+          <li>با <code class="inline-code">print()</code>، کامنت و تورفتگی راحت هستید.</li>
+          <li>می‌دانید متغیر چیست و با انواع داده (int، float، str، bool) آشنا هستید.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter04.py</code> در پوشه‌ی پروژه بسازید. هر مثال را در همان فایل تایپ و اجرا کنید. این روش باعث می‌شود همه‌ی یادداشت‌ها و کدها یکجا باشند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: عملگرها</h2></div>
+
+        <h3>۱) عملگر چیست؟ — ابزار انجام کار روی مقادیر</h3>
+        <p>یک <strong>عملگر</strong>، نمادی است که روی یک یا چند مقدار کار انجام می‌دهد و یک نتیجه تولید می‌کند. مقادیری که روی آن‌ها کار می‌شود، <strong>عملوند</strong> نام دارند.</p>
+        <p>مثال ساده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>مثال ساده</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">2 + 3
+# ↑  ↑
+# عملوند  عملگر  عملوند
+# نتیجه: 5</code></pre>
+        </div>
+        <p>ترکیب عملگرها و عملوندها، یک <strong>عبارت (expression)</strong> می‌سازد. هر عبارت، یک مقدار تولید می‌کند که می‌توانید آن را در متغیر ذخیره کنید یا مستقیماً چاپ کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>expression_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># مستقیماً چاپ
+print(2 + 3)
+
+# یا در متغیر ذخیره
+result = 2 + 3
+print(result)</code></pre>
+        </div>
+
+        <h3>۲) عملگرهای حسابی — ابزار کار با اعداد</h3>
+        <p>پایتون ۷ عملگر حسابی دارد. بعضی را از ریاضی می‌شناسید، بعضی را نه:</p>
+
+        <h4>الف) جمع، تفریق، ضرب، تقسیم — آشنایان قدیمی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>basic_arithmetic.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(10 + 3)    # 13 — جمع
+print(10 - 3)    # 7  — تفریق
+print(10 * 3)    # 30 — ضرب
+print(10 / 3)    # 3.3333... — تقسیم (همیشه اعشاری)</code></pre>
+        </div>
+        <p><strong>نکته‌ی مهم:</strong> عملگر <code class="inline-code">/</code> در پایتون ۳ همیشه خروجی اعشاری می‌دهد، حتی اگر جواب صحیح باشد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>تقسیم با /</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(10 / 2)    # 5.0  (نه 5!)
+print(type(10 / 2))   # &lt;class 'float'&gt;</code></pre>
+        </div>
+
+        <h4>ب) تقسیم صحیح — عملگر <code dir="ltr">//</code></h4>
+        <p>اگر می‌خواهید نتیجه‌ی تقسیم، عدد صحیح باشد (اعشارش حذف شود)، از <code class="inline-code">//</code> استفاده کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>floor_division.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(10 // 3)   # 3 (نه 3.33)
+print(10 // 2)   # 5 (صحیح، نه 5.0)
+print(17 // 5)   # 3
+print(7 // 2)    # 3</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 کاربرد واقعی</b>
+          فرض کنید ۱۷ سیب دارید و می‌خواهید در جعبه‌های ۵ تایی بچینید. چند جعبه‌ی کامل پر می‌شود؟ <code class="inline-code">17 // 5</code> = ۳ جعبه. این نوع محاسبه در برنامه‌نویسی بسیار رایج است.
+        </div>
+
+        <h4>ج) باقیمانده — عملگر <code dir="ltr">%</code></h4>
+        <p>عملگر <code class="inline-code">%</code> باقیمانده‌ی تقسیم را به شما می‌دهد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>modulo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(10 % 3)    # 1 (چون 10 = 3 × 3 + 1)
+print(10 % 5)    # 0 (چون 10 = 5 × 2 + 0)
+print(17 % 5)    # 2 (چون 17 = 5 × 3 + 2)</code></pre>
+        </div>
+        <p><strong>کاربردش چیست؟</strong> برای تشخیص زوج و فرد، بررسی بخش‌پذیری، و خیلی از محاسبات چرخه‌ای:</p>
+        <div class="code-box">
+          <div class="code-head"><span>even_odd.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">num = 8
+print(num % 2)    # 0 → زوج
+
+num = 7
+print(num % 2)    # 1 → فرد</code></pre>
+        </div>
+        <p>اگر <code class="inline-code">عدد % 2</code> صفر باشد، عدد زوج است. اگر ۱ باشد، فرد است. این ترفند را در فصل ۵ به‌کار می‌بریم.</p>
+
+        <h4>د) توان — عملگر <code dir="ltr">**</code></h4>
+        <p>برای محاسبه‌ی توان (مثلاً ۲ به قوّت ۳) از <code class="inline-code">**</code> استفاده می‌کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>power.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(2 ** 3)    # 8  (2 × 2 × 2)
+print(5 ** 2)    # 25 (5 × 5)
+print(2 ** 10)   # 1024
+print(9 ** 0.5)  # 3.0 (جذر ۹)</code></pre>
+        </div>
+
+        <h3>۳) عملگرهای مقایسه‌ای — بله/خیر</h3>
+        <p>عملگرهای مقایسه‌ای دو مقدار را با هم مقایسه می‌کنند و <strong>همیشه</strong> یک مقدار <code class="inline-code">True</code> یا <code class="inline-code">False</code> برمی‌گردانند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>comparison.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(5 == 5)    # True   — برابر (دوتا علامت مساوی!)
+print(5 != 3)    # True   — نابرابر
+print(10 > 3)    # True   — بزرگ‌تر
+print(10 < 3)    # False  — کوچک‌تر
+print(10 >= 10)  # True   — بزرگ‌تر یا مساوی
+print(10 <= 5)   # False  — کوچک‌تر یا مساوی</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دام بزرگ</b>
+          <code class="inline-code">=</code> برای انتساب است (ذخیره مقدار در متغیر)، اما <code class="inline-code">==</code> برای مقایسه. اگر اشتباهاً بنویسید <code class="inline-code">if x = 5</code> به‌جای <code class="inline-code">if x == 5</code>، پایتون خطای <code class="inline-code">SyntaxError</code> می‌دهد. این اشتباه در مبتدیان بسیار رایج است.
+        </div>
+
+        <p>مقایسه فقط بین اعداد نیست — متن‌ها را هم می‌توانید مقایسه کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>str_comparison.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("سلام" == "سلام")     # True
+print("سلام" == "خوبی")      # False
+print("a" < "b")             # True (بر اساس ترتیب الفبا)
+print("apple" < "banana")    # True</code></pre>
+        </div>
+
+        <h3>۴) عملگرهای منطقی — ترکیب شرط‌ها</h3>
+        <p>گاهی می‌خواهید چند شرط را با هم ترکیب کنید. پایتون سه عملگر منطقی دارد:</p>
+        <ul>
+          <li><code class="inline-code">and</code> — درست است اگر <strong>هر دو</strong> شرط درست باشند.</li>
+          <li><code class="inline-code">or</code> — درست است اگر <strong>حداقل یکی</strong> از شرط‌ها درست باشد.</li>
+          <li><code class="inline-code">not</code> — مقدار را برعکس می‌کند.</li>
+        </ul>
+
+        <h4>عملگر <code dir='ltr'>and</code></h4>
+        <div class="code-box">
+          <div class="code-head"><span>and_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">age = 20
+has_license = True
+
+print(age >= 18 and has_license)   # True (هر دو شرط درست)
+print(age >= 18 and age < 30)      # True
+print(age >= 18 and age < 18)      # False (چون یکی غلط است)</code></pre>
+        </div>
+
+        <h4>عملگر <code dir='ltr'>or</code></h4>
+        <div class="code-box">
+          <div class="code-head"><span>or_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">is_weekend = True
+is_holiday = False
+
+print(is_weekend or is_holiday)    # True (چون weekend درست است)
+print(False or False)              # False
+print(False or True)               # True</code></pre>
+        </div>
+
+        <h4>عملگر <code dir='ltr'>not</code></h4>
+        <div class="code-box">
+          <div class="code-head"><span>not_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">is_raining = False
+print(not is_raining)   # True (چون باران نمی‌بارد)
+
+is_sunny = True
+print(not is_sunny)     # False</code></pre>
+        </div>
+
+        <h4>ترکیب عملگرهای منطقی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>logical_combined.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">age = 25
+has_id = True
+is_banned = False
+
+# شرط‌های ترکیبی
+can_enter = age >= 18 and has_id and not is_banned
+print(can_enter)   # True
+
+# با پرانتز، خواناتر می‌شود
+can_enter = (age >= 18) and has_id and (not is_banned)
+print(can_enter)   # True</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          حتی وقتی نیازی نیست، از پرانتز استفاده کنید تا نیت کد شما برای خواننده واضح باشد. پرانتزهای اضافی ضرری ندارند اما باعث می‌شوند کد خوانا شود.
+        </div>
+
+        <h3>۵) عملگرهای انتساب ترکیبی — کوتاه‌نویسی</h3>
+        <p>فرض کنید می‌خواهید مقدار <code class="inline-code">score</code> را ۵ واحد زیاد کنید. راه معمولی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>normal_way.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">score = 10
+score = score + 5
+print(score)   # 15</code></pre>
+        </div>
+        <p>پایتون یک راه کوتاه‌تر دارد: <strong>عملگر انتساب ترکیبی</strong> <code class="inline-code">+=</code>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>short_way.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">score = 10
+score += 5     # معادل: score = score + 5
+print(score)   # 15
+
+score -= 3     # معادل: score = score - 3
+print(score)   # 12
+
+score *= 2     # معادل: score = score * 2
+print(score)   # 24
+
+score //= 5    # معادل: score = score // 5
+print(score)   # 4</code></pre>
+        </div>
+        <p>همه‌ی عملگرهای حسابی این نسخه‌ی ترکیبی دارند: <code class="inline-code">+=</code>، <code class="inline-code">-=</code>، <code class="inline-code">*=</code>، <code class="inline-code">/=</code>، <code class="inline-code">//=</code>، <code class="inline-code">%=</code>، <code class="inline-code">**=</code>.</p>
+
+        <h3>۶) اولویت عملگرها — چه چیزی اول حساب می‌شود؟</h3>
+        <p>وقتی یک عبارت چند عملگر دارد، پایتون با ترتیب مشخصی آن‌ها را محاسبه می‌کند. این ترتیب، از ریاضی دبستان آشناست:</p>
+        <ol>
+          <li><strong>پرانتز <code class="inline-code">()</code></strong> — همیشه اول.</li>
+          <li><strong>توان <code class="inline-code">**</code></strong> — بعد از پرانتز.</li>
+          <li><strong>ضرب، تقسیم، تقسیم صحیح، باقیمانده <code class="inline-code">* / // %</code></strong> — از چپ به راست.</li>
+          <li><strong>جمع و تفریق <code class="inline-code">+ -</code></strong> — از چپ به راست.</li>
+          <li><strong>مقایسه <code class="inline-code">== != &gt; &lt; &gt;= &lt;=</code></strong> — بعد از حساب.</li>
+          <li><strong>منطقی <code class="inline-code">not</code></strong> — قبل از and و or.</li>
+          <li><strong>منطقی <code class="inline-code">and</code></strong> — قبل از or.</li>
+          <li><strong>منطقی <code class="inline-code">or</code></strong> — آخر از همه.</li>
+        </ol>
+        <p>چند مثال برای درک بهتر:</p>
+        <div class="code-box">
+          <div class="code-head"><span>precedence.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># ضرب قبل از جمع
+print(2 + 3 * 4)          # 14 (نه 20)
+
+# با پرانتز، ترتیب را عوض می‌کنیم
+print((2 + 3) * 4)        # 20
+
+# توان قبل از ضرب
+print(2 * 3 ** 2)         # 18 (چون 3² = 9، بعد × 2)
+
+# تقسیم و ضرب از چپ به راست
+print(20 / 4 * 2)         # 10.0 (نه 2.5، چون 20/4 اول، بعد × 2)
+
+# مقایسه بعد از حساب
+print(2 + 3 > 4)          # True (چون 5 > 4)
+
+# not قبل از and
+print(not True and False) # False (چون (not True) = False، و False and False = False)
+
+# and قبل از or
+print(True or False and False)  # True (چون and اول: False and False = False، بعد True or False = True)</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          اگر شک دارید، پرانتز بگذارید. پرانتز نه فقط ترتیب را مشخص می‌کند، بلکه کد شما را برای خواننده هم واضح‌تر می‌کند. تجربه نشان می‌دهد که حرفه‌ای‌ها بیشتر از مبتدی‌ها از پرانتز استفاده می‌کنند، نه کمتر.
+        </div>
+
+        <h3>۷) کاربرد واقعی: ترکیب همه‌چیز</h3>
+        <p>بیایید همه‌ی این عملگرها را در یک برنامه‌ی واقعی به کار بگیریم. برنامه‌ای که وضعیت یک فروشگاه را بررسی می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>store_status.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># فرض کنید اطلاعات زیر از کاربر یا سیستم گرفته شده
+stock = 50               # موجودی انبار
+sold = 12                # تعداد فروش رفته
+price_per_item = 25000   # قیمت هر کالا
+is_weekend = True
+is_holiday = False
+
+# محاسبات با عملگرهای حسابی
+remaining = stock - sold                    # موجودی باقیمانده
+revenue = sold * price_per_item             # درآمد کل
+cartons = stock // 10                       # چند کارتن ده‌تایی پر می‌شود
+leftover = stock % 10                       # چند تا باقی می‌ماند
+
+# مقایسه‌ها
+needs_restock = remaining < 20              # نیاز به تأمین مجدد؟
+is_popular = sold > 10                      # پرفروش بوده؟
+
+# منطق ترکیبی
+is_busy_day = is_weekend or is_holiday      # روز شلوغ؟
+all_good = (remaining >= 0) and (revenue > 0)
+
+# نمایش
+print("=" * 40)
+print("گزارش فروشگاه")
+print("=" * 40)
+print("موجودی باقیمانده :", remaining)
+print("درآمد کل        :", revenue)
+print("کارتن‌های پر     :", cartons)
+print("کالای باقیمانده :", leftover)
+print()
+print("نیاز به تأمین مجدد؟", needs_restock)
+print("پرفروش؟           ", is_popular)
+print("روز شلوغ؟         ", is_busy_day)
+print("همه‌چیز خوب؟      ", all_good)
+print("=" * 40)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+گزارش فروشگاه
+========================================
+موجودی باقیمانده : 38
+درآمد کل        : 300000
+کارتن‌های پر     : 5
+کالای باقیمانده : 0
+
+نیاز به تأمین مجدد؟ False
+پرفروش؟            True
+روز شلوغ؟          True
+همه‌چیز خوب؟       True
+========================================</code></pre>
+        </div>
+        <p>به این کد دقت کنید. تمام مفاهیم این فصل (و فصل‌های قبل) در آن جمع شده‌اند: متغیر، انواع داده، عملگرهای حسابی، مقایسه‌ای و منطقی. این، یک برنامه‌ی واقعی است که در دنیای کار هم به همین شکل نوشته می‌شود — فقط مفاهیم بیشتر می‌شوند.</p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی ساده که از کاربر دو عدد می‌گیرد و همه‌ی عملگرها را روی آن‌ها نمایش می‌دهد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>calculator.py — ماشین‌حساب همه‌کاره</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># ماشین‌حساب — تمرین همه‌ی عملگرها
+
+print("=" * 40)
+print("        ماشین‌حساب ساده")
+print("=" * 40)
+print()
+
+# دریافت دو عدد
+a_text = input("عدد اول را وارد کنید: ")
+b_text = input("عدد دوم را وارد کنید: ")
+
+a = float(a_text)
+b = float(b_text)
+
+# محاسبات با عملگرهای حسابی
+sum_result = a + b
+diff = a - b
+product = a * b
+quotient = a / b
+floor_div = a // b
+remainder = a % b
+power = a ** b
+
+# مقایسه‌ها
+equal = (a == b)
+greater = (a > b)
+
+# منطق ترکیبی
+is_both_positive = (a > 0) and (b > 0)
+is_any_zero = (a == 0) or (b == 0)
+
+# نمایش نتایج
+print()
+print("-" * 40)
+print("  نتایج محاسبات:")
+print(f"    {a} + {b} = {sum_result}")
+print(f"    {a} - {b} = {diff}")
+print(f"    {a} × {b} = {product}")
+print(f"    {a} ÷ {b} = {quotient}")
+print(f"    {a} // {b} = {floor_div}")
+print(f"    {a} % {b} = {remainder}")
+print(f"    {a} ** {b} = {power}")
+print("-" * 40)
+print("  مقایسه:")
+print(f"    {a} == {b}؟ {equal}")
+print(f"    {a} > {b}؟ {greater}")
+print("-" * 40)
+print("  منطق:")
+print(f"    هر دو مثبت؟ {is_both_positive}")
+print(f"    حداقل یکی صفر؟ {is_any_zero}")
+print("-" * 40)</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+        ماشین‌حساب ساده
+========================================
+
+عدد اول را وارد کنید: 17
+عدد دوم را وارد کنید: 5
+
+----------------------------------------
+  نتایج محاسبات:
+    17.0 + 5.0 = 22.0
+    17.0 - 5.0 = 12.0
+    17.0 × 5.0 = 85.0
+    17.0 ÷ 5.0 = 3.4
+    17.0 // 5.0 = 3.0
+    17.0 % 5.0 = 2.0
+    17.0 ** 5.0 = 1419857.0
+----------------------------------------
+  مقایسه:
+    17.0 == 5.0؟ False
+    17.0 > 5.0؟ True
+----------------------------------------
+  منطق:
+    هر دو مثبت؟ True
+    حداقل یکی صفر؟ False
+----------------------------------------</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این برنامه از f-string استفاده می‌کند (<code class="inline-code">f"..."</code>) که هنوز تدریس نشده — اما نیازی نیست عمیق بفهمید. در فصل ۷ کامل یاد می‌گیرید. فعلاً بدانید که <code class="inline-code">f"..."</code> به شما اجازه می‌دهد متغیرها را مستقیم داخل متن بگذارید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «محاسبه‌گر فاکتور رستوران» بسازید که همه‌ی عملگرها را در خود داشته باشد:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">restaurant_bill.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>از کاربر بخواهید قیمت سه غذا را وارد کند. با <code class="inline-code">float()</code> به عدد تبدیل کنید.</li>
+          <li>جمع کل سه غذا را در متغیر <code class="inline-code">subtotal</code> ذخیره کنید.</li>
+          <li>مالیات ۹٪ را محاسبه کنید (ضرب در ۰.۰۹) و در <code class="inline-code">tax</code> بگذارید.</li>
+          <li>مبلغ نهایی را در <code class="inline-code">total</code> بگذارید.</li>
+          <li>تعداد نفرات را از کاربر بپرسید و در <code class="inline-code">people</code> بگذارید (با <code class="inline-code">int()</code>).</li>
+          <li>سهم هر نفر را با تقسیم <code class="inline-code">total / people</code> حساب کنید.</li>
+          <li>بررسی کنید که آیا سهم هر نفر از ۱۰۰۰۰۰ تومان بیشتر است؟ (نتیجه را در متغیر <code class="inline-code">is_expensive</code> ذخیره کنید.)</li>
+          <li>بررسی کنید که آیا تعداد نفرات بیشتر از ۳ و مبلغ نهایی بیشتر از ۵۰۰۰۰۰ است؟ (نتیجه را در <code class="inline-code">group_discount_eligible</code> بگذارید.)</li>
+          <li>همه‌چیز را در قالب یک فاکتور زیبا چاپ کنید.</li>
+          <li>یک خط اضافه کنید که چاپ کند: «پرداخت به عهده‌ی شماست؟» — جواب فقط وقتی <code class="inline-code">True</code> باشد که هم سهم شما بالا باشد و هم گروه واجد شرایط تخفیف باشد. از <code class="inline-code">and</code> استفاده کنید.</li>
+        </ol>
+        <p><strong>راهنما:</strong> به ترتیب عملگرها دقت کنید. مثلاً <code class="inline-code">a * 0.09 + b</code> اول ضرب و بعد جمع می‌شود. اگر می‌خواهید ترتیب دیگری باشد، از پرانتز استفاده کنید.</p>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>restaurant_bill.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># محاسبه‌گر فاکتور رستوران — تمرین عملگرها
+
+print("=" * 40)
+print("      فاکتور رستوران")
+print("=" * 40)
+print()
+
+# --- دریافت قیمت غذاها ---
+food1 = float(input("قیمت غذای اول: "))
+food2 = float(input("قیمت غذای دوم: "))
+food3 = float(input("قیمت غذای سوم: "))
+
+# --- دریافت تعداد نفرات ---
+people = int(input("تعداد افراد: "))
+
+# --- محاسبات حسابی ---
+subtotal = food1 + food2 + food3
+tax = subtotal * 0.09
+total = subtotal + tax
+per_person = total / people
+
+# --- مقایسه‌ها ---
+is_expensive = per_person > 100000
+
+# --- منطق ترکیبی ---
+group_discount_eligible = (people > 3) and (total > 500000)
+
+# --- تصمیم نهایی ---
+pay_by_me = is_expensive and group_discount_eligible
+
+# --- نمایش ---
+print()
+print("-" * 40)
+print("  جزئیات فاکتور:")
+print(f"    غذای اول  : {food1} تومان")
+print(f"    غذای دوم : {food2} تومان")
+print(f"    غذای سوم : {food3} تومان")
+print("-" * 40)
+print(f"  جمع غذاها  : {subtotal} تومان")
+print(f"  مالیات 9٪  : {tax} تومان")
+print(f"  مبلغ کل    : {total} تومان")
+print(f"  تعداد افراد: {people}")
+print(f"  سهم هر نفر : {per_person} تومان")
+print("-" * 40)
+print("  بررسی‌ها:")
+print(f"    گران است؟         {is_expensive}")
+print(f"    واجد تخفیف گروهی؟ {group_discount_eligible}")
+print(f"    پرداخت با من؟     {pay_by_me}")
+print("-" * 40)</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">========================================
+      فاکتور رستوران
+========================================
+
+قیمت غذای اول: 180000
+قیمت غذای دوم: 220000
+قیمت غذای سوم: 150000
+تعداد افراد: 4
+
+----------------------------------------
+  جزئیات فاکتور:
+    غذای اول  : 180000.0 تومان
+    غذای دوم : 220000.0 تومان
+    غذای سوم : 150000.0 تومان
+----------------------------------------
+  جمع غذاها  : 550000.0 تومان
+  مالیات 9٪  : 49500.0 تومان
+  مبلغ کل    : 599500.0 تومان
+  تعداد افراد: 4
+  سهم هر نفر : 149875.0 تومان
+----------------------------------------
+  بررسی‌ها:
+    گران است؟         True
+    واجد تخفیف گروهی؟ True
+    پرداخت با من؟     True
+----------------------------------------</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های تخصصی</summary>
+          <div class="answer-body">
+            <p>سه نکته‌ی مهم در این راه‌حل:</p>
+            <ol>
+              <li><strong>ترتیب عملگرها:</strong> خط <code class="inline-code">total = subtotal + tax</code> — چون هم جمع و هم انتساب دارد، اول سمت راست (<code class="inline-code">subtotal + tax</code>) محاسبه می‌شود، بعد نتیجه در <code class="inline-code">total</code> ذخیره می‌شود.</li>
+              <li><strong>پرانتز در منطق:</strong> در <code class="inline-code">group_discount_eligible</code> از پرانتز استفاده کردیم که خوانا باشد — هرچند پایتون با یا بدون پرانتز هم همین را می‌فهمد.</li>
+              <li><strong>کوتاه‌نویسی:</strong> اگر می‌خواستید مالیات را به subtotal اضافه کنید، می‌توانستید بنویسید <code class="inline-code">subtotal += tax</code> که معادل <code class="inline-code">subtotal = subtotal + tax</code> است. اما چون مقدار subtotal را بعداً لازم داشتیم، از یک متغیر جدید استفاده کردیم.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">restaurant_bill.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>با هر هفت عملگر حسابی (+, -, *, /, //, %, **) راحت هستید.</li>
+              <li>تفاوت <code class="inline-code">=</code> و <code class="inline-code">==</code> را کاملاً می‌فهمید.</li>
+              <li>می‌دانید <code class="inline-code">and</code>، <code class="inline-code">or</code>، <code class="inline-code">not</code> چه زمانی <code class="inline-code">True</code> و چه زمانی <code class="inline-code">False</code> می‌دهند.</li>
+              <li>می‌دانید ضرب قبل از جمع محاسبه می‌شود و با پرانتز می‌توان ترتیب را عوض کرد.</li>
+              <li>می‌توانید از <code class="inline-code">+=</code> و <code class="inline-code">-=</code> برای به‌روزرسانی سریع متغیرها استفاده کنید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید. هر کدام را خوب بشناسید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: invalid syntax (وقتی از = به‌جای == استفاده می‌کنید)</b>
+          <p><strong>معنی:</strong> پایتون انتظار دارد در این محل مقایسه انجام شود، اما شما انتساب نوشته‌اید.</p>
+          <p><strong>علت:</strong> نوشته‌اید <code class="inline-code">if x = 5:</code> یا <code class="inline-code">(x = 5)</code>.</p>
+          <p><strong>راه‌حل:</strong> برای مقایسه، همیشه از <code class="inline-code">==</code> استفاده کنید. برای انتساب، از <code class="inline-code">=</code>. این دو، متفاوتند و اشتباه‌گرفتنشان خطای رایجی است.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: unsupported operand type(s) for +: 'int' and 'str'</b>
+          <p><strong>معنی:</strong> «نمی‌توانم عدد و متن را با هم جمع کنم».</p>
+          <p><strong>علت:</strong> کدی مثل <code class="inline-code">"سن: " + 25</code> یا <code class="inline-code">age + " سال"</code> نوشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> با <code class="inline-code">str()</code> عدد را به متن تبدیل کنید، یا از <code class="inline-code">print("سن:", 25)</code> با کاما استفاده کنید. این دام در فصل ۳ مطرح شد.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ ZeroDivisionError: division by zero</b>
+          <p><strong>معنی:</strong> «نمی‌توان بر صفر تقسیم کرد».</p>
+          <p><strong>علت:</strong> کدی مثل <code class="inline-code">10 / 0</code> یا <code class="inline-code">x // 0</code> یا <code class="inline-code">10 % 0</code> نوشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> قبل از تقسیم، بررسی کنید که مخرج صفر نباشد. با یک شرط ساده: <code class="inline-code">if b != 0: result = a / b</code> (که در فصل ۵ یاد می‌گیرید).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خروجی اشتباه به‌خاطر اولویت عملگرها</b>
+          <p><strong>معنی:</strong> پایتون محاسبه را انجام داده، اما نه آن‌طور که شما انتظار داشتید.</p>
+          <p><strong>علت:</strong> مثلاً در <code class="inline-code">2 + 3 * 4</code> انتظار داشتید ۲۰ بگیرید، اما ۱۴ گرفتید.</p>
+          <p><strong>راه‌حل:</strong> هر وقت شک دارید، پرانتز بگذارید: <code class="inline-code">(2 + 3) * 4</code>. پرانتز نه هزینه دارد و نه سرعت را کم می‌کند؛ فقط وضوح می‌آورد.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ مقایسه‌ی یک عدد با متن</b>
+          <p><strong>معنی:</strong> پایتون نمی‌تواند عدد و متن را با هم مقایسه کند.</p>
+          <p><strong>علت:</strong> مثلاً نوشته‌اید <code class="inline-code">"10" > 5</code>. چون <code class="inline-code">"10"</code> متن است، پایتون خطای <code class="inline-code">TypeError</code> می‌دهد.</p>
+          <p><strong>راه‌حل:</strong> قبل از مقایسه، مطمئن شوید انواع یکسانند. با <code class="inline-code">int("10")</code> یا <code class="inline-code">str(5)</code> تبدیل انجام دهید. یا از <code class="inline-code">input()</code> که متن برمی‌گرداند، قبلش <code class="inline-code">int()</code> بگیرید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خروجی <code dir="ltr">10 / 2</code> می‌شود <code dir="ltr">5.0</code>، نه <code dir="ltr">5</code></b>
+          <p><strong>معنی:</strong> این خطا نیست، ولی اگر انتظار ۵ داشتید، باید بدانید.</p>
+          <p><strong>علت:</strong> در پایتون ۳، عملگر <code class="inline-code">/</code> همیشه خروجی float می‌دهد.</p>
+          <p><strong>راه‌حل:</strong> اگر خروجی صحیح می‌خواهید، از <code class="inline-code">//</code> استفاده کنید. این تفاوت در چاپ خروجی و در فرمت‌بندی اهمیت دارد.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ استفاده از کلمه‌ی <code dir="ltr">and</code> یا <code dir="ltr">or</code> به‌جای علامت</b>
+          <p><strong>معنی:</strong> بعضی زبان‌ها از <code class="inline-code">&amp;&amp;</code> و <code class="inline-code">||</code> استفاده می‌کنند، اما پایتون از کلمات انگلیسی.</p>
+          <p><strong>علت:</strong> مثلاً نوشته‌اید <code class="inline-code">a &amp;&amp; b</code> یا <code class="inline-code">a || b</code>.</p>
+          <p><strong>راه‌حل:</strong> در پایتون همیشه از <code class="inline-code">and</code>، <code class="inline-code">or</code>، <code class="inline-code">not</code> استفاده کنید — با حروف کوچک و انگلیسی.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این عبارات را حدس بزنید. سپس اجرا کنید و جواب‌ها را بررسی کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print(2 + 3 * 4)
+print((2 + 3) * 4)
+print(10 / 3)
+print(10 // 3)
+print(10 % 3)
+print(2 ** 3 ** 2)     # ← این یکی سوال خوبی است!
+print(5 > 3 and 2 < 4)
+print(5 > 3 or 2 > 4)
+print(not 5 > 3)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><code class="inline-code">2 + 3 * 4</code> → <code class="inline-code">14</code> (ضرب اول)</li>
+              <li><code class="inline-code">(2 + 3) * 4</code> → <code class="inline-code">20</code> (پرانتز اول)</li>
+              <li><code class="inline-code">10 / 3</code> → <code class="inline-code">3.3333...</code></li>
+              <li><code class="inline-code">10 // 3</code> → <code class="inline-code">3</code></li>
+              <li><code class="inline-code">10 % 3</code> → <code class="inline-code">1</code></li>
+              <li><code class="inline-code">2 ** 3 ** 2</code> → <code class="inline-code">512</code> (توان از راست به چپ: 3² = 9، بعد 2⁹ = 512 — نه (2³)² = 64)</li>
+              <li><code class="inline-code">5 &gt; 3 and 2 &lt; 4</code> → <code class="inline-code">True</code></li>
+              <li><code class="inline-code">5 &gt; 3 or 2 &gt; 4</code> → <code class="inline-code">True</code></li>
+              <li><code class="inline-code">not 5 &gt; 3</code> → <code class="inline-code">False</code> (چون <code class="inline-code">5 &gt; 3</code> می‌شود True، و not آن می‌شود False)</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — تشخیص زوج و فرد</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که عددی از کاربر بگیرد و مشخص کند که زوج یا فرد است:</p>
+            <div class="code-box">
+              <div class="code-head"><span>even_odd.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># تشخیص زوج یا فرد
+
+number = int(input("یک عدد وارد کنید: "))
+
+# باقیمانده تقسیم بر 2
+remainder = number % 2
+
+# بررسی: اگر باقیمانده 0 بود، زوج است
+is_even = (remainder == 0)
+is_odd = (remainder != 0)
+
+print()
+print(f"عدد شما: {number}")
+print(f"باقیمانده تقسیم بر 2: {remainder}")
+print(f"زوج است؟ {is_even}")
+print(f"فرد است؟ {is_odd}")</code></pre>
+            </div>
+            <p><strong>نکته:</strong> در فصل ۵، با <code class="inline-code">if</code>، این کد را طوری می‌نویسیم که فقط یک پیام (زوج یا فرد) نمایش دهد، نه هر دو را. الان چون <code class="inline-code">if</code> بلد نیستیم، هر دو را چاپ می‌کنیم.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1
+result = 10 / 0
+
+# خطا 2
+if 5 = 5:
+    print("برابر است")
+
+# خطا 3
+x = "10"
+y = 5
+print(x + y)
+
+# خطا 4
+print(2 + 3 * 4)   # نویسنده انتظار داشت 20 چاپ شود</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">ZeroDivisionError</code>. تقسیم بر صفر مجاز نیست. راه‌حل: مخرج را قبل از تقسیم بررسی کنید یا تغییر دهید.</li>
+              <li><strong>خطا ۲:</strong> <code class="inline-code">SyntaxError</code>. از <code class="inline-code">=</code> به‌جای <code class="inline-code">==</code> استفاده شده. راه‌حل: <code class="inline-code">if 5 == 5:</code>.</li>
+              <li><strong>خطا ۳:</strong> <code class="inline-code">TypeError</code>. نمی‌توان متن و عدد را جمع کرد. راه‌حل: <code class="inline-code">int(x) + y</code> یا <code class="inline-code">x + str(y)</code>.</li>
+              <li><strong>خطا ۴:</strong> این خطا نیست — اشتباه انتظاری است. پایتون ۱۴ می‌دهد چون ضرب اول محاسبه می‌شود. اگر می‌خواستید ۲۰ بگیرید، باید <code class="inline-code">(2 + 3) * 4</code> بنویسید.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1: استفاده از مخرج غیرصفر
+result = 10 / 2
+
+# خطا 2: استفاده از == به‌جای =
+if 5 == 5:
+    print("برابر است")
+
+# خطا 3: تبدیل نوع
+x = "10"
+y = 5
+print(int(x) + y)     # 15
+
+# خطا 4: پرانتزگذاری صحیح
+print((2 + 3) * 4)    # 20</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-04" data-title="آزمون فصل ۴ — عملگرها" data-pass="60">
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۱) خروجی <code dir="ltr">10 // 3</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">3.33</button>
+              <button type="button" class="quiz-opt" data-key="b">3.0</button>
+              <button type="button" class="quiz-opt" data-key="c">3</button>
+              <button type="button" class="quiz-opt" data-key="d">1</button>
+            </div>
+            <div class="quiz-explain">💡 عملگر <code dir='ltr'>//</code> تقسیم صحیح است — اعشار را حذف می‌کند. نتیجه ۳ (عدد صحیح) می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) خروجی <code dir="ltr">10 % 3</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">3</button>
+              <button type="button" class="quiz-opt" data-key="b">1</button>
+              <button type="button" class="quiz-opt" data-key="c">3.33</button>
+              <button type="button" class="quiz-opt" data-key="d">0</button>
+            </div>
+            <div class="quiz-explain">💡 عملگر <code dir='ltr'>%</code> باقیمانده تقسیم را برمی‌گرداند. ۱۰ = ۳ × ۳ + ۱، پس باقیمانده ۱ است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۳) خروجی <code dir="ltr">2 + 3 * 4</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">20</button>
+              <button type="button" class="quiz-opt" data-key="b">9</button>
+              <button type="button" class="quiz-opt" data-key="c">14</button>
+              <button type="button" class="quiz-opt" data-key="d">24</button>
+            </div>
+            <div class="quiz-explain">💡 ضرب قبل از جمع محاسبه می‌شود: ۳ × ۴ = ۱۲، بعد ۲ + ۱۲ = ۱۴.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) تفاوت <code dir="ltr">=</code> و <code dir="ltr">==</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="b">هر دو برای مقایسه هستند</button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>==</code> برای انتساب است، <code dir='ltr'>=</code> برای مقایسه</button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>=</code> برای انتساب است، <code dir='ltr'>==</code> برای مقایسه</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>=</code> یعنی «این مقدار را در متغیر بریز» (انتساب). <code dir='ltr'>==</code> یعنی «آیا این دو برابرند؟» (مقایسه). اشتباه‌گرفتن این دو، یکی از رایج‌ترین خطاهای مبتدیان است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۵) خروجی <code dir="ltr">(5 > 3) and (2 > 4)</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">False</button>
+              <button type="button" class="quiz-opt" data-key="b">True</button>
+              <button type="button" class="quiz-opt" data-key="c">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="d">5</button>
+            </div>
+            <div class="quiz-explain">💡 عملگر <code dir='ltr'>and</code> فقط وقتی True می‌دهد که <strong>هر دو</strong> شرط درست باشند. <code dir='ltr'>2 > 4</code> غلط است، پس نتیجه کلی False می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) کدام عملگر در پایتون، مقدار متغیر را به‌روزرسانی می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code dir='ltr'>==</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code dir='ltr'>+=</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>!=</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>&gt;=</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>+=</code> یک عملگر انتساب ترکیبی است: <code dir='ltr'>x += 5</code> معادل <code dir='ltr'>x = x + 5</code>. بقیه گزینه‌ها عملگرهای مقایسه‌ای هستند.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «ماشین‌حساب حقوق ماهانه»</strong> — برنامه‌ای که حقوق پایه، اضافه‌کاری و کسورات را از کاربر می‌گیرد و حقوق نهایی را محاسبه می‌کند.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">salary.py</code> ذخیره شده باشد.</li>
+          <li>از کاربر این اطلاعات گرفته شود:
+            <ul>
+              <li>حقوق پایه (به تومان)</li>
+              <li>ساعت اضافه‌کاری در ماه</li>
+              <li>نرخ هر ساعت اضافه‌کاری (معمولاً ۱.۴ برابر نرخ عادی — اما اینجا عدد مستقیم می‌گیریم)</li>
+              <li>درصد بیمه (معمولاً ۷٪)</li>
+            </ul>
+          </li>
+          <li>محاسبات:
+            <ul>
+              <li>مبلغ اضافه‌کاری = ساعت × نرخ</li>
+              <li>حقوق ناخالص = پایه + اضافه‌کاری</li>
+              <li>مبلغ بیمه = حقوق ناخالص × (درصد ÷ ۱۰۰)</li>
+              <li>حقوق خالص = ناخالص − بیمه</li>
+            </ul>
+          </li>
+          <li>بررسی‌ها:
+            <ul>
+              <li>آیا حقوق خالص بیشتر از ۲۰ میلیون است؟ (<code class="inline-code">is_high_salary</code>)</li>
+              <li>آیا ساعت اضافه‌کاری بین ۱۰ و ۳۰ ساعت است؟ (<code class="inline-code">is_normal_overtime</code>)</li>
+              <li>آیا هم حقوق پایه بالا است و هم اضافه‌کاری زیاد؟ (<code class="inline-code">is_deserving_bonus</code>)</li>
+            </ul>
+          </li>
+          <li>خروجی نهایی در قالب یک فاکتور با خط‌های جداکننده.</li>
+          <li>حداقل از ۵ عملگر مختلف در برنامه استفاده شده باشد.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+        فیش حقوقی ماهانه
+══════════════════════════════════════
+
+  حقوق پایه        : 25000000 تومان
+  ساعت اضافه‌کاری  : 20 ساعت
+  نرخ ساعتی        : 150000 تومان
+  درصد بیمه        : 7٪
+
+──────────────────────────────────────
+  مبلغ اضافه‌کاری  : 3000000 تومان
+  حقوق ناخالص      : 28000000 تومان
+  مبلغ بیمه        : 1960000 تومان
+  حقوق خالص        : 26040000 تومان
+──────────────────────────────────────
+
+  حقوق بالا؟         True
+  اضافه‌کاری معمولی؟ True
+  استحقاق پاداش؟     True
+══════════════════════════════════════</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از اینکه برنامه کار کرد، سعی کنید یک «پاداش» هم اضافه کنید. مثلاً اگر هم حقوق بالا باشد و هم اضافه‌کاری معمولی، ۵٪ حقوق خالص به‌عنوان پاداش در نظر بگیرید. این کار باعث می‌شود هم از عملگر منطقی <code class="inline-code">and</code> استفاده کنید، هم از عملگر انتساب ترکیبی <code class="inline-code">+=</code>.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>عملگر و عملوند چیست و چطور یک عبارت می‌سازند.</li>
+          <li>هفت عملگر حسابی: <code class="inline-code">+</code>، <code class="inline-code">-</code>، <code class="inline-code">*</code>، <code class="inline-code">/</code>، <code class="inline-code">//</code>، <code class="inline-code">%</code>، <code class="inline-code">**</code>.</li>
+          <li>تفاوت <code class="inline-code">/</code> (همیشه اعشاری) با <code class="inline-code">//</code> (همیشه صحیح).</li>
+          <li>کاربرد <code class="inline-code">%</code> برای تشخیص زوج/فرد و بخش‌پذیری.</li>
+          <li>شش عملگر مقایسه‌ای: <code class="inline-code">==</code>، <code class="inline-code">!=</code>، <code class="inline-code">&gt;</code>، <code class="inline-code">&lt;</code>، <code class="inline-code">&gt;=</code>، <code class="inline-code">&lt;=</code>.</li>
+          <li>سه عملگر منطقی: <code class="inline-code">and</code>، <code class="inline-code">or</code>، <code class="inline-code">not</code>.</li>
+          <li>عملگرهای انتساب ترکیبی: <code class="inline-code">+=</code>، <code class="inline-code">-=</code>، <code class="inline-code">*=</code>، و... .</li>
+          <li>اولویت عملگرها و چطور با پرانتز آن را کنترل کنیم.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «عملگرها ابزار کار با مقادیرند. اگر اولویت‌شان را بدانید و پرانتز را جدی بگیرید، کدتان همان چیزی می‌شود که در ذهنتان بود.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا پایتون از <code dir="ltr">and</code>/<code dir="ltr">or</code> استفاده می‌کند و نه <code dir="ltr">&amp;&amp;</code>/<code dir="ltr">||</code>؟</summary><div class="faq-body"><p>چون فلسفه‌ی پایتون این است که کد مثل انگلیسی خوانده شود. <code dir='ltr'>if age &gt; 18 and has_id</code> راحت‌تر از <code dir='ltr'>if age &gt; 18 &amp;&amp; has_id</code> خوانده می‌شود. زبان‌هایی مثل C و JavaScript از علامت استفاده می‌کنند، اما پایتون از کلمه — که خواناتر است.</p></div></details>
+        <details class="faq-item"><summary>آیا همیشه باید پرانتز بگذارم که مطمئن باشم؟</summary><div class="faq-body"><p>در موارد ساده نیازی نیست، اما وقتی شک دارید یا عبارت پیچیده می‌شود، پرانتز بگذارید. حرفه‌ای‌ها به‌جای اینکه روی حفظ کردن اولویت‌ها تکیه کنند، از پرانتز برای وضوح استفاده می‌کنند. پرانتز نه اجرا را کند می‌کند و نه خطا می‌دهد.</p></div></details>
+        <details class="faq-item"><summary>چرا <code dir="ltr">2 ** 3 ** 2</code> می‌شود ۵۱۲، نه ۶۴؟</summary><div class="faq-body"><p>چون توان در پایتون <strong>از راست به چپ</strong> محاسبه می‌شود. یعنی اول <code dir='ltr'>3 ** 2 = 9</code>، بعد <code dir='ltr'>2 ** 9 = 512</code>. اگر می‌خواستید <code dir='ltr'>(2 ** 3) ** 2 = 64</code> بگیرید، باید پرانتز بگذارید. این یکی از استثناهای اولویت در پایتون است.</p></div></details>
+        <details class="faq-item"><summary>آیا مقایسه‌ها را می‌توان زنجیره‌ای نوشت؟</summary><div class="faq-body"><p>بله! پایتون یک ویژگی زیبا دارد: می‌توانید بنویسید <code dir='ltr'>1 &lt; x &lt; 10</code> که معادل <code dir='ltr'>1 &lt; x and x &lt; 10</code> است. اما فعلاً نیازی نیست از این استفاده کنید؛ در فصل‌های بعدی می‌بینید.</p></div></details>
+        <details class="faq-item"><summary>عملگرهای بیتی مثل <code dir="ltr">&amp;</code> و <code dir="ltr">|</code> و <code dir="ltr">^</code> را کی یاد می‌گیریم؟</summary><div class="faq-body"><p>در این دوره‌ی مقدماتی، عملگرهای بیتی نیاز نمی‌شود. اگر بعداً در حوزه‌های خاصی مثل رمزنگاری، فشرده‌سازی یا برنامه‌نویسی سطح پایین کار کردید، آن‌ها را جداگانه یاد می‌گیرید. الان تمرکزمان روی چیزهایی است که هر روز به‌کار می‌آیند.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۵ با <strong>شرط و تصمیم‌گیری</strong> آشنا می‌شوید: <code class="inline-code">if</code>، <code class="inline-code">elif</code>، <code class="inline-code">else</code>. این فصل، دقیقاً روی همان عملگرهای مقایسه‌ای و منطقی که این فصل یاد گرفتید بنا می‌شود. حالا که بلدید شرط بسازید، یاد می‌گیرید برنامه بر اساس شرط‌ها تصمیم بگیرد.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-04" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-04">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-03/index.html">→ فصل قبلی<br><b>📦 فصل ۳</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-05/index.html">فصل بعدی ←<br><b>🔀 فصل ۵: شرط و تصمیم‌گیری</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۴: عملگرها | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

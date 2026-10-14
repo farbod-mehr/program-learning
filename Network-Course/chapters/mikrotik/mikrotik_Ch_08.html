@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۸ MikroTik — تونل‌ها (Tunnels)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-08">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۸ — تونل‌ها (VPN و Tunnels)</h1>
+    <div class="meta">
+      <span>📖 ۹۵ دقیقه</span>
+      <span>🎯 وزن در MTCNA: بخش نهایی</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: متوسط تا پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این <strong>آخرین فصل MTCNA</strong> است. در این فصل یاد می‌گیری چطور با
+      <span class="term" data-term="vpn">VPN</span> و
+      <span class="term" data-term="tunnel">Tunnel</span>،
+      دو شبکه‌ی دور از هم را به‌صورت امن به هم وصل کنی.
+    </p>
+    <p>
+      از <strong>PPTP</strong> و <strong>L2TP</strong> (پروتکل‌های کلاسیک)،
+      تا <strong>OpenVPN</strong> و <strong>SSTP</strong> (پروتکل‌های مدرن)،
+      <strong>SSTP</strong>، <strong>EoIP</strong>، <strong>IPIP</strong>،
+      <strong>WireGuard</strong> و <strong>ZeroTier</strong> —
+      کامل یاد می‌گیری چطور VPN Server و Client در RouterOS راه‌اندازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه VPN و انواع آن</li>
+      <li>Site-to-Site vs Remote Access VPN</li>
+      <li>PPP Settings — پایه‌ی VPN در RouterOS</li>
+      <li>IP Pool برای VPN Users</li>
+      <li>PPP Secrets و Profiles</li>
+      <li>PPTP — نصب و پیکربندی</li>
+      <li>L2TP — نصب و پیکربندی</li>
+      <li>L2TP/IPsec — ترکیب امن</li>
+      <li>SSTP — VPN مدرن با TLS</li>
+      <li>OpenVPN Server و Client</li>
+      <li>EoIP — Ethernet over IP</li>
+      <li>IPIP Tunnel</li>
+      <li>GRE Tunnel در RouterOS</li>
+      <li>WireGuard — VPN مدرن</li>
+      <li>ZeroTier و Cloud VPN</li>
+      <li>عیب‌یابی Tunnelها</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت Site-to-Site VPN و Remote Access VPN چیست؟</li>
+      <li>چرا PPTP امن نیست و امروزه توصیه نمی‌شود؟</li>
+      <li>تفاوت L2TP خالص و L2TP/IPsec چیست؟</li>
+      <li>EoIP چه زمانی استفاده می‌شود و چه مزیتی دارد؟</li>
+      <li>WireGuard چرا در سال‌های اخیر محبوب شده است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۸.۱ ==== -->
+    <h3>۸.۱ مفاهیم پایه VPN</h3>
+
+    <p>
+      <span class="term" data-term="vpn">VPN</span> (Virtual Private Network)
+      یک تونل امن بین دو نقطه روی اینترنت عمومی می‌سازد.
+    </p>
+
+    <p><strong>مزایای VPN:</strong></p>
+    <ul>
+      <li><strong>رمزنگاری:</strong> ترافیک روی اینترنت امن می‌شود</li>
+      <li><strong>اتصال امن:</strong> کاربران Remote با شبکه‌ی اصلی در ارتباط‌اند</li>
+      <li><strong>کاهش هزینه:</strong> نیاز به لینک اختصاصی نیست</li>
+      <li><strong>انعطاف:</strong> هر اتصال اینترنتی می‌تواند VPN باشد</li>
+      <li><strong>مخفی‌سازی:</strong> IP واقعی مشتری مخفی می‌ماند</li>
+    </ul>
+
+    <p><strong>انواع VPN از نظر معماری:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">مثال</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Site-to-Site</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">اتصال دو شبکه‌ی LAN</td>
+          <td style="padding:6px;border:1px solid var(--border)">دفتر مرکزی ↔ شعبه</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Remote Access</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">اتصال یک کاربر به شبکه</td>
+          <td style="padding:6px;border:1px solid var(--border)">کارمند از خانه</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Client-to-Site</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">کلاینت به یک شبکه</td>
+          <td style="padding:6px;border:1px solid var(--border)">Laptop به VPN سازمانی</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۸.۲ ==== -->
+    <h3>۸.۲ PPP Settings — پایه‌ی VPN در RouterOS</h3>
+
+    <p>
+      تمام VPNهای Point-to-Point در RouterOS زیر چتر
+      <code>/interface ppp</code> (یا در نسخه‌های جدیدتر
+      <code>/interface ppp-client</code> و <code>/ppp</code>) مدیریت می‌شوند.
+    </p>
+
+    <pre><code># ===== ساختار PPP =====
+/ppp
+├── aaa          → Authentication, Authorization, Accounting
+├── profile      → تنظیمات پیش‌فرض برای کلاینت‌ها
+├── secret       → کاربران PPP
+└── active       → اتصالات فعال
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ppp profile print
+[admin@MikroTik] > /ppp secret print
+[admin@MikroTik] > /ppp active print
+
+# ===== مشاهده Interfaceهای VPN =====
+[admin@MikroTik] > /interface print where type=ppp
+[admin@MikroTik] > /interface print where type=ovpn
+[admin@MikroTik] > /interface print where type=l2tp
+[admin@MikroTik] > /interface print where type=sstp
+[admin@MikroTik] > /interface print where type=pptp</code></pre>
+
+    <!-- ==== ۸.۳ ==== -->
+    <h3>۸.۳ IP Pool برای VPN Users</h3>
+
+    <pre><code># ===== ساخت IP Pool برای VPN =====
+[admin@MikroTik] > /ip pool add \
+    name=vpn-pool \
+    ranges=10.10.10.10-10.10.10.254 \
+    comment="VPN User IP Range"
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip pool print
+[admin@MikroTik] > /ip pool print where name=vpn-pool
+
+# ===== استفاده در PPP Profile =====
+[admin@MikroTik] > /ppp profile set default remote-address=vpn-pool
+
+# نکته:
+# - VPN Userها IP از این Pool می‌گیرند
+# - معمولاً از Subnet جداگانه مثل 10.10.10.0/24 استفاده کن
+# - این Subnet نباید با شبکه‌ی داخلی تداخل داشته باشد</code></pre>
+
+    <!-- ==== ۸.۴ ==== -->
+    <h3>۸.۴ PPP Secrets و Profiles</h3>
+
+    <p>
+      <strong>PPP Profile</strong> تنظیمات پیش‌فرض برای گروهی از کاربران است و
+      <strong>PPP Secret</strong> یک کاربر مشخص.
+    </p>
+
+    <pre><code># ===== PPP Profile =====
+[admin@MikroTik] > /ppp profile add \
+    name=vpn-users \
+    local-address=10.10.10.1 \
+    remote-address=vpn-pool \
+    dns-server=10.10.10.1,8.8.8.8 \
+    use-encryption=required \
+    comment="VPN User Profile"
+
+# پارامترها:
+# local-address    → IP سمت Server
+# remote-address   → Pool یا IP برای Client
+# dns-server       → DNS برای Client
+# use-encryption   → required/preferred/no
+
+# ===== PPP Secret — کاربران =====
+[admin@MikroTik] > /ppp secret add \
+    name=user1 \
+    password=StrongPass1 \
+    service=any \
+    profile=vpn-users \
+    comment="First VPN User"
+
+[admin@MikroTik] > /ppp secret add \
+    name=user2 \
+    password=StrongPass2 \
+    service=l2tp \
+    profile=vpn-users \
+    remote-address=10.10.10.50 \
+    comment="Static IP for user2"
+
+# پارامترها:
+# name             → نام کاربری
+# password         → رمز عبور
+# service          → any، pptp، l2tp، ovpn، sstp
+# profile          → PPP Profile
+# remote-address   → IP ثابت برای این کاربر (اختیاری)
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ppp secret print
+[admin@MikroTik] > /ppp secret print detail
+[admin@MikroTik] > /ppp active print
+# active: کاربران آنلاین</code></pre>
+
+    <!-- ==== ۸.۵ ==== -->
+    <h3>۸.۵ PPTP — پروتکل کلاسیک (توصیه نمی‌شود)</h3>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار امنیتی</div>
+      <strong>PPTP امن نیست!</strong> رمزنگاری آن (MS-CHAPv2) از سال‌ها قبل
+      شکسته شده است. NSA قادر به رمزگشایی آن در چند ساعت است.
+      فقط برای موارد غیرحساس یا سازگاری با دستگاه‌های قدیمی استفاده کن.
+    </div>
+
+    <pre><code># ===== PPTP Server =====
+[admin@MikroTik] > /interface pptp-server server set \
+    enabled=yes \
+    authentication=mschap2 \
+    default-profile=vpn-users \
+    keepalive-timeout=60
+
+# مشاهده وضعیت
+[admin@MikroTik] > /interface pptp-server server print
+
+# ===== PPTP Client =====
+[admin@MikroTik] > /interface pptp-client add \
+    name=pptp-out1 \
+    connect-to=203.0.113.5 \
+    user=user1 \
+    password=StrongPass1 \
+    disabled=no \
+    profile=default-encryption \
+    add-default-route=no
+
+# بررسی
+[admin@MikroTik] > /interface pptp-client print
+[admin@MikroTik] > /interface print where type=pptp
+
+# ===== نکته =====
+# PPTP از پورت TCP/1723 استفاده می‌کند
+# در نسخه‌های جدید RouterOS، PPTP نیاز به پکیج جداگانه ندارد</code></pre>
+
+    <!-- ==== ۸.۶ ==== -->
+    <h3>۸.۶ L2TP — Layer 2 Tunneling Protocol</h3>
+
+    <p>
+      L2TP خودش رمزنگاری ندارد، ولی معمولاً با IPsec ترکیب می‌شود
+      (<strong>L2TP/IPsec</strong>) که امنیت خوبی می‌دهد.
+    </p>
+
+    <pre><code># ===== L2TP Server (بدون IPsec — توصیه نمی‌شود) =====
+[admin@MikroTik] > /interface l2tp-server server set \
+    enabled=yes \
+    authentication=mschap2 \
+    default-profile=vpn-users
+
+# ===== L2TP Server با IPsec (توصیه‌شده) =====
+[admin@MikroTik] > /interface l2tp-server server set \
+    enabled=yes \
+    use-ipsec=yes \
+    ipsec-secret=IPsecSecret@2024 \
+    authentication=mschap2 \
+    default-profile=vpn-users
+
+# پارامترها:
+# use-ipsec        → فعال‌سازی IPsec
+# ipsec-secret     → کلید مشترک IPsec
+
+# ===== L2TP Client =====
+[admin@MikroTik] > /interface l2tp-client add \
+    name=l2tp-out1 \
+    connect-to=203.0.113.5 \
+    user=user1 \
+    password=StrongPass1 \
+    profile=default-encryption \
+    use-ipsec=yes \
+    ipsec-secret=IPsecSecret@2024 \
+    disabled=no \
+    add-default-route=no
+
+# ===== نکات مهم =====
+# 1. L2TP از UDP/1701 استفاده می‌کند
+# 2. IPsec از UDP/500 و UDP/4500 استفاده می‌کند
+# 3. در Firewall باید این پورت‌ها باز باشند
+
+# ===== Firewall برای L2TP/IPsec =====
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=udp \
+    dst-port=500,1701,4500 \
+    action=accept \
+    comment="Allow L2TP/IPsec"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=ipsec-esp \
+    action=accept \
+    comment="Allow IPsec-ESP"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=ipsec-ah \
+    action=accept \
+    comment="Allow IPsec-AH"</code></pre>
+
+    <!-- ==== ۸.۷ ==== -->
+    <h3>۸.۷ SSTP — Secure Socket Tunneling Protocol</h3>
+
+    <p>
+      SSTP یک VPN مدرن مایکروسافت است که روی <strong>HTTPS (TCP/443)</strong>
+      کار می‌کند — به‌راحتی از فایروال‌ها و پروکسی‌ها عبور می‌کند.
+    </p>
+
+    <pre><code># ===== SSTP Server =====
+[admin@MikroTik] > /interface sstp-server server set \
+    enabled=yes \
+    default-profile=vpn-users \
+    authentication=mschap2 \
+    certificate=server-cert
+
+# نکته: SSTP نیاز به Certificate دارد
+# اگر Certificate نداری، باید بسازی یا از Let's Encrypt استفاده کنی
+
+# ===== ساخت Certificate خودامضا =====
+[admin@MikroTik] > /certificate add \
+    name=server-cert \
+    common-name=vpn.example.com \
+    key-usage=tls-server \
+    days-valid=3650
+
+[admin@MikroTik] > /certificate sign server-cert
+
+# ===== SSTP Client =====
+[admin@MikroTik] > /interface sstp-client add \
+    name=sstp-out1 \
+    connect-to=203.0.113.5 \
+    user=user1 \
+    password=StrongPass1 \
+    profile=default-encryption \
+    disabled=no
+
+# ===== مزایای SSTP =====
+# - از TCP/443 عبور می‌کند (معمولاً باز است)
+# - رمزنگاری SSL/TLS
+# - سازگاری با Windows بدون نصب نرم‌افزار
+
+# ===== عیب =====
+# - Performance پایین‌تر از L2TP یا OpenVPN
+# - فقط روی Windows (و RouterOS) بومی پشتیبانی می‌شود</code></pre>
+
+    <!-- ==== ۸.۸ ==== -->
+    <h3>۸.۸ OpenVPN — VPN متن‌باز محبوب</h3>
+
+    <pre><code># ===== OpenVPN Server =====
+# گام ۱: Certificate
+[admin@MikroTik] > /certificate add \
+    name=ca \
+    common-name=my-ca \
+    key-usage=key-cert-sign,crl-sign \
+    days-valid=3650
+
+[admin@MikroTik] > /certificate sign ca
+
+[admin@MikroTik] > /certificate add \
+    name=server-cert \
+    common-name=server \
+    days-valid=3650
+
+[admin@MikroTik] > /certificate sign server-cert ca=ca
+
+# گام ۲: OpenVPN Server
+[admin@MikroTik] > /interface ovpn-server server set \
+    enabled=yes \
+    port=1194 \
+    mode=ip \
+    netmask=24 \
+    default-profile=vpn-users \
+    certificate=server-cert \
+    auth=sha1,md5 \
+    cipher=aes256,aes192,aes128 \
+    require-client-certificate=no
+
+# گام ۳: Firewall
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=1194 \
+    action=accept \
+    comment="Allow OpenVPN"
+
+# ===== OpenVPN Client =====
+[admin@MikroTik] > /interface ovpn-client add \
+    name=ovpn-out1 \
+    connect-to=203.0.113.5 \
+    port=1194 \
+    user=user1 \
+    password=StrongPass1 \
+    profile=default-encryption \
+    certificate=client-cert \
+    auth=sha1 \
+    cipher=aes256 \
+    disabled=no
+
+# ===== مزایا =====
+# - Open Source
+# - امنیت بالا با SSL/TLS
+# - سازگار با اکثر سیستم‌عامل‌ها
+# - انعطاف‌پذیری زیاد
+
+# ===== عیب =====
+# - Performance کمتر از WireGuard
+# - تنظیمات پیچیده‌تر</code></pre>
+
+    <!-- ==== ۸.۹ ==== -->
+    <h3>۸.۹ EoIP — Ethernet over IP</h3>
+
+    <p>
+      <strong>EoIP</strong> یک تونل لایه ۲ است که فریم‌های Ethernet را در
+      IP کپسوله می‌کند. برای اتصال دو شبکه‌ی L2 از راه دور.
+    </p>
+
+    <pre><code># ===== EoIP Tunnel =====
+[admin@R1] > /interface eoip add \
+    name=eoip-tunnel1 \
+    remote-address=203.0.113.5 \
+    tunnel-id=100 \
+    local-address=203.0.113.1 \
+    disabled=no
+
+# پارامترها:
+# remote-address   → IP طرف مقابل
+# tunnel-id        → شناسه تونل (یکتا، 0-65535)
+# local-address    → IP محلی (معمولاً خودکار)
+
+# ===== طرف مقابل =====
+[admin@R2] > /interface eoip add \
+    name=eoip-tunnel1 \
+    remote-address=203.0.113.1 \
+    tunnel-id=100 \
+    disabled=no
+
+# ===== استفاده: اضافه کردن به Bridge =====
+[admin@R1] > /interface bridge add name=br-eoip
+[admin@R1] > /interface bridge port add bridge=br-eoip interface=eoip-tunnel1
+[admin@R1] > /interface bridge port add bridge=br-eoip interface=ether2
+
+# ===== نکات مهم =====
+# 1. EoIP رمزنگاری ندارد — با IPsec ترکیب کن
+# 2. tunnel-id باید در دو طرف یکسان باشد
+# 3. برای شبکه‌های Multi-Branch عالی است
+# 4. روی MTU حساس است — MTU را کم کن اگر مشکل داشتی
+
+# ===== EoIP با IPsec =====
+# در EoIP، گزینه ipsec-secret را بگذار
+[admin@R1] > /interface eoip set eoip-tunnel1 \
+    ipsec-secret=MyIPsecSecret
+
+# حالا ترافیک تونل رمزنگاری می‌شود</code></pre>
+
+    <!-- ==== ۸.۱۰ ==== -->
+    <h3>۸.۱۰ IPIP Tunnel</h3>
+
+    <pre><code># ===== IPIP Tunnel =====
+[admin@R1] > /interface ipip add \
+    name=ipip-tunnel1 \
+    remote-address=203.0.113.5 \
+    local-address=203.0.113.1
+
+[admin@R2] > /interface ipip add \
+    name=ipip-tunnel1 \
+    remote-address=203.0.113.1
+
+# ===== IP روی تونل =====
+[admin@R1] > /ip address add \
+    address=10.10.10.1/30 \
+    interface=ipip-tunnel1
+
+[admin@R2] > /ip address add \
+    address=10.10.10.2/30 \
+    interface=ipip-tunnel1
+
+# ===== تفاوت IPIP و EoIP =====
+# IPIP: فقط IP (L3) را کپسوله می‌کند
+# EoIP: فریم Ethernet (L2) را کپسوله می‌کند
+# IPIP سریع‌تر، EoIP انعطاف‌پذیرتر</code></pre>
+
+    <!-- ==== ۸.۱۱ ==== -->
+    <h3>۸.۱۱ GRE Tunnel در RouterOS</h3>
+
+    <pre><code># ===== GRE Tunnel =====
+[admin@R1] > /interface gre add \
+    name=gre-tunnel1 \
+    remote-address=203.0.113.5 \
+    local-address=203.0.113.1 \
+    ipsec-secret=MyIPsecSecret \
+    allow-fast-path=yes
+
+[admin@R2] > /interface gre add \
+    name=gre-tunnel1 \
+    remote-address=203.0.113.1 \
+    ipsec-secret=MyIPsecSecret
+
+# ===== IP روی GRE =====
+[admin@R1] > /ip address add \
+    address=10.20.20.1/30 \
+    interface=gre-tunnel1
+
+[admin@R2] > /ip address add \
+    address=10.20.20.2/30 \
+    interface=gre-tunnel1
+
+# ===== نکته =====
+# GRE می‌تواند Routing Protocol و Multicast را حمل کند
+# مناسب برای OSPF روی تونل
+
+# ===== بررسی =====
+[admin@R1] > /interface print where type=gre
+[admin@R1] > /ping 10.20.20.2</code></pre>
+
+    <!-- ==== ۸.۱۲ ==== -->
+    <h3>۸.۱۲ WireGuard — VPN مدرن (RouterOS 7+)</h3>
+
+    <p>
+      <strong>WireGuard</strong> یک پروتکل VPN مدرن و سبک است که
+      در RouterOS 7.x اضافه شده است. سریع، ساده، و امن.
+    </p>
+
+    <p><strong>مزایای WireGuard:</strong></p>
+    <ul>
+      <li><strong>Performance:</strong> بسیار سریع‌تر از OpenVPN و L2TP</li>
+      <li><strong>سادگی:</strong> تنظیمات مینیمال</li>
+      <li><strong>امنیت:</strong> رمزنگاری مدرن (ChaCha20، Curve25519)</li>
+      <li><strong>Kernel-based:</strong> در Linux — بسیار سریع</li>
+      <li><strong>Roaming:</strong> پشتیبانی از تغییر شبکه کلاینت</li>
+    </ul>
+
+    <pre><code># ===== WireGuard Server (RouterOS 7+) =====
+# گام ۱: ساخت Interface
+[admin@MikroTik] > /interface wireguard add \
+    name=wg-server \
+    listen-port=13231 \
+    comment="WireGuard Server"
+
+# گام ۲: مشاهده Public Key
+[admin@MikroTik] > /interface wireguard print detail
+# خروجی شامل: private-key (که باید مخفی بماند)
+# public-key (که باید به کلاینت‌ها بدهی)
+
+[admin@MikroTik] > /interface wireguard print
+# یا اگر خواستی Public Key را ببینی:
+[admin@MikroTik] > /interface wireguard print where name=wg-server
+
+# گام ۳: IP روی Interface
+[admin@MikroTik] > /ip address add \
+    address=10.30.30.1/24 \
+    interface=wg-server
+
+# گام ۴: اضافه کردن Peer (کلاینت)
+[admin@MikroTik] > /interface wireguard peers add \
+    interface=wg-server \
+    public-key="ClientPublicKeyHere" \
+    allowed-address=10.30.30.2/32 \
+    comment="Client 1"
+
+# ===== WireGuard Client =====
+[admin@Client] > /interface wireguard add \
+    name=wg-client \
+    private-key="ClientPrivateKeyHere" \
+    comment="WireGuard Client"
+
+[admin@Client] > /interface wireguard peers add \
+    interface=wg-client \
+    public-key="ServerPublicKeyHere" \
+    endpoint-address=203.0.113.5 \
+    endpoint-port=13231 \
+    allowed-address=10.30.30.0/24 \
+    persistent-keepalive=25s
+
+[admin@Client] > /ip address add \
+    address=10.30.30.2/24 \
+    interface=wg-client
+
+# ===== نکته =====
+# persistent-keepalive: برای عبور از NAT ضروری است (25s توصیه‌شده)
+
+# ===== Firewall =====
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=udp \
+    dst-port=13231 \
+    action=accept \
+    comment="WireGuard"</code></pre>
+
+    <!-- ==== ۸.۱۳ ==== -->
+    <h3>۸.۱۳ ZeroTier و Cloud VPN</h3>
+
+    <pre><code># ===== ZeroTier (RouterOS 7+) =====
+[admin@MikroTik] > /zerotier add \
+    name=zt1 \
+    network=8056c2e21c000001 \
+    disabled=no
+
+# در ZeroTier Central Network را Authorize کن
+# سپس IP روی Interface بگیر
+
+[admin@MikroTik] > /ip address add \
+    address=10.147.17.1/24 \
+    interface=zt1
+
+# ===== مزایای ZeroTier =====
+# - بدون نیاز به IP عمومی
+# - بدون تنظیمات پیچیده
+# - عبور از NAT/Firewall آسان
+# - رایگان برای تا 100 دستگاه
+
+# ===== کاربردها =====
+# - اتصال دفاتر بدون IP Static
+# - Remote Access از پشت CGNAT
+# - Gaming و P2P</code></pre>
+
+    <!-- ==== ۸.۱۴ ==== -->
+    <h3>۸.۱۴ Routing روی Tunnel</h3>
+
+    <pre><code># ===== بعد از ساخت تونل، Routing =====
+
+# روش ۱: Static Route
+[admin@R1] > /ip route add \
+    dst-address=192.168.2.0/24 \
+    gateway=10.10.10.2 \
+    comment="Remote LAN via Tunnel"
+
+# روش ۲: OSPF روی تونل
+[admin@R1] > /routing ospf instance add name=ospf1
+[admin@R1] > /routing ospf area add name=backbone area-id=0.0.0.0 instance=ospf1
+
+[admin@R1] > /routing ospf interface-template add \
+    interfaces=ipip-tunnel1 \
+    area=backbone
+
+# روش ۳: BGP روی تونل
+[admin@R1] > /routing bgp connection add \
+    name=to-r2 \
+    remote.address=10.10.10.2 \
+    remote.as=65002 \
+    local.as=65001 \
+    as=65001
+
+# ===== NAT برای ترافیک VPN =====
+# اگر VPN Users می‌خواهند به اینترنت بروند:
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=10.10.10.0/24 \
+    out-interface=ether1 \
+    action=masquerade \
+    comment="NAT for VPN users"</code></pre>
+
+    <!-- ==== ۸.۱۵ ==== -->
+    <h3>۸.۱۵ Firewall برای Tunnelها</h3>
+
+    <pre><code># ===== پورت‌های مورد نیاز =====
+
+# PPTP: TCP/1723 + Protocol 47 (GRE)
+# L2TP: UDP/1701
+# L2TP/IPsec: UDP/500، UDP/1701، UDP/4500 + ESP
+# SSTP: TCP/443
+# OpenVPN: TCP/1194 (یا UDP/1194)
+# WireGuard: UDP/13231 (قابل تغییر)
+# EoIP: Protocol 47 (GRE)
+# IPIP: Protocol 4
+# GRE: Protocol 47
+
+# ===== Firewall Rules =====
+/ip firewall filter
+# PPTP
+add chain=input protocol=tcp dst-port=1723 action=accept comment="PPTP"
+add chain=input protocol=gre action=accept comment="GRE for PPTP"
+
+# L2TP
+add chain=input protocol=udp dst-port=1701 action=accept comment="L2TP"
+
+# IPsec
+add chain=input protocol=udp dst-port=500,4500 action=accept comment="IPsec"
+add chain=input protocol=ipsec-esp action=accept comment="IPsec-ESP"
+
+# SSTP
+add chain=input protocol=tcp dst-port=443 action=accept comment="SSTP"
+
+# OpenVPN
+add chain=input protocol=tcp dst-port=1194 action=accept comment="OpenVPN"
+
+# WireGuard
+add chain=input protocol=udp dst-port=13231 action=accept comment="WireGuard"
+
+# ===== نکته مهم =====
+# این Rules باید قبل از Drop نهایی قرار گیرند</code></pre>
+
+    <!-- ==== ۸.۱۶ ==== -->
+    <h3>۸.۱۶ عیب‌یابی Tunnelها</h3>
+
+    <pre><code># ===== دستورات عیب‌یابی =====
+
+# ۱. مشاهده وضعیت Interface
+[admin@MikroTik] > /interface print where type=ppp
+[admin@MikroTik] > /interface print where type=l2tp
+[admin@MikroTik] > /interface print where type=ovpn
+[admin@MikroTik] > /interface print where type=wireguard
+
+# ۲. مشاهده کاربران فعال VPN
+[admin@MikroTik] > /ppp active print
+[admin@MikroTik] > /ppp active print detail
+
+# ۳. Log
+[admin@MikroTik] > /log print where topics~"ppp"
+[admin@MikroTik] > /log print where topics~"l2tp"
+[admin@MikroTik] > /log print where topics~"ovpn"
+[admin@MikroTik] > /log print where topics~"wireguard"
+
+# ۴. Ping روی تونل
+[admin@MikroTik] > /ping 10.10.10.2
+
+# ۵. Traceroute
+[admin@MikroTik] > /tool traceroute 10.10.10.2
+
+# ۶. Firewall Counters
+[admin@MikroTik] > /ip firewall filter print stats
+# ببین آیا پورت‌های VPN باز شده‌اند
+
+# ۷. مشاهده WireGuard Peers
+[admin@MikroTik] > /interface wireguard peers print
+# ببین: last-handshake، rx، tx
+
+# ۸. IPsec Status
+[admin@MikroTik] > /ip ipsec active-peers print
+[admin@MikroTik] > /ip ipsec installed-sa print
+[admin@MikroTik] > /ip ipsec policy print
+
+# ===== چک‌لیست عیب‌یابی =====
+# 1. آیا IP عمومی Server درست است؟
+# 2. آیا پورت‌های VPN در Firewall باز هستند؟
+# 3. آیا PPP Secret و Profile درست است؟
+# 4. آیا IP Pool خالی است؟
+# 5. آیا Certificate (برای SSTP و OpenVPN) درست است؟
+# 6. آیا MTU تونل مشکل ندارد؟
+# 7. آیا Route روی تونل تعریف شده؟
+# 8. آیا NAT برای ترافیک VPN فعال است؟
+# 9. آیا ISP پورت‌های VPN را بلاک نکرده است؟
+# 10. آیا Client Configuration درست است؟</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      برخی ISPها پورت‌های VPN (خصوصاً PPTP و L2TP) را بلاک می‌کنند.
+      اگر تونل کار نمی‌کند، از SSTP (TCP/443) یا WireGuard (UDP) استفاده کن
+      که معمولاً بلاک نمی‌شوند.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در RouterOS 7+، <strong>WireGuard</strong> بهترین گزینه برای VPN است —
+      سریع، ساده، امن. اگر نسخه‌ی قدیمی داری، <strong>L2TP/IPsec</strong> یا
+      <strong>SSTP</strong> گزینه‌های خوبی هستند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ امنیت</div>
+      هرگز از PPTP استفاده نکن — شکسته است. حتی در سناریوهای غیرحساس،
+      از L2TP/IPsec یا WireGuard استفاده کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای اتصال بین دو دفتر بدون IP Static، از <strong>ZeroTier</strong> یا
+      <strong>Cloud VPN</strong> استفاده کن — نیازی به Forward کردن پورت روی
+      روتر نداری.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      با این فصل، دوره MTCNA کامل شد! 🎉 حالا آماده‌ای برای MTCRE، MTCWE
+      و دوره‌های تخصصی‌تر MikroTik.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در <strong>MTCINE</strong> با BGP و OSPF در سطح ISP، و
+      <strong>MTCSE</strong> با امنیت پیشرفته کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — L2TP/IPsec Server کامل</h3>
+    <pre><code># ===== گام ۱: IP Pool =====
+/ip pool add name=vpn-pool ranges=10.99.99.10-10.99.99.254
+
+# ===== گام ۲: PPP Profile =====
+/ppp profile add \
+    name=vpn-profile \
+    local-address=10.99.99.1 \
+    remote-address=vpn-pool \
+    dns-server=8.8.8.8,1.1.1.1 \
+    use-encryption=required
+
+# ===== گام ۳: PPP Secret =====
+/ppp secret add \
+    name=alice \
+    password=AlicePass@2024 \
+    service=l2tp \
+    profile=vpn-profile \
+    comment="Alice - Sales"
+
+/ppp secret add \
+    name=bob \
+    password=BobPass@2024 \
+    service=l2tp \
+    profile=vpn-profile \
+    comment="Bob - Tech"
+
+# ===== گام ۴: L2TP Server =====
+/interface l2tp-server server set \
+    enabled=yes \
+    use-ipsec=yes \
+    ipsec-secret=L2TPIPsec@2024 \
+    authentication=mschap2 \
+    default-profile=vpn-profile
+
+# ===== گام ۵: Firewall =====
+/ip firewall filter
+add chain=input protocol=udp dst-port=500,1701,4500 action=accept \
+    comment="L2TP/IPsec"
+add chain=input protocol=ipsec-esp action=accept comment="IPsec-ESP"
+add chain=input protocol=ipsec-ah action=accept comment="IPsec-AH"
+
+# ===== گام ۶: NAT برای VPN Users =====
+/ip firewall nat add chain=srcnat src-address=10.99.99.0/24 \
+    out-interface=ether1 action=masquerade comment="NAT VPN users"
+
+# ===== تست از Windows =====
+# 1. Settings → VPN → Add
+# 2. Provider: Windows (built-in)
+# 3. Server name: your-public-ip
+# 4. VPN type: L2TP/IPsec with pre-shared key
+# 5. Pre-shared key: L2TPIPsec@2024
+# 6. Username: alice، Password: AlicePass@2024</code></pre>
+
+    <h3>مثال ۲ — WireGuard بین دو سایت</h3>
+    <pre><code># ===== Server (Site A) =====
+
+# ۱. Interface
+/interface wireguard add name=wg-site name=wg-site listen-port=13231
+
+# ۲. IP
+/ip address add address=10.50.50.1/30 interface=wg-site
+
+# ۳. Peer (Site B) - نیاز به Public Key طرف مقابل
+# Public Key را از Site B بگیر
+/interface wireguard peers add \
+    interface=wg-site \
+    public-key="SITE_B_PUBLIC_KEY" \
+    allowed-address=10.50.50.2/32,192.168.20.0/24 \
+    comment="Site B"
+
+# ۴. Route به شبکه‌ی Site B
+/ip route add dst-address=192.168.20.0/24 gateway=10.50.50.2
+
+# ۵. Firewall
+/ip firewall filter add chain=input protocol=udp dst-port=13231 \
+    action=accept comment="WireGuard"
+
+# ===== Client (Site B) =====
+
+# ۱. Interface
+/interface wireguard add name=wg-site
+
+# ۲. IP
+/ip address add address=10.50.50.2/30 interface=wg-site
+
+# ۳. Peer (Site A)
+/interface wireguard peers add \
+    interface=wg-site \
+    public-key="SITE_A_PUBLIC_KEY" \
+    endpoint-address=203.0.113.1 \
+    endpoint-port=13231 \
+    allowed-address=10.50.50.1/32,192.168.10.0/24 \
+    persistent-keepalive=25s \
+    comment="Site A"
+
+# ۴. Route به شبکه‌ی Site A
+/ip route add dst-address=192.168.10.0/24 gateway=10.50.50.1
+
+# ===== نتیجه =====
+# Site A: 192.168.10.0/24 ↔ Site B: 192.168.20.0/24
+# اتصال رمزنگاری‌شده با WireGuard</code></pre>
+
+    <h3>مثال ۳ — EoIP Tunnel با Bridge</h3>
+    <pre><code># ===== سناریو: Bridge L2 بین دو دفتر =====
+
+# ===== Router 1 =====
+# ۱. EoIP Interface
+/interface eoip add \
+    name=eoip-bridge \
+    remote-address=203.0.113.5 \
+    tunnel-id=1000 \
+    ipsec-secret=EoIPSecret@2024
+
+# ۲. Bridge
+/interface bridge add name=br-remote
+/interface bridge port add bridge=br-remote interface=eoip-bridge
+/interface bridge port add bridge=br-remote interface=ether2
+
+# ۳. IP روتر روی Bridge
+/ip address add address=192.168.100.1/24 interface=br-remote
+
+# ===== Router 2 =====
+# ۱. EoIP Interface
+/interface eoip add \
+    name=eoip-bridge \
+    remote-address=203.0.113.1 \
+    tunnel-id=1000 \
+    ipsec-secret=EoIPSecret@2024
+
+# ۲. Bridge
+/interface bridge add name=br-remote
+/interface bridge port add bridge=br-remote interface=eoip-bridge
+/interface bridge port add bridge=br-remote interface=ether2
+
+# ۳. IP روتر روی Bridge
+/ip address add address=192.168.100.2/24 interface=br-remote
+
+# ===== نتیجه =====
+# تمام دستگاه‌های پشت ether2 در Router1 و Router2 در یک Broadcast Domain
+# گویی با کابل به هم وصل شده‌اند
+# حتی ARP و Broadcast از تونل عبور می‌کند
+
+# ===== تست =====
+[admin@R1] > /ping 192.168.100.2
+[admin@R1] > /interface bridge host print
+# MAC تمام دستگاه‌های پشت Router2 را در جدول می‌بینی</code></pre>
+
+    <h3>مثال ۴ — SSTP Server برای Remote Workers</h3>
+    <pre><code># ===== SSTP Server با Certificate =====
+
+# ۱. ساخت Certificate
+/certificate add \
+    name=ca-cert \
+    common-name=VPN-CA \
+    key-usage=key-cert-sign,crl-sign
+
+/certificate sign ca-cert
+
+/certificate add \
+    name=sstp-server \
+    common-name=vpn.company.ir \
+    key-usage=tls-server \
+    days-valid=3650
+
+/certificate sign sstp-server ca=ca-cert
+
+# ۲. PPP Pool و Profile
+/ip pool add name=sstp-pool ranges=10.80.80.10-10.80.80.254
+
+/ppp profile add \
+    name=sstp-profile \
+    local-address=10.80.80.1 \
+    remote-address=sstp-pool \
+    dns-server=10.80.80.1
+
+# ۳. کاربران
+/ppp secret add name=worker1 password=Worker1@2024 profile=sstp-profile
+/ppp secret add name=worker2 password=Worker2@2024 profile=sstp-profile
+
+# ۴. SSTP Server
+/interface sstp-server server set \
+    enabled=yes \
+    default-profile=sstp-profile \
+    authentication=mschap2 \
+    certificate=sstp-server
+
+# ۵. Firewall
+/ip firewall filter add chain=input protocol=tcp dst-port=443 \
+    action=accept comment="SSTP on 443"
+
+# ===== مزیت بزرگ SSTP =====
+# روی TCP/443 کار می‌کند — معمولاً هیچ ISP آن را بلاک نمی‌کند
+# به‌راحتی از فایروال‌های سختگیرانه عبور می‌کند
+
+# ===== تست از Windows =====
+# 1. Settings → VPN → Add
+# 2. Provider: Windows (built-in)
+# 3. Server name: vpn.company.ir
+# 4. VPN type: SSTP
+# 5. Username/Password: worker1 / Worker1@2024</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی VPN</h3>
+    <pre><code># ===== چک‌لیست کامل =====
+
+# ۱. آیا PPP Secret وجود دارد؟
+[admin@MikroTik] > /ppp secret print
+# ببین: name، password، service، profile
+
+# ۲. آیا PPP Profile درست است؟
+[admin@MikroTik] > /ppp profile print
+# ببین: local-address، remote-address، dns-server
+
+# ۳. آیا IP Pool خالی است؟
+[admin@MikroTik] > /ip pool print
+[admin@MikroTik] > /ip pool used print
+# ببین: چند IP استفاده شده
+
+# ۴. آیا VPN Server فعال است؟
+[admin@MikroTik] > /interface l2tp-server server print
+[admin@MikroTik] > /interface pptp-server server print
+[admin@MikroTik] > /interface sstp-server server print
+[admin@MikroTik] > /interface ovpn-server server print
+# ببین: enabled=yes
+
+# ۵. آیا Firewall اجازه می‌دهد؟
+[admin@MikroTik] > /ip firewall filter print stats
+# ببین Ruleهای VPN counter بالا می‌رود
+
+# ۶. Log زنده
+[admin@MikroTik] > /log print follow where topics~"ppp"
+# تلاش کن وصل شی — Log را ببین
+
+# ۷. کاربران فعال
+[admin@MikroTik] > /ppp active print
+# کاربران آنلاین را ببین
+
+# ۸. Packet Sniffer
+[admin@MikroTik] > /tool sniffer quick interface=ether1
+# ترافیک UDP/1701 یا TCP/443 را ببین
+
+# ===== مشکلات رایج =====
+# - "user X not found" → PPP Secret ندارد
+# - "no more addresses in pool" → Pool تمام شده
+# - "authentication failed" → رمز اشتباه
+# - "shared secret mismatch" → IPsec Secret اشتباه
+# - "certificate required" → Certificate نصب نشده
+# - "connection timeout" → Firewall یا ISP بلاک کرده</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>دو RouterOS در GNS3 یا EVE-NG با IP عمومی شبیه‌سازی‌شده</li>
+      <li>IP Pool برای VPN با Subnet 10.99.99.0/24 بساز</li>
+      <li>PPP Profile با local-address و remote-address بساز</li>
+      <li>دو PPP Secret بساز: user1 و user2</li>
+      <li>L2TP Server با IPsec فعال کن</li>
+      <li>Firewall را برای پورت‌های L2TP/IPsec باز کن</li>
+      <li>با یک RouterOS Client یا Windows به L2TP وصل شو</li>
+      <li>با <code>/ppp active print</code> کاربران آنلاین را ببین</li>
+      <li>SSTP را با Certificate راه‌اندازی کن</li>
+      <li>با Windows به SSTP وصل شو (بدون نرم‌افزار اضافه)</li>
+      <li>یک EoIP Tunnel بین دو RouterOS بساز</li>
+      <li>EoIP را به Bridge اضافه کن و شبکه L2 بساز</li>
+      <li>WireGuard را روی هر دو RouterOS راه‌اندازی کن</li>
+      <li>با WireGuard یک Site-to-Site VPN راه بینداز</li>
+      <li>بین دو شبکه Ping و Traceroute بزن</li>
+      <li>تمام تونل‌ها را با <code>/interface print</code> ببین</li>
+      <li>هر پیکربندی را با Export ذخیره کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>PPP Secret وجود ندارد:</strong> کاربر در <code>/ppp secret</code> تعریف نشده.</li>
+      <li><strong>IP Pool تمام شده:</strong> Range را افزایش بده یا کاربران بیکار را قطع کن.</li>
+      <li><strong>Authentication Failed:</strong> نام کاربری یا رمز اشتباه — حساس به بزرگی و کوچکی.</li>
+      <li><strong>IPsec Secret mismatch:</strong> کلید مشترک باید در Server و Client یکسان باشد.</li>
+      <li><strong>Certificate نامعتبر:</strong> SSTP و OpenVPN نیاز به Certificate معتبر دارند.</li>
+      <li><strong>Ping روی Tunnel کار نمی‌کند:</strong> Route به Subnet مقابل تعریف نشده.</li>
+      <li><strong>MTU مشکل:</strong> در تونل‌ها MSS را کم کن: <code>ip firewall mangle</code>.</li>
+      <li><strong>ISP پورت را بلاک می‌کند:</strong> از SSTP (TCP/443) یا WireGuard (UDP) استفاده کن.</li>
+      <li><strong>NAT برای VPN Users:</strong> VPN Userها بدون NAT به اینترنت نمی‌رسند.</li>
+      <li><strong>WireGuard Peer Up نمی‌شود:</strong> Public Key اشتباه یا Endpoint غلط.</li>
+      <li><strong>ZeroTier Authorize نمی‌شود:</strong> در ZeroTier Central دستگاه را Authorize کن.</li>
+      <li><strong>L2TP/IPsec با Windows کار نمی‌کند:</strong> Registry Fix لازم است — <code>AssumeUDPEncapsulationContextOnSendRule=2</code>.</li>
+      <li><strong>EoIP Tunnel Up نمی‌شود:</strong> tunnel-id باید در دو طرف یکسان باشد.</li>
+      <li><strong>GRE با NAT عبور نمی‌کند:</strong> از GRE/IPsec استفاده کن یا NAT-T را فعال کن.</li>
+      <li><strong>بعد از Restart تونل قطع می‌شود:</b> Interface را <code>disabled=no</code> بگذار و Route را Static کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="vpn">VPN</span> •
+      <span class="term" data-term="tunnel">Tunnel</span> •
+      <span class="term" data-term="l2tp">L2TP</span> •
+      <span class="term" data-term="openvpn">OpenVPN</span> •
+      <span class="term" data-term="wireguard">WireGuard</span> •
+      <span class="term" data-term="ipsec">IPsec</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-08" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) تفاوت Site-to-Site و Remote Access VPN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Site-to-Site اتصال دو LAN، Remote Access اتصال یک کاربر</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Remote Access فقط برای Mobile</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Site-to-Site فقط IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) چرا PPTP امن نیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> رمزنگاری ندارد</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> فقط روی Windows کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> رمزنگاری MS-CHAPv2 آن شکسته شده است</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> از UDP استفاده می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) L2TP/IPsec از چه پورت‌هایی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> TCP/1723</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> UDP/500، 1701، 4500</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> UDP/1194</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) SSTP روی چه پورتی کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> TCP/80</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> UDP/443</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> TCP/1194</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) مزیت اصلی SSTP نسبت به L2TP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> از TCP/443 عبور می‌کند — معمولاً بلاک نمی‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> رمزنگاری ندارد</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> فقط برای Mobile</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) تفاوت EoIP و IPIP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> EoIP فقط IP را کپسوله می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> EoIP فریم Ethernet (L2)، IPIP فقط IP (L3)</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> IPIP فقط برای Wireless</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) WireGuard در کدام نسخه RouterOS اضافه شد؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> RouterOS 6.x</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> RouterOS 7.x</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> RouterOS 5.x</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> فقط در CHR</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) WireGuard از چه پورت پیش‌فرض استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> TCP/13231</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> UDP/1194</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> UDP/13231</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> TCP/443</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) persistent-keepalive در WireGuard چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> رمزنگاری بهتر</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> عبور از NAT با نگه‌داشتن Session فعال</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> افزایش سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> کاهش Latency</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) PPP Profile و PPP Secret چه تفاوتی دارند؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> Secret برای تنظیمات کلی، Profile برای کاربر خاص</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> Profile تنظیمات گروهی، Secret یک کاربر مشخص</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Secret فقط برای L2TP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) برای دسترسی VPN Users به اینترنت چه لازم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> فقط Route</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> NAT Masquerade برای Subnet VPN</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> فقط Firewall</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Restart روتر</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) ZeroTier چه مزیتی نسبت به VPNهای سنتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> بدون نیاز به IP عمومی و Forward پورت</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> رایگان نیست</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) برای L2TP/IPsec در Firewall، کدام Protocol باید باز شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> TCP</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> UDP و ESP</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> ICMP</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط GRE</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) EoIP برای چه کاری مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فقط Routing</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> فقط VoIP</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> اتصال دو شبکه L2 از راه دور</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> فقط IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) کدام VPN متن‌باز و مدرن است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> PPTP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> WireGuard</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> L2TP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> SSTP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۶) OpenVPN از چه پورت پیش‌فرض استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> UDP/500</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> TCP/1194</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> UDP/1701</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۷) برای مشاهده کاربران فعال VPN از چه دستوری استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> /interface print</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> /ppp active print</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> /ip route print</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> /log print</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۸) IPsec برای VPN از چه الگوریتم‌هایی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> فقط DES</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> فقط RC4</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> AES، SHA و Diffie-Hellman</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> فقط MD5</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل (و دوره MikroTik)</h2>
+    <p>یک زیرساخت VPN کامل برای یک سازمان بساز:</p>
+    <ul>
+      <li><strong>دفتر مرکزی:</strong> RouterOS با IP عمومی</li>
+      <li><strong>IP Pool:</strong> 10.99.99.0/24 برای VPN Users</li>
+      <li><strong>PPP Profile:</strong> با local-address=10.99.99.1</li>
+      <li><strong>L2TP/IPsec Server:</strong> برای کاربران Windows بدون نرم‌افزار</li>
+      <li><strong>SSTP Server:</strong> با Certificate — برای شرایطی که L2TP بلاک است</li>
+      <li><strong>WireGuard:</strong> بین دو دفتر برای Site-to-Site</li>
+      <li><strong>EoIP:</strong> بین دو RouterOS برای Bridge L2 در سناریوی نیازمندی</li>
+      <li><strong>Firewall:</strong> باز کردن پورت‌های VPN قبل از Drop نهایی</li>
+      <li><strong>NAT:</strong> Masquerade برای VPN Users به اینترنت</li>
+      <li><strong>Routing:</strong> Route روی هر تونل به Subnet مقابل</li>
+      <li><strong>3 کاربر PPP:</strong> با رمز قوی و Profile مناسب</li>
+      <li><strong>Static IP</strong> برای یکی از کاربران مهم</li>
+      <li>مستندسازی کامل با Export و دیاگرام شبکه</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>ZeroTier را روی هر دو RouterOS راه‌اندازی کن و اتصال برقرار کن.</li>
+        <li>با OSPF روی تونل، Subnetهای دو طرف را خودکار یاد بگیر.</li>
+        <li>QoS برای ترافیک VPN پیاده کن — VoIP از VPN اولویت بالاتر.</li>
+        <li>یک Netwatch روی Tunnel بگذار که اگر قطع شد، هشدار بفرستد.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>VPN:</strong> تونل امن بین دو نقطه روی اینترنت عمومی</li>
+      <li><strong>Site-to-Site:</strong> اتصال دو LAN — <strong>Remote Access:</strong> اتصال کاربر</li>
+      <li><strong>PPP:</strong> پایه‌ی تمام VPNها — Pool + Profile + Secret</li>
+      <li><strong>PPTP:</strong> ناامن — استفاده نکن (TCP/1723 + GRE)</li>
+      <li><strong>L2TP:</strong> با IPsec امن — UDP/500، 1701، 4500 + ESP</li>
+      <li><strong>SSTP:</strong> روی TCP/443 — از فایروال‌ها عبور می‌کند، نیاز به Certificate</li>
+      <li><strong>OpenVPN:</strong> متن‌باز، TCP/1194، نیاز به Certificate</li>
+      <li><strong>EoIP:</strong> تونل L2 روی IP — با tunnel-id یکتا، نیاز به IPsec برای امنیت</li>
+      <li><strong>IPIP:</strong> تونل L3 ساده و سریع</li>
+      <li><strong>GRE:</strong> تونل L3 با پشتیبانی Multicast، با ipsec-secret امن</li>
+      <li><strong>WireGuard:</strong> مدرن، سریع، Kernel-based — UDP/13231، persistent-keepalive</li>
+      <li><strong>ZeroTier:</strong> بدون IP عمومی، از CGNAT عبور می‌کند</li>
+      <li><strong>Firewall:</strong> باز کردن پورت‌های VPN قبل از Drop نهایی</li>
+      <li><strong>NAT:</strong> Masquerade برای دسترسی VPN Users به اینترنت</li>
+      <li><strong>Routing:</strong> Static Route یا OSPF/BGP روی تونل</li>
+      <li><strong>عیب‌یابی:</strong> /ppp active، /log، /interface print، /tool sniffer</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_07.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-08">✅ پایان MikroTik</button>
+      <a class="btn" href="../mcsa/mcsa_Ch_01.html" data-nav-next>شروع MCSA ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

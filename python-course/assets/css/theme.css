@@ -1,0 +1,537 @@
+/* ============================================================
+   theme.css — رنگ‌های دوره «صفر تا صد پایتون»
+   ------------------------------------------------------------
+   ساختار:
+   ۰) توکن‌های پایه (خام) — رنگ‌های خالص پایتون
+   ۱) تم روشن (پیش‌فرض)
+   ۲) تم تاریک
+   ۳) تشخیص خودکار تم سیستم
+   ۴) توکن‌های معنایی مشترک
+   ۵) انیمیشن و ترنزیشن
+   ۶) چاپ و کاهش حرکت
+   ------------------------------------------------------------
+   نکته: رنگ‌های اصلی از پالت رسمی پایتون:
+     🔵 آبی پایتون:  #3776ab  (رنگ لوگوی اصلی)
+     🟡 زرد پایتون:  #ffd343  (رنگ مکمل لوگو)
+   ============================================================ */
+
+/* ---------- ۰) توکن‌های پایه ---------- */
+:root {
+  /* پالت رسمی پایتون */
+  --py-blue: #3776ab;
+  --py-blue-light: #4a8ac4;
+  --py-blue-dark: #2a5d8a;
+  --py-blue-deep: #1e4a6f;
+
+  --py-yellow: #ffd343;
+  --py-yellow-light: #ffe27a;
+  --py-yellow-dark: #e6b800;
+  --py-yellow-deep: #b38f00;
+
+  /* رنگ‌های معنایی خام */
+  --c-slate-50: #f8fafc;
+  --c-slate-100: #f1f5f9;
+  --c-slate-200: #e2e8f0;
+  --c-slate-300: #cbd5e1;
+  --c-slate-400: #94a3b8;
+  --c-slate-500: #64748b;
+  --c-slate-600: #475569;
+  --c-slate-700: #334155;
+  --c-slate-800: #1e293b;
+  --c-slate-900: #0f172a;
+  --c-slate-950: #020617;
+
+  /* رنگ‌های حالت */
+  --c-green: #10b981;
+  --c-green-soft: #d1fae5;
+  --c-amber: #f59e0b;
+  --c-amber-soft: #fef3c7;
+  --c-red: #dc2626;
+  --c-red-soft: #fee2e2;
+
+  /* اندازه‌ها */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* فاصله‌ها */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ترنزیشن */
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --ease-out: cubic-bezier(0, 0, .2, 1);
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
+  --dur-fast: .15s;
+  --dur: .22s;
+  --dur-slow: .35s;
+
+  /* z-index */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 500;
+  --z-tooltip: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+}
+
+/* ---------- ۱) تم روشن (پیش‌فرض) ---------- */
+:root {
+  /* --- پس‌زمینه و سطوح --- */
+  --bg: #f1f5f9;
+  --bg-alt: #e8eef5;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --overlay: rgba(15, 23, 42, .55);
+
+  /* --- متن --- */
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --text: #334155;
+  --text-soft: #475569;
+  --muted: #64748b;
+  --subtle: #94a3b8;
+
+  /* --- مرزها --- */
+  --line: #e2e8f0;
+  --line-soft: #f1f5f9;
+  --line-strong: #cbd5e1;
+
+  /* --- برند (آبی پایتون) --- */
+  --brand: #0f172a;
+  --accent: #3776ab;
+  --accent-dark: #285a86;
+  --accent-light: #4a8ac4;
+  --accent-soft: #e7f1f8;
+  --accent-soft-2: #d4e6f3;
+  --accent-contrast: #ffffff;
+
+  /* --- لهجه ثانویه (زرد پایتون) --- */
+  --accent-2: #ffd343;
+  --accent-2-dark: #e6b800;
+  --accent-2-soft: #fff8e1;
+  --accent-2-contrast: #10233b;
+
+  /* --- رنگ‌های حالت --- */
+  --gold: #f59e0b;
+  --gold-dark: #b45309;
+  --gold-soft: #fffbeb;
+
+  --red: #dc2626;
+  --red-dark: #991b1b;
+  --red-soft: #fef2f2;
+
+  --green: #059669;
+  --green-dark: #065f46;
+  --green-soft: #ecfdf5;
+
+  --blue: #2563eb;
+  --blue-dark: #1e40af;
+  --blue-soft: #eff6ff;
+
+  --purple: #7c3aed;
+  --purple-dark: #5b21b6;
+  --purple-soft: #f5f3ff;
+
+  --orange: #ea580c;
+  --orange-soft: #fff7ed;
+
+  /* --- سایه‌ها --- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, .04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, .06),
+               0 4px 12px -6px rgba(15, 23, 42, .08);
+  --shadow: 0 1px 3px rgba(15, 23, 42, .06),
+            0 8px 24px -12px rgba(15, 23, 42, .12);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, .08),
+               0 20px 50px -20px rgba(15, 23, 42, .2);
+  --shadow-lg: 0 10px 30px rgba(15, 23, 42, .12),
+               0 30px 70px -30px rgba(15, 23, 42, .28);
+
+  /* --- رنگ برند برای دکمه اصلی --- */
+  --btn-primary-bg: #3776ab;
+  --btn-primary-bg-hover: #285a86;
+  --btn-primary-fg: #ffffff;
+  --btn-primary-shadow: 0 10px 26px -12px rgba(55, 118, 171, .55);
+
+  /* --- کد --- */
+  --code-bg: #0f172a;
+  --code-bg-alt: #1e293b;
+  --code-ink: #e2e8f0;
+  --code-comment: #64748b;
+  --code-keyword: #c084fc;
+  --code-string: #86efac;
+  --code-number: #fbbf24;
+  --code-decorator: #f472b6;
+  --code-inline-bg: #f1f5f9;
+  --code-inline-fg: #7c3aed;
+  --code-inline-border: #e2e8f0;
+
+  /* --- فوکوس --- */
+  --focus-ring: 0 0 0 4px rgba(55, 118, 171, .18);
+  --focus-outline: 2px solid #3776ab;
+
+  /* --- حالت انتخاب متن --- */
+  --selection-bg: #3776ab;
+  --selection-fg: #ffffff;
+
+  /* --- گرادیان‌های آماده --- */
+  --gradient-python: linear-gradient(135deg, #3776ab 0%, #ffd343 100%);
+  --gradient-brand: linear-gradient(135deg, #0f2540 0%, #1a3a5c 55%, #21456b 100%);
+  --gradient-brand-light: linear-gradient(135deg, #1e40af 0%, #3776ab 100%);
+  --gradient-hero: radial-gradient(ellipse at 12% 18%, rgba(255, 211, 67, .18), transparent 42%),
+                   radial-gradient(ellipse at 88% 82%, rgba(55, 118, 171, .28), transparent 46%),
+                   linear-gradient(135deg, #0f2540 0%, #1a3a5c 45%, #21456b 100%);
+  --gradient-accent-bar: linear-gradient(90deg, #3776ab, #ffd343);
+  --gradient-progress: linear-gradient(90deg, #3776ab, #10b981);
+
+  /* --- شفافیت‌های رایج --- */
+  --glass-bg: rgba(255, 255, 255, .08);
+  --glass-bg-hover: rgba(255, 255, 255, .14);
+  --glass-border: rgba(255, 255, 255, .16);
+
+  /* --- اسکرول‌بار --- */
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  --scrollbar-track: #f1f5f9;
+
+  /* --- شمای روشن صریح --- */
+  color-scheme: light;
+}
+
+/* ---------- ۲) تم تاریک ---------- */
+html[data-theme="dark"] {
+  /* --- پس‌زمینه و سطوح --- */
+  --bg: #0b1220;
+  --bg-alt: #0a0f1c;
+  --surface: #131c2e;
+  --surface-2: #182236;
+  --surface-3: #1e2a45;
+  --overlay: rgba(0, 0, 0, .7);
+
+  /* --- متن --- */
+  --ink: #f1f5f9;
+  --ink-2: #e2e8f0;
+  --text: #cbd5e1;
+  --text-soft: #b0bfd1;
+  --muted: #94a3b8;
+  --subtle: #64748b;
+
+  /* --- مرزها --- */
+  --line: #24304a;
+  --line-soft: #1a2438;
+  --line-strong: #334155;
+
+  /* --- برند (در دارک، زرد پایتون لهجه اصلی) --- */
+  --brand: #0b1220;
+  --accent: #ffd343;
+  --accent-dark: #ffe27a;
+  --accent-light: #e6b800;
+  --accent-soft: #2d270e;
+  --accent-soft-2: #3a3214;
+  --accent-contrast: #10233b;
+
+  /* --- لهجه ثانویه (آبی پایتون) --- */
+  --accent-2: #5ba3d0;
+  --accent-2-dark: #8ac4e8;
+  --accent-2-soft: #15304a;
+  --accent-2-contrast: #0b1220;
+
+  /* --- رنگ‌های حالت --- */
+  --gold: #fbbf24;
+  --gold-dark: #fde68a;
+  --gold-soft: #33270c;
+
+  --red: #f87171;
+  --red-dark: #fca5a5;
+  --red-soft: #3b1515;
+
+  --green: #34d399;
+  --green-dark: #6ee7b7;
+  --green-soft: #0f2e24;
+
+  --blue: #60a5fa;
+  --blue-dark: #93c5fd;
+  --blue-soft: #12233f;
+
+  --purple: #a78bfa;
+  --purple-dark: #c4b5fd;
+  --purple-soft: #241a3f;
+
+  --orange: #fb923c;
+  --orange-soft: #33230f;
+
+  /* --- سایه‌ها (تیره‌تر برای عمق) --- */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .4),
+               0 4px 12px -6px rgba(0, 0, 0, .5);
+  --shadow: 0 1px 3px rgba(0, 0, 0, .4),
+            0 10px 30px -14px rgba(0, 0, 0, .6);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, .5),
+               0 24px 60px -20px rgba(0, 0, 0, .8);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, .6),
+               0 40px 90px -30px rgba(0, 0, 0, .9);
+
+  /* --- دکمه اصلی --- */
+  --btn-primary-bg: #ffd343;
+  --btn-primary-bg-hover: #ffe27a;
+  --btn-primary-fg: #10233b;
+  --btn-primary-shadow: 0 10px 30px -12px rgba(255, 211, 67, .5);
+
+  /* --- کد --- */
+  --code-bg: #0a0f1c;
+  --code-bg-alt: #131c2e;
+  --code-ink: #e2e8f0;
+  --code-comment: #64748b;
+  --code-keyword: #c084fc;
+  --code-string: #86efac;
+  --code-number: #fbbf24;
+  --code-decorator: #f472b6;
+  --code-inline-bg: #182236;
+  --code-inline-fg: #c4b5fd;
+  --code-inline-border: #24304a;
+
+  /* --- فوکوس --- */
+  --focus-ring: 0 0 0 4px rgba(255, 211, 67, .2);
+  --focus-outline: 2px solid #ffd343;
+
+  /* --- انتخاب متن --- */
+  --selection-bg: #ffd343;
+  --selection-fg: #10233b;
+
+  /* --- گرادیان‌ها --- */
+  --gradient-python: linear-gradient(135deg, #ffd343 0%, #5ba3d0 100%);
+  --gradient-brand: linear-gradient(135deg, #06101f 0%, #0f2540 55%, #1a3a5c 100%);
+  --gradient-brand-light: linear-gradient(135deg, #1e3a5f 0%, #285a86 100%);
+  --gradient-hero: radial-gradient(ellipse at 12% 18%, rgba(255, 211, 67, .22), transparent 42%),
+                   radial-gradient(ellipse at 88% 82%, rgba(55, 118, 171, .35), transparent 46%),
+                   linear-gradient(135deg, #06101f 0%, #0f2540 45%, #1a3a5c 100%);
+  --gradient-accent-bar: linear-gradient(90deg, #ffd343, #5ba3d0);
+  --gradient-progress: linear-gradient(90deg, #ffd343, #34d399);
+
+  /* --- شیشه --- */
+  --glass-bg: rgba(255, 255, 255, .06);
+  --glass-bg-hover: rgba(255, 255, 255, .12);
+  --glass-border: rgba(255, 255, 255, .12);
+
+  /* --- اسکرول‌بار --- */
+  --scrollbar-thumb: #334155;
+  --scrollbar-thumb-hover: #475569;
+  --scrollbar-track: #0b1220;
+
+  color-scheme: dark;
+}
+
+/* ---------- ۳) تشخیص خودکار تم سیستم ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* اگر کاربر تم انتخاب نکرده و سیستم دارک است، دارک شود.
+       این rules به‌طور کامل تکرار نمی‌شوند چون JS قبل از رندر
+       تم را از localStorage یا سیستم می‌خواند و data-theme را ست می‌کند. */
+  }
+}
+
+/* ---------- ۴) توکن‌های معنایی مشترک ---------- */
+
+/* وقتی صفحه با تم روشن رندر می‌شود */
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* وقتی صفحه با تم تاریک رندر می‌شود */
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ---------- ۵) انیمیشن و ترنزیشن ---------- */
+
+/* تغییر نرم بین تم‌ها */
+html {
+  transition: background-color var(--dur) var(--ease),
+              color var(--dur) var(--ease);
+}
+
+body,
+.site-header,
+.panel,
+.card,
+.gloss-card,
+.quiz-q,
+.modal-box,
+.toast {
+  transition: background-color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease),
+              color var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+
+/* ---------- ۶) اسکرول‌بار سراسری ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 6px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* اسکرول‌بار نازک برای بلوک‌های کد */
+pre.code::-webkit-scrollbar,
+.gloss-example pre::-webkit-scrollbar,
+.tip-example pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+pre.code::-webkit-scrollbar-thumb,
+.gloss-example pre::-webkit-scrollbar-thumb,
+.tip-example pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .15);
+  border: none;
+  border-radius: 3px;
+}
+
+pre.code::-webkit-scrollbar-thumb:hover,
+.gloss-example pre::-webkit-scrollbar-thumb:hover,
+.tip-example pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, .3);
+}
+
+/* ---------- ۷) کاهش حرکت ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+  body,
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- ۸) کنتراست بالا ---------- */
+@media (prefers-contrast: more) {
+  :root {
+    --line: #94a3b8;
+    --line-strong: #475569;
+    --muted: #475569;
+    --text-soft: #1e293b;
+  }
+  html[data-theme="dark"] {
+    --line: #64748b;
+    --line-strong: #cbd5e1;
+    --muted: #cbd5e1;
+    --text-soft: #e2e8f0;
+  }
+}
+
+/* ---------- ۹) چاپ ---------- */
+@media print {
+  :root {
+    /* همه رنگ‌ها روشن و صرفه‌جو در جوهر */
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --surface-3: #ffffff;
+    --ink: #000000;
+    --ink-2: #111111;
+    --text: #1a1a1a;
+    --text-soft: #1a1a1a;
+    --muted: #444444;
+    --subtle: #666666;
+    --line: #cccccc;
+    --line-soft: #e5e5e5;
+    --line-strong: #999999;
+    --accent: #1a4d7a;
+    --accent-dark: #103350;
+    --accent-soft: #f0f4f8;
+    --accent-contrast: #ffffff;
+    --shadow: none;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --code-bg: #f5f5f5;
+    --code-bg-alt: #ececec;
+    --code-ink: #000000;
+    --code-comment: #666666;
+    --code-keyword: #7c3aed;
+    --code-string: #047857;
+    --code-number: #b45309;
+    --code-decorator: #be185d;
+    --code-inline-bg: #f0f0f0;
+    --code-inline-fg: #5b21b6;
+    --code-inline-border: #cccccc;
+    --gradient-hero: none;
+    --gradient-brand: none;
+    --gradient-python: none;
+    --gradient-accent-bar: none;
+    --gradient-progress: none;
+    color-scheme: light;
+  }
+}
+
+/* ---------- ۱۰) حالت اجباری (با کلاس) ---------- */
+
+/* وقتی کاربر می‌خواهد تم را اجبار کند */
+html.theme-light {
+  color-scheme: light;
+}
+html.theme-dark {
+  color-scheme: dark;
+}
+
+/* ---------- ۱۱) پشتیبانی از forced-colors (ویندوز high-contrast) ---------- */
+@media (forced-colors: active) {
+  * {
+    border-color: currentColor;
+  }
+  .btn,
+  button,
+  a {
+    forced-color-adjust: auto;
+  }
+}
+
+/* ============================================================
+   پایان theme.css
+   ------------------------------------------------------------
+   متغیرهای کلیدی برای استفاده در style.css:
+   ------------------------------------------
+   پس‌زمینه:     --bg, --surface, --surface-2, --surface-3
+   متن:           --ink, --text, --muted, --subtle
+   مرز:           --line, --line-soft, --line-strong
+   برند:          --accent, --accent-dark, --accent-soft
+   لهجه ۲:        --accent-2, --accent-2-soft
+   حالت:          --gold, --red, --green, --blue, --purple
+   کد:            --code-bg, --code-ink, --code-keyword
+   سایه:          --shadow-sm, --shadow, --shadow-md
+   گرادیان:       --gradient-hero, --gradient-python
+   ============================================================ */

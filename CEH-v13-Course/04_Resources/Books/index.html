@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منابع کتاب‌ها - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* استایل‌های اختصاصی این صفحه */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .book-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 5px solid var(--primary, #4f46e5);
+        }
+        .book-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .book-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .book-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+        .book-card h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.2rem;
+            color: var(--text-primary, #0f172a);
+        }
+        .book-card .author {
+            font-weight: 500;
+            color: var(--text-secondary, #334155);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .book-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 12px 0;
+            line-height: 1.6;
+        }
+        .book-card .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .book-card .badge-group .badge {
+            font-size: 0.65rem;
+            padding: 3px 12px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+        body.dark-mode .book-card .badge-group .badge {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .book-card .badge-group .badge.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .book-card .badge-group .badge.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .book-card .badge-group .badge.practical {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .book-card .badge-group .badge.practical {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+        .book-card .btn-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--primary, #4f46e5);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            font-size: 0.95rem;
+        }
+        .book-card .btn-link:hover {
+            color: var(--secondary, #7c3aed);
+            text-decoration: underline;
+            transform: translateX(-4px);
+        }
+        [dir="rtl"] .book-card .btn-link:hover {
+            transform: translateX(4px);
+        }
+
+        .guide-box {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 24px 28px;
+            margin: 24px 0;
+            border-right: 5px solid var(--accent-green, #10b981);
+        }
+        body.dark-mode .guide-box {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .guide-box h3 {
+            margin-top: 0;
+            border-bottom: none;
+        }
+        .guide-box ul {
+            padding-right: 24px;
+        }
+        .guide-box ul li {
+            margin: 6px 0;
+        }
+
+        .glossary-table td {
+            vertical-align: middle;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: var(--primary-dark, #1e1b4b);
+            background: var(--primary-light, #eef2ff);
+            padding: 2px 10px;
+            border-radius: 6px;
+        }
+        body.dark-mode .glossary-term {
+            background: #1e293b;
+            color: #818cf8;
+        }
+
+        @media (max-width: 768px) {
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+            .book-card {
+                padding: 18px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">منابع</a>
+        </span>
+    </div>
+
+    <h1>📚 منابع جامع کتاب‌ها و مراجع CEH V13</h1>
+
+    <!-- ===== مقدمه ===== -->
+    <div class="card" id="intro">
+        <h2>🔰 راهنمای مطالعه و منابع پیشنهادی</h2>
+        <p>
+            موفقیت در دورهٔ CEH V13 و آزمون‌های آن نیازمند ترکیبی از <b>مطالعهٔ تئوری</b>، <b>تمرین عملی</b> و <b>مرور مستمر</b> است. در این بخش، بهترین کتاب‌ها، مستندات رسمی و منابع مکمل را گردآوری کرده‌ایم تا بتوانید مسیر یادگیری خود را هموار کنید.
+        </p>
+        <p>
+            <b>توصیهٔ مهم:</b> کتاب‌های نشان‌گذاری‌شده با برچسب <span class="badge essential">⭐ ضروری</span> برای آمادگی آزمون CEH الزامی هستند و بقیه برای تعمیق دانش و کاربرد عملی توصیه می‌شوند.
+        </p>
+        <div class="highlight-box" style="margin-top: 18px;">
+            <b>📌 ساختار پیشنهادی مطالعه:</b>
+            <ol>
+                <li><b>مرحلهٔ اول (مبانی):</b> کتاب «CEH Certified Ethical Hacker All-in-One Exam Guide» را مطالعه کنید و همزمان با آن، آزمایشگاه‌های اولیه را انجام دهید.</li>
+                <li><b>مرحلهٔ دوم (تمرین عملی):</b> کتاب «The Web Application Hacker's Handbook» و «Metasploit: The Penetration Tester's Guide» را به‌صورت موازی با آزمایشگاه‌های پیشرفته بخوانید.</li>
+                <li><b>مرحلهٔ سوم (مرور و تثبیت):</b> «CEH v13 Official Certified Ethical Hacker Review Guide» را مرور کرده و آزمون‌های شبیه‌سازی‌شده را حل کنید.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ===== کتاب‌های اصلی ===== -->
+    <div class="card">
+        <h2>📖 کتاب‌های مرجع اصلی</h2>
+        <div class="book-grid">
+
+            <!-- کتاب ۱ -->
+            <div class="book-card">
+                <h3>CEH Certified Ethical Hacker All‑in‑One Exam Guide</h3>
+                <div class="author">Matt Walker</div>
+                <p>
+                    کامل‌ترین و جامع‌ترین کتاب برای آمادگی آزمون CEH. شامل توضیحات دقیق، مثال‌های عملی و سوالات آزمونی.
+                </p>
+                <div class="badge-group">
+                    <span class="badge essential">⭐ ضروری</span>
+                    <span class="badge">تئوری + عملی</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در Amazon</a>
+            </div>
+
+            <!-- کتاب ۲ -->
+            <div class="book-card">
+                <h3>CEH v13 Official Certified Ethical Hacker Review Guide</h3>
+                <div class="author">EC-Council</div>
+                <p>
+                    راهنمای رسمی EC-Council برای مرور سریع مباحث آزمون. شامل خلاصهٔ تمام ۲۰ ماژول و نمونه سوالات.
+                </p>
+                <div class="badge-group">
+                    <span class="badge essential">⭐ ضروری</span>
+                    <span class="badge">مرور سریع</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در سایت EC-Council</a>
+            </div>
+
+            <!-- کتاب ۳ -->
+            <div class="book-card">
+                <h3>The Web Application Hacker's Handbook</h3>
+                <div class="author">Dafydd Stuttard, Marcus Pinto</div>
+                <p>
+                    کتاب مرجع هک برنامه‌های وب که تمام مباحث OWASP Top 10 و تکنیک‌های پیشرفته را پوشش می‌دهد.
+                </p>
+                <div class="badge-group">
+                    <span class="badge practical">🔧 عملی</span>
+                    <span class="badge">وب اپلیکیشن</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در Amazon</a>
+            </div>
+
+            <!-- کتاب ۴ -->
+            <div class="book-card">
+                <h3>Metasploit: The Penetration Tester's Guide</h3>
+                <div class="author">David Kennedy et al.</div>
+                <p>
+                    راهنمای جامع کار با Metasploit، از نصب تا بهره‌برداری و توسعهٔ ماژول‌های سفارشی.
+                </p>
+                <div class="badge-group">
+                    <span class="badge practical">🔧 عملی</span>
+                    <span class="badge">Metasploit</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در Amazon</a>
+            </div>
+
+            <!-- کتاب ۵ -->
+            <div class="book-card">
+                <h3>Penetration Testing: A Hands‑On Introduction to Hacking</h3>
+                <div class="author">Georgia Weidman</div>
+                <p>
+                    کتابی فوق‌العاده برای شروع تست نفوذ با رویکرد کاملاً عملی و گام‌به‌گام.
+                </p>
+                <div class="badge-group">
+                    <span class="badge practical">🔧 عملی</span>
+                    <span class="badge">مبتدی تا پیشرفته</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در Amazon</a>
+            </div>
+
+            <!-- کتاب ۶ -->
+            <div class="book-card">
+                <h3>Linux Command Line and Shell Scripting Bible</h3>
+                <div class="author">Richard Blum, Christine Bresnahan</div>
+                <p>
+                    مرجع کامل خط فرمان لینوکس و اسکریپت‌نویسی Bash. پایهٔ ضروری برای هر هکر قانونمند.
+                </p>
+                <div class="badge-group">
+                    <span class="badge">پیش‌نیاز</span>
+                    <span class="badge">لینوکس</span>
+                </div>
+                <a href="#" class="btn-link">🔗 مشاهده در Amazon</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== منابع تکمیلی و لینک‌های مفید ===== -->
+    <div class="card">
+        <h2>🔗 منابع تکمیلی و لینک‌های طلایی</h2>
+        <p>
+            علاوه بر کتاب‌ها، این وب‌سایت‌ها، مستندات و ابزارها را حتماً در طول دوره مطالعه کنید:
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 18px 0;">
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #2a7de1;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 مستندات OWASP</h4>
+                <p style="font-size: 0.9rem; margin: 0;">OWASP Top 10, Testing Guide, Cheat Sheets</p>
+                <a href="https://owasp.org/" target="_blank" style="font-weight:600;">owasp.org</a>
+            </div>
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #10b981;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 Nmap Documentation</h4>
+                <p style="font-size: 0.9rem; margin: 0;">راهنمای کامل Nmap، اسکریپت‌های NSE و مثال‌ها</p>
+                <a href="https://nmap.org/docs.html" target="_blank" style="font-weight:600;">nmap.org</a>
+            </div>
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #e67e22;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 Metasploit Unleashed</h4>
+                <p style="font-size: 0.9rem; margin: 0;">دورهٔ رایگان و کامل Metasploit از Offensive Security</p>
+                <a href="https://www.offensive-security.com/metasploit-unleashed/" target="_blank" style="font-weight:600;">offensive-security.com</a>
+            </div>
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #8e44ad;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 HackTheBox Academy</h4>
+                <p style="font-size: 0.9rem; margin: 0;">آموزش‌های عملی تست نفوذ با سناریوهای واقعی</p>
+                <a href="https://academy.hackthebox.com/" target="_blank" style="font-weight:600;">academy.hackthebox.com</a>
+            </div>
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #ef4444;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 PortSwigger Web Security</h4>
+                <p style="font-size: 0.9rem; margin: 0;">آکادمی رایگان Burp Suite و آسیب‌پذیری‌های وب</p>
+                <a href="https://portswigger.net/web-security" target="_blank" style="font-weight:600;">portswigger.net</a>
+            </div>
+            <div style="background: var(--card-bg, rgba(255,255,255,0.6)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 4px solid #f59e0b;">
+                <h4 style="margin: 0 0 6px 0; font-size: 1.05rem;">📘 Linux Journey</h4>
+                <p style="font-size: 0.9rem; margin: 0;">آموزش تعاملی لینوکس از مبتدی تا پیشرفته</p>
+                <a href="https://linuxjourney.com/" target="_blank" style="font-weight:600;">linuxjourney.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== راهنمای مطالعهٔ گام‌به‌گام ===== -->
+    <div class="guide-box">
+        <h3>🧭 راهنمای مطالعهٔ گام‌به‌گام با کتاب‌ها</h3>
+        <p>
+            برای بهینه‌سازی زمان و افزایش بازدهی، این برنامهٔ هفتگی را دنبال کنید (فرض بر مطالعهٔ روزانه ۱٫۵ تا ۲ ساعت):
+        </p>
+        <ul>
+            <li><b>هفته‌های ۱-۲ (مبانی):</b> کتاب «Linux Command Line and Shell Scripting Bible» (فصل‌های ۱ تا ۱۰) + تمرین دستورات پایه در Kali.</li>
+            <li><b>هفته‌های ۳-۴ (شبکه و شناسایی):</b> کتاب «CEH All-in-One» (ماژول‌های ۱ تا ۵) + آزمایشگاه‌های Nmap و Wireshark.</li>
+            <li><b>هفته‌های ۵-۸ (حملات و بهره‌برداری):</b> کتاب «Metasploit: The Penetration Tester's Guide» (فصل‌های ۱ تا ۸) + «CEH All-in-One» (ماژول‌های ۶ تا ۱۲).</li>
+            <li><b>هفته‌های ۹-۱۱ (وب اپلیکیشن):</b> کتاب «The Web Application Hacker's Handbook» (فصل‌های ۱ تا ۱۰) + تمرین با Burp Suite و OWASP WebGoat.</li>
+            <li><b>هفته‌های ۱۲-۱۴ (مرور و آزمون):</b> کتاب «CEH v13 Official Review Guide» + حل نمونه سوالات آزمون و پروژهٔ نهایی.</li>
+        </ul>
+        <p style="margin-top: 12px; font-style: italic; color: var(--text-muted);">
+            ⚡ نکته: همیشه پس از هر فصل، حداقل یک آزمایشگاه عملی انجام دهید. تئوری بدون عمل، در آزمون CEH Practical کارایی ندارد.
+        </p>
+    </div>
+
+    <!-- ===== کتاب‌های پیشنهادی برای مطالعهٔ تکمیلی ===== -->
+    <div class="card">
+        <h2>📘 کتاب‌های پیشنهادی برای مطالعهٔ تکمیلی</h2>
+        <div class="book-grid">
+            <div class="book-card">
+                <h3>Network Security Assessment</h3>
+                <div class="author">Chris McNab</div>
+                <p>ارزیابی امنیت شبکه از دیدگاه هکر، با تمرکز بر اسکن و شناسایی آسیب‌پذیری.</p>
+                <div class="badge-group"><span class="badge">شبکه</span></div>
+            </div>
+            <div class="book-card">
+                <h3>Practical Malware Analysis</h3>
+                <div class="author">Michael Sikorski, Andrew Honig</div>
+                <p>تحلیل بدافزارها به‌صورت عملی – برای ماژول Malware Threats بسیار مفید است.</p>
+                <div class="badge-group"><span class="badge">بدافزار</span></div>
+            </div>
+            <div class="book-card">
+                <h3>Hacking: The Art of Exploitation</h3>
+                <div class="author">Jon Erickson</div>
+                <p>مبانی هک، برنامه‌نویسی سیستم و بهره‌برداری از آسیب‌پذیری‌ها با زبان C.</p>
+                <div class="badge-group"><span class="badge">پیشرفته</span></div>
+            </div>
+            <div class="book-card">
+                <h3>Cryptography and Network Security</h3>
+                <div class="author">William Stallings</div>
+                <p>مرجع کامل رمزنگاری و امنیت شبکه – مناسب برای ماژول آخر CEH.</p>
+                <div class="badge-group"><span class="badge">رمزنگاری</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== واژه‌نامه تخصصی منابع ===== -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی منابع</h2>
+        <div class="table-responsive">
+            <table class="glossary-table">
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span class="glossary-term">Cheat Sheet</span></td>
+                    <td>برگهٔ مرجع فشرده شامل دستورات، مفاهیم و نکات کلیدی یک ابزار یا مبحث.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Hands‑On Lab</span></td>
+                    <td>آزمایشگاه عملی که در آن دانشجو با انجام سناریوهای واقعی، مهارت خود را افزایش می‌دهد.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Review Guide</span></td>
+                    <td>راهنمای مرور سریع که خلاصهٔ مباحث اصلی را برای آمادگی آزمون ارائه می‌دهد.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Payload</span></td>
+                    <td>کد مخربی که پس از بهره‌برداری از آسیب‌پذیری روی سیستم هدف اجرا می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Exploit</span></td>
+                    <td>کد یا تکنیکی که از یک آسیب‌پذیری خاص برای نفوذ به سیستم استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Footprinting</span></td>
+                    <td>مرحلهٔ جمع‌آوری اطلاعات عمومی از هدف بدون ایجاد ارتباط مستقیم.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Enumeration</span></td>
+                    <td>استخراج اطلاعات دقیق مانند نام کاربران، اشتراک‌ها و سرویس‌ها از سیستم هدف.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی ===== -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی و توصیهٔ نهایی:</b>
+        <ul>
+            <li>کتاب «CEH All-in-One» را به‌عنوان منبع اصلی مطالعه کنید و همزمان با آن، آزمایشگاه‌های دوره را انجام دهید.</li>
+            <li>برای تسلط بر ابزارها، از چیت‌شیت‌های بخش <a href="../03_Tools/index.html" style="color:#2a7de1;">ابزارها</a> استفاده کنید.</li>
+            <li>در هفته‌های پایانی، «Review Guide» را مرور کرده و آزمون‌های شبیه‌سازی‌شده را حل کنید.</li>
+            <li>همواره از منابع آنلاین مانند OWASP، PortSwigger و HackTheBox برای به‌روز ماندن استفاده کنید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 با مطالعهٔ منظم و تمرین عملی، موفقیت در CEH V13 تضمینی است.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">منابع کتاب‌ها | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

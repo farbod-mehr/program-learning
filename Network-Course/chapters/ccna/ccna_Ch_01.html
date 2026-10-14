@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۱ CCNA — مبانی شبکه (Network Fundamentals)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccna" data-chapter="ccna-01">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📘 فصل ۱ — مبانی شبکه (Network Fundamentals)</h1>
+    <div class="meta">
+      <span>📖 ۹۰ دقیقه</span>
+      <span>🎯 وزن در آزمون: ۲۰٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: مبتدی</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این فصل، سنگ‌بنای کل مسیر شبکه است. در اینجا با مدل‌های مرجع
+      <span class="term" data-term="osi">OSI</span> و
+      <span class="term" data-term="tcpip">TCP/IP</span> آشنا می‌شوی،
+      انواع شبکه (<span class="term" data-term="lan">LAN</span>،
+      <span class="term" data-term="wan">WAN</span>، WLAN، SOHO) و توپولوژی‌های مدرن
+      (Two-Tier، Three-Tier، Spine-Leaf) را می‌شناسی،
+      تجهیزات شبکه و نقش هرکدام را می‌فهمی، و مهارت حیاتی
+      <span class="term" data-term="subnetting">Subnetting</span> را در سطح حرفه‌ای
+      تمرین می‌کنی.
+    </p>
+    <p>
+      در انتهای فصل، می‌توانی یک شبکه‌ی کوچک را در Packet Tracer طراحی کنی،
+      آدرس‌دهی IPv4/IPv6 انجام بدهی، و مشکلات رایج لایه‌ی ۱ و ۲ را عیب‌یابی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه فصل -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مدل OSI هفت‌لایه و نگاشت به TCP/IP</li>
+      <li>اجزای شبکه و نقش هر تجهیز</li>
+      <li>انواع توپولوژی: Two-Tier، Three-Tier، Spine-Leaf، WAN، SOHO</li>
+      <li>مقایسه‌ی On-Premise و Cloud</li>
+      <li>کابل‌کشی: مسی، فیبر تک‌حالته، فیبر چندحالته</li>
+      <li>مشکلات Interface و Cable (Collision، Duplex/Speed Mismatch)</li>
+      <li>آدرس‌دهی IPv4 و Subnetting</li>
+      <li>آدرس‌دهی IPv6 و انواع آدرس‌ها</li>
+      <li>مقایسه‌ی TCP و UDP</li>
+      <li>اصول Wireless (کانال، SSID، RF، رمزنگاری)</li>
+      <li>مجازی‌سازی: Server Virtualization، Containers، VRF</li>
+      <li>سوئیچینگ لایه ۲: MAC Learning، Frame Switching/Flooding</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>وقتی آدرس یک سایت را در مرورگر می‌زنی، داده دقیقاً چه مسیری را طی می‌کند تا صفحه نمایش داده شود؟</li>
+      <li>چرا دو دستگاه با IP یکسان نمی‌توانند در یک شبکه با هم کار کنند؟</li>
+      <li>تفاوت Spine-Leaf با Three-Tier در چیست و چرا مدرن‌تر است؟</li>
+      <li>چرا IPv6 معرفی شد درحالی‌که IPv4 هنوز پرکاربرد است؟</li>
+      <li>اگر کابل ضعیف باشد، کدام لایه OSI اول دچار مشکل می‌شود و چطور تشخیص می‌دهیم؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی اصلی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۱.۱ ==== -->
+    <h3>۱.۱ مدل OSI و مدل TCP/IP</h3>
+    <p>
+      مدل <strong>OSI</strong> (Open Systems Interconnection) یک چارچوب
+      <strong>هفت‌لایه‌ای</strong> مرجع است که ISO معرفی کرده.
+      هر لایه وظیفه‌ی مشخصی دارد و به لایه‌ی بالاتر و پایین‌تر خود سرویس می‌دهد.
+      مدل <strong>TCP/IP</strong> در واقع پیاده‌سازی عملی و امروزی همین ایده است که
+      در آن، ۷ لایه به ۴ لایه کوتاه شده:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:8px;border:1px solid var(--border)">#</th>
+          <th style="padding:8px;border:1px solid var(--border)">لایه OSI</th>
+          <th style="padding:8px;border:1px solid var(--border)">لایه TCP/IP</th>
+          <th style="padding:8px;border:1px solid var(--border)">وظیفه‌ی کلیدی</th>
+          <th style="padding:8px;border:1px solid var(--border)">پروتکل‌ها</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۷</td>
+          <td style="padding:8px;border:1px solid var(--border)">Application</td>
+          <td style="padding:8px;border:1px solid var(--border)" rowspan="3">Application</td>
+          <td style="padding:8px;border:1px solid var(--border)">تعامل با کاربر</td>
+          <td style="padding:8px;border:1px solid var(--border)">HTTP، FTP، DNS، SMTP</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۶</td>
+          <td style="padding:8px;border:1px solid var(--border)">Presentation</td>
+          <td style="padding:8px;border:1px solid var(--border)">فرمت و رمزنگاری داده</td>
+          <td style="padding:8px;border:1px solid var(--border)">TLS، JPEG، UTF-8</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۵</td>
+          <td style="padding:8px;border:1px solid var(--border)">Session</td>
+          <td style="padding:8px;border:1px solid var(--border)">مدیریت نشست</td>
+          <td style="padding:8px;border:1px solid var(--border)">NetBIOS، RPC</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۴</td>
+          <td style="padding:8px;border:1px solid var(--border)">Transport</td>
+          <td style="padding:8px;border:1px solid var(--border)">Transport</td>
+          <td style="padding:8px;border:1px solid var(--border)">Segmentation و کنترل جریان</td>
+          <td style="padding:8px;border:1px solid var(--border)">TCP، UDP</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۳</td>
+          <td style="padding:8px;border:1px solid var(--border)">Network</td>
+          <td style="padding:8px;border:1px solid var(--border)">Internet</td>
+          <td style="padding:8px;border:1px solid var(--border)">آدرس‌دهی منطقی و مسیریابی</td>
+          <td style="padding:8px;border:1px solid var(--border)">IP، ICMP، OSPF</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۲</td>
+          <td style="padding:8px;border:1px solid var(--border)">Data Link</td>
+          <td style="padding:8px;border:1px solid var(--border)" rowspan="2">Network Access</td>
+          <td style="padding:8px;border:1px solid var(--border)">آدرس‌دهی فیزیکی، Frame</td>
+          <td style="padding:8px;border:1px solid var(--border)">Ethernet، ARP، 802.1Q</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid var(--border)">۱</td>
+          <td style="padding:8px;border:1px solid var(--border)">Physical</td>
+          <td style="padding:8px;border:1px solid var(--border)">انتقال بیت روی رسانه</td>
+          <td style="padding:8px;border:1px solid var(--border)">UTP، Fiber، Wi-Fi</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ نکته‌ی کاربردی</div>
+      یک جمله‌ی معروف برای حفظ ترتیب لایه‌ها از پایین به بالا:
+      <strong>Please Do Not Throw Sausage Pizza Away</strong>
+      (Physical → Data Link → Network → Transport → Session → Presentation → Application).
+    </div>
+
+    <!-- ==== ۱.۲ ==== -->
+    <h3>۱.۲ اجزای شبکه و نقش هر تجهیز</h3>
+    <p>
+      شبکه از ترکیب چند تجهیز ساخته می‌شود. شناخت نقش هر کدام حیاتی است:
+    </p>
+    <ul>
+      <li><strong>Router (لایه ۳):</strong> مسیریابی بین شبکه‌های مختلف، انتخاب بهترین مسیر.</li>
+      <li><strong>L2 Switch (لایه ۲):</strong> اتصال دستگاه‌ها در یک شبکه‌ی محلی، تصمیم‌گیری بر اساس MAC.</li>
+      <li><strong>L3 Switch (لایه ۳):</strong> سوئیچ با قابلیت مسیریابی داخلی (SVI) — جایگزین روتر برای Inter-VLAN.</li>
+      <li><strong>NGFW (Next-Gen Firewall):</strong> فایروال نسل جدید با قابلیت DPI، IPS، SSL Inspection.</li>
+      <li><strong>IPS (Intrusion Prevention System):</strong> تشخیص و جلوگیری از نفوذ به‌صورت Real-time.</li>
+      <li><strong>Access Point (AP):</strong> اتصال کلاینت‌های بی‌سیم به شبکه‌ی سیمی.</li>
+      <li><strong>Wireless Controller (WLC):</strong> مدیریت متمرکز چند AP.</li>
+      <li><strong>Cisco DNA Center:</strong> پلتفرم مدیریت متمرکز، Automation و Assurance سیسکو.</li>
+      <li><strong>Endpoint:</strong> دستگاه نهایی کاربر — لپ‌تاپ، موبایل، سرور، IP Phone.</li>
+      <li><strong>Server:</strong> ارائه‌دهنده‌ی سرویس (Web، DNS، DHCP، File، AD).</li>
+      <li><strong>PoE (Power over Ethernet):</strong> انتقال توان الکتریکی همراه داده روی کابل شبکه — برای AP و IP Phone.</li>
+    </ul>
+
+    <!-- ==== ۱.۳ ==== -->
+    <h3>۱.۳ انواع توپولوژی</h3>
+    <p>سه معماری اصلی در طراحی شبکه‌های سازمانی:</p>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🏢 Three-Tier (سنتی سازمانی):</strong>
+        <ul style="margin:8px 0 0">
+          <li><em>Core:</em> ستون فقرات با پهنای باند بالا</li>
+          <li><em>Distribution:</em> سیاست‌ها، Inter-VLAN، فیلتر</li>
+          <li><em>Access:</em> اتصال کاربران نهایی</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🏢 Two-Tier (Collapsed Core):</strong>
+        Core و Distribution در یک لایه ادغام می‌شوند. مناسب دفاتر متوسط.
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🕸️ Spine-Leaf (مرکز داده مدرن):</strong>
+        هر Leaf به همه‌ی Spineها وصل است. Latency یکنواخت، مقیاس‌پذیری افقی، مناسب DC و SD-Access.
+      </div>
+    </div>
+
+    <p>سایر انواع:</p>
+    <ul>
+      <li><strong>WAN:</strong> اتصال سایت‌ها و شعب دور از هم (MPLS، SD-WAN).</li>
+      <li><strong>SOHO:</strong> شبکه‌ی کوچک خانگی/دفتر کوچک با یک روتر/مودم همه‌کاره.</li>
+    </ul>
+
+    <!-- ==== ۱.۴ ==== -->
+    <h3>۱.۴ مقایسه‌ی On-Premise و Cloud</h3>
+    <ul>
+      <li><strong>On-Premise:</strong> تمام زیرساخت در محل سازمان؛ کنترل کامل، هزینه‌ی CAPEX بالا.</li>
+      <li><strong>Cloud:</strong> اجاره‌ی منابع از AWS / Azure / GCP؛ مقیاس‌پذیری سریع، هزینه‌ی OPEX.</li>
+      <li><strong>Hybrid:</strong> ترکیب هر دو — رایج‌ترین مدل امروزی سازمان‌ها.</li>
+    </ul>
+
+    <!-- ==== ۱.۵ ==== -->
+    <h3>۱.۵ کابل‌کشی و استانداردها</h3>
+    <ul>
+      <li><strong>UTP Cat5e:</strong> تا 1 Gbps در ۱۰۰ متر — برای Access.</li>
+      <li><strong>UTP Cat6/6a:</strong> تا 10 Gbps (Cat6 در ۵۵m، Cat6a در ۱۰۰m).</li>
+      <li><strong>فیبر چندحالته (Multimode — OM3/OM4):</strong> مسافت کوتاه داخل ساختمان (تا ~۵۵۰m).</li>
+      <li><strong>فیبر تک‌حالته (Singlemode — OS2):</strong> مسافت طولانی بین سایت‌ها (تا چند کیلومتر).</li>
+      <li><strong>Straight-Through:</strong> دستگاه‌های ناهمسان (PC ↔ Switch).</li>
+      <li><strong>Crossover:</strong> دستگاه‌های همسان (Switch ↔ Switch) — امروز با Auto-MDIX اکثراً منسوخ شده.</li>
+    </ul>
+
+    <!-- ==== ۱.۶ ==== -->
+    <h3>۱.۶ مشکلات Interface و Cable</h3>
+    <ul>
+      <li><strong>Collision:</strong> برخورد بسته‌ها در نیم‌دوطرفه — با Full-Duplex از بین می‌رود.</li>
+      <li><strong>Duplex Mismatch:</strong> یک طرف Full و طرف دیگر Half → Collisionهای فراوان، افت کارایی شدید.</li>
+      <li><strong>Speed Mismatch:</strong> دو طرف نرخ متفاوت → لینک بالا نمی‌آید.</li>
+      <li><strong>CRC Errors:</strong> بسته‌های مخدوش — نشانه‌ی کابل/کانکتور خراب یا نویز.</li>
+      <li><strong>Runts/Giants:</strong> فریم‌های خیلی کوچک/بزرگ — نشانه‌ی مشکل فیزیکی یا MTU.</li>
+    </ul>
+
+    <pre><code>! تشخیص در سیسکو
+show interfaces                ! وضعیت کامل اینترفیس‌ها + شمارنده‌ی خطاها
+show interfaces status         ! خلاصه: speed, duplex, vlan
+show controllers               ! اطلاعات فیزیکی لایه ۱
+show interfaces counters errors ! فقط شمارنده‌های خطا</code></pre>
+
+    <!-- ==== ۱.۷ ==== -->
+    <h3>۱.۷ آدرس‌دهی IPv4 و Subnetting</h3>
+    <p>
+      هر آدرس IPv4 از <strong>۳۲ بیت</strong> ساخته شده که به چهار اکتت (۸ بیتی) تقسیم می‌شود.
+      <span class="term" data-term="subnetting">Subnet Mask</span> مشخص می‌کند چند بیت برای شبکه و چند بیت برای هاست است.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Prefix</th>
+          <th style="padding:6px;border:1px solid var(--border)">Mask</th>
+          <th style="padding:6px;border:1px solid var(--border)">Hosts</th>
+          <th style="padding:6px;border:1px solid var(--border)">Block Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/24</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.0</td><td style="padding:6px;border:1px solid var(--border)">254</td><td style="padding:6px;border:1px solid var(--border)">256</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/25</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.128</td><td style="padding:6px;border:1px solid var(--border)">126</td><td style="padding:6px;border:1px solid var(--border)">128</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/26</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.192</td><td style="padding:6px;border:1px solid var(--border)">62</td><td style="padding:6px;border:1px solid var(--border)">64</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/27</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.224</td><td style="padding:6px;border:1px solid var(--border)">30</td><td style="padding:6px;border:1px solid var(--border)">32</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/28</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.240</td><td style="padding:6px;border:1px solid var(--border)">14</td><td style="padding:6px;border:1px solid var(--border)">16</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/29</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.248</td><td style="padding:6px;border:1px solid var(--border)">6</td><td style="padding:6px;border:1px solid var(--border)">8</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/30</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.252</td><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">4</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">/31</td><td style="padding:6px;border:1px solid var(--border)">255.255.255.254</td><td style="padding:6px;border:1px solid var(--border)">2 (PtP)</td><td style="padding:6px;border:1px solid var(--border)">2</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>دسته‌بندی آدرس‌های خصوصی (RFC 1918):</strong></p>
+    <pre><code>10.0.0.0/8         → ۱۰.۰.۰.۰  تا  ۱۰.۲۵۵.۲۵۵.۲۵۵
+172.16.0.0/12      → ۱۷۲.۱۶.۰.۰  تا  ۱۷۲.۳۱.۲۵۵.۲۵۵
+192.168.0.0/16     → ۱۹۲.۱۶۸.۰.۰  تا  ۱۹۲.۱۶۸.۲۵۵.۲۵۵
+
+# آدرس‌های خاص
+127.0.0.0/8        → Loopback
+169.254.0.0/16     → APIPA (وقتی DHCP نیست)
+224.0.0.0/4        → Multicast
+255.255.255.255    → Broadcast محدود</code></pre>
+
+    <!-- ==== ۱.۸ ==== -->
+    <h3>۱.۸ آدرس‌دهی IPv6 و انواع آدرس‌ها</h3>
+    <p>
+      IPv6 با <strong>۱۲۸ بیت</strong> فضای آدرس عظیمی می‌سازد. نمایش آن به‌صورت هشت گروه چهاررقمی هگزادسیمال است.
+    </p>
+
+    <pre><code># نمونه‌ی IPv6
+2001:0db8:0000:0000:0000:0000:0000:0001
+= 2001:db8::1   (کوتاه‌سازی با حذف صفرهای ابتدایی و ::)
+
+# انواع آدرس‌ها
+2000::/3          → Global Unicast (قابل مسیریابی روی اینترنت)
+fc00::/7          → Unique Local (معادل Private در IPv4)
+fe80::/10         → Link-Local (فقط در همان لینک)
+ff00::/8          → Multicast
+::/128            → Unspecified
+::1/128           → Loopback
+
+# Modified EUI-64:
+# 48 بیت MAC → 64 بیت Interface ID با درج FFFE در وسط
+# و معکوس کردن بیت هفتم بایت اول</code></pre>
+
+    <p><strong>SLAAC</strong> به هاست‌ها اجازه می‌دهد بدون DHCP آدرس بسازند.</p>
+
+    <!-- ==== ۱.۹ ==== -->
+    <h3>۱.۹ مقایسه‌ی TCP و UDP</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">TCP</th>
+          <th style="padding:6px;border:1px solid var(--border)">UDP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">اتصال</td><td style="padding:6px;border:1px solid var(--border)">Connection-Oriented (3-way handshake)</td><td style="padding:6px;border:1px solid var(--border)">Connectionless</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">تحویل مطمئن</td><td style="padding:6px;border:1px solid var(--border)">✅ تضمین با ACK و Retransmission</td><td style="padding:6px;border:1px solid var(--border)">❌ بدون تضمین</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">ترتیب بسته‌ها</td><td style="padding:6px;border:1px solid var(--border)">✅ حفظ می‌شود</td><td style="padding:6px;border:1px solid var(--border)">❌ ممکن است جابه‌جا شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Overhead</td><td style="padding:6px;border:1px solid var(--border)">بالا (20 بایت هدر)</td><td style="padding:6px;border:1px solid var(--border)">کم (8 بایت هدر)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">HTTP/HTTPS، FTP، SSH، SMTP</td><td style="padding:6px;border:1px solid var(--border)">DNS، DHCP، VoIP، Streaming، TFTP</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># TCP 3-Way Handshake
+Client → Server : SYN
+Server → Client : SYN-ACK
+Client → Server : ACK
+→ اتصال برقرار شد
+
+# پورت‌های معروف
+TCP/20,21 → FTP        TCP/22   → SSH
+TCP/23    → Telnet     TCP/25   → SMTP
+TCP/80    → HTTP       TCP/443  → HTTPS
+UDP/53    → DNS        UDP/67,68→ DHCP
+UDP/69    → TFTP       UDP/123  → NTP
+UDP/161   → SNMP       TCP/3389 → RDP</code></pre>
+
+    <!-- ==== ۱.۱۰ ==== -->
+    <h3>۱.۱۰ اصول Wireless</h3>
+    <ul>
+      <li><strong>باندها:</strong> 2.4GHz (برد بیشتر، تداخل بیشتر) و 5GHz (سرعت بالاتر، برد کمتر).</li>
+      <li><strong>کانال‌های غیرهمپوشان 2.4GHz:</strong> فقط 1، 6 و 11.</li>
+      <li><strong>SSID:</strong> نام شبکه‌ی بی‌سیم.</li>
+      <li><strong>RF (Radio Frequency):</strong> سیگنال رادیویی — تحت‌تأثیر موانع، نویز و تداخل.</li>
+      <li><strong>رمزنگاری:</strong> WPA2-PSK (حداقل امروز) یا WPA3 (بهتر).</li>
+      <li><strong>احراز هویت سازمانی:</strong> 802.1X با RADIUS.</li>
+      <li><strong>Roaming:</strong> جابه‌جایی کلاینت بین APها بدون قطع اتصال.</li>
+    </ul>
+
+    <!-- ==== ۱.۱۱ ==== -->
+    <h3>۱.۱۱ مجازی‌سازی و سوئیچینگ لایه ۲</h3>
+    <p><strong>مجازی‌سازی:</strong></p>
+    <ul>
+      <li><strong>Server Virtualization:</strong> اجرای چند سرور مجازی روی یک فیزیکی (VMware، Hyper-V، KVM).</li>
+      <li><strong>Containers:</strong> سبک‌تر از VM — اشتراک کرنل (Docker، Kubernetes).</li>
+      <li><strong>VRF:</strong> چند جدول مسیریابی مستقل روی یک روتر — جداسازی مشتریان.</li>
+    </ul>
+
+    <p><strong>سوئیچینگ لایه ۲:</strong></p>
+    <ul>
+      <li><strong>MAC Learning:</strong> سوئیچ از Source MAC یاد می‌گیرد کدام MAC روی کدام پورت است.</li>
+      <li><strong>MAC Aging:</strong> ورودی‌های جدول CAM بعد از ۳۰۰ ثانیه بی‌استفاده پاک می‌شوند.</li>
+      <li><strong>Frame Switching:</strong> ارسال فریم روی پورت مقصد مشخص.</li>
+      <li><strong>Frame Flooding:</strong> ارسال روی همه‌ی پورت‌ها (به‌جز ورودی) اگر مقصد ناشناس باشد.</li>
+      <li><strong>MAC Address Table:</strong> جدول نگاشت MAC به پورت (CAM Table).</li>
+    </ul>
+
+    <pre><code>! مشاهده‌ی جدول MAC در سیسکو
+show mac address-table
+show mac address-table dynamic
+show mac address-table interface GigabitEthernet0/1
+clear mac address-table dynamic  ! پاک کردن ورودی‌های داینامیک</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی نکته/هشدار/طلایی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      پیش از هر پیکربندی، محدوده‌ی شبکه و Broadcast را روی کاغذ محاسبه کن.
+      این عادت، ۹۰٪ خطاهای آدرس‌دهی را از بین می‌برد.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      هرگز روی پورت‌های Trunk از VLAN 1 به‌عنوان Native VLAN استفاده نکن —
+      خطر حمله‌ی VLAN Hopping را به‌شدت بالا می‌برد.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      Subnetting را آن‌قدر تمرین کن که بتوانی بدون ماشین‌حساب، هر /۲۴ تا /۳۰ را در کمتر از ۱۰ ثانیه
+      تحلیل کنی. این مهارت پایه‌ی همه‌ی مباحث بعدی است.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۲ با <span class="term" data-term="vlan">VLAN</span> و
+      <span class="term" data-term="trunk">Trunk</span> عمیق‌تر آشنا می‌شوی و
+      در فصل ۳ وارد <span class="term" data-term="ospf">OSPF</span> می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCNP یاد می‌گیری چطور با <span class="term" data-term="vxlan">VXLAN</span>،
+      <span class="term" data-term="lisp">LISP</span> و
+      <span class="term" data-term="sdwan">SD-WAN</span> یک Fabric مقیاس‌پذیر بسازی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — محاسبه‌ی Subnet برای 192.168.10.200/26</h3>
+    <pre><code>Mask:      255.255.255.192
+Block:     64
+شبکه:      192.168.10.192
+Broadcast: 192.168.10.255
+Hosts:     192.168.10.193 – 192.168.10.254
+تعداد:     62 هاست</code></pre>
+
+    <h3>مثال ۲ — تفکیک 10.0.0.0/24 به ۴ زیرشبکه</h3>
+    <pre><code>10.0.0.0/26    → hosts: .1 – .62
+10.0.0.64/26   → hosts: .65 – .126
+10.0.0.128/26  → hosts: .129 – .190
+10.0.0.192/26  → hosts: .193 – .254</code></pre>
+
+    <h3>مثال ۳ — پیکربندی IP روی اینترفیس سیسکو</h3>
+    <pre><code>Router> enable
+Router# configure terminal
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.10.1 255.255.255.0
+Router(config-if)# no shutdown
+Router(config-if)# exit
+Router(config)# exit
+Router# write memory</code></pre>
+
+    <h3>مثال ۴ — پیکربندی IPv6 روی اینترفیس</h3>
+    <pre><code>Router(config)# interface GigabitEthernet0/1
+Router(config-if)# ipv6 address 2001:db8::1/64
+Router(config-if)# ipv6 address fe80::1 link-local
+Router(config-if)# no shutdown</code></pre>
+
+    <h3>مثال ۵ — تشخیص Duplex Mismatch</h3>
+    <pre><code>Switch# show interfaces GigabitEthernet0/1
+GigabitEthernet0/1 is up, line protocol is up
+  ...
+  Full-duplex, 1000Mb/s          ! یک طرف Full
+  ...
+  1234 input errors              ! ❌ خطاها
+  567 CRC, 89 frame              ! ❌ CRC و Frame
+  12 collisions                  ! ❌ Collision
+
+! راه حل:
+Switch(config-if)# speed auto
+Switch(config-if)# duplex auto</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در Packet Tracer یک روتر Cisco 4331 و دو سوئیچ 2960 اضافه کن</li>
+      <li>دو کلاینت PC به هر سوئیچ وصل کن</li>
+      <li>سوئیچ‌ها را با کابل Straight به روتر وصل کن</li>
+      <li>شبکه‌ی LAN داخلی: 192.168.10.0/24</li>
+      <li>روتر را با IP 192.168.10.1/24 پیکربندی کن</li>
+      <li>PC1 را با 192.168.10.10/24، Gateway .1 بده</li>
+      <li>PC2 را با 192.168.10.11/24، Gateway .1 بده</li>
+      <li>از PC1 به PC2 ping بزن</li>
+      <li>با <code>show mac address-table</code> جدول MAC را ببین</li>
+      <li>در Windows با <code>ipconfig /all</code> و در Linux با <code>ip -c a</code> تنظیمات را چک کن</li>
+      <li>با <code>traceroute</code> مسیر را دنبال کن</li>
+      <li>IPv6 را هم فعال کن (SLAAC خودکار)</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>IP تکراری:</strong> پیام IP Conflict — با <code>arp -a</code> و <code>show arp</code> پیدا کن.</li>
+      <li><strong>Subnet Mask اشتباه:</strong> دو دستگاه در یک IP Range ولی Mask متفاوت → نمی‌توانند حرف بزنند.</li>
+      <li><strong>Gateway اشتباه:</strong> ارتباط داخل LAN کار می‌کند ولی اینترنت نه.</li>
+      <li><strong>Duplex Mismatch:</strong> Collisionهای زیاد، سرعت پایین.</li>
+      <li><strong>کابل Cross در جای اشتباه:</strong> در دستگاه‌های قدیمی، لینک بالا نمی‌آید.</li>
+      <li><strong>169.254.x.x:</strong> نشانه‌ی عدم دریافت IP از DHCP (APIPA).</li>
+      <li><strong>VLAN Native متفاوت روی دو سوئیچ:</strong> پیام‌های CDP Errors و اختلال در Trunk.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="osi">OSI</span> •
+      <span class="term" data-term="tcpip">TCP/IP</span> •
+      <span class="term" data-term="lan">LAN</span> •
+      <span class="term" data-term="wan">WAN</span> •
+      <span class="term" data-term="subnetting">Subnetting</span> •
+      <span class="term" data-term="vlan">VLAN</span> •
+      <span class="term" data-term="trunk">Trunk</span> •
+      <span class="term" data-term="vrf">VRF</span> •
+      <span class="term" data-term="nat">NAT</span> •
+      <span class="term" data-term="dhcp">DHCP</span> •
+      <span class="term" data-term="dns">DNS</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون تعاملی ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccna-01" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) کدام لایه‌ی OSI وظیفه‌ی آدرس‌دهی منطقی و مسیریابی را دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Layer 2 — Data Link</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Layer 3 — Network</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Layer 4 — Transport</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Layer 5 — Session</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) آدرس 192.168.1.130/25 متعلق به کدام سابنت است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> 192.168.1.0/25</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> 192.168.1.64/25</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> 192.168.1.128/25</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> 192.168.1.192/25</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت TCP و UDP چیست؟ برای VoIP کدام مناسب‌تر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> TCP برای VoIP چون سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> UDP برای VoIP چون Low Latency لازم است</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> VoIP از ICMP استفاده می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۴) تفاوت MAC و IP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> MAC فیزیکی و ثابت، IP منطقی و قابل تغییر</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> MAC منطقی، IP فیزیکی</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> هر دو ثابتند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هر دو قابل تغییرند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) کدام محدوده جزء آدرس‌های خصوصی (RFC 1918) است؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> 8.8.8.0/24</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> 1.1.1.0/24</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> 172.16.0.0/12</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> 4.2.2.0/24</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) پورت ۴۴۳ مربوط به چه سرویسی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> HTTP</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> HTTPS</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> SSH</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> DNS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) تفاوت Hub و Switch در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Hub لایه ۳، Switch لایه ۲</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> هر دو لایه ۳ هستند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> Hub لایه ۱ و Flood می‌کند، Switch لایه ۲ و Forward هوشمند دارد</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Hub سریع‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) با 10.0.0.0/26 چند هاست قابل استفاده در هر سابنت داری؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> 30</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> 62</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> 64</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> 126</label>
+      </div>
+
+      <div class="quiz-question" data-answer="3">
+        <div class="q-text">۹) چرا IPv6 معرفی شد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> برای کاهش سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> برای رمزنگاری خودکار</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> برای ناسازگاری با TCP</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> به دلیل اتمام آدرس‌های IPv4</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) اگر کامپیوتری IP با 169.254.x.x گرفت، مشکل چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> کابل قطع است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> DNS کار نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> نتوانسته از DHCP آدرس بگیرد (APIPA)</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Gateway اشتباه است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) کدام توپولوژی برای مرکز داده‌ی مدرن توصیه می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> Three-Tier</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> Spine-Leaf</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> Bus</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Ring</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۲) مشکل Duplex Mismatch چه نشانه‌ای دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Collision و CRC Errors بالا</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> لینک قطع می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> IP conflict رخ می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> DNS پاسخ نمی‌دهد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) کدام IPv6 معادل Private در IPv4 است؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> 2000::/3</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> fe80::/10</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> fc00::/7 (Unique Local)</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> ff00::/8</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) سوئیچ برای اولین بار فریمی با MAC مقصد ناشناس می‌گیرد. چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فریم را Drop می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> Flood روی همه‌ی پورت‌ها (به‌جز ورودی)</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> به روتر می‌فرستد</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> منتظر می‌ماند تا MAC یاد بگیرد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="3">
+        <div class="q-text">۱۵) VRF در شبکه چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> افزایش پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> رمزنگاری داده</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> ترجمه آدرس</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> جداسازی چند جدول مسیریابی روی یک روتر</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه‌ی پایانی -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>
+      یک شبکه‌ی کوچک سازمانی با توپولوژی زیر طراحی و در Packet Tracer پیاده‌سازی کن:
+    </p>
+    <ul>
+      <li>یک روتر مرکزی Cisco 4331</li>
+      <li>دو سوئیچ 2960 برای واحد فروش و واحد فنی</li>
+      <li>شش کلاینت (سه در هر واحد)</li>
+      <li>شبکه‌ی LAN: <code>192.168.10.0/24</code></li>
+      <li>هر سوئیچ یک VLAN جدا داشته باشد (VLAN 10 فروش، VLAN 20 فنی)</li>
+      <li>روتر به اینترنت متصل باشد با NAT (شبیه‌سازی)</li>
+      <li>اتصال end-to-end با ping و traceroute تأیید شود</li>
+      <li>از <code>show mac address-table</code> و <code>show arp</code> برای صحت‌سنجی استفاده کن</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>آدرس‌دهی IPv6 را هم پیکربندی کن (SLAAC + EUI-64).</li>
+        <li>یک SSID برای Wireless با WPA2-PSK راه‌اندازی کن.</li>
+        <li>با <code>Wireshark</code> یک capture از ping بگیری و ۳-way handshake را در سطح پکت تحلیل کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>OSI:</strong> ۷ لایه — Physical → Application</li>
+      <li><strong>TCP/IP:</strong> ۴ لایه — عملی و امروزی</li>
+      <li><strong>IPv4:</strong> ۳۲ بیت، ۴ اکتت، Subnetting حیاتی</li>
+      <li><strong>IPv6:</strong> ۱۲۸ بیت، Global / ULA / Link-Local / Multicast</li>
+      <li><strong>TCP:</strong> مطمئن، اتصال‌گرا | <strong>UDP:</strong> سریع، بدون اتصال</li>
+      <li><strong>MAC:</strong> فیزیکی و ثابت | <strong>IP:</strong> منطقی و قابل تغییر</li>
+      <li><strong>Private IPs:</strong> 10.0.0.0/8، 172.16.0.0/12، 192.168.0.0/16</li>
+      <li><strong>APIPA:</strong> 169.254.x.x → DHCP پاسخ نداده</li>
+      <li><strong>توپولوژی‌ها:</strong> Three-Tier (سنتی)، Two-Tier (متوسط)، Spine-Leaf (DC)</li>
+      <li><strong>VRF:</strong> جداسازی ترافیک در لایه ۳</li>
+      <li><strong>MAC Learning:</strong> از Source MAC، در جدول CAM</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn ghost" disabled data-nav-prev>⬅️ فصل قبلی</button>
+      <button class="btn" data-finish-chapter="ccna-01">✅ پایان فصل</button>
+      <a class="btn" href="ccna_Ch_02.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

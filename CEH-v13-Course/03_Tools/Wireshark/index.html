@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چیت‌شیت Wireshark - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            background: #4a5a7a;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        .copy-btn:hover {
+            background: #2a7de1;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.95rem;
+            min-width: 550px;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf4;
+            vertical-align: top;
+        }
+        tr:hover {
+            background: #f1f6fa;
+        }
+        td code, th code {
+            background: #eef3f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #c7254e;
+            border: 1px solid #dce3ea;
+            white-space: nowrap;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .filter-section {
+            margin: 25px 0 15px 0;
+            border-right: 4px solid #2a7de1;
+            padding-right: 15px;
+        }
+        .filter-section h3 {
+            color: #0b3b5c;
+            border-bottom: 2px solid #b6d4f0;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 400px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8rem;
+                min-width: 320px;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ابزارها</a>
+        </span>
+    </div>
+
+    <h1>📡 چیت‌شیت جامع Wireshark</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 مقدمه – Wireshark چیست؟</h2>
+        <p>
+            <b>Wireshark</b> یکی از قدرتمندترین و محبوب‌ترین ابزارهای <b>تحلیل و شنود شبکه (Network Sniffing & Analysis)</b> در جهان است. این ابزار متن‌باز که در سال ۱۹۹۸ توسط Gerald Combs توسعه یافت، به متخصصان امنیت، مدیران شبکه و هکرهای قانونمند امکان می‌دهد تا <b>ترافیک شبکه را در زمان واقعی ضبط، تحلیل و بررسی</b> کنند.
+        </p>
+        <p>
+            Wireshark به شما امکان می‌دهد تا بسته‌های شبکه را در <b>سطح بایت</b> مشاهده کنید و تمام لایه‌های مدل OSI/TCP/IP را تحلیل نمایید. این ابزار برای <b>عیب‌یابی شبکه، تحلیل حملات، شناسایی بدافزارها و آموزش</b> بسیار مفید است.
+        </p>
+        <div class="info-box">
+            <b>💡 کاربردهای اصلی Wireshark:</b>
+            <ul>
+                <li><b>شنود شبکه (Sniffing):</b> ضبط و نمایش تمام بسته‌های عبوری از شبکه.</li>
+                <li><b>تحلیل ترافیک:</b> بررسی پروتکل‌ها، اندازه بسته‌ها، تأخیر و …</li>
+                <li><b>عیب‌یابی شبکه:</b> شناسایی مشکلات اتصال، تأخیر و از دست رفتن بسته‌ها.</li>
+                <li><b>تشخیص حملات:</b> شناسایی حملات ARP Spoofing، DoS، MITM و …</li>
+                <li><b>تحلیل بدافزار:</b> شناسایی ارتباطات مشکوک بدافزارها با سرورهای C2.</li>
+                <li><b>آموزش:</b> مشاهده عملکرد پروتکل‌ها به صورت بصری.</li>
+                <li><b>جرم‌یابی دیجیتال:</b> استخراج شواهد از ترافیک شبکه.</li>
+            </ul>
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> شنود شبکه‌های بدون مجوز، <b>جرم</b> محسوب می‌شود و حریم خصوصی افراد را نقض می‌کند. فقط در شبکه‌های خود یا با مجوز کتبی استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: نصب و راه‌اندازی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📥 نصب و راه‌اندازی Wireshark</h2>
+
+        <h3>📌 نصب در Kali Linux (پیش‌فرض):</h3>
+        <p>Wireshark در Kali Linux به صورت پیش‌فرض نصب است.</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo apt update
+sudo apt install wireshark -y</code></pre>
+        </div>
+
+        <h3>📌 نصب در ویندوز:</h3>
+        <p>دانلود از سایت رسمی: <a href="https://www.wireshark.org/download.html" target="_blank">https://www.wireshark.org/download.html</a></p>
+
+        <h3>📌 نصب در macOS:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>brew install wireshark</code></pre>
+        </div>
+
+        <h3>📌 اجرای Wireshark:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>sudo wireshark</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> برای ضبط ترافیک در لینوکس، Wireshark باید با دسترسی <b>root</b> اجرا شود. در غیر این صورت، ممکن است نتوانید بسته‌ها را ضبط کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: رابط کاربری -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🖥️ آشنایی با رابط کاربری Wireshark</h2>
+
+        <h3>📌 بخش‌های اصلی:</h3>
+        <ul>
+            <li><b>Toolbar (نوار ابزار):</b> دکمه‌های شروع/توقف ضبط، باز کردن فایل، ذخیره و …</li>
+            <li><b>Packet List Pane:</b> لیست تمام بسته‌های ضبط شده با خلاصه اطلاعات.</li>
+            <li><b>Packet Details Pane:</b> نمایش جزئیات بسته انتخاب‌شده در تمام لایه‌ها.</li>
+            <li><b>Packet Bytes Pane:</b> نمایش داده‌های خام بسته به صورت Hex و ASCII.</li>
+            <li><b>Filter Bar:</b> جعبه متن برای وارد کردن فیلترهای نمایش.</li>
+            <li><b>Status Bar:</b> اطلاعات آماری مانند تعداد بسته‌ها و …</li>
+        </ul>
+
+        <h3>📌 میانبرهای مهم:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>کلید</th><th>توضیح</th></tr>
+                <tr><td><code dir='ltr'>Ctrl+E</code></td><td>شروع/توقف ضبط</td></tr>
+                <tr><td><code dir='ltr'>Ctrl+R</code></td><td>شروع ضبط مجدد</td></tr>
+                <tr><td><code dir='ltr'>Ctrl+S</code></td><td>ذخیره فایل ضبط‌شده</td></tr>
+                <tr><td><code dir='ltr'>Ctrl+F</code></td><td>جستجو در بسته‌ها</td></tr>
+                <tr><td><code dir='ltr'>Ctrl+G</code></td><td>رفتن به بسته با شماره مشخص</td></tr>
+                <tr><td><code dir='ltr'>Ctrl+Alt+Shift+T</code></td><td>دنبال کردن جریان (Follow Stream)</td></tr>
+                <tr><td><code dir='ltr'>F2</code></td><td>ویرایش فیلتر نمایش</td></tr>
+                <tr><td><code dir='ltr'>F7</code></td><td>مشاهده بسته بعدی (در حالت دنبال کردن)</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: فیلترهای ضبط (Capture Filters) -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🎯 فیلترهای ضبط (Capture Filters)</h2>
+        <p>
+            فیلترهای ضبط قبل از شروع ضبط اعمال می‌شوند و تعیین می‌کنند که <b>کدام بسته‌ها ضبط شوند</b>. این فیلترها با زبان BPF (Berkeley Packet Filter) نوشته می‌شوند و برای کاهش حجم فایل ضبط بسیار مفید هستند.
+        </p>
+
+        <div class="filter-section">
+            <h3>📌 فیلترهای پرکاربرد Capture:</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>فیلتر</th><th>توضیح</th></tr>
+                    <tr><td><code dir='ltr'>host 192.168.1.101</code></td>
+                    <td>ضبط ترافیک یک IP خاص</td></tr>
+                    <tr><td><code dir='ltr'>src host 192.168.1.100</code></td>
+                    <td>ضبط بسته‌هایی که از یک IP خاص آمده‌اند</td></tr>
+                    <tr><td><code dir='ltr'>dst host 192.168.1.1</code></td>
+                    <td>ضبط بسته‌هایی که به یک IP خاص می‌روند</td></tr>
+                    <tr><td><code dir='ltr'>port 80</code></td>
+                    <td>ضبط ترافیک یک پورت خاص</td></tr>
+                    <tr><td><code dir='ltr'>portrange 1-1024</code></td>
+                    <td>ضبط ترافیک یک محدوده پورت</td></tr>
+                    <tr><td><code dir='ltr'>tcp</code></td>
+                    <td>ضبط فقط ترافیک TCP</td></tr>
+                    <tr><td><code dir='ltr'>udp</code></td>
+                    <td>ضبط فقط ترافیک UDP</td></tr>
+                    <tr><td><code dir='ltr'>icmp</code></td>
+                    <td>ضبط فقط ترافیک ICMP (پینگ)</td></tr>
+                    <tr><td><code dir='ltr'>arp</code></td>
+                    <td>ضبط فقط ترافیک ARP</td></tr>
+                    <tr><td><code dir='ltr'>not port 22</code></td>
+                    <td>ضبط همه ترافیک به جز پورت ۲۲</td></tr>
+                    <tr><td><code dir='ltr'>host 192.168.1.101 and port 80</code></td>
+                    <td>ضبط ترافیک HTTP یک IP خاص</td></tr>
+                    <tr><td><code dir='ltr'>src host 10.0.0.1 and dst port 53</code></td>
+                    <td>ضبط درخواست‌های DNS از یک IP خاص</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> فیلترهای ضبط در کادر <b>Capture Filter</b> در بالای صفحه یا در پنجره <b>Capture Options</b> وارد می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: فیلترهای نمایش (Display Filters) -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔍 فیلترهای نمایش (Display Filters)</h2>
+        <p>
+            فیلترهای نمایش پس از ضبط اعمال می‌شوند و تعیین می‌کنند که <b>کدام بسته‌ها در لیست نمایش داده شوند</b>. این فیلترها با زبان اختصاصی Wireshark نوشته می‌شوند و بسیار قدرتمند هستند.
+        </p>
+
+        <div class="filter-section">
+            <h3>📌 فیلترهای پایه:</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>فیلتر</th><th>توضیح</th></tr>
+                    <tr><td><code dir='ltr'>ip.addr == 192.168.1.101</code></td>
+                    <td>نمایش بسته‌های یک IP خاص (مبدأ یا مقصد)</td></tr>
+                    <tr><td><code dir='ltr'>ip.src == 192.168.1.100</code></td>
+                    <td>نمایش بسته‌هایی با IP مبدأ خاص</td></tr>
+                    <tr><td><code dir='ltr'>ip.dst == 192.168.1.1</code></td>
+                    <td>نمایش بسته‌هایی با IP مقصد خاص</td></tr>
+                    <tr><td><code dir='ltr'>tcp.port == 80</code></td>
+                    <td>نمایش ترافیک یک پورت TCP خاص</td></tr>
+                    <tr><td><code dir='ltr'>udp.port == 53</code></td>
+                    <td>نمایش ترافیک یک پورت UDP خاص</td></tr>
+                    <tr><td><code dir='ltr'>tcp</code></td>
+                    <td>نمایش فقط ترافیک TCP</td></tr>
+                    <tr><td><code dir='ltr'>udp</code></td>
+                    <td>نمایش فقط ترافیک UDP</td></tr>
+                    <tr><td><code dir='ltr'>icmp</code></td>
+                    <td>نمایش فقط ترافیک ICMP</td></tr>
+                    <tr><td><code dir='ltr'>arp</code></td>
+                    <td>نمایش فقط ترافیک ARP</td></tr>
+                    <tr><td><code dir='ltr'>dns</code></td>
+                    <td>نمایش فقط ترافیک DNS</td></tr>
+                    <tr><td><code dir='ltr'>http</code></td>
+                    <td>نمایش فقط ترافیک HTTP</td></tr>
+                    <tr><td><code dir='ltr'>https</code></td>
+                    <td>نمایش فقط ترافیک HTTPS</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 فیلترهای ترکیبی:</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>فیلتر</th><th>توضیح</th></tr>
+                    <tr><td><code dir='ltr'>ip.addr == 192.168.1.101 and tcp.port == 80</code></td>
+                    <td>ترافیک HTTP یک IP خاص</td></tr>
+                    <tr><td><code dir='ltr'>ip.src == 10.0.0.1 or ip.dst == 10.0.0.1</code></td>
+                    <td>بسته‌های مرتبط با یک IP</td></tr>
+                    <tr><td><code dir='ltr'>!(arp or icmp)</code></td>
+                    <td>همه چیز به جز ARP و ICMP</td></tr>
+                    <tr><td><code dir='ltr'>tcp.flags.syn == 1</code></td>
+                    <td>بسته‌های SYN (شروع اتصال)</td></tr>
+                    <tr><td><code dir='ltr'>tcp.flags.reset == 1</code></td>
+                    <td>بسته‌های RST (قطع اتصال)</td></tr>
+                    <tr><td><code dir='ltr'>tcp.flags.fin == 1</code></td>
+                    <td>بسته‌های FIN (پایان اتصال)</td></tr>
+                    <tr><td><code dir='ltr'>http.request.method == "GET"</code></td>
+                    <td>درخواست‌های GET HTTP</td></tr>
+                    <tr><td><code dir='ltr'>http.request.method == "POST"</code></td>
+                    <td>درخواست‌های POST HTTP</td></tr>
+                    <tr><td><code dir='ltr'>http.response.code == 404</code></td>
+                    <td>پاسخ‌های HTTP 404</td></tr>
+                    <tr><td><code dir='ltr'>http contains "password"</code></td>
+                    <td>درخواست‌های HTTP حاوی کلمه password</td></tr>
+                    <tr><td><code dir='ltr'>frame contains "admin"</code></td>
+                    <td>بسته‌هایی که شامل عبارت admin هستند</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 فیلترهای پیشرفته:</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>فیلتر</th><th>توضیح</th></tr>
+                    <tr><td><code dir='ltr'>tcp.stream eq 0</code></td>
+                    <td>نمایش جریان TCP شماره ۰</td></tr>
+                    <tr><td><code dir='ltr'>tcp.analysis.retransmission</code></td>
+                    <td>بسته‌های ارسال مجدد (Retransmission)</td></tr>
+                    <tr><td><code dir='ltr'>tcp.analysis.duplicate_ack</code></td>
+                    <td>بسته‌های ACK تکراری</td></tr>
+                    <tr><td><code dir='ltr'>tcp.analysis.ack_rtt > 0.5</code></td>
+                    <td>تأخیر ACK بیشتر از ۵۰۰ میلی‌ثانیه</td></tr>
+                    <tr><td><code dir='ltr'>tcp.window_size < 65535</code></td>
+                    <td>پنجره TCP کوچک</td></tr>
+                    <tr><td><code dir='ltr'>tcp.len > 0</code></td>
+                    <td>بسته‌های TCP با داده</td></tr>
+                    <tr><td><code dir='ltr'>udp.length > 1000</code></td>
+                    <td>بسته‌های UDP با طول بیشتر از ۱۰۰۰ بایت</td></tr>
+                    <tr><td><code dir='ltr'>ip.ttl < 10</code></td>
+                    <td>بسته‌هایی با TTL کمتر از ۱۰</td></tr>
+                    <tr><td><code dir='ltr'>ip.fragmented</code></td>
+                    <td>بسته‌های تکه‌تکه‌شده IP</td></tr>
+                    <tr><td><code dir='ltr'>dns.qry.name contains "example.com"</code></td>
+                    <td>درخواست‌های DNS برای یک دامنه خاص</td></tr>
+                    <tr><td><code dir='ltr'>ssl.handshake.type == 1</code></td>
+                    <td>بسته‌های Client Hello در SSL/TLS</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> فیلترهای نمایش در کادر <b>Display Filter</b> (نوار سبز رنگ) وارد می‌شوند. اگر فیلتر صحیح باشد، زمینه سبز می‌شود و اگر اشتباه باشد، قرمز می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: دنبال کردن جریان (Follow Stream) -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📎 دنبال کردن جریان (Follow Stream)</h2>
+        <p>
+            یکی از قوی‌ترین ویژگی‌های Wireshark، قابلیت <b>دنبال کردن جریان</b> است که به شما امکان می‌دهد تا ارتباط کامل بین کلاینت و سرور را به صورت یکپارچه مشاهده کنید.
+        </p>
+
+        <h3>📌 نحوه استفاده:</h3>
+        <ol>
+            <li>یک بسته از جریان مورد نظر را انتخاب کنید.</li>
+            <li>از منوی <b>Analyze → Follow</b> و سپس انتخاب نوع جریان (TCP Stream، UDP Stream، TLS Stream، HTTP Stream).</li>
+            <li>محتوا به صورت کامل نمایش داده می‌شود.</li>
+        </ol>
+
+        <h3>📌 میانبر:</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'>Ctrl+Alt+Shift+T</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 کاربرد در هک:</b>
+            <ul>
+                <li><b>استخراج رمزهای عبور:</b> در ترافیک HTTP غیرامن، رمزهای عبور به صورت متن واضح قابل مشاهده هستند.</li>
+                <li><b>بازسازی محتوای وب:</b> مشاهده کامل صفحات وب منتقل‌شده.</li>
+                <li><b>تحلیل بدافزار:</b> مشاهده ارتباطات بدافزار با سرورهای C2.</li>
+                <li><b>شناسایی داده‌های حساس:</b> پیدا کردن اطلاعات کارت اعتباری یا اطلاعات شخصی در ترافیک.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: تشخیص حملات با Wireshark -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🛡️ تشخیص حملات با Wireshark</h2>
+
+        <div class="filter-section">
+            <h3>📌 ۱. تشخیص ARP Spoofing</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># فیلتر نمایش
+arp.duplicate-address-frame
+
+# یا بررسی دستی
+arp.opcode == 2  # پاسخ ARP
+# و مشاهده آدرس‌های MAC تکراری</code></pre>
+            </div>
+            <p><b>نشانه‌ها:</b> چندین پاسخ ARP با یک IP اما با MAC متفاوت.</p>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 ۲. تشخیص SYN Flood (DoS)</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># نمایش تعداد SYN در یک بازه زمانی
+tcp.flags.syn == 1 and tcp.flags.ack == 0
+
+# تعداد SYN از یک IP خاص
+tcp.flags.syn == 1 and ip.src == 192.168.1.100</code></pre>
+            </div>
+            <p><b>نشانه‌ها:</b> تعداد زیادی بسته SYN از یک یا چند IP بدون تکمیل Handshake.</p>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 ۳. تشخیص حملات MITM</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># بررسی SSL/TLS
+ssl.handshake.type == 1  # Client Hello
+
+# بررسی تغییر مسیر ICMP
+icmp.type == 5  # ICMP Redirect</code></pre>
+            </div>
+            <p><b>نشانه‌ها:</b> تغییر مسیر غیرعادی یا گواهی‌های SSL مشکوک.</p>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 ۴. تشخیص DNS Spoofing</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># پاسخ‌های DNS با آدرس‌های غیرمعمول
+dns.flags.response == 1 and dns.a != 0</code></pre>
+            </div>
+            <p><b>نشانه‌ها:</b> پاسخ‌های DNS که به آدرس‌های IP غیرمعمول اشاره می‌کنند.</p>
+        </div>
+
+        <div class="filter-section">
+            <h3>📌 ۵. تشخیص ترافیک بدافزار</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+                <pre dir='ltr'><code dir='ltr'># ترافیک به پورت‌های غیراستاندارد
+tcp.port >= 49152 and tcp.port <= 65535
+
+# درخواست‌های DNS به دامنه‌های مشکوک
+dns.qry.name contains "tor" or dns.qry.name contains "onion"
+
+# ترافیک به IPهای خارجی با الگوی غیرعادی
+ip.dst == 8.8.8.8 or ip.dst == 1.1.1.1</code></pre>
+            </div>
+            <p><b>نشانه‌ها:</b> ارتباطات غیرعادی به پورت‌های بالا، دامنه‌های مشکوک یا IPهای خارجی.</p>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ نکته:</b> تشخیص حملات نیاز به دانش و تجربه دارد. همیشه با یک شبکه سالم مقایسه کنید تا الگوهای غیرعادی را شناسایی کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: سناریوهای عملی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 سناریوهای عملی با Wireshark</h2>
+
+        <h3>📌 سناریو ۱: ضبط و تحلیل ترافیک HTTP</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. شروع ضبط روی رابط شبکه
+# ۲. در مرورگر، یک وب‌سایت غیرامن (http://) باز کنید
+# ۳. ضبط را متوقف کنید
+# ۴. فیلتر نمایش: http
+# ۵. یک درخواست GET را انتخاب کنید و Follow HTTP Stream را انتخاب کنید
+# ۶. محتوای صفحه و اطلاعات ارسال‌شده را مشاهده کنید</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۲: استخراج رمز عبور از ترافیک FTP</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. ضبط ترافیک در حین اتصال FTP
+# ۲. فیلتر نمایش: ftp
+# ۳. بسته‌های حاوی USER و PASS را پیدا کنید
+# ۴. نام کاربری و رمز عبور به صورت متن واضح قابل مشاهده است</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۳: تشخیص ARP Spoofing</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. ضبط ترافیک شبکه
+# ۲. فیلتر نمایش: arp
+# ۳. به دنبال پاسخ‌های ARP با IP تکراری اما MAC متفاوت باشید
+# ۴. در صورت مشاهده، احتمالاً حمله ARP Spoofing در جریان است</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۴: تحلیل ترافیک DNS</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. ضبط ترافیک
+# ۲. فیلتر نمایش: dns
+# ۳. درخواست‌ها و پاسخ‌های DNS را مشاهده کنید
+# ۴. به دنبال پاسخ‌های غیرمعمول با IPهای مشکوک باشید</code></pre>
+        </div>
+
+        <h3>📌 سناریو ۵: شناسایی ارتباطات بدافزار</h3>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">📋 کپی</button>
+            <pre dir='ltr'><code dir='ltr'># ۱. ضبط ترافیک در سیستم آلوده
+# ۲. فیلترهای مختلف را امتحان کنید:
+#    - tcp.port >= 49152 (پورت‌های بالا)
+#    - dns.qry.name (دامنه‌های مشکوک)
+#    - ip.dst not in {192.168.1.0/24} (ترافیک به خارج از شبکه)</code></pre>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> Wireshark یک ابزار قدرتمند است که با تمرین و تجربه، می‌توانید از آن برای تحلیل عمیق شبکه و تشخیص حملات استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: نکات امنیتی و حرفه‌ای -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔒 نکات امنیتی و حرفه‌ای</h2>
+
+        <ul>
+            <li><b>فقط در شبکه‌های مجاز ضبط کنید:</b> شنود شبکه‌های دیگران بدون مجوز جرم است.</li>
+            <li><b>از فیلترهای ضبط استفاده کنید:</b> برای کاهش حجم فایل و تمرکز بر ترافیک مورد نظر.</li>
+            <li><b>ذخیره فایل‌های ضبط با فرمت pcapng:</b> فرمت استاندارد Wireshark با قابلیت‌های بیشتر.</li>
+            <li><b>استفاده از رنگ‌بندی:</b> برای تشخیص سریع انواع ترافیک، رنگ‌ها را سفارشی کنید.</li>
+            <li><b>بررسی هشدارها:</b> Wireshark دارای قابلیت تشخیص خودکار برخی حملات و مشکلات است.</li>
+            <li><b>به‌روزرسانی منظم:</b> همیشه آخرین نسخه Wireshark را برای پشتیبانی از پروتکل‌های جدید نصب کنید.</li>
+            <li><b>تحلیل با احتیاط:</b> فایل‌های ضبط ممکن است حاوی اطلاعات حساس باشند. از آنها به‌درستی محافظت کنید.</li>
+            <li><b>استفاده از tcpdump:</b> در سرورهای بدون GUI، از tcpdump برای ضبط و سپس تحلیل با Wireshark استفاده کنید.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> Wireshark ابزاری قدرتمند برای تحلیل شبکه است، اما استفاده از آن برای شنود ارتباطات دیگران بدون مجوز، <b>غیراخلاقی و غیرقانونی</b> است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📖 واژه‌نامه تخصصی Wireshark</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:130px;">واژه</th><th>توضیح کامل</th></tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Sniffing</span></td>
+                    <td>فرآیند ضبط و تحلیل بسته‌های شبکه برای جمع‌آوری اطلاعات.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Capture Filter</span></td>
+                    <td>فیلتری که قبل از ضبط اعمال می‌شود و تعیین می‌کند کدام بسته‌ها ضبط شوند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Display Filter</span></td>
+                    <td>فیلتری که پس از ضبط اعمال می‌شود و تعیین می‌کند کدام بسته‌ها نمایش داده شوند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">BPF</span></td>
+                    <td>Berkeley Packet Filter – زبان فیلتر کردن بسته‌ها در سطح هسته.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Stream</span></td>
+                    <td>یک جریان ارتباطی بین دو دستگاه که شامل تمام بسته‌های مرتبط است.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Follow Stream</span></td>
+                    <td>قابلیت Wireshark برای نمایش کامل یک جریان ارتباطی (TCP/UDP/HTTP).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Pcap</span></td>
+                    <td>فرمت فایل ضبط بسته‌های شبکه (Packet Capture).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Pcapng</span></td>
+                    <td>نسخه جدیدتر فرمت pcap با قابلیت‌های بیشتر.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ARP Spoofing</span></td>
+                    <td>حمله‌ای که در آن مهاجم با ارسال بسته‌های ARP جعلی، ترافیک را به سمت خود هدایت می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MITM</span></td>
+                    <td>Man-in-the-Middle – حمله‌ای که در آن مهاجم بین دو طرف ارتباط قرار می‌گیرد.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">TCP Handshake</span></td>
+                    <td>فرآیند سه مرحله‌ای برقراری اتصال TCP (SYN, SYN-ACK, ACK).</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Wireshark</span></td>
+                    <td>ابزاری برای ضبط و تحلیل بسته‌های شبکه در زمان واقعی.</td>
+                </tr>
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Tcpdump</span></td>
+                    <td>نسخه خط فرمان Wireshark برای ضبط بسته‌ها در سرورها.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی چیت‌شیت Wireshark:</b>
+        <p>
+            Wireshark یکی از قدرتمندترین ابزارهای تحلیل شبکه است که با قابلیت‌های پیشرفته‌ای مانند فیلترهای دقیق، 
+            دنبال کردن جریان و تشخیص حملات، به متخصصان امنیت امکان بررسی عمیق ترافیک شبکه را می‌دهد.
+        </p>
+        <p>
+            <b>📌 توصیه نهایی:</b> با فیلترهای پایه شروع کنید و به تدریج به سراغ فیلترهای پیشرفته و تحلیل حملات بروید. 
+            تمرین روی شبکه‌های خود و محیط‌های آزمایشگاهی بهترین راه برای یادگیری است. 
+            همچنین از ابزار <b>tcpdump</b> برای ضبط در سرورها و سپس تحلیل با Wireshark استفاده کنید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">چیت‌شیت Wireshark | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

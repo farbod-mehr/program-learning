@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 14: کار با فایل‌ها (File I/O)</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .output-demo .error {
+            color: #ef4444;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 180px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .file-tree {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .file-tree .folder {
+            color: #ffd43b;
+        }
+        .file-tree .file {
+            color: #34d399;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 14: کار با فایل‌ها (File I/O)</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-13/index.html">قبلی</a>
+            <a href="../chapter-15/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۴: کار با فایل‌ها (File I/O)</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۴: کار با فایل‌ها (File I/O)</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی پایتون و مدیریت خطا)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی پایتون (فصل‌های ۱ تا ۱۳)</li>
+                <li>✅ آشنایی با مدیریت خطاها (فصل ۱۲)</li>
+                <li>✅ آشنایی اولیه با ساختار پوشه‌ها و فایل‌ها در سیستم‌عامل</li>
+                <li>✅ توانایی کار با خط فرمان (Command Line)</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ با <strong><code dir='ltr'>open()</code></strong> فایل‌ها را باز کنید.</li>
+                <li>✔️ از <strong>حالت‌های مختلف</strong> ('r', 'w', 'a', 'x', 'b', 't') استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>read()</code></strong>، <strong><code dir='ltr'>readline()</code></strong> و <strong><code dir='ltr'>readlines()</code></strong> فایل را بخوانید.</li>
+                <li>✔️ با <strong><code dir='ltr'>write()</code></strong> و <strong><code dir='ltr'>writelines()</code></strong> در فایل بنویسید.</li>
+                <li>✔️ از <strong><code dir='ltr'>with</code></strong> برای مدیریت خودکار فایل‌ها استفاده کنید.</li>
+                <li>✔️ با <strong>فایل‌های CSV</strong> و ماژول <code dir='ltr'>csv</code> کار کنید.</li>
+                <li>✔️ با <strong>فایل‌های JSON</strong> و ماژول <code dir='ltr'>json</code> کار کنید.</li>
+                <li>✔️ با <strong>فایل‌های باینری</strong> (تصاویر، صدا و ...) کار کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>os</code></strong> و <strong><code dir='ltr'>pathlib</code></strong> برای مدیریت مسیرها و دایرکتوری‌ها استفاده کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>تا اینجا همه‌ی داده‌ها را در حافظه‌ی موقت (RAM) ذخیره می‌کردیم و با بستن برنامه، همه‌چیز از بین می‌رفت. برای <strong>ذخیره‌سازی دائمی</strong> داده‌ها، نیاز به <strong>فایل‌ها</strong> داریم.</p>
+            <p>کار با فایل‌ها یکی از مهم‌ترین مهارت‌های هر برنامه‌نویس پایتون است. با فایل‌ها می‌توانید داده‌ها را ذخیره کنید، تنظیمات برنامه را نگه دارید، لاگ‌ها را ثبت کنید، داده‌ها را با برنامه‌های دیگر به اشتراک بگذارید و خیلی کارهای دیگر.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث کار با فایل‌ها</strong> آشنا می‌شوید: باز کردن، خواندن، نوشتن، بستن، کار با CSV، JSON، فایل‌های باینری و مدیریت مسیرها.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۴.۱ -->
+            <div class="sub-section">
+                <h4>۱۴.۱ باز کردن فایل با <code dir='ltr'>open()</code> و حالت‌های مختلف</h4>
+                <p>تابع <strong><code dir='ltr'>open()</code></strong> برای باز کردن فایل‌ها استفاده می‌شود و یک شیء فایل برمی‌گرداند. دو پارامتر اصلی: نام فایل و حالت (mode).</p>
+                <ul>
+                    <li><strong>حالت‌های اصلی (Mode):</strong>
+                        <ul>
+                            <li><code dir='ltr'>'r'</code> – خواندن (پیش‌فرض) – فایل باید وجود داشته باشد.</li>
+                            <li><code dir='ltr'>'w'</code> – نوشتن – اگر فایل وجود داشته باشد، محتوای آن پاک می‌شود. اگر نباشد، ایجاد می‌شود.</li>
+                            <li><code dir='ltr'>'a'</code> – افزودن (append) – به انتهای فایل اضافه می‌کند.</li>
+                            <li><code dir='ltr'>'x'</code> – ایجاد انحصاری – اگر فایل وجود داشته باشد، خطا می‌دهد.</li>
+                            <li><code dir='ltr'>'b'</code> – حالت باینری (مثل <code dir='ltr'>'rb'</code>، <code dir='ltr'>'wb'</code>).</li>
+                            <li><code dir='ltr'>'t'</code> – حالت متنی (پیش‌فرض – <code dir='ltr'>'rt'</code>).</li>
+                            <li><code dir='ltr'>'+'</code> – خواندن و نوشتن همزمان (مثل <code dir='ltr'>'r+'</code>، <code dir='ltr'>'w+'</code>).</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># باز کردن فایل برای خواندن (پیش‌فرض)
+file = open("test.txt", "r")
+content = file.read()
+file.close()
+
+# باز کردن فایل برای نوشتن (محتوای قبلی پاک می‌شود)
+file = open("test.txt", "w")
+file.write("Hello World!")
+file.close()
+
+# باز کردن فایل برای افزودن به انتها
+file = open("test.txt", "a")
+file.write(" - اضافه شد")
+file.close()
+
+# باز کردن فایل برای خواندن و نوشتن
+file = open("test.txt", "r+")
+content = file.read()
+file.write(" جدید")
+file.close()
+
+# باز کردن فایل در حالت باینری
+file = open("image.jpg", "rb")
+data = file.read()
+file.close()</code></pre>
+                </div>
+                <div class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>حالت</th>
+                            <th>توضیح</th>
+                            <th>فایل وجود دارد</th>
+                            <th>فایل وجود ندارد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code dir='ltr'>'r'</code></td>
+                            <td>خواندن</td>
+                            <td>✅ باز می‌شود</td>
+                            <td>❌ FileNotFoundError</td>
+                        </tr>
+                        <tr>
+                            <td><code dir='ltr'>'w'</code></td>
+                            <td>نوشتن (پاک می‌کند)</td>
+                            <td>✅ پاک و باز</td>
+                            <td>✅ ایجاد می‌کند</td>
+                        </tr>
+                        <tr>
+                            <td><code dir='ltr'>'a'</code></td>
+                            <td>افزودن به انتها</td>
+                            <td>✅ باز (انتهای فایل)</td>
+                            <td>✅ ایجاد می‌کند</td>
+                        </tr>
+                        <tr>
+                            <td><code dir='ltr'>'x'</code></td>
+                            <td>ایجاد انحصاری</td>
+                            <td>❌ FileExistsError</td>
+                            <td>✅ ایجاد می‌کند</td>
+                        </tr>
+                    </tbody>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> همیشه بعد از کار با فایل، آن را با <code dir='ltr'>close()</code> ببندید. اما بهتر است از <code dir='ltr'>with</code> استفاده کنید که به‌طور خودکار فایل را می‌بندد (بخش بعدی).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک فایل جدید با نام <code dir='ltr'>sample.txt</code> در حالت نوشتن ایجاد کنید و یک متن در آن بنویسید. سپس با حالت خواندن آن را باز کنید و محتوا را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۱۴.۲ -->
+            <div class="sub-section">
+                <h4>۱۴.۲ خواندن از فایل: <code dir='ltr'>read()</code>، <code dir='ltr'>readline()</code> و <code dir='ltr'>readlines()</code></h4>
+                <p>سه روش اصلی برای خواندن محتوای فایل:</p>
+                <ul>
+                    <li><strong><code dir='ltr'>read(size)</code></strong>: کل فایل یا تعداد مشخصی کاراکتر را می‌خواند.</li>
+                    <li><strong><code dir='ltr'>readline()</code></strong>: یک خط کامل را می‌خواند (تا \n).</li>
+                    <li><strong><code dir='ltr'>readlines()</code></strong>: همه‌ی خطوط را به‌صورت لیست برمی‌گرداند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># خواندن کل فایل
+with open("test.txt", "r") as f:
+    content = f.read()
+    print(content)
+
+# خواندن تعداد مشخصی کاراکتر
+with open("test.txt", "r") as f:
+    part = f.read(10)  # ۱۰ کاراکتر اول
+    print(part)
+
+# خواندن خط به خط با readline()
+with open("test.txt", "r") as f:
+    line = f.readline()
+    while line:
+        print(line.strip())
+        line = f.readline()
+
+# خواندن همه‌ی خطوط با readlines()
+with open("test.txt", "r") as f:
+    lines = f.readlines()
+    for line in lines:
+        print(line.strip())
+
+# پیمایش مستقیم با for (رایج‌ترین روش)
+with open("test.txt", "r") as f:
+    for line in f:
+        print(line.strip())</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> برای فایل‌های بزرگ، از <code dir='ltr'>for line in f</code> استفاده کنید که خط‌به‌خط می‌خواند و حافظه را کم مصرف می‌کند. از <code dir='ltr'>read()</code> برای فایل‌های کوچک استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک فایل با چند خط متن ایجاد کنید. با استفاده از <code dir='ltr'>readlines()</code> همه‌ی خطوط را بخوانید و با <code dir='ltr'>enumerate()</code> شماره‌ی هر خط را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۱۴.۳ -->
+            <div class="sub-section">
+                <h4>۱۴.۳ نوشتن در فایل: <code dir='ltr'>write()</code> و <code dir='ltr'>writelines()</code></h4>
+                <p>دو روش اصلی برای نوشتن در فایل:</p>
+                <ul>
+                    <li><strong><code dir='ltr'>write(string)</code></strong>: یک رشته را در فایل می‌نویسد.</li>
+                    <li><strong><code dir='ltr'>writelines(list)</code></strong>: یک لیست از رشته‌ها را می‌نویسد (بدون اضافه کردن \n).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># نوشتن یک رشته
+with open("output.txt", "w") as f:
+    f.write("سلام دنیا!\n")
+    f.write("این خط دوم است.\n")
+
+# نوشتن با writelines
+lines = ["خط اول\n", "خط دوم\n", "خط سوم\n"]
+with open("output.txt", "w") as f:
+    f.writelines(lines)
+
+# افزودن به فایل (append)
+with open("output.txt", "a") as f:
+    f.write("این خط به انتها اضافه شد.\n")
+
+# نوشتن با استفاده از join
+items = ["سیب", "موز", "پرتقال"]
+with open("fruits.txt", "w") as f:
+    f.write("\n".join(items))
+
+# نوشتن داده‌های ساختاریافته
+data = [
+    {"name": "علی", "age": 25},
+    {"name": "سارا", "age": 30}
+]
+with open("data.txt", "w") as f:
+    for item in data:
+        f.write(f"{item['name']},{item['age']}\n")</code></pre>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>writelines()</code> به‌طور خودکار <code dir='ltr'>\n</code> اضافه نمی‌کند. باید خودتان خط جدید را مدیریت کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از ۵ اسم حیوان ایجاد کنید. با استفاده از <code dir='ltr'>writelines()</code> آنها را در یک فایل بنویسید و سپس فایل را بخوانید و محتوا را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۱۴.۴ -->
+            <div class="sub-section">
+                <h4>۱۴.۴ مدیریت خودکار فایل با <code dir='ltr'>with</code></h4>
+                <p><strong><code dir='ltr'>with</code></strong> یک Context Manager است که به‌طور خودکار فایل را بعد از پایان بلوک می‌بندد، حتی اگر خطا رخ دهد. این روش امن‌ترین و خوانا‌ترین روش برای کار با فایل‌هاست.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># با with (توصیه‌شده)
+with open("test.txt", "r") as f:
+    content = f.read()
+    print(content)
+# فایل به‌طور خودکار بسته می‌شود
+
+# بدون with (قدیمی)
+f = open("test.txt", "r")
+try:
+    content = f.read()
+    print(content)
+finally:
+    f.close()
+
+# چندین فایل با with
+with open("input.txt", "r") as infile, open("output.txt", "w") as outfile:
+    content = infile.read()
+    outfile.write(content.upper())
+
+# with در توابع
+def read_file_safe(filename):
+    try:
+        with open(filename, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return "فایل وجود ندارد!"
+
+print(read_file_safe("test.txt"))
+print(read_file_safe("notexist.txt"))</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <strong>همیشه</strong> از <code dir='ltr'>with</code> برای کار با فایل‌ها استفاده کنید. این کار از نشت منابع جلوگیری می‌کند و کد را تمیزتر می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>copy_file(src, dst)</code> بنویسید که با استفاده از <code dir='ltr'>with</code> محتویات یک فایل را به فایل دیگر کپی کند.
+                </div>
+            </div>
+
+            <!-- ۱۴.۵ -->
+            <div class="sub-section">
+                <h4>۱۴.۵ کار با فایل‌های CSV</h4>
+                <p><strong>CSV (Comma-Separated Values)</strong> یک فرمت ساده برای ذخیره‌سازی داده‌های جدولی است. ماژول <code dir='ltr'>csv</code> ابزارهای کامل برای خواندن و نوشتن CSV ارائه می‌دهد.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import csv
+
+# نوشتن در فایل CSV
+data = [
+    ["name", "age", "city"],
+    ["علی", 25, "تهران"],
+    ["سارا", 30, "اصفهان"],
+    ["رضا", 28, "شیراز"]
+]
+
+with open("users.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerows(data)
+
+# نوشتن با DictWriter
+fieldnames = ["name", "age", "city"]
+data2 = [
+    {"name": "علی", "age": 25, "city": "تهران"},
+    {"name": "سارا", "age": 30, "city": "اصفهان"}
+]
+
+with open("users_dict.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(data2)
+
+# خواندن از فایل CSV
+with open("users.csv", "r", encoding="utf-8") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)
+
+# خواندن با DictReader
+with open("users_dict.csv", "r", encoding="utf-8") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(f"{row['name']} - {row['age']} - {row['city']}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">['name', 'age', 'city']</span><br>
+                    <span class="highlight">➜</span> <span class="result">['علی', '25', 'تهران']</span><br>
+                    <span class="highlight">➜</span> <span class="result">علی - 25 - تهران</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> پارامتر <code dir='ltr'>newline=""</code> در <code dir='ltr'>open()</code> از ایجاد خطوط خالی اضافی در فایل‌های CSV جلوگیری می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک فایل CSV با اطلاعات چند دانش‌آموز (نام، نمره، کلاس) ایجاد کنید. سپس با <code dir='ltr'>csv.reader</code> آن را بخوانید و میانگین نمرات را محاسبه کنید.
+                </div>
+            </div>
+
+            <!-- ۱۴.۶ -->
+            <div class="sub-section">
+                <h4>۱۴.۶ کار با فایل‌های JSON</h4>
+                <p><strong>JSON (JavaScript Object Notation)</strong> یک فرمت استاندارد برای تبادل داده است که در وب بسیار رایج است. ماژول <code dir='ltr'>json</code> برای کار با JSON در پایتون استفاده می‌شود.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import json
+
+# داده‌های نمونه
+data = {
+    "name": "علی",
+    "age": 25,
+    "city": "تهران",
+    "skills": ["Python", "JavaScript", "CSS"],
+    "is_student": False
+}
+
+# نوشتن در فایل JSON
+with open("data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+# خواندن از فایل JSON
+with open("data.json", "r", encoding="utf-8") as f:
+    loaded = json.load(f)
+    print(loaded["name"])      # "علی"
+    print(loaded["skills"])    # ['Python', 'JavaScript', 'CSS']
+
+# تبدیل رشته JSON به دیکشنری
+json_str = '{"name": "سارا", "age": 30}'
+parsed = json.loads(json_str)
+print(parsed["name"])  # "سارا"
+
+# تبدیل دیکشنری به رشته JSON
+dict_data = {"name": "رضا", "age": 28}
+json_str2 = json.dumps(dict_data, ensure_ascii=False)
+print(json_str2)  # {"name": "رضا", "age": 28}
+
+# مدیریت خطاها در JSON
+try:
+    with open("invalid.json", "r") as f:
+        data = json.load(f)
+except json.JSONDecodeError:
+    print("❌ فایل JSON نامعتبر است!")
+except FileNotFoundError:
+    print("❌ فایل وجود ندارد!")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">['Python', 'JavaScript', 'CSS']</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>json.dump()</code> با <code dir='ltr'>indent=2</code> و <code dir='ltr'>ensure_ascii=False</code> برای ذخیره‌سازی خوانا و پشتیبانی از فارسی استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک دیکشنری از اطلاعات یک کتاب (عنوان، نویسنده، سال، قیمت) ایجاد کنید و آن را در یک فایل JSON ذخیره کنید. سپس فایل را بخوانید و اطلاعات را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۱۴.۷ -->
+            <div class="sub-section">
+                <h4>۱۴.۷ مدیریت مسیرها و دایرکتوری‌ها با <code dir='ltr'>os</code> و <code dir='ltr'>pathlib</code></h4>
+                <p>برای کار با مسیرها، دایرکتوری‌ها و فایل‌ها در سیستم‌عامل، از ماژول‌های <code dir='ltr'>os</code> و <code dir='ltr'>pathlib</code> استفاده می‌شود.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>import os
+from pathlib import Path
+
+# os - کار با مسیرها و دایرکتوری‌ها
+print(os.getcwd())                    # مسیر فعلی
+os.mkdir("new_folder")                # ایجاد دایرکتوری
+os.chdir("new_folder")                # تغییر مسیر
+os.rmdir("new_folder")                # حذف دایرکتوری (خالی)
+
+# os.path - کار با مسیرها
+print(os.path.exists("test.txt"))     # وجود فایل
+print(os.path.isfile("test.txt"))     # آیا فایل است؟
+print(os.path.isdir("new_folder"))    # آیا دایرکتوری است؟
+print(os.path.join("folder", "file.txt"))  # folder/file.txt
+print(os.path.basename("/path/to/file.txt"))  # file.txt
+print(os.path.dirname("/path/to/file.txt"))   # /path/to
+
+# pathlib - روش مدرن‌تر (توصیه‌شده)
+path = Path("test.txt")
+print(path.exists())                  # وجود فایل
+print(path.is_file())                 # آیا فایل است؟
+print(path.parent)                    # دایرکتوری والد
+print(path.name)                      # نام فایل
+print(path.stem)                      # نام بدون پسوند
+print(path.suffix)                    # پسوند (.txt)
+
+# ایجاد دایرکتوری با pathlib
+Path("data/images").mkdir(parents=True, exist_ok=True)
+
+# لیست فایل‌های یک دایرکتوری
+for file in Path(".").iterdir():
+    if file.is_file():
+        print(f"📄 {file.name}")
+    else:
+        print(f"📁 {file.name}")
+
+# جستجوی فایل‌ها با الگو (glob)
+for file in Path(".").glob("*.py"):
+    print(file)</code></pre>
+                </div>
+                <div class="file-tree">
+                    <span class="folder">📁 project/</span><br>
+                    &nbsp;&nbsp;├── <span class="file">📄 main.py</span><br>
+                    &nbsp;&nbsp;├── <span class="file">📄 config.json</span><br>
+                    &nbsp;&nbsp;├── <span class="folder">📁 utils/</span><br>
+                    &nbsp;&nbsp;│&nbsp;&nbsp;├── <span class="file">📄 __init__.py</span><br>
+                    &nbsp;&nbsp;│&nbsp;&nbsp;└── <span class="file">📄 helpers.py</span><br>
+                    &nbsp;&nbsp;└── <span class="folder">📁 data/</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">📄 users.csv</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">📄 data.json</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>pathlib</code> روش مدرن‌تر و شی‌گرا برای کار با مسیرهاست و در پروژه‌های جدید توصیه می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از <code dir='ltr'>pathlib</code>، یک دایرکتوری به نام <code dir='ltr'>backup</code> ایجاد کنید. سپس همه‌ی فایل‌های <code dir='ltr'>.txt</code> را از دایرکتوری فعلی به دایرکتوری <code dir='ltr'>backup</code> کپی کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک دفترچه تماس با فایل‌های JSON</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>contact_manager.py</code> ایجاد کنید.</li>
+                <li>از ماژول‌های <code dir='ltr'>json</code> و <code dir='ltr'>os</code> استفاده کنید.</li>
+                <li>یک فایل <code dir='ltr'>contacts.json</code> برای ذخیره‌سازی مخاطبان (لیست دیکشنری‌ها) در نظر بگیرید.</li>
+                <li>توابع زیر را پیاده‌سازی کنید:
+                    <ul>
+                        <li><code dir='ltr'>load_contacts()</code> – بارگذاری مخاطبان از فایل JSON.</li>
+                        <li><code dir='ltr'>save_contacts(contacts)</code> – ذخیره‌سازی مخاطبان در فایل JSON.</li>
+                        <li><code dir='ltr'>add_contact(name, phone, email)</code> – افزودن مخاطب جدید.</li>
+                        <li><code dir='ltr'>search_contact(query)</code> – جستجوی مخاطب بر اساس نام یا شماره.</li>
+                        <li><code dir='ltr'>delete_contact(name)</code> – حذف مخاطب.</li>
+                        <li><code dir='ltr'>list_contacts()</code> – نمایش همه‌ی مخاطبان.</li>
+                    </ul>
+                </li>
+                <li>از <code dir='ltr'>with</code> برای کار با فایل استفاده کنید.</li>
+                <li>مدیریت خطاها (FileNotFoundError، JSONDecodeError) را اضافه کنید.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> ایجاد کنید.</li>
+            </ol>
+            <div class="live-demo" id="file-demo">
+                <h4>📁 شبیه‌ساز کار با فایل</h4>
+                <button onclick="runFileDemo()">▶️ اجرای دمو</button>
+                <div class="result-box" id="fileResult">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه با موارد زیر بسازید:</p>
+            <ul>
+                <li>یک فایل CSV از داده‌های کاربران (نام، ایمیل، سن) ایجاد کنید.</li>
+                <li>با <code dir='ltr'>csv.DictReader</code> داده‌ها را بخوانید.</li>
+                <li>یک فایل JSON با داده‌های مشابه ایجاد کنید و با <code dir='ltr'>json.load()</code> آن را بخوانید.</li>
+                <li>با استفاده از <code dir='ltr'>os</code> و <code dir='ltr'>pathlib</code>، یک گزارش از فایل‌های موجود در دایرکتوری تهیه کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین حالت‌های <code dir='ltr'>'w'</code> و <code dir='ltr'>'a'</code> در <code dir='ltr'>open()</code> چیست؟</li>
+                <li>چرا باید از <code dir='ltr'>with</code> برای کار با فایل‌ها استفاده کنیم؟</li>
+                <li>تفاوت بین <code dir='ltr'>read()</code>، <code dir='ltr'>readline()</code> و <code dir='ltr'>readlines()</code> چیست؟</li>
+                <li>چه تفاوتی بین فایل‌های CSV و JSON وجود دارد؟ هرکدام چه زمانی مناسب هستند؟</li>
+                <li><code dir='ltr'>json.dump()</code> و <code dir='ltr'>json.dumps()</code> چه تفاوتی دارند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام حالت <code dir='ltr'>open()</code> اگر فایل وجود نداشته باشد، خطا می‌دهد؟<br>
+                    أ) <code dir='ltr'>'w'</code>  ب) <code dir='ltr'>'a'</code>  ج) <code dir='ltr'>'r'</code>  د) <code dir='ltr'>'x'</code></li>
+                <li>کدام یک از موارد زیر یک فایل CSV را با <code dir='ltr'>with</code> باز می‌کند؟<br>
+                    أ) <code dir='ltr'>with open("file.csv", "r") as f:</code>  ب) <code dir='ltr'>with csv.open("file.csv", "r") as f:</code>  ج) هر دو  د) هیچکدام</li>
+                <li>کدام متد برای تبدیل یک دیکشنری به رشته JSON استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>json.dump()</code>  ب) <code dir='ltr'>json.load()</code>  ج) <code dir='ltr'>json.dumps()</code>  د) <code dir='ltr'>json.loads()</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک فایل <code dir='ltr'>students.csv</code> با ستون‌های name, grade, subject ایجاد کند.</li>
+                <li>با <code dir='ltr'>csv.writer</code> ۵ دانش‌آموز را در آن بنویسد.</li>
+                <li>با <code dir='ltr'>csv.DictReader</code> فایل را بخواند و میانگین نمرات را محاسبه کند.</li>
+                <li>نتیجه را در یک فایل <code dir='ltr'>summary.json</code> ذخیره کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong><code dir='ltr'>open()</code></strong> برای باز کردن فایل با حالت‌های <code dir='ltr'>'r'</code>، <code dir='ltr'>'w'</code>، <code dir='ltr'>'a'</code>، <code dir='ltr'>'x'</code>.</li>
+                <li>🔹 <strong><code dir='ltr'>with</code></strong> برای مدیریت خودکار فایل‌ها (بستن خودکار).</li>
+                <li>🔹 خواندن: <code dir='ltr'>read()</code>، <code dir='ltr'>readline()</code>، <code dir='ltr'>readlines()</code>.</li>
+                <li>🔹 نوشتن: <code dir='ltr'>write()</code>، <code dir='ltr'>writelines()</code>.</li>
+                <li>🔹 <strong>CSV</strong> با ماژول <code dir='ltr'>csv</code> (reader، writer، DictReader، DictWriter).</li>
+                <li>🔹 <strong>JSON</strong> با ماژول <code dir='ltr'>json</code> (dump، load، dumps، loads).</li>
+                <li>🔹 <strong><code dir='ltr'>os</code></strong> و <strong><code dir='ltr'>pathlib</code></strong> برای مدیریت مسیرها و دایرکتوری‌ها.</li>
+                <li>🔹 همیشه از <strong><code dir='ltr'>with</code></strong> و مدیریت خطاها استفاده کنید.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># باز کردن فایل
+with open("file.txt", "r") as f:
+    content = f.read()
+
+# نوشتن
+with open("file.txt", "w") as f:
+    f.write("Hello")
+
+# CSV
+import csv
+with open("data.csv", "r") as f:
+    reader = csv.reader(f)
+    for row in reader: ...
+
+# JSON
+import json
+with open("data.json", "w") as f:
+    json.dump(data, f)
+
+# مسیرها
+from pathlib import Path
+p = Path("file.txt")
+p.exists()
+p.is_file()
+
+# os
+import os
+os.getcwd()
+os.mkdir("folder")</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>File I/O:</strong> ورودی/خروجی فایل – خواندن و نوشتن در فایل‌ها.</li>
+                <li><strong>Mode (حالت):</strong> نحوه‌ی باز کردن فایل ('r', 'w', 'a', ...).</li>
+                <li><strong>Context Manager:</strong> شیءی که منابع را با <code dir='ltr'>with</code> مدیریت می‌کند.</li>
+                <li><strong>CSV:</strong> فرمت داده‌های جدولی با جداکننده‌ی کاما.</li>
+                <li><strong>JSON:</strong> فرمت استاندارد تبادل داده (JavaScript Object Notation).</li>
+                <li><strong>Serialization (سریال‌سازی):</strong> تبدیل داده به فرمت قابل ذخیره‌سازی.</li>
+                <li><strong>Deserialization (دی‌سریال‌سازی):</strong> تبدیل داده ذخیره‌شده به ساختار داده.</li>
+                <li><strong>Path (مسیر):</strong> آدرس یک فایل یا دایرکتوری در سیستم‌عامل.</li>
+                <li><strong>Directory (دایرکتوری):</strong> پوشه‌ای که فایل‌ها را سازماندهی می‌کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/inputoutput.html" target="_blank" rel="noopener noreferrer">Python: Input and Output</a></li>
+                <li><a href="https://docs.python.org/3/library/csv.html" target="_blank" rel="noopener noreferrer">Python: csv</a></li>
+                <li><a href="https://docs.python.org/3/library/json.html" target="_blank" rel="noopener noreferrer">Python: json</a></li>
+                <li><a href="https://docs.python.org/3/library/pathlib.html" target="_blank" rel="noopener noreferrer">Python: pathlib</a></li>
+                <li><a href="https://realpython.com/python-csv/" target="_blank" rel="noopener noreferrer">Real Python: CSV</a></li>
+                <li><a href="https://realpython.com/python-json/" target="_blank" rel="noopener noreferrer">Real Python: JSON</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> open() و حالت‌های مختلف – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> read, readline, readlines – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> write و writelines – ۱۰ دقیقه</li>
+                <li><strong>گام ۴:</strong> with و Context Managers – ۱۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> فایل‌های CSV – ۲۰ دقیقه</li>
+                <li><strong>گام ۶:</strong> فایل‌های JSON – ۲۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> os و pathlib – ۱۵ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ اگر یک فایل را با <code dir='ltr'>'w'</code> باز کنیم و بعد از آن با <code dir='ltr'>'r'</code> بخوانیم، چه اتفاقی می‌افتد؟</li>
+                <li>❓ چرا <code dir='ltr'>with</code> بهتر از <code dir='ltr'>try/finally</code> برای مدیریت فایل‌هاست؟</li>
+                <li>❓ چه تفاوتی بین ذخیره‌سازی داده‌ها در CSV و JSON وجود دارد؟</li>
+                <li>❓ اگر یک فایل JSON بزرگ داشته باشیم، چگونه می‌توانیم بدون بارگذاری کامل، آن را پردازش کنیم؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>os.path</code> و <code dir='ltr'>pathlib</code> وجود دارد؟ کدام یک بهتر است؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن بستن فایل با <code dir='ltr'>close()</code> (یا استفاده نکردن از <code dir='ltr'>with</code>).<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>with</code> استفاده کنید تا فایل به‌طور خودکار بسته شود.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>'r'</code> برای فایلی که وجود ندارد که باعث <code dir='ltr'>FileNotFoundError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> قبل از باز کردن، وجود فایل را با <code dir='ltr'>os.path.exists()</code> بررسی کنید یا از <code dir='ltr'>try/except</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>newline=""</code> در <code dir='ltr'>open()</code> برای CSV که باعث ایجاد خطوط خالی اضافی می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>newline=""</code> در <code dir='ltr'>open()</code> برای فایل‌های CSV استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>json.load()</code> برای فایلی که JSON معتبر ندارد که باعث <code dir='ltr'>JSONDecodeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>try/except</code> برای مدیریت خطاهای JSON استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از مسیرهای نسبی بدون در نظر گرفتن دایرکتوری فعلی که ممکن است فایل پیدا نشود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>os.path.join()</code> یا <code dir='ltr'>Path()</code> برای ساخت مسیرهای صحیح استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت کتابخانه با فایل‌های JSON</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت کتابخانه با ذخیره‌سازی در فایل JSON بسازید:</p>
+            <ul>
+                <li>داده‌های کتاب‌ها را در یک فایل <code dir='ltr'>library.json</code> ذخیره کنید (لیست دیکشنری‌ها).</li>
+                <li>از ماژول‌های <code dir='ltr'>json</code>، <code dir='ltr'>os</code> و <code dir='ltr'>pathlib</code> استفاده کنید.</li>
+                <li>توابع زیر را پیاده‌سازی کنید:
+                    <ul>
+                        <li><code dir='ltr'>load_books()</code> – بارگذاری کتاب‌ها از فایل JSON.</li>
+                        <li><code dir='ltr'>save_books(books)</code> – ذخیره‌سازی کتاب‌ها در فایل JSON.</li>
+                        <li><code dir='ltr'>add_book(title, author, year, isbn)</code> – افزودن کتاب جدید.</li>
+                        <li><code dir='ltr'>search_books(query)</code> – جستجوی کتاب بر اساس عنوان یا نویسنده.</li>
+                        <li><code dir='ltr'>delete_book(isbn)</code> – حذف کتاب بر اساس ISBN.</li>
+                        <li><code dir='ltr'>list_books()</code> – نمایش همه‌ی کتاب‌ها.</li>
+                        <li><code dir='ltr'>get_stats()</code> – نمایش آمار (تعداد کتاب‌ها، قدیمی‌ترین، جدیدترین).</li>
+                        <li><code dir='ltr'>export_to_csv()</code> – خروجی‌گرفتن از کتاب‌ها به فرمت CSV.</li>
+                    </ul>
+                </li>
+                <li>از <code dir='ltr'>with</code> برای کار با فایل‌ها استفاده کنید.</li>
+                <li>مدیریت خطاها (FileNotFoundError، JSONDecodeError) را اضافه کنید.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> ایجاد کنید.</li>
+                <li>با <code dir='ltr'>pathlib</code>، یک پوشه‌ی <code dir='ltr'>backup</code> ایجاد کنید و هر بار که برنامه بسته می‌شود، یک نسخه پشتیبان از فایل JSON در آن ذخیره کنید.</li>
+                <li>همه‌ی توابع را با Docstring و Type Hints مستند کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 main.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>با استفاده از <code dir='ltr'>csv</code> و <code dir='ltr'>json</code>، یک تابع <code dir='ltr'>import_from_csv()</code> اضافه کنید که کتاب‌ها را از یک فایل CSV وارد کند.</li>
+                    <li>با استفاده از <code dir='ltr'>os</code> و <code dir='ltr'>shutil</code>، یک قابلیت بک‌آپ خودکار با تاریخ در نام فایل اضافه کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>datetime</code>، تاریخ ثبت هر کتاب را ذخیره کنید و امکان فیلتر بر اساس تاریخ را اضافه کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-13/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-15/index.html" class="btn-demo">رفتن به فصل ۱۵ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی کار با فایل‌ها
+        function runFileDemo() {
+            const resultBox = document.getElementById('fileResult');
+
+            // شبیه‌سازی داده‌ها
+            const contacts = [
+                { name: "علی رضایی", phone: "09123456789", email: "ali@example.com" },
+                { name: "سارا محمدی", phone: "09129876543", email: "sara@example.com" },
+                { name: "رضا کریمی", phone: "09127654321", email: "reza@example.com" }
+            ];
+
+            // شبیه‌سازی ذخیره در JSON
+            const jsonData = JSON.stringify(contacts, null, 2);
+
+            // شبیه‌سازی خواندن
+            let loaded = [];
+            try {
+                loaded = JSON.parse(jsonData);
+            } catch (e) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '❌ خطا در خواندن داده‌ها!';
+                return;
+            }
+
+            let html = '<strong>📁 دفترچه تماس (شبیه‌سازی)</strong><br><br>';
+            html += `✅ تعداد مخاطبان: ${loaded.length}<br><br>`;
+
+            loaded.forEach((c, i) => {
+                html += `${i + 1}. 👤 ${c.name} | 📞 ${c.phone} | ✉️ ${c.email}<br>`;
+            });
+
+            html += `<br>📄 داده‌ها در فرمت JSON ذخیره شده‌اند.`;
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

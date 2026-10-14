@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 08: رشته‌ها - بخش اول: مبانی</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 180px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 08: رشته‌ها - بخش اول: مبانی</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-07/index.html">قبلی</a>
+            <a href="../chapter-09/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۸: رشته‌ها - بخش اول: مبانی</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۸: رشته‌ها - بخش اول: مبانی</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی کامل با مبانی پایتون – فصل‌های ۱ تا ۷)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر متغیرها و انواع داده (فصل ۲) – به‌ویژه نوع <code dir='ltr'>str</code></li>
+                <li>✅ آشنایی با لیست‌ها و تاپل‌ها (فصل ۶) – درک مفهوم اندیس و Slicing</li>
+                <li>✅ آشنایی با حلقه‌ها (فصل ۵) – برای پیمایش کاراکترها</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون (REPL)</li>
+            </ul>
+            <p>رشته‌ها یکی از مهم‌ترین انواع داده در پایتون هستند و تقریباً در تمام برنامه‌ها با آنها سروکار خواهید داشت. تسلط بر مبانی این فصل برای ادامه‌ی مسیر ضروری است.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>رشته‌ها</strong> را با استفاده از نقل‌قول‌های تکی ('), دوگانه (") و سه‌گانه (''') ایجاد کنید و تفاوت آنها را توضیح دهید.</li>
+                <li>✔️ از <strong>کاراکترهای ویژه (Escape Characters)</strong> مانند <code dir='ltr'>\n</code> (خط جدید)، <code dir='ltr'>\t</code> (تب) و <code dir='ltr'>\\</code> (بک‌اسلش) برای کنترل فرمت متن استفاده کنید.</li>
+                <li>✔️ با <strong>متدهای اصلی رشته‌ها</strong> مانند <code dir='ltr'>upper()</code>، <code dir='ltr'>lower()</code>، <code dir='ltr'>strip()</code>، <code dir='ltr'>split()</code>، <code dir='ltr'>join()</code> و ... در سناریوهای واقعی کار کنید.</li>
+                <li>✔️ از <strong>Slicing (برش)</strong> با سینتکس <code dir='ltr'>[start:stop:step]</code> برای استخراج زیررشته‌ها و معکوس‌سازی استفاده کنید.</li>
+                <li>✔️ با <strong>f-strings</strong> و قابلیت‌های پیشرفته‌ی آن (فرمت‌دهی اعداد، تراز، محاسبات درون‌خطی) خروجی‌های حرفه‌ای تولید کنید.</li>
+                <li>✔️ از <strong>متدهای جستجو</strong> مانند <code dir='ltr'>find()</code>، <code dir='ltr'>index()</code> و عملگر <code dir='ltr'>in</code> برای یافتن زیررشته‌ها استفاده کنید.</li>
+                <li>✔️ رشته‌ها را با <strong><code dir='ltr'>split()</code></strong> به لیست تبدیل کنید و با <strong><code dir='ltr'>join()</code></strong> لیست را به رشته تبدیل کنید.</li>
+                <li>✔️ مفهوم <strong>غیرقابل تغییر بودن (Immutable)</strong> رشته‌ها را درک کنید و بدانید که هر تغییر، یک رشته‌ی جدید ایجاد می‌کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>رشته‌ها (Strings) یکی از مهم‌ترین و پرکاربردترین انواع داده در پایتون هستند. تقریباً هر برنامه‌ای با متن سر و کار دارد: ورودی کاربر، پیام‌های خطا، نام فایل‌ها، داده‌های وب، پردازش فایل‌های متنی، تحلیل داده‌های متنی و ... . بدون تسلط بر رشته‌ها، نمی‌توانید برنامه‌های کاربردی و مفید بنویسید.</p>
+            <p>در پایتون، رشته‌ها <strong>غیرقابل تغییر (Immutable)</strong> هستند – یعنی پس از ایجاد، نمی‌توانید یک کاراکتر را تغییر دهید، بلکه باید یک رشته‌ی جدید بسازید. این ویژگی مزایای زیادی از نظر امنیت و عملکرد دارد، اما نیاز به درک صحیح نحوه‌ی کار با رشته‌ها را ضروری می‌سازد. پایتون ابزارهای قدرتمندی برای کار با رشته‌ها ارائه می‌دهد: از متدهای تغییر حالت (مثل بزرگ/کوچک کردن) گرفته تا جستجو، برش، تقسیم، ترکیب و فرمت‌دهی پیشرفته.</p>
+            <p>در این فصل با <strong>همه‌ی مبانی رشته‌ها</strong> آشنا می‌شوید: ایجاد رشته، کاراکترهای ویژه، دسترسی به کاراکترها، Slicing، متدهای تغییر حالت، حذف فضاهای اضافی، جستجو، تقسیم و ترکیب، و فرمت‌دهی با f-strings. این مبانی پایه‌ی مباحث پیشرفته‌تر مانند <strong>عبارات منظم (Regular Expressions)</strong> در فصل بعدی هستند. تسلط بر این مبانی، شما را به یک توسعه‌دهنده‌ی کارآمدتر تبدیل می‌کند و زمان برنامه‌نویسی شما را به‌طور قابل‌توجهی کاهش می‌دهد.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۸.۱ -->
+            <div class="sub-section">
+                <h4>۸.۱ ایجاد رشته و کاراکترهای ویژه (Escape Characters)</h4>
+                <p>در پایتون، رشته‌ها با استفاده از <strong>نقل‌قول‌های تکی (<code dir='ltr'>' '</code>)</strong>، <strong>دوگانه (<code dir='ltr'>" "</code>)</strong> یا <strong>سه‌گانه (<code dir='ltr'>''' '''</code> یا <code dir='ltr'>""" """</code>)</strong> ایجاد می‌شوند. انتخاب نوع نقل‌قول به محتوای رشته و نیاز شما بستگی دارد.</p>
+                <ul>
+                    <li><strong>نقل‌قول تکی و دوگانه</strong> تفاوتی ندارند و می‌توانید از هرکدام استفاده کنید. اما اگر رشته شامل نقل‌قول باشد، باید از نوع دیگر استفاده کنید یا از <strong>کاراکترهای ویژه (Escape)</strong> استفاده کنید.</li>
+                    <li><strong>نقل‌قول سه‌گانه</strong> برای رشته‌های چندخطی (multi-line) بسیار مناسب است و می‌تواند شامل خطوط جدید بدون نیاز به <code dir='ltr'>\n</code> باشد.</li>
+                    <li><strong>رشته‌های خام (Raw Strings)</strong> با <code dir='ltr'>r</code> قبل از نقل‌قول ایجاد می‌شوند و کاراکترهای ویژه را نادیده می‌گیرند – برای مسیرهای فایل و عبارات منظم بسیار مفید هستند.</li>
+                </ul>
+                <p><strong>کاراکترهای ویژه (Escape Characters) پرکاربرد:</strong></p>
+                <ul>
+                    <li><code dir='ltr'>\n</code> – خط جدید (newline)</li>
+                    <li><code dir='ltr'>\t</code> – تب (tab)</li>
+                    <li><code dir='ltr'>\\</code> – بک‌اسلش (backslash)</li>
+                    <li><code dir='ltr'>\"</code> یا <code dir='ltr'>\'</code> – نقل‌قول دوگانه یا تکی داخل رشته</li>
+                    <li><code dir='ltr'>\r</code> – بازگشت به ابتدای خط (carriage return)</li>
+                    <li><code dir='ltr'>\b</code> – backspace</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد رشته با نقل‌قول‌های مختلف ==========
+name = 'علی'                  # نقل‌قول تکی
+message = "سلام دنیا!"        # نقل‌قول دوگانه
+multi_line = """این یک رشته
+چند خطی است
+که می‌تواند چندین خط داشته باشد"""  # نقل‌قول سه‌گانه
+
+# ========== کاراکترهای ویژه ==========
+print("سلام\nدنیا")    # \n = خط جدید
+print("نام\t: علی")    # \t = تب (Tab)
+print("مسیر: C:\\Users\\Ali\\Documents")  # \\ = بک‌اسلش
+print("او گفت: \"سلام\"")  # \" = نقل‌قول دوگانه
+print('او گفت: \'سلام\'')  # \' = نقل‌قول تکی
+
+# ========== رشته‌های خام (Raw Strings) ==========
+path = r"C:\Users\Ali\Documents"
+print(path)  # C:\Users\Ali\Documents (کاراکترهای ویژه نادیده گرفته می‌شوند)
+
+# ========== ترکیب نقل‌قول‌ها ==========
+text1 = "او گفت: 'سلام'"   # نقل‌قول دوگانه بیرونی، تکی داخلی
+text2 = 'او گفت: "سلام"'   # نقل‌قول تکی بیرونی، دوگانه داخلی
+print(text1)  # او گفت: 'سلام'
+print(text2)  # او گفت: "سلام"
+
+# ========== رشته‌های چندخطی با \n ==========
+multiline = "خط اول\nخط دوم\nخط سوم"
+print(multiline)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام</span><br>
+                    <span class="highlight">➜</span> <span class="result">دنیا</span><br>
+                    <span class="highlight">➜</span> <span class="result">نام	: علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">او گفت: "سلام"</span><br>
+                    <span class="highlight">➜</span> <span class="result">C:\Users\Ali\Documents</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> رشته‌های خام (با <code dir='ltr'>r</code>) برای مسیرهای فایل در ویندوز که از <code dir='ltr'>\</code> استفاده می‌کنند، بسیار مفید هستند. همچنین در عبارات منظم (Regular Expressions) که از <code dir='ltr'>\</code> زیاد استفاده می‌شود، ضروری هستند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با نام کامل خود (با نقل‌قول دوگانه) ایجاد کنید. سپس یک رشته چندخطی با ۳ خط متن (با نقل‌قول سه‌گانه) و یک رشته خام برای مسیر یک فایل در سیستم‌عامل خود (مثلاً <code dir='ltr'>C:\Users\YourName\file.txt</code>) ایجاد کنید. همه را با <code dir='ltr'>print()</code> نمایش دهید.
+                </div>
+            </div>
+
+            <!-- ۸.۲ -->
+            <div class="sub-section">
+                <h4>۸.۲ دسترسی به کاراکترها و Slicing (برش) در رشته‌ها</h4>
+                <p>در پایتون، رشته‌ها مانند لیست‌ها از <strong>اندیس (Index)</strong> پشتیبانی می‌کنند. می‌توانید با <code dir='ltr'>[]</code> به کاراکترها دسترسی پیدا کنید. همچنین <strong>Slicing (برش)</strong> به شما اجازه می‌دهد بخشی از رشته را استخراج کنید.</p>
+                <ul>
+                    <li>اندیس‌ها از <code dir='ltr'>0</code> شروع می‌شوند (اولین کاراکتر).</li>
+                    <li>اندیس‌های منفی از انتها شمارش می‌شوند (<code dir='ltr'>-1</code> آخرین کاراکتر).</li>
+                    <li>Slicing یک <strong>رشته‌ی جدید</strong> برمی‌گرداند و رشته‌ی اصلی را تغییر نمی‌دهد (چون immutable است).</li>
+                    <li>سینتکس Slicing: <code dir='ltr'>text[start:stop:step]</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>text = "Python Programming is fun"
+
+# ========== دسترسی با اندیس مثبت ==========
+print(text[0])      # 'P' (اولین کاراکتر)
+print(text[6])      # ' ' (فضای خالی – اندیس ۶)
+print(text[7])      # 'P' (هفتمین کاراکتر – حرف P دوم)
+
+# ========== دسترسی با اندیس منفی ==========
+print(text[-1])     # 'n' (آخرین کاراکتر)
+print(text[-6])     # 'm' (ششمین کاراکتر از آخر)
+
+# ========== Slicing (برش) ==========
+print(text[0:6])    # 'Python' (از ۰ تا قبل از ۶)
+print(text[7:18])   # 'Programming' (از ۷ تا قبل از ۱۸)
+print(text[:6])     # 'Python' (از ابتدا تا قبل از ۶)
+print(text[7:])     # 'Programming is fun' (از ۷ تا انتها)
+print(text[::2])    # 'Pto rgamn' (گام ۲ – کاراکترهای زوج)
+print(text[::-1])   # 'nuf si gnimmargorP nohtyP' (معکوس کامل)
+
+# ========== طول رشته ==========
+print(len(text))    # 27
+
+# ========== رشته‌ها غیرقابل تغییر هستند ==========
+# text[0] = 'p'  # ❌ TypeError: 'str' object does not support item assignment
+
+# ========== استخراج کلمات با Slicing ==========
+word = "Programming"
+print(word[0:4])   # 'Prog'
+print(word[-4:])   # 'ming' (۴ کاراکتر آخر)
+print(word[3:7])   # 'gram'</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">P</span><br>
+                    <span class="highlight">➜</span> <span class="result">Python</span><br>
+                    <span class="highlight">➜</span> <span class="result">n</span><br>
+                    <span class="highlight">➜</span> <span class="result">27</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> رشته‌ها در پایتون <strong>غیرقابل تغییر (Immutable)</strong> هستند. نمی‌توانید یک کاراکتر را مستقیماً تغییر دهید. برای "تغییر" یک رشته، باید یک رشته‌ی جدید با استفاده از Slicing، <code dir='ltr'>replace()</code> یا ترکیب رشته‌ها ایجاد کنید. این ویژگی باعث می‌شود رشته‌ها در حافظه امن‌تر و کارآمدتر باشند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته از نام و نام‌خانوادگی خود ایجاد کنید (مثلاً "علی رضایی"). با استفاده از اندیس‌ها و Slicing:
+                    <ul>
+                        <li>اولین، آخرین و سومین کاراکتر را با اندیس‌های مثبت و منفی استخراج کنید.</li>
+                        <li>۳ کاراکتر اول و ۳ کاراکتر آخر را با Slicing استخراج کنید.</li>
+                        <li>رشته را به‌صورت معکوس (از آخر به اول) با Slicing چاپ کنید.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۸.۳ -->
+            <div class="sub-section">
+                <h4>۸.۳ متدهای تغییر حالت (Case Methods)</h4>
+                <p>این متدها رشته را به حالت‌های مختلف تبدیل می‌کنند و <strong>رشته‌ای جدید</strong> برمی‌گردانند (رشته اصلی تغییر نمی‌کند). این متدها برای یکسان‌سازی متن، اعتبارسنجی و فرمت‌دهی بسیار مفید هستند.</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">🔠</span>
+                        <span class="name">upper()</span>
+                        <span class="desc">تبدیل همه‌ی حروف به بزرگ</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔡</span>
+                        <span class="name">lower()</span>
+                        <span class="desc">تبدیل همه‌ی حروف به کوچک</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📝</span>
+                        <span class="name">capitalize()</span>
+                        <span class="desc">بزرگ کردن حرف اول، بقیه کوچک</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">title()</span>
+                        <span class="desc">بزرگ کردن حرف اول هر کلمه</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔄</span>
+                        <span class="name">swapcase()</span>
+                        <span class="desc">برعکس کردن حالت (بزرگ→کوچک و برعکس)</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>text = "hello world"
+
+# ========== upper() – تبدیل به بزرگ ==========
+print(text.upper())      # "HELLO WORLD"
+
+# ========== lower() – تبدیل به کوچک ==========
+print(text.lower())      # "hello world"
+
+# ========== capitalize() – اولین حرف بزرگ ==========
+print(text.capitalize()) # "Hello world"
+
+# ========== title() – بزرگ هر کلمه ==========
+print(text.title())      # "Hello World"
+
+# ========== swapcase() – برعکس حالت ==========
+print(text.swapcase())   # "HELLO WORLD"
+print("HELLO".swapcase()) # "hello"
+
+# ========== بررسی حالت ==========
+print(text.islower())    # True (همه کوچک)
+print(text.isupper())    # False (همه بزرگ نیستند)
+print("HELLO".isupper()) # True
+
+# ========== کاربرد در اعتبارسنجی و یکسان‌سازی ==========
+user_input = "  Ali  "
+clean = user_input.strip().lower()
+print(clean)  # "ali"
+
+# ========== مقایسه‌ی بدون حساسیت به بزرگی/کوچکی ==========
+username = "Admin"
+if username.lower() == "admin":
+    print("✅ کاربر معتبر است")
+
+# ========== کاربرد در فرمت‌دهی نام‌ها ==========
+name = "john doe"
+formatted = name.title()
+print(formatted)  # "John Doe"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">HELLO WORLD</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hello world</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با ترکیبی از حروف بزرگ و کوچک (مثلاً "PyThOn Is FuN") ایجاد کنید. با استفاده از <code dir='ltr'>upper()</code>، <code dir='ltr'>lower()</code>، <code dir='ltr'>capitalize()</code> و <code dir='ltr'>title()</code> آن را به حالت‌های مختلف تبدیل کنید و نتایج را چاپ کنید. همچنین با <code dir='ltr'>swapcase()</code> حالت آن را معکوس کنید.
+                </div>
+            </div>
+
+            <!-- ۸.۴ -->
+            <div class="sub-section">
+                <h4>۸.۴ متدهای حذف فضاهای خالی (Strip Methods)</h4>
+                <p>این متدها فضاهای خالی (یا کاراکترهای مشخص) را از ابتدا و/یا انتهای رشته حذف می‌کنند. برای تمیز کردن ورودی کاربر و پردازش داده‌های متنی بسیار کاربردی هستند.</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">✂️</span>
+                        <span class="name">strip()</span>
+                        <span class="desc">حذف فضا از دو طرف</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">✂️</span>
+                        <span class="name">lstrip()</span>
+                        <span class="desc">حذف فضا از چپ (ابتدا)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">✂️</span>
+                        <span class="name">rstrip()</span>
+                        <span class="desc">حذف فضا از راست (انتهای)</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>text = "  Hello World  "
+
+# ========== strip() – حذف از دو طرف ==========
+print(text.strip())       # "Hello World"
+
+# ========== lstrip() – حذف از چپ ==========
+print(text.lstrip())      # "Hello World  "
+
+# ========== rstrip() – حذف از راست ==========
+print(text.rstrip())      # "  Hello World"
+
+# ========== حذف کاراکترهای خاص ==========
+text2 = "---Hello---"
+print(text2.strip('-'))   # "Hello"
+print(text2.lstrip('-'))  # "Hello---"
+print(text2.rstrip('-'))  # "---Hello"
+
+# ========== حذف چند کاراکتر مختلف ==========
+text3 = "##Hello##"
+print(text3.strip("#"))   # "Hello"
+print(text3.strip("#H"))  # "ello" (هر دو کاراکتر # و H حذف می‌شوند)
+
+# ========== کاربرد در پردازش ورودی کاربر ==========
+user_input = "  ali  "
+clean = user_input.strip()
+print(clean)  # "ali"
+
+# ========== کاربرد در خواندن فایل ==========
+line = "data,value,10\n"
+clean_line = line.strip()  # حذف \n و فضاها
+print(clean_line)  # "data,value,10"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Hello World</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hello</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه قبل از ذخیره‌سازی یا اعتبارسنجی ورودی کاربر، از <code dir='ltr'>strip()</code> برای حذف فضاهای اضافی ابتدا و انتها استفاده کنید. این کار از بسیاری از خطاهای ناخواسته (مانند تطابق نام با فاصله) جلوگیری می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با فضاهای اضافی در ابتدا و انتها و همچنین کاراکترهای <code dir='ltr'>*</code> در دو طرف (مثلاً <code dir='ltr'>"  ***Hello***  "</code>) ایجاد کنید. با <code dir='ltr'>strip()</code> فضاها را حذف کنید، سپس با <code dir='ltr'>lstrip()</code> و <code dir='ltr'>rstrip()</code> کاراکترهای <code dir='ltr'>*</code> را حذف کنید. هر مرحله را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۸.۵ -->
+            <div class="sub-section">
+                <h4>۸.۵ جستجو و بررسی در رشته‌ها</h4>
+                <p>متدهای جستجو برای پیدا کردن زیررشته‌ها، بررسی شروع و پایان رشته و اعتبارسنجی محتوا استفاده می‌شوند. این متدها در تحلیل متن، پردازش داده و برنامه‌نویسی روزمره بسیار کاربرد دارند.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>find(sub)</code></strong>: اندیس اولین occurrence را برمی‌گرداند، اگر نباشد <code dir='ltr'>-1</code>.</li>
+                    <li><strong><code dir='ltr'>index(sub)</code></strong>: مشابه <code dir='ltr'>find()</code> اما اگر نباشد <code dir='ltr'>ValueError</code> می‌دهد.</li>
+                    <li><strong><code dir='ltr'>count(sub)</code></strong>: تعداد occurrenceهای یک زیررشته را برمی‌گرداند.</li>
+                    <li><strong><code dir='ltr'>startswith(prefix)</code></strong>: بررسی می‌کند که رشته با <code dir='ltr'>prefix</code> شروع شود.</li>
+                    <li><strong><code dir='ltr'>endswith(suffix)</code></strong>: بررسی می‌کند که رشته با <code dir='ltr'>suffix</code> تمام شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>text = "Python Programming is fun"
+
+# ========== find() – پیدا کردن اندیس (ایمن) ==========
+print(text.find("Programming"))   # 7
+print(text.find("Java"))          # -1 (پیدا نشد)
+
+# ========== index() – مشابه find اما با خطا ==========
+print(text.index("fun"))          # 24
+# print(text.index("Java"))       # ❌ ValueError: substring not found
+
+# ========== in – بررسی وجود زیررشته (ساده‌ترین) ==========
+print("Python" in text)           # True
+print("Java" in text)             # False
+
+# ========== startswith() و endswith() ==========
+print(text.startswith("Python"))  # True
+print(text.startswith("Java"))    # False
+print(text.endswith("fun"))       # True
+print(text.endswith("!"))         # False
+
+# ========== count() – تعداد تکرار ==========
+print(text.count("p"))            # 2 (یک بار در Python و یک بار در Programming)
+print(text.count("is"))           # 1
+
+# ========== متدهای بررسی نوع کاراکترها ==========
+# isalnum() – آیا فقط حروف و اعداد است؟ (بدون فاصله و کاراکتر خاص)
+print("Hello123".isalnum())       # True
+print("Hello 123".isalnum())      # False (فضا دارد)
+
+# isalpha() – آیا فقط حروف است؟
+print("Hello".isalpha())          # True
+print("Hello123".isalpha())       # False (عدد دارد)
+
+# isdigit() – آیا فقط اعداد است؟
+print("123".isdigit())            # True
+print("123a".isdigit())           # False
+
+# isspace() – آیا فقط فضاهای خالی است؟
+print("   ".isspace())            # True
+print("  a ".isspace())           # False
+
+# ========== کاربرد عملی: اعتبارسنجی ایمیل ساده ==========
+email = "user@example.com"
+if "@" in email and "." in email:
+    print("✅ ایمیل معتبر است")
+else:
+    print("❌ ایمیل نامعتبر است")
+
+# ========== کاربرد عملی: بررسی پسوند فایل ==========
+filename = "document.pdf"
+if filename.endswith(".pdf"):
+    print("📄 این یک فایل PDF است")
+elif filename.endswith(".txt"):
+    print("📝 این یک فایل متنی است")
+else:
+    print("📁 نوع فایل ناشناخته")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">7</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> <code dir='ltr'>find()</code> و <code dir='ltr'>index()</code> هر دو اندیس اولین occurrence را برمی‌گردانند، اما <code dir='ltr'>find()</code> به‌جای خطا، <code dir='ltr'>-1</code> برمی‌گرداند که برای کدنویسی ایمن‌تر است. در شرایطی که مطمئن هستید زیررشته وجود دارد، از <code dir='ltr'>index()</code> استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته مانند "The quick brown fox jumps over the lazy dog" ایجاد کنید. با <code dir='ltr'>find()</code> موقعیت کلمه "fox" را پیدا کنید. با <code dir='ltr'>in</code> بررسی کنید که آیا "lazy" در رشته وجود دارد. با <code dir='ltr'>startswith()</code> و <code dir='ltr'>endswith()</code> شروع و پایان رشته را بررسی کنید. همچنین تعداد تکرار حرف "o" را با <code dir='ltr'>count()</code> محاسبه کنید.
+                </div>
+            </div>
+
+            <!-- ۸.۶ -->
+            <div class="sub-section">
+                <h4>۸.۶ تقسیم و ترکیب رشته‌ها (<code dir='ltr'>split()</code> و <code dir='ltr'>join()</code>)</h4>
+                <p>این دو متد از پرکاربردترین ابزارهای پردازش متن در پایتون هستند:</p>
+                <ul>
+                    <li><strong><code dir='ltr'>split(separator, maxsplit)</code></strong>: یک رشته را بر اساس یک جداکننده به <strong>لیست</strong> تقسیم می‌کند. با <code dir='ltr'>maxsplit</code> می‌توانید تعداد تقسیم‌ها را محدود کنید.</li>
+                    <li><strong><code dir='ltr'>join(iterable)</code></strong>: یک لیست (یا هر iterable) را با استفاده از یک رشته‌ی جداکننده به <strong>رشته</strong> ترکیب می‌کند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== split() – تقسیم رشته به لیست ==========
+text = "apple,banana,orange,grape"
+fruits = text.split(",")
+print(fruits)  # ['apple', 'banana', 'orange', 'grape']
+
+# ========== split با پیش‌فرض (فضا) ==========
+words = "Hello World Python".split()
+print(words)  # ['Hello', 'World', 'Python']
+
+# ========== split با maxsplit (تعداد تقسیم‌ها) ==========
+data = "one,two,three,four".split(",", 2)
+print(data)   # ['one', 'two', 'three,four']
+
+# ========== split روی خطوط (با \n) ==========
+lines = "خط اول\nخط دوم\nخط سوم".split("\n")
+print(lines)  # ['خط اول', 'خط دوم', 'خط سوم']
+
+# ========== join() – ترکیب لیست به رشته ==========
+fruits = ['apple', 'banana', 'orange']
+result = ", ".join(fruits)
+print(result)  # "apple, banana, orange"
+
+# ========== join با کاراکترهای دیگر ==========
+print(" - ".join(fruits))  # "apple - banana - orange"
+print("".join(fruits))     # "applebananaorange"
+
+# ========== تبدیل رشته به لیست کاراکترها ==========
+chars = list("Python")
+print(chars)  # ['P', 'y', 't', 'h', 'o', 'n']
+
+# ========== تبدیل لیست کاراکترها به رشته ==========
+word = "".join(chars)
+print(word)   # "Python"
+
+# ========== کاربرد عملی: پردازش داده‌های CSV ==========
+csv_line = "name,age,city"
+fields = csv_line.split(",")
+print(fields)  # ['name', 'age', 'city']
+
+# ========== کاربرد عملی: ساخت مسیر با join ==========
+parts = ["home", "user", "documents", "file.txt"]
+path = "/".join(parts)
+print(path)   # "home/user/documents/file.txt"
+
+# ========== split بدون آرگومان (فضاهای متعدد را مدیریت می‌کند) ==========
+text2 = "Hello    World   Python"
+words2 = text2.split()  # فضاهای متعدد را یک فضا در نظر می‌گیرد
+print(words2)  # ['Hello', 'World', 'Python']</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">['apple', 'banana', 'orange', 'grape']</span><br>
+                    <span class="highlight">➜</span> <span class="result">apple, banana, orange</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>split()</code> و <code dir='ltr'>join()</code> برای پردازش داده‌های متنی (مانند CSV، لاگ‌ها، داده‌های API) بسیار مفید هستند. برای تبدیل لیست به رشته، <code dir='ltr'>join()</code> کارآمدترین روش است و از حلقه‌های دستی سریع‌تر عمل می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته با چند کلمه (با فاصله) ایجاد کنید (مثلاً "python is a powerful language"). با <code dir='ltr'>split()</code> آن را به لیست کلمات تبدیل کنید. سپس با <code dir='ltr'>join()</code> و جداکننده‌ی " - " (خط تیره با فاصله) دوباره به رشته برگردانید. همچنین یک رشته‌ی CSV مانند "name,age,city,country" ایجاد کنید و با <code dir='ltr'>split(",")</code> آن را به لیست تبدیل کنید.
+                </div>
+            </div>
+
+            <!-- ۸.۷ -->
+            <div class="sub-section">
+                <h4>۸.۷ f-strings و فرمت‌دهی پیشرفته</h4>
+                <p><strong>f-strings</strong> (یا "رشته‌های f") بهترین، مدرن‌ترین و سریع‌ترین روش برای فرمت‌دهی رشته‌ها در پایتون است (Python 3.6+). با قرار دادن حرف <code dir='ltr'>f</code> قبل از رشته و استفاده از <code dir='ltr'>{}</code> برای درج متغیرها و عبارات، می‌توانید خروجی‌های زیبا، خوانا و حرفه‌ای تولید کنید.</p>
+                <p><strong>قابلیت‌های کلیدی f-strings:</strong></p>
+                <ul>
+                    <li>درج مستقیم متغیرها با <code dir='ltr'>{variable}</code></li>
+                    <li>اجرای عبارات و محاسبات درون <code dir='ltr'>{}</code></li>
+                    <li>فرمت‌دهی اعداد (تعداد ارقام اعشار، جداکننده هزارگان، تراز چپ/راست)</li>
+                    <li>فراخوانی توابع درون <code dir='ltr'>{}</code></li>
+                    <li>امکان استفاده از <code dir='ltr'>!</code> و <code dir='ltr'>:</code> برای فرمت‌دهی پیشرفته</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>name = "علی"
+age = 25
+height = 1.78
+score = 95.5
+
+# ========== f-string ساده ==========
+print(f"نام: {name}، سن: {age}")           # "نام: علی، سن: 25"
+
+# ========== محاسبه درون f-string ==========
+print(f"سال آینده {age + 1} ساله می‌شوید")  # "سال آینده 26 ساله می‌شوید"
+print(f"سن دو برابر: {age * 2}")           # "سن دو برابر: 50"
+
+# ========== فرمت‌دهی اعداد اعشاری ==========
+pi = 3.14159265
+print(f"pi با 2 رقم اعشار: {pi:.2f}")    # "pi با 2 رقم اعشار: 3.14"
+print(f"pi با 4 رقم اعشار: {pi:.4f}")    # "pi با 4 رقم اعشار: 3.1416"
+print(f"pi با 8 رقم اعشار: {pi:.8f}")    # "pi با 8 رقم اعشار: 3.14159265"
+
+# ========== جداکننده هزارگان (کاما) ==========
+price = 19900000
+print(f"قیمت: {price:,} تومان")           # "قیمت: 19,900,000 تومان"
+
+# ========== تراز چپ/راست و پر کردن با فاصله ==========
+print(f"امتیاز: {score:>10}")              # "امتیاز:       95.5" (راست‌چین با ۱۰ فاصله)
+print(f"امتیاز: {score:<10}")              # "امتیاز: 95.5      " (چپ‌چین با ۱۰ فاصله)
+print(f"امتیاز: {score:^10}")              # "امتیاز:   95.5   " (وسط‌چین)
+
+# ========== ترکیب چند قابلیت ==========
+discount = 0.15
+final_price = price * (1 - discount)
+print(f"قیمت با {discount * 100:.0f}% تخفیف: {final_price:,.0f} تومان")
+# خروجی: "قیمت با 15% تخفیف: 16,915,000 تومان"
+
+# ========== فراخوانی توابع درون f-string ==========
+print(f"نام با حروف بزرگ: {name.upper()}")  # "نام با حروف بزرگ: علی"
+
+# ========== استفاده از دیکشنری در f-string ==========
+person = {"name": "سارا", "age": 28}
+print(f"نام: {person['name']}, سن: {person['age']}")
+
+# ========== f-string با عبارات شرطی (Ternary) ==========
+age = 20
+print(f"{'بزرگسال' if age >= 18 else 'نوجوان'}")  # "بزرگسال"
+
+# ========== مقایسه با روش‌های قدیمی ==========
+# روش .format() (قدیمی‌تر)
+print("نام: {}, سن: {}".format(name, age))
+# روش % (قدیمی‌ترین)
+print("نام: %s, سن: %d" % (name, age))</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">نام: علی، سن: 25</span><br>
+                    <span class="highlight">➜</span> <span class="result">سال آینده 26 ساله می‌شوید</span><br>
+                    <span class="highlight">➜</span> <span class="result">pi با 2 رقم اعشار: 3.14</span><br>
+                    <span class="highlight">➜</span> <span class="result">قیمت با 15% تخفیف: 16,915,000 تومان</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> f-strings از Python 3.6 به بعد در دسترس هستند و <strong>توصیه‌شده‌ترین</strong> روش برای فرمت‌دهی رشته‌ها محسوب می‌شوند. اگر از نسخه‌های قدیمی‌تر پایتون استفاده می‌کنید (قبل از 3.6)، از متد <code dir='ltr'>.format()</code> استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از f-strings، یک کارت شناسایی برای یک کاربر ایجاد کنید که شامل نام، سن، شغل، حقوق ماهانه (با فرمت هزارگان و ۲ رقم اعشار) و وضعیت تأهل باشد. همه‌ی اطلاعات را با یک پیام خوش‌آمدگویی ترکیب کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک تحلیل‌گر متن کامل با رشته‌ها</h4>
+            <p>در این کارگاه، یک برنامه‌ی خط فرمان برای تحلیل متن‌های طولانی می‌سازیم که از تمام متدهای رشته‌ای این فصل استفاده می‌کند. این برنامه به کاربر اجازه می‌دهد یک متن وارد کند و آمارهای مختلفی از آن دریافت کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>text_analyzer.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>دریافت ورودی:</strong> از کاربر یک متن طولانی (چند جمله یا پاراگراف) با <code dir='ltr'>input()</code> دریافت کنید. (می‌توانید از <code dir='ltr'>"""</code> برای ورودی چندخطی استفاده کنید).</li>
+                <li><strong>پاکسازی متن:</strong> با <code dir='ltr'>strip()</code> فضاهای اضافی ابتدا و انتها را حذف کنید.</li>
+                <li><strong>تحلیل‌های پایه:</strong>
+                    <ul>
+                        <li>تعداد کل کاراکترها: <code dir='ltr'>len(text)</code></li>
+                        <li>تعداد کاراکترها بدون فاصله: <code dir='ltr'>len(text.replace(" ", ""))</code> یا با <code dir='ltr'>re</code></li>
+                        <li>تعداد کلمات: <code dir='ltr'>len(text.split())</code></li>
+                        <li>تعداد جملات: <code dir='ltr'>len(text.split('.')) - 1</code> (با فرض نقطه پایان جمله)</li>
+                    </ul>
+                </li>
+                <li><strong>تحلیل کاراکترها:</strong>
+                    <ul>
+                        <li>تعداد حروف بزرگ: با حلقه و <code dir='ltr'>isupper()</code></li>
+                        <li>تعداد حروف کوچک: با حلقه و <code dir='ltr'>islower()</code></li>
+                        <li>تعداد اعداد: با حلقه و <code dir='ltr'>isdigit()</code></li>
+                        <li>تعداد کاراکترهای خاص (غیر از حروف، اعداد و فاصله)</li>
+                    </ul>
+                </li>
+                <li><strong>تحلیل کلمات:</strong>
+                    <ul>
+                        <li>متداول‌ترین کلمه: با استفاده از دیکشنری و <code dir='ltr'>split()</code></li>
+                        <li>طولانی‌ترین و کوتاه‌ترین کلمه: با حلقه روی کلمات</li>
+                    </ul>
+                </li>
+                <li><strong>جستجو و جایگزینی:</strong>
+                    <ul>
+                        <li>با <code dir='ltr'>find()</code> موقعیت یک کلمه‌ی خاص را پیدا کنید.</li>
+                        <li>با <code dir='ltr'>replace()</code> یک کلمه را با کلمه‌ی دیگر جایگزین کنید (با تأیید کاربر).</li>
+                    </ul>
+                </li>
+                <li><strong>گزارش نهایی با f-strings:</strong> همه‌ی آمارها را به‌صورت یک گزارش کامل و خوانا با f-strings نمایش دهید.</li>
+                <li><strong>ذخیره‌سازی (اختیاری):</strong> گزارش را در یک فایل متنی ذخیره کنید.</li>
+            </ol>
+            <div class="live-demo" id="string-demo">
+                <h4>📊 تحلیل‌گر متن</h4>
+                <input type="text" id="textInput" placeholder="یک متن وارد کنید..." style="width:80%;">
+                <button onclick="analyzeText()">🔍 تحلیل متن</button>
+                <div class="result-box" id="stringResult">منتظر ورودی...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک رشته از کاربر دریافت کند.</li>
+                <li>با <code dir='ltr'>strip()</code> فضاهای اضافی را حذف کند.</li>
+                <li>با <code dir='ltr'>split()</code> کلمات را استخراج کند و تعداد آنها را چاپ کند.</li>
+                <li>با <code dir='ltr'>join()</code> کلمات را با یک جداکننده‌ی مشخص (مثل <code dir='ltr'>' | '</code>) ترکیب کند و نمایش دهد.</li>
+                <li>با <code dir='ltr'>upper()</code> و <code dir='ltr'>lower()</code> حالت‌های مختلف را نمایش دهد.</li>
+                <li>با <code dir='ltr'>find()</code> یک کلمه‌ی خاص را جستجو کند و موقعیت آن را چاپ کند.</li>
+                <li>همه‌ی نتایج را با f-strings نمایش دهد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>چرا رشته‌ها در پایتون غیرقابل تغییر (Immutable) هستند؟ این ویژگی چه مزایا و معایبی دارد؟</li>
+                <li>تفاوت بین <code dir='ltr'>find()</code> و <code dir='ltr'>index()</code> چیست؟ در چه شرایطی از هرکدام استفاده می‌کنیم؟</li>
+                <li><code dir='ltr'>split()</code> و <code dir='ltr'>join()</code> چه تفاوتی دارند و هرکدام چه کاربردی در پردازش داده‌های متنی دارند؟</li>
+                <li>f-strings چه مزیت‌هایی نسبت به روش‌های قدیمی فرمت‌دهی (<code dir='ltr'>.format()</code> و <code dir='ltr'>%</code>) دارند؟</li>
+                <li>تفاوت بین <code dir='ltr'>strip()</code>، <code dir='ltr'>lstrip()</code> و <code dir='ltr'>rstrip()</code> چیست و چه زمانی از هرکدام استفاده می‌کنیم؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>خروجی <code dir='ltr'>"Hello World".lower()</code> چیست؟<br>
+                    أ) "HELLO WORLD"  ب) "hello world"  ج) "Hello World"  د) "hello World"</li>
+                <li>کدام یک از موارد زیر یک رشته را به لیست تبدیل می‌کند؟<br>
+                    أ) <code dir='ltr'>join()</code>  ب) <code dir='ltr'>split()</code>  ج) <code dir='ltr'>strip()</code>  د) <code dir='ltr'>find()</code></li>
+                <li>خروجی <code dir='ltr'>"Python"[::-1]</code> چیست؟<br>
+                    أ) "Python"  ب) "nohtyP"  ج) "Pytho"  د) "hon"</li>
+                <li>کدام یک از موارد زیر یک کاراکتر ویژه برای خط جدید است؟<br>
+                    أ) <code dir='ltr'>\t</code>  ب) <code dir='ltr'>\n</code>  ج) <code dir='ltr'>\\</code>  د) <code dir='ltr'>\"</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک جمله از کاربر دریافت کند.</li>
+                <li>تعداد کلمات را با <code dir='ltr'>split()</code> محاسبه کند.</li>
+                <li>هر کلمه را با <code dir='ltr'>capitalize()</code> به حالت عنوان (حرف اول بزرگ) تبدیل کند.</li>
+                <li>با <code dir='ltr'>join()</code> کلمات را با یک جداکننده‌ی دلخواه (مثلاً <code dir='ltr'>" • "</code>) ترکیب کند و نمایش دهد.</li>
+                <li>با <code dir='ltr'>find()</code> یک کلمه‌ی خاص (مثلاً "python") را جستجو کند و اگر وجود داشت، پیام "پیدا شد" و موقعیت آن را نمایش دهد.</li>
+                <li>همه‌ی نتایج را با f-strings در یک گزارش نمایش دهد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>رشته‌ها</strong> با ' ', " " یا ''' ''' ایجاد می‌شوند و <strong>غیرقابل تغییر (Immutable)</strong> هستند.</li>
+                <li>🔹 <strong>کاراکترهای ویژه</strong> مانند <code dir='ltr'>\n</code> (خط جدید)، <code dir='ltr'>\t</code> (تب) و <code dir='ltr'>\\</code> (بک‌اسلش) برای کنترل فرمت متن استفاده می‌شوند.</li>
+                <li>🔹 <strong>Slicing</strong> با <code dir='ltr'>[start:stop:step]</code> بخش‌هایی از رشته را استخراج می‌کند و یک رشته‌ی جدید برمی‌گرداند.</li>
+                <li>🔹 متدهای تغییر حالت: <code dir='ltr'>upper()</code>، <code dir='ltr'>lower()</code>، <code dir='ltr'>capitalize()</code>، <code dir='ltr'>title()</code>، <code dir='ltr'>swapcase()</code>.</li>
+                <li>🔹 متدهای حذف فضا: <code dir='ltr'>strip()</code> (دو طرف)، <code dir='ltr'>lstrip()</code> (چپ)، <code dir='ltr'>rstrip()</code> (راست).</li>
+                <li>🔹 جستجو با <code dir='ltr'>find()</code> (ایمن، برگرداندن -1)، <code dir='ltr'>index()</code> (خطا در صورت نبود) و <code dir='ltr'>in</code> (ساده‌ترین).</li>
+                <li>🔹 <strong><code dir='ltr'>split()</code></strong> رشته را به لیست تقسیم می‌کند و <strong><code dir='ltr'>join()</code></strong> لیست را به رشته ترکیب می‌کند.</li>
+                <li>🔹 <strong>f-strings</strong> بهترین و مدرن‌ترین روش برای فرمت‌دهی رشته‌ها با قابلیت‌های پیشرفته (فرمت اعداد، تراز، محاسبات درون‌خطی).</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir='ltr'><code dir='ltr'># ========== ایجاد رشته ==========
+name = "علی"
+text = """چند خطی"""
+
+# ========== دسترسی و برش ==========
+text[0]          # اولین کاراکتر
+text[2:5]        # برش
+text[::-1]       # معکوس
+
+# ========== متدهای تغییر حالت ==========
+text.upper()
+text.lower()
+text.capitalize()
+text.title()
+text.swapcase()
+
+# ========== حذف فضاها ==========
+text.strip()
+text.lstrip()
+text.rstrip()
+
+# ========== جستجو ==========
+text.find("sub")
+"sub" in text
+text.startswith("Hello")
+text.endswith("!")
+
+# ========== تقسیم و ترکیب ==========
+text.split(",")
+", ".join(list)
+
+# ========== f-string ==========
+f"نام: {name}, سن: {age}"</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>String (رشته):</strong> دنباله‌ای از کاراکترها که در پایتون با '' یا "" مشخص می‌شود.</li>
+                <li><strong>Index (اندیس):</strong> شماره‌ی موقعیت یک کاراکتر در رشته (از ۰ شروع می‌شود).</li>
+                <li><strong>Slicing (برش):</strong> استخراج بخشی از رشته با استفاده از <code dir='ltr'>[start:stop:step]</code>.</li>
+                <li><strong>Immutable (غیرقابل تغییر):</strong> ویژگی رشته‌ها که پس از ایجاد قابل تغییر نیستند و هر "تغییر" یک رشته‌ی جدید ایجاد می‌کند.</li>
+                <li><strong>Escape Character (کاراکتر ویژه):</strong> کاراکتری که با <code dir='ltr'>\</code> شروع می‌شود و معنای خاصی دارد (مانند <code dir='ltr'>\n</code> برای خط جدید).</li>
+                <li><strong>f-string:</strong> روش مدرن فرمت‌دهی رشته با <code dir='ltr'>f"..."</code> که از Python 3.6 به بعد در دسترس است.</li>
+                <li><strong>split():</strong> متد تقسیم رشته به لیست بر اساس یک جداکننده.</li>
+                <li><strong>join():</strong> متد ترکیب لیست (یا iterable) به رشته با یک جداکننده.</li>
+                <li><strong>strip():</strong> متد حذف فضاهای خالی (یا کاراکترهای مشخص) از ابتدا و انتهای رشته.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str" target="_blank" rel="noopener noreferrer">Python: String Methods (مرجع رسمی)</a></li>
+                <li><a href="https://realpython.com/python-strings/" target="_blank" rel="noopener noreferrer">Real Python: Strings</a></li>
+                <li><a href="https://realpython.com/python-f-strings/" target="_blank" rel="noopener noreferrer">Real Python: f-strings</a></li>
+                <li><a href="https://www.w3schools.com/python/python_strings.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Strings</a></li>
+                <li><a href="https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals" target="_blank" rel="noopener noreferrer">Python: String Literals</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> ایجاد رشته و کاراکترهای ویژه – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> دسترسی به کاراکترها و Slicing – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> متدهای تغییر حالت – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> متدهای حذف فضا – ۱۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> جستجو و بررسی – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> split و join – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> f-strings و فرمت‌دهی – ۱۵ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۳۰ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا رشته‌ها غیرقابل تغییر هستند و این ویژگی چه مزایایی در برنامه‌نویسی هم‌روند (Concurrent) دارد؟</li>
+                <li>❓ چه زمانی باید از <code dir='ltr'>find()</code> و چه زمانی از <code dir='ltr'>index()</code> استفاده کنیم؟ کدام یک ایمن‌تر است؟</li>
+                <li>❓ چگونه می‌توان با <code dir='ltr'>split()</code> و <code dir='ltr'>join()</code> داده‌های CSV را پردازش کرد؟ اگر داده‌ها شامل کاما باشند، چه باید کرد؟</li>
+                <li>❓ f-strings چه مزیتی نسبت به <code dir='ltr'>.format()</code> دارد؟ آیا f-strings در همه‌ی نسخه‌های پایتون در دسترس هستند؟</li>
+                <li>❓ اگر یک رشته را با <code dir='ltr'>strip()</code> پردازش نکنیم، چه مشکلاتی ممکن است در اعتبارسنجی ورودی کاربر پیش بیاید؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن اینکه رشته‌ها غیرقابل تغییر هستند و تلاش برای تغییر یک کاراکتر با <code dir='ltr'>text[0] = 'x'</code> که باعث <code dir='ltr'>TypeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> برای تغییر، یک رشته‌ی جدید با Slicing، <code dir='ltr'>replace()</code> یا ترکیب رشته‌ها ایجاد کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>find()</code> بدون بررسی <code dir='ltr'>-1</code> که باعث می‌شود اگر زیررشته پیدا نشد، اندیس <code dir='ltr'>-1</code> به‌عنوان موقعیت معتبر در نظر گرفته شود و خطاهای بعدی ایجاد کند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه نتیجه‌ی <code dir='ltr'>find()</code> را با <code dir='ltr'>if result != -1:</code> بررسی کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>strip()</code> برای ورودی کاربر که باعث می‌شود فضاهای ابتدا و انتها در اعتبارسنجی (مثلاً مقایسه با مقدار مورد انتظار) مشکل ایجاد کنند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه ورودی کاربر را با <code dir='ltr'>strip()</code> تمیز کنید، مگر اینکه فضاها برای شما مهم باشند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>join()</code> با لیستی که شامل غیررشته‌هاست (مثل اعداد) که باعث <code dir='ltr'>TypeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> قبل از <code dir='ltr'>join()</code>، همه‌ی عناصر را با <code dir='ltr'>map(str, my_list)</code> یا List Comprehension به رشته تبدیل کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>f</code> قبل از f-string که باعث می‌شود <code dir='ltr'>{}</code> به‌عنوان متن معمولی نمایش داده شود و متغیرها درج نشوند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>f</code> قبل از رشته استفاده کنید: <code dir='ltr'>f"متن {var}"</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>split('.')</code> برای شمارش جملات در متنی که شامل اعشار (مثلاً 3.14) یا اختصارات (مثلاً Dr.) است – این روش ممکن است نتایج اشتباه بدهد.<br>
+                    <strong>🔧 راه حل:</strong> برای شمارش جملات، از کتابخانه‌های تخصصی مانند <code dir='ltr'>nltk</code> یا عبارات منظم پیشرفته‌تر استفاده کنید، یا با فرض ساده‌سازی، فقط از <code dir='ltr'>split('.')</code> با دقت استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک تحلیل‌گر متن پیشرفته با رشته‌ها و فایل‌ها</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) کامل برای تحلیل متن‌های طولانی (چند پاراگراف) با استفاده از رشته‌ها، متدهای رشته‌ای، f-strings و کار با فایل‌ها بسازید.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ورودی):</strong> از کاربر یک متن طولانی (چند پاراگراف) با <code dir='ltr'>input()</code> دریافت کنید. می‌توانید از کاربر بخواهید که متن را در یک فایل ذخیره کند و نام فایل را وارد کند (با <code dir='ltr'>open()</code> بخوانید).</li>
+                <li><strong>مرحله ۲ (پاکسازی):</strong> با <code dir='ltr'>strip()</code> فضاهای اضافی ابتدا و انتها را حذف کنید. همچنین فضاهای اضافی بین کلمات را با <code dir='ltr'>split()</code> و <code dir='ltr'>join()</code> یکسان‌سازی کنید.</li>
+                <li><strong>مرحله ۳ (تحلیل‌های پایه):</strong>
+                    <ul>
+                        <li>تعداد کل کاراکترها (با و بدون فاصله)</li>
+                        <li>تعداد کلمات (<code dir='ltr'>split()</code>)</li>
+                        <li>تعداد جملات (<code dir='ltr'>split('.')</code> یا <code dir='ltr'>split('!')</code> و <code dir='ltr'>split('?')</code>)</li>
+                        <li>تعداد پاراگراف‌ها (<code dir='ltr'>split('\n\n')</code>)</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۴ (تحلیل کاراکترها):</strong>
+                    <ul>
+                        <li>تعداد حروف بزرگ و کوچک (با حلقه و <code dir='ltr'>isupper()</code> و <code dir='ltr'>islower()</code>)</li>
+                        <li>تعداد اعداد (<code dir='ltr'>isdigit()</code>)</li>
+                        <li>تعداد کاراکترهای خاص (غیر از حروف، اعداد و فاصله)</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۵ (تحلیل کلمات پیشرفته):</strong>
+                    <ul>
+                        <li>متداول‌ترین کلمه با استفاده از دیکشنری و <code dir='ltr'>split()</code> (با حذف علائم نقطه‌گذاری)</li>
+                        <li>طولانی‌ترین و کوتاه‌ترین کلمه</li>
+                        <li>تعداد کلمات منحصربه‌فرد (با استفاده از مجموعه <code dir='ltr'>set()</code>)</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۶ (جستجو و جایگزینی):</strong>
+                    <ul>
+                        <li>با <code dir='ltr'>find()</code> یک کلمه‌ی خاص را در متن جستجو کنید و موقعیت آن را نمایش دهید.</li>
+                        <li>با <code dir='ltr'>replace()</code> یک کلمه را با کلمه‌ی دیگر جایگزین کنید (با تأیید کاربر).</li>
+                        <li>با <code dir='ltr'>split()</code> و <code dir='ltr'>join()</code> متن را به‌صورت مرتب‌شده (بر اساس طول کلمات یا الفبایی) نمایش دهید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۷ (گزارش نهایی):</strong> همه‌ی نتایج را با f-strings به‌صورت یک گزارش کامل و زیبا (با خطوط جداکننده، ایموجی و فرمت‌دهی اعداد) نمایش دهید.</li>
+                <li><strong>مرحله ۸ (ذخیره‌سازی):</strong> گزارش را در یک فایل متنی با نام <code dir='ltr'>analysis_report.txt</code> ذخیره کنید (با <code dir='ltr'>open()</code> و <code dir='ltr'>write()</code>).</li>
+                <li><strong>مرحله ۹ (چالش بیشتر):</strong>
+                    <ul>
+                        <li>با استفاده از <code dir='ltr'>split()</code> و دیکشنری، یک تحلیل آماری از کلمات (تعداد تکرار هر کلمه) تهیه کنید و ۱۰ کلمه‌ی پرتکرار را نمایش دهید.</li>
+                        <li>با استفاده از <code dir='ltr'>find()</code> و حلقه، همه‌ی occurrenceهای یک کلمه را پیدا کنید و موقعیت‌های آنها را نمایش دهید.</li>
+                        <li>با <code dir='ltr'>replace()</code> و <code dir='ltr'>join()</code> یک سانسور کلمات (حذف کلمات نامناسب از یک لیست) پیاده‌سازی کنید.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 text_analyzer.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را با کاربرد عملی همه‌ی متدهای رشته‌ای در یک برنامه‌ی واقعی آشنا می‌کند. سعی کنید کد را ماژولار (تابع‌محور)، خوانا و با کامنت‌های مناسب بنویسید. از ایموجی‌ها و f-strings برای جذاب‌تر کردن خروجی استفاده کنید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-07/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-09/index.html" class="btn-demo">رفتن به فصل ۹ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی تحلیل‌گر متن
+        function analyzeText() {
+            const input = document.getElementById('textInput');
+            const resultBox = document.getElementById('stringResult');
+            const text = input.value;
+
+            if (!text || text.trim() === '') {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً یک متن وارد کنید!';
+                return;
+            }
+
+            const clean = text.strip();
+            const charCount = text.length;
+            const charCountNoSpace = text.replace(/\s/g, '').length;
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const wordCount = words.length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const sentenceCount = sentences.length;
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+            const paragraphCount = paragraphs.length;
+            const upperCount = (text.match(/[A-Z]/g) || []).length;
+            const lowerCount = (text.match(/[a-z]/g) || []).length;
+            const digitCount = (text.match(/[0-9]/g) || []).length;
+            const specialCount = text.length - charCountNoSpace - upperCount - lowerCount - digitCount;
+
+            // متداول‌ترین کلمه
+            const wordFreq = {};
+            words.forEach(w => {
+                const word = w.toLowerCase().replace(/[^a-z\u0600-\u06FF]/g, '');
+                if (word) {
+                    wordFreq[word] = (wordFreq[word] || 0) + 1;
+                }
+            });
+            let mostCommon = '';
+            let maxFreq = 0;
+            for (const [word, count] of Object.entries(wordFreq)) {
+                if (count > maxFreq) {
+                    maxFreq = count;
+                    mostCommon = word;
+                }
+            }
+
+            // طولانی‌ترین و کوتاه‌ترین کلمه
+            let longest = '';
+            let shortest = words[0] || '';
+            words.forEach(w => {
+                if (w.length > longest.length) longest = w;
+                if (w.length < shortest.length) shortest = w;
+            });
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                <strong>📊 گزارش تحلیل متن</strong><br><br>
+                📝 تعداد کاراکترها: ${charCount} (بدون فاصله: ${charCountNoSpace})<br>
+                📚 تعداد کلمات: ${wordCount}<br>
+                📄 تعداد جملات: ${sentenceCount}<br>
+                📑 تعداد پاراگراف‌ها: ${paragraphCount}<br>
+                🔠 حروف بزرگ: ${upperCount} | 🔡 حروف کوچک: ${lowerCount}<br>
+                🔢 اعداد: ${digitCount} | ✨ کاراکترهای خاص: ${specialCount}<br>
+                🏆 متداول‌ترین کلمه: "${mostCommon}" (${maxFreq} بار)<br>
+                📏 طولانی‌ترین کلمه: "${longest}" (${longest.length} حرف)<br>
+                📏 کوتاه‌ترین کلمه: "${shortest}" (${shortest.length} حرف)
+            `;
+        }
+
+        // متد strip برای JavaScript (شبیه‌سازی)
+        String.prototype.strip = function() {
+            return this.replace(/^\s+|\s+$/g, '');
+        };
+    </script>
+</body>
+</html>

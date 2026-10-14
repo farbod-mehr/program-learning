@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 13: ماژول‌ها و پکیج‌ها</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 180px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 13: ماژول‌ها و پکیج‌ها</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-12/index.html">قبلی</a>
+            <a href="../chapter-14/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۳: ماژول‌ها و پکیج‌ها</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۳: ماژول‌ها و پکیج‌ها</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی پایتون)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی پایتون (فصل‌های ۱ تا ۱۲)</li>
+                <li>✅ آشنایی با توابع و کلاس‌ها</li>
+                <li>✅ توانایی کار با خط فرمان (Command Line)</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ مفهوم <strong>ماژول (Module)</strong> و <strong>پکیج (Package)</strong> را توضیح دهید.</li>
+                <li>✔️ با <strong><code dir='ltr'>import</code></strong>، <strong><code dir='ltr'>from...import</code></strong> و <strong><code dir='ltr'>import as</code></strong> کار کنید.</li>
+                <li>✔️ <strong>ماژول‌های سفارشی</strong> خود را ایجاد و استفاده کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>if __name__ == "__main__"</code></strong> برای اجرای مستقیم و import استفاده کنید.</li>
+                <li>✔️ <strong>پکیج‌ها</strong> را با <code dir='ltr'>__init__.py</code> ایجاد کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>pip</code></strong> پکیج‌های شخص ثالث را نصب کنید.</li>
+                <li>✔️ <strong>محیط‌های مجازی (Virtualenv)</strong> را ایجاد و مدیریت کنید.</li>
+                <li>✔️ وابستگی‌ها را با <strong><code dir='ltr'>requirements.txt</code></strong> مدیریت کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>تا اینجا همه‌ی کدها را در یک فایل می‌نوشتیم. اما با بزرگ‌تر شدن پروژه‌ها، نیاز به <strong>سازماندهی کد</strong> داریم. همچنین برای استفاده از قابلیت‌های آماده، نیاز به کتابخانه‌های شخص ثالث داریم. اینجاست که <strong>ماژول‌ها (Modules)</strong> و <strong>پکیج‌ها (Packages)</strong> وارد می‌شوند.</p>
+            <p>پایتون با ارائه‌ی یک سیستم ماژولار قوی، به شما اجازه می‌دهد کد را به فایل‌های جداگانه تقسیم کنید، از کدهای دیگران استفاده کنید و پروژه‌های خود را به‌خوبی سازماندهی کنید.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث ماژول‌ها و پکیج‌ها</strong> آشنا می‌شوید: import کردن، ساخت ماژول‌های سفارشی، پکیج‌ها، نصب پکیج‌ها با pip، محیط‌های مجازی و مدیریت وابستگی‌ها.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۳.۱ -->
+            <div class="sub-section">
+                <h4>۱۳.۱ ماژول چیست و چرا از آن استفاده می‌کنیم؟</h4>
+                <p><strong>ماژول (Module)</strong> یک فایل پایتون است که شامل تعاریف، توابع، کلاس‌ها و متغیرهاست. با استفاده از ماژول‌ها می‌توانید کد را به بخش‌های کوچک‌تر و قابل‌مدیریت تقسیم کنید.</p>
+                <ul>
+                    <li><strong>مزایای استفاده از ماژول‌ها:</strong>
+                        <ul>
+                            <li><strong>سازماندهی کد:</strong> کد را به بخش‌های منطقی تقسیم می‌کند.</li>
+                            <li><strong>قابل استفاده‌ی مجدد:</strong> یک ماژول را می‌توانید در چندین برنامه استفاده کنید.</li>
+                            <li><strong>کاهش وابستگی:</strong> تغییرات در یک ماژول، بقیه‌ی برنامه را تحت تأثیر قرار نمی‌دهد.</li>
+                            <li><strong>استفاده از کتابخانه‌های آماده:</strong> با import کردن ماژول‌های استاندارد یا شخص ثالث، از کدهای دیگران استفاده می‌کنید.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># ماژول‌های استاندارد پایتون
+import math
+import random
+import datetime
+import os
+import sys
+
+# استفاده از ماژول math
+print(math.sqrt(16))       # 4.0
+print(math.pi)             # 3.141592653589793
+
+# استفاده از ماژول random
+print(random.randint(1, 10))  # عدد تصادفی بین ۱ تا ۱۰
+
+# استفاده از ماژول datetime
+now = datetime.datetime.now()
+print(now)                 # 2026-01-15 14:30:00...</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">4.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">3.141592653589793</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> پایتون کتابخانه‌ی استاندارد بسیار غنی‌ای دارد که شامل ماژول‌های مفید برای کارهای مختلف (ریاضی، تاریخ، فایل، شبکه و ...) است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> ماژول <code dir='ltr'>math</code> را import کنید و از توابع <code dir='ltr'>ceil()</code>، <code dir='ltr'>floor()</code> و <code dir='ltr'>pow()</code> استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۲ -->
+            <div class="sub-section">
+                <h4>۱۳.۲ روش‌های import: <code dir='ltr'>import</code>، <code dir='ltr'>from...import</code> و <code dir='ltr'>as</code></h4>
+                <p>سه روش اصلی برای import کردن ماژول‌ها وجود دارد:</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">📦</span>
+                        <span class="name">import module</span>
+                        <span class="desc">import کامل ماژول</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">from module import ...</span>
+                        <span class="desc">import بخشی از ماژول</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔤</span>
+                        <span class="name">import module as alias</span>
+                        <span class="desc">import با نام مستعار</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># روش ۱: import کامل
+import math
+print(math.sqrt(25))  # 5.0
+
+# روش ۲: from...import
+from math import sqrt, pi
+print(sqrt(36))      # 6.0
+print(pi)            # 3.1415
+
+# روش ۳: import با نام مستعار (alias)
+import datetime as dt
+now = dt.datetime.now()
+print(now)
+
+# import همه‌چیز (توصیه نمی‌شود)
+from math import *
+print(sin(0))        # 0.0 (اما نام‌ها ممکن است تداخل کنند)
+
+# import چندین چیز با کاما
+from random import randint, choice
+print(randint(1, 100))
+print(choice(["a", "b", "c"]))
+
+# import ماژول‌های استاندارد
+import os
+import sys
+print(sys.version)   # نسخه پایتون</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">5.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">6.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">2026-01-15 14:30:00</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>from module import *</code> خودداری کنید چون ممکن است نام‌ها تداخل پیدا کنند. بهتر است فقط چیزهایی که نیاز دارید را import کنید یا از نام مستعار استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> ماژول <code dir='ltr'>random</code> را import کنید و یک عدد تصادفی بین ۱ تا ۱۰۰ تولید کنید. همچنین با <code dir='ltr'>from random import choice</code> یک عنصر تصادفی از یک لیست انتخاب کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۳ -->
+            <div class="sub-section">
+                <h4>۱۳.۳ ساخت ماژول‌های سفارشی</h4>
+                <p>شما می‌توانید ماژول‌های خود را بسازید. کافی است یک فایل <code dir='ltr'>.py</code> ایجاد کنید و توابع، کلاس‌ها و متغیرهای خود را در آن بنویسید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># فایل: mymodule.py
+def greet(name):
+    return f"سلام {name}!"
+
+def add(a, b):
+    return a + b
+
+PI = 3.14159
+
+class Calculator:
+    def multiply(self, a, b):
+        return a * b
+
+# ============================================
+
+# فایل: main.py (استفاده از ماژول)
+import mymodule
+
+print(mymodule.greet("علی"))        # "سلام علی!"
+print(mymodule.add(5, 3))           # 8
+print(mymodule.PI)                  # 3.14159
+
+calc = mymodule.Calculator()
+print(calc.multiply(5, 3))          # 15
+
+# با from...import
+from mymodule import greet, PI
+print(greet("سارا"))                # "سلام سارا!"
+print(PI)                           # 3.14159</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span><br>
+                    <span class="highlight">➜</span> <span class="result">8</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> وقتی یک فایل پایتون را import می‌کنید، پایتون آن را اجرا می‌کند. برای جلوگیری از اجرای کدهای خاص هنگام import، از <code dir='ltr'>if __name__ == "__main__"</code> استفاده کنید (بخش بعدی).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک ماژول به نام <code dir='ltr'>utilities.py</code> ایجاد کنید که شامل توابع <code dir='ltr'>is_even()</code>، <code dir='ltr'>is_odd()</code> و <code dir='ltr'>factorial()</code> باشد. سپس آن را در یک فایل دیگر import کنید و از توابع استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۴ -->
+            <div class="sub-section">
+                <h4>۱۳.۴ <code dir='ltr'>if __name__ == "__main__"</code></h4>
+                <p>این یک الگوی مهم در پایتون است که به ماژول اجازه می‌دهد هم به‌عنوان یک برنامه‌ی مستقل اجرا شود و هم به‌عنوان ماژول import شود.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>__name__</code></strong>: زمانی که فایل مستقیماً اجرا می‌شود، مقدار <code dir='ltr'>"__main__"</code> است.</li>
+                    <li>زمانی که فایل import می‌شود، مقدار <code dir='ltr'>__name__</code> برابر با نام ماژول است.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># فایل: mymodule.py
+def greet(name):
+    return f"سلام {name}!"
+
+def main():
+    print("این ماژول به‌صورت مستقیم اجرا شده است.")
+    print(greet("علی"))
+
+if __name__ == "__main__":
+    main()
+    # این کد فقط زمانی اجرا می‌شود که فایل مستقیم اجرا شود
+    # اگر import شود، اجرا نمی‌شود
+
+# ============================================
+
+# فایل: main.py (import کردن)
+import mymodule
+
+print(mymodule.greet("سارا"))  # "سلام سارا!"
+# کدهای داخل if __name__ اجرا نمی‌شوند</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">(اجرای مستقیم mymodule.py)</span><br>
+                    <span class="highlight">➜</span> <span class="result">این ماژول به‌صورت مستقیم اجرا شده است.</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه از <code dir='ltr'>if __name__ == "__main__"</code> برای قرار دادن کدهای تست یا اجرای مستقیم ماژول استفاده کنید. این کار باعث می‌شود ماژول شما هم قابل استفاده‌ی مجدد و هم قابل اجرا باشد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک ماژول به نام <code dir='ltr'>calculator.py</code> با توابع <code dir='ltr'>add()</code>، <code dir='ltr'>subtract()</code>، <code dir='ltr'>multiply()</code> و <code dir='ltr'>divide()</code> ایجاد کنید. یک بخش <code dir='ltr'>if __name__ == "__main__"</code> اضافه کنید که توابع را تست کند. سپس ماژول را import کنید و از توابع استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۵ -->
+            <div class="sub-section">
+                <h4>۱۳.۵ پکیج‌ها (Packages) و <code dir='ltr'>__init__.py</code></h4>
+                <p><strong>پکیج (Package)</strong> یک دایرکتوری است که شامل چندین ماژول مرتبط است. برای اینکه یک دایرکتوری به‌عنوان پکیج شناخته شود، باید یک فایل <code dir='ltr'>__init__.py</code> در آن وجود داشته باشد.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>__init__.py</code></strong>: می‌تواند خالی باشد یا کدهای اولیه برای پکیج را شامل شود.</li>
+                    <li>پکیج‌ها به شما اجازه می‌دهند ماژول‌ها را به‌صورت سلسله‌مراتبی سازماندهی کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># ساختار پکیج
+myproject/
+├── __init__.py
+├── utils/
+│   ├── __init__.py
+│   ├── strings.py
+│   └── numbers.py
+└── data/
+    ├── __init__.py
+    └── database.py
+
+# ============================================
+
+# فایل: utils/strings.py
+def reverse(text):
+    return text[::-1]
+
+def capitalize_words(text):
+    return text.title()
+
+# فایل: utils/numbers.py
+def is_even(n):
+    return n % 2 == 0
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+# فایل: data/database.py
+class Database:
+    def __init__(self):
+        self.data = []
+    
+    def add(self, item):
+        self.data.append(item)
+    
+    def get_all(self):
+        return self.data
+
+# ============================================
+
+# فایل: main.py (استفاده از پکیج)
+from utils.strings import reverse, capitalize_words
+from utils.numbers import is_even, is_prime
+from data.database import Database
+
+print(reverse("hello"))           # "olleh"
+print(capitalize_words("hello world"))  # "Hello World"
+print(is_even(4))                 # True
+print(is_prime(7))                # True
+
+db = Database()
+db.add("item1")
+db.add("item2")
+print(db.get_all())               # ['item1', 'item2']</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">olleh</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hello World</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> در پایتون ۳، <code dir='ltr'>__init__.py</code> برای تعریف پکیج لازم است (اختیاری در نسخه‌های جدیدتر، اما همچنان توصیه می‌شود).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک پکیج به نام <code dir='ltr'>math_utils</code> با دو ماژول <code dir='ltr'>basic.py</code> (توابع جمع، تفریق، ضرب، تقسیم) و <code dir='ltr'>advanced.py</code> (توابع توان، ریشه، فاکتوریل) ایجاد کنید. سپس در یک فایل اصلی از آنها استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۶ -->
+            <div class="sub-section">
+                <h4>۱۳.۶ نصب پکیج‌ها با <code dir='ltr'>pip</code></h4>
+                <p><strong><code dir='ltr'>pip</code></strong> مدیر بسته‌های پایتون است و برای نصب پکیج‌های شخص ثالث از PyPI (Python Package Index) استفاده می‌شود.</p>
+                <ul>
+                    <li><strong>نصب پکیج:</strong> <code dir='ltr'>pip install package_name</code></li>
+                    <li><strong>نصب نسخه‌ی خاص:</strong> <code dir='ltr'>pip install package_name==1.2.3</code></li>
+                    <li><strong>به‌روزرسانی:</strong> <code dir='ltr'>pip install --upgrade package_name</code></li>
+                    <li><strong>حذف:</strong> <code dir='ltr'>pip uninstall package_name</code></li>
+                    <li><strong>مشاهده‌ی پکیج‌های نصب‌شده:</strong> <code dir='ltr'>pip list</code></li>
+                    <li><strong>نصب از فایل requirements:</strong> <code dir='ltr'>pip install -r requirements.txt</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># نصب پکیج محبوب requests
+pip install requests
+
+# نصب نسخه‌ی خاص
+pip install numpy==1.24.0
+
+# نصب چند پکیج
+pip install requests pandas matplotlib
+
+# نصب پکیج در محیط مجازی
+# (پس از فعال‌سازی محیط)
+pip install flask
+
+# ذخیره‌سازی وابستگی‌ها
+pip freeze > requirements.txt
+
+# نصب از روی فایل requirements.txt
+pip install -r requirements.txt</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه از <strong>محیط مجازی</strong> برای نصب پکیج‌ها استفاده کنید تا از تداخل بین پروژه‌های مختلف جلوگیری کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> پکیج <code dir='ltr'>requests</code> را نصب کنید و یک درخواست ساده به یک API (مثلاً <code dir='ltr'>https://api.github.com</code>) ارسال کنید.
+                </div>
+            </div>
+
+            <!-- ۱۳.۷ -->
+            <div class="sub-section">
+                <h4>۱۳.۷ محیط‌های مجازی و <code dir='ltr'>requirements.txt</code></h4>
+                <p><strong>محیط مجازی (Virtual Environment)</strong> یک فضای ایزوله برای پروژه‌های پایتون است که به شما اجازه می‌دهد وابستگی‌های هر پروژه را جداگانه مدیریت کنید.</p>
+                <ul>
+                    <li><strong>ایجاد محیط مجازی:</strong> <code dir='ltr'>python -m venv venv</code></li>
+                    <li><strong>فعال‌سازی در Windows:</strong> <code dir='ltr'>venv\Scripts\activate</code></li>
+                    <li><strong>فعال‌سازی در macOS/Linux:</strong> <code dir='ltr'>source venv/bin/activate</code></li>
+                    <li><strong>خروج از محیط:</strong> <code dir='ltr'>deactivate</code></li>
+                    <li><strong>ذخیره‌سازی وابستگی‌ها:</strong> <code dir='ltr'>pip freeze > requirements.txt</code></li>
+                    <li><strong>نصب وابستگی‌ها:</strong> <code dir='ltr'>pip install -r requirements.txt</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># ایجاد محیط مجازی
+python -m venv myenv
+
+# فعال‌سازی (Windows)
+myenv\Scripts\activate
+
+# فعال‌سازی (macOS/Linux)
+source myenv/bin/activate
+
+# نصب پکیج‌ها در محیط
+pip install requests flask pandas
+
+# ذخیره‌سازی وابستگی‌ها
+pip freeze > requirements.txt
+
+# محتویات requirements.txt
+# requests==2.28.1
+# flask==2.2.2
+# pandas==1.5.3
+
+# نصب وابستگی‌ها در محیط جدید
+pip install -r requirements.txt
+
+# خروج از محیط
+deactivate</code></pre>
+                </div>
+                <div class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>ویژگی</th>
+                            <th>بدون محیط مجازی</th>
+                            <th>با محیط مجازی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ایزوله بودن</td>
+                            <td>❌</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td>مدیریت وابستگی‌ها</td>
+                            <td>❌ مشکل</td>
+                            <td>✅ آسان</td>
+                        </tr>
+                        <tr>
+                            <td>تداخل بین پروژه‌ها</td>
+                            <td>❌ زیاد</td>
+                            <td>✅ کم</td>
+                        </tr>
+                        <tr>
+                            <td>توصیه</td>
+                            <td>❌</td>
+                            <td>✅ همیشه</td>
+                        </tr>
+                    </tbody>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> همیشه برای هر پروژه‌ی پایتونی یک محیط مجازی ایجاد کنید. این کار باعث می‌شود پروژه‌ها از هم مستقل باشند و از مشکلات نسخه‌های مختلف جلوگیری شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک محیط مجازی برای یک پروژه‌ی جدید ایجاد کنید، پکیج‌های <code dir='ltr'>requests</code> و <code dir='ltr'>flask</code> را نصب کنید، وابستگی‌ها را در <code dir='ltr'>requirements.txt</code> ذخیره کنید و سپس محیط را غیرفعال کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک پروژه با ماژول‌ها و پکیج‌ها</h4>
+            <ol>
+                <li>یک پوشه برای پروژه ایجاد کنید.</li>
+                <li>یک محیط مجازی ایجاد و فعال کنید.</li>
+                <li>یک پکیج به نام <code dir='ltr'>utils</code> با ماژول‌های زیر بسازید:
+                    <ul>
+                        <li><code dir='ltr'>string_utils.py</code> – توابع کار با رشته (reverse, capitalize, count_words)</li>
+                        <li><code dir='ltr'>number_utils.py</code> – توابع کار با اعداد (is_prime, fibonacci, factorial)</li>
+                        <li><code dir='ltr'>file_utils.py</code> – توابع کار با فایل (read_file, write_file)</li>
+                    </ul>
+                </li>
+                <li>یک فایل <code dir='ltr'>main.py</code> در ریشه‌ی پروژه ایجاد کنید که از پکیج استفاده کند.</li>
+                <li>از <code dir='ltr'>if __name__ == "__main__"</code> برای تست توابع استفاده کنید.</li>
+                <li>وابستگی‌ها (در صورت نیاز) را در <code dir='ltr'>requirements.txt</code> ذخیره کنید.</li>
+                <li>برنامه را اجرا کنید و نتایج را بررسی کنید.</li>
+            </ol>
+            <div class="live-demo" id="module-demo">
+                <h4>📦 شبیه‌ساز ماژول</h4>
+                <button onclick="runModuleDemo()">▶️ اجرای ماژول‌های نمونه</button>
+                <div class="result-box" id="moduleResult">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک پروژه با موارد زیر بسازید:</p>
+            <ul>
+                <li>یک پکیج <code dir='ltr'>data_processing</code> با ماژول‌های <code dir='ltr'>cleaning.py</code> و <code dir='ltr'>analysis.py</code>.</li>
+                <li>یک ماژول <code dir='ltr'>config.py</code> برای تنظیمات.</li>
+                <li>استفاده از <code dir='ltr'>if __name__ == "__main__"</code> در همه‌ی ماژول‌ها.</li>
+                <li>یک فایل <code dir='ltr'>requirements.txt</code> با وابستگی‌ها.</li>
+                <li>یک اسکریپت اصلی که از همه‌ی ماژول‌ها استفاده کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین ماژول و پکیج چیست؟</li>
+                <li>سه روش import کردن ماژول را با مثال توضیح دهید.</li>
+                <li><code dir='ltr'>if __name__ == "__main__"</code> چه کاربردی دارد؟</li>
+                <li>چرا باید از محیط‌های مجازی استفاده کنیم؟</li>
+                <li><code dir='ltr'>requirements.txt</code> چه نقشی در پروژه دارد؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای import کردن یک ماژول با نام مستعار استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>import module as alias</code>  ب) <code dir='ltr'>from module import alias</code>  ج) <code dir='ltr'>import alias from module</code>  د) <code dir='ltr'>alias = import module</code></li>
+                <li>برای اینکه یک دایرکتوری به‌عنوان پکیج شناخته شود، چه فایلی باید در آن باشد؟<br>
+                    أ) <code dir='ltr'>__main__.py</code>  ب) <code dir='ltr'>__init__.py</code>  ج) <code dir='ltr'>package.py</code>  د) <code dir='ltr'>setup.py</code></li>
+                <li>کدام دستور برای نصب یک پکیج با pip استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>pip install package</code>  ب) <code dir='ltr'>pip get package</code>  ج) <code dir='ltr'>pip add package</code>  د) <code dir='ltr'>pip download package</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک پروژه با موارد زیر بسازید:</p>
+            <ul>
+                <li>یک پکیج <code dir='ltr'>calculator</code> با ماژول‌های <code dir='ltr'>basic.py</code> و <code dir='ltr'>advanced.py</code>.</li>
+                <li>هر ماژول حداقل ۳ تابع داشته باشد.</li>
+                <li>یک فایل <code dir='ltr'>main.py</code> که از پکیج استفاده کند.</li>
+                <li>از <code dir='ltr'>if __name__ == "__main__"</code> برای تست استفاده کنید.</li>
+                <li>یک محیط مجازی ایجاد کنید و وابستگی‌ها را در <code dir='ltr'>requirements.txt</code> ذخیره کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>ماژول</strong> یک فایل <code dir='ltr'>.py</code> است که کد را سازماندهی می‌کند.</li>
+                <li>🔹 <strong>پکیج</strong> یک دایرکتوری با <code dir='ltr'>__init__.py</code> است که ماژول‌ها را گروه‌بندی می‌کند.</li>
+                <li>🔹 روش‌های import: <code dir='ltr'>import module</code>، <code dir='ltr'>from module import name</code>، <code dir='ltr'>import module as alias</code>.</li>
+                <li>🔹 <strong><code dir='ltr'>if __name__ == "__main__"</code></strong> برای تشخیص اجرای مستقیم یا import.</li>
+                <li>🔹 <strong><code dir='ltr'>pip</code></strong> مدیر بسته‌های پایتون برای نصب پکیج‌های شخص ثالث.</li>
+                <li>🔹 <strong>محیط‌های مجازی (venv)</strong> برای ایزوله کردن وابستگی‌های پروژه.</li>
+                <li>🔹 <strong><code dir='ltr'>requirements.txt</code></strong> برای مدیریت وابستگی‌ها و انتقال آسان پروژه.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># import
+import math
+from math import sqrt
+import math as m
+
+# ماژول سفارشی
+# mymodule.py → import mymodule
+
+# if __name__ == "__main__"
+if __name__ == "__main__":
+    main()
+
+# پکیج
+myproject/
+├── __init__.py
+└── utils/
+    ├── __init__.py
+    └── strings.py
+
+# pip
+pip install requests
+pip freeze > requirements.txt
+pip install -r requirements.txt
+
+# venv
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+deactivate</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Module (ماژول):</strong> فایل پایتون با کدهای قابل استفاده‌ی مجدد.</li>
+                <li><strong>Package (پکیج):</strong> مجموعه‌ای از ماژول‌ها در یک دایرکتوری.</li>
+                <li><strong>Import:</strong> فراخوانی کد از یک ماژول یا پکیج.</li>
+                <li><strong>__name__:</strong> متغیر ویژه که نام ماژول را نگه می‌دارد.</li>
+                <li><strong>pip:</strong> مدیر بسته‌های پایتون.</li>
+                <li><strong>Virtual Environment (محیط مجازی):</strong> فضای ایزوله برای مدیریت وابستگی‌ها.</li>
+                <li><strong>requirements.txt:</strong> فایل لیست وابستگی‌های پروژه.</li>
+                <li><strong>PyPI:</strong> مخزن رسمی پکیج‌های پایتون.</li>
+                <li><strong>__init__.py:</strong> فایل برای تعریف پکیج.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/modules.html" target="_blank" rel="noopener noreferrer">Python: Modules</a></li>
+                <li><a href="https://docs.python.org/3/tutorial/venv.html" target="_blank" rel="noopener noreferrer">Python: Virtual Environments</a></li>
+                <li><a href="https://pip.pypa.io/" target="_blank" rel="noopener noreferrer">pip Documentation</a></li>
+                <li><a href="https://realpython.com/python-modules-packages/" target="_blank" rel="noopener noreferrer">Real Python: Modules and Packages</a></li>
+                <li><a href="https://pypi.org/" target="_blank" rel="noopener noreferrer">PyPI - Python Package Index</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> معرفی ماژول‌ها – ۱۰ دقیقه</li>
+                <li><strong>گام ۲:</strong> روش‌های import – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> ماژول‌های سفارشی – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> if __name__ – ۱۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> پکیج‌ها – ۲۰ دقیقه</li>
+                <li><strong>گام ۶:</strong> pip و نصب پکیج‌ها – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> محیط‌های مجازی و requirements – ۱۵ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ اگر دو ماژول با نام مشابه داشته باشیم، چگونه از تداخل جلوگیری کنیم؟</li>
+                <li>❓ چرا پایتون از ماژول‌ها برای سازماندهی کد استفاده می‌کند؟</li>
+                <li>❓ چه تفاوتی بین import کردن یک ماژول و اجرای مستقیم آن وجود دارد؟</li>
+                <li>❓ چرا باید از محیط‌های مجازی استفاده کنیم و چه مشکلاتی را حل می‌کنند؟</li>
+                <li>❓ اگر یک پکیج را بدون <code dir='ltr'>__init__.py</code> ایجاد کنیم، چه اتفاقی می‌افتد؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>__init__.py</code> در پکیج که باعث می‌شود پایتون آن را به‌عنوان پکیج تشخیص ندهد.<br>
+                    <strong>🔧 راه حل:</strong> یک فایل <code dir='ltr'>__init__.py</code> (حتی خالی) در دایرکتوری پکیج ایجاد کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن فعال‌سازی محیط مجازی قبل از نصب پکیج‌ها که باعث می‌شود پکیج‌ها در سیستم نصب شوند.<br>
+                    <strong>🔧 راه حل:</strong> قبل از نصب هر پکیج، محیط مجازی را فعال کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>from module import *</code> که باعث تداخل نام‌ها می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> فقط چیزهایی که نیاز دارید را import کنید یا از نام مستعار استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>if __name__ == "__main__"</code> که باعث می‌شود کدهای تست هنگام import اجرا شوند.<br>
+                    <strong>🔧 راه حل:</strong> کدهای تست را در داخل <code dir='ltr'>if __name__ == "__main__"</code> قرار دهید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از مسیرهای نسبی نامناسب برای import ماژول‌های داخل پکیج.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>from . import module</code> (import نسبی) یا ساختار مناسب پکیج استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک ابزار خط فرمان با ماژول‌ها و پکیج‌ها</p>
+            <p><strong>شرح:</strong> یک ابزار خط فرمان برای مدیریت وظایف (Task Manager) با استفاده از ماژول‌ها و پکیج‌ها بسازید:</p>
+            <ul>
+                <li>ساختار پروژه:
+                    <pre style="background:#0f172a;color:#e2e8f0;padding:10px;border-radius:6px;font-size:0.8rem;">
+task_manager/
+├── __init__.py
+├── main.py
+├── tasks/
+│   ├── __init__.py
+│   ├── models.py
+│   └── storage.py
+├── utils/
+│   ├── __init__.py
+│   ├── validators.py
+│   └── formatters.py
+└── tests/
+    ├── __init__.py
+    └── test_tasks.py</pre>
+                </li>
+                <li>ماژول‌های پروژه:
+                    <ul>
+                        <li><code dir='ltr'>tasks/models.py</code>: کلاس <code dir='ltr'>Task</code> با ویژگی‌های title, description, due_date, status.</li>
+                        <li><code dir='ltr'>tasks/storage.py</code>: توابع برای ذخیره‌سازی و بارگذاری وظایف در یک فایل JSON.</li>
+                        <li><code dir='ltr'>utils/validators.py</code>: توابع اعتبارسنجی (تاریخ، اولویت و ...).</li>
+                        <li><code dir='ltr'>utils/formatters.py</code>: توابع برای نمایش زیبای وظایف (با f-strings و جداول).</li>
+                        <li><code dir='ltr'>main.py</code>: منوی اصلی با <code dir='ltr'>while</code> و استفاده از پکیج‌ها.</li>
+                    </ul>
+                </li>
+                <li>از <code dir='ltr'>if __name__ == "__main__"</code> در همه‌ی ماژول‌ها برای تست استفاده کنید.</li>
+                <li>یک محیط مجازی ایجاد کنید و <code dir='ltr'>requirements.txt</code> برای وابستگی‌ها (در صورت نیاز) تهیه کنید.</li>
+                <li>قابلیت‌های برنامه:
+                    <ul>
+                        <li>افزودن وظیفه (با اعتبارسنجی)</li>
+                        <li>نمایش همه‌ی وظایف</li>
+                        <li>تغییر وضعیت وظیفه (انجام‌شده/انجام‌نشده)</li>
+                        <li>حذف وظیفه</li>
+                        <li>جستجوی وظایف بر اساس عنوان</li>
+                        <li>ذخیره‌سازی خودکار در فایل</li>
+                    </ul>
+                </li>
+                <li>همه‌ی توابع را با Docstring مستند کنید و از Type Hints استفاده کنید.</li>
+                <li>یک فایل <code dir='ltr'>README.md</code> برای پروژه بنویسید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 main.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>یک ماژول <code dir='ltr'>exporters.py</code> برای خروجی‌گرفتن از وظایف به فرمت‌های CSV و PDF اضافه کنید.</li>
+                    <li>با استفاده از پکیج <code dir='ltr'>argparse</code> (استاندارد) یک رابط خط فرمان (CLI) با آرگومان‌های مختلف بسازید.</li>
+                    <li>یک سیستم اولویت‌بندی (Priority: Low, Medium, High) به وظایف اضافه کنید.</li>
+                    <li>با استفاده از ماژول <code dir='ltr'>datetime</code>، یادآوری برای وظایف نزدیک به تاریخ سررسید اضافه کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-12/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-14/index.html" class="btn-demo">رفتن به فصل ۱۴ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی ماژول‌ها
+        function runModuleDemo() {
+            const resultBox = document.getElementById('moduleResult');
+
+            // شبیه‌سازی ماژول‌های نمونه
+            const stringUtils = {
+                reverse: (text) => text.split('').reverse().join(''),
+                capitalize: (text) => text.charAt(0).toUpperCase() + text.slice(1),
+                countWords: (text) => text.trim().split(/\s+/).length
+            };
+
+            const numberUtils = {
+                isEven: (n) => n % 2 === 0,
+                factorial: (n) => {
+                    if (n <= 1) return 1;
+                    let result = 1;
+                    for (let i = 2; i <= n; i++) result *= i;
+                    return result;
+                },
+                isPrime: (n) => {
+                    if (n < 2) return false;
+                    for (let i = 2; i <= Math.sqrt(n); i++) {
+                        if (n % i === 0) return false;
+                    }
+                    return true;
+                }
+            };
+
+            const demoText = "hello world";
+            const demoNumber = 7;
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                📦 شبیه‌ساز ماژول‌های نمونه
+
+                📝 string_utils:
+                • reverse("${demoText}") → "${stringUtils.reverse(demoText)}"
+                • capitalize("${demoText}") → "${stringUtils.capitalize(demoText)}"
+                • countWords("${demoText}") → ${stringUtils.countWords(demoText)} کلمه
+
+                🔢 number_utils:
+                • isEven(${demoNumber}) → ${numberUtils.isEven(demoNumber)}
+                • factorial(5) → ${numberUtils.factorial(5)}
+                • isPrime(${demoNumber}) → ${numberUtils.isPrime(demoNumber)}
+
+                ✅ همه‌ی توابع به‌درستی کار می‌کنند!
+            `.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

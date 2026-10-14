@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دوره تخصصی امنیت وب — ۲۱ فصل، از صفر تا حرفه‌ای | CEH-Aligned</title>
+    <meta name="description" content="دوره کامل امنیت وب با ۲۱ فصل تخصصی: از راه‌اندازی آزمایشگاه Kali تا SQLi، XSS، RCE، WAF و پروژه جامع نهایی. هم‌راستا با CEH و OWASP.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="امنیت وب, تست نفوذ, CEH, OWASP, Kali Linux, Django, SQLi, XSS, CSRF, RCE, SSRF, XXE, WAF, ModSecurity">
+    <meta name="theme-color" content="#0b1220">
+
+    <meta property="og:title" content="دوره تخصصی امنیت وب — ۲۱ فصل کامل">
+    <meta property="og:description" content="از راه‌اندازی آزمایشگاه تا پروژه جامع نهایی — یک مسیر کامل CEH-Aligned">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fa_IR">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ============================================================
+           صفحه اصلی — استایل‌های اختصاصی
+           ============================================================ */
+
+        /* --- Hero --- */
+        .home-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
+            color: white;
+            padding: clamp(40px, 6vw, 80px) clamp(20px, 4vw, 40px);
+            border-radius: var(--radius-lg);
+            margin: var(--space-7) 0;
+            text-align: center;
+            border: 1px solid var(--accent);
+            box-shadow: 0 20px 50px rgba(0, 217, 126, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 217, 126, 0.25), transparent 70%);
+            pointer-events: none;
+        }
+
+        .home-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 217, 126, 0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        .home-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .home-hero .badge-row {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4);
+        }
+
+        .home-hero .badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: var(--radius-pill);
+            padding: 4px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .home-hero h1 {
+            font-size: clamp(1.5rem, 4vw, 2.6rem);
+            line-height: 1.3;
+            margin: 0 0 var(--space-4);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .home-hero p {
+            font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+            line-height: 2;
+            max-width: 800px;
+            margin: var(--space-3) auto;
+            opacity: 0.95;
+        }
+
+        .home-hero .cta-row {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--space-6);
+        }
+
+        .home-hero .btn-start {
+            min-height: 52px;
+            padding: var(--space-3) var(--space-7);
+            font-size: 1.05rem;
+            box-shadow: 0 10px 30px rgba(0, 217, 126, 0.4);
+        }
+
+        .home-hero .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius-pill);
+            padding: var(--space-3) var(--space-6);
+            font-weight: 700;
+            font-size: 0.95rem;
+            min-height: 52px;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+
+        .home-hero .btn-ghost:hover {
+            background: var(--accent-soft);
+            transform: translateY(-2px);
+            color: var(--accent);
+        }
+
+        /* --- Warning Box --- */
+        .legal-warning {
+            background: linear-gradient(135deg, #3f1d1d, #451a1a);
+            border-right: 6px solid var(--red);
+            border-radius: var(--radius);
+            padding: var(--space-5) var(--space-6);
+            margin: var(--space-6) 0;
+            color: var(--red-text);
+            line-height: 1.9;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .legal-warning strong {
+            color: var(--red-text-2);
+        }
+
+        .legal-warning .warning-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        /* --- Stats --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-7) 0;
+        }
+
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--space-5) var(--space-4);
+            text-align: center;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--transition);
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-box:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-box .stat-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        .stat-box .stat-num {
+            display: block;
+            font-size: clamp(1.6rem, 3vw, 2.1rem);
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1.2;
+            margin-bottom: var(--space-1);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-box .stat-lbl {
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* --- Search Box --- */
+        .search-bar {
+            position: relative;
+            max-width: 620px;
+            margin: var(--space-6) auto var(--space-4);
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4) var(--space-3) 52px;
+            border: 1.5px solid var(--line);
+            border-radius: var(--radius-pill);
+            background: var(--surface);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            min-height: 52px;
+            transition: all var(--transition-fast);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-bar::before {
+            content: '🔍';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.05rem;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* --- Filter Chips --- */
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            justify-content: center;
+            margin: var(--space-4) 0 var(--space-6);
+        }
+
+        .filter-chip {
+            background: var(--surface);
+            color: var(--muted);
+            border: 1.5px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: var(--space-2) var(--space-5);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-chip.active {
+            background: var(--accent);
+            color: #0b1220;
+            border-color: var(--accent);
+        }
+
+        /* --- Section Header (دسته فصل‌ها) --- */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin: var(--space-8) 0 var(--space-3);
+            padding-bottom: var(--space-3);
+            border-bottom: 2px solid var(--line);
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: 0;
+            width: 80px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .section-header .section-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .section-header .section-title-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            color: var(--ink);
+            font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .section-header .section-desc {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .section-header .section-count {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            color: var(--accent);
+            border-radius: var(--radius-pill);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        /* --- Chapter Cards (نسخه تفصیلی) --- */
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-5);
+            margin: var(--space-5) 0 var(--space-8);
+        }
+
+        .chapter-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 0;
+            text-align: right;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition);
+            min-height: 260px;
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--transition);
+            z-index: 2;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+            color: var(--text);
+        }
+
+        .chapter-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* ردیف بالای کارت */
+        .card-top {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-5) var(--space-3);
+            border-bottom: 1px dashed var(--line);
+            position: relative;
+        }
+
+        .card-top .card-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .card-top .card-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-top .card-num {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: var(--radius-xs);
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .card-top .card-title {
+            margin: 0;
+            color: var(--ink);
+            font-size: 0.98rem;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        .card-top .done-mark {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* بدنه کارت */
+        .card-body {
+            padding: var(--space-3) var(--space-5);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .card-body .card-desc {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.75;
+        }
+
+        /* لیست سرفصل‌ها */
+        .card-topics {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-topics li {
+            position: relative;
+            padding-right: 18px;
+            color: var(--text);
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .card-topics li::before {
+            content: '▸';
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: var(--accent);
+            font-size: 0.72rem;
+            line-height: 1.6;
+        }
+
+        /* فوتر کارت */
+        .card-footer {
+            padding: var(--space-3) var(--space-5) var(--space-4);
+            border-top: 1px solid var(--line);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            align-items: center;
+        }
+
+        .card-footer .mini-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 3px 10px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .card-footer .mini-pill.time { color: #93c5fd; border-color: #1e40af; background: #142438; }
+        .card-footer .mini-pill.tool { color: #7ee787; border-color: #166534; background: #0d2818; }
+        .card-footer .mini-pill.level-1 { color: #86efac; border-color: #15803d; background: #0d2818; }
+        .card-footer .mini-pill.level-2 { color: #fde68a; border-color: #a16207; background: #3d2b0d; }
+        .card-footer .mini-pill.level-3 { color: #fca5a5; border-color: #991b1b; background: #3f1d1d; }
+
+        /* --- Empty Result --- */
+        .empty-result {
+            display: none;
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--muted);
+            font-size: 1rem;
+            background: var(--surface-2);
+            border: 1px dashed var(--line);
+            border-radius: var(--radius);
+            margin: var(--space-5) 0;
+        }
+
+        .empty-result.visible {
+            display: block;
+        }
+
+        /* --- Learning Path --- */
+        .learning-path {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: var(--space-7) var(--space-6);
+            margin: var(--space-8) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .learning-path::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .learning-path h2 {
+            margin: 0 0 var(--space-2);
+            color: var(--ink);
+            font-size: clamp(1.3rem, 3vw, 1.7rem);
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .learning-path .path-sub {
+            text-align: center;
+            color: var(--muted);
+            margin: 0 auto var(--space-6);
+            max-width: 620px;
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        .path-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            position: relative;
+        }
+
+        .path-step {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--space-5) var(--space-4);
+            text-align: center;
+            position: relative;
+            transition: all var(--transition);
+        }
+
+        .path-step:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .path-step .step-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #0b1220;
+            border-radius: var(--radius-pill);
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+        }
+
+        .path-step h4 {
+            margin: 0 0 var(--space-2);
+            color: var(--ink);
+            font-size: 0.95rem;
+            font-weight: 800;
+            line-height: 1.5;
+        }
+
+        .path-step p {
+            margin: 0;
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* --- Tools Cloud --- */
+        .tools-cloud {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--space-5);
+            margin: var(--space-6) 0;
+        }
+
+        .tools-cloud h3 {
+            margin: 0 0 var(--space-4);
+            color: var(--ink);
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .tools-cloud .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            justify-content: center;
+        }
+
+        .tools-cloud .tool-tag {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            color: var(--code-text);
+            border-radius: var(--radius-xs);
+            padding: 5px 12px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            transition: all var(--transition-fast);
+        }
+
+        .tools-cloud .tool-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* --- Who Is This For --- */
+        .who-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+
+        .who-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--space-5);
+            text-align: center;
+            transition: all var(--transition);
+        }
+
+        .who-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .who-card .who-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        .who-card h4 {
+            margin: 0 0 var(--space-2);
+            color: var(--ink);
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+
+        .who-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.75;
+        }
+
+        /* --- CTA Banner --- */
+        .cta-banner {
+            background: linear-gradient(135deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8) var(--space-6);
+            margin: var(--space-8) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .cta-banner h2 {
+            color: var(--ink);
+            font-size: clamp(1.3rem, 3vw, 1.7rem);
+            margin: 0 0 var(--space-4);
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .cta-banner p {
+            font-size: 1rem;
+            max-width: 720px;
+            margin: var(--space-2) auto var(--space-6);
+            color: var(--text);
+            line-height: 1.9;
+        }
+
+        /* --- Footer Quick --- */
+        .footer-quick {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .footer-quick a {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-xs);
+            transition: all var(--transition-fast);
+            border-bottom: none;
+        }
+
+        .footer-quick a:hover {
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* --- Sticky Nav TOC (فهرست سریع) --- */
+        .quick-toc {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: var(--space-4) var(--space-5);
+            margin: var(--space-6) 0;
+            position: sticky;
+            top: calc(var(--nav-height) + 12px);
+            z-index: 20;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .quick-toc .toc-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+            text-align: center;
+        }
+
+        .quick-toc .toc-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            justify-content: center;
+        }
+
+        .quick-toc .toc-links a {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 4px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: none;
+            transition: all var(--transition-fast);
+        }
+
+        .quick-toc .toc-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 700px) {
+            .home-hero {
+                padding: var(--space-7) var(--space-4);
+                border-radius: var(--radius);
+            }
+
+            .home-hero .cta-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .home-hero .btn-start,
+            .home-hero .btn-ghost {
+                width: 100%;
+            }
+
+            .legal-warning {
+                padding: var(--space-4);
+                border-right-width: 4px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-3);
+            }
+
+            .filter-chips {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: var(--space-2);
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .filter-chips::-webkit-scrollbar {
+                display: none;
+            }
+
+            .chapter-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-4);
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+                gap: var(--space-2);
+            }
+
+            .section-header .section-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
+            }
+
+            .section-header .section-count {
+                order: 3;
+            }
+
+            .path-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-banner,
+            .learning-path {
+                padding: var(--space-6) var(--space-4);
+            }
+
+            .quick-toc {
+                padding: var(--space-3);
+            }
+        }
+
+        @media (max-width: 420px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-top,
+            .card-body,
+            .card-footer {
+                padding-left: var(--space-4);
+                padding-right: var(--space-4);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .stat-box,
+            .stat-box::before,
+            .home-hero .btn-ghost,
+            .chapter-card,
+            .path-step,
+            .who-card {
+                transition: none !important;
+            }
+            .stat-box:hover,
+            .home-hero .btn-ghost:hover,
+            .chapter-card:hover,
+            .path-step:hover,
+            .who-card:hover {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>حملات، نفوذ و راه‌های مقابله — از صفر تا حرفه‌ای</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- ============================================================
+             Hero
+             ============================================================ -->
+        <section class="home-hero">
+            <div class="badge-row">
+                <span class="badge">🎓 CEH-Aligned</span>
+                <span class="badge">🧪 عملی و آزمایشگاهی</span>
+                <span class="badge">🐍 Django-Focused</span>
+                <span class="badge">📘 فارسی کامل</span>
+            </div>
+            <h1>⚔️ به دوره تخصصی امنیت وب خوش آمدید</h1>
+            <p>
+                یک مسیر <strong>۲۱ فصلی</strong> و <strong>۲۹۴ بخشی</strong> که شما را از صفر
+                تا سطح <strong>تست نفوذ حرفه‌ای وب‌اپلیکیشن</strong> می‌برد:
+                از راه‌اندازی آزمایشگاه <strong>Kali + Django</strong> تا اجرای واقعی حملات
+                (SQLi، XSS، CSRF، RCE، SSRF، XXE و...) و پیاده‌سازی راهکارهای دفاعی حرفه‌ای
+                با WAF، Secure Coding و مانیتورینگ.
+            </p>
+            <div class="cta-row">
+                <a href="chapters/chapter-01/index.html" class="btn-start">
+                    📖 شروع یادگیری از فصل ۱
+                </a>
+                <a href="#chapters" class="btn-ghost">
+                    🗂️ مشاهده ۲۱ فصل
+                </a>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             هشدار قانونی
+             ============================================================ -->
+        <aside class="legal-warning" role="alert">
+            <div class="warning-title">
+                <span>⚠️</span>
+                <span>هشدار مهم اخلاقی و قانونی</span>
+            </div>
+            تمام تکنیک‌ها و ابزارهای این دوره <strong>فقط برای استفاده در محیط آزمایشگاه ایزوله</strong>
+            و روی سیستم‌هایی است که مالک آن‌ها هستید یا <strong>مجوز کتبی</strong> دارید.
+            اجرای این حملات روی سیستم‌های واقعی بدون اجازه، طبق <strong>قانون جرایم رایانه‌ای ایران (مواد ۱ تا ۸)</strong> جرم کیفری است
+            و مجازات آن از <strong>حبس ۹۱ روز تا چند سال</strong> متغیر است.
+            یادگیری امنیت یعنی یادگیری <strong>مسئولیت‌پذیری</strong>.
+        </aside>
+
+        <!-- ============================================================
+             آمار دوره
+             ============================================================ -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-icon">📚</span>
+                <span class="stat-num">۲۱</span>
+                <span class="stat-lbl">فصل تخصصی</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">🧩</span>
+                <span class="stat-num">۲۹۴</span>
+                <span class="stat-lbl">بخش آموزشی</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">⚔️</span>
+                <span class="stat-num">+۲۵</span>
+                <span class="stat-lbl">حمله عملی</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">🛡️</span>
+                <span class="stat-num">+۴۰</span>
+                <span class="stat-lbl">راهکار دفاعی</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">🛠️</span>
+                <span class="stat-num">+۵۰</span>
+                <span class="stat-lbl">ابزار تخصصی</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-icon">⏱️</span>
+                <span class="stat-num">+۴۰</span>
+                <span class="stat-lbl">ساعت آموزش</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             مخاطبان دوره
+             ============================================================ -->
+        <h2 style="text-align:center; color:var(--ink); margin: var(--space-7) 0 var(--space-3); font-size: clamp(1.2rem, 2.6vw, 1.5rem); font-weight: 800;">
+            🎯 این دوره برای کیست؟
+        </h2>
+        <p style="text-align:center; color:var(--muted); max-width:640px; margin: 0 auto var(--space-5); line-height:1.9;">
+            اگر در یکی از این دسته‌ها هستید، این دوره دقیقاً برای شماست.
+        </p>
+
+        <div class="who-section">
+            <div class="who-card">
+                <span class="who-icon">👨‍💻</span>
+                <h4>توسعه‌دهندگان وب</h4>
+                <p>می‌خواهید کد امن بنویسید و بدانید چطور مهاجم به کد شما نگاه می‌کند.</p>
+            </div>
+            <div class="who-card">
+                <span class="who-icon">🔐</span>
+                <h4>علاقه‌مندان امنیت</h4>
+                <p>می‌خواهید وارد حوزه تست نفوذ شوید و اولین شغل امنیتی را بگیرید.</p>
+            </div>
+            <div class="who-card">
+                <span class="who-icon">🎓</span>
+                <h4>دانشجویان IT</h4>
+                <p>می‌خواهید پروژه دانشگاهی یا پایان‌نامه در حوزه امنیت وب انجام دهید.</p>
+            </div>
+            <div class="who-card">
+                <span class="who-icon">💼</span>
+                <h4>مدیران فنی</h4>
+                <p>می‌خواهید تیم و محصولتان در برابر حملات واقعی مقاوم شود.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             ابزارهای تحت پوشش
+             ============================================================ -->
+        <div class="tools-cloud">
+            <h3>🛠️ ابزارهای اصلی که در دوره یاد می‌گیرید</h3>
+            <div class="tools-list">
+                <span class="tool-tag">Nmap</span>
+                <span class="tool-tag">Burp Suite</span>
+                <span class="tool-tag">OWASP ZAP</span>
+                <span class="tool-tag">sqlmap</span>
+                <span class="tool-tag">Nikto</span>
+                <span class="tool-tag">Nuclei</span>
+                <span class="tool-tag">Gobuster</span>
+                <span class="tool-tag">FFUF</span>
+                <span class="tool-tag">Subfinder</span>
+                <span class="tool-tag">Amass</span>
+                <span class="tool-tag">Hydra</span>
+                <span class="tool-tag">Wireshark</span>
+                <span class="tool-tag">Metasploit</span>
+                <span class="tool-tag">BeEF</span>
+                <span class="tool-tag">testssl.sh</span>
+                <span class="tool-tag">ModSecurity</span>
+                <span class="tool-tag">Wappalyzer</span>
+                <span class="tool-tag">WhatWeb</span>
+                <span class="tool-tag">dnsrecon</span>
+                <span class="tool-tag">theHarvester</span>
+                <span class="tool-tag">Recon-ng</span>
+                <span class="tool-tag">waybackurls</span>
+                <span class="tool-tag">git-dumper</span>
+                <span class="tool-tag">Django</span>
+                <span class="tool-tag">Docker</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             مسیر یادگیری
+             ============================================================ -->
+        <section class="learning-path">
+            <h2>🗺️ مسیر یادگیری شما در ۵ گام</h2>
+            <p class="path-sub">
+                ترتیب فصل‌ها تصادفی نیست — هر گام پیش‌نیاز گام بعدی است. اگر تازه‌کار هستید، ترتیب را رعایت کنید.
+            </p>
+
+            <div class="path-steps">
+                <div class="path-step">
+                    <span class="step-badge">گام ۱</span>
+                    <h4>🧱 مبانی و آزمایشگاه</h4>
+                    <p>فصل ۱ و ۲ — مفاهیم CIA، OWASP، و ساخت آزمایشگاه Kali + Django</p>
+                </div>
+                <div class="path-step">
+                    <span class="step-badge">گام ۲</span>
+                    <h4>🔍 شناسایی و اسکن</h4>
+                    <p>فصل ۳ و ۴ — Recon، Nmap، Gobuster، Burp، ZAP، Nuclei</p>
+                </div>
+                <div class="path-step">
+                    <span class="step-badge">گام ۳</span>
+                    <h4>⚔️ حملات وب (قلب دوره)</h4>
+                    <p>فصل ۵ تا ۱۴ — از Brute Force تا SQLi، XSS، CSRF، RCE، SSRF، XXE</p>
+                </div>
+                <div class="path-step">
+                    <span class="step-badge">گام ۴</span>
+                    <h4>🛡️ دفاع و سخت‌سازی</h4>
+                    <p>فصل ۱۵ تا ۱۹ — Django Security، WAF، Secure Coding، Hardening، SIEM</p>
+                </div>
+                <div class="path-step">
+                    <span class="step-badge">گام ۵</span>
+                    <h4>🚀 پروژه و حرفه‌ای شدن</h4>
+                    <p>فصل ۲۰ و ۲۱ — متدولوژی تست، گزارش‌نویسی، پروژه جامع End-to-End</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             فهرست فصل‌ها
+             ============================================================ -->
+        <div id="chapters" style="scroll-margin-top: calc(var(--nav-height) + 20px);">
+
+            <h2 class="section-title" style="display:flex; align-items:center; gap:var(--space-3); margin: var(--space-7) 0 var(--space-4); color:var(--ink); font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight:800;">
+                📂 فهرست کامل ۲۱ فصل
+            </h2>
+            <p style="color: var(--muted); text-align: center; margin: 0 0 var(--space-4); line-height:1.9;">
+                هر فصل شامل ۱۴ بخش استاندارد: تئوری، کارگاه عملی، حمله، دفاع، آزمونک و پروژه است.
+            </p>
+
+            <!-- TOC سریع -->
+            <nav class="quick-toc" aria-label="پیمایش سریع دسته‌ها">
+                <span class="toc-label">⚡ پیمایش سریع:</span>
+                <div class="toc-links">
+                    <a href="#cat-foundation">🧱 مبانی</a>
+                    <a href="#cat-recon">🔍 Recon</a>
+                    <a href="#cat-attacks">⚔️ حملات</a>
+                    <a href="#cat-defense">🛡️ دفاع</a>
+                    <a href="#cat-advanced">🚀 پروژه</a>
+                </div>
+            </nav>
+
+            <!-- جستجو -->
+            <div class="search-bar">
+                <input
+                    id="chapter-search"
+                    type="search"
+                    placeholder="جستجو در ۲۱ فصل... (SQLi، SSRF، Nmap، WAF، ...)"
+                    aria-label="جستجو در فصل‌های دوره"
+                    autocomplete="off">
+            </div>
+
+            <!-- فیلترها -->
+            <div class="filter-chips" role="tablist" aria-label="فیلتر فصل‌ها بر اساس دسته">
+                <button class="filter-chip active" data-cat="all" type="button" role="tab" aria-selected="true">✨ همه فصل‌ها</button>
+                <button class="filter-chip" data-cat="foundation" type="button" role="tab" aria-selected="false">🧱 مبانی و آزمایشگاه</button>
+                <button class="filter-chip" data-cat="recon" type="button" role="tab" aria-selected="false">🔍 Recon و Scanning</button>
+                <button class="filter-chip" data-cat="attacks" type="button" role="tab" aria-selected="false">⚔️ حملات وب</button>
+                <button class="filter-chip" data-cat="defense" type="button" role="tab" aria-selected="false">🛡️ دفاع و سخت‌سازی</button>
+                <button class="filter-chip" data-cat="advanced" type="button" role="tab" aria-selected="false">🚀 پیشرفته و پروژه</button>
+            </div>
+
+            <!-- پیام خالی -->
+            <div id="no-result" class="empty-result">
+                😔 فصلی با این مشخصات پیدا نشد — عبارت دیگری امتحان کنید.
+            </div>
+
+            <!-- ============================================
+                 دسته ۱: مبانی و آزمایشگاه
+                 ============================================ -->
+            <div class="chapter-category" data-cat="foundation">
+                <div class="section-header" id="cat-foundation">
+                    <div class="section-icon">🧱</div>
+                    <div class="section-title-wrap">
+                        <h2>بخش ۱ — مبانی و راه‌اندازی آزمایشگاه</h2>
+                        <p class="section-desc">پایه‌های نظری امنیت وب + ساخت محیط ایزوله برای تمرین عملی</p>
+                    </div>
+                    <span class="section-count">۲ فصل</span>
+                </div>
+
+                <div class="chapter-grid">
+
+                    <a class="chapter-card" href="chapters/chapter-01/index.html"
+                       data-cat="foundation"
+                       data-search="مبانی امنیت وب نقشه راه ceh cia triad owasp kill chain انواع مهاجم اخلاق حرفه ای">
+                        <div class="card-top">
+                            <div class="card-icon">🛡️</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱</span>
+                                <h3 class="card-title">مبانی امنیت وب و نقشه راه CEH</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-01"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                نقطه شروع سفر شما — مفاهیم بنیادی که هر متخصص امنیت باید بداند.
+                                بدون این فصل، فصل‌های بعد «جعبه سیاه» می‌شوند.
+                            </p>
+                            <ul class="card-topics">
+                                <li>مدل CIA (محرمانگی، یکپارچگی، دسترس‌پذیری)</li>
+                                <li>Cyber Kill Chain — ۷ مرحله هر حمله واقعی</li>
+                                <li>OWASP Top 10 و نگاهی به ۱۰ آسیب‌پذیری اصلی</li>
+                                <li>انواع مهاجم (Script Kiddie تا APT)</li>
+                                <li>چارچوب قانونی ایران و اخلاق حرفه‌ای</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۰ دقیقه</span>
+                            <span class="mini-pill level-1">🎓 مبتدی</span>
+                            <span class="mini-pill tool">📚 تئوری + ذهنی</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-02/index.html"
+                       data-cat="foundation"
+                       data-search="راه اندازی آزمایشگاه kali windows django vmware شبکه ایزوله host-only نصب ابزارها">
+                        <div class="card-top">
+                            <div class="card-icon">🧪</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۲</span>
+                                <h3 class="card-title">راه‌اندازی آزمایشگاه امن</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-02"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                ساخت آزمایشگاه ایزوله با Kali + Windows + Django روی VMware.
+                                تمام تمرین‌های دوره در همین آزمایشگاه انجام می‌شود.
+                            </p>
+                            <ul class="card-topics">
+                                <li>نصب و پیکربندی VMware Workstation</li>
+                                <li>ساخت شبکه Host-Only (VMnet1) — جداسازی از اینترنت</li>
+                                <li>نصب Kali Linux و تنظیم IP استاتیک</li>
+                                <li>نصب Windows + Python + Django به عنوان هدف</li>
+                                <li>استراتژی Snapshot و مستندسازی آزمایشگاه</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-1">🎓 مبتدی</span>
+                            <span class="mini-pill tool">🛠 VMware + Kali</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 دسته ۲: Recon و Scanning
+                 ============================================ -->
+            <div class="chapter-category" data-cat="recon">
+                <div class="section-header" id="cat-recon">
+                    <div class="section-icon">🔍</div>
+                    <div class="section-title-wrap">
+                        <h2>بخش ۲ — شناسایی و اسکن هدف</h2>
+                        <p class="section-desc">قبل از حمله، هدف را کامل بشناسید — ۸۰٪ موفقیت حمله اینجاست</p>
+                    </div>
+                    <span class="section-count">۲ فصل</span>
+                </div>
+
+                <div class="chapter-grid">
+
+                    <a class="chapter-card" href="chapters/chapter-03/index.html"
+                       data-cat="recon"
+                       data-search="جمع آوری اطلاعات reconnaissance passive active osint dns nmap gobuster subfinder shodan">
+                        <div class="card-top">
+                            <div class="card-icon">🔍</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۳</span>
+                                <h3 class="card-title">جمع‌آوری اطلاعات (Reconnaissance)</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-03"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                اولین فاز تست نفوذ — کشف کامل هدف از منابع عمومی و تعاملی.
+                                با اطلاعات دقیق، حمله هدفمند می‌شود.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Passive vs Active Recon — تفاوت بحرانی</li>
+                                <li>OSINT با Google Dorks، Shodan، Censys</li>
+                                <li>DNS Enumeration — زیردامنه‌ها و رکوردها</li>
+                                <li>Nmap — پادشاه اسکن پورت با NSE Scripts</li>
+                                <li>Gobuster و FFUF برای کشف مسیرها</li>
+                                <li>WhatWeb و Wappalyzer برای Fingerprinting</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Nmap + Subfinder</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-04/index.html"
+                       data-cat="recon"
+                       data-search="شناسایی اسکن وب scanning enumeration nikto wappalyzer burp spider owasp zap testssl ssl tls nuclei">
+                        <div class="card-top">
+                            <div class="card-icon">📡</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۴</span>
+                                <h3 class="card-title">شناسایی و اسکن وب</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-04"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                از اطلاعات خام Recon تا لیست اولویت‌بندی‌شده آسیب‌پذیری‌ها با امتیاز CVSS.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Nikto — اسکنر کلاسیک وب‌سرور</li>
+                                <li>Nuclei — اسکنر مدرن YAML-based (۵۰۰۰+ Template)</li>
+                                <li>Burp Suite Spider — کشف خودکار Endpoints</li>
+                                <li>OWASP ZAP Automated Scan</li>
+                                <li>testssl.sh — تحلیل SSL/TLS و Cipher Suites</li>
+                                <li>کشف API endpoints و تکنولوژی هدف</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Nikto + Nuclei + ZAP</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 دسته ۳: حملات وب (قلب دوره)
+                 ============================================ -->
+            <div class="chapter-category" data-cat="attacks">
+                <div class="section-header" id="cat-attacks">
+                    <div class="section-icon">⚔️</div>
+                    <div class="section-title-wrap">
+                        <h2>بخش ۳ — حملات وب (قلب دوره)</h2>
+                        <p class="section-desc">۱۰ فصل تخصصی حملات OWASP — از Brute Force تا XXE</p>
+                    </div>
+                    <span class="section-count">۱۰ فصل</span>
+                </div>
+
+                <div class="chapter-grid">
+
+                    <a class="chapter-card" href="chapters/chapter-05/index.html"
+                       data-cat="attacks"
+                       data-search="حمله احراز هویت authentication brute force credential stuffing session hijacking mfa bypass hydra">
+                        <div class="card-top">
+                            <div class="card-icon">🔑</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۵</span>
+                                <h3 class="card-title">حمله به احراز هویت</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-05"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                شکستن دروازه ورود — رایج‌ترین نقطه شروع حملات واقعی.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Brute Force با Hydra و Medusa</li>
+                                <li>Credential Stuffing (استفاده از دیتابیس‌های لو رفته)</li>
+                                <li>Session Hijacking و Session Fixation</li>
+                                <li>MFA Bypass و Password Reset Flaws</li>
+                                <li>JWT Attacks و Token Manipulation</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۵ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Hydra + Burp</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-06/index.html"
+                       data-cat="attacks"
+                       data-search="sql injection تزریق sqli union boolean blind time-based sqlmap out-of-band دیتابیس">
+                        <div class="card-top">
+                            <div class="card-icon">💉</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۶</span>
+                                <h3 class="card-title">SQL Injection — نفوذ در دیتابیس</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-06"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                پادشاه آسیب‌پذیری‌ها — استخراج کامل دیتابیس از یک فیلد ورودی ساده.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Union-based SQLi — استخراج داده در یک درخواست</li>
+                                <li>Boolean-based Blind — حمله کور با سؤال بله/خیر</li>
+                                <li>Time-based Blind — حمله با تأخیر زمانی</li>
+                                <li>Error-based — استخراج از پیام‌های خطا</li>
+                                <li>Out-of-Band SQLi — سرقت داده از طریق DNS</li>
+                                <li>تسلط کامل بر sqlmap + Bypass WAF</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۳۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 sqlmap + Burp</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-07/index.html"
+                       data-cat="attacks"
+                       data-search="xss تزریق اسکریپت کلاینت reflected stored dom-based beef csp bypass cross site scripting">
+                        <div class="card-top">
+                            <div class="card-icon">⚡</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۷</span>
+                                <h3 class="card-title">XSS — تزریق اسکریپت سمت کلاینت</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-07"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                سرقت نشست کاربران و اجرای کد در مرورگر آن‌ها — پرتکرارترین حمله وب.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Reflected XSS — تزریق در URL</li>
+                                <li>Stored XSS — کد مخرب در دیتابیس</li>
+                                <li>DOM-based XSS — حمله در سمت مرورگر</li>
+                                <li>BeEF Framework — کنترل مرورگر قربانی</li>
+                                <li>CSP Bypass و تکنیک‌های دور زدن فیلتر</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 BeEF + Burp</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-08/index.html"
+                       data-cat="attacks"
+                       data-search="csrf جعل درخواست بین سایتی samesite token referer cross site request forgery">
+                        <div class="card-top">
+                            <div class="card-icon">🎭</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۸</span>
+                                <h3 class="card-title">CSRF — جعل درخواست بین‌سایتی</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-08"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                وادار کردن قربانی احراز هویت‌شده به انجام کار ناخواسته — بدون دزدیدن رمز.
+                            </p>
+                            <ul class="card-topics">
+                                <li>ساخت صفحه حمله برای تغییر رمز/ایمیل</li>
+                                <li>SameSite Cookie Bypass</li>
+                                <li>CSRF Token Flaws و Reuse</li>
+                                <li>Referer/Origin Check Bypass</li>
+                                <li>XSS + CSRF Chains (زنجیره حمله)</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Burp + HTML</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-09/index.html"
+                       data-cat="attacks"
+                       data-search="idor شکست کنترل دسترسی horizontal vertical privilege bola mass assignment">
+                        <div class="card-top">
+                            <div class="card-icon">🚪</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۹</span>
+                                <h3 class="card-title">IDOR و شکست کنترل دسترسی</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-09"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                ساده‌ترین و پردرآمدترین آسیب‌پذیری Bug Bounty — تغییر یک عدد در URL.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Horizontal Privilege Escalation (کاربر به کاربر)</li>
+                                <li>Vertical Privilege Escalation (کاربر به ادمین)</li>
+                                <li>BOLA (Broken Object Level Authorization)</li>
+                                <li>Mass Assignment — تغییر فیلدهای مخفی</li>
+                                <li>Directory Traversal و Path Bypass</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Burp Intruder</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-10/index.html"
+                       data-cat="attacks"
+                       data-search="آپلود فایل ناامن web shell bypass extension mime polyglot reverse shell rce file upload">
+                        <div class="card-top">
+                            <div class="card-icon">📤</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۰</span>
+                                <h3 class="card-title">آپلود فایل ناامن و Web Shell</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-10"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                از یک فرم آپلود ساده تا دسترسی کامل به سرور با Reverse Shell.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Bypass Extension Filters (.php, .phtml, .php5)</li>
+                                <li>Bypass MIME Type Check</li>
+                                <li>Polyglot Files (تصویر + کد PHP)</li>
+                                <li>Web Shell (PHP, JSP, ASPX)</li>
+                                <li>Reverse Shell با netcat و powershell</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۵ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 Burp + netcat</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-11/index.html"
+                       data-cat="attacks"
+                       data-search="command injection اجرای کد از راه دور os command blind injection reverse shell rce">
+                        <div class="card-top">
+                            <div class="card-icon">💻</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۱</span>
+                                <h3 class="card-title">Command Injection و RCE</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-11"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                خطرناک‌ترین کلاس آسیب‌پذیری — اجرای دستور مستقیم روی سرور هدف.
+                            </p>
+                            <ul class="card-topics">
+                                <li>OS Command Injection — اجرای دستور سیستم</li>
+                                <li>Blind Command Injection (با تأخیر و OAST)</li>
+                                <li>Filter Bypass (space, pipe, semicolon)</li>
+                                <li>Reverse Shell با bash, python, powershell</li>
+                                <li>Privilege Escalation اولیه روی سرور</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 Burp + nc + python</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-12/index.html"
+                       data-cat="attacks"
+                       data-search="ssrf جعل درخواست سمت سرور internal network cloud metadata bypass 169.254">
+                        <div class="card-top">
+                            <div class="card-icon">🌐</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۲</span>
+                                <h3 class="card-title">SSRF — جعل درخواست سمت سرور</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-12"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                عبور از دیوار آتش از داخل — قلب حمله به سرویس‌های ابری (AWS, GCP).
+                            </p>
+                            <ul class="card-topics">
+                                <li>کشف سرویس‌های داخلی (Internal Network Scan)</li>
+                                <li>Cloud Metadata Attacks (169.254.169.254)</li>
+                                <li>Bypass Blocklist (hex, decimal, DNS rebinding)</li>
+                                <li>SSRF via URL parsers و redirects</li>
+                                <li>ترکیب SSRF با سایر حملات (chained)</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۰ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 Burp + curl</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-13/index.html"
+                       data-cat="attacks"
+                       data-search="xxe حمله پردازش xml file disclosure ssrf billion laughs blind xml external entity">
+                        <div class="card-top">
+                            <div class="card-icon">📄</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۳</span>
+                                <h3 class="card-title">XXE — حمله به پردازش XML</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-13"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                خواندن فایل‌های سرور و SSRF از طریق پردازش XML — آسیب‌پذیری فراموش‌شده اما خطرناک.
+                            </p>
+                            <ul class="card-topics">
+                                <li>XML External Entity — خواندن فایل‌های حساس</li>
+                                <li>SSRF via XXE — حمله به شبکه داخلی</li>
+                                <li>Blind XXE — با Out-of-Band Interaction</li>
+                                <li>Billion Laughs — حمله DoS</li>
+                                <li>XXE in SOAP, SAML, DOCX, SVG</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۰ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 Burp + XXE Payloads</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-14/index.html"
+                       data-cat="attacks"
+                       data-search="owasp top 10 نقشه کامل 2021 مرور یکپارچه ده آسیب پذیری نوظهور">
+                        <div class="card-top">
+                            <div class="card-icon">🗺️</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۴</span>
+                                <h3 class="card-title">نقشه کامل OWASP Top 10 (2021)</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-14"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                مرور یکپارچه همه آسیب‌پذیری‌ها + آسیب‌پذیری‌های نوظهور (Prototype Pollution، Deserialization).
+                            </p>
+                            <ul class="card-topics">
+                                <li>مرور کامل ۱۰ دسته OWASP 2021</li>
+                                <li>Insecure Deserialization (Java, PHP, Python)</li>
+                                <li>Prototype Pollution (JavaScript)</li>
+                                <li>Server-Side Template Injection (SSTI)</li>
+                                <li>Race Conditions و HTTP Request Smuggling</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۵ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">📚 مروری</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 دسته ۴: دفاع و سخت‌سازی
+                 ============================================ -->
+            <div class="chapter-category" data-cat="defense">
+                <div class="section-header" id="cat-defense">
+                    <div class="section-icon">🛡️</div>
+                    <div class="section-title-wrap">
+                        <h2>بخش ۴ — دفاع و سخت‌سازی</h2>
+                        <p class="section-desc">از دید مهاجم به دید مدافع — چطور جلوی حملات را بگیریم؟</p>
+                    </div>
+                    <span class="section-count">۵ فصل</span>
+                </div>
+
+                <div class="chapter-grid">
+
+                    <a class="chapter-card" href="chapters/chapter-15/index.html"
+                       data-cat="defense"
+                       data-search="django آسیب پذیری backend کد ناامن تنظیمات غلط debug allowed_hosts secret">
+                        <div class="card-top">
+                            <div class="card-icon">🐍</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۵</span>
+                                <h3 class="card-title">Django و آسیب‌پذیری‌های بک‌اند</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-15"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                تمرکز ویژه روی Django — framework پرکاربرد و آسیب‌پذیری‌های مخصوص آن.
+                            </p>
+                            <ul class="card-topics">
+                                <li>کدهای ناامن رایج در پروژه‌های Django</li>
+                                <li>DEBUG=True در Production (فاجعه)</li>
+                                <li>ALLOWED_HOSTS اشتباه و SECRET_KEY لو رفته</li>
+                                <li>CORS Misconfiguration</li>
+                                <li>Insecure Deserialization در DRF</li>
+                                <li>ORM misuse (Raw SQL، Extra، RawSQL)</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🐍 Django + DRF</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-16/index.html"
+                       data-cat="defense"
+                       data-search="waf دیوار آتش وب modsecurity owasp crs rules rate limiting bypass">
+                        <div class="card-top">
+                            <div class="card-icon">🔥</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۶</span>
+                                <h3 class="card-title">دیوار آتش وب (WAF) و ModSecurity</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-16"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                نصب و پیکربندی WAF حرفه‌ای + یادگیری Bypass آن (این بخش جذاب‌ترین قسمت است).
+                            </p>
+                            <ul class="card-topics">
+                                <li>ModSecurity + OWASP Core Rule Set (CRS)</li>
+                                <li>Rule Writing — ساخت قوانین سفارشی</li>
+                                <li>Rate Limiting و Anti-Bot</li>
+                                <li>Bypass Techniques (Encoding، Case، Obfuscation)</li>
+                                <li>Cloudflare WAF و CDN Bypass</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۵ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 ModSecurity + CRS</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-17/index.html"
+                       data-cat="defense"
+                       data-search="کدنویسی امن بازبینی کد secure coding parameterized queries output encoding input validation">
+                        <div class="card-top">
+                            <div class="card-icon">✅</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۷</span>
+                                <h3 class="card-title">کدنویسی امن و بازبینی کد</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-17"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                کد امن از روز اول — پیشگیری مؤثرتر از هر WAF و هر پچ.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Parameterized Queries (Prepared Statements)</li>
+                                <li>Output Encoding و Context-aware Escaping</li>
+                                <li>Input Validation — Whitelist vs Blacklist</li>
+                                <li>Secure Session Management</li>
+                                <li>Code Review چک‌لیست OWASP</li>
+                                <li>SAST/DAST Tools Integration</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 SonarQube + Bandit</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-18/index.html"
+                       data-cat="defense"
+                       data-search="هدر امنیتی سخت سازی سرور csp hsts x-frame-options hardening owasp secure headers">
+                        <div class="card-top">
+                            <div class="card-icon">🔒</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۸</span>
+                                <h3 class="card-title">هدرهای امنیتی و سخت‌سازی سرور</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-18"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                سخت‌سازی سرور وب و اضافه کردن لایه‌های دفاعی مبتنی بر هدرهای HTTP.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Content Security Policy (CSP) — قوی‌ترین دفاع XSS</li>
+                                <li>HSTS — اجبار به HTTPS</li>
+                                <li>X-Frame-Options و Clickjacking Defense</li>
+                                <li>Nginx/Apache Hardening</li>
+                                <li>TLS/SSL Best Practices (Mozilla Config)</li>
+                                <li>Security Headers Testing</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۰۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">🛠 Nginx + testssl.sh</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-19/index.html"
+                       data-cat="defense"
+                       data-search="مانیتورینگ لاگ گیری پاسخ به حادثه siem log analysis ids ips incident response forensics">
+                        <div class="card-top">
+                            <div class="card-icon">📊</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۱۹</span>
+                                <h3 class="card-title">مانیتورینگ، لاگ‌گیری و پاسخ به حادثه</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-19"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                تشخیص، پاسخ و بازیابی — وقتی حمله رخ داد، چطور سریع واکنش دهیم؟
+                            </p>
+                            <ul class="card-topics">
+                                <li>Centralized Logging با ELK Stack</li>
+                                <li>SIEM (Splunk، Wazuh) — تشخیص تهدید</li>
+                                <li>IDS/IPS با Snort و Suricata</li>
+                                <li>Incident Response Playbook</li>
+                                <li>Forensics و حفظ آثار حمله</li>
+                                <li>Threat Intelligence Integration</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۲۰ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پیشرفته</span>
+                            <span class="mini-pill tool">🛠 ELK + Wazuh</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- ============================================
+                 دسته ۵: پیشرفته و پروژه
+                 ============================================ -->
+            <div class="chapter-category" data-cat="advanced">
+                <div class="section-header" id="cat-advanced">
+                    <div class="section-icon">🚀</div>
+                    <div class="section-title-wrap">
+                        <h2>بخش ۵ — متدولوژی و پروژه نهایی</h2>
+                        <p class="section-desc">حرفه‌ای شدن: تست نفوذ استاندارد + پروژه جامع End-to-End</p>
+                    </div>
+                    <span class="section-count">۲ فصل</span>
+                </div>
+
+                <div class="chapter-grid">
+
+                    <a class="chapter-card" href="chapters/chapter-20/index.html"
+                       data-cat="advanced"
+                       data-search="متدولوژی تست نفوذ گزارش نویسی ptes nist owasp wstg severity rating">
+                        <div class="card-top">
+                            <div class="card-icon">📝</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۲۰</span>
+                                <h3 class="card-title">متدولوژی تست نفوذ و گزارش‌نویسی</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-20"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                تفاوت یک «هکر» با «تستر نفوذ حرفه‌ای» — گزارش حرفه‌ای و متدولوژی استاندارد.
+                            </p>
+                            <ul class="card-topics">
+                                <li>PTES، NIST SP 800-115، OWASP WSTG</li>
+                                <li>Scope of Work و Rules of Engagement</li>
+                                <li>ساختار گزارش حرفه‌ای پنتست</li>
+                                <li>CVSS v3.1 — محاسبه دقیق شدت</li>
+                                <li>Executive Summary vs Technical Report</li>
+                                <li>Remediation توصیه‌های اولویت‌بندی‌شده</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۱۰ دقیقه</span>
+                            <span class="mini-pill level-2">🎓 متوسط</span>
+                            <span class="mini-pill tool">📝 گزارش‌نویسی</span>
+                        </div>
+                    </a>
+
+                    <a class="chapter-card" href="chapters/chapter-21/index.html"
+                       data-cat="advanced"
+                       data-search="پروژه جامع آزمون عملی نهایی end-to-end recon گزارش مسیر شغلی capstone">
+                        <div class="card-top">
+                            <div class="card-icon">🏆</div>
+                            <div class="card-meta">
+                                <span class="card-num">فصل ۲۱</span>
+                                <h3 class="card-title">پروژه جامع و آزمون نهایی (Capstone)</h3>
+                            </div>
+                            <span class="done-mark" data-id="ch-21"></span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-desc">
+                                همه چیز را کنار هم می‌گذاریم — یک تست نفوذ کامل روی یک هدف شبیه‌سازی‌شده.
+                            </p>
+                            <ul class="card-topics">
+                                <li>Recon کامل هدف + مستندسازی</li>
+                                <li>کشف و بهره‌جویی از آسیب‌پذیری‌ها</li>
+                                <li>Post-Exploitation و Privilege Escalation</li>
+                                <li>گزارش نهایی حرفه‌ای + ارائه</li>
+                                <li>مسیر شغلی: Bug Bounty، استخدام، فریلنس</li>
+                                <li>ساخت پورتفولیوی امنیتی حرفه‌ای</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <span class="mini-pill time">⏱ ۱۵۰ دقیقه</span>
+                            <span class="mini-pill level-3">🎓 پروژه‌محور</span>
+                            <span class="mini-pill tool">🏆 Capstone</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             CTA پایانی
+             ============================================================ -->
+        <section class="cta-banner">
+            <h2>🎯 آماده شروع هستید؟</h2>
+            <p>
+                از راه‌اندازی آزمایشگاه تا گزارش نهایی تست نفوذ — یک مسیر کامل شبیه به دوره‌های CEH و OSCP،
+                ولی با تمرکز عملی روی <strong>وب‌اپلیکیشن‌ها</strong> و <strong>Django</strong>.
+                <br>
+                هر فصل ۱۴ بخش استاندارد دارد — بدون پیش‌نیاز پیچیده، از صفر تا حرفه‌ای.
+            </p>
+            <a href="chapters/chapter-01/index.html" class="btn-start">
+                ▶️ شروع از فصل اول
+            </a>
+        </section>
+
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <nav class="footer-quick" aria-label="لینک‌های سریع">
+                <a href="chapters/chapter-01/index.html">📖 شروع دوره</a>
+                <a href="chapters/chapter-03/index.html">🔍 فصل ۳: Recon</a>
+                <a href="chapters/chapter-06/index.html">💉 فصل ۶: SQLi</a>
+                <a href="chapters/chapter-15/index.html">🐍 فصل ۱۵: Django</a>
+                <a href="chapters/chapter-21/index.html">🏆 فصل ۲۱: پروژه</a>
+            </nav>
+
+            <p style="margin: var(--space-4) 0 var(--space-2); font-weight: 700; color: var(--text);">
+                🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵
+            </p>
+            <p style="font-size: 0.85rem; color: var(--muted); margin: var(--space-1) 0;">
+                تمامی حقوق محفوظ است
+            </p>
+            <p style="font-size: 0.8rem; color: var(--muted); margin-top: var(--space-3);">
+                ⚠️ استفاده از محتوای این دوره فقط در محیط آزمایشگاه ایزوله مجاز است.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         اسکریپت‌های صفحه اصلی
+         ============================================================ -->
+    <script>
+    (function () {
+        'use strict';
+
+        var storageOK = true;
+        try {
+            localStorage.setItem('__wsc_home_test__', '1');
+            localStorage.removeItem('__wsc_home_test__');
+        } catch (e) {
+            storageOK = false;
+        }
+
+        /* ---------- ۱) جستجو و فیلتر ---------- */
+        var searchInput = document.getElementById('chapter-search');
+        var chips = Array.prototype.slice.call(document.querySelectorAll('.filter-chip'));
+        var cards = Array.prototype.slice.call(document.querySelectorAll('.chapter-card'));
+        var categories = Array.prototype.slice.call(document.querySelectorAll('.chapter-category'));
+        var noResult = document.getElementById('no-result');
+        var activeCat = 'all';
+
+        function normalize(str) {
+            return (str || '').toLowerCase().trim();
+        }
+
+        function applyFilter() {
+            var q = normalize(searchInput ? searchInput.value : '');
+            var totalVisible = 0;
+
+            cards.forEach(function (card) {
+                var text = normalize(card.getAttribute('data-search'));
+                var content = normalize(card.textContent);
+                var cat = card.getAttribute('data-cat');
+
+                var matchesSearch = !q || text.indexOf(q) !== -1 || content.indexOf(q) !== -1;
+                var matchesCat = activeCat === 'all' || cat === activeCat;
+
+                if (matchesSearch && matchesCat) {
+                    card.style.display = '';
+                    totalVisible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // نمایش/پنهان کردن دسته‌ها بر اساس کارت‌های دیده‌شده
+            categories.forEach(function (catEl) {
+                var catName = catEl.getAttribute('data-cat');
+                var catMatches = activeCat === 'all' || catName === activeCat;
+
+                var anyVisible = Array.prototype.some.call(
+                    catEl.querySelectorAll('.chapter-card'),
+                    function (c) { return c.style.display !== 'none'; }
+                );
+
+                if (catMatches && anyVisible) {
+                    catEl.style.display = '';
+                } else {
+                    catEl.style.display = 'none';
+                }
+            });
+
+            if (noResult) {
+                noResult.classList.toggle('visible', totalVisible === 0);
+            }
+        }
+
+        if (searchInput) {
+            var searchTimer = null;
+            searchInput.addEventListener('input', function () {
+                if (searchTimer) clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    searchTimer = null;
+                    applyFilter();
+                }, 120);
+            });
+        }
+
+        chips.forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                chips.forEach(function (c) {
+                    c.classList.toggle('active', c === chip);
+                    c.setAttribute('aria-selected', c === chip ? 'true' : 'false');
+                });
+                activeCat = chip.getAttribute('data-cat') || 'all';
+                applyFilter();
+            });
+        });
+
+        /* ---------- ۲) نمایش نشان فصل‌های خوانده‌شده ---------- */
+        function paintDoneMarks() {
+            if (!storageOK) return;
+            var finished = {};
+            try {
+                finished = JSON.parse(localStorage.getItem('wsc_finished_v1')) || {};
+            } catch (e) {
+                finished = {};
+            }
+
+            var marks = document.querySelectorAll('.done-mark');
+            marks.forEach(function (mark) {
+                var id = mark.getAttribute('data-id');
+                if (finished[id]) {
+                    mark.textContent = '✓';
+                    mark.title = 'این فصل را خوانده‌اید';
+                } else {
+                    mark.textContent = '';
+                    mark.title = '';
+                }
+            });
+        }
+        paintDoneMarks();
+
+        /* ---------- ۳) Scroll Smooth برای لینک‌های # ---------- */
+        document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                var id = a.getAttribute('href');
+                if (id === '#' || id.length < 2) return;
+                var target = document.getElementById(id.slice(1));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.replaceState(null, '', id);
+                }
+            });
+        });
+
+        /* ---------- ۴) پیمایش سریع با کلید / ---------- */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === '/' && searchInput && document.activeElement !== searchInput) {
+                var tag = (document.activeElement && document.activeElement.tagName) || '';
+                if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+        });
+
+        console.log('🛡️ صفحه اصلی دوره امنیت وب (v2 — توسعه‌یافته) بارگذاری شد');
+    })();
+    </script>
+</body>
+</html>

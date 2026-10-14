@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>چیت‌شیت جامع لینوکس - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../index.html">خانه</a> |
+            <a href="../index.html">چیت‌شیت‌ها</a>
+        </span>
+    </div>
+
+    <h1>🐧 چیت‌شیت جامع لینوکس</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه</a></li>
+            <li><a href="#file">📂 مدیریت فایل</a></li>
+            <li><a href="#perms">🔐 مجوزها</a></li>
+            <li><a href="#network">🌐 شبکه</a></li>
+            <li><a href="#process">⚙️ فرآیندها</a></li>
+            <li><a href="#package">🧰 مدیریت بسته</a></li>
+            <li><a href="#search">🔍 جستجو و فیلتر</a></li>
+            <li><a href="#security">🛡️ امنیت و کاربران</a></li>
+            <li><a href="#script">📜 اسکریپت‌نویسی</a></li>
+            <li><a href="#monitor">📊 مانیتورینگ</a></li>
+            <li><a href="#disk">💾 دیسک</a></li>
+            <li><a href="#archive">📦 فشرده‌سازی</a></li>
+            <li><a href="#cron">⏰ Cron</a></li>
+            <li><a href="#troubleshoot">🔧 عیب‌یابی</a></li>
+            <li><a href="#shortcuts">⌨️ میانبرها</a></li>
+            <li><a href="#practice">🧪 تمرینات</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – چرا لینوکس برای هک قانونمند حیاتی است؟</h2>
+        <p>
+            <b>لینوکس</b> یک سیستمعامل متن‌باز و مبتنی بر یونیکس است که به دلیل <b>امنیت بالا، انعطاف‌پذیری و ابزارهای قدرتمند خط فرمان</b>، به عنوان بستر اصلی برای انجام تست نفوذ و هک قانونمند شناخته می‌شود. بیش از <b>۸۰٪</b> ابزارهای امنیتی و هک (مانند Nmap، Metasploit، Wireshark، Aircrack-ng و …) به‌صورت اختصاصی برای لینوکس توسعه یافته‌اند یا در این محیط بهترین عملکرد را دارند.
+        </p>
+        <p>
+            <b>توزیع Kali Linux</b> که به‌طور خاص برای تست نفوذ طراحی شده، شامل بیش از <b>۶۰۰ ابزار</b> امنیتی از پیش نصب‌شده است. تسلط بر <b>خط فرمان (Shell)</b> و دستورات پایه لینوکس، اولین و مهم‌ترین قدم برای تبدیل شدن به یک هکر قانونمند (Ethical Hacker) است.
+        </p>
+        <p><b>💡 ساختار هر دستور در لینوکس:</b></p>
+        <div class="code-block">
+            <pre dir='ltr'><code dir='ltr'>command [options] [arguments]</code></pre>
+        </div>
+        <ul>
+            <li><b>Command (دستور):</b> نام برنامه یا دستوری که می‌خواهیم اجرا کنیم (مثل <code dir='ltr'>ls</code>، <code dir='ltr'>cd</code>، <code dir='ltr'>ping</code>).</li>
+            <li><b>Options (گزینه‌ها / سوئیچ‌ها):</b> معمولاً با <code dir='ltr'>-</code> (خط تیره) یا <code dir='ltr'>--</code> (دو خط تیره) مشخص می‌شوند و نحوه عملکرد دستور را تغییر می‌دهند (مثل <code dir='ltr'>-l</code> برای نمایش جزئیات یا <code dir='ltr'>--help</code> برای راهنما).</li>
+            <li><b>Arguments (آرگومان‌ها / پارامترها):</b> هدف یا ورودی دستور هستند؛ مانند نام فایل، آدرس IP، یا مسیر دایرکتوری.</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته مهم برای مبتدیان:</b> اگر در مورد هر دستوری شک دارید، از گزینه <code dir='ltr'>--help</code> یا دستور <code dir='ltr'>man</code> (مثل <code dir='ltr'>man ls</code>) استفاده کنید تا مستندات کامل را مشاهده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مدیریت فایل و دایرکتوری -->
+    <!-- ============================================================ -->
+    <div class="card" id="file">
+        <h2>📂 دستورات مدیریت فایل و دایرکتوری (File & Directory Management)</h2>
+        <p>
+            در لینوکس، همه چیز به صورت <b>فایل</b> در نظر گرفته می‌شود. حتی دستگاه‌های سخت‌افزاری، پورت‌ها و فرآیندها نیز به صورت فایل در مسیر <code dir='ltr'>/dev/</code> و <code dir='ltr'>/proc/</code> نمایش داده می‌شوند. تسلط بر دستورات مدیریت فایل، پایه و اساس کار با لینوکس است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>ls</code></td>
+                        <td>لیست محتویات دایرکتوری فعلی. با گزینه‌های مختلف می‌توان اطلاعات بیشتری دریافت کرد.</td>
+                        <td><code dir='ltr'>ls -la</code> → نمایش همه فایل‌ها (حتی مخفی‌ها) با جزئیات کامل (مجوزها، مالک، اندازه، تاریخ)</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>cd</code></td>
+                        <td>تغییر دایرکتوری جاری (Change Directory). برای حرکت در ساختار پوشه‌ها استفاده می‌شود.</td>
+                        <td><code dir='ltr'>cd /etc</code> → رفتن به پوشه etc <br> <code dir='ltr'>cd ~</code> → رفتن به پوشه خانه کاربر <br> <code dir='ltr'>cd ..</code> → یک سطح بالاتر</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>pwd</code></td>
+                        <td>نمایش مسیر کامل دایرکتوری فعلی (Print Working Directory). برای فهمیدن اینکه در کدام پوشه هستیم.</td>
+                        <td><code dir='ltr'>pwd</code> → خروجی: <code dir='ltr'>/home/user/ceh_lab</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>mkdir</code></td>
+                        <td>ساخت دایرکتوری جدید (Make Directory). با گزینه <code dir='ltr'>-p</code> می‌توان زنجیره‌ای از پوشه‌ها را ایجاد کرد.</td>
+                        <td><code dir='ltr'>mkdir -p project/src/images</code> → ساخت سه پوشه تو در تو</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>rm</code></td>
+                        <td>حذف فایل یا دایرکتوری (Remove). با گزینه <code dir='ltr'>-r</code> (بازگشتی) برای حذف پوشه و محتویات و <code dir='ltr'>-f</code> (اجباری) برای حذف بدون تأیید.</td>
+                        <td><code dir='ltr'>rm -rf my_folder</code> → حذف کامل پوشه my_folder و همه زیرپوشه‌ها بدون سوال</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>cp</code></td>
+                        <td>کپی فایل یا دایرکتوری (Copy). با <code dir='ltr'>-r</code> برای کپی بازگشتی پوشه‌ها.</td>
+                        <td><code dir='ltr'>cp -r source_folder/ destination_folder/</code> → کپی کامل یک پوشه به مقصد</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>mv</code></td>
+                        <td>انتقال فایل/پوشه به مکان دیگر یا تغییر نام (Move). هم برای جابجایی و هم تغییر نام استفاده می‌شود.</td>
+                        <td><code dir='ltr'>mv old_name.txt new_name.txt</code> → تغییر نام فایل <br> <code dir='ltr'>mv file.txt /tmp/</code> → انتقال فایل به tmp</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>touch</code></td>
+                        <td>ساخت یک فایل خالی یا به‌روزرسانی زمان آخرین دسترسی/تغییر فایل. اگر فایل وجود نداشته باشد، ایجاد می‌شود.</td>
+                        <td><code dir='ltr'>touch newfile.txt</code> → ساخت فایل خالی <br> <code dir='ltr'>touch -t 202501011200 file.txt</code> → تغییر زمان فایل به تاریخ مشخص</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>nano</code></td>
+                        <td>یک ویرایشگر متنی ساده و کاربرپسند در خط فرمان. برای ویرایش فایل‌های پیکربندی و اسکریپت‌ها عالی است.</td>
+                        <td><code dir='ltr'>nano script.sh</code> → باز کردن (یا ایجاد) فایل script.sh در ویرایشگر nano</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>cat</code></td>
+                        <td>نمایش کامل محتوای یک فایل در خروجی استاندارد (ConCATenate). برای فایل‌های کوچک مناسب است.</td>
+                        <td><code dir='ltr'>cat /etc/passwd</code> → نمایش لیست کاربران سیستم</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>less</code></td>
+                        <td>نمایش محتوای فایل به صورت صفحه‌به‌صفحه با قابلیت جستجو و حرکت بالا/پایین. برای فایل‌های بزرگ بسیار مفید است.</td>
+                        <td><code dir='ltr'>less /var/log/syslog</code> → مشاهده لاگ سیستم با قابلیت اسکرول</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>head</code></td>
+                        <td>نمایش ۱۰ خط اول یک فایل (قابل تغییر با <code dir='ltr'>-n</code>). برای دیدن ابتدای فایل‌های لاگ یا خروجی‌ها.</td>
+                        <td><code dir='ltr'>head -20 /var/log/auth.log</code> → نمایش ۲۰ خط اول لاگ احراز هویت</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>tail</code></td>
+                        <td>نمایش ۱۰ خط آخر یک فایل. با گزینه <code dir='ltr'>-f</code> (follow) می‌توان به‌صورت زنده تغییرات را دنبال کرد.</td>
+                        <td><code dir='ltr'>tail -f /var/log/syslog</code> → نمایش زنده لاگ‌های سیستم (بسیار مفید برای عیب‌یابی)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="highlight-box">
+            <b>💡 نکته مهم:</b> گزینه <code dir='ltr'>-r</code> در دستورات <code dir='ltr'>rm</code> و <code dir='ltr'>cp</code> به معنی <b>بازگشتی (Recursive)</b> است و برای کار با دایرکتوری‌ها و زیرشاخه‌های آنها استفاده می‌شود. همچنین <code dir='ltr'>-f</code> یعنی <b>اجباری (Force)</b> و از پرسیدن سؤال‌های تأیید جلوگیری می‌کند.
+        </div>
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> دستور <code dir='ltr'>rm -rf /</code> (حذف کل سیستم) بسیار خطرناک است و هرگز نباید اجرا شود! همیشه قبل از حذف، مسیر را دوباره چک کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: مجوزها (Permissions) -->
+    <!-- ============================================================ -->
+    <div class="card" id="perms">
+        <h2>🔐 دستورات مدیریت مجوزها (File Permissions)</h2>
+        <p>
+            در لینوکس، هر فایل و دایرکتوری دارای <b>مجوزهای دسترسی (Permissions)</b> است که مشخص می‌کند چه کسی (مالک، گروه، دیگران) چه عملی (خواندن، نوشتن، اجرا) می‌تواند روی آن انجام دهد. این مجوزها یکی از اصلی‌ترین مکانیزم‌های امنیتی لینوکس هستند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>chmod</code></td>
+                        <td>تغییر مجوزهای دسترسی فایل یا دایرکتوری (Change Mode). می‌توان با روش <b>سمبلیک</b> (مثل +x) یا <b>عددی (octal)</b> (مثل 755) استفاده کرد.</td>
+                        <td><code dir='ltr'>chmod +x script.sh</code> → اضافه کردن مجوز اجرا <br> <code dir='ltr'>chmod 755 script.sh</code> → مالک: rwx (۷)، گروه و دیگران: r-x (۵)</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>chown</code></td>
+                        <td>تغییر مالک فایل یا دایرکتوری (Change Owner). فقط کاربر root یا کاربر با مجوز مناسب می‌تواند این کار را انجام دهد.</td>
+                        <td><code dir='ltr'>sudo chown root:root file.txt</code> → تغییر مالک به root و گروه به root</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>chgrp</code></td>
+                        <td>تغییر گروه مالک فایل یا دایرکتوری (Change Group).</td>
+                        <td><code dir='ltr'>sudo chgrp admins file.txt</code> → تغییر گروه فایل به admins</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><b>🔢 نحوه خواندن مجوزها (مثال):</b></p>
+        <div class="code-block">
+            <pre dir='ltr'><code dir='ltr'>-rwxr-xr-- 1 user group 1234 Jan 1 12:00 file.txt</code></pre>
+        </div>
+        <ul>
+            <li><b>نویسه اول:</b> <code dir='ltr'>-</code> یعنی فایل معمولی، <code dir='ltr'>d</code> یعنی دایرکتوری، <code dir='ltr'>l</code> یعنی لینک نمادین (Symlink).</li>
+            <li><b>سه نویسه بعدی (۲-۴):</b> مجوزهای <b>مالک (Owner)</b> – <code dir='ltr'>rwx</code> یعنی خواندن، نوشتن و اجرا دارد.</li>
+            <li><b>سه نویسه بعدی (۵-۷):</b> مجوزهای <b>گروه (Group)</b> – <code dir='ltr'>r-x</code> یعنی خواندن و اجرا دارد، اما نوشتن ندارد.</li>
+            <li><b>سه نویسه آخر (۸-۱۰):</b> مجوزهای <b>دیگران (Others)</b> – <code dir='ltr'>r--</code> یعنی فقط خواندن دارد.</li>
+        </ul>
+
+        <p><b>📐 مقادیر عددی (سیستم اکتال – Octal):</b></p>
+        <ul>
+            <li><code dir='ltr'>r</code> (خواندن) = ۴</li>
+            <li><code dir='ltr'>w</code> (نوشتن) = ۲</li>
+            <li><code dir='ltr'>x</code> (اجرا) = ۱</li>
+            <li><code dir='ltr'>-</code> (بدون مجوز) = ۰</li>
+        </ul>
+        <p><b>مثال‌های عددی رایج:</b></p>
+        <ul>
+            <li><code dir='ltr'>chmod 755 script.sh</code> → مالک: ۷ (۴+۲+۱ = rwx) – گروه: ۵ (۴+۰+۱ = r-x) – دیگران: ۵ (r-x)</li>
+            <li><code dir='ltr'>chmod 644 file.txt</code> → مالک: ۶ (۴+۲+۰ = rw-) – گروه: ۴ (r--) – دیگران: ۴ (r--)</li>
+            <li><code dir='ltr'>chmod 700 secret.sh</code> → فقط مالک دسترسی کامل دارد (rwx)، دیگران هیچ دسترسی ندارند.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ نکته امنیتی بسیار مهم:</b> هرگز به فایل‌های حساس (مثل <code dir='ltr'>/etc/passwd</code>، <code dir='ltr'>/etc/shadow</code>، یا کلیدهای SSH) مجوز <code dir='ltr'>777</code> ندهید. این کار امنیت سیستم را به شدت کاهش می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: شبکه -->
+    <!-- ============================================================ -->
+    <div class="card" id="network">
+        <h2>🌐 دستورات شبکه (Networking Commands)</h2>
+        <p>
+            دستورات شبکه در لینوکس به شما امکان می‌دهند تا <b>تنظیمات شبکه را مشاهده، اتصالات را تست و عیب‌یابی کنید</b>. این دستورات پایه‌ترین ابزارهای یک هکر برای <b>شناسایی (Reconnaissance)</b> و <b>تست نفوذ (Penetration Testing)</b> هستند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>ip a</code> (یا <code dir='ltr'>ifconfig</code>)</td>
+                        <td>نمایش تمام رابط‌های شبکه (Network Interfaces) شامل آدرس IP، ماسک زیرشبکه، آدرس MAC و وضعیت آنها. <code dir='ltr'>ip a</code> جدیدتر است.</td>
+                        <td><code dir='ltr'>ip a</code> → نمایش اطلاعات همه رابط‌ها مثل eth0, wlan0, lo</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>ping</code></td>
+                        <td>تست اتصال به یک میزبان (Host) با ارسال بسته‌های ICMP Echo Request و دریافت پاسخ (Echo Reply). برای بررسی زنده بودن هدف استفاده می‌شود.</td>
+                        <td><code dir='ltr'>ping -c 4 8.8.8.8</code> → ارسال ۴ بسته به DNS گوگل و نمایش زمان پاسخ</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>traceroute</code></td>
+                        <td>نمایش مسیر (Route) رسیدن بسته‌ها از مبدأ به مقصد با لیست کردن تمام روترهای (Hops) بین آنها. برای تشخیص قطعی یا تأخیر در مسیر مفید است.</td>
+                        <td><code dir='ltr'>traceroute -n google.com</code> → نمایش مسیر با آی‌پی (بدون حل DNS) برای سرعت بیشتر</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>netstat</code></td>
+                        <td>نمایش پورت‌های باز، اتصالات فعال، جدول مسیریابی و آمار شبکه. با گزینه‌های مختلف می‌توان اطلاعات دقیق‌تری گرفت.</td>
+                        <td><code dir='ltr'>netstat -tulpn</code> → نمایش همه پورت‌های TCP و UDP در حال گوش دادن (Listening) همراه با نام برنامه</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>ss</code></td>
+                        <td>جایگزین مدرن و سریع‌تر <code dir='ltr'>netstat</code>. اطلاعات مشابهی را با سرعت بالاتر و کارایی بهتر ارائه می‌دهد.</td>
+                        <td><code dir='ltr'>ss -tulpn</code> → مشابه netstat اما سریع‌تر</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>nslookup</code></td>
+                        <td>پرس‌وجوی DNS برای دریافت آدرس IP، نام دامنه و سایر رکوردهای DNS (مانند MX, NS, TXT).</td>
+                        <td><code dir='ltr'>nslookup google.com</code> → نمایش آدرس IP گوگل</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>dig</code></td>
+                        <td>ابزار پیشرفته‌تر پرس‌وجوی DNS با جزئیات کامل‌تر. برای تحلیل دقیق DNS بسیار مفید است.</td>
+                        <td><code dir='ltr'>dig google.com A</code> → دریافت رکورد A (IPv4) <br> <code dir='ltr'>dig google.com MX</code> → دریافت رکوردهای سرور ایمیل</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>curl</code></td>
+                        <td>ارسال درخواست‌های HTTP/HTTPS و دریافت پاسخ. برای تست وب‌سرویس‌ها، دریافت هدرها و محتوای صفحات استفاده می‌شود.</td>
+                        <td><code dir='ltr'>curl -I example.com</code> → دریافت فقط هدرهای HTTP (بدون محتوا) <br> <code dir='ltr'>curl -X POST -d "data=test" example.com/api</code> → ارسال درخواست POST</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>wget</code></td>
+                        <td>دانلود فایل‌ها از وب به‌صورت مستقیم از خط فرمان. می‌تواند فایل‌های بزرگ را با قابلیت ادامه دانلود دریافت کند.</td>
+                        <td><code dir='ltr'>wget -O myfile.zip https://example.com/file.zip</code> → دانلود و ذخیره با نام myfile.zip</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>arp</code></td>
+                        <td>نمایش و مدیریت جدول ARP (Address Resolution Protocol) که نگاشت آدرس‌های IP به آدرس‌های MAC را نشان می‌دهد.</td>
+                        <td><code dir='ltr'>arp -a</code> → نمایش جدول ARP کامل</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>route</code></td>
+                        <td>نمایش و مدیریت جدول مسیریابی (Routing Table). مشخص می‌کند بسته‌ها برای رسیدن به مقصدهای مختلف از چه مسیری عبور کنند.</td>
+                        <td><code dir='ltr'>route -n</code> → نمایش جدول مسیریابی با آی‌پی (بدون حل نام)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته مهم برای هکرها:</b>
+            <ul>
+                <li>از <code dir='ltr'>ping</code> برای <b>تشخیص زنده بودن</b> هدف استفاده کنید.</li>
+                <li>از <code dir='ltr'>traceroute</code> برای <b>شناسایی تعداد روترها و فایروال‌های</b> بین شما و هدف استفاده کنید.</li>
+                <li>از <code dir='ltr'>netstat</code> و <code dir='ltr'>ss</code> برای <b>پیدا کردن پورت‌های باز و سرویس‌های در حال اجرا</b> روی سیستم خود یا سیستم هدف (در صورت دسترسی) استفاده کنید.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: مدیریت فرآیندها -->
+    <!-- ============================================================ -->
+    <div class="card" id="process">
+        <h2>⚙️ مدیریت فرآیندها (Process Management)</h2>
+        <p>
+            یک <b>فرآیند (Process)</b> به یک برنامه در حال اجرا در سیستمعامل گفته می‌شود. هر فرآیند یک <b>شناسه منحصربه‌فرد به نام PID (Process ID)</b> دارد. مدیریت فرآیندها برای <b>مانیتورینگ، عیب‌یابی و پایان دادن به برنامه‌های مشکوک</b> ضروری است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>ps</code></td>
+                        <td>نمایش اطلاعات فرآیندهای در حال اجرا. با گزینه‌های مختلف می‌توان جزئیات بیشتری مانند مصرف CPU، حافظه و وضعیت را مشاهده کرد.</td>
+                        <td><code dir='ltr'>ps aux</code> → نمایش همه فرآیندها با جزئیات کامل <br> <code dir='ltr'>ps aux | grep apache</code> → پیدا کردن فرآیندهای Apache</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>top</code></td>
+                        <td>نمایش پویا و بلادرنگ (Real-time) از فرآیندها، مشابه Task Manager در ویندوز. به‌صورت پیش‌فرض بر اساس مصرف CPU مرتب می‌شود.</td>
+                        <td><code dir='ltr'>top</code> → اجرای مانیتورینگ زنده (برای خروج کلید <code dir='ltr'>q</code> را بزنید)</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>htop</code></td>
+                        <td>نسخه پیشرفته‌تر و زیباتر <code dir='ltr'>top</code> با قابلیت تعامل با ماوس، رنگ‌بندی و گزینه‌های بیشتر. نیاز به نصب جداگانه دارد.</td>
+                        <td><code dir='ltr'>sudo apt install htop</code> → نصب <br> <code dir='ltr'>htop</code> → اجرا</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>kill</code></td>
+                        <td>پایان دادن به یک فرآیند با استفاده از PID. با سیگنال‌های مختلف می‌توان نوع پایان را کنترل کرد.</td>
+                        <td><code dir='ltr'>kill -9 1234</code> → پایان اجباری (سیگنال SIGKILL) فرآیند با PID 1234</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>pkill</code></td>
+                        <td>پایان دادن به فرآیند(ها) بر اساس نام. برای کشتن همه نمونه‌های یک برنامه مفید است.</td>
+                        <td><code dir='ltr'>pkill firefox</code> → پایان دادن به همه فرآیندهای Firefox</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>killall</code></td>
+                        <td>مشابه pkill، اما دقیقاً نام فرآیند را مطابقت می‌دهد (بدون تطابق جزیی).</td>
+                        <td><code dir='ltr'>killall apache2</code> → پایان دادن به همه فرآیندهای apache2</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>nohup</code></td>
+                        <td>اجرای یک دستور به‌گونه‌ای که پس از خروج از ترمینال (logout) نیز به کار خود ادامه دهد. خروجی به فایل <code dir='ltr'>nohup.out</code> ذخیره می‌شود.</td>
+                        <td><code dir='ltr'>nohup ./long_script.sh &</code> → اجرای اسکریپت در پس‌زمینه و ادامه بعد از خروج</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>systemctl</code></td>
+                        <td>مدیریت سرویس‌های <b>systemd</b> (سیستم初始化). برای شروع، توقف، فعال‌سازی و بررسی وضعیت سرویس‌ها استفاده می‌شود.</td>
+                        <td><code dir='ltr'>sudo systemctl start apache2</code> → شروع سرویس Apache <br> <code dir='ltr'>sudo systemctl enable apache2</code> → فعال‌سازی برای راه‌اندازی خودکار</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>jobs</code></td>
+                        <td>نمایش لیست کارهای (Jobs) در حال اجرا در پس‌زمینه که از ترمینال فعلی شروع شده‌اند.</td>
+                        <td><code dir='ltr'>jobs</code> → نمایش کارهای پس‌زمینه با شماره‌هایشان</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>fg</code></td>
+                        <td>آوردن یک کار (Job) از پس‌زمینه به جلوی ترمینال (Foreground).</td>
+                        <td><code dir='ltr'>fg %1</code> → آوردن کار شماره ۱ به جلو</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>bg</code></td>
+                        <td>ادامه دادن یک کار متوقف‌شده در پس‌زمینه (Background).</td>
+                        <td><code dir='ltr'>bg %1</code> → ادامه کار شماره ۱ در پس‌زمینه</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <b>💡 نکته مفید:</b> اگر برنامه‌ای از کار افتاد و پاسخگو نبود، ابتدا با <code dir='ltr'>ps aux | grep [program]</code> PID آن را پیدا کنید و سپس با <code dir='ltr'>kill -9 [PID]</code> آن را پایان دهید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: مدیریت بسته -->
+    <!-- ============================================================ -->
+    <div class="card" id="package">
+        <h2>🧰 مدیریت بسته (Package Management)</h2>
+        <p>
+            <b>مدیریت بسته (Package Management)</b> یکی از اصلی‌ترین قابلیت‌های لینوکس است که به شما امکان می‌دهد نرم‌افزارها را به‌راحتی <b>نصب، به‌روزرسانی، جستجو و حذف</b> کنید. در توزیع‌های مبتنی بر Debian (مانند Kali، Ubuntu) از <b>APT (Advanced Package Tool)</b> استفاده می‌شود.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>apt update</code></td>
+                        <td>به‌روزرسانی لیست بسته‌های موجود در مخازن (Repositories). این دستور بسته‌ها را ارتقا نمی‌دهد، فقط فهرست را به‌روز می‌کند.</td>
+                        <td><code dir='ltr'>sudo apt update</code> → به‌روزرسانی لیست مخازن</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt upgrade</code></td>
+                        <td>ارتقاء تمام بسته‌های نصب‌شده به آخرین نسخه موجود در مخازن. با <code dir='ltr'>-y</code> می‌توان تأیید خودکار را فعال کرد.</td>
+                        <td><code dir='ltr'>sudo apt upgrade -y</code> → ارتقاء همه بسته‌ها بدون سوال</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt install</code></td>
+                        <td>نصب یک یا چند بسته جدید از مخازن. نام بسته را به‌طور دقیق وارد کنید.</td>
+                        <td><code dir='ltr'>sudo apt install nmap</code> → نصب ابزار Nmap</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt remove</code></td>
+                        <td>حذف یک بسته نصب‌شده (فایل‌های پیکربندی معمولاً باقی می‌مانند).</td>
+                        <td><code dir='ltr'>sudo apt remove nmap</code> → حذف Nmap</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt purge</code></td>
+                        <td>حذف کامل بسته به همراه تمام فایل‌های پیکربندی آن. برای پاک‌سازی کامل استفاده می‌شود.</td>
+                        <td><code dir='ltr'>sudo apt purge nmap</code> → حذف کامل Nmap با تنظیمات</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt search</code></td>
+                        <td>جستجوی یک بسته در مخازن با استفاده از کلمه کلیدی. برای پیدا کردن نام دقیق بسته مفید است.</td>
+                        <td><code dir='ltr'>apt search wireshark</code> → جستجوی ابزار Wireshark</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>apt show</code></td>
+                        <td>نمایش اطلاعات کامل یک بسته مانند نسخه، توضیحات، وابستگی‌ها و حجم.</td>
+                        <td><code dir='ltr'>apt show nmap</code> → نمایش اطلاعات کامل Nmap</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>dpkg -i</code></td>
+                        <td>نصب یک فایل بسته <code dir='ltr'>.deb</code> به‌صورت دستی (بدون استفاده از مخازن).</td>
+                        <td><code dir='ltr'>sudo dpkg -i package.deb</code> → نصب فایل deb</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><b>📌 تفاوت <code dir='ltr'>apt</code> و <code dir='ltr'>apt-get</code>:</b></p>
+        <ul>
+            <li><code dir='ltr'>apt</code> یک ابزار مدرن‌تر با خروجی خواناتر و رنگ‌بندی است که برای استفاده روزمره مناسب‌تر است.</li>
+            <li><code dir='ltr'>apt-get</code> نسخه قدیمی‌تر است و در اسکریپت‌ها و محیط‌های قدیمی‌تر استفاده می‌شود.</li>
+        </ul>
+
+        <p><b>🧩 در توزیع‌های مبتنی بر Red Hat (مانند CentOS، Fedora، RHEL):</b></p>
+        <ul>
+            <li><code dir='ltr'>yum install nmap</code> → (قدیمی) نصب با YUM</li>
+            <li><code dir='ltr'>dnf install nmap</code> → (جدید) نصب با DNF</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته:</b> همیشه قبل از نصب یک بسته جدید، با <code dir='ltr'>apt search</code> یا <code dir='ltr'>apt show</code> اطلاعات آن را بررسی کنید تا مطمئن شوید بسته مورد نظر شماست.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: جستجو و فیلتر -->
+    <!-- ============================================================ -->
+    <div class="card" id="search">
+        <h2>🔍 جستجو و فیلتر (Search & Filter)</h2>
+        <p>
+            در لینوکس، <b>جستجو و فیلتر کردن</b> داده‌ها یکی از مهارت‌های کلیدی است. ابزارهایی مانند <code dir='ltr'>grep</code> و <code dir='ltr'>find</code> به شما امکان می‌دهند تا به‌سرعت اطلاعات مورد نظر خود را در میان حجم انبوه داده‌ها پیدا کنید.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>grep</code></td>
+                        <td>جستجوی یک الگو (Pattern) در فایل‌ها یا خروجی استاندارد. با گزینه‌های مختلف مانند <code dir='ltr'>-i</code> (بدون حساسیت به حروف)، <code dir='ltr'>-r</code> (جستجوی بازگشتی در پوشه‌ها) و <code dir='ltr'>-c</code> (شمارش تعداد) قابل استفاده است.</td>
+                        <td><code dir='ltr'>grep -r "password" /var/log/</code> → جستجوی کلمه "password" در همه فایل‌های زیر پوشه log <br> <code dir='ltr'>grep -i "error" syslog</code> → جستجوی "error" بدون حساسیت به بزرگ/کوچکی</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>grep -c</code></td>
+                        <td>شمارش تعداد خطوطی که با الگو مطابقت دارند (Count).</td>
+                        <td><code dir='ltr'>grep -c "failed" /var/log/auth.log</code> → تعداد تلاش‌های ناموفق ورود</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>grep -v</code></td>
+                        <td>نمایش خطوطی که الگو را <b>ندارند</b> (Invert match). برای فیلتر کردن خروجی مفید است.</td>
+                        <td><code dir='ltr'>grep -v "debug" log.txt</code> → نمایش خطوطی که شامل "debug" نیستند</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>find</code></td>
+                        <td>جستجوی فایل‌ها و دایرکتوری‌ها بر اساس معیارهای مختلف مانند نام، نوع، اندازه، تاریخ تغییر و …</td>
+                        <td><code dir='ltr'>find / -name "*.conf" -type f</code> → پیدا کردن همه فایل‌های با پسوند conf <br> <code dir='ltr'>find /home -size +100M</code> → فایل‌های بزرگ‌تر از ۱۰۰ مگابایت در خانه کاربران</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>which</code></td>
+                        <td>نمایش مسیر کامل یک دستور اجرایی (Executable). برای پیدا کردن محل نصب یک برنامه استفاده می‌شود.</td>
+                        <td><code dir='ltr'>which nmap</code> → خروجی: <code dir='ltr'>/usr/bin/nmap</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>whereis</code></td>
+                        <td>نمایش مسیر فایل اجرایی، فایل‌های سورس و مستندات (man pages) یک دستور.</td>
+                        <td><code dir='ltr'>whereis python</code> → نمایش مسیرهای مختلف Python</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>locate</code></td>
+                        <td>جستجوی سریع فایل‌ها با استفاده از یک پایگاه داده از پیش ساخته‌شده (نیاز به <code dir='ltr'>updatedb</code> برای به‌روزرسانی). بسیار سریع‌تر از <code dir='ltr'>find</code> است.</td>
+                        <td><code dir='ltr'>locate passwd</code> → پیدا کردن همه فایل‌های شامل "passwd"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته طلایی:</b> ترکیب <code dir='ltr'>grep</code> با <b>لوله (Pipe) <code dir='ltr'>|</code></b> یکی از قدرتمندترین تکنیک‌های خط فرمان است. با این روش می‌توانید خروجی هر دستوری را فیلتر کنید. مثال: <code dir='ltr'>ps aux | grep apache</code> → پیدا کردن فرآیندهای Apache.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: امنیت و کاربران -->
+    <!-- ============================================================ -->
+    <div class="card" id="security">
+        <h2>🛡️ امنیت و مدیریت کاربران (Security & User Management)</h2>
+        <p>
+            در لینوکس، هر کاربر دارای <b>شناسه کاربری (UID)</b> و <b>گروه (GID)</b> است. مدیریت کاربران و مجوزهای آنها یکی از پایه‌های امنیت سیستم است. دستورات این بخش به شما امکان می‌دهند کاربران را ایجاد، حذف و مدیریت کنید.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>sudo</code></td>
+                        <td>اجرای یک دستور با دسترسی <b>root</b> (superuser). برای انجام کارهای مدیریتی که نیاز به مجوز بالا دارند استفاده می‌شود.</td>
+                        <td><code dir='ltr'>sudo apt update</code> → به‌روزرسانی با دسترسی root</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>useradd</code></td>
+                        <td>ایجاد یک کاربر جدید. با گزینه‌های <code dir='ltr'>-m</code> (ساخت پوشه خانه) و <code dir='ltr'>-s</code> (تعیین شل پیش‌فرض) قابل تنظیم است.</td>
+                        <td><code dir='ltr'>sudo useradd -m -s /bin/bash newuser</code> → ایجاد کاربر با پوشه خانه و شل bash</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>adduser</code></td>
+                        <td>نسخه ساده‌تر و تعاملی‌تر <code dir='ltr'>useradd</code> که اطلاعات کاربر را به‌صورت مرحله‌به‌مرحله می‌پرسد.</td>
+                        <td><code dir='ltr'>sudo adduser newuser</code> → ایجاد کاربر با راهنمایی مرحله‌به‌مرحله</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>passwd</code></td>
+                        <td>تغییر رمز عبور یک کاربر. کاربران عادی می‌توانند رمز خود را تغییر دهند، اما root می‌تواند رمز هر کاربری را تغییر دهد.</td>
+                        <td><code dir='ltr'>passwd newuser</code> → تنظیم رمز برای کاربر newuser</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>whoami</code></td>
+                        <td>نمایش نام کاربر فعلی که لاگین کرده است.</td>
+                        <td><code dir='ltr'>whoami</code> → خروجی: <code dir='ltr'>user</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>id</code></td>
+                        <td>نمایش اطلاعات کامل کاربر شامل UID، GID و گروه‌های عضو.</td>
+                        <td><code dir='ltr'>id</code> → خروجی: <code dir='ltr'>uid=1000(user) gid=1000(user) groups=1000(user),4(adm),24(cdrom)...</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>who</code></td>
+                        <td>نمایش کاربرانی که در حال حاضر به سیستم لاگین کرده‌اند.</td>
+                        <td><code dir='ltr'>who</code> → نمایش نام کاربر، ترمینال و زمان لاگین</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>last</code></td>
+                        <td>نمایش تاریخچه لاگین‌های اخیر سیستم (از فایل <code dir='ltr'>/var/log/wtmp</code>).</td>
+                        <td><code dir='ltr'>last -5</code> → نمایش ۵ لاگین آخر</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>usermod</code></td>
+                        <td>تغییر مشخصات یک کاربر موجود مانند گروه، شل، یا افزودن به گروه‌های جدید.</td>
+                        <td><code dir='ltr'>sudo usermod -aG sudo newuser</code> → افزودن کاربر به گروه sudo (برای دسترسی root)</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>userdel</code></td>
+                        <td>حذف یک کاربر از سیستم. با گزینه <code dir='ltr'>-r</code> پوشه خانه و ایمیل‌های کاربر نیز حذف می‌شوند.</td>
+                        <td><code dir='ltr'>sudo userdel -r newuser</code> → حذف کامل کاربر با پوشه خانه</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ نکته امنیتی بسیار مهم:</b> هرگز به‌صورت مستقیم با کاربر <b>root</b> کار نکنید. همیشه از <code dir='ltr'>sudo</code> برای دستورات مدیریتی استفاده کنید. کار با root می‌تواند به سیستم آسیب برساند و یک اشتباه ساده کل سیستم را از کار بیندازد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: اسکریپت‌نویسی -->
+    <!-- ============================================================ -->
+    <div class="card" id="script">
+        <h2>📜 اسکریپت‌نویسی در Bash</h2>
+        <p>
+            <b>Bash (Bourne Again SHell)</b> محبوب‌ترین شل در لینوکس است. نوشتن اسکریپت‌های Bash به شما امکان می‌دهد تا کارهای تکراری را <b>اتوماتیک</b> کنید، ابزارهای خود را بسازید و تست نفوذ را به‌صورت کارآمدتر انجام دهید.
+        </p>
+
+        <p><b>📌 اسکریپت اسکن پورت‌های محلی (برای تمرین):</b></p>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>#!/bin/bash
+# اسکریپت ساده برای اسکن پورت‌های باز روی لوپ‌بک (127.0.0.1)
+echo "شروع اسکن پورت‌های ۱ تا ۱۰۰۰..."
+for port in {1..1000}; do
+    (echo >/dev/tcp/127.0.0.1/$port) >/dev/null 2>&1 && echo "✅ پورت $port باز است"
+done
+echo "اسکن کامل شد."</code></pre>
+        </div>
+
+        <p><b>📌 اسکریپت با آرگومان ورودی (ورودی از کاربر):</b></p>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>#!/bin/bash
+# اسکریپت خوش‌آمدگویی با دریافت نام کاربر
+if [ -z "$1" ]; then
+    echo "❌ لطفاً نام خود را به عنوان آرگومان وارد کنید."
+    echo "مثال: ./greet.sh Ali"
+    exit 1
+fi
+echo "👋 سلام $1! خوش آمدی به دوره CEH."
+echo "📅 تاریخ امروز: $(date)"
+echo "🕒 زمان: $(date +%T)"</code></pre>
+        </div>
+
+        <p><b>📌 نحوه اجرای اسکریپت‌ها:</b></p>
+        <ul>
+            <li>فایل اسکریپت را با پسوند <code dir='ltr'>.sh</code> ذخیره کنید: <code dir='ltr'>nano myscript.sh</code></li>
+            <li>با <code dir='ltr'>chmod +x myscript.sh</code> به آن مجوز اجرا بدهید.</li>
+            <li>اجرا کنید: <code dir='ltr'>./myscript.sh</code> یا اگر آرگومان دارد: <code dir='ltr'>./myscript.sh "Ali"</code></li>
+            <li>همچنین می‌توانید با <code dir='ltr'>bash myscript.sh</code> اجرا کنید (نیاز به مجوز اجرا ندارد).</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکات کلیدی در اسکریپت‌نویسی:</b>
+            <ul>
+                <li><code dir='ltr'>$1</code> → اولین آرگومان ورودی، <code dir='ltr'>$2</code> دومین و به همین ترتیب.</li>
+                <li><code dir='ltr'>$#</code> → تعداد کل آرگومان‌های ورودی.</li>
+                <li><code dir='ltr'>$@</code> → همه آرگومان‌ها به‌صورت لیست.</li>
+                <li><code dir='ltr'>$?</code> → کد خروجی آخرین دستور (۰ یعنی موفقیت).</li>
+                <li><code dir='ltr'>$(command)</code> → جایگزینی خروجی یک دستور درون اسکریپت.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: مانیتورینگ -->
+    <!-- ============================================================ -->
+    <div class="card" id="monitor">
+        <h2>📊 مانیتورینگ و لاگ‌ها (Monitoring & Logs)</h2>
+        <p>
+            <b>لاگ‌ها (Logs)</b> شامل سوابق وقایع سیستم هستند و برای <b>عیب‌یابی، تحلیل حملات و مانیتورینگ</b> امنیتی بسیار حیاتی هستند. در لینوکس، بیشتر لاگ‌ها در پوشه <code dir='ltr'>/var/log/</code> ذخیره می‌شوند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>dmesg</code></td>
+                        <td>نمایش پیام‌های بوت (راه‌اندازی) و لاگ‌های کرنل (Kernel). برای دیدن وقایع سخت‌افزاری و خطاهای اولیه سیستم مفید است.</td>
+                        <td><code dir='ltr'>dmesg | tail -20</code> → نمایش ۲۰ خط آخر پیام‌های کرنل</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>journalctl</code></td>
+                        <td>مشاهده لاگ‌های سیستم در توزیع‌های مبتنی بر systemd. جایگزین مدرن برای مشاهده لاگ‌های سنتی است.</td>
+                        <td><code dir='ltr'>journalctl -xe</code> → نمایش لاگ‌های سیستم با توضیحات اضافی <br> <code dir='ltr'>journalctl -u sshd</code> → لاگ‌های سرویس SSH</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>journalctl -f</code></td>
+                        <td>دنبال کردن (Follow) لاگ‌های سیستم به‌صورت زنده (مشابه <code dir='ltr'>tail -f</code>).</td>
+                        <td><code dir='ltr'>journalctl -f</code> → نمایش زنده لاگ‌های سیستم</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>tail -f</code></td>
+                        <td>دنبال کردن یک فایل لاگ به‌صورت زنده. برای نظارت بر رویدادهای جاری سیستم استفاده می‌شود.</td>
+                        <td><code dir='ltr'>tail -f /var/log/syslog</code> → نمایش زنده لاگ‌های عمومی سیستم</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>watch</code></td>
+                        <td>اجرای مکرر یک دستور با فاصله زمانی مشخص (پیش‌فرض ۲ ثانیه). برای مانیتورینگ پویا مفید است.</td>
+                        <td><code dir='ltr'>watch -n 5 "netstat -tulpn"</code> → هر ۵ ثانیه وضعیت پورت‌ها را نمایش بده</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <b>💡 نکته:</b> لاگ‌های مهم امنیتی در <code dir='ltr'>/var/log/auth.log</code> (احراز هویت) و <code dir='ltr'>/var/log/syslog</code> (رویدادهای عمومی) قرار دارند. همیشه این فایل‌ها را برای بررسی حملات چک کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: دیسک -->
+    <!-- ============================================================ -->
+    <div class="card" id="disk">
+        <h2>💾 مدیریت دیسک و فضای ذخیره‌سازی (Disk Management)</h2>
+        <p>
+            مدیریت فضای دیسک برای <b>مانیتورینگ مصرف، پاک‌سازی فایل‌های اضافی و مدیریت پارتیشن‌ها</b> ضروری است. این دستورات به شما کمک می‌کنند تا از پر شدن هارددیسک جلوگیری کنید.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>df -h</code></td>
+                        <td>نمایش فضای استفاده‌شده و باقیمانده روی همه پارتیشن‌های متصل (Disk Free) به‌صورت خوانا (Human-readable).</td>
+                        <td><code dir='ltr'>df -h</code> → نمایش حجم هر پارتیشن بر حسب گیگابایت یا مگابایت</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>du -sh</code></td>
+                        <td>نمایش حجم کل یک دایرکتوری یا فایل (Disk Usage) به‌صورت خلاصه (Summary).</td>
+                        <td><code dir='ltr'>du -sh /home/</code> → نمایش حجم کل پوشه خانه کاربران</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>du -h --max-depth=1</code></td>
+                        <td>نمایش حجم زیرشاخه‌های یک دایرکتوری تا عمق مشخص (یک سطح). برای پیدا کردن پوشه‌های حجیم مفید است.</td>
+                        <td><code dir='ltr'>du -h --max-depth=1 /var/</code> → نمایش حجم زیرپوشه‌های var</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>lsblk</code></td>
+                        <td>نمایش ساختار درختی همه دیسک‌ها و پارتیشن‌های سیستم (List Block Devices).</td>
+                        <td><code dir='ltr'>lsblk</code> → نمایش دیسک‌ها و پارتیشن‌ها با اندازه و نقطه اتصال</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>fdisk -l</code></td>
+                        <td>نمایش اطلاعات کامل پارتیشن‌های دیسک (نیاز به دسترسی root). برای مدیریت پارتیشن‌ها استفاده می‌شود.</td>
+                        <td><code dir='ltr'>sudo fdisk -l</code> → نمایش جدول پارتیشن‌های همه دیسک‌ها</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>mount</code></td>
+                        <td>نمایش دیسک‌ها و پارتیشن‌های متصل‌شده (Mounted) به سیستم فایل.</td>
+                        <td><code dir='ltr'>mount | grep /dev</code> → نمایش دیسک‌های متصل از نوع دستگاه</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="tip-box">
+            <b>💡 نکته:</b> اگر فضای دیسک کم است، ابتدا با <code dir='ltr'>du -sh /* | sort -h</code> پوشه‌های حجیم را پیدا کنید و سپس با <code dir='ltr'>rm</code> یا <code dir='ltr'>apt autoremove</code> فایل‌های غیرضروری را حذف کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: فشرده‌سازی -->
+    <!-- ============================================================ -->
+    <div class="card" id="archive">
+        <h2>📦 فشرده‌سازی و بایگانی (Compression & Archiving)</h2>
+        <p>
+            فشرده‌سازی فایل‌ها در لینوکس برای <b>ذخیره‌سازی کارآمد، انتقال سریع‌تر و بایگانی داده‌ها</b> استفاده می‌شود. ابزارهای اصلی شامل <code dir='ltr'>tar</code>، <code dir='ltr'>gzip</code> و <code dir='ltr'>zip</code> هستند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>tar -czvf</code></td>
+                        <td>ایجاد یک فایل بایگانی با فشرده‌سازی <b>gzip</b> (پسوند <code dir='ltr'>.tar.gz</code>).</td>
+                        <td><code dir='ltr'>tar -czvf archive.tar.gz my_folder/</code> → فشرده‌سازی پوشه my_folder</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>tar -xzvf</code></td>
+                        <td>از حالت فشرده خارج کردن یک فایل <code dir='ltr'>.tar.gz</code> (Extract).</td>
+                        <td><code dir='ltr'>tar -xzvf archive.tar.gz</code> → استخراج در دایرکتوری فعلی</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>tar -cjvf</code></td>
+                        <td>ایجاد فایل بایگانی با فشرده‌سازی <b>bzip2</b> (پسوند <code dir='ltr'>.tar.bz2</code>) – فشرده‌سازی بهتر ولی کندتر.</td>
+                        <td><code dir='ltr'>tar -cjvf archive.tar.bz2 my_folder/</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>gzip</code></td>
+                        <td>فشرده‌سازی یک فایل به فرمت <code dir='ltr'>.gz</code>. فایل اصلی حذف و فایل فشرده جایگزین می‌شود.</td>
+                        <td><code dir='ltr'>gzip file.txt</code> → ایجاد <code dir='ltr'>file.txt.gz</code></td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>gunzip</code></td>
+                        <td>خارج کردن از حالت فشرده فایل <code dir='ltr'>.gz</code>.</td>
+                        <td><code dir='ltr'>gunzip file.txt.gz</code> → بازگرداندن فایل اصلی</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>zip</code></td>
+                        <td>ایجاد فایل فشرده با فرمت <code dir='ltr'>.zip</code> (قابل استفاده در ویندوز).</td>
+                        <td><code dir='ltr'>zip -r archive.zip my_folder/</code> → فشرده‌سازی بازگشتی پوشه</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>unzip</code></td>
+                        <td>خارج کردن از حالت فشرده فایل <code dir='ltr'>.zip</code>.</td>
+                        <td><code dir='ltr'>unzip archive.zip -d dest_folder/</code> → استخراج در پوشه مقصد</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><b>📌 معنی گزینه‌های دستور <code dir='ltr'>tar</code>:</b></p>
+        <ul>
+            <li><code dir='ltr'>c</code> → Create (ساخت بایگانی جدید)</li>
+            <li><code dir='ltr'>x</code> → Extract (استخراج از بایگانی)</li>
+            <li><code dir='ltr'>z</code> → فشرده‌سازی با gzip (برای <code dir='ltr'>.tar.gz</code>)</li>
+            <li><code dir='ltr'>j</code> → فشرده‌سازی با bzip2 (برای <code dir='ltr'>.tar.bz2</code>)</li>
+            <li><code dir='ltr'>v</code> → Verbose (نمایش جزئیات در حین کار)</li>
+            <li><code dir='ltr'>f</code> → File (مشخص کردن نام فایل بایگانی)</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: Cron -->
+    <!-- ============================================================ -->
+    <div class="card" id="cron">
+        <h2>⏰ زمان‌بندی خودکار با Cron (Cron Jobs)</h2>
+        <p>
+            <b>Cron</b> یک ابزار قدرتمند در لینوکس برای <b>اجرای خودکار دستورات و اسکریپت‌ها در زمان‌های مشخص</b> است. Cron Jobs برای کارهای تکراری مانند پشتیبان‌گیری، مانیتورینگ و اسکن‌های دوره‌ای بسیار مفید هستند.
+        </p>
+
+        <p><b>🛠️ ویرایش Cron Jobs:</b> <code dir='ltr'>crontab -e</code></p>
+        <p><b>📋 نمایش Cron Jobs:</b> <code dir='ltr'>crontab -l</code></p>
+        <p><b>🗑️ حذف Cron Jobs:</b> <code dir='ltr'>crontab -r</code></p>
+
+        <p><b>📐 ساختار هر خط در Crontab:</b></p>
+        <div class="code-block">
+            <pre dir='ltr'><code dir='ltr'>* * * * * command_to_execute
+│ │ │ │ │
+│ │ │ │ └─── روز هفته (۰-۶, ۰=یکشنبه)
+│ │ │ └───── ماه (۱-۱۲)
+│ │ └─────── روز ماه (۱-۳۱)
+│ └───────── ساعت (۰-۲۳)
+└─────────── دقیقه (۰-۵۹)</code></pre>
+        </div>
+
+        <p><b>📌 مثال‌های پرکاربرد:</b></p>
+        <ul>
+            <li><code dir='ltr'>0 2 * * * /home/user/backup.sh</code> → اجرای اسکریپت پشتیبان‌گیری هر روز ساعت ۲ بامداد</li>
+            <li><code dir='ltr'>*/5 * * * * /home/user/check.sh</code> → اجرای اسکریپت بررسی هر ۵ دقیقه یکبار</li>
+            <li><code dir='ltr'>0 9 * * 1-5 /home/user/report.sh</code> → اجرای اسکریپت گزارش در روزهای کاری (دوشنبه تا جمعه) ساعت ۹ صبح</li>
+            <li><code dir='ltr'>@reboot /home/user/start.sh</code> → اجرای اسکریپت هنگام راه‌اندازی سیستم</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته مهم:</b> برای اشکال‌زدایی Cron Jobs، خروجی دستورات را به یک فایل لاگ هدایت کنید تا در صورت بروز خطا، آن را ببینید:
+            <br>
+            <code dir='ltr'>0 2 * * * /home/user/backup.sh &gt; /var/log/backup.log 2&gt;&amp;1</code>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: عیب‌یابی -->
+    <!-- ============================================================ -->
+    <div class="card" id="troubleshoot">
+        <h2>🔧 عیب‌یابی پیشرفته (Advanced Troubleshooting)</h2>
+        <p>
+            ابزارهای عیب‌یابی پیشرفته به شما امکان می‌دهند تا مشکلات سیستم را در سطح پایین‌تر بررسی کنید. این ابزارها برای تحلیل حملات، پیدا کردن فرآیندهای مشکوک و بررسی عملکرد سیستم بسیار مفید هستند.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>دستور</th><th>توضیح کامل</th><th>مثال کاربردی</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code dir='ltr'>lsof</code></td>
+                        <td>نمایش فایل‌های باز (Open Files) توسط فرآیندها. در لینوکس همه چیز فایل است، بنابراین این دستور اطلاعات بسیار مفیدی می‌دهد.</td>
+                        <td><code dir='ltr'>lsof -i :80</code> → پیدا کردن فرآیندی که پورت ۸۰ (HTTP) را باز کرده است <br> <code dir='ltr'>lsof -p 1234</code> → فایل‌های باز توسط فرآیند با PID 1234</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>strace</code></td>
+                        <td>ردیابی و نمایش تمام <b>سیستم‌کال‌ها (System Calls)</b> که توسط یک فرآیند انجام می‌شود. برای تحلیل رفتار برنامه‌ها و پیدا کردن خطاها استفاده می‌شود.</td>
+                        <td><code dir='ltr'>strace -p 1234</code> → ردیابی سیستم‌کال‌های فرآیند ۱۲۳۴ <br> <code dir='ltr'>strace -o output.txt ./program</code> → ذخیره خروجی ردیابی در فایل</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>ltrace</code></td>
+                        <td>ردیابی تماس‌های کتابخانه‌ای (Library Calls) در یک برنامه. برای تحلیل وابستگی‌های برنامه مفید است.</td>
+                        <td><code dir='ltr'>ltrace ./program</code> → نمایش تماس‌های کتابخانه‌ای برنامه</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>tcpdump</code></td>
+                        <td>ضبط بسته‌های شبکه در خط فرمان. برای تحلیل ترافیک شبکه و تشخیص حملات شبکه بسیار مفید است.</td>
+                        <td><code dir='ltr'>tcpdump -i eth0 -c 10</code> → ضبط ۱۰ بسته از رابط eth0 <br> <code dir='ltr'>tcpdump -i eth0 port 80</code> → ضبط فقط ترافیک HTTP</td>
+                    </tr>
+                    <tr>
+                        <td><code dir='ltr'>nc</code> (netcat)</td>
+                        <td>یک ابزار چندمنظوره شبکه برای ایجاد اتصالات TCP/UDP، تست پورت، دریافت/ارسال فایل و ایجاد شل معکوس.</td>
+                        <td><code dir='ltr'>nc -zv 192.168.1.1 22</code> → تست باز بودن پورت SSH <br> <code dir='ltr'>nc -l -p 4444</code> → گوش دادن روی پورت ۴۴۴۴</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: میانبرها -->
+    <!-- ============================================================ -->
+    <div class="card" id="shortcuts">
+        <h2>⌨️ میانبرها و ترفندهای افزایش سرعت</h2>
+        <p>
+            آشنایی با میانبرهای صفحه‌کلید و ترفندهای خط فرمان، سرعت کار شما را به‌طور چشمگیری افزایش می‌دهد.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>کلید / میانبر</th><th>توضیح</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code dir='ltr'>Ctrl + C</code></td><td>قطع (Terminate) دستور در حال اجرا</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + Z</code></td><td>متوقف کردن (Suspend) دستور جاری (قابل بازیابی با <code dir='ltr'>fg</code>)</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + D</code></td><td>خروج از شل (معادل <code dir='ltr'>exit</code>)</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + L</code></td><td>پاک کردن صفحه ترمینال (معادل <code dir='ltr'>clear</code>)</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + A</code></td><td>رفتن به ابتدای خط (Home)</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + E</code></td><td>رفتن به انتهای خط (End)</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + U</code></td><td>حذف از مکان فعلی تا ابتدای خط</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + K</code></td><td>حذف از مکان فعلی تا انتهای خط</td></tr>
+                    <tr><td><code dir='ltr'>Ctrl + R</code></td><td>جستجوی تاریخچه دستورات (Reverse Search) – بسیار مفید!</td></tr>
+                    <tr><td><code dir='ltr'>!!</code></td><td>اجرای آخرین دستور</td></tr>
+                    <tr><td><code dir='ltr'>!$</code></td><td>آخرین آرگومان دستور قبلی</td></tr>
+                    <tr><td><code dir='ltr'>Tab</code></td><td>تکمیل خودکار (Auto-complete) نام فایل، دستور یا مسیر</td></tr>
+                    <tr><td><code dir='ltr'>history</code></td><td>نمایش لیست کامل تاریخچه دستورات</td></tr>
+                    <tr><td><code dir='ltr'>clear</code></td><td>پاک کردن صفحه ترمینال</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 ترفند حرفه‌ای:</b> با <code dir='ltr'>Ctrl + R</code> شروع به تایپ کنید تا تاریخچه دستورات را جستجو کند. این روش بسیار سریع‌تر از اسکرول کردن در تاریخچه است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: تمرینات -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice">
+        <h2>🧪 تمرین‌های عملی جامع</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مفاهیم لینوکس را به‌صورت عملی یاد بگیرید. سعی کنید همه تمرینات را در محیط Kali یا هر توزیع لینوکسی دیگر انجام دهید.
+        </p>
+
+        <ul>
+            <li><b>تمرین ۱ – مدیریت فایل:</b> یک دایرکتوری به نام <code dir='ltr'>ceh_lab</code> در پوشه خانه خود بسازید. داخل آن سه فایل خالی با نام‌های <code dir='ltr'>file1.txt</code>، <code dir='ltr'>file2.log</code> و <code dir='ltr'>script.sh</code> ایجاد کنید.</li>
+            <li><b>تمرین ۲ – مجوزها:</b> به فایل <code dir='ltr'>script.sh</code> مجوز اجرا بدهید و با <code dir='ltr'>ls -l</code> مجوزها را بررسی کنید.</li>
+            <li><b>تمرین ۳ – اسکریپت‌نویسی:</b> با <code dir='ltr'>nano</code> اسکریپتی بنویسید که پیام "Hello CEH" را چاپ کند، آن را ذخیره و اجرا کنید.</li>
+            <li><b>تمرین ۴ – جستجو:</b> با <code dir='ltr'>grep</code> تمام خطوط شامل کلمه "error" را در فایل <code dir='ltr'>/var/log/syslog</code> پیدا کنید و تعداد آنها را بشمارید.</li>
+            <li><b>تمرین ۵ – شبکه:</b> با <code dir='ltr'>netstat -tulpn</code> پورت‌های باز سیستم خود را بررسی و سرویس‌های در حال گوش دادن را شناسایی کنید.</li>
+            <li><b>تمرین ۶ – فشرده‌سازی:</b> پوشه <code dir='ltr'>ceh_lab</code> را با <code dir='ltr'>tar</code> فشرده کنید و سپس از حالت فشرده خارج کنید.</li>
+            <li><b>تمرین ۷ – Cron:</b> یک Cron Job تنظیم کنید که هر روز ساعت ۳ بامداد یک فایل لاگ ساده در <code dir='ltr'>/tmp</code> ایجاد کند.</li>
+            <li><b>تمرین ۸ – مانیتورینگ:</b> با <code dir='ltr'>watch</code> وضعیت پورت‌های باز را هر ۳ ثانیه مانیتور کنید.</li>
+            <li><b>تمرین ۹ – عیب‌یابی:</b> با <code dir='ltr'>lsof -i :22</code> بررسی کنید کدام فرآیند پورت SSH را باز کرده است.</li>
+            <li><b>تمرین ۱۰ – مدیریت کاربر:</b> یک کاربر جدید با نام <code dir='ltr'>ceh_user</code> ایجاد کنید و سپس آن را حذف کنید.</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی لینوکس (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی که در این چیت‌شیت استفاده شده است، به همراه <b>معنی، کاربرد، مثال، کارکرد و عملکرد</b> توضیح داده می‌شود. این واژه‌نامه یک مرجع کامل برای مبتدیان و حرفه‌ای‌هاست.
+        </p>
+
+        <div class="table-responsive">
+            <table class="glossary-table">
+                <tr><th>واژه</th><th>توضیح کامل (معنی، کاربرد، مثال، کارکرد، عملکرد)</th></tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Kali Linux</span></td>
+                    <td>
+                        <b>معنی:</b> یک توزیع لینوکس مبتنی بر Debian که به‌طور خاص برای تست نفوذ و امنیت سایبری طراحی شده است.
+                        <br><b>کاربرد:</b> محیط اصلی برای هکرهای قانونمند برای انجام تست نفوذ، تحلیل امنیتی و آموزش.
+                        <br><b>مثال:</b> نصب Kali روی VirtualBox برای تمرین ابزارهای هک.
+                        <br><b>کارکرد:</b> شامل بیش از ۶۰۰ ابزار امنیتی از پیش نصب‌شده مانند Nmap، Metasploit، Wireshark، Aircrack-ng و…
+                        <br><b>عملکرد:</b> به‌عنوان یک سیستمعامل اختصاصی برای متخصصان امنیت استفاده می‌شود.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Shell</span></td>
+                    <td>
+                        <b>معنی:</b> یک رابط خط فرمان (Command-Line Interface) که دستورات کاربر را دریافت و به هسته (Kernel) ارسال می‌کند.
+                        <br><b>کاربرد:</b> اجرای دستورات، مدیریت فایل‌ها، اسکریپت‌نویسی و مدیریت سیستم.
+                        <br><b>مثال:</b> Bash، Zsh، Fish از جمله شل‌های معروف هستند.
+                        <br><b>کارکرد:</b> تفسیر دستورات و اجرای آنها با استفاده از هسته.
+                        <br><b>عملکرد:</b> به کاربر امکان تعامل مستقیم با سیستمعامل را می‌دهد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">PID (Process ID)</span></td>
+                    <td>
+                        <b>معنی:</b> یک عدد منحصربه‌فرد که به هر فرآیند در حال اجرا در لینوکس اختصاص داده می‌شود.
+                        <br><b>کاربرد:</b> شناسایی و مدیریت فرآیندها (مثلاً برای پایان دادن با <code dir='ltr'>kill</code>).
+                        <br><b>مثال:</b> <code dir='ltr'>ps aux | grep apache</code> → PID فرآیند Apache را پیدا کنید.
+                        <br><b>کارکرد:</b> سیستم از PID برای ردیابی و مدیریت فرآیندها استفاده می‌کند.
+                        <br><b>عملکرد:</b> با استفاده از PID می‌توان فرآیند را متوقف، اولویت آن را تغییر داد یا اطلاعات آن را مشاهده کرد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Root</span></td>
+                    <td>
+                        <b>معنی:</b> کاربر مدیر سیستم (Superuser) با بالاترین سطح دسترسی در لینوکس.
+                        <br><b>کاربرد:</b> انجام کارهای مدیریتی مانند نصب نرم‌افزار، تغییر تنظیمات سیستم و مدیریت کاربران.
+                        <br><b>مثال:</b> <code dir='ltr'>sudo apt update</code> → اجرای دستور با دسترسی root.
+                        <br><b>کارکرد:</b> دسترسی کامل به همه فایل‌ها و فرآیندها بدون محدودیت.
+                        <br><b>عملکرد:</b> استفاده از root باید محدود به کارهای ضروری باشد تا امنیت سیستم حفظ شود.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">sudo</span></td>
+                    <td>
+                        <b>معنی:</b> یک دستور که به کاربران عادی اجازه می‌دهد دستورات را با سطح دسترسی root اجرا کنند.
+                        <br><b>کاربرد:</b> اجرای دستورات مدیریتی بدون نیاز به لاگین با کاربر root.
+                        <br><b>مثال:</b> <code dir='ltr'>sudo systemctl restart apache2</code> → ری‌استارت سرویس Apache با دسترسی root.
+                        <br><b>کارکرد:</b> با استفاده از فایل <code dir='ltr'>/etc/sudoers</code> مشخص می‌کند کدام کاربران مجوز دارند.
+                        <br><b>عملکرد:</b> امنیت سیستم را افزایش می‌دهد زیرا کاربران فقط برای دستورات خاص از root استفاده می‌کنند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">APT (Advanced Package Tool)</span></td>
+                    <td>
+                        <b>معنی:</b> ابزار مدیریت بسته در توزیع‌های مبتنی بر Debian (مانند Kali، Ubuntu).
+                        <br><b>کاربرد:</b> نصب، به‌روزرسانی، حذف و جستجوی بسته‌های نرم‌افزاری.
+                        <br><b>مثال:</b> <code dir='ltr'>sudo apt install nmap</code> → نصب Nmap.
+                        <br><b>کارکرد:</b> با مخازن (Repositories) ارتباط برقرار می‌کند و وابستگی‌ها را مدیریت می‌کند.
+                        <br><b>عملکرد:</b> نصب نرم‌افزار را ساده و خودکار می‌کند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Systemd</span></td>
+                    <td>
+                        <b>معنی:</b> یک سیستم مدیریت سرویس‌ها و راه‌اندازی (Init System) در توزیع‌های مدرن لینوکس.
+                        <br><b>کاربرد:</b> مدیریت سرویس‌ها (شروع، توقف، فعال‌سازی) و مدیریت لاگ‌ها.
+                        <br><b>مثال:</b> <code dir='ltr'>systemctl start apache2</code> → شروع سرویس Apache.
+                        <br><b>کارکرد:</b> جایگزین System V Init شده و سریع‌تر و کارآمدتر است.
+                        <br><b>عملکرد:</b> سرویس‌ها را در پس‌زمینه مدیریت می‌کند و امکان راه‌اندازی خودکار در بوت را فراهم می‌کند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Cron</span></td>
+                    <td>
+                        <b>معنی:</b> یک ابزار زمان‌بندی برای اجرای خودکار دستورات و اسکریپت‌ها در بازه‌های زمانی مشخص.
+                        <br><b>کاربرد:</b> پشتیبان‌گیری خودکار، اسکن‌های دوره‌ای، مانیتورینگ و ارسال گزارش.
+                        <br><b>مثال:</b> <code dir='ltr'>0 2 * * * /home/user/backup.sh</code> → اجرای اسکریپت هر روز ساعت ۲ بامداد.
+                        <br><b>کارکرد:</b> از فایل‌های Crontab برای ذخیره زمان‌بندی‌ها استفاده می‌کند.
+                        <br><b>عملکرد:</b> دستورات را در زمان‌های مشخص به‌صورت خودکار اجرا می‌کند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Grep</span></td>
+                    <td>
+                        <b>معنی:</b> یک ابزار خط فرمان برای جستجوی الگوها (Patterns) در فایل‌ها یا خروجی دستورات.
+                        <br><b>کاربرد:</b> فیلتر کردن خروجی، پیدا کردن خطاها در لاگ‌ها، جستجوی متن در فایل‌ها.
+                        <br><b>مثال:</b> <code dir='ltr'>grep -r "password" /var/log/</code> → جستجوی کلمه password در لاگ‌ها.
+                        <br><b>کارکرد:</b> از عبارت‌های منظم (Regular Expressions) برای تطابق الگو استفاده می‌کند.
+                        <br><b>عملکرد:</b> یکی از پرکاربردترین ابزارهای خط فرمان برای تحلیل داده است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Pipe (|)</span></td>
+                    <td>
+                        <b>معنی:</b> یک عملگر در خط فرمان که خروجی یک دستور را به ورودی دستور دیگر هدایت می‌کند.
+                        <br><b>کاربرد:</b> ترکیب چند دستور برای انجام کارهای پیچیده.
+                        <br><b>مثال:</b> <code dir='ltr'>ps aux | grep apache</code> → پیدا کردن فرآیندهای Apache.
+                        <br><b>کارکرد:</b> ارتباط بین خروجی و ورودی استاندارد دو دستور.
+                        <br><b>عملکرد:</b> امکان فیلتر کردن، پردازش و تحلیل داده‌ها را به‌صورت زنجیره‌ای فراهم می‌کند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Permission (مجوز)</span></td>
+                    <td>
+                        <b>معنی:</b> سطح دسترسی تعیین‌شده برای فایل‌ها و دایرکتوری‌ها شامل خواندن (r)، نوشتن (w) و اجرا (x).
+                        <br><b>کاربرد:</b> کنترل دسترسی کاربران به فایل‌ها و محافظت از اطلاعات حساس.
+                        <br><b>مثال:</b> <code dir='ltr'>chmod 755 script.sh</code> → تنظیم مجوزها.
+                        <br><b>کارکرد:</b> سه سطح دسترسی: مالک، گروه و دیگران.
+                        <br><b>عملکرد:</b> از دسترسی غیرمجاز به فایل‌ها جلوگیری می‌کند و امنیت سیستم را تأمین می‌کند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Repository (مخزن)</span></td>
+                    <td>
+                        <b>معنی:</b> یک سرور یا مکان ذخیره‌سازی که شامل بسته‌های نرم‌افزاری و اطلاعات مربوط به آنها است.
+                        <br><b>کاربرد:</b> منبع نصب نرم‌افزارها در لینوکس.
+                        <br><b>مثال:</b> مخازن رسمی Kali و Ubuntu شامل هزاران بسته هستند.
+                        <br><b>کارکرد:</b> مدیریت بسته‌ها و وابستگی‌ها را آسان می‌کند.
+                        <br><b>عملکرد:</b> کاربران با <code dir='ltr'>apt update</code> لیست مخازن را به‌روز می‌کنند و با <code dir='ltr'>apt install</code> بسته‌ها را نصب می‌کنند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Kernel</span></td>
+                    <td>
+                        <b>معنی:</b> هسته اصلی سیستمعامل لینوکس که ارتباط بین سخت‌افزار و نرم‌افزار را مدیریت می‌کند.
+                        <br><b>کاربرد:</b> مدیریت منابع سخت‌افزاری، حافظه، فرآیندها و دستگاه‌ها.
+                        <br><b>مثال:</b> نسخه کرنل را با <code dir='ltr'>uname -r</code> مشاهده کنید.
+                        <br><b>کارکرد:</b> واسط بین سخت‌افزار (CPU، حافظه، دیسک) و برنامه‌های کاربردی است.
+                        <br><b>عملکرد:</b> امنیت و پایداری سیستم به کرنل بستگی دارد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Log (لاگ)</span></td>
+                    <td>
+                        <b>معنی:</b> فایل‌هایی که رویدادها، خطاها و فعالیت‌های سیستم را ثبت می‌کنند.
+                        <br><b>کاربرد:</b> عیب‌یابی، تحلیل حملات، مانیتورینگ عملکرد و امنیت.
+                        <br><b>مثال:</b> <code dir='ltr'>/var/log/syslog</code> لاگ عمومی سیستم، <code dir='ltr'>/var/log/auth.log</code> لاگ احراز هویت.
+                        <br><b>کارکرد:</b> ثبت زمان‌دار وقایع برای بررسی بعدی.
+                        <br><b>عملکرد:</b> هکرها و مدیران سیستم از لاگ‌ها برای شناسایی حملات و مشکلات استفاده می‌کنند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Symbolic Link (لینک نمادین)</span></td>
+                    <td>
+                        <b>معنی:</b> یک فایل خاص که به فایل یا دایرکتوری دیگری اشاره می‌کند (مشابه Shortcut در ویندوز).
+                        <br><b>کاربرد:</b> ایجاد دسترسی آسان به فایل‌ها بدون کپی کردن آنها.
+                        <br><b>مثال:</b> <code dir='ltr'>ln -s /original/file /link/file</code> → ایجاد لینک.
+                        <br><b>کارکرد:</b> لینک فقط یک اشاره‌گر است و خود فایل را کپی نمی‌کند.
+                        <br><b>عملکرد:</b> در مدیریت فایل‌ها و سازماندهی سیستم بسیار مفید است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSH (Secure Shell)</span></td>
+                    <td>
+                        <b>معنی:</b> یک پروتکل امن برای ارتباط رمزنگاری‌شده با سرورها و دستگاه‌های از راه دور.
+                        <br><b>کاربرد:</b> دسترسی ایمن به ترمینال سرور، انتقال فایل و اجرای دستورات از راه دور.
+                        <br><b>مثال:</b> <code dir='ltr'>ssh user@192.168.1.10</code> → اتصال به سرور.
+                        <br><b>کارکرد:</b> از رمزنگاری قوی برای محافظت از ارتباط استفاده می‌کند.
+                        <br><b>عملکرد:</b> جایگزین امن Telnet است و در مدیریت سرورها بسیار رایج است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Bash (Bourne Again SHell)</span></td>
+                    <td>
+                        <b>معنی:</b> محبوب‌ترین و پرکاربردترین شل در لینوکس که به‌عنوان رابط خط فرمان عمل می‌کند.
+                        <br><b>کاربرد:</b> اجرای دستورات، نوشتن اسکریپت‌های اتوماسیون و مدیریت سیستم.
+                        <br><b>مثال:</b> <code dir='ltr'>#!/bin/bash</code> در ابتدای اسکریپت‌های Bash.
+                        <br><b>کارکرد:</b> تفسیر دستورات و مدیریت تاریخچه، متغیرها و توابع.
+                        <br><b>عملکرد:</b> قدرت‌ترین و انعطاف‌پذیرترین شل در لینوکس است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Daemon (دیمن)</span></td>
+                    <td>
+                        <b>معنی:</b> یک فرآیند پس‌زمینه که بدون نیاز به تعامل کاربر، سرویس‌های سیستم را ارائه می‌دهد.
+                        <br><b>کاربرد:</b> سرویس‌های شبکه (مثل Apache، SSH)، مدیریت چاپ، زمان‌بندی و …
+                        <br><b>مثال:</b> <code dir='ltr'>sshd</code> دیمن SSH، <code dir='ltr'>apache2</code> دیمن وب سرور.
+                        <br><b>کارکرد:</b> معمولاً با حرف <code dir='ltr'>d</code> در انتهای نام مشخص می‌شوند.
+                        <br><b>عملکرد:</b> سرویس‌های حیاتی سیستم را بدون دخالت کاربر مدیریت می‌کنند.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه شامل مهم‌ترین اصطلاحات لینوکس است که در طول دوره CEH با آنها مواجه خواهید شد. توصیه می‌شود هر بار که با یک اصطلاح جدید مواجه شدید، به این بخش مراجعه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی نهایی:</b> این چیت‌شیت یک مرجع کامل و جامع برای دستورات لینوکس در طول دوره CEH است.
+        تمام مباحث از مدیریت فایل گرفته تا اسکریپت‌نویسی، شبکه، امنیت و عیب‌یابی را پوشش می‌دهد.
+        <br><br>
+        <b>📌 گام بعدی:</b> پس از آشنایی کامل با دستورات لینوکس، به سراغ
+        <a href="../Setup_Guides/index.html" style="color:#2a7de1;font-weight:bold;">راهنمای نصب Kali</a> بروید و محیط خود را آماده کنید.
+        <br><br>
+        <b>📖 واژه‌نامه:</b> برای مرور سریع اصطلاحات، به بخش <a href="#glossary" style="color:#2a7de1;font-weight:bold;">واژه‌نامه تخصصی</a> مراجعه کنید.
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">تعداد واژگان تخصصی: ۱۶ | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>

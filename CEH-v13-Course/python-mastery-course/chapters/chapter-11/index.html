@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 11: توابع - بخش دوم: پیشرفته</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 11: توابع - بخش دوم: پیشرفته</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-10/index.html">قبلی</a>
+            <a href="../chapter-12/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۱: توابع - بخش دوم: پیشرفته</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۱۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۱: توابع - بخش دوم: پیشرفته</p>
+            <p><strong>زمان مطالعه:</strong> ۱۱۰ تا ۱۴۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی توابع از فصل ۱۰)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی توابع (فصل ۱۰)</li>
+                <li>✅ آشنایی با لیست‌ها و دیکشنری‌ها (فصل‌های ۶ و ۷)</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ از <strong>توابع لاندا (Lambda)</strong> برای توابع یک‌خطی استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>map()</code></strong>، <strong><code dir='ltr'>filter()</code></strong> و <strong><code dir='ltr'>reduce()</code></strong> پردازش تابعی انجام دهید.</li>
+                <li>✔️ <strong>Decorators</strong> را برای تغییر رفتار توابع پیاده‌سازی کنید.</li>
+                <li>✔️ مفهوم <strong>Closure</strong> را درک کنید و از آن استفاده کنید.</li>
+                <li>✔️ <strong>توابع بازگشتی (Recursive)</strong> را برای حل مسائل بازگشتی بنویسید.</li>
+                <li>✔️ از <strong>Type Hints</strong> برای خوانایی و دیباگ بهتر استفاده کنید.</li>
+                <li>✔️ <strong>توابع مرتبه‌بالا (Higher-Order Functions)</strong> را تشخیص دهید و بنویسید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با مبانی توابع آشنا شدید. اما پایتون ابزارهای بسیار قدرتمندتری برای کار با توابع ارائه می‌دهد. <strong>توابع لاندا (Lambda)</strong> برای توابع یک‌خطی، <strong>Decorators</strong> برای تغییر رفتار توابع، <strong>Closure</strong> برای ایجاد توابع با حافظه، و <strong>Type Hints</strong> برای خوانایی بیشتر کد.</p>
+            <p>همچنین <strong>برنامه‌نویسی تابعی (Functional Programming)</strong> با توابعی مانند <code dir='ltr'>map()</code>، <code dir='ltr'>filter()</code> و <code dir='ltr'>reduce()</code> یکی از سبک‌های مهم برنامه‌نویسی است که کد را خواناتر و قابل‌تست‌تر می‌کند.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث پیشرفته‌ی توابع</strong> آشنا می‌شوید: لاندا، map/filter/reduce، دکوریتورها، closure، بازگشت و Type Hints. این مباحث شما را به یک توسعه‌دهنده‌ی حرفه‌ای پایتون تبدیل می‌کنند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۱.۱ -->
+            <div class="sub-section">
+                <h4>۱۱.۱ توابع لاندا (Lambda Functions)</h4>
+                <p><strong>توابع لاندا</strong> توابع کوچک و بی‌نامی هستند که با کلمه‌ی کلیدی <code dir='ltr'>lambda</code> تعریف می‌شوند. برای عملیات‌های ساده و یک‌خطی بسیار مفید هستند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># تعریف تابع لاندا
+square = lambda x: x ** 2
+print(square(5))  # 25
+
+# معادل با تابع معمولی
+def square_normal(x):
+    return x ** 2
+
+# لاندا با چند پارامتر
+add = lambda a, b: a + b
+print(add(3, 5))  # 8
+
+# استفاده در sorted (مرتب‌سازی بر اساس معیار خاص)
+students = [
+    {"name": "علی", "score": 85},
+    {"name": "سارا", "score": 92},
+    {"name": "رضا", "score": 78}
+]
+sorted_students = sorted(students, key=lambda s: s["score"])
+print(sorted_students)
+# [{'name': 'رضا', 'score': 78}, {'name': 'علی', 'score': 85}, {'name': 'سارا', 'score': 92}]
+
+# استفاده در max/min
+max_score = max(students, key=lambda s: s["score"])
+print(max_score)  # {'name': 'سارا', 'score': 92}
+
+# لاندا با شرط (اگر...وگرنه)
+is_even = lambda x: "زوج" if x % 2 == 0 else "فرد"
+print(is_even(5))  # "فرد"
+print(is_even(8))  # "زوج"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">25</span><br>
+                    <span class="highlight">➜</span> <span class="result">8</span><br>
+                    <span class="highlight">➜</span> <span class="result">{'name': 'سارا', 'score': 92}</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> توابع لاندا فقط برای عبارات ساده مناسب هستند. برای منطق پیچیده، از توابع معمولی با <code dir='ltr'>def</code> استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع لاندا برای محاسبه‌ی مساحت مستطیل (طول × عرض) بنویسید و آن را با اعداد مختلف تست کنید.
+                </div>
+            </div>
+
+            <!-- ۱۱.۲ -->
+            <div class="sub-section">
+                <h4>۱۱.۲ <code dir='ltr'>map()</code>، <code dir='ltr'>filter()</code> و <code dir='ltr'>reduce()</code></h4>
+                <p>این سه تابع، ابزارهای اصلی برنامه‌نویسی تابعی در پایتون هستند.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>map(function, iterable)</code></strong>: تابع را روی هر عنصر اعمال می‌کند.</li>
+                    <li><strong><code dir='ltr'>filter(function, iterable)</code></strong>: عناصری که شرط را برآورده می‌کنند را فیلتر می‌کند.</li>
+                    <li><strong><code dir='ltr'>reduce(function, iterable)</code></strong>: عناصر را به یک مقدار تجمیع می‌کند.</li>
+                </ul>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">🔄</span>
+                        <span class="name">map()</span>
+                        <span class="desc">اعمال تابع روی همه</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔍</span>
+                        <span class="name">filter()</span>
+                        <span class="desc">فیلتر کردن</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📊</span>
+                        <span class="name">reduce()</span>
+                        <span class="desc">تجمیع و کاهش</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'>from functools import reduce
+
+# map() - اعمال تابع روی هر عنصر
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x ** 2, numbers))
+print(squared)  # [1, 4, 9, 16, 25]
+
+# map با توابع معمولی
+def double(x):
+    return x * 2
+
+doubled = list(map(double, numbers))
+print(doubled)  # [2, 4, 6, 8, 10]
+
+# filter() - فیلتر کردن
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+print(evens)  # [2, 4]
+
+# filter با شرط‌های پیچیده
+words = ["apple", "banana", "cherry", "date"]
+long_words = list(filter(lambda w: len(w) > 5, words))
+print(long_words)  # ['banana', 'cherry']
+
+# reduce() - تجمیع
+sum_all = reduce(lambda a, b: a + b, numbers)
+print(sum_all)  # 15
+
+product = reduce(lambda a, b: a * b, numbers)
+print(product)  # 120
+
+# ترکیب map و filter
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+result = list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, numbers)))
+print(result)  # [4, 8, 12, 16, 20] (اعداد زوج × 2)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">[1, 4, 9, 16, 25]</span><br>
+                    <span class="highlight">➜</span> <span class="result">[2, 4]</span><br>
+                    <span class="highlight">➜</span> <span class="result">15</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code> iterator برمی‌گردانند. برای مشاهده‌ی نتایج باید آنها را به لیست تبدیل کنید یا در حلقه پیمایش کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از اعداد ایجاد کنید. با <code dir='ltr'>map()</code> مربع هر عدد را محاسبه کنید. با <code dir='ltr'>filter()</code> اعداد بزرگ‌تر از ۱۰ را فیلتر کنید. با <code dir='ltr'>reduce()</code> مجموع همه‌ی اعداد را محاسبه کنید.
+                </div>
+            </div>
+
+            <!-- ۱۱.۳ -->
+            <div class="sub-section">
+                <h4>۱۱.۳ Decorators (دکوریتورها)</h4>
+                <p><strong>Decorators</strong> توابعی هستند که رفتار توابع دیگر را تغییر می‌دهند. با <code dir='ltr'>@decorator_name</code> استفاده می‌شوند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># دکوریتور ساده
+def timer(func):
+    def wrapper(*args, **kwargs):
+        import time
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} زمان اجرا: {end - start:.4f} ثانیه")
+        return result
+    return wrapper
+
+# استفاده از دکوریتور
+@timer
+def slow_function():
+    import time
+    time.sleep(1)
+    return "Done"
+
+print(slow_function())  # "slow_function زمان اجرا: 1.0002 ثانیه"
+
+# دکوریتور با پارامتر
+def repeat(times):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(times):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+@repeat(3)
+def say_hello():
+    print("سلام!")
+
+say_hello()  # "سلام!" (۳ بار)
+
+# دکوریتور برای لاگ‌گیری
+def log_function_call(func):
+    def wrapper(*args, **kwargs):
+        print(f"فراخوانی {func.__name__} با آرگومان‌ها: {args}, {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"نتیجه: {result}")
+        return result
+    return wrapper
+
+@log_function_call
+def add(a, b):
+    return a + b
+
+add(3, 5)
+# فراخوانی add با آرگومان‌ها: (3, 5), {}
+# نتیجه: 8</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">slow_function زمان اجرا: 1.0002 ثانیه</span><br>
+                    <span class="highlight">➜</span> <span class="result">سلام! (۳ بار)</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> دکوریتورها با استفاده از <code dir='ltr'>@functools.wraps</code> می‌توانند اطلاعات تابع اصلی را حفظ کنند (مانند نام، docstring).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک دکوریتور <code dir='ltr'>@debug</code> بنویسید که آرگومان‌ها و نتیجه‌ی هر تابع را چاپ کند. سپس آن را روی یک تابع ساده اعمال کنید.
+                </div>
+            </div>
+
+            <!-- ۱۱.۴ -->
+            <div class="sub-section">
+                <h4>۱۱.۴ Closure (بسته‌ها)</h4>
+                <p><strong>Closure</strong> یک تابع داخلی است که به متغیرهای تابع خارجی دسترسی دارد، حتی پس از اتمام اجرای تابع خارجی.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># Closure ساده
+def outer(x):
+    def inner(y):
+        return x + y
+    return inner
+
+add_five = outer(5)
+print(add_five(3))  # 8
+
+# Counter با Closure
+def create_counter():
+    count = 0
+    def increment():
+        nonlocal count
+        count += 1
+        return count
+    return increment
+
+counter = create_counter()
+print(counter())  # 1
+print(counter())  # 2
+print(counter())  # 3
+
+# Factory functions با Closure
+def multiplier(factor):
+    def multiply(number):
+        return number * factor
+    return multiply
+
+double = multiplier(2)
+triple = multiplier(3)
+
+print(double(5))   # 10
+print(triple(5))   # 15
+
+# Closure با پارامترهای پیش‌فرض
+def power_of(exponent):
+    def power(base):
+        return base ** exponent
+    return power
+
+square = power_of(2)
+cube = power_of(3)
+
+print(square(4))  # 16
+print(cube(4))    # 64</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">8</span><br>
+                    <span class="highlight">➜</span> <span class="result">1, 2, 3</span><br>
+                    <span class="highlight">➜</span> <span class="result">10</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> Closure برای ایجاد <strong>توابع factory</strong> و <strong>محافظت از داده‌ها</strong> (داده‌های خصوصی) بسیار مفید است. از <code dir='ltr'>nonlocal</code> برای تغییر متغیرهای تابع خارجی استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>create_bank_account</code> با Closure بنویسید که یک حساب بانکی با موجودی اولیه ایجاد کند و توابع <code dir='ltr'>deposit</code> و <code dir='ltr'>withdraw</code> را برگرداند.
+                </div>
+            </div>
+
+            <!-- ۱۱.۵ -->
+            <div class="sub-section">
+                <h4>۱۱.۵ توابع بازگشتی (Recursive Functions)</h4>
+                <p><strong>توابع بازگشتی</strong> توابعی هستند که خودشان را فراخوانی می‌کنند. برای حل مسائل بازگشتی (مثل فاکتوریل، فیبوناچی، پیمایش درخت) استفاده می‌شوند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># فاکتوریل با بازگشت
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+print(factorial(5))  # 120
+
+# دنباله فیبوناچی
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(7))  # 13
+
+# محاسبه‌ی توان با بازگشت
+def power(base, exponent):
+    if exponent == 0:
+        return 1
+    return base * power(base, exponent - 1)
+
+print(power(2, 5))  # 32
+
+# جمع اعداد ۱ تا n
+def sum_recursive(n):
+    if n <= 1:
+        return n
+    return n + sum_recursive(n - 1)
+
+print(sum_recursive(10))  # 55
+
+# پیمایش یک ساختار درختی
+def sum_tree(node):
+    if not node:
+        return 0
+    return node["value"] + sum_tree(node.get("left")) + sum_tree(node.get("right"))
+
+tree = {
+    "value": 5,
+    "left": {"value": 3, "left": {"value": 1}, "right": {"value": 4}},
+    "right": {"value": 8, "left": {"value": 6}, "right": {"value": 10}}
+}
+print(sum_tree(tree))  # 37</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">120</span><br>
+                    <span class="highlight">➜</span> <span class="result">13</span><br>
+                    <span class="highlight">➜</span> <span class="result">32</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> توابع بازگشتی باید <strong>شرط توقف (Base Case)</strong> داشته باشند تا از حلقه‌ی بی‌نهایت و خطای <code dir='ltr'>RecursionError</code> جلوگیری شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از بازگشت، یک تابع <code dir='ltr'>sum_digits(n)</code> بنویسید که مجموع ارقام یک عدد را محاسبه کند. (مثلاً <code dir='ltr'>sum_digits(123) = 6</code>)
+                </div>
+            </div>
+
+            <!-- ۱۱.۶ -->
+            <div class="sub-section">
+                <h4>۱۱.۶ Type Hints (نوع‌دهی)</h4>
+                <p><strong>Type Hints</strong> به شما اجازه می‌دهند نوع داده‌ی پارامترها و مقدار بازگشتی را مشخص کنید. این کار خوانایی کد و دیباگ را بهبود می‌بخشد.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># Type Hints ساده
+def greet(name: str) -> str:
+    return f"سلام {name}!"
+
+print(greet("علی"))  # "سلام علی!"
+
+# Type Hints برای چند پارامتر
+def add_numbers(a: int, b: int) -> int:
+    return a + b
+
+print(add_numbers(5, 3))  # 8
+
+# Type Hints برای لیست‌ها و دیکشنری‌ها
+from typing import List, Dict, Optional
+
+def process_numbers(numbers: List[int]) -> List[int]:
+    return [n * 2 for n in numbers]
+
+print(process_numbers([1, 2, 3]))  # [2, 4, 6]
+
+def get_user(name: str, age: int, city: str = "تهران") -> Dict[str, any]:
+    return {"name": name, "age": age, "city": city}
+
+print(get_user("علی", 25))
+# {'name': 'علی', 'age': 25, 'city': 'تهران'}
+
+# Optional - می‌تواند None باشد
+def find_user(name: str, users: List[Dict]) -> Optional[Dict]:
+    for user in users:
+        if user["name"] == name:
+            return user
+    return None
+
+users = [{"name": "علی", "age": 25}, {"name": "سارا", "age": 30}]
+result = find_user("علی", users)
+print(result)  # {'name': 'علی', 'age': 25}
+
+# Union - چند نوع ممکن
+from typing import Union
+
+def parse_value(value: Union[int, str]) -> int:
+    if isinstance(value, str):
+        return int(value)
+    return value
+
+print(parse_value("123"))  # 123
+print(parse_value(456))    # 456</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام علی!</span><br>
+                    <span class="highlight">➜</span> <span class="result">8</span><br>
+                    <span class="highlight">➜</span> <span class="result">[2, 4, 6]</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> Type Hints در زمان اجرا تأثیری ندارند، اما با ابزارهایی مانند <code dir='ltr'>mypy</code> می‌توانید کد خود را بررسی کنید. همچنین IDEها از Type Hints برای تکمیل خودکار استفاده می‌کنند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>calculate_average</code> با Type Hints بنویسید که یک لیست از اعداد را دریافت کند و میانگین آنها را برگرداند.
+                </div>
+            </div>
+
+            <!-- ۱۱.۷ -->
+            <div class="sub-section">
+                <h4>۱۱.۷ توابع مرتبه‌بالا (Higher-Order Functions)</h4>
+                <p><strong>توابع مرتبه‌بالا</strong> توابعی هستند که یک تابع را به‌عنوان آرگومان دریافت می‌کنند یا یک تابع برمی‌گردانند. <code dir='ltr'>map()</code>، <code dir='ltr'>filter()</code> و <code dir='ltr'>reduce()</code> نمونه‌هایی از این توابع هستند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># تابع مرتبه‌بالا که تابع را به‌عنوان آرگومان می‌گیرد
+def apply_operation(operation, x, y):
+    return operation(x, y)
+
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+
+print(apply_operation(add, 5, 3))       # 8
+print(apply_operation(multiply, 5, 3))  # 15
+
+# تابع مرتبه‌بالا با لاندا
+print(apply_operation(lambda a, b: a - b, 10, 4))  # 6
+
+# تابع مرتبه‌بالا که تابع برمی‌گرداند
+def make_operation(operator):
+    if operator == "+":
+        return lambda a, b: a + b
+    elif operator == "-":
+        return lambda a, b: a - b
+    elif operator == "*":
+        return lambda a, b: a * b
+    else:
+        return lambda a, b: a / b
+
+add_func = make_operation("+")
+multiply_func = make_operation("*")
+
+print(add_func(5, 3))       # 8
+print(multiply_func(5, 3))  # 15
+
+# Decorators نمونه‌ای از توابع مرتبه‌بالا هستند
+def debug(func):
+    def wrapper(*args, **kwargs):
+        print(f"فراخوانی {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@debug
+def say_hello():
+    print("سلام!")
+
+say_hello()
+# فراخوانی say_hello
+# سلام!</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">8, 15, 6</span><br>
+                    <span class="highlight">➜</span> <span class="result">8, 15</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> توابع مرتبه‌بالا پایه و اساس <strong>برنامه‌نویسی تابعی (Functional Programming)</strong> در پایتون هستند. آنها کد را انعطاف‌پذیرتر و قابل‌ترکیب‌تر می‌کنند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع مرتبه‌بالا <code dir='ltr'>filter_by_condition</code> بنویسید که یک لیست و یک تابع شرط دریافت کند و لیست فیلترشده را برگرداند (مشابه <code dir='ltr'>filter()</code>).
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک پردازش‌گر داده با توابع پیشرفته</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>data_processor.py</code> ایجاد کنید.</li>
+                <li>یک لیست از دیکشنری‌ها (داده‌های کاربران) ایجاد کنید.</li>
+                <li>با استفاده از <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code>:
+                    <ul>
+                        <li>نام همه‌ی کاربران را استخراج کنید.</li>
+                        <li>کاربران با سن بالای ۲۰ را فیلتر کنید.</li>
+                    </ul>
+                </li>
+                <li>با استفاده از <code dir='ltr'>reduce()</code> میانگین سن کاربران را محاسبه کنید.</li>
+                <li>یک دکوریتور <code dir='ltr'>@timeit</code> برای اندازه‌گیری زمان اجرا بنویسید.</li>
+                <li>یک Closure برای ایجاد شمارنده‌ی کاربران (تعداد کاربران پردازش‌شده) بنویسید.</li>
+                <li>با استفاده از بازگشت، یک تابع <code dir='ltr'>flatten_list</code> برای صاف کردن لیست‌های تو در تو بنویسید.</li>
+                <li>همه‌ی توابع را با Type Hints مستند کنید.</li>
+            </ol>
+            <div class="live-demo" id="advanced-func-demo">
+                <h4>📊 پردازش‌گر داده با توابع پیشرفته</h4>
+                <button onclick="processData()">▶️ اجرای پردازش</button>
+                <div class="result-box" id="advancedResult">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه با موارد زیر بسازید:</p>
+            <ul>
+                <li>یک دکوریتور <code dir='ltr'>@retry</code> که یک تابع را در صورت خطا، چند بار تکرار کند.</li>
+                <li>یک Closure برای کش کردن نتایج توابع (Memoization).</li>
+                <li>یک تابع بازگشتی برای محاسبه‌ی GCD (بزرگ‌ترین مقسوم‌علیه مشترک).</li>
+                <li>استفاده از Type Hints در همه‌ی توابع.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین توابع لاندا و توابع معمولی چیست؟</li>
+                <li><code dir='ltr'>map()</code>، <code dir='ltr'>filter()</code> و <code dir='ltr'>reduce()</code> چه تفاوتی دارند؟</li>
+                <li>Decorators چگونه کار می‌کنند و چه کاربردی دارند؟</li>
+                <li>Closure چیست و چه مزیتی نسبت به متغیرهای سراسری دارد؟</li>
+                <li>Type Hints چه مزایایی دارند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای ایجاد یک تابع یک‌خطی استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>def</code>  ب) <code dir='ltr'>lambda</code>  ج) <code dir='ltr'>class</code>  د) <code dir='ltr'>return</code></li>
+                <li>خروجی <code dir='ltr'>list(filter(lambda x: x > 2, [1, 2, 3, 4]))</code> چیست؟<br>
+                    أ) [1, 2]  ب) [3, 4]  ج) [1, 2, 3, 4]  د) [2, 3, 4]</li>
+                <li>کدام یک از موارد زیر برای تغییر رفتار یک تابع بدون تغییر کد آن استفاده می‌شود؟<br>
+                    أ) Lambda  ب) Decorator  ج) Closure  د) Map</li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک دکوریتور <code dir='ltr'>@cache</code> برای کش کردن نتایج توابع پیاده‌سازی کند.</li>
+                <li>با استفاده از <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code> یک لیست از اعداد را پردازش کند.</li>
+                <li>با استفاده از Closure یک تابع <code dir='ltr'>create_accumulator</code> بسازد که یک شمارنده داشته باشد.</li>
+                <li>با استفاده از بازگشت، یک تابع <code dir='ltr'>power_recursive</code> برای محاسبه‌ی توان بنویسد.</li>
+                <li>همه‌ی توابع را با Type Hints مستند کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>توابع لاندا (Lambda)</strong> برای توابع ساده و یک‌خطی.</li>
+                <li>🔹 <strong><code dir='ltr'>map()</code></strong> برای اعمال تابع روی همه‌ی عناصر.</li>
+                <li>🔹 <strong><code dir='ltr'>filter()</code></strong> برای فیلتر کردن عناصر بر اساس شرط.</li>
+                <li>🔹 <strong><code dir='ltr'>reduce()</code></strong> برای تجمیع و کاهش عناصر به یک مقدار.</li>
+                <li>🔹 <strong>Decorators</strong> برای تغییر رفتار توابع با <code dir='ltr'>@</code>.</li>
+                <li>🔹 <strong>Closure</strong> برای ایجاد توابع با حافظه و داده‌های خصوصی.</li>
+                <li>🔹 <strong>توابع بازگشتی (Recursive)</strong> برای حل مسائل بازگشتی.</li>
+                <li>🔹 <strong>Type Hints</strong> برای خوانایی و دیباگ بهتر.</li>
+                <li>🔹 <strong>توابع مرتبه‌بالا</strong> پایه‌ی برنامه‌نویسی تابعی هستند.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># Lambda
+lambda x: x * 2
+
+# map/filter/reduce
+map(func, iterable)
+filter(func, iterable)
+reduce(func, iterable)
+
+# Decorator
+@decorator
+def func(): pass
+
+# Closure
+def outer():
+    x = 0
+    def inner():
+        nonlocal x
+        x += 1
+        return x
+    return inner
+
+# Recursive
+def fact(n):
+    return 1 if n <= 1 else n * fact(n-1)
+
+# Type Hints
+def func(a: int, b: str) -> bool: pass</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Lambda:</strong> تابع بی‌نام یک‌خطی.</li>
+                <li><strong>map:</strong> اعمال تابع روی همه‌ی عناصر یک iterable.</li>
+                <li><strong>filter:</strong> فیلتر کردن عناصر بر اساس شرط.</li>
+                <li><strong>reduce:</strong> تجمیع عناصر به یک مقدار.</li>
+                <li><strong>Decorator:</strong> تابعی که رفتار توابع دیگر را تغییر می‌دهد.</li>
+                <li><strong>Closure:</strong> تابع داخلی با دسترسی به متغیرهای تابع خارجی.</li>
+                <li><strong>Recursive:</strong> تابعی که خودش را فراخوانی می‌کند.</li>
+                <li><strong>Type Hint:</strong> مشخص کردن نوع داده‌ی پارامترها و مقدار بازگشتی.</li>
+                <li><strong>Higher-Order Function:</strong> تابعی که تابع دیگری را دریافت یا برمی‌گرداند.</li>
+                <li><strong>Functional Programming:</strong> سبک برنامه‌نویسی مبتنی بر توابع.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions" target="_blank" rel="noopener noreferrer">Python: Lambda</a></li>
+                <li><a href="https://docs.python.org/3/library/functools.html" target="_blank" rel="noopener noreferrer">Python: functools</a></li>
+                <li><a href="https://realpython.com/primer-on-python-decorators/" target="_blank" rel="noopener noreferrer">Real Python: Decorators</a></li>
+                <li><a href="https://realpython.com/python-closure/" target="_blank" rel="noopener noreferrer">Real Python: Closures</a></li>
+                <li><a href="https://docs.python.org/3/library/typing.html" target="_blank" rel="noopener noreferrer">Python: typing</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> Lambda – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> map/filter/reduce – ۲۰ دقیقه</li>
+                <li><strong>گام ۳:</strong> Decorators – ۲۰ دقیقه</li>
+                <li><strong>گام ۴:</strong> Closure – ۱۵ دقیقه</li>
+                <li><strong>گام ۵:</strong> Recursive – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> Type Hints – ۱۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> Higher-Order Functions – ۱۰ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چه زمانی باید از Lambda به‌جای توابع معمولی استفاده کنیم؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code> وجود دارد؟</li>
+                <li>❓ چرا از Decorators استفاده می‌کنیم؟ چه مشکلاتی را حل می‌کنند؟</li>
+                <li>❓ Closure چه تفاوتی با توابع معمولی دارد؟</li>
+                <li>❓ چه زمانی استفاده از بازگشت بهتر از حلقه‌هاست؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>return</code> در Lambda که باعث می‌شود <code dir='ltr'>None</code> برگرداند.<br>
+                    <strong>🔧 راه حل:</strong> Lambda به‌طور خودکار نتیجه‌ی عبارت را برمی‌گرداند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن تبدیل <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code> به لیست.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>list(map(...))</code> یا <code dir='ltr'>list(filter(...))</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>@functools.wraps</code> در Decorators که باعث از بین رفتن اطلاعات تابع می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>@functools.wraps(func)</code> برای حفظ اطلاعات استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> عدم استفاده از <code dir='ltr'>nonlocal</code> در Closure که باعث می‌شود متغیر به‌عنوان محلی ایجاد شود.<br>
+                    <strong>🔧 راه حل:</strong> برای تغییر متغیرهای تابع خارجی از <code dir='ltr'>nonlocal</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن شرط توقف در توابع بازگشتی که باعث <code dir='ltr'>RecursionError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه یک شرط توقف (Base Case) در تابع بازگشتی تعریف کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک ابزار تحلیل داده با توابع پیشرفته</p>
+            <p><strong>شرح:</strong> یک برنامه برای تحلیل داده‌های یک فایل CSV (یا داده‌های نمونه) با استفاده از توابع پیشرفته بسازید:</p>
+            <ul>
+                <li>یک لیست از دیکشنری‌ها (داده‌های کاربران) با حداقل ۱۰ رکورد ایجاد کنید (نام، سن، شهر، حقوق).</li>
+                <li>با <code dir='ltr'>map()</code> و <code dir='ltr'>filter()</code>:
+                    <ul>
+                        <li>لیست اسامی همه‌ی کاربران را استخراج کنید.</li>
+                        <li>کاربران با حقوق بالای ۵۰ میلیون را فیلتر کنید.</li>
+                        <li>کاربران با سن بین ۲۵ تا ۴۰ را فیلتر کنید.</li>
+                    </ul>
+                </li>
+                <li>با <code dir='ltr'>reduce()</code>:
+                    <ul>
+                        <li>مجموع حقوق همه‌ی کاربران را محاسبه کنید.</li>
+                        <li>میانگین سن کاربران را محاسبه کنید.</li>
+                    </ul>
+                </li>
+                <li>یک دکوریتور <code dir='ltr'>@timeit</code> برای اندازه‌گیری زمان اجرای هر عملیات بنویسید.</li>
+                <li>یک Closure برای شمارش تعداد کاربران پردازش‌شده بنویسید.</li>
+                <li>با استفاده از بازگشت، یک تابع <code dir='ltr'>find_user_recursive</code> برای جستجوی کاربر در لیست بنویسید.</li>
+                <li>همه‌ی توابع را با Type Hints مستند کنید.</li>
+                <li>در نهایت، یک گزارش کامل از تحلیل داده‌ها با f-strings نمایش دهید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>با استفاده از <code dir='ltr'>filter()</code> و <code dir='ltr'>reduce()</code>، کاربران با حقوق بالاتر از میانگین را پیدا کنید.</li>
+                    <li>با استفاده از Closure، یک تابع <code dir='ltr'>create_salary_stats</code> بسازید که آمار حقوق (حداقل، حداکثر، میانگین) را محاسبه کند.</li>
+                    <li>با استفاده از بازگشت، یک تابع <code dir='ltr'>flatten_dict</code> برای صاف کردن دیکشنری‌های تو در تو بنویسید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-10/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-12/index.html" class="btn-demo">رفتن به فصل ۱۲ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی پردازشگر داده با توابع پیشرفته
+        function processData() {
+            const resultBox = document.getElementById('advancedResult');
+
+            const users = [
+                { name: "علی", age: 25, city: "تهران", salary: 45000000 },
+                { name: "سارا", age: 30, city: "اصفهان", salary: 52000000 },
+                { name: "رضا", age: 22, city: "شیراز", salary: 38000000 },
+                { name: "مریم", age: 35, city: "تهران", salary: 60000000 },
+                { name: "احمد", age: 28, city: "مشهد", salary: 48000000 },
+                { name: "زهرا", age: 40, city: "اصفهان", salary: 70000000 },
+                { name: "علی", age: 32, city: "تبریز", salary: 55000000 },
+                { name: "نرگس", age: 26, city: "شیراز", salary: 42000000 }
+            ];
+
+            // map - استخراج اسامی
+            const names = users.map(u => u.name);
+
+            // filter - کاربران با حقوق بالا
+            const highSalary = users.filter(u => u.salary > 50000000);
+
+            // filter - کاربران با سن بین 25-40
+            const ageRange = users.filter(u => u.age >= 25 && u.age <= 40);
+
+            // reduce - مجموع حقوق
+            const totalSalary = users.reduce((sum, u) => sum + u.salary, 0);
+            const averageSalary = totalSalary / users.length;
+
+            // reduce - میانگین سن
+            const totalAge = users.reduce((sum, u) => sum + u.age, 0);
+            const averageAge = totalAge / users.length;
+
+            // Closure - شمارنده
+            function createCounter() {
+                let count = 0;
+                return function() {
+                    count++;
+                    return count;
+                };
+            }
+            const counter = createCounter();
+            users.forEach(() => counter());
+
+            // Decorator شبیه‌سازی‌شده (با تابع معمولی)
+            function timeit(func) {
+                const start = Date.now();
+                const result = func();
+                const end = Date.now();
+                return { result, time: (end - start) / 1000 };
+            }
+
+            const processed = timeit(() => {
+                return {
+                    names: names,
+                    highSalary: highSalary,
+                    ageRange: ageRange,
+                    totalSalary: totalSalary,
+                    averageSalary: averageSalary,
+                    averageAge: averageAge,
+                    processedCount: counter()
+                };
+            });
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                📊 گزارش تحلیل داده‌ها (${processed.time.toFixed(3)} ثانیه)
+
+                👥 تعداد کل کاربران: ${users.length}
+                ✅ کاربران پردازش‌شده: ${processed.result.processedCount}
+
+                📋 اسامی: ${processed.result.names.join(', ')}
+
+                💰 کاربران با حقوق بالا (> ۵۰M):
+                ${processed.result.highSalary.map(u => `• ${u.name} (${u.salary.toLocaleString()})`).join('\n')}
+
+                👤 کاربران با سن ۲۵-۴۰:
+                ${processed.result.ageRange.map(u => `• ${u.name} (${u.age} سال)`).join('\n')}
+
+                💵 مجموع حقوق: ${processed.result.totalSalary.toLocaleString()} تومان
+                💵 میانگین حقوق: ${processed.result.averageSalary.toLocaleString()} تومان
+                📊 میانگین سن: ${processed.result.averageAge.toFixed(1)} سال
+            `.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

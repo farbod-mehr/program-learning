@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 07: دیکشنری‌ها و مجموعه‌ها</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 07: دیکشنری‌ها و مجموعه‌ها</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-06/index.html">قبلی</a>
+            <a href="../chapter-08/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۷: دیکشنری‌ها و مجموعه‌ها</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۷: دیکشنری‌ها و مجموعه‌ها</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی کامل با لیست‌ها، تاپل‌ها و حلقه‌ها)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر لیست‌ها و تاپل‌ها (فصل ۶) – آشنایی با اندیس‌گذاری، Slicing و Unpacking</li>
+                <li>✅ آشنایی کامل با حلقه‌ها (فصل ۵) – به‌ویژه <code dir='ltr'>for</code> و پیمایش مجموعه‌ها</li>
+                <li>✅ درک عملگرهای عضویت (<code dir='ltr'>in</code>، <code dir='ltr'>not in</code>) از فصل ۳</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون (REPL)</li>
+            </ul>
+            <p>قبل از شروع این فصل، حتماً با لیست‌ها و حلقه‌ها راحت باشید، زیرا دیکشنری‌ها و مجموعه‌ها اغلب با حلقه‌ها ترکیب می‌شوند و شباهت‌هایی با لیست‌ها دارند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>دیکشنری‌ها</strong> را با <code dir='ltr'>{}</code> و جفت‌های <code dir='ltr'>key: value</code> ایجاد و مقداردهی کنید و به‌روزرسانی کنید.</li>
+                <li>✔️ از <strong>متدهای اصلی دیکشنری</strong> مانند <code dir='ltr'>keys()</code>، <code dir='ltr'>values()</code>، <code dir='ltr'>items()</code>، <code dir='ltr'>update()</code>، <code dir='ltr'>pop()</code>، <code dir='ltr'>get()</code> و <code dir='ltr'>clear()</code> در سناریوهای واقعی استفاده کنید.</li>
+                <li>✔️ <strong>مجموعه‌ها (Sets)</strong> را با <code dir='ltr'>{}</code> یا <code dir='ltr'>set()</code> ایجاد کنید و از عملیات‌های مهم مانند اجتماع (<code dir='ltr'>union</code>)، اشتراک (<code dir='ltr'>intersection</code>) و تفاضل (<code dir='ltr'>difference</code>) استفاده کنید.</li>
+                <li>✔️ با <strong>Dictionary Comprehension</strong> دیکشنری‌های فشرده و خوانا با شرط‌های مختلف ایجاد کنید.</li>
+                <li>✔️ با <strong>Set Comprehension</strong> مجموعه‌های فشرده ایجاد کنید.</li>
+                <li>✔️ تفاوت بین <strong>دیکشنری، مجموعه و لیست</strong> را از نظر ساختار، کاربرد و عملکرد توضیح دهید.</li>
+                <li>✔️ از <strong>Frozenset</strong> برای ایجاد مجموعه‌های غیرقابل تغییر و استفاده از آنها به‌عنوان کلید دیکشنری استفاده کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با لیست‌ها و تاپل‌ها آشنا شدید – ساختارهایی که داده‌ها را به‌صورت <strong>دنباله‌ای (Sequence)</strong> و با اندیس‌های عددی ذخیره می‌کنند. اما در دنیای واقعی، داده‌ها اغلب به‌صورت <strong>کلید-مقدار (Key-Value)</strong> سازماندهی می‌شوند: یک دفترچه تلفن که با نام (کلید) شماره (مقدار) را پیدا می‌کند، یک سیستم مدیریت کاربران که با شناسه (کلید) اطلاعات کاربر (مقدار) را بازیابی می‌کند، یا یک کش (Cache) که با یک کلید منحصربه‌فرد، داده‌های ذخیره‌شده را برمی‌گرداند. اینجاست که <strong>دیکشنری‌ها (Dictionaries)</strong> وارد می‌شوند.</p>
+            <p>همچنین گاهی نیاز داریم مجموعه‌ای از عناصر <strong>یکتا (Unique)</strong> داشته باشیم – مثلاً لیست کلمات منحصربه‌فرد یک متن، یا مجموعه‌ی کاربران فعال یک سیستم. <strong>مجموعه‌ها (Sets)</strong> این نیاز را با کارایی بالا و بدون نگرانی از تکرار برآورده می‌کنند.</p>
+            <p>در این فصل با <strong>همه‌ی مبانی دیکشنری‌ها و مجموعه‌ها</strong> آشنا می‌شوید: ایجاد، دسترسی، متدها، عملیات‌ها، Comprehension و کاربردهای عملی. این ساختارها در بسیاری از برنامه‌ها (مدیریت کاربران، کش داده، پردازش متن، تحلیل داده، ذخیره‌سازی تنظیمات و ...) کاربرد دارند و تسلط بر آنها برای هر توسعه‌دهنده‌ای ضروری است.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۷.۱ -->
+            <div class="sub-section">
+                <h4>۷.۱ ایجاد دیکشنری و دسترسی به مقادیر</h4>
+                <p>دیکشنری‌ها با <strong>آکولاد (<code dir='ltr'>{}</code>)</strong> ایجاد می‌شوند و از جفت‌های <code dir='ltr'>key: value</code> تشکیل شده‌اند. کلیدها باید <strong>غیرقابل تغییر (Immutable)</strong> باشند (رشته، عدد، تاپل) – بنابراین لیست‌ها نمی‌توانند کلید باشند. مقادیر می‌توانند هر نوع داده‌ای (از جمله لیست، دیکشنری دیگر و حتی توابع) باشند.</p>
+                <p><strong>نکات کلیدی:</strong></p>
+                <ul>
+                    <li>دسترسی به مقدار با <code dir='ltr'>dict[key]</code> – اگر کلید وجود نداشته باشد، <code dir='ltr'>KeyError</code> می‌دهد.</li>
+                    <li>روش ایمن‌تر: <code dir='ltr'>dict.get(key, default)</code> – اگر کلید وجود نداشته باشد، <code dir='ltr'>default</code> برمی‌گرداند (پیش‌فرض <code dir='ltr'>None</code>).</li>
+                    <li>افزودن کلید-مقدار جدید: <code dir='ltr'>dict[new_key] = value</code>.</li>
+                    <li>حذف: <code dir='ltr'>del dict[key]</code> یا <code dir='ltr'>dict.pop(key)</code>.</li>
+                    <li>کلیدها در دیکشنری <strong>یکتا</strong> هستند – اگر کلید تکراری باشد، مقدار قبلی بازنویسی می‌شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد دیکشنری ==========
+person = {
+    "name": "علی",
+    "age": 30,
+    "city": "تهران",
+    "is_student": False,
+    "skills": ["Python", "JavaScript", "CSS"]  # مقدار می‌تواند لیست باشد
+}
+
+# ========== دسترسی به مقادیر با کلید ==========
+print(person["name"])      # "علی"
+print(person["age"])       # 30
+print(person["skills"][0]) # "Python"
+
+# ========== دسترسی با get() (ایمن‌تر) ==========
+print(person.get("job"))              # None
+print(person.get("job", "نامشخص"))    # "نامشخص"
+print(person.get("city", "نامشخص"))   # "تهران" (چون وجود دارد)
+
+# ========== افزودن کلید-مقدار جدید ==========
+person["job"] = "برنامه‌نویس"
+print(person)  # {'name': 'علی', 'age': 30, 'city': 'تهران', 'is_student': False, 'skills': [...], 'job': 'برنامه‌نویس'}
+
+# ========== تغییر مقدار ==========
+person["age"] = 31
+
+# ========== حذف یک کلید ==========
+del person["is_student"]    # روش ۱
+removed = person.pop("city") # روش ۲ (مقدار حذف‌شده را برمی‌گرداند)
+print(removed)  # "تهران"
+
+# ========== بررسی وجود کلید با in ==========
+if "name" in person:
+    print("✅ نام وجود دارد")
+else:
+    print("❌ نام وجود ندارد")
+
+# ========== دیکشنری خالی ==========
+empty_dict = {}  # یا dict()
+print(type(empty_dict))  # &lt;class 'dict'&gt;
+
+# ========== دیکشنری با کلیدهای عددی ==========
+scores = {1: "ضعیف", 2: "متوسط", 3: "خوب", 4: "عالی"}
+print(scores[3])  # "خوب"
+
+# ========== دیکشنری تو در تو ==========
+users = {
+    "user1": {"name": "علی", "age": 25},
+    "user2": {"name": "سارا", "age": 30}
+}
+print(users["user1"]["name"])  # "علی"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">علی</span><br>
+                    <span class="highlight">➜</span> <span class="result">30</span><br>
+                    <span class="highlight">➜</span> <span class="result">{'name': 'علی', 'age': 31, 'job': 'برنامه‌نویس', 'skills': ['Python', 'JavaScript', 'CSS']}</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> کلیدهای دیکشنری باید <strong>غیرقابل تغییر (Immutable)</strong> باشند. بنابراین لیست‌ها نمی‌توانند کلید باشند (چون قابل تغییر هستند)، اما تاپل‌ها و رشته‌ها می‌توانند. این محدودیت به‌دلیل پیاده‌سازی داخلی دیکشنری با هش (Hash) است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک دیکشنری با اطلاعات یک کتاب (عنوان، نویسنده، سال انتشار، قیمت، ژانر) ایجاد کنید. سپس با <code dir='ltr'>get()</code> قیمت را دریافت کنید و اگر وجود نداشت، مقدار پیش‌فرض "نامشخص" برگردانید. یک کلید جدید "موضوع" به آن اضافه کنید و دیکشنری نهایی را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۷.۲ -->
+            <div class="sub-section">
+                <h4>۷.۲ متدهای اصلی دیکشنری</h4>
+                <p>دیکشنری‌ها متدهای مفیدی برای مدیریت داده‌ها دارند. در این بخش با پرکاربردترین آنها آشنا می‌شوید:</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">🔑</span>
+                        <span class="name">keys()</span>
+                        <span class="desc">برگشت‌دهنده‌ی لیستی از کلیدها</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📊</span>
+                        <span class="name">values()</span>
+                        <span class="desc">برگشت‌دهنده‌ی لیستی از مقادیر</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">items()</span>
+                        <span class="desc">برگشت‌دهنده‌ی لیستی از (کلید، مقدار)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">➕</span>
+                        <span class="name">update()</span>
+                        <span class="desc">ترکیب/به‌روزرسانی با دیکشنری دیگر</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🗑️</span>
+                        <span class="name">pop()</span>
+                        <span class="desc">حذف با کلید و برگرداندن مقدار</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🧹</span>
+                        <span class="name">clear()</span>
+                        <span class="desc">پاک کردن همه‌ی آیتم‌ها</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📝</span>
+                        <span class="name">copy()</span>
+                        <span class="desc">کپی کردن دیکشنری</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔍</span>
+                        <span class="name">get()</span>
+                        <span class="desc">دسترسی با fallback (پیش‌فرض)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📤</span>
+                        <span class="name">popitem()</span>
+                        <span class="desc">حذف و برگرداندن آخرین آیتم</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>person = {"name": "علی", "age": 30, "city": "تهران", "job": "برنامه‌نویس"}
+
+# ========== keys() - دریافت کلیدها ==========
+print(person.keys())    # dict_keys(['name', 'age', 'city', 'job'])
+
+# ========== values() - دریافت مقادیر ==========
+print(person.values())  # dict_values(['علی', 30, 'تهران', 'برنامه‌نویس'])
+
+# ========== items() - دریافت جفت‌ها (کلید، مقدار) ==========
+print(person.items())   # dict_items([('name', 'علی'), ('age', 30), ('city', 'تهران'), ('job', 'برنامه‌نویس')])
+
+# ========== پیمایش با items() ==========
+for key, value in person.items():
+    print(f"🔑 {key} → {value}")
+
+# ========== update() - ترکیب دو دیکشنری ==========
+extra = {"age": 31, "salary": 8000000}  # age بازنویسی می‌شود، salary اضافه می‌شود
+person.update(extra)
+print(person)  # {'name': 'علی', 'age': 31, 'city': 'تهران', 'job': 'برنامه‌نویس', 'salary': 8000000}
+
+# ========== pop() - حذف با کلید ==========
+removed = person.pop("city")
+print(removed)   # "تهران"
+print(person)    # {'name': 'علی', 'age': 31, 'job': 'برنامه‌نویس', 'salary': 8000000}
+
+# ========== popitem() - حذف آخرین آیتم ==========
+last = person.popitem()
+print(last)      # ('salary', 8000000)
+print(person)    # {'name': 'علی', 'age': 31, 'job': 'برنامه‌نویس'}
+
+# ========== copy() - کپی کردن ==========
+person_copy = person.copy()  # کپی سطحی (Shallow Copy)
+print(person_copy)
+
+# ========== clear() - پاک کردن همه ==========
+person.clear()
+print(person)    # {}</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>items()</code> در حلقه‌های <code dir='ltr'>for</code> برای پیمایش همزمان کلیدها و مقادیر استفاده کنید – این روش <strong>پایتونیک‌ترین</strong> و خواناترین روش است. از <code dir='ltr'>update()</code> برای ترکیب دو دیکشنری (یا به‌روزرسانی دیکشنری با داده‌های جدید) استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک دیکشنری با ۳ کلید-مقدار (نام، سن، شهر) ایجاد کنید. با <code dir='ltr'>keys()</code> کلیدها را چاپ کنید، با <code dir='ltr'>values()</code> مقادیر را چاپ کنید، با <code dir='ltr'>items()</code> همه را پیمایش کنید و با <code dir='ltr'>pop()</code> کلید "شهر" را حذف کنید. سپس با <code dir='ltr'>update()</code> یک دیکشنری جدید به آن اضافه کنید.
+                </div>
+            </div>
+
+            <!-- ۷.۳ -->
+            <div class="sub-section">
+                <h4>۷.۳ Dictionary Comprehension (درک دیکشنری)</h4>
+                <p><strong>Dictionary Comprehension</strong> روشی فشرده، سریع و خوانا برای ایجاد دیکشنری‌ها با استفاده از یک حلقه‌ی <code dir='ltr'>for</code> و شرط‌های اختیاری است. ساختار کلی: <code dir='ltr'>{key_expression: value_expression for item in iterable if condition}</code></p>
+                <p><strong>مزایا:</strong></p>
+                <ul>
+                    <li>کد <strong>کوتاه‌تر</strong> و <strong>خواناتر</strong> از حلقه‌های معمولی.</li>
+                    <li>در بسیاری موارد <strong>سریع‌تر</strong> از حلقه‌های <code dir='ltr'>for</code> سنتی.</li>
+                    <li>قابل ترکیب با <code dir='ltr'>zip()</code> برای ساخت دیکشنری از دو لیست.</li>
+                </ul>
+                <p><strong>چه زمانی از آن استفاده نکنیم؟</strong> وقتی منطق پیچیده است (چندین شرط تو در تو) یا نیاز به تغییر دیکشنری در حین پیمایش دارید، از حلقه‌های معمولی استفاده کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد دیکشنری از لیست اعداد ==========
+numbers = [1, 2, 3, 4, 5]
+squares = {x: x**2 for x in numbers}
+print(squares)  # {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+
+# ========== فیلتر کردن اعداد زوج ==========
+evens = {x: x**2 for x in range(1, 11) if x % 2 == 0}
+print(evens)    # {2: 4, 4: 16, 6: 36, 8: 64, 10: 100}
+
+# ========== تبدیل دو لیست به دیکشنری با zip() ==========
+names = ["علی", "سارا", "رضا", "مریم"]
+ages = [25, 30, 28, 22]
+people = {name: age for name, age in zip(names, ages)}
+print(people)   # {'علی': 25, 'سارا': 30, 'رضا': 28, 'مریم': 22}
+
+# ========== معکوس کردن کلید و مقدار ==========
+original = {"a": 1, "b": 2, "c": 3, "d": 4}
+reversed_dict = {value: key for key, value in original.items()}
+print(reversed_dict)  # {1: 'a', 2: 'b', 3: 'c', 4: 'd'}
+
+# ========== شرط روی مقدار ==========
+filtered = {k: v for k, v in original.items() if v > 2}
+print(filtered)  # {'c': 3, 'd': 4}
+
+# ========== شرط روی کلید ==========
+filtered_by_key = {k: v for k, v in original.items() if k in "ab"}
+print(filtered_by_key)  # {'a': 1, 'b': 2}
+
+# ========== استفاده از if/else در مقدار ==========
+scores = {"علی": 85, "سارا": 92, "رضا": 78, "مریم": 95}
+status = {name: "قبول" if score >= 80 else "رد" for name, score in scores.items()}
+print(status)   # {'علی': 'قبول', 'سارا': 'قبول', 'رضا': 'رد', 'مریم': 'قبول'}
+
+# ========== ساخت دیکشنری از دو لیست با enumerate ==========
+items = ["apple", "banana", "orange"]
+index_dict = {i: item for i, item in enumerate(items, start=1)}
+print(index_dict)  # {1: 'apple', 2: 'banana', 3: 'orange'}
+
+# ========== ترکیب دو حلقه (حاصلضرب دکارتی) ==========
+keys = ["A", "B"]
+values = [1, 2, 3]
+cartesian = {k: v for k in keys for v in values}
+print(cartesian)  # {'A': 3, 'B': 3} (آخرین مقدار برای هر کلید)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}</span><br>
+                    <span class="highlight">➜</span> <span class="result">{2: 4, 4: 16, 6: 36, 8: 64, 10: 100}</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> Dictionary Comprehension می‌تواند با حلقه‌های تو در تو و شرط‌های پیچیده ترکیب شود، اما برای <strong>خوانایی بهتر</strong>، از حلقه‌های ساده‌تر استفاده کنید. همچنین اگر کلیدها تکراری شوند، آخرین مقدار باقی می‌ماند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> دو لیست از نام‌ها و نمرات دانش‌آموزان (حداقل ۵ نفر) ایجاد کنید. با Dictionary Comprehension:
+                    <ul>
+                        <li>یک دیکشنری از دانش‌آموزان و نمرات آنها بسازید.</li>
+                        <li>دانش‌آموزانی که نمره‌ی بالای ۱۷ دارند را فیلتر کنید و دیکشنری جدیدی بسازید.</li>
+                        <li>یک دیکشنری از وضعیت قبولی (قبول/رد) بر اساس نمره (حد نصاب ۱۲) ایجاد کنید.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۷.۴ -->
+            <div class="sub-section">
+                <h4>۷.۴ مجموعه‌ها (Sets) – ایجاد و عملیات</h4>
+                <p><strong>مجموعه‌ها (Sets)</strong> ساختارهایی برای ذخیره‌سازی عناصر <strong>یکتا و غیرتکراری</strong> هستند. مجموعه‌ها <strong>نامرتب</strong> هستند (ترتیب عناصر تضمینی نیست) و از عملیات‌های ریاضی مجموعه‌ها (اجتماع، اشتراک، تفاضل) پشتیبانی می‌کنند.</p>
+                <p><strong>ویژگی‌های کلیدی:</strong></p>
+                <ul>
+                    <li>با <code dir='ltr'>{}</code> یا <code dir='ltr'>set()</code> ایجاد می‌شوند (مجموعه‌ی خالی با <code dir='ltr'>set()</code>، نه <code dir='ltr'>{}</code> که دیکشنری است).</li>
+                    <li>فقط شامل عناصر <strong>hashable</strong> (غیرقابل تغییر) هستند – لیست‌ها نمی‌توانند عضو مجموعه باشند.</li>
+                    <li>برای <strong>حذف تکراری‌ها</strong> از یک لیست بسیار مفید هستند.</li>
+                    <li>عملیات‌های مجموعه‌ها <strong>سریع</strong> هستند (پیچیدگی زمانی O(1) برای عضویت).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد مجموعه ==========
+colors = {"قرمز", "سبز", "آبی", "قرمز"}  # تکراری‌ها حذف می‌شوند
+print(colors)  # {'سبز', 'آبی', 'قرمز'} (ترتیب ممکن است متفاوت باشد)
+
+# ========== ایجاد مجموعه با set() از لیست ==========
+numbers = set([1, 2, 3, 2, 1, 4, 4])
+print(numbers)  # {1, 2, 3, 4}
+
+# ========== مجموعه خالی ==========
+empty_set = set()  # ✅ درست
+# empty_set2 = {}  # ❌ این یک دیکشنری خالی است
+
+# ========== افزودن عنصر ==========
+colors.add("زرد")
+print(colors)   # {'سبز', 'زرد', 'آبی', 'قرمز'}
+
+# ========== حذف عنصر ==========
+colors.remove("سبز")   # اگر نباشد خطا می‌دهد (KeyError)
+colors.discard("بنفش") # اگر نباشد خطا نمی‌دهد
+
+# ========== عملیات مجموعه‌ها ==========
+a = {1, 2, 3, 4, 5}
+b = {4, 5, 6, 7, 8}
+
+# اجتماع (Union) – ترکیب دو مجموعه
+print(a | b)           # {1, 2, 3, 4, 5, 6, 7, 8}
+print(a.union(b))      # {1, 2, 3, 4, 5, 6, 7, 8}
+
+# اشتراک (Intersection) – عناصر مشترک
+print(a & b)           # {4, 5}
+print(a.intersection(b))  # {4, 5}
+
+# تفاضل (Difference) – عناصر a که در b نیستند
+print(a - b)           # {1, 2, 3}
+print(a.difference(b)) # {1, 2, 3}
+print(b - a)           # {6, 7, 8}
+
+# تفاضل متقارن (Symmetric Difference) – عناصری که در یکی هستند اما نه در هر دو
+print(a ^ b)           # {1, 2, 3, 6, 7, 8}
+print(a.symmetric_difference(b))  # {1, 2, 3, 6, 7, 8}
+
+# ========== بررسی زیرمجموعه و بالامجموعه ==========
+subset = {1, 2, 3}
+print(subset.issubset(a))   # True (subset ⊆ a)
+print(a.issuperset(subset)) # True (a ⊇ subset)
+print(a.isdisjoint(b))      # False (اشتراک دارند)
+print({9, 10}.isdisjoint(a)) # True (اشتراک ندارند)
+
+# ========== استفاده از مجموعه برای حذف تکراری‌ها ==========
+duplicates = [1, 2, 2, 3, 4, 4, 4, 5]
+unique = list(set(duplicates))
+print(unique)  # [1, 2, 3, 4, 5] (ترتیب ممکن است تغییر کند)
+
+# ========== پیمایش مجموعه ==========
+for color in colors:
+    print(color)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">{'سبز', 'آبی', 'قرمز'}</span><br>
+                    <span class="highlight">➜</span> <span class="result">{1, 2, 3, 4}</span><br>
+                    <span class="highlight">➜</span> <span class="result">{1, 2, 3, 4, 5, 6, 7, 8}</span><br>
+                    <span class="highlight">➜</span> <span class="result">{4, 5}</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> مجموعه‌ها برای <strong>حذف موارد تکراری</strong> از یک لیست بسیار مفید هستند: <code dir='ltr'>unique = list(set(my_list))</code>. همچنین برای بررسی <strong>عضویت</strong> (با <code dir='ltr'>in</code>) بسیار سریع‌تر از لیست‌ها عمل می‌کنند (O(1) در مقابل O(n)).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از اعداد با تکرار (مثلاً [1, 2, 2, 3, 4, 4, 5, 6, 6, 7]) ایجاد کنید. با استفاده از مجموعه، اعداد یکتا را استخراج کنید. سپس دو مجموعه‌ی دیگر (مثلاً {1, 2, 3, 4} و {3, 4, 5, 6}) ایجاد کنید و عملیات اجتماع، اشتراک، تفاضل و تفاضل متقارن را روی آنها انجام دهید و نتایج را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۷.۵ -->
+            <div class="sub-section">
+                <h4>۷.۵ Frozenset (مجموعه‌ی غیرقابل تغییر)</h4>
+                <p><strong>Frozenset</strong> نسخه‌ی <strong>غیرقابل تغییر (Immutable)</strong> مجموعه است. پس از ایجاد، نمی‌توانید عناصری به آن اضافه یا از آن حذف کنید. این ویژگی Frozenset را برای موارد زیر مناسب می‌سازد:</p>
+                <ul>
+                    <li>استفاده به‌عنوان <strong>کلید در دیکشنری</strong> (چون immutable است).</li>
+                    <li>ذخیره‌سازی <strong>داده‌های ثابت</strong> که نباید تغییر کنند.</li>
+                    <li>به‌عنوان عضوی از مجموعه‌های دیگر (چون hashable است).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد Frozenset ==========
+frozen = frozenset([1, 2, 3, 4, 5])
+print(frozen)  # frozenset({1, 2, 3, 4, 5})
+
+# ========== قابل تغییر نیست ==========
+# frozen.add(6)   # ❌ AttributeError: 'frozenset' object has no attribute 'add'
+# frozen.remove(1) # ❌ AttributeError
+
+# ========== عملیات روی Frozenset (مجموعه جدید برمی‌گرداند) ==========
+other = frozenset([3, 4, 5, 6, 7, 8])
+union = frozen.union(other)
+print(union)  # frozenset({1, 2, 3, 4, 5, 6, 7, 8})
+intersection = frozen.intersection(other)
+print(intersection)  # frozenset({3, 4, 5})
+
+# ========== استفاده به‌عنوان کلید دیکشنری ==========
+cache = {
+    frozenset([1, 2, 3]): "مجموعه ۱",
+    frozenset([4, 5, 6]): "مجموعه ۲"
+}
+print(cache[frozenset([1, 2, 3])])  # "مجموعه ۱"
+
+# ========== مجموعه معمولی نمی‌تواند کلید باشد ==========
+# invalid = {{1, 2, 3}: "value"}  # ❌ TypeError: unhashable type: 'set'
+
+# ========== Frozenset به‌عنوان عضو مجموعه ==========
+set_of_sets = {frozenset([1, 2]), frozenset([3, 4])}
+print(set_of_sets)  # {frozenset({1, 2}), frozenset({3, 4})}
+# set_of_sets2 = {{1, 2}, {3, 4}}  # ❌ TypeError
+
+# ========== تبدیل لیست به Frozenset برای استفاده در دیکشنری ==========
+def get_key_for_list(lst):
+    return frozenset(lst)
+
+key = get_key_for_list([1, 2, 3])
+data = {key: "اطلاعات"}
+print(data)  # {frozenset({1, 2, 3}): 'اطلاعات'}</code></pre>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> Frozenset زمانی مفید است که نیاز به یک مجموعه‌ی ثابت دارید که قرار نیست تغییر کند، یا می‌خواهید از آن به‌عنوان کلید در دیکشنری یا عضوی از مجموعه‌های دیگر استفاده کنید. به‌دلیل غیرقابل تغییر بودن، Frozenset هش‌پذیر (hashable) است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک Frozenset از اعداد ۱ تا ۵ ایجاد کنید. سعی کنید با <code dir='ltr'>add()</code> یا <code dir='ltr'>remove()</code> آن را تغییر دهید و خطای دریافتی را مشاهده کنید. سپس از آن به‌عنوان کلید در یک دیکشنری با یک مقدار دلخواه استفاده کنید و مقدار را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۷.۶ -->
+            <div class="sub-section">
+                <h4>۷.۶ Set Comprehension (درک مجموعه)</h4>
+                <p>مشابه List Comprehension و Dictionary Comprehension، می‌توانید با <strong>Set Comprehension</strong> مجموعه‌های فشرده و کارآمد ایجاد کنید. ساختار: <code dir='ltr'>{expression for item in iterable if condition}</code></p>
+                <p><strong>ویژگی‌ها:</strong></p>
+                <ul>
+                    <li>مشابه List Comprehension اما با <code dir='ltr'>{}</code> به‌جای <code dir='ltr'>[]</code>.</li>
+                    <li>به‌طور خودکار <strong>تکراری‌ها را حذف</strong> می‌کند (چون مجموعه است).</li>
+                    <li>برای استخراج عناصر یکتا از یک iterable بسیار مناسب است.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== ایجاد مجموعه‌ی مربع‌های اعداد ==========
+squares = {x**2 for x in range(1, 7)}
+print(squares)  # {1, 4, 9, 16, 25, 36}
+
+# ========== فیلتر کردن اعداد زوج ==========
+evens = {x for x in range(1, 11) if x % 2 == 0}
+print(evens)    # {2, 4, 6, 8, 10}
+
+# ========== استخراج حروف یکتا از یک رشته (بدون فاصله) ==========
+text = "python programming is fun"
+unique_letters = {char for char in text if char != ' '}
+print(unique_letters)  # {'n', 't', 'h', 'y', 'i', 'o', 'p', 'r', 'g', 'm', 'a', 's', 'f', 'u'}
+
+# ========== تبدیل لیست به مجموعه با شرط ==========
+numbers = [1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 8, 9]
+unique_odds = {x for x in numbers if x % 2 == 1}
+print(unique_odds)  # {1, 3, 5, 7, 9}
+
+# ========== استخراج کلمات با طول مشخص ==========
+words = ["apple", "banana", "cherry", "date", "elderberry", "fig"]
+long_words = {word for word in words if len(word) > 5}
+print(long_words)  # {'banana', 'cherry', 'elderberry'}
+
+# ========== استفاده از Set Comprehension برای حذف تکراری‌ها با تبدیل ==========
+names = ["علی", "سارا", "علی", "رضا", "سارا", "مریم"]
+unique_names = {name for name in names}
+print(unique_names)  # {'سارا', 'مریم', 'علی', 'رضا'}
+
+# ========== ترکیب چند حلقه ==========
+pairs = {(x, y) for x in range(3) for y in range(3)}
+print(pairs)  # {(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)}
+
+# ========== استفاده از if/else در عبارت ==========
+numbers = [1, 2, 3, 4, 5]
+status = {"زوج" if x % 2 == 0 else "فرد" for x in numbers}
+print(status)  # {'زوج', 'فرد'}  (چون مجموعه است، تکراری‌ها حذف می‌شوند)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">{1, 4, 9, 16, 25, 36}</span><br>
+                    <span class="highlight">➜</span> <span class="result">{2, 4, 6, 8, 10}</span>
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک رشته‌ی طولانی (حداقل ۲۰ کاراکتر با تکرار حروف) ایجاد کنید. با Set Comprehension:
+                    <ul>
+                        <li>حروف یکتای آن را استخراج کنید (به‌جز فاصله‌ها).</li>
+                        <li>حروف صدادار (a, e, i, o, u) را فیلتر کنید و فقط حروف بی‌صدا را نمایش دهید.</li>
+                        <li>حروفی که بیش از یک بار تکرار شده‌اند را پیدا کنید (با استفاده از دو Set Comprehension).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۷.۷ -->
+            <div class="sub-section">
+                <h4>۷.۷ مقایسه دیکشنری، مجموعه و لیست</h4>
+                <p>انتخاب ساختار داده‌ی مناسب تأثیر زیادی بر عملکرد، خوانایی و کارایی کد دارد. در این بخش سه ساختار اصلی پایتون را با هم مقایسه می‌کنیم:</p>
+                <div class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>ویژگی</th>
+                            <th>لیست (List)</th>
+                            <th>مجموعه (Set)</th>
+                            <th>دیکشنری (Dict)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>سینتکس</strong></td>
+                            <td><code dir='ltr'>[]</code></td>
+                            <td><code dir='ltr'>{}</code> (یا <code dir='ltr'>set()</code>)</td>
+                            <td><code dir='ltr'>{key: value}</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>قابل تغییر (Mutable)</strong></td>
+                            <td>✅</td>
+                            <td>✅</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td><strong>حفظ ترتیب</strong></td>
+                            <td>✅ (از ۳.۷)</td>
+                            <td>❌ (نامرتب)</td>
+                            <td>✅ (از ۳.۷)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>عناصر تکراری</strong></td>
+                            <td>✅ مجاز</td>
+                            <td>❌ غیرمجاز</td>
+                            <td>❌ (کلیدها یکتا)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>دسترسی</strong></td>
+                            <td>با اندیس عددی</td>
+                            <td>با مقدار (عضویت)</td>
+                            <td>با کلید</td>
+                        </tr>
+                        <tr>
+                            <td><strong>سرعت عضویت (in)</strong></td>
+                            <td>O(n) (کند)</td>
+                            <td>O(1) (سریع)</td>
+                            <td>O(1) (سریع)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>کاربرد اصلی</strong></td>
+                            <td>دنباله‌های مرتب و قابل تکرار</td>
+                            <td>مجموعه‌های یکتا و عملیات مجموعه‌ای</td>
+                            <td>نگاشت کلید-مقدار</td>
+                        </tr>
+                        <tr>
+                            <td><strong>کلید قابل استفاده در دیکشنری</strong></td>
+                            <td>❌ خیر</td>
+                            <td>❌ خیر (به‌جز Frozenset)</td>
+                            <td>N/A</td>
+                        </tr>
+                    </tbody>
+                </div>
+                <p><strong>راهنمای انتخاب:</strong></p>
+                <ul>
+                    <li><strong>لیست:</strong> وقتی به داده‌های <strong>مرتب</strong> و <strong>تکراری</strong> نیاز دارید و دسترسی با اندیس مهم است.</li>
+                    <li><strong>مجموعه:</strong> وقتی به <strong>عناصر یکتا</strong> نیاز دارید، ترتیب مهم نیست و می‌خواهید عضویت را سریع بررسی کنید.</li>
+                    <li><strong>دیکشنری:</strong> وقتی به <strong>نگاشت کلید-مقدار</strong> نیاز دارید و می‌خواهید با یک کلید به مقدار دسترسی پیدا کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># ========== انتخاب ساختار مناسب ==========
+# ۱. لیست – برای داده‌های مرتب و قابل تکرار
+students = ["علی", "سارا", "رضا", "علی"]  # تکراری مجاز
+
+# ۲. مجموعه – برای داده‌های یکتا
+unique_students = {"علی", "سارا", "رضا"}  # تکراری نداریم
+
+# ۳. دیکشنری – برای نگاشت کلید-مقدار
+student_scores = {
+    "علی": 85,
+    "سارا": 92,
+    "رضا": 78
+}
+
+# ========== سناریوی واقعی ==========
+# مدیریت کاربران یک وب‌سایت:
+# - لیست کاربران (با ترتیب ورود): List
+# - مجموعه‌ی کاربران فعال: Set (یکتا و جستجوی سریع)
+# - اطلاعات کامل کاربر (با شناسه): Dict
+
+users_list = ["user1", "user2", "user3"]           # لیست
+active_users = {"user1", "user3"}                  # مجموعه
+user_profiles = {
+    "user1": {"name": "علی", "email": "ali@test.com"},
+    "user2": {"name": "سارا", "email": "sara@test.com"},
+    "user3": {"name": "رضا", "email": "reza@test.com"}
+}  # دیکشنری</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> انتخاب ساختار داده‌ی مناسب تأثیر زیادی بر <strong>عملکرد</strong> و <strong>خوانایی</strong> کد دارد. قاعده‌ی کلی: اگر نیاز به داده‌های مرتب و قابل تکرار دارید → لیست. اگر به داده‌های یکتا و عملیات مجموعه‌ای نیاز دارید → مجموعه. اگر به نگاشت کلید-مقدار نیاز دارید → دیکشنری. همیشه به پیچیدگی زمانی عملیات‌ها توجه کنید (O(1) برای دیکشنری و مجموعه، O(n) برای لیست).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک مسئله‌ی واقعی را انتخاب کنید (مثلاً مدیریت یک فروشگاه آنلاین: محصولات، سبد خرید، کاربران، سفارشات). مشخص کنید که برای هر بخش از کدام ساختار داده (لیست، مجموعه، دیکشنری) استفاده می‌کنید و چرا. پاسخ خود را با مثال‌های کد (ساختارهای فرضی) نشان دهید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک سیستم مدیریت دفترچه تلفن با دیکشنری و مجموعه</h4>
+            <p>در این کارگاه، یک برنامه‌ی کامل برای مدیریت دفترچه تلفن می‌سازیم که از دیکشنری، مجموعه، Dictionary Comprehension و Set Comprehension استفاده می‌کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>phonebook_manager.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>دیکشنری اصلی:</strong> یک دیکشنری خالی به نام <code dir='ltr'>phonebook</code> با کلید نام و مقدار شماره تلفن ایجاد کنید.</li>
+                <li><strong>مجموعه‌ی شماره‌ها:</strong> یک مجموعه‌ی خالی برای ذخیره‌ی شماره‌های یکتا ایجاد کنید (برای جلوگیری از تکرار شماره).</li>
+                <li><strong>توابع مدیریت:</strong> توابع زیر را پیاده‌سازی کنید:
+                    <ul>
+                        <li><code dir='ltr'>add_contact(name, number)</code> – افزودن مخاطب (اگر شماره تکراری نبود).</li>
+                        <li><code dir='ltr'>search_contact(name)</code> – جستجوی شماره با نام (با <code dir='ltr'>get()</code>).</li>
+                        <li><code dir='ltr'>delete_contact(name)</code> – حذف مخاطب با <code dir='ltr'>pop()</code>.</li>
+                        <li><code dir='ltr'>show_all()</code> – نمایش همه‌ی مخاطبان با <code dir='ltr'>items()</code>.</li>
+                        <li><code dir='ltr'>count_contacts()</code> – تعداد مخاطبان با <code dir='ltr'>len()</code>.</li>
+                        <li><code dir='ltr'>find_duplicate_numbers()</code> – پیدا کردن شماره‌های تکراری (با مجموعه).</li>
+                    </ul>
+                </li>
+                <li><strong>استفاده از Comprehension:</strong>
+                    <ul>
+                        <li>با <strong>Dictionary Comprehension</strong> یک دیکشنری از مخاطبان که نام‌شان با حرف خاصی شروع می‌شود ایجاد کنید.</li>
+                        <li>با <strong>Set Comprehension</strong> یک مجموعه از شماره‌های تکراری استخراج کنید.</li>
+                    </ul>
+                </li>
+                <li><strong>پیمایش:</strong> با <code dir='ltr'>items()</code> مخاطبان را پیمایش کنید و به‌صورت شماره‌دار نمایش دهید.</li>
+                <li><strong>منوی تعاملی:</strong> با یک حلقه‌ی <code dir='ltr'>while</code> یک منوی کاربری ایجاد کنید که گزینه‌های بالا را پشتیبانی کند.</li>
+                <li><strong>ذخیره‌سازی (اختیاری):</strong> داده‌ها را در یک فایل JSON ذخیره و بارگذاری کنید (با <code dir='ltr'>json</code> ماژول که در فصل‌های بعدی یاد می‌گیرید، اما فعلاً با یک فایل متنی ساده).</li>
+            </ol>
+            <div class="live-demo" id="dict-demo">
+                <h4>📞 دفترچه تلفن</h4>
+                <input type="text" id="contactName" placeholder="نام">
+                <input type="text" id="contactNumber" placeholder="شماره">
+                <button onclick="addContact()">➕ افزودن</button>
+                <button onclick="searchContact()">🔍 جستجو</button>
+                <button onclick="deleteContact()">🗑️ حذف</button>
+                <div class="result-box" id="dictResult">دفترچه تلفن خالی است</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک لیست از کلمات (با تکرار) ایجاد کند.</li>
+                <li>با استفاده از مجموعه، کلمات تکراری را حذف کند و لیست جدیدی بسازد.</li>
+                <li>با یک دیکشنری، تعداد تکرار هر کلمه را بشمارد (با حلقه‌ی <code dir='ltr'>for</code> و <code dir='ltr'>get()</code>).</li>
+                <li>با Dictionary Comprehension، کلماتی که بیش از ۲ بار تکرار شده‌اند را فیلتر کند.</li>
+                <li>با Set Comprehension، حروف یکتای یک متن طولانی را استخراج کند و حروف صدادار را از آن حذف کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین دیکشنری و لیست چیست؟ هرکدام چه زمانی مناسب هستند؟ مثال بزنید.</li>
+                <li>مجموعه (Set) چه ویژگی‌هایی دارد و چه تفاوتی با لیست از نظر عملکرد عضویت (in) دارد؟</li>
+                <li>Frozenset چیست و چه کاربردی دارد؟ چرا می‌تواند کلید دیکشنری باشد در حالی که Set معمولی نمی‌تواند؟</li>
+                <li>Dictionary Comprehension چه مزیتی نسبت به حلقه‌های معمولی دارد؟ چه زمانی نباید از آن استفاده کرد؟</li>
+                <li>چرا کلیدهای دیکشنری باید غیرقابل تغییر (Immutable) باشند؟ اگر از کلید mutable استفاده کنیم چه اتفاقی می‌افتد؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر یک کلید <strong>معتبر</strong> برای دیکشنری است؟<br>
+                    أ) <code dir='ltr'>[1, 2, 3]</code>  ب) <code dir='ltr'>(1, 2, 3)</code>  ج) <code dir='ltr'>{1, 2, 3}</code>  د) همه‌ی موارد</li>
+                <li>خروجی <code dir='ltr'>{1, 2, 3}.union({2, 3, 4})</code> چیست؟<br>
+                    أ) <code dir='ltr'>{1, 2, 3, 4}</code>  ب) <code dir='ltr'>{2, 3}</code>  ج) <code dir='ltr'>{1, 4}</code>  د) <code dir='ltr'>{1, 2, 3}</code></li>
+                <li>کدام متد برای ترکیب دو دیکشنری (اضافه کردن کلیدهای جدید و بازنویسی کلیدهای مشترک) استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>merge()</code>  ب) <code dir='ltr'>combine()</code>  ج) <code dir='ltr'>update()</code>  د) <code dir='ltr'>union()</code></li>
+                <li>برای ایجاد یک مجموعه‌ی خالی، از کدام یک از موارد زیر باید استفاده کنیم؟<br>
+                    أ) <code dir='ltr'>{}</code>  ب) <code dir='ltr'>set()</code>  ج) <code dir='ltr'>[]</code>  د) <code dir='ltr'>()</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک دیکشنری از دانش‌آموزان (نام و نمره) با حداقل ۶ نفر ایجاد کند.</li>
+                <li>با <code dir='ltr'>items()</code> همه‌ی دانش‌آموزان را به‌صورت "نام: نمره" نمایش دهد.</li>
+                <li>با Dictionary Comprehension، دانش‌آموزانی که نمره‌ی بالای ۱۷ دارند را فیلتر کرده و دیکشنری جدیدی بسازد.</li>
+                <li>با <code dir='ltr'>get()</code> نمره‌ی یک دانش‌آموز خاص را دریافت کند (در صورت وجود، وگرنه "یافت نشد").</li>
+                <li>با <code dir='ltr'>pop()</code> یک دانش‌آموز را حذف کند (با مدیریت خطا در صورت عدم وجود).</li>
+                <li>با استفاده از مجموعه، اسامی یکتای دانش‌آموزان را استخراج کند و چاپ کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>دیکشنری‌ها</strong> با <code dir='ltr'>{}</code> و جفت‌های <code dir='ltr'>key: value</code> ایجاد می‌شوند و برای نگاشت کلید-مقدار استفاده می‌شوند.</li>
+                <li>🔹 متدهای اصلی دیکشنری: <code dir='ltr'>keys()</code>، <code dir='ltr'>values()</code>، <code dir='ltr'>items()</code>، <code dir='ltr'>update()</code>، <code dir='ltr'>pop()</code>، <code dir='ltr'>get()</code>، <code dir='ltr'>copy()</code> و <code dir='ltr'>clear()</code>.</li>
+                <li>🔹 <strong>مجموعه‌ها (Sets)</strong> برای ذخیره‌سازی عناصر یکتا و غیرتکراری با <code dir='ltr'>{}</code> یا <code dir='ltr'>set()</code> ایجاد می‌شوند.</li>
+                <li>🔹 عملیات‌های مجموعه‌ها: <code dir='ltr'>union()</code> (اجتماع)، <code dir='ltr'>intersection()</code> (اشتراک)، <code dir='ltr'>difference()</code> (تفاضل)، <code dir='ltr'>symmetric_difference()</code> (تفاضل متقارن).</li>
+                <li>🔹 <strong>Dictionary Comprehension</strong> روشی فشرده و کارآمد برای ایجاد دیکشنری‌ها با حلقه و شرط.</li>
+                <li>🔹 <strong>Set Comprehension</strong> روشی فشرده برای ایجاد مجموعه‌ها با حلقه و شرط.</li>
+                <li>🔹 <strong>Frozenset</strong> نسخه‌ی غیرقابل تغییر مجموعه است و می‌تواند کلید دیکشنری باشد.</li>
+                <li>🔹 انتخاب ساختار داده‌ی مناسب (لیست، مجموعه، دیکشنری) تأثیر زیادی بر عملکرد و خوانایی کد دارد.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir='ltr'><code dir='ltr'># ========== دیکشنری ==========
+person = {"name": "علی", "age": 30}
+person["job"] = "برنامه‌نویس"          # افزودن
+person.get("city", "نامشخص")          # دسترسی ایمن
+person.keys(), person.values(), person.items()  # کلیدها، مقادیر، جفت‌ها
+person.update({"age": 31})             # به‌روزرسانی
+person.pop("city")                     # حذف
+
+# ========== مجموعه ==========
+colors = {"قرمز", "سبز", "آبی"}
+colors.add("زرد")                     # افزودن
+colors.remove("سبز")                  # حذف (خطا اگر نباشد)
+colors.discard("بنفش")                # حذف (خطا نمی‌دهد)
+
+# عملیات مجموعه‌ها
+a | b  # اجتماع (union)
+a & b  # اشتراک (intersection)
+a - b  # تفاضل (difference)
+a ^ b  # تفاضل متقارن
+
+# ========== Dictionary Comprehension ==========
+{x: x**2 for x in range(5)}           # {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+{x: x**2 for x in range(10) if x % 2 == 0}  # با شرط
+
+# ========== Set Comprehension ==========
+{x**2 for x in range(5)}              # {0, 1, 4, 9, 16}
+{x for x in range(10) if x % 2 == 0}  # {0, 2, 4, 6, 8}</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Dictionary (دیکشنری):</strong> ساختار داده‌ی کلید-مقدار با <code dir='ltr'>{}</code> که دسترسی سریع با کلید را فراهم می‌کند.</li>
+                <li><strong>Set (مجموعه):</strong> ساختار داده برای عناصر یکتا و غیرتکراری با <code dir='ltr'>{}</code> یا <code dir='ltr'>set()</code>.</li>
+                <li><strong>Key (کلید):</strong> شناسه‌ی منحصربه‌فرد در دیکشنری (باید immutable باشد).</li>
+                <li><strong>Value (مقدار):</strong> داده‌ای که به یک کلید متصل است (می‌تواند هر نوع داده‌ای باشد).</li>
+                <li><strong>Frozenset:</strong> نسخه‌ی غیرقابل تغییر مجموعه که hashable است و می‌تواند کلید دیکشنری باشد.</li>
+                <li><strong>Union (اجتماع):</strong> ترکیب دو مجموعه (همه‌ی عناصر هر دو).</li>
+                <li><strong>Intersection (اشتراک):</strong> عناصر مشترک بین دو مجموعه.</li>
+                <li><strong>Difference (تفاضل):</strong> عناصر موجود در یک مجموعه اما نه در دیگری.</li>
+                <li><strong>Symmetric Difference (تفاضل متقارن):</strong> عناصری که در یکی از دو مجموعه هستند اما نه در هر دو.</li>
+                <li><strong>Mutable (قابل تغییر):</strong> ساختاری که می‌توان محتوای آن را پس از ایجاد تغییر داد (لیست، دیکشنری، مجموعه).</li>
+                <li><strong>Immutable (غیرقابل تغییر):</strong> ساختاری که پس از ایجاد قابل تغییر نیست (تاپل، رشته، Frozenset).</li>
+                <li><strong>Hashable (هش‌پذیر):</strong> مقداری که می‌توان از آن کلید دیکشنری یا عضو مجموعه استفاده کرد (باید immutable باشد).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/datastructures.html#dictionaries" target="_blank" rel="noopener noreferrer">Python: Dictionaries (مرجع رسمی)</a></li>
+                <li><a href="https://docs.python.org/3/tutorial/datastructures.html#sets" target="_blank" rel="noopener noreferrer">Python: Sets</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#dict" target="_blank" rel="noopener noreferrer">Python: dict (مرجع کامل)</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#set" target="_blank" rel="noopener noreferrer">Python: set (مرجع کامل)</a></li>
+                <li><a href="https://realpython.com/python-dicts/" target="_blank" rel="noopener noreferrer">Real Python: Dictionaries</a></li>
+                <li><a href="https://realpython.com/python-sets/" target="_blank" rel="noopener noreferrer">Real Python: Sets</a></li>
+                <li><a href="https://www.w3schools.com/python/python_dictionaries.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Dictionaries</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> ایجاد دیکشنری و دسترسی به مقادیر – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> متدهای اصلی دیکشنری – ۲۰ دقیقه (با تمرین عملی)</li>
+                <li><strong>گام ۳:</strong> Dictionary Comprehension – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> مجموعه‌ها (Sets) و عملیات – ۲۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> Frozenset – ۱۰ دقیقه</li>
+                <li><strong>گام ۶:</strong> Set Comprehension – ۱۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> مقایسه ساختارها و انتخاب درست – ۱۰ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۳۰ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا کلیدهای دیکشنری باید غیرقابل تغییر (Immutable) باشند؟ این ویژگی چه تأثیری بر عملکرد و طراحی دیکشنری دارد؟</li>
+                <li>❓ چه زمانی استفاده از مجموعه (Set) به‌جای لیست (List) می‌تواند عملکرد برنامه را به‌طور چشمگیری بهبود بخشد؟</li>
+                <li>❓ چگونه می‌توان با استفاده از دیکشنری یک کش (Cache) ساده با حذف خودکار قدیمی‌ترین داده‌ها پیاده‌سازی کرد؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>remove()</code> و <code dir='ltr'>discard()</code> در مجموعه‌ها وجود دارد و هرکدام چه زمانی مناسب هستند؟</li>
+                <li>❓ چرا Frozenset می‌تواند کلید دیکشنری باشد اما Set معمولی نمی‌تواند؟ چه اتفاقی می‌افتد اگر یک Set را به‌عنوان کلید استفاده کنیم؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از لیست به‌عنوان کلید دیکشنری که باعث <code dir='ltr'>TypeError: unhashable type: 'list'</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از تاپل یا رشته به‌عنوان کلید استفاده کنید یا لیست را به تاپل تبدیل کنید: <code dir='ltr'>tuple(my_list)</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> دسترسی به کلیدی که در دیکشنری وجود ندارد با <code dir='ltr'>[]</code> که باعث <code dir='ltr'>KeyError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>get()</code> با مقدار پیش‌فرض استفاده کنید: <code dir='ltr'>dict.get(key, default)</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> تغییر یک مجموعه در حین پیمایش با <code dir='ltr'>for</code> که باعث <code dir='ltr'>RuntimeError: Set changed size during iteration</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از یک کپی از مجموعه برای پیمایش استفاده کنید: <code dir='ltr'>for item in set_copy:</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن اینکه مجموعه‌ها <strong>نامرتب</strong> هستند و ترتیب عناصر تضمینی نیست – در نتیجه ممکن است کد شما به ترتیب خاصی وابسته باشد و در اجراهای مختلف نتایج متفاوتی بگیرد.<br>
+                    <strong>🔧 راه حل:</strong> اگر ترتیب مهم است، از لیست یا دیکشنری (که از Python 3.7 ترتیب را حفظ می‌کنند) استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>{}</code> برای ایجاد مجموعه‌ی خالی – این کار یک <strong>دیکشنری خالی</strong> ایجاد می‌کند، نه مجموعه.<br>
+                    <strong>🔧 راه حل:</strong> برای مجموعه‌ی خالی از <code dir='ltr'>set()</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>remove()</code> روی عنصری که در مجموعه وجود ندارد – باعث <code dir='ltr'>KeyError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>discard()</code> استفاده کنید (اگر عنصر نباشد، خطا نمی‌دهد) یا قبل از حذف با <code dir='ltr'>in</code> بررسی کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> در Dictionary Comprehension، فراموش کردن اینکه اگر کلیدها تکراری باشند، آخرین مقدار باقی می‌ماند و ممکن است داده‌ها از دست بروند.<br>
+                    <strong>🔧 راه حل:</strong> مطمئن شوید که کلیدها یکتا هستند یا اگر تکراری هستند، از منطق مناسب برای ترکیب مقادیر استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت دانش‌آموزان با دیکشنری، مجموعه و Comprehension</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) کامل برای مدیریت دانش‌آموزان یک مدرسه بسازید که از دیکشنری، مجموعه، Dictionary Comprehension و Set Comprehension استفاده کند. این پروژه شما را با کاربرد عملی همه‌ی مفاهیم این فصل در یک سناریوی واقعی آشنا می‌کند.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ساختار داده‌ها):</strong>
+                    <ul>
+                        <li>یک دیکشنری <code dir='ltr'>students</code> با کلید <strong>نام دانش‌آموز</strong> و مقدار <strong>دیکشنری اطلاعات</strong> (شامل سن، کلاس، لیست نمرات) ایجاد کنید.</li>
+                        <li>یک مجموعه <code dir='ltr'>unique_classes</code> برای ذخیره‌ی کلاس‌های موجود (برای جلوگیری از تکرار) ایجاد کنید.</li>
+                        <li>یک مجموعه <code dir='ltr'>all_subjects</code> برای ذخیره‌ی همه‌ی دروس (یکتا) ایجاد کنید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۲ (توابع اصلی):</strong>
+                    <ul>
+                        <li><code dir='ltr'>add_student(name, age, grade, scores_dict)</code> – افزودن دانش‌آموز جدید با اعتبارسنجی (سن، نمرات).</li>
+                        <li><code dir='ltr'>get_student(name)</code> – دریافت اطلاعات یک دانش‌آموز با <code dir='ltr'>get()</code> (در صورت نبود، پیام خطا).</li>
+                        <li><code dir='ltr'>update_score(name, subject, score)</code> – به‌روزرسانی نمره‌ی یک درس خاص.</li>
+                        <li><code dir='ltr'>get_top_students(n)</code> – دریافت <code dir='ltr'>n</code> دانش‌آموز با بهترین معدل (با استفاده از <code dir='ltr'>sorted()</code> و <code dir='ltr'>items()</code>).</li>
+                        <li><code dir='ltr'>get_subjects()</code> – دریافت مجموعه‌ی همه‌ی دروس (با استفاده از Set Comprehension روی دیکشنری دانش‌آموزان).</li>
+                        <li><code dir='ltr'>get_average_by_class(class_name)</code> – محاسبه‌ی میانگین نمرات یک کلاس خاص.</li>
+                        <li><code dir='ltr'>get_students_by_grade(grade)</code> – دریافت لیست دانش‌آموزان یک کلاس خاص (با Dictionary Comprehension).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۳ (قابلیت‌های پیشرفته با Comprehension):</strong>
+                    <ul>
+                        <li>با <strong>Dictionary Comprehension</strong> یک دیکشنری از دانش‌آموزان با معدل بالای ۱۷ بسازید.</li>
+                        <li>با <strong>Set Comprehension</strong> مجموعه‌ی دروس یکتای تدریس‌شده در مدرسه را استخراج کنید.</li>
+                        <li>با <strong>Dictionary Comprehension</strong> یک دیکشنری از کلاس‌ها و تعداد دانش‌آموزان هر کلاس بسازید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۴ (مدیریت داده‌ها):</strong>
+                    <ul>
+                        <li>با استفاده از <code dir='ltr'>Frozenset</code>، مجموعه‌ای از دروس ثابت (مثلاً ریاضی، علوم، ادبیات) ایجاد کنید و از آن به‌عنوان کلید در یک دیکشنری برای ذخیره‌ی نمرات استاندارد استفاده کنید.</li>
+                        <li>قابلیت ذخیره‌سازی و بارگذاری داده‌ها در فایل JSON را اضافه کنید (اختیاری – با ماژول <code dir='ltr'>json</code>).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۵ (منوی تعاملی):</strong> با یک حلقه‌ی <code dir='ltr'>while</code> یک منوی کاربری ایجاد کنید که گزینه‌های زیر را پشتیبانی کند:
+                    <ul>
+                        <li>۱. افزودن دانش‌آموز</li>
+                        <li>۲. مشاهده‌ی اطلاعات دانش‌آموز</li>
+                        <li>۳. به‌روزرسانی نمره</li>
+                        <li>۴. نمایش دانش‌آموزان برتر</li>
+                        <li>۵. نمایش دروس یکتا</li>
+                        <li>۶. محاسبه‌ی میانگین یک کلاس</li>
+                        <li>۷. نمایش آمار کلی (تعداد دانش‌آموزان، تعداد کلاس‌ها)</li>
+                        <li>۸. خروج</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><strong>چالش‌های بیشتر (اختیاری):</strong></p>
+            <ul>
+                <li>با استفاده از <code dir='ltr'>zip()</code> و Dictionary Comprehension، یک گزارش از نمرات هر دانش‌آموز به‌صورت جدولی تهیه کنید.</li>
+                <li>با استفاده از مجموعه، دانش‌آموزانی که در همه‌ی دروس نمره‌ی بالای ۱۷ دارند (مبتکران) را پیدا کنید.</li>
+                <li>با استفاده از <code dir='ltr'>statistics</code> یا محاسبات دستی، انحراف معیار نمرات هر کلاس را محاسبه کنید.</li>
+                <li>قابلیت جستجوی دانش‌آموزان بر اساس محدوده‌ی سنی را اضافه کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 student_manager.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را با کاربرد عملی دیکشنری‌ها، مجموعه‌ها و Comprehension در یک سیستم مدیریت داده‌ی واقعی آشنا می‌کند. سعی کنید کد را ماژولار (تابع‌محور)، خوانا و با کامنت‌های مناسب بنویسید. از ایموجی‌ها برای جذاب‌تر کردن خروجی استفاده کنید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-06/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-08/index.html" class="btn-demo">رفتن به فصل ۸ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی دفترچه تلفن
+        let phonebook = {};
+
+        function renderPhonebook() {
+            const resultBox = document.getElementById('dictResult');
+            const names = Object.keys(phonebook);
+            if (names.length === 0) {
+                resultBox.className = 'result-box info';
+                resultBox.textContent = '📭 دفترچه تلفن خالی است';
+                return;
+            }
+            let html = '<div style="text-align:right;">';
+            for (const [name, number] of Object.entries(phonebook)) {
+                html += `<div style="padding:4px 8px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;">
+                    <span>👤 ${name}</span>
+                    <span>📞 ${number}</span>
+                </div>`;
+            }
+            html += '</div>';
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = html;
+        }
+
+        function addContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const number = document.getElementById('contactNumber').value.trim();
+            const resultBox = document.getElementById('dictResult');
+
+            if (!name || !number) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ نام و شماره را وارد کنید!';
+                return;
+            }
+
+            if (name in phonebook) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = `❌ "${name}" قبلاً در دفترچه وجود دارد!`;
+                return;
+            }
+
+            phonebook[name] = number;
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactNumber').value = '';
+            renderPhonebook();
+            resultBox.className = 'result-box success';
+            resultBox.textContent = `✅ "${name}" با موفقیت اضافه شد.`;
+        }
+
+        function searchContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const resultBox = document.getElementById('dictResult');
+
+            if (!name) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً نامی برای جستجو وارد کنید!';
+                return;
+            }
+
+            if (name in phonebook) {
+                resultBox.className = 'result-box success';
+                resultBox.textContent = `📞 شماره "${name}": ${phonebook[name]}`;
+            } else {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = `❌ "${name}" در دفترچه وجود ندارد!`;
+            }
+        }
+
+        function deleteContact() {
+            const name = document.getElementById('contactName').value.trim();
+            const resultBox = document.getElementById('dictResult');
+
+            if (!name) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً نامی برای حذف وارد کنید!';
+                return;
+            }
+
+            if (name in phonebook) {
+                delete phonebook[name];
+                document.getElementById('contactName').value = '';
+                renderPhonebook();
+                resultBox.className = 'result-box success';
+                resultBox.textContent = `🗑️ "${name}" حذف شد.`;
+            } else {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = `❌ "${name}" در دفترچه وجود ندارد!`;
+            }
+        }
+
+        // نمونه اولیه
+        phonebook = {
+            "علی رضایی": "09123456789",
+            "سارا محمدی": "09129876543",
+            "رضا کریمی": "09127654321"
+        };
+        renderPhonebook();
+    </script>
+</body>
+</html>

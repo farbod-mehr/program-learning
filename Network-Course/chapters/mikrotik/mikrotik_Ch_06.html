@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۶ MikroTik — فایروال (Firewall)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-06">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۶ — فایروال (Firewall)</h1>
+    <div class="meta">
+      <span>📖 ۱۰۰ دقیقه</span>
+      <span>🎯 وزن در MTCNA: بخش کلیدی</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: متوسط تا پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      فایروال قلب امنیت هر شبکه است. در RouterOS، فایروال از طریق
+      <span class="term" data-term="firewall-filter">Firewall Filter</span>،
+      <span class="term" data-term="nat">NAT</span> و
+      <span class="term" data-term="mangle">Mangle</span>
+      پیاده‌سازی می‌شود.
+    </p>
+    <p>
+      در این فصل یاد می‌گیری چطور یک فایروال حرفه‌ای بسازی: از اصول
+      <strong>Connection Tracking</strong> و <strong>Chains</strong>
+      تا <strong>Address-List</strong>،
+      <strong>Source NAT</strong>،
+      <strong>Destination NAT</strong>،
+      <strong>FastTrack</strong> و سناریوهای واقعی مثل Port Forwarding و Hairpin NAT.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه Firewall در RouterOS</li>
+      <li>Connection Tracking و Stateful Firewall</li>
+      <li>Chains — Input، Forward، Output</li>
+      <li>Actions — Accept، Drop، Reject، Jump، Log</li>
+      <li>ساختار فایروال پایه</li>
+      <li>Firewall Rules برای امنیت روتر</li>
+      <li>Firewall Rules برای کاربران</li>
+      <li>Address-List — مدیریت IPها</li>
+      <li>NAT — مفهوم و انواع</li>
+      <li>Source NAT — Masquerade و Src-NAT</li>
+      <li>Destination NAT — Port Forwarding</li>
+      <li>Hairpin NAT — دسترسی داخلی به سرور عمومی</li>
+      <li>Netmap — تغییر کامل Subnet</li>
+      <li>FastTrack — عبور سریع ترافیک</li>
+      <li>Raw Firewall و Bypass</li>
+      <li>عیب‌یابی Firewall و Log</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت Stateful و Stateless Firewall چیست؟</li>
+      <li>چرا در فایروال MikroTik، ترتیب Rules بسیار مهم است؟</li>
+      <li>تفاوت Source NAT و Destination NAT چیست؟</li>
+      <li>FastTrack چه زمانی باید فعال باشد و چه زمانی نه؟</li>
+      <li>Hairpin NAT چرا لازم است و چه مشکلی را حل می‌کند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۶.۱ ==== -->
+    <h3>۶.۱ مفاهیم پایه Firewall در RouterOS</h3>
+
+    <p>
+      <span class="term" data-term="firewall-filter">Firewall Filter</span> در RouterOS
+      مجموعه‌ای از <strong>Rules</strong> است که به‌ترتیب چک می‌شوند و تصمیم می‌گیرند
+      چه ترافیکی عبور کند و چه ترافیکی Drop شود.
+    </p>
+
+    <p><strong>سه بخش اصلی فایروال در RouterOS:</strong></p>
+    <ul>
+      <li><strong>Filter:</strong> Allow/Deny ترافیک</li>
+      <li><strong>NAT:</strong> ترجمه آدرس IP و پورت</li>
+      <li><strong>Mangle:</strong> علامت‌گذاری بسته‌ها برای QoS، Routing و NAT</li>
+    </ul>
+
+    <p><strong>مسیر بسته در RouterOS:</strong></p>
+    <pre><code>Inbound Packet
+    ↓
+[RAW]   → پیش‌فیلتر (Bypass/Notrack)
+    ↓
+[MANGLE Prerouting]
+    ↓
+[DESTINATION NAT]
+    ↓
+[ROUTING DECISION]
+    ↓
+[INPUT (به روتر)] یا [FORWARD (عبوری)] یا [OUTPUT (از روتر)]
+    ↓
+[MANGLE Postrouting]
+    ↓
+[SOURCE NAT]
+    ↓
+Outbound Packet</code></pre>
+
+    <!-- ==== ۶.۲ ==== -->
+    <h3>۶.۲ Connection Tracking و Stateful Firewall</h3>
+
+    <p>
+      RouterOS یک <strong>Stateful Firewall</strong> است — یعنی وضعیت تمام
+      اتصالات فعال را در جدول <strong>Connection Tracking</strong> نگه می‌دارد.
+    </p>
+
+    <p><strong>حالت‌های Connection:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">State</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>new</strong></td><td style="padding:6px;border:1px solid var(--border)">شروع یک اتصال جدید (SYN یا اولین بسته)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>established</strong></td><td style="padding:6px;border:1px solid var(--border)">اتصال قبلاً دیده شده و فعال است</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>related</strong></td><td style="padding:6px;border:1px solid var(--border)">مرتبط با یک اتصال دیگر (مثل ICMP Error یا FTP Data)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>invalid</strong></td><td style="padding:6px;border:1px solid var(--border)">بسته‌ی نامعتبر یا خارج از State</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>untracked</strong></td><td style="padding:6px;border:1px solid var(--border)">اتصال Notrack شده (از فایروال عبور می‌کند)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مشاهده Connection Tracking =====
+[admin@MikroTik] > /ip firewall connection print
+[admin@MikroTik] > /ip firewall connection print count-only
+[admin@MikroTik] > /ip firewall connection print where protocol=tcp
+[admin@MikroTik] > /ip firewall connection print where dst-address~":80"
+
+# ===== پاک کردن Connection Table =====
+[admin@MikroTik] > /ip firewall connection remove [find]
+
+# ===== تنظیمات Connection Tracking =====
+[admin@MikroTik] > /ip firewall connection tracking print
+# tcp-syn-sent-timeout: 5s
+# tcp-syn-received-timeout: 5s
+# tcp-established-timeout: 1d
+# tcp-fin-wait-timeout: 10s
+# tcp-close-wait-timeout: 10s
+# tcp-last-ack-timeout: 10s
+# tcp-time-wait-timeout: 10s
+# tcp-close-timeout: 10s
+# udp-timeout: 10s
+# udp-stream-timeout: 3m
+# icmp-timeout: 10s
+# generic-timeout: 10m</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Connection Tracking، راز اصلی فایروال Stateful است.
+      با یک Rule ساده روی <code>connection-state=established,related</code>
+      می‌توانی اجازه بدهی تمام پاسخ‌های اتصالات مجاز عبور کنند — بدون نیاز به Rule جداگانه.
+    </div>
+
+    <!-- ==== ۶.۳ ==== -->
+    <h3>۶.۳ Chains — Input، Forward، Output</h3>
+
+    <p>RouterOS سه Chain اصلی دارد که هرکدام ترافیک متفاوتی را مدیریت می‌کند:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Chain</th>
+          <th style="padding:6px;border:1px solid var(--border)">ترافیک</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>input</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">به خود روتر</td>
+          <td style="padding:6px;border:1px solid var(--border)">حفاظت از روتر — SSH، Winbox، API، SNMP</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>forward</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">از یک Interface به Interface دیگر</td>
+          <td style="padding:6px;border:1px solid var(--border)">کنترل ترافیک کاربران — فیلتر ترافیک عبوری</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>output</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">از روتر به بیرون</td>
+          <td style="padding:6px;border:1px solid var(--border)">کنترل ترافیک تولیدی خود روتر — کمتر استفاده می‌شود</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== نمونه Rule در هر Chain =====
+
+# Input — اجازه SSH از LAN
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    src-address=192.168.88.0/24 \
+    action=accept \
+    comment="SSH from LAN"
+
+# Forward — اجازه HTTP از کاربران به اینترنت
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    protocol=tcp \
+    dst-port=80,443 \
+    action=accept \
+    comment="Allow HTTP/HTTPS"
+
+# Output — اجازه DNS از روتر
+[admin@MikroTik] > /ip firewall filter add \
+    chain=output \
+    protocol=udp \
+    dst-port=53 \
+    action=accept \
+    comment="Allow DNS"</code></pre>
+
+    <!-- ==== ۶.۴ ==== -->
+    <h3>۶.۴ Actions — Accept، Drop، Reject، Jump، Log</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Action</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>accept</strong></td><td style="padding:6px;border:1px solid var(--border)">اجازه عبور — از ادامه Rules صرف‌نظر می‌شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>drop</strong></td><td style="padding:6px;border:1px solid var(--border)">حذف بسته بدون اطلاع به فرستنده (Silent)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>reject</strong></td><td style="padding:6px;border:1px solid var(--border)">رد بسته با ارسال ICMP Error به فرستنده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>jump</strong></td><td style="padding:6px;border:1px solid var(--border)">پرش به Chain دیگر — برای تقسیم منطقی Rules</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>return</strong></td><td style="padding:6px;border:1px solid var(--border)">بازگشت از Jump به Chain اصلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>log</strong></td><td style="padding:6px;border:1px solid var(--border)">ثبت در Log و ادامه به Rule بعدی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>tarpit</strong></td><td style="padding:6px;border:1px solid var(--border)">به‌دام انداختن اتصال (کند کردن مهاجم)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>passthrough</strong></td><td style="padding:6px;border:1px solid var(--border)">فقط Match، بدون Action — ادامه به Rule بعدی</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      <strong>drop</strong> امن‌تر از <strong>reject</strong> است — چون مهاجم نمی‌فهمد سرویس وجود دارد یا نه.
+      در قواعد Public، همیشه از <strong>drop</strong> استفاده کن.
+    </div>
+
+    <!-- ==== ۶.۵ ==== -->
+    <h3>۶.۵ ساختار فایروال پایه</h3>
+
+    <p>
+      یک فایروال حرفه‌ای MikroTik معمولاً از این ساختار استفاده می‌کند:
+    </p>
+
+    <pre><code># ===== ساختار فایروال پایه (ترتیب مهم است) =====
+
+# ===== INPUT CHAIN — حفاظت از روتر =====
+
+# ۱. اجازه Established و Related
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    connection-state=established,related \
+    action=accept \
+    comment="Allow Established/Related"
+
+# ۲. Drop Invalid
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    connection-state=invalid \
+    action=drop \
+    comment="Drop Invalid"
+
+# ۳. اجازه ICMP (Ping)
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=icmp \
+    action=accept \
+    comment="Allow ICMP"
+
+# ۴. اجازه SSH/Winbox از LAN
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22,8291 \
+    src-address=192.168.88.0/24 \
+    action=accept \
+    comment="Allow SSH/Winbox from LAN"
+
+# ۵. اجازه DHCP از LAN
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=udp \
+    dst-port=67 \
+    action=accept \
+    comment="Allow DHCP"
+
+# ۶. Drop همه‌ی بقیه
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    action=drop \
+    comment="Drop All Other Input"
+
+# ===== FORWARD CHAIN — کنترل کاربران =====
+
+# ۱. FastTrack برای Established و Related (اختیاری)
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    connection-state=established,related \
+    action=fasttrack-connection \
+    comment="FastTrack Established"
+
+# ۲. اجازه Established و Related
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    connection-state=established,related \
+    action=accept \
+    comment="Accept Established"
+
+# ۳. Drop Invalid
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    connection-state=invalid \
+    action=drop \
+    comment="Drop Invalid"
+
+# ۴. اجازه ترافیک LAN به WAN
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    in-interface=bridge-lan \
+    out-interface=ether1 \
+    action=accept \
+    comment="LAN to WAN"
+
+# ۵. Drop بقیه Forward
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    action=drop \
+    comment="Drop All Other Forward"</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      ترتیب Rules حیاتی است. همیشه:
+      <ol style="margin:6px 0 0">
+        <li>Established/Related Accept</li>
+        <li>Invalid Drop</li>
+        <li>ترافیک‌های خاص (SSH از LAN، ICMP، ...)</li>
+        <li>LAN به WAN</li>
+        <li>Drop All در انتها</li>
+      </ol>
+    </div>
+
+    <!-- ==== ۶.۶ ==== -->
+    <h3>۶.۶ Firewall Rules برای امنیت روتر</h3>
+
+    <pre><code># ===== قوانین مهم امنیتی =====
+
+# ۱. محدود کردن Winbox به IP مدیریتی
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=8291 \
+    src-address-list=MGMT-IPS \
+    action=accept \
+    comment="Winbox only from MGMT"
+
+# ۲. Brute Force Protection برای SSH
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    src-address-list=ssh_blacklist \
+    action=drop \
+    comment="Drop SSH Blacklist"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    connection-state=new \
+    src-address-list=ssh_stage3 \
+    action=add-src-to-address-list \
+    address-list=ssh_blacklist \
+    address-list-timeout=1d \
+    comment="SSH Stage 3 → Blacklist"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    connection-state=new \
+    src-address-list=ssh_stage2 \
+    action=add-src-to-address-list \
+    address-list=ssh_stage3 \
+    address-list-timeout=1m
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    connection-state=new \
+    src-address-list=ssh_stage1 \
+    action=add-src-to-address-list \
+    address-list=ssh_stage2 \
+    address-list-timeout=1m
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    dst-port=22 \
+    connection-state=new \
+    action=add-src-to-address-list \
+    address-list=ssh_stage1 \
+    address-list-timeout=1m
+
+# ۳. Drop Port Scan
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=tcp \
+    tcp-flags=syn \
+    connection-state=new \
+    action=add-src-to-address-list \
+    address-list=port_scanners \
+    address-list-timeout=1d \
+    comment="Port Scan Detection"
+
+# ۴. غیرفعال کردن سرویس‌های بی‌استفاده
+[admin@MikroTik] > /ip service disable telnet,ftp,www,api
+[admin@MikroTik] > /ip service set winbox address=192.168.88.0/24
+[admin@MikroTik] > /ip service set ssh address=192.168.88.0/24</code></pre>
+
+    <!-- ==== ۶.۷ ==== -->
+    <h3>۶.۷ Firewall Rules برای کاربران</h3>
+
+    <pre><code># ===== سناریوهای رایج =====
+
+# ۱. اجازه HTTP/HTTPS/DNS به کاربران
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    protocol=tcp \
+    dst-port=80,443 \
+    action=accept \
+    comment="HTTP/HTTPS"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    protocol=udp \
+    dst-port=53 \
+    action=accept \
+    comment="DNS"
+
+# ۲. بلاک یک IP خاص
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    src-address=192.168.88.50 \
+    action=drop \
+    comment="Block specific IP"
+
+# ۳. بلاک یک وب‌سایت (بر اساس IP)
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    dst-address=203.0.113.10 \
+    action=drop \
+    comment="Block website"
+
+# ۴. بلاک Facebook با Address-List
+[admin@MikroTik] > /ip firewall address-list add \
+    list=BLOCKED \
+    address=157.240.0.0/16 \
+    comment="Facebook"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    dst-address-list=BLOCKED \
+    action=drop \
+    comment="Block by list"
+
+# ۵. Rate Limit هر کاربر
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    src-address=192.168.88.0/24 \
+    action=accept \
+    comment="LAN users"
+
+# ۶. اجازه دسترسی به یک سرور خاص از یک IP
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    src-address=192.168.88.10 \
+    dst-address=192.168.88.100 \
+    action=accept \
+    comment="Allow manager to server"</code></pre>
+
+    <!-- ==== ۶.۸ ==== -->
+    <h3>۶.۸ Address-List — مدیریت IPها</h3>
+
+    <p>
+      <strong>Address-List</strong> مجموعه‌ای از IPها یا Subnetها با نام مشترک است.
+      با این کار می‌توانی Rules را ساده‌تر کنی.
+    </p>
+
+    <pre><code># ===== ساخت Address-List =====
+
+# ۱. لیست MGMT-IPS — IPهای مدیریتی
+[admin@MikroTik] > /ip firewall address-list add \
+    list=MGMT-IPS \
+    address=192.168.88.10 \
+    comment="Admin Laptop"
+
+[admin@MikroTik] > /ip firewall address-list add \
+    list=MGMT-IPS \
+    address=192.168.88.11 \
+    comment="Admin Desktop"
+
+# ۲. لیست VIP-USERS
+[admin@MikroTik] > /ip firewall address-list add \
+    list=VIP-USERS \
+    address=192.168.88.100-192.168.88.120 \
+    comment="VIP Range"
+
+# ۳. لیست BLOCKED — سایت‌ها یا IPهای بلاک
+[admin@MikroTik] > /ip firewall address-list add \
+    list=BLOCKED \
+    address=203.0.113.0/24 \
+    comment="Blocked Range"
+
+# ===== استفاده در فایروال =====
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    src-address-list=MGMT-IPS \
+    action=accept \
+    comment="Allow from MGMT"
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    dst-address-list=BLOCKED \
+    action=drop \
+    comment="Block by list"
+
+# ===== Dynamic Address-List (خودکار) =====
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    protocol=tcp \
+    tcp-flags=syn \
+    dst-port=80 \
+    action=add-src-to-address-list \
+    address-list=WEB-USERS \
+    address-list-timeout=1h \
+    comment="Add to list dynamically"
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip firewall address-list print
+[admin@MikroTik] > /ip firewall address-list print where list=MGMT-IPS
+[admin@MikroTik] > /ip firewall address-list print count-only</code></pre>
+
+    <!-- ==== ۶.۹ ==== -->
+    <h3>۶.۹ NAT — مفهوم و انواع</h3>
+
+    <p>
+      <span class="term" data-term="nat">NAT</span> (Network Address Translation)
+      ترجمه‌ی آدرس IP مبدأ یا مقصد است. در RouterOS، NAT در
+      <code>/ip firewall nat</code> پیکربندی می‌شود.
+    </p>
+
+    <p><strong>دو نوع اصلی NAT:</strong></p>
+    <ul>
+      <li><strong>Source NAT (srcnat):</strong> تغییر IP مبدأ — برای دسترسی چند دستگاه به اینترنت</li>
+      <li><strong>Destination NAT (dstnat):</strong> تغییر IP مقصد — برای Port Forwarding</li>
+    </ul>
+
+    <p><strong>Chains در NAT:</strong></p>
+    <ul>
+      <li><strong>srcnat:</strong> بعد از تصمیم Routing، قبل از خروج</li>
+      <li><strong>dstnat:</strong> قبل از تصمیم Routing</li>
+    </ul>
+
+    <!-- ==== ۶.۱۰ ==== -->
+    <h3>۶.۱۰ Source NAT — Masquerade و Src-NAT</h3>
+
+    <pre><code># ===== Masquerade (رایج‌ترین) =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether1 \
+    action=masquerade \
+    comment="NAT to Internet"
+
+# مزیت: خودکار IP اینترفیس خروجی را استفاده می‌کند
+
+# ===== Src-NAT با IP مشخص =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=192.168.88.0/24 \
+    out-interface=ether1 \
+    action=src-nat \
+    to-addresses=203.0.113.5 \
+    comment="NAT to specific IP"
+
+# فرق با Masquerade:
+# - Masquerade: IP خودکار از Interface
+# - Src-NAT: IP مشخص و ثابت
+
+# ===== NAT برای یک IP خاص =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=192.168.88.10 \
+    action=src-nat \
+    to-addresses=203.0.113.10 \
+    comment="Server Public IP"
+
+# ===== NAT فقط برای یک مقصد خاص =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    dst-address=8.8.8.8 \
+    action=src-nat \
+    to-addresses=203.0.113.20
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip firewall nat print
+[admin@MikroTik] > /ip firewall nat print stats</code></pre>
+
+    <!-- ==== ۶.۱۱ ==== -->
+    <h3>۶.۱۱ Destination NAT — Port Forwarding</h3>
+
+    <p>
+      با <strong>Destination NAT</strong> می‌توانی ترافیک ورودی به یک پورت
+      را به یک سرور داخلی هدایت کنی — مثلاً وب‌سرور داخلی روی پورت 80 از اینترنت.
+    </p>
+
+    <pre><code># ===== Port Forwarding ساده =====
+# ترافیک پورت 8080 روی IP عمومی روتر → پورت 80 سرور داخلی
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=8080 \
+    in-interface=ether1 \
+    action=dst-nat \
+    to-addresses=192.168.88.10 \
+    to-ports=80 \
+    comment="Forward 8080 → Web Server 80"
+
+# ===== Port Forwarding با شرط IP مبدأ =====
+# فقط از یک IP خاص
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=22 \
+    src-address=203.0.113.100 \
+    action=dst-nat \
+    to-addresses=192.168.88.5 \
+    to-ports=22 \
+    comment="SSH only from admin IP"
+
+# ===== Forward یک Range پورت =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=8000-8100 \
+    action=dst-nat \
+    to-addresses=192.168.88.20 \
+    comment="Forward range to server"
+
+# ===== RDP Forward =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=3389 \
+    action=dst-nat \
+    to-addresses=192.168.88.30 \
+    to-ports=3389 \
+    comment="RDP to Windows Server"
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip firewall nat print
+[admin@MikroTik] > /ip firewall nat print where chain=dstnat</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      بعد از Port Forwarding، حتماً در <strong>Firewall Filter</strong>
+      اجازه‌ی ورود آن پورت را بده:
+      <pre style="margin:8px 0 0"><code>/ip firewall filter add chain=forward protocol=tcp dst-port=8080 \
+  dst-address=192.168.88.10 action=accept</code></pre>
+    </div>
+
+    <!-- ==== ۶.۱۲ ==== -->
+    <h3>۶.۱۲ Hairpin NAT — دسترسی داخلی به سرور عمومی</h3>
+
+    <p>
+      <strong>Hairpin NAT</strong> (Loopback NAT یا NAT Reflection) مشکل زیر را حل می‌کند:
+      اگر یک سرور داخلی داری که با Port Forwarding از اینترنت قابل دسترس است،
+      کاربران <strong>داخلی</strong> چطور می‌توانند با IP عمومی به آن دسترسی داشته باشند؟
+    </p>
+
+    <pre><code># ===== سناریو =====
+# IP عمومی روتر: 203.0.113.5
+# سرور داخلی: 192.168.88.10 (پورت 80)
+# از اینترنت: 203.0.113.5:80 → 192.168.88.10:80
+# از داخل: 192.168.88.50 → می‌خواهد به 203.0.113.5:80 وصل شود
+
+# ===== پیکربندی Hairpin NAT =====
+
+# ۱. Destination NAT
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=80 \
+    dst-address=203.0.113.5 \
+    action=dst-nat \
+    to-addresses=192.168.88.10 \
+    to-ports=80 \
+    comment="Web Server DNAT"
+
+# ۲. Source NAT برای ترافیک داخلی به سرور داخلی
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=192.168.88.0/24 \
+    dst-address=192.168.88.10 \
+    protocol=tcp \
+    dst-port=80 \
+    action=src-nat \
+    to-addresses=192.168.88.1 \
+    comment="Hairpin NAT"
+
+# ===== نتیجه =====
+# کاربر داخلی → 203.0.113.5:80 → ترجمه به 192.168.88.10:80
+# پاسخ از سرور → روتر → ترجمه برگشت
+# کاربر فکر می‌کند با سرور خارجی حرف زده</code></pre>
+
+    <!-- ==== ۶.۱۳ ==== -->
+    <h3>۶.۱۳ Netmap — تغییر کامل Subnet</h3>
+
+    <p>
+      <strong>Netmap</strong> یک نوع NAT است که کل Subnet را به Subnet دیگر ترجمه می‌کند.
+      مفید برای سناریوهای ISP یا زمانی که شبکه‌ی داخلی با Subnet دیگری تداخل دارد.
+    </p>
+
+    <pre><code># ===== Netmap =====
+# ترجمه 10.0.0.0/24 به 192.168.1.0/24
+# یعنی 10.0.0.5 → 192.168.1.5
+
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=10.0.0.0/24 \
+    action=netmap \
+    to-addresses=192.168.1.0/24 \
+    comment="Netmap 10.x to 192.168.1.x"
+
+# در جهت مخالف (اگر لازم باشد)
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    dst-address=192.168.1.0/24 \
+    action=netmap \
+    to-addresses=10.0.0.0/24
+
+# ===== کاربرد =====
+# دو شرکت با Subnet یکسان 192.168.1.0/24 در یک VPN ادغام می‌شوند
+# یکی از آن‌ها با Netmap به 10.0.0.0/24 نگاشت می‌شود</code></pre>
+
+    <!-- ==== ۶.۱۴ ==== -->
+    <h3>۶.۱۴ FastTrack — عبور سریع ترافیک</h3>
+
+    <p>
+      <strong>FastTrack</strong> یک ویژگی مهم MikroTik است که ترافیک Established را
+      از بخش‌های سنگین RouterOS (Firewall، Queue، Mangle) عبور می‌دهد و
+      مستقیم به Forwarding می‌فرستد.
+    </p>
+
+    <p><strong>مزایا:</strong></p>
+    <ul>
+      <li>Performance بسیار بالاتر (تا چند برابر)</li>
+      <li>کاهش CPU Usage</li>
+      <li>Throughput بالاتر</li>
+    </ul>
+
+    <p><strong>معایب:</strong></p>
+    <ul>
+      <li>ترافیک FastTrack شده از Queue و Mangle عبور نمی‌کند</li>
+      <li>QoS روی ترافیک FastTrack شده کار نمی‌کند</li>
+      <li>اگر QoS یا Queue مهم است، FastTrack را غیرفعال کن</li>
+    </ul>
+
+    <pre><code># ===== فعال‌سازی FastTrack =====
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    connection-state=established,related \
+    action=fasttrack-connection \
+    comment="FastTrack Established" \
+    place-before=0
+
+# نکته: Rule FastTrack باید بالاتر از Rule Accept باشد
+
+# ===== ترافیک‌های مستثنی از FastTrack =====
+# اگر می‌خواهی QoS روی ترافیک خاصی کار کند، آن را از FastTrack خارج کن
+
+# مثلاً VoIP را از FastTrack مستثنی کن
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    protocol=udp \
+    dst-port=5060,10000-20000 \
+    action=accept \
+    comment="VoIP - bypass FastTrack" \
+    place-before=0
+# این Rule باید قبل از FastTrack باشد
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip firewall filter print where action=fasttrack-connection
+[admin@MikroTik] > /ip firewall filter print stats
+# ببین تعداد بسته‌های FastTrack شده</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      FastTrack فوق‌العاده است برای شبکه‌های معمولی، ولی اگر QoS یا Queue دقیق داری،
+      یا آن را غیرفعال کن یا ترافیک‌های حساس را مستثنی کن.
+    </div>
+
+    <!-- ==== ۶.۱۵ ==== -->
+    <h3>۶.۱۵ Raw Firewall و Bypass</h3>
+
+    <p>
+      <strong>Raw Firewall</strong> قبل از Connection Tracking اجرا می‌شود — برای
+      Drop کردن ترافیک‌های خطرناک بدون اشغال منابع Connection Table.
+    </p>
+
+    <pre><code># ===== Raw Rules =====
+
+# ۱. Drop سریع IPهای مهاجم
+[admin@MikroTik] > /ip firewall raw add \
+    chain=prerouting \
+    src-address-list=BLACKLIST \
+    action=drop \
+    comment="Drop blacklisted IPs"
+
+# ۲. Drop Invalid در Raw (سریع‌تر از Filter)
+[admin@MikroTik] > /ip firewall raw add \
+    chain=prerouting \
+    connection-state=invalid \
+    action=drop \
+    comment="Drop invalid fast"
+
+# ۳. Notrack برای ترافیک خاص
+[admin@MikroTik] > /ip firewall raw add \
+    chain=prerouting \
+    src-address=192.168.88.0/24 \
+    action=notrack \
+    comment="Notrack LAN"
+
+# ۴. Raw Drop برای محافظت از CPU
+[admin@MikroTik] > /ip firewall raw add \
+    chain=prerouting \
+    protocol=tcp \
+    dst-port=22,8291 \
+    src-address-list=NOT-MGMT \
+    action=drop</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Raw Firewall ترافیک را قبل از Connection Tracking Drop می‌کند —
+      سریع‌تر و کم‌هزینه‌تر. برای جلوگیری از DDoS ساده بسیار مفید است.
+    </div>
+
+    <!-- ==== ۶.۱۶ ==== -->
+    <h3>۶.۱۶ عیب‌یابی Firewall و Log</h3>
+
+    <pre><code># ===== ابزارهای عیب‌یابی =====
+
+# ۱. مشاهده Rules با آمار
+[admin@MikroTik] > /ip firewall filter print stats
+# ستون‌ها: packets، bytes
+# اگر Rule Accept صفر باشد → ترافیک به آن نمی‌رسد
+
+# ۲. فعال کردن Log روی Rule
+[admin@MikroTik] > /ip firewall filter set [find comment="Drop All"] log=yes
+
+# ۳. مشاهده Log
+[admin@MikroTik] > /log print where topics~"firewall"
+[admin@MikroTik] > /log print where message~"DROP"
+
+# ۴. Reset Counter
+[admin@MikroTik] > /ip firewall filter reset-counters-all
+
+# ۵. Connection Table
+[admin@MikroTik] > /ip firewall connection print
+[admin@MikroTik] > /ip firewall connection print where connection-state=new
+
+# ۶. Sniffer
+[admin@MikroTik] > /tool sniffer quick interface=ether1
+# ترافیک را ببین و فیلتر کن
+
+# ۷. Torch
+[admin@MikroTik] > /tool torch interface=ether1
+
+# ۸. تست با IP مشخص
+[admin@MikroTik] > /ping 8.8.8.8 src-address=192.168.88.10
+
+# ===== مثال: چرا Ping از WAN بلاک است =====
+# ۱. Rules Input را بررسی کن
+[admin@MikroTik] > /ip firewall filter print where chain=input
+
+# ۲. اگر Drop نهایی جلوی ICMP را می‌گیرد، اجازه بده
+[admin@MikroTik] > /ip firewall filter add \
+    chain=input \
+    protocol=icmp \
+    action=accept \
+    place-before=[find action=drop]</code></pre>
+
+    <pre><code># ===== چک‌لیست کامل عیب‌یابی Firewall =====
+
+# ۱. ترتیب Rules — آیا Rule Drop قبل از Accept قرار دارد؟
+[admin@MikroTik] > /ip firewall filter print
+
+# ۲. Counterها — کدام Rule فعال است؟
+[admin@MikroTik] > /ip firewall filter print stats
+
+# ۳. Connection State — آیا بسته new یا established است؟
+[admin@MikroTik] > /ip firewall connection print
+
+# ۴. Interface — ترافیک از کدام Interface می‌آید؟
+[admin@MikroTik] > /ip firewall filter print where in-interface=ether1
+
+# ۵. NAT — آیا NAT درست است؟
+[admin@MikroTik] > /ip firewall nat print
+
+# ۶. Address-List — آیا IP در لیست‌های اشتباه نیست؟
+[admin@MikroTik] > /ip firewall address-list print
+
+# ۷. Log — چه چیزی Drop می‌شود؟
+[admin@MikroTik] > /log print where topics~"firewall"
+
+# ۸. FastTrack — آیا ترافیک از FastTrack عبور می‌کند؟
+[admin@MikroTik] > /ip firewall filter print where action=fasttrack-connection
+
+# ۹. Raw — آیا Raw جلوی ترافیک را می‌گیرد؟
+[admin@MikroTik] > /ip firewall raw print</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه اول <code>Established,Related → Accept</code> بگذار، بعد
+      <code>Invalid → Drop</code>. این دو Rule، ۹۰٪ ترافیک مشروع را پوشش می‌دهند
+      و بقیه Rules فقط برای ترافیک New هستند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ خطر بزرگ</div>
+      هرگز در Production، یک Drop نهایی برای Chain=input بدون Rule قبلی برای SSH/Winbox نگذار.
+      در غیر این صورت خودت را از روتر بیرون می‌اندازی. از <strong>Safe Mode</strong> استفاده کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      Masquerade vs Src-NAT:
+      <ul style="margin:6px 0 0">
+        <li><strong>Masquerade:</strong> IP خودکار اینترفیس — برای لینک‌های DHCP/PPPoE</li>
+        <li><strong>Src-NAT:</strong> IP ثابت — وقتی IP عمومی مشخص داری و می‌خواهی خاص باشی</li>
+      </ul>
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۷ با <span class="term" data-term="queue">Queue</span>، QoS و
+      مدیریت پهنای باند (PCQ، Simple Queue، Queue Tree) آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCSE با <strong>Mangle پیشرفته</strong>،
+      <strong>Connection Mark</strong> و <strong>Policy Routing</strong>
+      در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — فایروال کامل روتر خانگی</h3>
+    <pre><code># ===== ساختار فایروال روتر خانگی =====
+
+# INPUT — حفاظت از روتر
+/ip firewall filter
+add chain=input connection-state=established,related action=accept comment="Est/Rel"
+add chain=input connection-state=invalid action=drop comment="Invalid"
+add chain=input protocol=icmp action=accept comment="ICMP"
+add chain=input protocol=udp dst-port=67 action=accept comment="DHCP"
+add chain=input in-interface=bridge-lan action=accept comment="LAN full access"
+add chain=input action=drop comment="Drop all WAN input"
+
+# FORWARD — کنترل کاربران
+add chain=forward connection-state=established,related action=fasttrack-connection comment="FastTrack"
+add chain=forward connection-state=established,related action=accept comment="Est/Rel"
+add chain=forward connection-state=invalid action=drop comment="Invalid"
+add chain=forward in-interface=bridge-lan out-interface=ether1 action=accept comment="LAN to WAN"
+add chain=forward action=drop comment="Drop all"
+
+# NAT
+/ip firewall nat
+add chain=srcnat out-interface=ether1 action=masquerade comment="NAT"
+
+# ===== نتیجه =====
+# - کاربران LAN به اینترنت دسترسی دارند
+# - از WAN هیچ‌کس نمی‌تواند به روتر وصل شود
+# - Performance بالا با FastTrack</code></pre>
+
+    <h3>مثال ۲ — Port Forwarding چند سرویس</h3>
+    <pre><code># ===== سناریو: چند سرویس داخلی =====
+# سرور وب: 192.168.88.10 (پورت 80، 443)
+# RDP: 192.168.88.20 (پورت 3389)
+# SSH: 192.168.88.30 (پورت 22)
+
+# ===== Destination NAT =====
+/ip firewall nat
+add chain=dstnat protocol=tcp dst-port=80,443 in-interface=ether1 \
+    action=dst-nat to-addresses=192.168.88.10 comment="Web Server"
+add chain=dstnat protocol=tcp dst-port=3389 in-interface=ether1 \
+    action=dst-nat to-addresses=192.168.88.20 comment="RDP"
+add chain=dstnat protocol=tcp dst-port=2222 in-interface=ether1 \
+    action=dst-nat to-addresses=192.168.88.30 to-ports=22 \
+    comment="SSH via 2222"
+
+# ===== اجازه در Firewall =====
+/ip firewall filter
+add chain=forward protocol=tcp dst-port=80,443 dst-address=192.168.88.10 \
+    action=accept comment="Allow Web"
+add chain=forward protocol=tcp dst-port=3389 dst-address=192.168.88.20 \
+    action=accept comment="Allow RDP"
+add chain=forward protocol=tcp dst-port=22 dst-address=192.168.88.30 \
+    action=accept comment="Allow SSH"</code></pre>
+
+    <h3>مثال ۳ — Hairpin NAT برای سرور وب</h3>
+    <pre><code># ===== پیکربندی Hairpin NAT =====
+
+# ۱. Destination NAT
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    protocol=tcp \
+    dst-port=80 \
+    dst-address=203.0.113.5 \
+    action=dst-nat \
+    to-addresses=192.168.88.10 \
+    to-ports=80 \
+    comment="Web Server DNAT"
+
+# ۲. Source NAT برای ترافیک داخلی
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=192.168.88.0/24 \
+    dst-address=192.168.88.10 \
+    protocol=tcp \
+    dst-port=80 \
+    action=src-nat \
+    to-addresses=192.168.88.1 \
+    comment="Hairpin NAT"
+
+# ===== تست =====
+# از یک PC داخلی: browse به 203.0.113.5:80
+# باید وب‌سرور داخلی باز شود
+
+# از PC خارجی: browse به 203.0.113.5:80
+# باید همان وب‌سرور باز شود
+
+# ===== نکته =====
+# IP داخلی روتر (192.168.88.1) در to-addresses استفاده می‌شود
+# تا پاسخ از روتر به کاربر برگردد</code></pre>
+
+    <h3>مثال ۴ — Brute Force Protection</h3>
+    <pre><code># ===== محافظت از SSH و Winbox با Address-List =====
+
+# ۱. Stage 1 — اولین تلاش
+/ip firewall filter
+add chain=input protocol=tcp dst-port=22,8291 connection-state=new \
+    src-address-list=ssh_stage1 \
+    action=add-src-to-address-list \
+    address-list=ssh_stage2 \
+    address-list-timeout=1m \
+    comment="Stage 1 → 2"
+
+# ۲. Stage 2
+add chain=input protocol=tcp dst-port=22,8291 connection-state=new \
+    src-address-list=ssh_stage2 \
+    action=add-src-to-address-list \
+    address-list=ssh_stage3 \
+    address-list-timeout=1m \
+    comment="Stage 2 → 3"
+
+# ۳. Stage 3 → Blacklist
+add chain=input protocol=tcp dst-port=22,8291 connection-state=new \
+    src-address-list=ssh_stage3 \
+    action=add-src-to-address-list \
+    address-list=ssh_blacklist \
+    address-list-timeout=1d \
+    comment="Stage 3 → Blacklist"
+
+# ۴. Drop blacklist
+add chain=input protocol=tcp dst-port=22,8291 \
+    src-address-list=ssh_blacklist \
+    action=drop \
+    comment="Drop blacklisted"
+
+# ۵. اولین Rule — شروع Stage 1
+add chain=input protocol=tcp dst-port=22,8291 connection-state=new \
+    action=add-src-to-address-list \
+    address-list=ssh_stage1 \
+    address-list-timeout=1m \
+    comment="Start Stage 1" \
+    place-before=0
+
+# ===== نتیجه =====
+# - بعد از ۳ تلاش ناموفق، IP در Blacklist قرار می‌گیرد
+# - به مدت ۲۴ ساعت بلاک می‌شود</code></pre>
+
+    <h3>مثال ۵ — Netmap برای ISP</h3>
+    <pre><code># ===== سناریو: ISP کوچک با مشتری =====
+# مشتری: 100 مشتری با IP خصوصی 10.0.0.1-10.0.0.100
+# می‌خواهی این‌ها با IP عمومی 203.0.113.0/24 دیده شوند
+
+# Netmap از 10.0.0.0/24 به 203.0.113.0/24
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    src-address=10.0.0.0/24 \
+    action=netmap \
+    to-addresses=203.0.113.0/24 \
+    comment="Netmap to public"
+
+# نتیجه:
+# 10.0.0.1 → 203.0.113.1
+# 10.0.0.5 → 203.0.113.5
+# 10.0.0.100 → 203.0.113.100
+
+# ===== در جهت برگشت =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=dstnat \
+    dst-address=203.0.113.0/24 \
+    action=netmap \
+    to-addresses=10.0.0.0/24 \
+    comment="Reverse netmap"
+
+# ===== نکته =====
+# Netmap برای ISPها و ادغام شبکه‌های Overlapping عالی است
+# هر IP داخلی به یک IP عمومی نگاشت می‌شود</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>RouterOS با دو Interface (WAN و LAN) راه‌اندازی کن</li>
+      <li>WAN را با DHCP Client از ISP بگیر</li>
+      <li>LAN را با Bridge و IP تنظیم کن</li>
+      <li>فایروال پایه Input بساز (Est، Invalid، ICMP، LAN، Drop)</li>
+      <li>فایروال پایه Forward بساز (FastTrack، Est، Invalid، LAN to WAN، Drop)</li>
+      <li>NAT Masquerade روی WAN فعال کن</li>
+      <li>یک وب‌سرور داخلی راه‌اندازی کن (192.168.88.10:80)</li>
+      <li>Port Forwarding از WAN:8080 → سرور:80</li>
+      <li>Hairpin NAT برای دسترسی داخلی از طریق IP عمومی</li>
+      <li>Brute Force Protection برای SSH</li>
+      <li>Address-List MGMT-IPS با IP مدیریتی بساز</li>
+      <li>Winbox را فقط از MGMT-IPS اجازه بده</li>
+      <li>یک Address-List BLOCKED برای بلاک سایت بساز</li>
+      <li>با Sniffer ترافیک را تحلیل کن و Ruleها را عیب‌یابی کن</li>
+      <li>Log را برای Drop نهایی فعال کن و ببین چه چیزی Drop می‌شود</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>خودت را از روتر بیرون انداختی:</strong> Drop نهایی جلوی SSH/Winbox را گرفته — از Safe Mode استفاده کن.</li>
+      <li><strong>اینترنت کاربران قطع شد:</strong> Rule Est/Rel در Forward نیست یا ترتیب اشتباه.</li>
+      <li><strong>NAT کار نمی‌کند:</strong> Chain اشتباه، out-interface غلط، یا Rule قبل از آن Drop می‌کند.</li>
+      <li><strong>Port Forwarding کار نمی‌کند:</strong> Rule Forward برای اجازه پورت نیست، یا NAT Wrong.</li>
+      <li><strong>Hairpin NAT کار نمی‌کند:</strong> Src-Address داخلی و to-addresses باید IP داخلی روتر باشد.</li>
+      <li><strong>FastTrack جلوی QoS را می‌گیرد:</strong> ترافیک حساس را قبل از FastTrack Accept کن.</li>
+      <li><strong>Connection Table پر می‌شود:</strong> Raw Firewall برای Drop Invalid یا Notrack استفاده کن.</li>
+      <li><strong>Counterها افزایش نمی‌یابند:</strong> Rule اشتباه یا ترتیب اشتباه — با <code>place-before</code> جابه‌جا کن.</li>
+      <li><strong>Rule شماره‌ی اشتباه را Delete کردم:</strong> همیشه با <code>find comment="..."</code> استفاده کن.</li>
+      <li><strong>بعد از تغییرات Firewall قطعی موقت:</strong> از Safe Mode یا یک Session دوم برای برگشت استفاده کن.</li>
+      <li><strong>Drop همه ترافیک:</strong> احتمالاً Rule Drop نهایی بدون Rules Accept قبل از آن است.</li>
+      <li><strong>Address-List داینامیک پاک می‌شود:</strong> <code>address-list-timeout</code> را تنظیم کن.</li>
+      <li><strong>Masquerade با IP اشتباه:</strong> <code>out-interface</code> باید دقیقاً همان Interface خروجی باشد.</li>
+      <li><strong>Netmap پاسخ برنمی‌گردد:</strong> باید Reverse Netmap هم داشته باشی.</li>
+      <li><strong>Log Firewall خیلی بزرگ می‌شود:</strong> فقط Ruleهای مهم را Log کن — نه همه.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="firewall-filter">Firewall Filter</span> •
+      <span class="term" data-term="nat">NAT</span> •
+      <span class="term" data-term="mangle">Mangle</span> •
+      <span class="term" data-term="masquerade">Masquerade</span> •
+      <span class="term" data-term="address-list">Address-List</span> •
+      <span class="term" data-term="fasttrack">FastTrack</span> •
+      <span class="term" data-term="connection-tracking">Connection Tracking</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-06" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) فایروال MikroTik از چه نوعی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Stateless</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Stateful با Connection Tracking</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Proxy-based</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Application Layer</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) کدام Chain برای ترافیک به خود روتر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> forward</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> output</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> input</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> prerouting</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت drop و reject چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> drop بی‌صدا، reject با ICMP Error</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> reject امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> drop پیام خطا می‌فرستد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) اولین Rule فایروال باید کدام باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> Drop invalid</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> ICMP accept</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> Established/Related accept</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> LAN to WAN accept</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) Masquerade چه نوع NAT است؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Destination NAT</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Source NAT</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Netmap</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Hairpin</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Port Forwarding در کدام Chain NAT انجام می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> srcnat</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> input</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> dstnat</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> forward</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) تفاوت Masquerade و Src-NAT چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Masquerade برای UDP، Src-NAT برای TCP</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Masquerade IP خودکار، Src-NAT IP مشخص</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Src-NAT قدیمی‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) Hairpin NAT چه مشکلی را حل می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> کاهش مصرف CPU</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Rate Limiting</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> دسترسی کاربران داخلی به سرور با IP عمومی</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> رمزنگاری ترافیک</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) FastTrack چه اثری دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> ترافیک را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> ترافیک Established را سریع‌تر عبور می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> تعداد Connections را کاهش می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Bandwidth را زیاد می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) FastTrack با QoS چه تداخلی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> QoS را سریع‌تر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> QoS را دور می‌زند — ترافیک از Queue عبور نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> QoS را خراب می‌کند اما مهم نیست</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) دستور ساخت Address-List چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> <code>/ip address list add</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> <code>/firewall list add</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> <code>/ip firewall address-list add</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> <code>/address-list new</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) Netmap چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> فقط یک IP را ترجمه می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> کل Subnet را به Subnet دیگر نگاشت می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> DHCP Server را راه‌اندازی می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> فقط برای IPv6 است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) Raw Firewall قبل یا بعد از Connection Tracking اجرا می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> بعد</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> همزمان</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> قبل</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> اصلاً اجرا نمی‌شود</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) برای محافظت از SSH از Brute Force چه باید کرد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فقط رمز قوی</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> Address-List داینامیک + Drop بعد از چند تلاش</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> غیرفعال کردن SSH</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> Password کوتاه</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) اگر پس از تغییر Firewall اتصال را از دست دادی، از چه استفاده کنی؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> Netinstall</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Factory Reset</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> Safe Mode — تغییرات بعد از Logout برمی‌گردند</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> حذف فیزیکی</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) Log Firewall را چطور می‌بینی؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> <code>/ip firewall log</code></label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> <code>/log print where topics~"firewall"</code></label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> <code>/firewall print log</code></label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> <code>/system log</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) برای اجازه ترافیک برگشتی از اینترنت، کدام Rule لازم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> فقط Default Route</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> فقط Masquerade</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> Rule Accept برای connection-state=established,related</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> فقط ICMP accept</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) Counterهای Firewall برای چه کاربرد دارند؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> فقط نمایش آماری</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> بررسی این‌که کدام Rule فعال است و چه ترافیکی از آن عبور می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> کاهش مصرف CPU</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> Rate Limiting</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک فایروال کامل برای یک دفتر کوچک بساز:</p>
+    <ul>
+      <li><strong>RouterOS</strong> با WAN (DHCP) و LAN (Bridge)</li>
+      <li><strong>فایروال Input</strong> با قوانین: Est/Rel Accept، Invalid Drop، ICMP Accept، DHCP Accept، LAN Access، Drop All</li>
+      <li><strong>فایروال Forward</strong> با FastTrack، Est/Rel Accept، Invalid Drop، LAN to WAN، Drop All</li>
+      <li><strong>NAT Masquerade</strong> روی WAN</li>
+      <li><strong>Port Forwarding</strong> برای یک وب‌سرور داخلی (پورت 8080 → 80)</li>
+      <li><strong>Hairpin NAT</strong> برای دسترسی داخلی از طریق IP عمومی</li>
+      <li><strong>Address-List MGMT-IPS</strong> و Winbox فقط از این IPها</li>
+      <li><strong>Brute Force Protection</strong> برای SSH با سه Stage</li>
+      <li><strong>Address-List BLOCKED</strong> برای بلاک یک وب‌سایت</li>
+      <li><strong>فقط ساعات کاری</strong> برای SSH از بیرون (با Time)</li>
+      <li>مستندسازی کامل با Export و دیاگرام</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Rule بنویس که ترافیک P2P را بلاک کند.</li>
+        <li>یک Rate Limit روی پورت 80 برای کاربر خاص پیاده کن.</li>
+        <li>با Mangle، ترافیک SSH را اولویت‌بندی کن.</li>
+        <li>از Safe Mode استفاده کن و یک تغییر خطرناک بزن — ببین چطور برمی‌گردد.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Stateful Firewall:</strong> با Connection Tracking — ۵ state</li>
+      <li><strong>Chains:</strong> input، forward، output</li>
+      <li><strong>Actions:</strong> accept، drop، reject، jump، return، log</li>
+      <li><strong>ترتیب مهم:</strong> Est/Rel → Invalid → Rules خاص → LAN to WAN → Drop</li>
+      <li><strong>Source NAT:</strong> masquerade (IP خودکار) یا src-nat (IP مشخص)</li>
+      <li><strong>Destination NAT:</strong> Port Forwarding — با dstnat</li>
+      <li><strong>Hairpin NAT:</strong> برای دسترسی داخلی به سرور با IP عمومی</li>
+      <li><strong>Netmap:</strong> ترجمه کل Subnet به Subnet دیگر</li>
+      <li><strong>FastTrack:</strong> عبور سریع Established — ولی QoS را دور می‌زند</li>
+      <li><strong>Raw Firewall:</strong> قبل از Connection Tracking — سریع‌تر</li>
+      <li><strong>Address-List:</strong> مجموعه IPها با نام مشترک — استاتیک یا داینامیک</li>
+      <li><strong>Brute Force Protection:</strong> با Address-List داینامیک چند مرحله‌ای</li>
+      <li><strong>Safe Mode:</strong> همیشه قبل از تغییرات حساس Firewall فعال کن</li>
+      <li><strong>Log:</strong> <code>/log print where topics~"firewall"</code></li>
+      <li><strong>Counterها:</strong> با <code>/ip firewall filter print stats</code></li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_05.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-06">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_07.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

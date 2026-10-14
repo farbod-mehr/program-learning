@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۱ MikroTik — معرفی RouterOS و مدیریت</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-01">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۱ — معرفی RouterOS و مدیریت</h1>
+    <div class="meta">
+      <span>📖 ۹۰ دقیقه</span>
+      <span>🎯 وزن در MTCNA: پایه و ضروری</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: مبتدی</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      به دنیای <strong>MikroTik</strong> خوش آمدی! در این فصل با
+      <span class="term" data-term="routeros">RouterOS</span> و
+      <span class="term" data-term="routerboard">RouterBOARD</span> آشنا می‌شوی،
+      روش‌های مختلف اتصال و مدیریت دستگاه را یاد می‌گیری، و اولین پیکربندی‌ها
+      (IP، NAT، DHCP) را انجام می‌دهی.
+    </p>
+    <p>
+      MikroTik به دلیل <strong>قیمت مناسب، امکانات زیاد و انعطاف‌پذیری بالا</strong>
+      در ایران بسیار محبوب است. این فصل، پایه‌ی کل مسیر MTCNA است.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>آشنایی با RouterOS و RouterBOARD</li>
+      <li>روش‌های اتصال: Winbox، Webfig، SSH، MAC-Telnet</li>
+      <li>محیط CLI و دستورات پایه</li>
+      <li>پیکربندی اولیه: IP، Default Gateway، NAT</li>
+      <li>راه‌اندازی DHCP Server برای شبکه‌ی داخلی</li>
+      <li>Winbox — نصب و کار با آن</li>
+      <li>Webfig — رابط وب</li>
+      <li>Quickset — راه‌اندازی سریع</li>
+      <li>مدیریت لایسنس (Level 1 تا 6)</li>
+      <li>ارتقاء RouterOS</li>
+      <li>Backup و Restore پیکربندی</li>
+      <li>Reset به حالت اولیه (Factory Reset)</li>
+      <li>مدیریت کاربران و دسترسی‌ها</li>
+      <li>Netinstall — نصب مجدد RouterOS</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا MikroTik در ایران این‌قدر محبوب است؟</li>
+      <li>تفاوت Winbox و Webfig در چیست و هرکدام برای چه سناریوهایی مناسب‌اند؟</li>
+      <li>اگر RouterOS بالا نیاید، چطور می‌توانیم به آن دسترسی بگیریم؟</li>
+      <li>تفاوت Safe Mode و حالت معمولی در Winbox چیست؟</li>
+      <li>لایسنس‌های MikroTik (Level 1 تا 6) چه تفاوتی دارند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۱.۱ ==== -->
+    <h3>۱.۱ RouterOS و RouterBOARD</h3>
+    <p>
+      <strong>MikroTik</strong> یک شرکت لتونیایی است که دو محصول اصلی دارد:
+    </p>
+
+    <ul>
+      <li><strong>RouterOS:</strong> سیستم‌عامل شبکه مبتنی بر Linux — روی سخت‌افزار MikroTik، VPS، Cloud یا ماشین مجازی اجرا می‌شود</li>
+      <li><strong>RouterBOARD:</strong> سخت‌افزارهای MikroTik (روتر، سوئیچ، Access Point) که RouterOS روی آن‌ها نصب است</li>
+    </ul>
+
+    <p><strong>کاربردهای اصلی RouterOS:</strong></p>
+    <ul>
+      <li>روتر اصلی شبکه (Routing، NAT، Firewall)</li>
+      <li>Access Point Wireless</li>
+      <li>Hotspot و User Manager</li>
+      <li>VPN Server/Client</li>
+      <li>Queue و Traffic Shaping</li>
+      <li>Bandwidth Management</li>
+      <li>MPLS و BGP برای ISPها</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      RouterOS هم روی سخت‌افزار MikroTik نصب می‌شود و هم روی
+      <strong>PC یا سرور (x86)</strong>، <strong>VM (CHR - Cloud Hosted Router)</strong>
+      و <strong>Cloud (AWS، Azure، GCP)</strong>.
+    </div>
+
+    <!-- ==== ۱.۲ ==== -->
+    <h3>۱.۲ روش‌های اتصال به RouterOS</h3>
+
+    <p>چندین راه برای اتصال به RouterOS وجود دارد:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">روش</th>
+          <th style="padding:6px;border:1px solid var(--border)">Transport</th>
+          <th style="padding:6px;border:1px solid var(--border)">مزیت</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Winbox</strong></td><td style="padding:6px;border:1px solid var(--border)">MAC یا IP</td><td style="padding:6px;border:1px solid var(--border)">گرافیکی، سرعت بالا</td><td style="padding:6px;border:1px solid var(--border)">روزمره</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Webfig</strong></td><td style="padding:6px;border:1px solid var(--border)">HTTP/HTTPS</td><td style="padding:6px;border:1px solid var(--border)">نیاز به نصب ندارد</td><td style="padding:6px;border:1px solid var(--border)">دسترسی از راه دور</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>SSH</strong></td><td style="padding:6px;border:1px solid var(--border)">TCP/22</td><td style="padding:6px;border:1px solid var(--border)">امن، اسکریپت‌پذیر</td><td style="padding:6px;border:1px solid var(--border)">اتوماسیون</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Telnet</strong></td><td style="padding:6px;border:1px solid var(--border)">TCP/23</td><td style="padding:6px;border:1px solid var(--border)">ساده</td><td style="padding:6px;border:1px solid var(--border)">تست</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>MAC-Telnet</strong></td><td style="padding:6px;border:1px solid var(--border)">L2 (UDP/20561)</td><td style="padding:6px;border:1px solid var(--border)">بدون IP</td><td style="padding:6px;border:1px solid var(--border)">اضطراری</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>API</strong></td><td style="padding:6px;border:1px solid var(--border)">TCP/8728</td><td style="padding:6px;border:1px solid var(--border)">اسکریپتی</td><td style="padding:6px;border:1px solid var(--border)">برنامه‌نویسی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Console</strong></td><td style="padding:6px;border:1px solid var(--border)">Serial</td><td style="padding:6px;border:1px solid var(--border)">مستقیم</td><td style="padding:6px;border:1px solid var(--border)">نصب اولیه</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># اتصال از لینوکس/مک (SSH)
+ssh admin@192.168.88.1
+
+# اتصال با MAC-Telnet از RouterOS دیگر
+/tool mac-telnet 00:0C:29:AB:CD:EF
+
+# اتصال با Telnet (غیر امن — فقط تست)
+telnet 192.168.88.1
+
+# استفاده از API از Python
+# pip install librouteros
+from librouteros import connect
+api = connect(username='admin', password='', host='192.168.88.1')
+for iface in api.path('interface'):
+    print(iface['name'], iface['running'])</code></pre>
+
+    <!-- ==== ۱.۳ ==== -->
+    <h3>۱.۳ آدرس پیش‌فرض MikroTik</h3>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ تنظیمات پیش‌فرض MikroTik</div>
+      <ul style="margin:6px 0 0">
+        <li><strong>IP پیش‌فرض:</strong> 192.168.88.1/24</li>
+        <li><strong>نام کاربری:</strong> admin</li>
+        <li><strong>رمز عبور:</strong> (خالی — <strong>حتماً عوض کن!</strong>)</li>
+        <li><strong>پورت DHCP Client:</strong> ether1 (پیش‌فرض به ISP)</li>
+        <li><strong>پورت LAN:</strong> ether2-ether5 (سوئیچ داخلی)</li>
+        <li><strong>DHCP Server روی ether2:</strong> فعال</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۱.۴ ==== -->
+    <h3>۱.۴ محیط CLI و دستورات پایه</h3>
+
+    <p>
+      CLI RouterOS مبتنی بر <strong>مسیر درختی</strong> است — مثل فایل‌سیستم.
+      هر بخش یک Menu جداگانه است:
+    </p>
+
+    <pre><code># مشاهده ساختار Menu
+[admin@MikroTik] > /interface print
+[admin@MikroTik] > /ip address print
+[admin@MikroTik] > /ip route print
+
+# ورود به یک Menu
+[admin@MikroTik] > /ip address
+[admin@MikroTik] /ip/address> print
+[admin@MikroTik] /ip/address> add address=192.168.1.1/24 interface=ether2
+[admin@MikroTik] /ip/address> ..
+
+# مشاهده Help
+[admin@MikroTik] > ?
+[admin@MikroTik] > /ip ?
+
+# Autocomplete با Tab
+[admin@MikroTik] > /ip addr<TAB>
+! → /ip address
+
+# History
+[admin@MikroTik] > /history
+[admin@MikroTik] > /history print
+
+# دستورات مفید
+[admin@MikroTik] > /system resource print
+[admin@MikroTik] > /system identity print
+[admin@MikroTik] > /system clock print
+[admin@MikroTik] > /system package print
+[admin@MikroTik] > /system routerboard print
+[admin@MikroTik] > /export</code></pre>
+
+    <p><strong>ساختار دستور در RouterOS:</strong></p>
+    <pre><code>/path action item=value
+
+مثال:
+/ip address add address=192.168.1.1/24 interface=ether2
+
+path = /ip address
+action = add
+item = address
+value = 192.168.1.1/24</code></pre>
+
+    <!-- ==== ۱.۵ ==== -->
+    <h3>۱.۵ پیکربندی اولیه — IP، Gateway، NAT</h3>
+
+    <pre><code># ===== گام ۱: تنظیم Hostname =====
+[admin@MikroTik] > /system identity set name=MyRouter
+
+# ===== گام ۲: تنظیم IP روی LAN =====
+[admin@MikroTik] > /ip address add \
+    address=192.168.88.1/24 \
+    interface=ether2 \
+    comment="LAN"
+
+# ===== گام ۳: دریافت IP از ISP روی WAN =====
+# اگر ISP با DHCP IP می‌دهد:
+[admin@MikroTik] > /ip dhcp-client add \
+    interface=ether1 \
+    disabled=no \
+    comment="WAN DHCP"
+
+# اگر ISP IP Static می‌دهد:
+[admin@MikroTik] > /ip address add \
+    address=203.0.113.2/24 \
+    interface=ether1 \
+    comment="WAN Static"
+
+# ===== گام ۴: Default Route =====
+# اگر از DHCP استفاده می‌کنی، خودکار اضافه می‌شود.
+# اگر Static:
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1
+
+# ===== گام ۵: NAT Masquerade برای خروج به اینترنت =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether1 \
+    action=masquerade \
+    comment="NAT to Internet"
+
+# ===== گام ۶: DNS Server =====
+[admin@MikroTik] > /ip dns set \
+    servers=8.8.8.8,1.1.1.1 \
+    allow-remote-requests=yes
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip address print
+[admin@MikroTik] > /ip route print
+[admin@MikroTik] > /ip firewall nat print
+[admin@MikroTik] > /ip dns print</code></pre>
+
+    <!-- ==== ۱.۶ ==== -->
+    <h3>۱.۶ راه‌اندازی DHCP Server</h3>
+
+    <pre><code># ===== گام ۱: تعریف Pool =====
+[admin@MikroTik] > /ip pool add \
+    name=dhcp_pool \
+    ranges=192.168.88.10-192.168.88.254
+
+# ===== گام ۲: DHCP Network =====
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.88.0/24 \
+    gateway=192.168.88.1 \
+    dns-server=192.168.88.1 \
+    comment="LAN Network"
+
+# ===== گام ۳: DHCP Server =====
+[admin@MikroTik] > /ip dhcp-server add \
+    name=dhcp_lan \
+    interface=ether2 \
+    address-pool=dhcp_pool \
+    lease-time=1d \
+    disabled=no
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip dhcp-server print
+[admin@MikroTik] > /ip dhcp-server lease print
+[admin@MikroTik] > /ip dhcp-server lease print detail</code></pre>
+
+    <!-- ==== ۱.۷ ==== -->
+    <h3>۱.۷ Winbox — نصب و کار با آن</h3>
+
+    <p>
+      <strong>Winbox</strong> محبوب‌ترین ابزار مدیریت MikroTik است — یک برنامه
+      ویندوزی که از <code>mikrotik.com/download</code> قابل دانلود است.
+    </p>
+
+    <p><strong>مزایای Winbox:</strong></p>
+    <ul>
+      <li>محیط گرافیکی کامل و سریع</li>
+      <li>اتصال با <strong>MAC Address</strong> (حتی بدون IP)</li>
+      <li>Safe Mode برای پیکربندی امن</li>
+      <li>پشتیبانی از Drag & Drop در Firewall Rules</li>
+      <li>Torch و Traffic Monitor داخلی</li>
+      <li>نصب از طریق Wine در Linux/Mac</li>
+    </ul>
+
+    <p><strong>حالت‌های مهم در Winbox:</strong></p>
+    <ul>
+      <li><strong>Safe Mode:</strong> تغییرات بعد از Logout برگردانده می‌شوند اگر تأیید نکنی — برای پیکربندی‌های حساس</li>
+      <li><strong>Advanced Mode:</strong> نمایش تمام گزینه‌ها (حتی پارامترهای پیشرفته)</li>
+      <li><strong>Simple Mode:</strong> فقط گزینه‌های پایه</li>
+    </ul>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ امنیت Winbox</div>
+      Winbox روی پورت <strong>TCP/8291</strong> کار می‌کند. حتماً:
+      <ul style="margin:6px 0 0">
+        <li>پورت را به IP مدیریتی محدود کن</li>
+        <li>سرویس را روی WAN غیرفعال کن</li>
+        <li>از Winbox نسخه 3.30+ استفاده کن (پچ CVE-2018-14847)</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۱.۸ ==== -->
+    <h3>۱.۸ Webfig و Quickset</h3>
+
+    <p><strong>Webfig:</strong> رابط وب RouterOS — از مرورگر در آدرس
+      <code>http://192.168.88.1</code> قابل دسترسی است.</p>
+
+    <p><strong>مزایا:</strong></p>
+    <ul>
+      <li>نیاز به نصب ندارد</li>
+      <li>قابل استفاده از هر سیستمی</li>
+      <li>مشابه Winbox ولی کندتر</li>
+    </ul>
+
+    <p><strong>Quickset:</strong> صفحه‌ی راه‌اندازی سریع — برای تنظیمات پایه:
+      انتخاب حالت (Router، Bridge، AP، CPE)، WAN، LAN، Wireless.</p>
+
+    <pre><code># فعال‌سازی Webfig
+[admin@MikroTik] > /ip service set www disabled=no port=80
+[admin@MikroTik] > /ip service set www-ssl disabled=no port=443
+[admin@MikroTik] > /ip service print
+
+# ===== سرویس‌های مهم =====
+[admin@MikroTik] > /ip service print
+# خروجی:
+# NAME      PORT   ADDRESS
+# telnet    23
+# ftp       21
+# www       80
+# ssh       22
+# www-ssl   443
+# api       8728
+# winbox    8291
+# api-ssl   8729
+
+# ===== امن‌سازی سرویس‌ها =====
+# غیرفعال‌سازی سرویس‌های بی‌استفاده
+[admin@MikroTik] > /ip service disable telnet,ftp,www,api
+
+# محدود کردن دسترسی به IP مشخص
+[admin@MikroTik] > /ip service set winbox address=192.168.88.0/24
+[admin@MikroTik] > /ip service set ssh address=192.168.88.0/24</code></pre>
+
+    <!-- ==== ۱.۹ ==== -->
+    <h3>۱.۹ لایسنس RouterOS</h3>
+
+    <p>RouterOS در ۶ سطح لایسنس ارائه می‌شود (Level 1 تا 6):</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Level</th>
+          <th style="padding:6px;border:1px solid var(--border)">Wireless</th>
+          <th style="padding:6px;border:1px solid var(--border)">Hotspot</th>
+          <th style="padding:6px;border:1px solid var(--border)">User Manager</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1 — Free</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">24h Trial</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">CPE، AP ساده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">4</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">ISP کوچک</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">5</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">ISP متوسط</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">6 — Full</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">ISP بزرگ</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># مشاهده لایسنس
+[admin@MikroTik] > /system license print
+# خروجی:
+# software-id: XXXX-XXXX
+# level: 4
+# key: ...
+
+# فعال‌سازی لایسنس
+[admin@MikroTik] > /system license renew
+# یا با وارد کردن Key:
+[admin@MikroTik] > /system license set key=YOUR-LICENSE-KEY</code></pre>
+
+    <!-- ==== ۱.۱۰ ==== -->
+    <h3>۱.۱۰ ارتقاء RouterOS</h3>
+
+    <pre><code># ===== روش ۱: از طریق CLI =====
+[admin@MikroTik] > /system package update check-for-updates
+[admin@MikroTik] > /system package update download
+[admin@MikroTik] > /system reboot
+# یا اگر Update Channel را ست کردی:
+[admin@MikroTik] > /system package update set channel=stable
+
+# ===== روش ۲: از طریق فایل =====
+# فایل .npk را از mikrotik.com دانلود کن
+# آپلود به Files
+# Reboot
+
+# ===== روش ۳: از طریق Winbox =====
+# System → Packages → Check For Updates
+
+# ===== تنظیم Update Channel =====
+[admin@MikroTik] > /system package update set channel=long-term
+# گزینه‌ها: stable (پیش‌فرض)، long-term، testing، development
+
+# بررسی نسخه فعلی
+[admin@MikroTik] > /system resource print
+# خروجی: version, build-time, factory-software
+
+# آپدیت RouterBOOT Firmware (جدا از RouterOS)
+[admin@MikroTik] > /system routerboard print
+[admin@MikroTik] > /system routerboard upgrade
+[admin@MikroTik] > /system reboot</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای شبکه‌های Production، از <strong>long-term</strong> استفاده کن — پایدارتر
+      و تست‌شده. از <strong>testing</strong> و <strong>development</strong> پرهیز کن.
+    </div>
+
+    <!-- ==== ۱.۱۱ ==== -->
+    <h3>۱.۱۱ Backup و Restore</h3>
+
+    <pre><code># ===== دو نوع Backup در RouterOS =====
+
+# ۱. Binary Backup (.backup)
+# کامل + سریع + قابل Restore فقط روی همان مدل دستگاه
+[admin@MikroTik] > /system backup save name=router-backup
+
+# ۲. Export Config (.rsc)
+# متنی + قابل ویرایش + قابل Restore روی هر دستگاهی
+[admin@MikroTik] > /export file=router-config
+
+# Export فقط بخش خاص
+[admin@MikroTik] > /ip firewall export file=firewall-rules
+[admin@MikroTik] > /ip address export
+
+# ===== Restore =====
+
+# از Binary Backup
+[admin@MikroTik] > /system backup load name=router-backup
+
+# از Export File
+[admin@MikroTik] > /import file-name=router-config.rsc
+
+# ===== انتقال به سرور خارجی =====
+# با FTP
+[admin@MikroTik] > /tool fetch address=192.168.1.100 \
+    src-path=router-backup.backup \
+    dst-path=/router-backup.backup \
+    user=admin password=pass mode=ftp upload=yes
+
+# با Email (برای بکاپ خودکار)
+[admin@MikroTik] > /tool e-mail set \
+    server=smtp.gmail.com port=587 \
+    from=myrouter@gmail.com \
+    user=myrouter@gmail.com password=app-password \
+    tls=yes
+
+[admin@MikroTik] > /system backup save name=backup
+[admin@MikroTik] > /tool e-mail send \
+    to=admin@company.ir \
+    subject="Backup $(date)" \
+    body="Daily backup" \
+    file=backup.backup</code></pre>
+
+    <!-- ==== ۱.۱۲ ==== -->
+    <h3>۱.۱۲ Factory Reset</h3>
+
+    <pre><code># ===== روش‌های Factory Reset =====
+
+# ۱. از CLI
+[admin@MikroTik] > /system reset-configuration
+# سوال می‌پرسد: Dangerous! Reset anyway? [y/N] → y
+# سوال: Keep default configuration? [y/N]
+#   y = پیکربندی پیش‌فرض می‌ماند (IP 192.168.88.1)
+#   n = پیکربندی خالی می‌شود
+
+# ۲. با حذف تمام Config اما نگه‌داشتن Userها
+[admin@MikroTik] > /system reset-configuration keep-users=yes
+
+# ۳. بدون Backup خودکار
+[admin@MikroTik] > /system reset-configuration no-defaults=yes skip-backup=yes
+
+# ۴. از طریق Winbox
+# System → Reset Configuration
+
+# ۵. با دکمه‌ی Reset سخت‌افزاری
+# دکمه Reset را نگه دار و برق را وصل کن
+# LED شروع به چشمک زدن می‌کند → رها کن
+# یا 10 ثانیه نگه دار برای Factory Default
+
+# ۶. با Netinstall (اگر RouterOS بالا نمی‌آید)
+# → در بخش بعدی توضیح داده شده</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      قبل از Factory Reset، حتماً:
+      <ul style="margin:6px 0 0">
+        <li>Backup بگیر (<code>/system backup save</code>)</li>
+        <li>Export پیکربندی بگیر (<code>/export</code>)</li>
+        <li>لایسنس را ذخیره کن</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۱.۱۳ ==== -->
+    <h3>۱.۱۳ مدیریت کاربران و گروه‌ها</h3>
+
+    <pre><code># ===== مشاهده کاربران =====
+[admin@MikroTik] > /user print
+[admin@MikroTik] > /user group print
+
+# ===== تغییر رمز admin =====
+[admin@MikroTik] > /user set admin password=StrongP@ss2024
+
+# ===== ایجاد کاربر جدید =====
+[admin@MikroTik] > /user add \
+    name=operator \
+    password=OperP@ss \
+    group=read \
+    comment="Monitoring"
+
+# ===== گروه‌های پیش‌فرض =====
+# read       → فقط خواندن
+# write      → خواندن و نوشتن
+# full       → دسترسی کامل
+
+# ===== ایجاد گروه سفارشی =====
+[admin@MikroTik] > /user group add name=monitor policy=read,test
+[admin@MikroTik] > /user group add name=helpdesk policy=read,write,test
+
+# ===== سیاست‌های موجود =====
+# local, telnet, ssh, ftp, reboot, read, write, policy, test,
+# winbox, password, web, snmp, romon, rest-api, api
+
+# ===== مشاهده Active Sessions =====
+[admin@MikroTik] > /user active print
+[admin@MikroTik] > /user active print detail
+
+# ===== قطع Session =====
+[admin@MikroTik] > /user active remove 0</code></pre>
+
+    <!-- ==== ۱.۱۴ ==== -->
+    <h3>۱.۱۴ Netinstall — نصب مجدد RouterOS</h3>
+
+    <p>
+      <strong>Netinstall</strong> ابزار رسمی MikroTik برای نصب مجدد RouterOS
+      روی دستگاه است — وقتی که RouterOS خراب شده یا نیاز به پاک‌سازی کامل داری.
+    </p>
+
+    <p><strong>پیش‌نیازها:</strong></p>
+    <ul>
+      <li>یک کامپیوتر با Windows یا Linux</li>
+      <li>نرم‌افزار Netinstall (از mikrotik.com)</li>
+      <li>فایل .npk RouterOS</li>
+      <li>اتصال Ethernet مستقیم بین PC و MikroTik</li>
+    </ul>
+
+    <pre><code># ===== مراحل Netinstall =====
+
+# ۱. Netinstall را اجرا کن (Run as Administrator)
+# ۲. از منوی Net booting → Netinstall Server
+# ۳. Client IP: 192.168.88.2 ، Server IP: 192.168.88.3
+# ۴. فایل .npk را در Netinstall انتخاب کن
+# ۵. روی کامپیوتر، IP دستی مثل 192.168.88.2/24 بده
+# ۶. MikroTik را با دکمه Reset روشن کن
+#    - دکمه Reset را نگه دار
+#    - برق را وصل کن
+#    - LED چشمک می‌زند → رها کن
+# ۷. دستگاه در Netinstall ظاهر می‌شود → انتخاب و Install
+
+# ===== بعد از نصب =====
+# دستگاه با پیکربندی خالی بالا می‌آید
+# با MAC-Winbox یا از Console وصل شو</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Netinstall تمام پیکربندی، لایسنس (در بعضی مدل‌ها) و فایل‌ها را پاک می‌کند.
+      <strong>آخرین راه‌حل</strong> قبل از تعویض سخت‌افزار است.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه بعد از هر تغییر مهم، <code>/export</code> بگیر و در محل امن ذخیره کن.
+      فایل RSC قابل ویرایش است و روی هر دستگاهی Restore می‌شود.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ امنیت</div>
+      رمز admin خالی، بزرگ‌ترین حفره‌ی امنیتی MikroTik است. متأسفانه هزاران دستگاه
+      در اینترنت قربانی حمله‌ی <strong>Hajime</strong> و <strong>Mirai</strong>
+      شده‌اند به دلیل همین سهل‌انگاری.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در Production، همیشه Safe Mode در Winbox را قبل از تغییرات Firewall
+      یا IP استفاده کن — اگر اشتباهی رخ داد و خودت را از دستگاه بیرون انداختی،
+      Safe Mode بعد از Logout همه‌ی تغییرات را برمی‌گرداند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۲ با <span class="term" data-term="static-route">Static Route</span>،
+      <span class="term" data-term="default-route">Default Route</span> و
+      Route Flags آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCINE و MTCRE با <span class="term" data-term="bgp">BGP</span>،
+      <span class="term" data-term="ospf">OSPF</span> و MPLS در RouterOS
+      کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — پیکربندی کامل یک روتر خانگی/اداری</h3>
+    <pre><code># ===== ۱. Hostname =====
+[admin@MikroTik] > /system identity set name=HomeRouter
+
+# ===== ۲. User و رمز =====
+[admin@MikroTik] > /user set admin password=MyStrongP@ss
+
+# ===== ۳. WAN با DHCP =====
+[admin@MikroTik] > /ip dhcp-client add \
+    interface=ether1 \
+    disabled=no \
+    comment="WAN from ISP"
+
+# ===== ۴. LAN =====
+[admin@MikroTik] > /ip address add \
+    address=192.168.88.1/24 \
+    interface=ether2 \
+    comment="LAN"
+
+# ===== ۵. DHCP Server برای LAN =====
+[admin@MikroTik] > /ip pool add name=lan-pool ranges=192.168.88.10-192.168.88.200
+
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.88.0/24 \
+    gateway=192.168.88.1 \
+    dns-server=192.168.88.1
+
+[admin@MikroTik] > /ip dhcp-server add \
+    name=lan-dhcp \
+    interface=ether2 \
+    address-pool=lan-pool \
+    lease-time=1d \
+    disabled=no
+
+# ===== ۶. DNS =====
+[admin@MikroTik] > /ip dns set \
+    servers=8.8.8.8,1.1.1.1 \
+    allow-remote-requests=yes
+
+# ===== ۷. NAT =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether1 \
+    action=masquerade
+
+# ===== ۸. امن‌سازی سرویس‌ها =====
+[admin@MikroTik] > /ip service disable telnet,ftp,www,api,api-ssl
+[admin@MikroTik] > /ip service set winbox address=192.168.88.0/24
+[admin@MikroTik] > /ip service set ssh address=192.168.88.0/24
+
+# ===== ۹. NTP Client =====
+[admin@MikroTik] > /system ntp client set \
+    enabled=yes \
+    mode=unicast \
+    servers=pool.ntp.org
+
+[admin@MikroTik] > /system clock set time-zone-name=Asia/Tehran
+
+# ===== ۱۰. ذخیره =====
+[admin@MikroTik] > /system backup save name=first-config
+[admin@MikroTik] > /export file=first-config</code></pre>
+
+    <h3>مثال ۲ — پیکربندی کامل با CLI یک‌خطی</h3>
+    <pre><code># اسکریپت کامل برای راه‌اندازی سریع
+/ip address add address=192.168.88.1/24 interface=ether2
+/ip pool add name=dhcp ranges=192.168.88.10-192.168.88.254
+/ip dhcp-server network add address=192.168.88.0/24 gateway=192.168.88.1
+/ip dhcp-server add name=dhcp1 interface=ether2 address-pool=dhcp disabled=no
+/ip dns set servers=8.8.8.8 allow-remote-requests=yes
+/ip dhcp-client add interface=ether1 disabled=no
+/ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade
+/ip service disable telnet,ftp,www,api
+/user set admin password=StrongP@ss
+/system identity set name=MyRouter
+/system backup save name=initial</code></pre>
+
+    <h3>مثال ۳ — اسکریپت Backup خودکار با Email</h3>
+    <pre><code># ===== پیکربندی Email =====
+[admin@MikroTik] > /tool e-mail set \
+    server=smtp.gmail.com \
+    port=587 \
+    from=router@gmail.com \
+    user=router@gmail.com \
+    password=app-specific-password \
+    tls=yes
+
+# ===== اسکریپت Backup =====
+[admin@MikroTik] > /system script add \
+    name=daily-backup \
+    source="
+        /system backup save name=(\"backup-\" . [/system clock get date])
+        /export file=(\"export-\" . [/system clock get date])
+        /tool e-mail send \
+            to=admin@company.ir \
+            subject=(\"Router Backup - \" . [/system clock get date]) \
+            body=\"Daily backup attached\" \
+            file=(\"backup-\" . [/system clock get date] . \".backup\")
+    "
+
+# ===== زمان‌بندی =====
+[admin@MikroTik] > /system scheduler add \
+    name=backup-scheduler \
+    interval=1d \
+    start-time=03:00:00 \
+    on-event=daily-backup
+
+# ===== بررسی =====
+[admin@MikroTik] > /system script print
+[admin@MikroTik] > /system scheduler print</code></pre>
+
+    <h3>مثال ۴ — Safe Mode در Winbox</h3>
+    <pre><code># ===== در Winbox =====
+# 1. دکمه Safe Mode را در نوار بالا فشار بده
+# 2. تغییرات را اعمال کن
+# 3. اگر همه‌چیز OK بود: Safe Mode را خاموش کن (تأیید)
+# 4. اگر خودت را از دستگاه بیرون انداختی:
+#    - بعد از قطع اتصال، تغییرات خودکار برمی‌گردند
+
+# ===== در CLI =====
+[admin@MikroTik] > /system safe-mode
+# حالا در Safe Mode هستی
+# تغییرات را انجام بده
+[admin@MikroTik] > /quit
+# اگر Logout کنی، تغییرات برمی‌گردند
+# برای تأیید:
+[admin@MikroTik] > /system safe-mode
+# دوباره Enter بزن → تأیید و خروج</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی اتصال</h3>
+    <pre><code># ===== اگر نمی‌توانی به MikroTik وصل شوی =====
+
+# ۱. اتصال با MAC-Winbox (بدون IP)
+# در Winbox روی "..." کلیک کن
+# دستگاه‌های موجود در شبکه L2 نمایش داده می‌شوند
+
+# ۲. اتصال با MAC-Telnet
+[admin@AnotherRouter] > /tool mac-telnet AA:BB:CC:DD:EE:FF
+# Login: admin
+
+# ۳. اتصال از Console (کابل Serial)
+# از نرم‌افزارهایی مثل PuTTY یا TeraTerm استفاده کن
+# Baud rate: 115200 (یا 9600 در مدل‌های قدیمی)
+# Data: 8, Parity: None, Stop: 1, Flow: None
+
+# ۴. اگر آدرس IP را فراموش کردی
+# از MAC-Telnet یا Console وارد شو و:
+[admin@MikroTik] > /ip address print
+[admin@MikroTik] > /ip dhcp-client print
+
+# ۵. اگر خودت را از Firewall بیرون انداختی
+# - از Console وارد شو
+# - یا Safe Mode را فراموش نکن
+# - در بدترین حالت: Factory Reset
+
+# ۶. اگر RouterOS بالا نمی‌آید
+# → Netinstall</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>RouterOS را روی VM (CHR) یا سخت‌افزار RouterBOARD راه‌اندازی کن</li>
+      <li>با Winbox وصل شو (MAC یا IP پیش‌فرض 192.168.88.1)</li>
+      <li>رمز admin را عوض کن به یک رمز قوی</li>
+      <li>Hostname را تنظیم کن</li>
+      <li>WAN را با DHCP Client روی ether1 پیکربندی کن</li>
+      <li>LAN را با IP 192.168.88.1/24 روی ether2 پیکربندی کن</li>
+      <li>DHCP Server را با Pool مناسب راه‌اندازی کن</li>
+      <li>NAT Masquerade را روی ether1 فعال کن</li>
+      <li>DNS Server را تنظیم کن</li>
+      <li>از یک PC در شبکه LAN، IP بگیر و به اینترنت ping بزن</li>
+      <li>سرویس‌های بی‌استفاده را غیرفعال کن (Telnet، FTP، www)</li>
+      <li>دسترسی Winbox و SSH را به IP مدیریتی محدود کن</li>
+      <li>NTP Client را برای زمان‌بندی دقیق راه‌اندازی کن</li>
+      <li>از کل پیکربندی <code>/export</code> بگیر و از <code>/system backup</code> هم فایل ذخیره کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Winbox وصل نمی‌شود:</strong> پورت 8291 باز، IP درست، یا با MAC-Telnet تست کن.</li>
+      <li><strong>IP پیش‌فرض 192.168.88.1 کار نمی‌کند:</strong> ممکن است Factory Reset شده باشد. با MAC-Winbox وصل شو.</li>
+      <li><strong>DHCP IP نمی‌دهد:</strong> Network، Pool و Server را جداگانه چک کن — هر سه باید هماهنگ باشند.</li>
+      <li><strong>بدون NAT، اینترنت کار نمی‌کند:</strong> از بیرون به داخل ممکن است کار کند ولی به بیرون نه — NAT Masquerade را چک کن.</li>
+      <li><strong>DNS کار نمی‌کند:</strong> <code>allow-remote-requests=yes</code> و DNS Server روی DHCP Network ست شود.</li>
+      <li><strong>بعد از Update، دستگاه بوت نمی‌شود:</strong> از Channel long-term استفاده کن یا با Netinstall برگردان.</li>
+      <li><strong>لایسنس Trial تمام شد:</strong> بعد از ۲۴ ساعت، اگر لایسنس نداری، برخی سرویس‌ها قطع می‌شوند.</li>
+      <li><strong>Backup روی دستگاه دیگر Restore نمی‌شود:</strong> Binary Backup به مدل/نسخه گره خورده — از <code>/export</code> استفاده کن.</li>
+      <li><strong>بعد از تغییر IP خودت را از دستگاه بیرون انداختی:</strong> از MAC-Winbox یا Console وارد شو.</li>
+      <li><strong>سرویس www خاموش شد و Webfig باز نمی‌شود:</strong> با Winbox روشنش کن یا از SSH استفاده کن.</li>
+      <li><strong>Netinstall دستگاه را نمی‌بیند:</strong> Firewall ویندوز، IP اشتباه، یا دکمه Reset را دیر رها کردی.</li>
+      <li><strong>بعد از Factory Reset، رمز admin خالی است:</strong> بلافاصله رمز قوی بگذار — خطر امنیتی جدی.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="routeros">RouterOS</span> •
+      <span class="term" data-term="routerboard">RouterBOARD</span> •
+      <span class="term" data-term="winbox">Winbox</span> •
+      <span class="term" data-term="webfig">Webfig</span> •
+      <span class="term" data-term="masquerade">Masquerade</span> •
+      <span class="term" data-term="dhcp">DHCP</span> •
+      <span class="term" data-term="netwatch">Netwatch</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-01" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) IP پیش‌فرض MikroTik چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> 192.168.1.1</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> 192.168.88.1</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> 10.0.0.1</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> 172.16.0.1</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) تفاوت Winbox و Webfig در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Winbox فقط روی Linux</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Webfig روی MAC کار می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Winbox برنامه ویندوزی با امکان اتصال MAC، Webfig رابط وب روی HTTP</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) Factory Reset چگونه انجام می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> با حذف فیزیکی دستگاه</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> <code>/system reset-configuration</code> یا دکمه Reset سخت‌افزاری</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> فقط از طریق Cloud</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> غیرممکن است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) NAT Masquerade چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> ترجمه IP مقصد</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> ترجمه IP مبدأ به IP اینترفیس خروجی برای دسترسی به اینترنت</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> Rate Limiting</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) کدام فایل Backup قابل انتقال به دستگاه دیگر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Backup باینری (.backup)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Export متنی (.rsc)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> هر دو</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> هیچ‌کدام</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) دستور <code>/system identity set name=MyRouter</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> IP روتر را عوض می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> رمز را عوض می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Hostname روتر را تغییر می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> دستگاه را ری‌استارت می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) لایسنس Level 4 برای چه کسی مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> برای استفاده‌ی شخصی</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> ISPهای کوچک با User Manager و Hotspot</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> فقط برای تست ۲۴ ساعته</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> برای APهای ساده</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) پورت پیش‌فرض Winbox چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> TCP/80</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> TCP/8292</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> TCP/8291</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> UDP/8291</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) برای دسترسی به دستگاه بدون IP از چه روشی استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Telnet</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> MAC-Telnet یا MAC-Winbox</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> SSH</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> FTP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۰) Safe Mode در Winbox چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> برگرداندن تغییرات اگر اتصال قطع شود</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> Backup خودکار</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> فقط در SSH کار می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) Channel پیشنهادی برای Production کدام است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> development</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> testing</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> long-term</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> stable (فقط)</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) دستور <code>/export</code> چه چیزی تولید می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> فایل باینری</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> فایل متنی قابل ویرایش با تمام دستورات پیکربندی</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> فایل Log</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> فایل لایسنس</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) Netinstall برای چه کاری استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> Backup روزانه</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> تغییر رمز admin</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> نصب مجدد RouterOS وقتی دستگاه بالا نمی‌آید</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> راه‌اندازی VPN</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) دستور <code>/ip service disable telnet,ftp,www</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> سرویس‌ها را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> سرویس‌های ناامن را غیرفعال می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> پورت‌ها را عوض می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> Firewall می‌سازد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) بعد از Factory Reset با <code>keep-default=yes</code> چه اتفاقی می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> همه‌ی Userها پاک می‌شوند</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> دستگاه بالا نمی‌آید</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> پیکربندی پیش‌فرض برمی‌گردد (IP 192.168.88.1 و DHCP Server فعال)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط Firewall پاک می‌شود</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک روتر MikroTik کامل برای یک دفتر کوچک راه‌اندازی کن:</p>
+    <ul>
+      <li><strong>سخت‌افزار:</strong> RouterBOARD یا CHR روی VM</li>
+      <li><strong>WAN:</strong> DHCP Client روی ether1 (شبیه‌سازی ISP)</li>
+      <li><strong>LAN:</strong> ether2 با IP 192.168.10.1/24</li>
+      <li><strong>DHCP Server:</strong> Pool 192.168.10.10-200، Lease 1d</li>
+      <li><strong>DNS:</strong> با allow-remote-requests و DNS سرورهای عمومی</li>
+      <li><strong>NAT Masquerade:</strong> روی ether1</li>
+      <li><strong>NTP Client:</strong> همگام با pool.ntp.org و Timezone تهران</li>
+      <li><strong>User:</strong> admin با رمز قوی + کاربر Operator با دسترسی read</li>
+      <li><strong>امنیت:</strong> غیرفعال کردن سرویس‌های Telnet، FTP، www</li>
+      <li><strong>محدودیت:</strong> Winbox و SSH فقط از Subnet مدیریتی</li>
+      <li><strong>Backup خودکار:</strong> روزانه ساعت ۳ بامداد با Email</li>
+      <li>مستندسازی کامل با Export و دیاگرام شبکه</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Script بنویس که وقتی اینترنت قطع شد، یک Email هشدار بفرستد.</li>
+        <li>با Netwatch، پایش یک سرور مهم (مثلاً 8.8.8.8) راه‌اندازی کن.</li>
+        <li>با Scheduler، هر روز Config را Export کن و در FTP سرور ذخیره کن.</li>
+        <li>یک Firewall Rule بساز که فقط اجازه Ping از LAN بدهد و بقیه را Block کند.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>RouterOS:</strong> سیستم‌عامل شبکه MikroTik — روی RouterBOARD، VM، Cloud</li>
+      <li><strong>IP پیش‌فرض:</strong> 192.168.88.1/24 — User admin با رمز خالی (حتماً عوض کن)</li>
+      <li><strong>Winbox:</strong> TCP/8291، اتصال MAC یا IP، Safe Mode، Advanced Mode</li>
+      <li><strong>Webfig:</strong> HTTP/80 یا HTTPS/443</li>
+      <li><strong>SSH:</strong> TCP/22 — امن، اسکریپت‌پذیر</li>
+      <li><strong>MAC-Telnet:</strong> L2، بدون IP — برای شرایط اضطراری</li>
+      <li><strong>NAT Masquerade:</strong> chain=srcnat، out-interface=WAN، action=masquerade</li>
+      <li><strong>DHCP Server:</strong> Pool + Network + Server (هر سه لازم است)</li>
+      <li><strong>DNS:</strong> allow-remote-requests=yes برای راه‌اندازی DNS Server محلی</li>
+      <li><strong>Backup:</strong> Binary (.backup) مخصوص همان مدل — Export (.rsc) قابل انتقال</li>
+      <li><strong>Factory Reset:</strong> <code>/system reset-configuration</code> یا دکمه Reset</li>
+      <li><strong>Netinstall:</strong> نصب مجدد RouterOS — آخرین راه‌حل</li>
+      <li><strong>لایسنس:</strong> Level 1 (Free 24h) تا Level 6 (Full ISP)</li>
+      <li><strong>Channel:</strong> long-term برای Production</li>
+      <li><strong>امنیت:</strong> غیرفعال کردن سرویس‌های ناامن، محدود کردن دسترسی به IP مدیریتی</li>
+      <li><strong>NTP Client:</strong> با pool.ntp.org و Timezone Asia/Tehran</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="../ccnp/ccnp_Ch_08.html" data-nav-prev>⬅️ آخرین فصل CCNP</a>
+      <button class="btn" data-finish-chapter="mikrotik-01">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_02.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۹: لیست و تاپل — نگه‌داشتن چند مقدار در یک جا | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۹ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور چند مقدار را در یک متغیر نگه دارید — لیست، تاپل، ایندکس، برش، متدها و دام کپی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۹ از ۳۰ — لیست و تاپل</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۹
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۹ از ۳۰</span>
+    <h1>📋 لیست و تاپل — چند مقدار در یک جا</h1>
+    <p>چطور چند مقدار را در یک متغیر نگه داریم؟ — <span class="term" data-term="list">list</span>، <span class="term" data-term="tuple">tuple</span>، <span class="term" data-term="indexing">indexing</span>، <span class="term" data-term="slicing">slicing</span>، <span class="term" data-term="unpacking">unpacking</span>، <span class="term" data-term="mutable">mutable</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۶۵ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا هر متغیر فقط یک مقدار داشت: <code class="inline-code">age = 25</code>، <code class="inline-code">name = "علی"</code>. اما در دنیای واقعی، اغلب اوقات با <strong>مجموعه‌ای از مقادیر</strong> سر و کار داریم: نمرات یک دانشجو، لیست خرید، نام کاربران یک سایت، دماهای یک هفته. مدیریت این‌ها با یک متغیر برای هر کدام، غیرممکن می‌شود.</p>
+        <p>اینجاست که <strong>لیست‌ها</strong> و <strong>تاپل‌ها</strong> وارد می‌شوند. آن‌ها به شما اجازه می‌دهند چند مقدار را در یک متغیر، زیر یک نام نگه دارید. این‌ها پرکاربردترین ساختمان‌های داده در پایتون هستند و از این فصل به بعد، هر روز با آن‌ها کار می‌کنید.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>لیست و تاپل بسازید و به اعضایشان دسترسی پیدا کنید.</li>
+          <li>لیست‌ها را تغییر دهید (اضافه، حذف، جایگزینی).</li>
+          <li>از متدهای مهم لیست مثل <code class="inline-code">append</code>، <code class="inline-code">remove</code>، <code class="inline-code">sort</code> استفاده کنید.</li>
+          <li>روی لیست‌ها حلقه بزنید.</li>
+          <li>تفاوت لیست (تغییرپذیر) و تاپل (تغییرناپذیر) را بفهمید.</li>
+          <li>با unpacking مقادیر را از تاپل‌ها بیرون بکشید.</li>
+          <li>از <strong>دام کپی لیست</strong> آگاه باشید و درست کپی کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          در این فصل با دو ساختمان داده‌ی اصلی آشنا می‌شوید. دو ساختمان دیگر — دیکشنری و مجموعه (set) — در فصل ۱۰ می‌آیند. آن‌ها مفاهیم متفاوتی دارند و در جای خودشان یاد داده می‌شوند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>لیست</h4><p>ساخت، ایندکس، متدها.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>تغییر و پیمایش</h4><p>append، remove، حلقه.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>تاپل</h4><p>تغییرناپذیر + unpacking.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>کپی</h4><p>دام مهم و راه‌حل.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 تفاوت لیست و تاپل چیست؟ چرا دو نوع داریم؟</summary>
+          <div class="answer-body"><p>تفاوت کلیدی این است: لیست <strong>تغییرپذیر</strong> است (می‌توانید اضافه، حذف و عوض کنید)، ولی تاپل <strong>تغییرناپذیر</strong> است (بعد از ساخت، نمی‌توانید عوضش کنید). چرا؟ چون گاهی می‌خواهید مطمئن باشید داده‌ای که دارید، هیچ‌وقت عوض نمی‌شود — مثل مختصات یک نقطه در نقشه، یا روزهای هفته. تاپل این اطمینان را می‌دهد. علاوه بر این، تاپل‌ها کمی سریع‌تر و کم‌حجم‌تر هستند.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا می‌گویند کپی لیست در پایتون «دام» دارد؟</summary>
+          <div class="answer-body"><p>تصور کنید می‌نویسید <code class="inline-code">b = a</code> که a و b هر دو لیست باشند. شما فکر می‌کنید یک کپی از a در b ذخیره کرده‌اید. اما در واقعیت، a و b هر دو <strong>به همان لیست در حافظه اشاره می‌کنند</strong>. اگر b را عوض کنید، a هم عوض می‌شود! این یکی از رایج‌ترین باگ‌های تازه‌کارهاست. در این فصل یاد می‌گیرید چطور درست کپی کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 ایندکس لیست مثل ایندکس متن است؟</summary>
+          <div class="answer-body"><p>بله، خیلی شبیه. هر دو از صفر شروع می‌شوند، هر دو ایندکس منفی می‌پذیرند (<code class="inline-code">-1</code> برای آخر)، و هر دو Slicing دارند. اگر فصل ۷ (رشته‌ها) را فهمیده باشید، نصف این فصل برایتان آشناست. تفاوت اصلی این است که در لیست می‌توانید اعضا را عوض کنید، اما در متن نمی‌توانستید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی هشت فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با متغیرها و انواع داده راحت هستید (فصل ۳).</li>
+          <li>شرط‌ها و حلقه‌ها را می‌دانید (فصل‌های ۵ و ۶).</li>
+          <li>با رشته‌ها و Slicing و ایندکس کار کرده‌اید (فصل ۷).</li>
+          <li>توابع و return را می‌شناسید (فصل ۸).</li>
+        </ul>
+        <p>خصوصاً فصل ۷ را خوب یاد گرفته باشید، چون نصف این فصل بر پایه‌ی همان مفاهیم (ایندکس، Slicing) است.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter09.py</code> در پوشه‌ی پروژه بسازید. هر مثال را تایپ کنید و عمداً تغییر دهید. لیست‌ها ابزار عملیاتی زیادی دارند که با تایپ کردن، دستتان می‌آید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: لیست و تاپل</h2></div>
+
+        <h3>۱) لیست چیست؟ — یک ظرف چند-خانه‌ای</h3>
+        <p>تا اینجا هر متغیر یک مقدار داشت. <strong>لیست</strong> یک متغیر است که می‌تواند <strong>چند مقدار</strong> را در خودش نگه دارد. مقادیر داخل لیست، پشت سر هم و با ترتیب مشخص قرار می‌گیرند. برای ساختن یک لیست، مقادیر را داخل براکت <code class="inline-code">[ ]</code> و با کاما جدا می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># یک لیست از اعداد
+numbers = [10, 20, 30, 40, 50]
+
+# یک لیست از نام‌ها
+names = ["علی", "رضا", "سارا"]
+
+# یک لیست خالی
+empty = []
+
+# لیست با مقادیر مختلف
+mixed = ["علی", 25, 1.75, True]
+
+print(numbers)
+print(names)
+print(empty)
+print(mixed)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">[10, 20, 30, 40, 50]
+['علی', 'رضا', 'سارا']
+[]
+['علی', 25, 1.75, True]</code></pre>
+        </div>
+        <p>سه نکته:</p>
+        <ul>
+          <li>لیست می‌تواند همه‌ی اعداد هم‌نوع داشته باشد، یا مقادیر مختلف — پایتون ایرادی نمی‌گیرد.</li>
+          <li>لیست خالی با <code class="inline-code">[]</code> ساخته می‌شود.</li>
+          <li>وقتی یک لیست را <code class="inline-code">print</code> می‌کنید، پایتون همه‌ی اعضا را در براکت نشان می‌دهد.</li>
+        </ul>
+
+        <h4>ساخت لیست از یک رشته یا محدوده</h4>
+        <div class="code-box">
+          <div class="code-head"><span>list_from.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># از range
+numbers = list(range(1, 6))
+print(numbers)      # [1, 2, 3, 4, 5]
+
+# از یک رشته
+letters = list("Python")
+print(letters)      # ['P', 'y', 't', 'h', 'o', 'n']</code></pre>
+        </div>
+        <p>این ترفند وقتی مفید است که بخواهید روی اعضای یک رشته یا یک محدوده از اعداد، به شکل لیست کار کنید.</p>
+
+        <h3>۲) دسترسی به اعضا — ایندکس و Slicing</h3>
+        <p>مثل متن، اعضای لیست با ایندکس شماره‌گذاری می‌شوند، از <strong>صفر</strong>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>indexing_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز", "پرتقال", "انگور"]
+#            0      1      2        3
+
+print(fruits[0])    # سیب
+print(fruits[1])    # موز
+print(fruits[-1])   # انگور (آخرین عضو)
+print(fruits[-2])   # پرتقال</code></pre>
+        </div>
+        <p><strong>Slicing</strong> هم مثل رشته‌ها کار می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>slicing_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">numbers = [10, 20, 30, 40, 50, 60]
+
+print(numbers[1:4])    # [20, 30, 40]
+print(numbers[:3])     # [10, 20, 30]
+print(numbers[3:])     # [40, 50, 60]
+print(numbers[::-1])   # [60, 50, 40, 30, 20, 10]
+print(numbers[::2])    # [10, 30, 50]</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته مهم</b>
+          Slicing یک <strong>لیست جدید</strong> می‌سازد — لیست اصلی دست‌نخورده می‌ماند. این خیلی مهم است و بعداً برای کپی کردن لیست‌ها ازش استفاده می‌کنیم.
+        </div>
+
+        <h3>۳) تغییر دادن لیست — تغییرپذیری</h3>
+        <p>برخلاف رشته‌ها که تغییرناپذیر بودند، لیست‌ها <strong>تغییرپذیر</strong> هستند. یعنی می‌توانید یک عضو خاص را مستقیماً عوض کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>mutable.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز", "پرتقال"]
+
+# تغییر یک عضو
+fruits[1] = "گیلاس"
+print(fruits)   # ['سیب', 'گیلاس', 'پرتقال']
+
+# تغییر یک محدوده
+fruits[0:2] = ["هلو", "انگور"]
+print(fruits)   # ['هلو', 'انگور', 'پرتقال']</code></pre>
+        </div>
+        <p>دقت کنید که <code class="inline-code">fruits[1] = "گیلاس"</code> یعنی «عضو ایندکس ۱ را با گیلاس عوض کن». این کاری است که در متن نمی‌توانستیم بکنیم.</p>
+
+        <h3>۴) متدهای مهم لیست</h3>
+        <p>لیست‌ها ده‌ها متد دارند. اینجا پرکاربردترین‌ها را یاد می‌گیرید:</p>
+
+        <h4>الف) اضافه کردن عضو — append و insert</h4>
+        <div class="code-box">
+          <div class="code-head"><span>append_insert.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز"]
+
+# append — اضافه به آخر
+fruits.append("پرتقال")
+print(fruits)   # ['سیب', 'موز', 'پرتقال']
+
+# insert — اضافه در موقعیت مشخص
+fruits.insert(1, "گیلاس")
+print(fruits)   # ['سیب', 'گیلاس', 'موز', 'پرتقال']</code></pre>
+        </div>
+
+        <h4>ب) ترکیب دو لیست — extend</h4>
+        <div class="code-box">
+          <div class="code-head"><span>extend.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">a = [1, 2, 3]
+b = [4, 5, 6]
+
+a.extend(b)
+print(a)   # [1, 2, 3, 4, 5, 6]</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دقت کنید</b>
+          <code class="inline-code">extend</code> محتوای لیست دوم را به اولی اضافه می‌کند. اگر از <code class="inline-code">append</code> استفاده کنید، لیست دوم <strong>به‌عنوان یک عضو واحد</strong> به اولی چسبانده می‌شود: <code class="inline-code">a.append(b)</code> نتیجه‌اش می‌شود <code class="inline-code">[1, 2, 3, [4, 5, 6]]</code> — نه <code class="inline-code">[1, 2, 3, 4, 5, 6]</code>.
+        </div>
+
+        <h4>ج) حذف عضو — remove، pop، del</h4>
+        <div class="code-box">
+          <div class="code-head"><span>remove_pop.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز", "پرتقال", "انگور"]
+
+# remove — حذف بر اساس مقدار
+fruits.remove("موز")
+print(fruits)   # ['سیب', 'پرتقال', 'انگور']
+
+# pop — حذف بر اساس ایندکس و برگرداندن مقدار
+last = fruits.pop()
+print(last)     # انگور
+print(fruits)   # ['سیب', 'پرتقال']
+
+# pop با ایندکس خاص
+first = fruits.pop(0)
+print(first)    # سیب
+print(fruits)   # ['پرتقال']
+
+# del — حذف بر اساس ایندکس
+numbers = [10, 20, 30, 40]
+del numbers[1]
+print(numbers)   # [10, 30, 40]</code></pre>
+        </div>
+        <p>تفاوت <code class="inline-code">remove</code> و <code class="inline-code">pop</code>:</p>
+        <ul>
+          <li><code class="inline-code">remove</code>: بر اساس <strong>مقدار</strong> حذف می‌کند، چیزی برنمی‌گرداند.</li>
+          <li><code class="inline-code">pop</code>: بر اساس <strong>ایندکس</strong> حذف می‌کند، مقدار حذف‌شده را <strong>برمی‌گرداند</strong>.</li>
+        </ul>
+
+        <h4>د) مرتب‌سازی و معکوس کردن — sort و reverse</h4>
+        <div class="code-box">
+          <div class="code-head"><span>sort_reverse.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+
+# sort — مرتب‌سازی صعودی
+numbers.sort()
+print(numbers)   # [1, 1, 2, 3, 4, 5, 6, 9]
+
+# معکوس کردن ترتیب
+numbers.reverse()
+print(numbers)   # [9, 6, 5, 4, 3, 2, 1, 1]
+
+# ترکیب هر دو برای نزولی
+numbers.sort(reverse=True)
+print(numbers)   # [9, 6, 5, 4, 3, 2, 1, 1]
+
+# متن‌ها هم مرتب می‌شوند
+names = ["سارا", "علی", "رضا", "مریم"]
+names.sort()
+print(names)</code></pre>
+        </div>
+
+        <h4>ه) شمارش و جست‌وجو — count و index</h4>
+        <div class="code-box">
+          <div class="code-head"><span>count_index.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">numbers = [10, 20, 30, 20, 40, 20]
+
+# count — چند بار یک مقدار تکرار شده
+print(numbers.count(20))    # 3
+
+# index — ایندکس اولین جایی که پیدا می‌شود
+print(numbers.index(30))    # 2
+
+# بررسی وجود
+print(40 in numbers)        # True
+print(100 in numbers)       # False</code></pre>
+        </div>
+
+        <h4>و) طول لیست — len</h4>
+        <div class="code-box">
+          <div class="code-head"><span>length_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز", "پرتقال"]
+print(len(fruits))   # 3
+
+empty = []
+print(len(empty))    # 0</code></pre>
+        </div>
+
+        <h3>۵) حلقه روی لیست — پیمایش اعضا</h3>
+        <p>پرکاربردترین کار با لیست، پیمایش اعضای آن با حلقه است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>loop_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = ["سیب", "موز", "پرتقال"]
+
+# پیمایش ساده
+for fruit in fruits:
+    print(fruit)
+
+# با ایندکس (اگر لازم باشد موقعیت هم بدانیم)
+for i in range(len(fruits)):
+    print(f"{i}: {fruits[i]}")
+
+# با enumerate — بهترین راه وقتی ایندکس لازم است
+for i, fruit in enumerate(fruits):
+    print(f"{i}: {fruit}")</code></pre>
+        </div>
+        <p>خروجی هر دو روش آخر یکی است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">0: سیب
+1: موز
+2: پرتقال</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          وقتی فقط مقادیر را لازم دارید، از <code class="inline-code">for fruit in fruits:</code> استفاده کنید. اگر ایندکس هم لازم است، از <code class="inline-code">enumerate()</code> استفاده کنید — نیازی نیست با <code class="inline-code">range(len())</code> دست و پنجه نرم کنید.
+        </div>
+
+        <h3>۶) جمع، مینیمم و ماکسیمم</h3>
+        <p>پایتون چند تابع آماده برای عملیات روی لیست‌های عددی دارد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>stats.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">scores = [18, 15, 20, 17, 19, 12]
+
+print(sum(scores))     # 101 (جمع کل)
+print(max(scores))     # 20 (بزرگ‌ترین)
+print(min(scores))     # 12 (کوچک‌ترین)
+
+# میانگین = جمع / تعداد
+average = sum(scores) / len(scores)
+print(f"میانگین: {average:.2f}")   # میانگین: 16.83</code></pre>
+        </div>
+
+        <h3>۷) دام بزرگ — کپی لیست</h3>
+        <p>حالا وقت مهم‌ترین نکته‌ی این فصل است. به این کد دقت کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>copy_trap.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">a = [1, 2, 3]
+b = a            # ← این کپی نیست!
+b.append(4)
+
+print(a)         # [1, 2, 3, 4]  ← a هم عوض شد!
+print(b)         # [1, 2, 3, 4]</code></pre>
+        </div>
+        <p>وقتی می‌نویسید <code class="inline-code">b = a</code>، پایتون یک لیست جدید نمی‌سازد. بلکه به متغیر <code class="inline-code">b</code> می‌گوید: «تو هم به همان لیستی که a اشاره می‌کند، اشاره کن». نتیجه این می‌شود که a و b <strong>هر دو به یک لیست در حافظه اشاره می‌کنند</strong>. تغییر یکی، تغییر دیگر است.</p>
+        <p><strong>راه‌حل:</strong> برای یک کپی مستقل، یکی از این روش‌ها را استفاده کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>proper_copy.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">a = [1, 2, 3]
+
+# روش 1: با copy() — بهترین و خواناترین
+b = a.copy()
+
+# روش 2: با Slicing
+c = a[:]
+
+# روش 3: با list()
+d = list(a)
+
+# حالا تغییر b روی a اثری ندارد
+b.append(4)
+print(a)   # [1, 2, 3]  ← دست‌نخورده!
+print(b)   # [1, 2, 3, 4]</code></pre>
+        </div>
+        <div class="callout danger">
+          <b class="title">⚠️ هشدار مهم</b>
+          این دام، در ۹۰٪ موارد علت باگ‌های عجیبی است که تازه‌کارها با آن دست به گریبانند. همیشه وقتی می‌خواهید از یک لیست کپی بگیرید، از <code class="inline-code">.copy()</code> یا <code class="inline-code">[:]</code> استفاده کنید. هرگز <code class="inline-code">b = a</code> ننویسید مگر اینکه واقعاً بخواهید به همان لیست اشاره کنید.
+        </div>
+
+        <h3>۸) تاپل — برادر تغییرناپذیر لیست</h3>
+        <p><strong>تاپل</strong> خیلی شبیه لیست است، اما با یک تفاوت مهم: بعد از ساخت، <strong>نمی‌توانید تغییرش دهید</strong>. برای ساخت، از پرانتز <code class="inline-code">( )</code> استفاده می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>tuples.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">point = (3, 4)
+colors = ("قرمز", "سبز", "آبی")
+mixed = ("علی", 25, True)
+empty = ()
+
+print(point)      # (3, 4)
+print(colors)     # ('قرمز', 'سبز', 'آبی')
+print(len(colors))  # 3</code></pre>
+        </div>
+
+        <h4>دسترسی به اعضای تاپل</h4>
+        <p>مثل لیست و رشته، با ایندکس و Slicing:</p>
+        <div class="code-box">
+          <div class="code-head"><span>tuple_access.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">point = (3, 4, 5)
+
+print(point[0])      # 3
+print(point[-1])     # 5
+print(point[0:2])    # (3, 4)</code></pre>
+        </div>
+
+        <h4>تاپل تغییرناپذیر است</h4>
+        <div class="code-box">
+          <div class="code-head"><span>tuple_immutable.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">point = (3, 4)
+
+# این خطا می‌دهد:
+# point[0] = 10   ← TypeError: 'tuple' object does not support item assignment
+
+# حتی append، remove، pop هم ندارند</code></pre>
+        </div>
+
+        <h4>تاپل تک‌عضوی — دام رایج!</h4>
+        <div class="code-box">
+          <div class="code-head"><span>single_tuple.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># ❌ این تاپل نیست، یک عدد داخل پرانتز است
+not_a_tuple = (5)
+print(type(not_a_tuple))   # &lt;class 'int'&gt;
+
+# ✅ تاپل تک‌عضوی باید کاما داشته باشد
+real_tuple = (5,)
+print(type(real_tuple))    # &lt;class 'tuple'&gt;</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دام مهم</b>
+          برای ساختن تاپل با یک عضو، <strong>حتماً کاما</strong> بگذارید. <code class="inline-code">(5)</code> یک عدد است، نه یک تاپل. <code class="inline-code">(5,)</code> یک تاپل تک‌عضوی است.
+        </div>
+
+        <h3>۹) Unpacking — بازکردن تاپل و لیست</h3>
+        <p>یکی از زیباترین ویژگی‌های پایتون: می‌توانید اعضای یک تاپل (یا لیست) را در چند متغیر جداگانه <strong>باز کنید</strong>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>unpacking.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">point = (3, 4)
+x, y = point
+print(x)   # 3
+print(y)   # 4
+
+# با لیست هم کار می‌کند
+colors = ["قرمز", "سبز", "آبی"]
+r, g, b = colors
+print(r, g, b)   # قرمز سبز آبی
+
+# تعویض دو متغیر با unpacking
+a = 10
+b = 20
+a, b = b, a
+print(a, b)   # 20 10</code></pre>
+        </div>
+        <p>آن خط <code class="inline-code">a, b = b, a</code> که دو متغیر را با هم تعویض می‌کند، یکی از ترفندهای کلاسیک پایتون است. در زبان‌های دیگر باید از یک متغیر کمکی استفاده می‌کردید، اما در پایتون فقط یک خط.</p>
+
+        <h4>Unpacking با ستاره — گرفتن باقی اعضا</h4>
+        <div class="code-box">
+          <div class="code-head"><span>star_unpacking.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">numbers = [1, 2, 3, 4, 5]
+
+# اولی، آخری، و بقیه
+first, *middle, last = numbers
+print(first)    # 1
+print(middle)   # [2, 3, 4]
+print(last)     # 5
+
+# اولی و بقیه
+head, *tail = numbers
+print(head)     # 1
+print(tail)     # [2, 3, 4, 5]</code></pre>
+        </div>
+        <p>ستاره (<code class="inline-code">*</code>) می‌گوید «بقیه‌ی اعضا را در یک لیست بریز». این الگو در کارهای واقعی خیلی به‌کار می‌آید.</p>
+
+        <h3>۱۰) کدام را استفاده کنیم — لیست یا تاپل؟</h3>
+        <p>قاعده‌ی ساده:</p>
+        <ul>
+          <li>اگر داده‌ها بعداً تغییر می‌کنند (مثل لیست خرید، نمرات)، از <strong>لیست</strong> استفاده کنید.</li>
+          <li>اگر داده‌ها ثابت‌اند و نباید تغییر کنند (مثل مختصات یک نقطه، روزهای هفته، مشخصات یک کارمند)، از <strong>تاپل</strong> استفاده کنید.</li>
+          <li>اگر نمی‌دانید کدام را استفاده کنید، لیست پیش‌فرض است — چون انعطاف‌پذیرتر است.</li>
+        </ul>
+
+        <h3>۱۱) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>بیایید یک برنامه‌ی «دفترچه نمرات» با توابع و لیست‌ها بسازیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>grade_book.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""دفترچه نمرات — با لیست‌ها و توابع."""
+
+
+def get_scores():
+    """چند نمره از کاربر می‌گیرد و لیست برمی‌گرداند."""
+    scores = []
+    while True:
+        text = input("نمره (یا 'تمام' برای پایان): ").strip()
+        if text == "تمام":
+            break
+        try:
+            scores.append(float(text))
+        except ValueError:
+            print("⚠️ لطفاً یک عدد معتبر وارد کنید.")
+    return scores
+
+
+def show_report(scores):
+    """گزارش نمرات را چاپ می‌کند."""
+    if not scores:
+        print("⚠️ هیچ نمره‌ای وارد نشده.")
+        return
+
+    print()
+    print("-" * 40)
+    print(f"  تعداد نمرات: {len(scores)}")
+    print(f"  میانگین    : {sum(scores) / len(scores):.2f}")
+    print(f"  بیشترین    : {max(scores):.2f}")
+    print(f"  کمترین     : {min(scores):.2f}")
+    print("-" * 40)
+
+    # لیست نمرات بالای میانگین
+    average = sum(scores) / len(scores)
+    above = [s for s in scores if s > average]
+    print(f"  بالای میانگین: {above}")
+    print("-" * 40)
+
+
+def main():
+    print("=" * 40)
+    print("       دفترچه نمرات")
+    print("=" * 40)
+
+    scores = get_scores()
+    show_report(scores)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+       دفترچه نمرات
+========================================
+نمره (یا 'تمام' برای پایان): 18
+نمره (یا 'تمام' برای پایان): 15
+نمره (یا 'تمام' برای پایان): 20
+نمره (یا 'تمام' برای پایان): 12
+نمره (یا 'تمام' برای پایان): تمام
+
+----------------------------------------
+  تعداد نمرات: 4
+  میانگین    : 16.25
+  بیشترین    : 20.00
+  کمترین     : 12.00
+----------------------------------------
+  بالای میانگین: [18.0, 20.0]
+----------------------------------------</code></pre>
+        </div>
+        <p>در این برنامه چند چیز را با هم ترکیب کردیم:</p>
+        <ul>
+          <li>ساخت لیست خالی و اضافه کردن با <code class="inline-code">append</code>.</li>
+          <li>حلقه‌ی <code class="inline-code">while</code> با <code class="inline-code">break</code>.</li>
+          <li><code class="inline-code">try/except</code> برای مدیریت ورودی نامعتبر.</li>
+          <li>توابع <code class="inline-code">sum</code>، <code class="inline-code">max</code>، <code class="inline-code">min</code> و <code class="inline-code">len</code>.</li>
+          <li>ساخت لیست جدید با یک خط (این روش <strong>list comprehension</strong> نام دارد و در فصل ۱۱ کامل یاد می‌گیرید — فعلاً فقط ببینید).</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی «مدیر لیست خرید» که همه‌ی متدهای مهم لیست را در خود دارد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>shopping_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""مدیر لیست خرید — تمرین متدهای لیست."""
+
+
+def show_menu():
+    """منوی برنامه را نمایش می‌دهد."""
+    print("\n" + "=" * 40)
+    print("       لیست خرید")
+    print("=" * 40)
+    print("  1. نمایش لیست")
+    print("  2. اضافه کردن آیتم")
+    print("  3. حذف آیتم")
+    print("  4. جست‌وجو")
+    print("  5. مرتب‌سازی")
+    print("  6. پاک کردن همه")
+    print("  7. خروج")
+    print("-" * 40)
+
+
+def show_items(items):
+    """آیتم‌های لیست را شماره‌دار چاپ می‌کند."""
+    if not items:
+        print("\n📭 لیست خالی است.")
+        return
+
+    print(f"\n📋 شما {len(items)} آیتم دارید:")
+    for i, item in enumerate(items, start=1):
+        print(f"  {i}. {item}")
+
+
+def add_item(items):
+    """یک آیتم جدید به لیست اضافه می‌کند."""
+    item = input("نام آیتم: ").strip()
+    if not item:
+        print("⚠️ آیتم نمی‌تواند خالی باشد.")
+        return
+    if item in items:
+        print(f"⚠️ «{item}» قبلاً در لیست است.")
+        return
+    items.append(item)
+    print(f"✅ «{item}» اضافه شد.")
+
+
+def remove_item(items):
+    """یک آیتم را از لیست حذف می‌کند."""
+    if not items:
+        print("📭 لیست خالی است.")
+        return
+
+    show_items(items)
+    try:
+        index = int(input("\nشماره آیتم برای حذف: ")) - 1
+        if 0 <= index < len(items):
+            removed = items.pop(index)
+            print(f"🗑 «{removed}» حذف شد.")
+        else:
+            print("⚠️ شماره نامعتبر.")
+    except ValueError:
+        print("⚠️ لطفاً یک عدد وارد کنید.")
+
+
+def search_items(items):
+    """جست‌وجو در لیست انجام می‌دهد."""
+    if not items:
+        print("📭 لیست خالی است.")
+        return
+
+    query = input("دنبال چه می‌گردید؟ ").strip().lower()
+    found = [item for item in items if query in item.lower()]
+
+    if found:
+        print(f"\n🔍 {len(found)} نتیجه یافت شد:")
+        for item in found:
+            print(f"  • {item}")
+    else:
+        print("❌ چیزی پیدا نشد.")
+
+
+def sort_items(items):
+    """لیست را مرتب می‌کند."""
+    if not items:
+        print("📭 لیست خالی است.")
+        return
+
+    items.sort()
+    print("✅ لیست مرتب شد.")
+
+
+def clear_items(items):
+    """همه‌ی آیتم‌ها را حذف می‌کند."""
+    confirm = input("مطمئنید همه پاک شوند؟ (بله/خیر): ").strip()
+    if confirm == "بله":
+        items.clear()
+        print("🗑 همه آیتم‌ها پاک شدند.")
+    else:
+        print("لغو شد.")
+
+
+def main():
+    items = []
+
+    while True:
+        show_menu()
+        choice = input("انتخاب شما: ").strip()
+
+        if choice == "1":
+            show_items(items)
+        elif choice == "2":
+            add_item(items)
+        elif choice == "3":
+            remove_item(items)
+        elif choice == "4":
+            search_items(items)
+        elif choice == "5":
+            sort_items(items)
+        elif choice == "6":
+            clear_items(items)
+        elif choice == "7":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این برنامه را با داده‌های واقعی تست کنید. مثلاً «شیر»، «نان»، «پنیر» را اضافه کنید، جست‌وجو کنید «ش»، مرتب کنید و ببینید چطور همه چیز کنار هم کار می‌کند. این خودش یک برنامه‌ی واقعی است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «دفترچه نمرات کلاس» بسازید که نمرات چند دانشجو را نگه دارد و تحلیل کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">class_grades.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک لیست از تاپل‌ها بسازید که هر تاپل شامل (نام دانشجو، نمره) باشد. مثال: <code class="inline-code">[("علی", 18), ("رضا", 15), ("سارا", 20)]</code>.</li>
+          <li>تابعی به نام <code class="inline-code">find_top_student(students)</code> بسازید که دانشجوی با بالاترین نمره را برگرداند (یک تاپل).</li>
+          <li>تابعی به نام <code class="inline-code">find_lowest(students)</code> بسازید که پایین‌ترین نمره را برگرداند.</li>
+          <li>تابعی به نام <code class="inline-code">calculate_average(students)</code> بسازید که میانگین نمرات را حساب کند.</li>
+          <li>تابعی به نام <code class="inline-code">filter_passed(students)</code> بسازید که فقط دانشجوهای با نمره‌ی ۱۰ یا بالاتر را در یک لیست جدید برگرداند.</li>
+          <li>تابعی به نام <code class="inline-code">show_report(students)</code> بسازید که همه‌ی اطلاعات بالا را در قالب یک گزارش زیبا چاپ کند. برای پیمایش از unpacking استفاده کنید: <code class="inline-code">for name, score in students:</code>.</li>
+          <li>حلقه‌ی <code class="inline-code">main()</code> بسازید که از کاربر بخواهد نام و نمره‌ی چند دانشجو را وارد کند، تا وقتی «تمام» بزند.</li>
+          <li>پس از پایان ورودی، گزارش را چاپ کند.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>class_grades.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""دفترچه نمرات کلاس — با لیست از تاپل‌ها."""
+
+
+def get_students():
+    """اطلاعات دانشجوها را از کاربر می‌گیرد."""
+    students = []
+    while True:
+        name = input("نام دانشجو (یا 'تمام'): ").strip()
+        if name == "تمام":
+            break
+        if not name:
+            print("⚠️ نام نمی‌تواند خالی باشد.")
+            continue
+        try:
+            score = float(input(f"  نمره {name}: "))
+            students.append((name, score))
+        except ValueError:
+            print("⚠️ نمره باید عدد باشد.")
+    return students
+
+
+def find_top_student(students):
+    """دانشجوی با بالاترین نمره را برمی‌گرداند."""
+    if not students:
+        return None
+    return max(students, key=lambda s: s[1])
+
+
+def find_lowest(students):
+    """دانشجوی با پایین‌ترین نمره را برمی‌گرداند."""
+    if not students:
+        return None
+    return min(students, key=lambda s: s[1])
+
+
+def calculate_average(students):
+    """میانگین نمرات را حساب می‌کند."""
+    if not students:
+        return 0
+    total = sum(score for _, score in students)
+    return total / len(students)
+
+
+def filter_passed(students):
+    """فقط دانشجوهای قبول‌شده (نمره >= 10) را برمی‌گرداند."""
+    return [(name, score) for name, score in students if score >= 10]
+
+
+def show_report(students):
+    """گزارش کامل را چاپ می‌کند."""
+    if not students:
+        print("\n⚠️ هیچ دانشجویی وارد نشده.")
+        return
+
+    print()
+    print("=" * 45)
+    print("           گزارش نمرات کلاس")
+    print("=" * 45)
+
+    print(f"\n  تعداد دانشجوها: {len(students)}")
+    print(f"  میانگین کلاس  : {calculate_average(students):.2f}")
+
+    top = find_top_student(students)
+    print(f"  🏆 بهترین    : {top[0]} ({top[1]})")
+
+    low = find_lowest(students)
+    print(f"  📉 ضعیف‌ترین  : {low[0]} ({low[1]})")
+
+    passed = filter_passed(students)
+    print(f"\n  ✅ قبول‌شدگان: {len(passed)} از {len(students)}")
+    for name, score in passed:
+        print(f"      • {name}: {score}")
+
+    failed = [(name, s) for name, s in students if s < 10]
+    if failed:
+        print(f"\n  ❌ مردودها ({len(failed)}):")
+        for name, score in failed:
+            print(f"      • {name}: {score}")
+
+    print("=" * 45)
+
+
+def main():
+    print("=" * 45)
+    print("     ثبت نمرات کلاس")
+    print("=" * 45)
+
+    students = get_students()
+    show_report(students)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+     ثبت نمرات کلاس
+=============================================
+نام دانشجو (یا 'تمام'): علی
+  نمره علی: 18
+نام دانشجو (یا 'تمام'): رضا
+  نمره رضا: 8
+نام دانشجو (یا 'تمام'): سارا
+  نمره سارا: 20
+نام دانشجو (یا 'تمام'): مریم
+  نمره مریم: 15
+نام دانشجو (یا 'تمام'): تمام
+
+=============================================
+           گزارش نمرات کلاس
+=============================================
+
+  تعداد دانشجوها: 4
+  میانگین کلاس  : 15.25
+  🏆 بهترین    : سارا (20.0)
+  📉 ضعیف‌ترین  : رضا (8.0)
+
+  ✅ قبول‌شدگان: 3 از 4
+      • علی: 18.0
+      • سارا: 20.0
+      • مریم: 15.0
+
+  ❌ مردودها (1):
+      • رضا: 8.0
+=============================================</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی این راه‌حل</summary>
+          <div class="answer-body">
+            <p>چند نکته‌ی مهم:</p>
+            <ol>
+              <li><strong>ساختار لیست از تاپل‌ها:</strong> <code class="inline-code">students = [("علی", 18), ("رضا", 15)]</code>. این الگو خیلی رایج است — وقتی می‌خواهید اطلاعات چند شیء را در یک لیست نگه دارید.</li>
+              <li><strong>Unpacking در حلقه:</strong> <code class="inline-code">for name, score in students:</code> — این‌طوری مستقیم اعضای تاپل را در دو متغیر می‌گیرید. خیلی خواناتر از <code class="inline-code">students[i][0]</code>.</li>
+              <li><strong>استفاده از max/min با key:</strong> <code class="inline-code">max(students, key=lambda s: s[1])</code> یعنی «بیشترین بر اساس عضو دوم». (lambda در فصل ۱۱ توضیح داده می‌شود — فعلاً فقط بدانید که این ترفند وجود دارد.)</li>
+              <li><strong>ساخت لیست فیلترشده:</strong> <code class="inline-code">[(name, s) for name, s in students if s >= 10]</code> — این list comprehension است و در فصل ۱۱ کامل یاد می‌گیرید.</li>
+              <li><strong>جداسازی مسئولیت‌ها:</strong> هر تابع یک کار مشخص می‌کند. <code class="inline-code">show_report</code> فقط چاپ می‌کند و از توابع دیگر برای محاسبه استفاده می‌کند.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">class_grades.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌دانید چرا <code class="inline-code">students.append(("علی", 18))</code> یک تاپل به لیست اضافه می‌کند.</li>
+              <li>با unpacking در حلقه راحت هستید.</li>
+              <li>می‌دانید تفاوت لیست و تاپل چیست و کِی از هر کدام استفاده کنید.</li>
+              <li>دام کپی لیست (<code class="inline-code">b = a</code>) را می‌شناسید و می‌دانید چطور از آن فرار کنید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ IndexError: list index out of range</b>
+          <p><strong>معنی:</strong> ایندکسی که استفاده کردید، در لیست وجود ندارد.</p>
+          <p><strong>علت:</strong> مثلاً روی لیستی با ۳ عضو (ایندکس ۰ تا ۲)، بنویسید <code class="inline-code">my_list[5]</code>.</p>
+          <p><strong>راه‌حل:</strong> قبل از دسترسی، با <code class="inline-code">len(my_list)</code> طول را چک کنید. اگر لازم است، با شرط بررسی کنید: <code class="inline-code">if i &lt; len(my_list):</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ ValueError: list.remove(x): x not in list</b>
+          <p><strong>معنی:</strong> می‌خواهید چیزی را حذف کنید که در لیست نیست.</p>
+          <p><strong>علت:</strong> <code class="inline-code">my_list.remove("موز")</code> در حالی که «موز» در لیست نیست.</p>
+          <p><strong>راه‌حل:</strong> قبل از remove بررسی کنید: <code class="inline-code">if "موز" in my_list: my_list.remove("موز")</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: 'tuple' object does not support item assignment</b>
+          <p><strong>معنی:</strong> می‌خواهید یک تاپل را تغییر دهید — که مجاز نیست.</p>
+          <p><strong>علت:</strong> <code class="inline-code">my_tuple[0] = 10</code>.</p>
+          <p><strong>راه‌حل:</strong> اگر به تغییر نیاز دارید، از <strong>لیست</strong> استفاده کنید نه تاپل. یا یک تاپل جدید بسازید: <code class="inline-code">my_tuple = (10,) + my_tuple[1:]</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ AttributeError: 'tuple' object has no attribute 'append'</b>
+          <p><strong>معنی:</strong> تاپل متدهای لیست را ندارد.</p>
+          <p><strong>علت:</strong> تاپل تغییرناپذیر است، پس <code class="inline-code">append</code>، <code class="inline-code">remove</code>، <code class="inline-code">pop</code> و... ندارد.</p>
+          <p><strong>راه‌حل:</strong> اگر به این متدها نیاز دارید، از لیست استفاده کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ دام کپی — تغییر در یک لیست، در لیست دیگر اثر می‌گذارد</b>
+          <p><strong>معنی:</strong> یک لیست را با <code class="inline-code">b = a</code> کپی کرده‌اید، پس هر دو به یک لیست اشاره می‌کنند.</p>
+          <p><strong>علت:</strong> در پایتون، انتساب یک لیست به متغیر دیگر، فقط یک <strong>ارجاع</strong> می‌سازد، نه کپی.</p>
+          <p><strong>راه‌حل:</strong> برای کپی واقعی از <code class="inline-code">a.copy()</code> یا <code class="inline-code">a[:]</code> یا <code class="inline-code">list(a)</code> استفاده کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموشی کاما در تاپل تک‌عضوی</b>
+          <p><strong>معنی:</strong> به‌جای تاپل، یک عدد یا متن ساختید.</p>
+          <p><strong>علت:</strong> <code class="inline-code">x = (5)</code> یک عدد است، نه تاپل.</p>
+          <p><strong>راه‌حل:</strong> تاپل تک‌عضوی باید کاما داشته باشد: <code class="inline-code">x = (5,)</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ تغییر لیست هنگام پیمایش</b>
+          <p><strong>معنی:</strong> در حالی که روی لیستی حلقه می‌زنید، آن را تغییر می‌دهید.</p>
+          <p><strong>علت:</strong> مثلاً <code class="inline-code">for x in my_list: my_list.remove(x)</code> — پایتون گیج می‌شود.</p>
+          <p><strong>راه‌حل:</strong> یک کپی از لیست بگیرید و روی کپی حلقه بزنید: <code class="inline-code">for x in my_list.copy(): my_list.remove(x)</code>. یا از list comprehension استفاده کنید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+nums = [10, 20, 30, 40, 50]
+print(nums[0])
+print(nums[-1])
+print(nums[1:4])
+
+# مورد 2
+nums = [1, 2, 3]
+nums.append(4)
+nums.insert(0, 0)
+print(nums)
+
+# مورد 3
+a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)
+print(b)
+
+# مورد 4
+a = [1, 2, 3]
+b = a.copy()
+b.append(4)
+print(a)
+print(b)
+
+# مورد 5
+point = (3, 4)
+x, y = point
+print(x + y)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> 10، 50، [20, 30, 40]</li>
+              <li><strong>مورد ۲:</strong> [0, 1, 2, 3, 4]</li>
+              <li><strong>مورد ۳:</strong> هر دو [1, 2, 3, 4] — چون هر دو به یک لیست اشاره می‌کنند. این همان دام است.</li>
+              <li><strong>مورد ۴:</strong> a می‌ماند [1, 2, 3]، b می‌شود [1, 2, 3, 4] — چون copy یک لیست مستقل ساخت.</li>
+              <li><strong>مورد ۵:</strong> 7 — چون unpacking تاپل را در x و y باز کرد و بعد جمعش را چاپ کردیم.</li>
+            </ul>
+            <p><strong>درس مهم:</strong> مورد ۳ و ۴ تفاوت کپی و انتساب را نشان می‌دهند. این یکی از مهم‌ترین مفاهیم پایتون است.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — آمار نمرات</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که نمرات یک کلاس را در یک لیست ذخیره کند و آمار بدهد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>scores_stats.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">scores = [18, 15.5, 20, 12, 17, 19.5, 8, 14]
+
+# آمار پایه
+print(f"تعداد: {len(scores)}")
+print(f"میانگین: {sum(scores) / len(scores):.2f}")
+print(f"بیشترین: {max(scores)}")
+print(f"کمترین: {min(scores)}")
+
+# مرتب‌سازی
+sorted_scores = sorted(scores)   # این یک لیست جدید می‌سازد
+print(f"مرتب‌شده: {sorted_scores}")
+
+# قبول‌شدگان (نمره >= 10)
+passed = [s for s in scores if s >= 10]
+print(f"قبول‌شدگان: {len(passed)} نفر")
+print(f"نمرات قبولی: {passed}")
+
+# دانشجو با بالاترین نمره
+top = max(scores)
+top_count = scores.count(top)
+print(f"بالاترین نمره ({top}) را {top_count} نفر گرفته‌اند.")</code></pre>
+            </div>
+            <p><strong>نکته:</strong> در این راه‌حل از دو تابع مشابه استفاده شد: <code class="inline-code">sorted()</code> و <code class="inline-code">.sort()</code>. تفاوتشان:</p>
+            <ul>
+              <li><code class="inline-code">sorted(scores)</code>: یک <strong>لیست جدید</strong> برمی‌گرداند، لیست اصلی دست‌نخورده.</li>
+              <li><code class="inline-code">scores.sort()</code>: لیست اصلی را <strong>در جا</strong> مرتب می‌کند، چیزی برنمی‌گرداند.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1
+nums = [1, 2, 3]
+print(nums[3])
+
+# خطا 2
+colors = ("قرمز", "سبز")
+colors.append("آبی")
+
+# خطا 3
+a = [1, 2, 3]
+b = a
+b.append(4)
+print("a:", a, "باید دست‌نخورده باشد!")
+
+# خطا 4
+empty_list = []
+print(empty_list[0])</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">IndexError</code>. لیست ۳ عضو دارد (ایندکس ۰ تا ۲)، اما شما [3] را صدا زدید. راه‌حل: <code class="inline-code">nums[2]</code> یا <code class="inline-code">nums[-1]</code>.</li>
+              <li><strong>خطا ۲:</strong> <code class="inline-code">AttributeError</code>. تاپل <code class="inline-code">append</code> ندارد. راه‌حل: از لیست استفاده کنید یا یک تاپل جدید بسازید.</li>
+              <li><strong>خطا ۳:</strong> باگ منطقی. <code class="inline-code">b = a</code> یک کپی نیست. هر دو به یک لیست اشاره می‌کنند. راه‌حل: <code class="inline-code">b = a.copy()</code>.</li>
+              <li><strong>خطا ۴:</strong> <code class="inline-code">IndexError</code>. لیست خالی هیچ عضوی ندارد، پس [0] وجود ندارد. راه‌حل: قبل از دسترسی، طول را چک کنید.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># اصلاح 1
+nums = [1, 2, 3]
+print(nums[2])           # 3
+
+# اصلاح 2
+colors = ["قرمز", "سبز"]
+colors.append("آبی")
+print(colors)
+
+# اصلاح 3
+a = [1, 2, 3]
+b = a.copy()
+b.append(4)
+print("a:", a)   # [1, 2, 3]
+print("b:", b)   # [1, 2, 3, 4]
+
+# اصلاح 4
+empty_list = []
+if empty_list:
+    print(empty_list[0])
+else:
+    print("لیست خالی است.")</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-09" data-title="آزمون فصل ۹ — لیست و تاپل" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) خروجی <code dir="ltr">[10, 20, 30, 40][1:3]</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">[10, 20]</button>
+              <button type="button" class="quiz-opt" data-key="b">[20, 30]</button>
+              <button type="button" class="quiz-opt" data-key="c">[20, 30, 40]</button>
+              <button type="button" class="quiz-opt" data-key="d">[10, 20, 30]</button>
+            </div>
+            <div class="quiz-explain">💡 Slicing از ایندکس start تا stop-1 می‌رود. ایندکس‌های ۱ و ۲ یعنی ۲۰ و ۳۰. عضو ایندکس ۳ (که ۴۰ است) شامل نمی‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) کدام متد به <strong>آخر</strong> لیست چیزی اضافه می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">insert</button>
+              <button type="button" class="quiz-opt" data-key="b">extend</button>
+              <button type="button" class="quiz-opt" data-key="c">append</button>
+              <button type="button" class="quiz-opt" data-key="d">add</button>
+            </div>
+            <div class="quiz-explain">💡 <code>append</code> به آخر لیست اضافه می‌کند. <code>insert</code> در موقعیت مشخص، و <code>extend</code> محتوای یک لیست دیگر را به آخر اضافه می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۳) تفاوت لیست و تاپل چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">تاپل فقط اعداد می‌پذیرد</button>
+              <button type="button" class="quiz-opt" data-key="b">لیست تغییرپذیر است، تاپل تغییرناپذیر</button>
+              <button type="button" class="quiz-opt" data-key="c">لیست سریع‌تر است</button>
+              <button type="button" class="quiz-opt" data-key="d">تاپل با [ ] ساخته می‌شود</button>
+            </div>
+            <div class="quiz-explain">💡 تفاوت اصلی: لیست را می‌توان تغییر داد (اضافه، حذف، جایگزینی)، اما تاپل بعد از ساخت، ثابت می‌ماند. لیست با <code>[ ]</code> و تاپل با <code>( )</code> ساخته می‌شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) خروجی این کد چیست؟<br><code dir="ltr">a = [1, 2]<br>b = a<br>b.append(3)<br>print(a)</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">[1, 2]</button>
+              <button type="button" class="quiz-opt" data-key="b">[3]</button>
+              <button type="button" class="quiz-opt" data-key="c">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="d">[1, 2, 3]</button>
+            </div>
+            <div class="quiz-explain">💡 <code>b = a</code> یک کپی نیست — فقط یک ارجاع دیگر به همان لیست است. پس تغییر در b، a را هم عوض می‌کند. برای کپی واقعی از <code>a.copy()</code> استفاده کنید.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۵) برای کپی مستقل از یک لیست، کدام روش درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">b = a</button>
+              <button type="button" class="quiz-opt" data-key="b">b = list[a]</button>
+              <button type="button" class="quiz-opt" data-key="c">b = a.copy()</button>
+              <button type="button" class="quiz-opt" data-key="d">b = copy(a)</button>
+            </div>
+            <div class="quiz-explain">💡 <code>a.copy()</code>، <code>a[:]</code> و <code>list(a)</code> هر سه یک کپی مستقل می‌سازند. ساده‌ترین و خواناترین، <code>.copy()</code> است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۶) خروجی این کد چیست؟<br><code dir="ltr">point = (3, 4)<br>x, y = point<br>print(x, y)</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">3, 4 (به‌عنوان تاپل)</button>
+              <button type="button" class="quiz-opt" data-key="b">3 4</button>
+              <button type="button" class="quiz-opt" data-key="c">(3, 4)</button>
+              <button type="button" class="quiz-opt" data-key="d">خطا می‌دهد</button>
+            </div>
+            <div class="quiz-explain">💡 unpacking تاپل، اعضا را در متغیرهای جداگانه می‌ریزد. <code>print(x, y)</code> دو مقدار را با فاصله چاپ می‌کند: <code>3 4</code>.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «دفترچه تلفن ساده»</strong> — یک برنامه‌ی تعاملی که اطلاعات تماس چند نفر را نگه دارد و امکان جست‌وجو و مدیریت بدهد.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">phonebook.py</code> ذخیره شود.</li>
+          <li>اطلاعات تماس هر شخص شامل سه فیلد: نام، شماره تلفن، شهر. این اطلاعات را در <strong>یک تاپل</strong> ذخیره کنید: <code class="inline-code">(name, phone, city)</code>.</li>
+          <li>همه‌ی مخاطبین را در یک <strong>لیست از تاپل‌ها</strong> نگه دارید.</li>
+          <li>تابع <code class="inline-code">add_contact(contacts)</code>: از کاربر اطلاعات می‌گیرد و به لیست اضافه می‌کند.</li>
+          <li>تابع <code class="inline-code">show_contacts(contacts)</code>: همه‌ی مخاطبین را نمایش می‌دهد.</li>
+          <li>تابع <code class="inline-code">search_contacts(contacts, query)</code>: با جست‌وجو در نام یا شهر، مخاطبین مطابق را برمی‌گرداند.</li>
+          <li>تابع <code class="inline-code">delete_contact(contacts, index)</code>: با شماره‌ی مخاطب، آن را حذف می‌کند.</li>
+          <li>تابع <code class="inline-code">sort_contacts(contacts)</code>: مخاطبین را بر اساس نام مرتب می‌کند (راهنما: از تاپل‌ها به لیست تبدیل کنید، sort کنید، دوباره به تاپل تبدیل کنید؛ یا از ترفند sorted با key استفاده کنید).</li>
+          <li>تابع <code class="inline-code">main()</code>: حلقه‌ی منوی تعاملی شامل همه‌ی این قابلیت‌ها.</li>
+          <li>در جست‌وجو، از <code class="inline-code">in</code> استفاده کنید تا بخشی از متن هم پیدا شود (جست‌وجوی جزئی).</li>
+          <li>هر تابع یک docstring داشته باشد.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+       دفترچه تلفن
+══════════════════════════════════════
+  1. افزودن مخاطب
+  2. نمایش همه
+  3. جست‌وجو
+  4. حذف
+  5. مرتب‌سازی
+  6. خروج
+──────────────────────────────────────
+
+انتخاب شما: 1
+نام: علی احمدی
+شماره: 09123456789
+شهر: تهران
+✅ مخاطب اضافه شد.
+
+انتخاب شما: 2
+📞 دفترچه تلفن (1 مخاطب):
+  1. علی احمدی — 09123456789 — تهران
+
+انتخاب شما: 3
+جست‌وجو: تهر
+🔍 1 نتیجه:
+  • علی احمدی — 09123456789 — تهران</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>قبل از افزودن، چک کنید شماره‌ی تکراری نباشد.</li>
+            <li>گزینه‌ی «ویرایش» اضافه کنید (با حذف و افزودن مجدد).</li>
+            <li>امکان ذخیره‌ی دفترچه در یک فایل (به فصل ۱۴ موکول می‌شود).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>لیست چیست و چطور با <code class="inline-code">[ ]</code> بسازید.</li>
+          <li>ایندکس و Slicing روی لیست‌ها (مثل رشته‌ها).</li>
+          <li>لیست‌ها تغییرپذیرند و می‌توانید یک عضو را مستقیماً عوض کنید.</li>
+          <li>متدهای پرکاربرد: <code class="inline-code">append</code>، <code class="inline-code">insert</code>، <code class="inline-code">extend</code>، <code class="inline-code">remove</code>، <code class="inline-code">pop</code>، <code class="inline-code">sort</code>، <code class="inline-code">reverse</code>، <code class="inline-code">count</code>، <code class="inline-code">index</code>.</li>
+          <li>حلقه زدن روی لیست، با <code class="inline-code">for</code> و <code class="inline-code">enumerate</code>.</li>
+          <li>توابع آماده: <code class="inline-code">len</code>، <code class="inline-code">sum</code>، <code class="inline-code">max</code>، <code class="inline-code">min</code>.</li>
+          <li><strong>دام کپی لیست:</strong> <code class="inline-code">b = a</code> کپی نیست، از <code class="inline-code">a.copy()</code> استفاده کنید.</li>
+          <li>تاپل چیست و چرا تغییرناپذیر است.</li>
+          <li>تاپل تک‌عضوی نیاز به کاما دارد: <code class="inline-code">(5,)</code>.</li>
+          <li>Unpacking — بازکردن مقادیر در چند متغیر.</li>
+          <li>Unpacking با ستاره برای گرفتن باقی اعضا.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «لیست‌ها و تاپل‌ها، ستون فقرات داده‌پردازی در پایتون هستند. اگر تفاوتشان را بفهمید و دام کپی را بشناسید، نصف کارهای پیچیده‌ی برنامه‌نویسی برایتان آسان می‌شود.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا در Python از لیست استفاده می‌کنیم و نه آرایه؟</summary><div class="faq-body"><p>لیست‌های پایتون بسیار انعطاف‌پذیرند: می‌توانند هر نوع داده‌ای بگیرند، اندازه‌شان پویا است، و متدهای زیادی دارند. آرایه‌های واقعی (مثل numpy) برای محاسبات عددی سنگین سریع‌ترند، اما برای کارهای روزمره، لیست بهترین انتخاب است.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم داخل یک لیست، لیست دیگری بگذارم؟</summary><div class="faq-body"><p>بله! به این می‌گویند «لیست تو در تو» یا nested list. مثلاً <code>matrix = [[1, 2], [3, 4]]</code> یک ماتریس ۲×۲ می‌سازد. دسترسی: <code>matrix[0][1]</code> یعنی ۲. این مفهوم در فصل‌های پیشرفته بیشتر کاربرد دارد.</p></div></details>
+        <details class="faq-item"><summary>چرا <code dir="ltr">list.copy()</code> روی لیست‌های تو در تو کار نمی‌کند؟</summary><div class="faq-body"><p>چون <code>copy()</code> یک کپی <strong>سطحی</strong> انجام می‌دهد. یعنی اگر لیست شما شامل لیست‌های تودرتو باشد، آن‌ها کپی نمی‌شوند بلکه به همان‌ها ارجاع داده می‌شود. برای کپی کامل، از <code>import copy; copy.deepcopy(a)</code> استفاده کنید. این ترفند در فصل‌های پیشرفته‌تر توضیح داده می‌شود.</p></div></details>
+        <details class="faq-item"><summary>تفاوت <code dir="ltr">pop</code> و <code dir="ltr">remove</code> چیست؟</summary><div class="faq-body"><p><code>pop</code> بر اساس ایندکس حذف می‌کند و مقدار حذف‌شده را برمی‌گرداند: <code>item = my_list.pop(0)</code>. <code>remove</code> بر اساس مقدار حذف می‌کند و چیزی برنمی‌گرداند: <code>my_list.remove("موز")</code>.</p></div></details>
+        <details class="faq-item"><summary>چطور می‌توانم یک لیست را بدون دستکاری اصلی، مرتب کنم؟</summary><div class="faq-body"><p>از <code>sorted(my_list)</code> استفاده کنید. این تابع یک لیست جدید و مرتب برمی‌گرداند و لیست اصلی دست‌نخورده می‌ماند. در مقابل، <code>my_list.sort()</code> لیست اصلی را در جا مرتب می‌کند.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۰ با <strong>دیکشنری و مجموعه (Set)</strong> آشنا می‌شوید. دیکشنری ساختاری است که به‌جای ایندکس عددی، از کلید (key) استفاده می‌کند و برای ذخیره‌ی داده‌های متنوع مثل اطلاعات کاربر عالی است. Set هم مجموعه‌ای از اعضای یکتاست و برای حذف تکراری‌ها کاربرد دارد.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-09" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-09">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-08/index.html">→ فصل قبلی<br><b>🧩 فصل ۸</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-10/index.html">فصل بعدی ←<br><b>🗂️ فصل ۱۰: دیکشنری و مجموعه</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۹: لیست و تاپل | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

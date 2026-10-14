@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۳: استثنا و خطایابی — مدیریت خطاها | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۳ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور برنامه را از کرش کردن نجات دهید — try/except، finally، raise و logging.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۳ از ۳۰ — استثنا و خطایابی</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۳
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۳ از ۳۰</span>
+    <h1>🛡️ استثنا و خطایابی — مدیریت خطاها</h1>
+    <p>چطور برنامه‌مان را از کرش کردن نجات دهیم؟ — <span class="term" data-term="exception">exception</span>، <span class="term" data-term="try">try</span>، <span class="term" data-term="except">except</span>، <span class="term" data-term="finally">finally</span>، <span class="term" data-term="raise">raise</span>، <span class="term" data-term="logging">logging</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۷۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا با خطاهای مختلفی روبه‌رو شده‌اید: <code class="inline-code">ValueError</code>، <code class="inline-code">TypeError</code>، <code class="inline-code">KeyError</code>، <code class="inline-code">IndexError</code>. هر وقت یکی از این‌ها رخ می‌داد، برنامه کاملاً متوقف می‌شد. اما در دنیای واقعی، این قابل قبول نیست. اگر یک وب‌سایت با یک ورودی بد کاربر از کار بیفتد، فاجعه است.</p>
+        <p>در این فصل یاد می‌گیرید که چطور این خطاها را <strong>مدیریت کنید</strong> — یعنی به‌جای کرش کردن، برنامه به کار خود ادامه دهد و پیام مناسبی به کاربر نشان دهد. این یکی از مهم‌ترین تفاوت‌های بین یک برنامه‌ی مبتدی و یک برنامه‌ی حرفه‌ای است.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با <code class="inline-code">try/except</code> خطاها را بگیرید و مدیریت کنید.</li>
+          <li>حالت‌های مختلف خطا را جداگانه مدیریت کنید (چند <code class="inline-code">except</code>).</li>
+          <li>با <code class="inline-code">finally</code> مطمئن شوید کد پاک‌سازی همیشه اجرا می‌شود.</li>
+          <li>با <code class="inline-code">raise</code> خطای خودتان بسازید و پرتاب کنید.</li>
+          <li>استثناهای سفارشی (خودتان) طراحی کنید.</li>
+          <li>با <code class="inline-code">logging</code> رویدادهای برنامه را ثبت کنید (به‌جای <code class="inline-code">print</code>).</li>
+          <li>کِی از try/except استفاده کنید و کِی نه.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          هدف این فصل، پنهان کردن خطاها <strong>نیست</strong>. هدف این است که خطاها را <strong>هوشمندانه مدیریت</strong> کنید — یعنی بفهمید کجا خطا ممکن است رخ دهد، چه نوعی از خطا، و چطور به کاربر یا برنامه پاسخ مناسب بدهید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>try/except</h4><p>گرفتن خطا.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>چند except</h4><p>هر خطا، پاسخ خودش.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>else و finally</h4><p>کنترل دقیق‌تر.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>raise و logging</h4><p>خطای خودت + لاگ.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا خطاها را «پنهان» نکنیم؟ خوب نیست که برنامه کارش را ادامه دهد؟</summary>
+          <div class="answer-body"><p>این یک سؤال خیلی مهم است. بله، ادامه دادن برنامه خوب است، اما <strong>نه به قیمت پنهان کردن واقعیت</strong>. اگر برنامه‌ای دارید که باید پول از حساب کاربر کم کند و به دلیل خطایی این کار نشده، ادامه دادن برنامه بدون این‌که کسی بفهمد، فاجعه است! پس قاعده‌ی طلایی: <em>خطاها را ببینید، مدیریتشان کنید، و در جایی که لازم است ثبت‌شان کنید</em>. اما هرگز آن‌ها را کاملاً نادیده نگیرید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا از <code dir="ltr">logging</code> استفاده کنیم و نه <code dir="ltr">print</code>؟</summary>
+          <div class="answer-body"><p>سه دلیل مهم: (۱) <strong>سطح‌بندی</strong> — می‌توانید مشخص کنید پیام «اطلاعات» است یا «خطا» یا «هشدار». (۲) <strong>ذخیره در فایل</strong> — با یک تنظیم ساده، همه‌ی پیام‌ها در فایل ذخیره می‌شوند تا بعداً بررسی کنید. (۳) <strong>قابل خاموش کردن</strong> — در حالت توسعه، همه‌ی لاگ‌ها را می‌بینید؛ در حالت عملیاتی، فقط خطاها. با <code>print</code> نمی‌توانید این‌ها را کنترل کنید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت <code dir="ltr">except Exception</code> و <code dir="ltr">except ValueError</code> چیست؟</summary>
+          <div class="answer-body"><p><code class="inline-code">except Exception</code> <strong>هر</strong> خطایی را می‌گیرد — حتی آن‌هایی که فکرش را نمی‌کنید. <code class="inline-code">except ValueError</code> فقط خطای ValueError را می‌گیرد. شاید فکر کنید اولی بهتر است چون همه‌چیز را می‌گیرد، اما نه! اگر فقط <code class="inline-code">ValueError</code> را انتظار دارید، با <code class="inline-code">except Exception</code> ممکن است یک باگ واقعی در کدتان را پنهان کنید. <strong>همیشه دقیق‌ترین except را انتخاب کنید</strong>.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی دوازده فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با توابع (<code class="inline-code">def</code>، <code class="inline-code">return</code>) راحت هستید.</li>
+          <li>با لیست، دیکشنری و set کار کرده‌اید.</li>
+          <li>می‌توانید ماژول import کنید (فصل ۱۲).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter13.py</code> بسازید. در این فصل، تمرین اصلی این است که <strong>عمداً خطا بسازید</strong> و بعد آن را مدیریت کنید. تایپ، اجرا و دیدن خطاها، بهترین راه یادگیری این فصل است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: استثنا و خطایابی</h2></div>
+
+        <h3>۱) خطا در پایتون — دو نوع</h3>
+        <p>در پایتون دو نوع خطا داریم:</p>
+        <ul>
+          <li><strong>خطای نحوی (SyntaxError):</strong> وقتی کد از نظر گرامری اشتباه باشد. قبل از اجرا اتفاق می‌افتد.</li>
+          <li><strong>استثنا (Exception):</strong> وقتی کد از نظر گرامری درست است، اما هنگام اجرا مشکلی پیش می‌آید. مثل تقسیم بر صفر.</li>
+        </ul>
+        <p>SyntaxError را با ویرایش کد رفع می‌کنید. اما استثناها را می‌توان با <code class="inline-code">try/except</code> مدیریت کرد.</p>
+        <p>نمونه‌ای از استثنا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>unhandled.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">number = int("سلام")   # ValueError!
+
+# خروجی:
+# Traceback (most recent call last):
+#   File "unhandled.py", line 1, in &lt;module&gt;
+#     number = int("سلام")
+# ValueError: invalid literal for int() with base 10: 'سلام'</code></pre>
+        </div>
+        <p>برنامه با یک پیام طولانی و ترسناک متوقف می‌شود. حالا بیایید همین را با try/except مدیریت کنیم.</p>
+
+        <h3>۲) <code>try/except</code> — گرفتن خطا</h3>
+        <p>ساختار ساده:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار try/except</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    # کدی که ممکنه خطا بده
+    ...
+except نوع_خطا:
+    # کارهایی که باید در صورت رخ دادن خطا انجام شود
+    ...</code></pre>
+        </div>
+        <p>مثال:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_try.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    number = int("سلام")
+    print("عدد:", number)
+except ValueError:
+    print("❌ نمی‌توانم این متن را به عدد تبدیل کنم.")
+
+print("برنامه ادامه پیدا کرد.")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">❌ نمی‌توانم این متن را به عدد تبدیل کنم.
+برنامه ادامه پیدا کرد.</code></pre>
+        </div>
+        <p>ببینید چقدر متفاوت است! به‌جای Traceback ترسناک، یک پیام دوستانه چاپ می‌شود و برنامه به کار خود ادامه می‌دهد.</p>
+
+        <h4>مثال واقعی: ورودی گرفتن از کاربر</h4>
+        <p>این یکی از پرکاربردترین موارد استفاده‌ی try/except است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>safe_input.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">while True:
+    text = input("یک عدد وارد کن: ")
+    try:
+        number = int(text)
+        print(f"✅ عدد شما: {number}")
+        break
+    except ValueError:
+        print("⚠️ این یک عدد معتبر نیست. دوباره امتحان کن.")</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">یک عدد وارد کن: سلام
+⚠️ این یک عدد معتبر نیست. دوباره امتحان کن.
+یک عدد وارد کن: abc
+⚠️ این یک عدد معتبر نیست. دوباره امتحان کن.
+یک عدد وارد کن: 42
+✅ عدد شما: 42</code></pre>
+        </div>
+
+        <h3>۳) چند <code>except</code> — هر خطا، پاسخ خودش</h3>
+        <p>ممکن است کدی چند نوع خطای مختلف داشته باشد. می‌توانید برای هر کدام <code class="inline-code">except</code> جداگانه بنویسید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>multiple_except.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    a = int(input("عدد اول: "))
+    b = int(input("عدد دوم: "))
+    result = a / b
+    print("نتیجه:", result)
+except ValueError:
+    print("❌ لطفاً عدد معتبر وارد کن.")
+except ZeroDivisionError:
+    print("❌ نمی‌توان بر صفر تقسیم کرد.")
+except Exception as e:
+    print(f"❌ خطای غیرمنتظره: {e}")</code></pre>
+        </div>
+        <p>نکته: <code class="inline-code">except Exception</code> در انتها آمده — به‌عنوان «شبکه‌ی امنیتی» برای خطاهای غیرمنتظره. <strong>همیشه</strong> exceptهای خاص را <em>قبل</em> از exceptهای عمومی بنویسید.</p>
+
+        <h4>ترکیب چند خطا در یک except</h4>
+        <p>اگر برای چند خطا یک پاسخ دارید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>combined_except.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    # کد مشکوک
+    ...
+except (ValueError, TypeError) as e:
+    print(f"خطای نوع داده: {e}")</code></pre>
+        </div>
+        <p>دقت کنید که باید داخل پرانتز باشند.</p>
+
+        <h3>۴) اطلاعات بیشتر درباره خطا با <code>as e</code></h3>
+        <p>گاهی می‌خواهید ببینید دقیقاً چه خطایی رخ داده. با <code class="inline-code">as e</code> می‌توانید پیام خطا را بگیرید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_as.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    number = int("سلام")
+except ValueError as e:
+    print(f"❌ خطای تبدیل: {e}")
+
+# خروجی: ❌ خطای تبدیل: invalid literal for int() with base 10: 'سلام'</code></pre>
+        </div>
+        <p>حتی می‌توانید نوع خطا را ببینید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>type_of_error.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    number = int("سلام")
+except Exception as e:
+    print(f"نوع خطا: {type(e).__name__}")
+    print(f"پیام: {e}")
+
+# خروجی:
+# نوع خطا: ValueError
+# پیام: invalid literal for int() with base 10: 'سلام'</code></pre>
+        </div>
+
+        <h3>۵) <code>else</code> و <code>finally</code> — کنترل کامل</h3>
+        <p>ساختار کامل try/except شامل دو بخش اضافی هم می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار کامل</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    # کد مشکوک
+    ...
+except نوع_خطا:
+    # اگر خطا رخ داد
+    ...
+else:
+    # اگر خطا رخ نداد (اجرا فقط وقتی try موفق باشد)
+    ...
+finally:
+    # هر اتفاقی افتاد، این همیشه اجرا می‌شود
+    ...</code></pre>
+        </div>
+
+        <h4><code>else</code> — وقتی خطا رخ نداده</h4>
+        <div class="code-box">
+          <div class="code-head"><span>else_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">try:
+    number = int(input("عدد: "))
+except ValueError:
+    print("❌ ورودی نامعتبر است.")
+else:
+    print(f"✅ عدد صحیح وارد شد: {number}")
+    print(f"دو برابرش: {number * 2}")</code></pre>
+        </div>
+        <p><strong>فایده‌ی else چیست؟</strong> اینکه مشخص کنید کدام کد <em>فقط</em> در حالت موفقیت اجرا می‌شود. اگر آن کد را داخل try می‌گذاشتید، خطاهای آن هم گرفته می‌شدند — که ممکن است چیزی نباشد که می‌خواستید.</p>
+
+        <h4><code>finally</code> — همیشه اجرا می‌شود</h4>
+        <p>کد داخل <code class="inline-code">finally</code> <strong>در هر شرایطی</strong> اجرا می‌شود — چه خطا رخ بدهد، چه ندهد، حتی اگر با <code class="inline-code">return</code> از تابع بیرون بیایید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>finally_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def divide(a, b):
+    try:
+        result = a / b
+        print(f"محاسبه: {a} / {b} = {result}")
+        return result
+    except ZeroDivisionError:
+        print("❌ تقسیم بر صفر مجاز نیست.")
+        return None
+    finally:
+        print("--- پایان عملیات تقسیم ---")
+
+
+divide(10, 2)
+print()
+divide(10, 0)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">محاسبه: 10 / 2 = 5.0
+--- پایان عملیات تقسیم ---
+
+❌ تقسیم بر صفر مجاز نیست.
+--- پایان عملیات تقسیم ---</code></pre>
+        </div>
+        <p><strong>کاربرد اصلی finally:</strong> پاک‌سازی. مثلاً بستن فایل، بستن اتصال شبکه، آزاد کردن منابع. با <code class="inline-code">finally</code> مطمئن می‌شوید که این کار در هر حالتی انجام می‌شود.</p>
+
+        <h3>۶) <code>raise</code> — پرتاب خطا از سمت خودتان</h3>
+        <p>گاهی خودتان تشخیص می‌دهید که چیزی اشتباه است و می‌خواهید خطا بسازید. با <code class="inline-code">raise</code> این کار را می‌کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>raise_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def set_age(age):
+    """سن را تعیین می‌کند، ولی باید بین 0 و 150 باشد."""
+    if age < 0:
+        raise ValueError("سن نمی‌تواند منفی باشد.")
+    if age > 150:
+        raise ValueError("سن نمی‌تواند بیشتر از 150 باشد.")
+    return age
+
+
+# استفاده
+try:
+    user_age = set_age(-5)
+except ValueError as e:
+    print(f"❌ خطا: {e}")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">❌ خطا: سن نمی‌تواند منفی باشد.</code></pre>
+        </div>
+
+        <h4>چرا خطای خودمان پرتاب کنیم؟</h4>
+        <p>سه دلیل اصلی:</p>
+        <ul>
+          <li><strong>صریح بودن:</strong> به‌جای اینکه تابع با یک خطای مبهم متوقف شود، پیام دقیق می‌دهد.</li>
+          <li><strong>اعتبارسنجی:</strong> می‌توانید ورودی‌های نامعتبر را رد کنید.</li>
+          <li><strong>قرارداد:</strong> کاربر تابع می‌داند چه انتظاری داشته باشد و چه خطاهایی احتمال دارد.</li>
+        </ul>
+
+        <h4>دوباره پرتاب کردن خطا — <code>raise</code> بدون آرگومان</h4>
+        <p>گاهی می‌خواهید خطا را بگیرید، کارهای لازم را انجام دهید، و بعد دوباره پرتابش کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>re_raise.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">def process_data(data):
+    try:
+        return int(data)
+    except ValueError:
+        # ثبت خطا برای عیب‌یابی
+        print(f"❌ ورودی نامعتبر: {data}")
+        # دوباره پرتاب کن — تا فراخوان هم بفهمد
+        raise</code></pre>
+        </div>
+
+        <h3>۷) استثناهای سفارشی — خطاهای خودتان</h3>
+        <p>برای پروژه‌های بزرگ، بهتر است خطاهای مخصوص برنامه‌ی خود را بسازید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>custom_exception.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">class InsufficientBalanceError(Exception):
+    """خطای کمبود موجودی."""
+    pass
+
+
+class InvalidAmountError(Exception):
+    """خطای مبلغ نامعتبر."""
+    pass
+
+
+def withdraw(balance, amount):
+    """از حساب برداشت می‌کند."""
+    if amount <= 0:
+        raise InvalidAmountError(f"مبلغ {amount} نامعتبر است.")
+    if amount > balance:
+        raise InsufficientBalanceError(
+            f"موجودی {balance} برای برداشت {amount} کافی نیست."
+        )
+    return balance - amount
+
+
+# استفاده
+try:
+    new_balance = withdraw(1000, 1500)
+    print(f"موجودی جدید: {new_balance}")
+except InvalidAmountError as e:
+    print(f"⚠️ {e}")
+except InsufficientBalanceError as e:
+    print(f"💸 {e}")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">💸 موجودی 1000 برای برداشت 1500 کافی نیست.</code></pre>
+        </div>
+        <p><strong>نکته:</strong> استثنای سفارشی را با <code class="inline-code">class</code> می‌سازید، اما <code class="inline-code">class</code> را در فصل ۱۶ به‌طور کامل یاد می‌گیرید. الان فقط بدانید که این ساختار کار می‌کند و در فصل ۱۶ به آن برمی‌گردیم.</p>
+
+        <h3>۸) logging — به‌جای <code>print</code></h3>
+        <p>در فصل‌های قبل، برای دیدن آنچه در برنامه می‌گذرد از <code class="inline-code">print</code> استفاده می‌کردیم. اما در برنامه‌های واقعی، <code class="inline-code">print</code> کافی نیست. باید از <code class="inline-code">logging</code> استفاده کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>logging_intro.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import logging
+
+# تنظیمات ساده
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+
+logging.debug("این پیام معمولاً نمایش داده نمی‌شود.")
+logging.info("برنامه شروع شد.")
+logging.warning("این یک هشدار است.")
+logging.error("یک خطا رخ داد!")
+logging.critical("خطای بحرانی!")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">2024-XX-XX XX:XX:XX,XXX [INFO] برنامه شروع شد.
+2024-XX-XX XX:XX:XX,XXX [WARNING] این یک هشدار است.
+2024-XX-XX XX:XX:XX,XXX [ERROR] یک خطا رخ داد!
+2024-XX-XX XX:XX:XX,XXX [CRITICAL] خطای بحرانی!</code></pre>
+        </div>
+
+        <h4>پنج سطح لاگ</h4>
+        <p>هر پیام یکی از پنج سطح را دارد:</p>
+        <ul>
+          <li><code class="inline-code">DEBUG</code> — اطلاعات جزئی برای توسعه.</li>
+          <li><code class="inline-code">INFO</code> — رویدادهای معمول (مثل «کاربر وارد شد»).</li>
+          <li><code class="inline-code">WARNING</code> — هشدار، ولی برنامه هنوز کار می‌کند.</li>
+          <li><code class="inline-code">ERROR</code> — خطا، ولی برنامه ادامه می‌دهد.</li>
+          <li><code class="inline-code">CRITICAL</code> — خطای بحرانی، برنامه باید متوقف شود.</li>
+        </ul>
+        <p>با تنظیم <code class="inline-code">level=logging.INFO</code>، همه‌ی پیام‌های INFO و بالاتر نمایش داده می‌شوند (INFO، WARNING، ERROR، CRITICAL). پیام‌های DEBUG نادیده گرفته می‌شوند.</p>
+
+        <h4>ذخیره در فایل</h4>
+        <div class="code-box">
+          <div class="code-head"><span>logging_to_file.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    filename="app.log",       # به فایل می‌رود، نه کنسول
+)
+
+logging.info("این پیام در فایل app.log ذخیره می‌شود.")</code></pre>
+        </div>
+        <p>فایل <code class="inline-code">app.log</code> در پوشه‌ی جاری ساخته می‌شود و پیام‌ها در آن ذخیره می‌شوند.</p>
+
+        <h4>logging در try/except</h4>
+        <p>بهترین دوست try/except، logging است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>logging_in_try.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import logging
+
+logging.basicConfig(level=logging.INFO)
+
+def divide(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        logging.error(f"تلاش برای تقسیم {a} بر صفر")
+        return None
+    except TypeError as e:
+        logging.error(f"نوع داده اشتباه: {e}")
+        return None
+
+
+print(divide(10, 2))
+print(divide(10, 0))</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">5.0
+ERROR:root:تلاش برای تقسیم 10 بر صفر
+None</code></pre>
+        </div>
+
+        <h3>۹) کِی از <code>try/except</code> استفاده کنیم؟ کِی نه؟</h3>
+        <p>این یکی از مهم‌ترین سؤالاتی است که هر برنامه‌نویس باید بداند. بیایید با مثال:</p>
+
+        <h4>✅ وقتی استفاده کنید:</h4>
+        <ul>
+          <li><strong>ورودی کاربر:</strong> کاربر ممکن است هر چیزی وارد کند.</li>
+          <li><strong>کار با فایل:</strong> فایل ممکن است نباشد یا قابل خواندن نباشد.</li>
+          <li><strong>درخواست‌های شبکه:</strong> اتصال ممکن است قطع شود.</li>
+          <li><strong>تقسیم:</strong> مخرج ممکن است صفر باشد.</li>
+          <li><strong>تبدیل نوع:</strong> متن ممکن است قابل تبدیل نباشد.</li>
+        </ul>
+
+        <h4>❌ وقتی استفاده نکنید:</h4>
+        <ul>
+          <li><strong>باگ‌های منطقی:</strong> اگر کد شما مشکل منطقی دارد، try/except راه‌حل نیست — باید کد را اصلاح کنید.</li>
+          <li><strong>پنهان کردن خطاهای واقعی:</strong> مثلاً <code class="inline-code">except Exception: pass</code> که همه‌چیز را می‌بلعد و هیچ کاری نمی‌کند. این کار باعث می‌شود باگ‌ها پنهان شوند و بعداً پیدا کردنشان سخت‌تر شود.</li>
+          <li><strong>وقتی می‌توانید از قبل بررسی کنید:</strong> گاهی بهتر است قبل از وقوع خطا، شرط را چک کنید. مثلاً به‌جای try/except برای تقسیم، از قبل چک کنید که مخرج صفر نباشد.</li>
+        </ul>
+
+        <div class="callout danger">
+          <b class="title">❌ هرگز این کار را نکنید</b>
+          <div class="code-box" style="margin-top:8px">
+            <div class="code-head"><span>ضدالگو</span><span class="lang">Python</span></div>
+            <pre class="code"><code dir='ltr' data-lang="python">try:
+    do_something()
+except:
+    pass   # ← فاجعه! هر خطایی، بی‌صدا نادیده گرفته می‌شود</code></pre>
+          </div>
+          این کار مثل این است که چراغ قرمز را با چسب برچسب بزنید که نبینید. مشکل حل نشده — فقط پنهان شده. با این کد، اگر برنامه‌تان باگ داشته باشد، هیچ‌وقت نمی‌فهمید.
+        </div>
+
+        <h3>۱۰) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>بیایید یک برنامه‌ی «ماشین‌حساب امن» بسازیم که تمام مفاهیم این فصل را کنار هم داشته باشد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>safe_calculator.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ماشین‌حساب امن — با مدیریت خطا و لاگ."""
+
+import logging
+
+# تنظیمات لاگ
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+
+
+class CalculatorError(Exception):
+    """خطای پایه‌ی ماشین‌حساب."""
+    pass
+
+
+def get_number(prompt):
+    """یک عدد از کاربر می‌گیرد، با مدیریت خطا."""
+    while True:
+        try:
+            text = input(prompt).strip()
+            if not text:
+                raise CalculatorError("ورودی خالی است.")
+            return float(text)
+        except ValueError:
+            logging.warning(f"ورودی نامعتبر: '{text}'")
+            print("⚠️ عدد معتبر وارد کن.")
+        except CalculatorError as e:
+            logging.warning(str(e))
+            print(f"⚠️ {e}")
+
+
+def get_operation():
+    """عملگر را از کاربر می‌گیرد."""
+    valid_ops = ["+", "-", "*", "/"]
+    while True:
+        op = input("عملگر (+, -, *, /): ").strip()
+        if op in valid_ops:
+            return op
+        logging.warning(f"عملگر نامعتبر: '{op}'")
+        print("⚠️ عملگر نامعتبر است.")
+
+
+def calculate(a, op, b):
+    """محاسبه را انجام می‌دهد، با مدیریت خطا."""
+    try:
+        if op == "+":
+            return a + b
+        if op == "-":
+            return a - b
+        if op == "*":
+            return a * b
+        if op == "/":
+            if b == 0:
+                raise CalculatorError("تقسیم بر صفر مجاز نیست.")
+            return a / b
+    except CalculatorError as e:
+        logging.error(f"خطای محاسبه: {e}")
+        raise
+
+
+def main():
+    print("=" * 40)
+    print("        ماشین‌حساب امن")
+    print("=" * 40)
+    logging.info("برنامه شروع شد.")
+
+    try:
+        a = get_number("عدد اول: ")
+        op = get_operation()
+        b = get_number("عدد دوم: ")
+
+        result = calculate(a, op, b)
+        print()
+        print(f"✅ {a} {op} {b} = {result}")
+        logging.info(f"محاسبه موفق: {a} {op} {b} = {result}")
+
+    except CalculatorError as e:
+        print(f"\n❌ خطا: {e}")
+    except Exception as e:
+        print(f"\n❌ خطای غیرمنتظره: {e}")
+        logging.exception("خطای غیرمنتظره رخ داد.")
+    finally:
+        print("\n👋 پایان برنامه.")
+        logging.info("برنامه بسته شد.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا (با ورودی اشتباه):</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+        ماشین‌حساب امن
+========================================
+عدد اول: abc
+⚠️ عدد معتبر وارد کن.
+عدد اول: 10
+عملگر (+, -, *, /): /
+عدد دوم: 0
+❌ خطا: تقسیم بر صفر مجاز نیست.
+
+👋 پایان برنامه.</code></pre>
+        </div>
+        <p>در این برنامه، تمام مفاهیم فصل به‌کار گرفته شده‌اند:</p>
+        <ul>
+          <li><strong>try/except</strong> برای گرفتن خطاهای تبدیل نوع.</li>
+          <li><strong>raise</strong> برای پرتاب خطای سفارشی.</li>
+          <li><strong>Exception سفارشی</strong> <code class="inline-code">CalculatorError</code>.</li>
+          <li><strong>finally</strong> برای پیام پایانی.</li>
+          <li><strong>logging</strong> برای ثبت رویدادها.</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه‌ی «خواننده‌ی امن لیست» که خطاهای مختلف را در یک تابع مدیریت می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>safe_list_reader.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""خواننده‌ی امن لیست — با مدیریت خطا."""
+
+
+def safe_get(items, index):
+    """با مدیریت خطا یک عضو لیست را برمی‌گرداند."""
+    try:
+        return items[index]
+    except IndexError:
+        return f"❌ ایندکس {index} خارج از محدوده است."
+    except TypeError:
+        return "❌ ایندکس باید عدد باشد."
+
+
+def safe_divide(a, b):
+    """تقسیم با مدیریت خطا."""
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "❌ تقسیم بر صفر"
+    except TypeError:
+        return "❌ نوع داده اشتباه"
+
+
+def safe_convert(text, to_type):
+    """تبدیل نوع با مدیریت خطا."""
+    try:
+        return to_type(text)
+    except ValueError:
+        return f"❌ نمی‌توان '{text}' را به {to_type.__name__} تبدیل کرد"
+    except Exception as e:
+        return f"❌ خطا: {e}"
+
+
+def main():
+    print("=" * 45)
+    print("       خواننده‌ی امن داده‌ها")
+    print("=" * 45)
+
+    numbers = [10, 20, 30, 40, 50]
+
+    # تست safe_get
+    print("\n🔍 دسترسی به لیست:")
+    print(f"  numbers[0]: {safe_get(numbers, 0)}")
+    print(f"  numbers[2]: {safe_get(numbers, 2)}")
+    print(f"  numbers[100]: {safe_get(numbers, 100)}")
+    print(f"  numbers['a']: {safe_get(numbers, 'a')}")
+
+    # تست safe_divide
+    print("\n➗ تقسیم:")
+    print(f"  10 / 2 = {safe_divide(10, 2)}")
+    print(f"  10 / 0 = {safe_divide(10, 0)}")
+    print(f"  10 / 'a' = {safe_divide(10, 'a')}")
+
+    # تست safe_convert
+    print("\n🔄 تبدیل نوع:")
+    print(f"  '42' → int: {safe_convert('42', int)}")
+    print(f"  '3.14' → float: {safe_convert('3.14', float)}")
+    print(f"  'abc' → int: {safe_convert('abc', int)}")
+
+    print("\n" + "=" * 45)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       خواننده‌ی امن داده‌ها
+=============================================
+
+🔍 دسترسی به لیست:
+  numbers[0]: 10
+  numbers[2]: 30
+  numbers[100]: ❌ ایندکس 100 خارج از محدوده است.
+  numbers['a']: ❌ ایندکس باید عدد باشد.
+
+➗ تقسیم:
+  10 / 2 = 5.0
+  10 / 0 = ❌ تقسیم بر صفر
+  10 / 'a' = ❌ نوع داده اشتباه
+
+🔄 تبدیل نوع:
+  '42' → int: 42
+  '3.14' → float: 3.14
+  'abc' → int: ❌ نمی‌توان 'abc' را به int تبدیل کرد
+
+=============================================</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این الگو — هر تابع یک <code class="inline-code">try/except</code> مرتبط با کار خودش — یکی از استانداردهای کد حرفه‌ای است. هر تابع می‌داند چه خطاهایی ممکن است رخ دهد و چطور پاسخ دهد.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «ورود ایمن کاربر» بسازید که ورودی‌ها را کامل مدیریت کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">safe_login.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>تابع <code class="inline-code">get_username()</code> بسازید که نام کاربری بگیرد و شرایط زیر را بررسی کند:
+            <ul>
+              <li>خالی نباشد (<code class="inline-code">raise ValueError</code>)</li>
+              <li>حداقل ۳ حرف باشد (<code class="inline-code">raise ValueError</code>)</li>
+              <li>فقط شامل حروف و اعداد باشد (<code class="inline-code">raise ValueError</code>)</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">get_password()</code> بسازید که:
+            <ul>
+              <li>حداقل ۶ حرف باشد</li>
+              <li>حداقل یک عدد داشته باشد</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">get_age()</code> بسازید که سن را می‌گیرد و بین ۱ تا ۱۲۰ است.</li>
+          <li>یک استثنای سفارشی <code class="inline-code">ValidationError</code> بسازید و از آن برای خطاهای اعتبارسنجی استفاده کنید.</li>
+          <li>در <code class="inline-code">main()</code>:
+            <ul>
+              <li>هر تابع را در <code class="inline-code">try/except</code> صدا بزنید و پیام مناسب بدهید.</li>
+              <li>اگر همه‌ی اطلاعات درست بود، پیام «ثبت‌نام موفق» بدهید.</li>
+              <li>در <code class="inline-code">finally</code> همیشه یک پیام «پایان ثبت‌نام» چاپ کنید.</li>
+            </ul>
+          </li>
+          <li>برای هر خطا، با <code class="inline-code">logging.error()</code> هم ثبت کنید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>safe_login.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""ورود ایمن کاربر — با اعتبارسنجی و مدیریت خطا."""
+
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+
+
+class ValidationError(Exception):
+    """خطای اعتبارسنجی ورودی."""
+    pass
+
+
+def get_username():
+    """نام کاربری معتبر از کاربر می‌گیرد."""
+    username = input("نام کاربری: ").strip()
+
+    if not username:
+        raise ValidationError("نام کاربری نمی‌تواند خالی باشد.")
+    if len(username) < 3:
+        raise ValidationError("نام کاربری باید حداقل ۳ حرف باشد.")
+    if not username.isalnum():
+        raise ValidationError("نام کاربری فقط حروف و اعداد می‌پذیرد.")
+
+    return username
+
+
+def get_password():
+    """رمز عبور معتبر از کاربر می‌گیرد."""
+    password = input("رمز عبور: ")
+
+    if len(password) < 6:
+        raise ValidationError("رمز عبور باید حداقل ۶ حرف باشد.")
+    if not any(c.isdigit() for c in password):
+        raise ValidationError("رمز عبور باید حداقل یک عدد داشته باشد.")
+
+    return password
+
+
+def get_age():
+    """سن معتبر از کاربر می‌گیرد."""
+    text = input("سن: ").strip()
+
+    try:
+        age = int(text)
+    except ValueError:
+        raise ValidationError(f"سن '{text}' یک عدد معتبر نیست.")
+
+    if not (1 <= age <= 120):
+        raise ValidationError("سن باید بین ۱ و ۱۲۰ باشد.")
+
+    return age
+
+
+def main():
+    print("=" * 45)
+    print("       ثبت‌نام کاربر")
+    print("=" * 45)
+
+    logging.info("شروع ثبت‌نام.")
+
+    try:
+        username = get_username()
+        password = get_password()
+        age = get_age()
+
+        print()
+        print("-" * 45)
+        print(f"✅ ثبت‌نام موفق!")
+        print(f"   نام کاربری: {username}")
+        print(f"   سن: {age} سال")
+        print("-" * 45)
+
+        logging.info(f"ثبت‌نام موفق: {username}")
+
+    except ValidationError as e:
+        print(f"\n❌ خطای اعتبارسنجی: {e}")
+        logging.error(f"اعتبارسنجی ناموفق: {e}")
+    except Exception as e:
+        print(f"\n❌ خطای غیرمنتظره: {e}")
+        logging.exception("خطای غیرمنتظره")
+    finally:
+        print("\n👋 پایان ثبت‌نام.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا با ورودی اشتباه:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       ثبت‌نام کاربر
+=============================================
+نام کاربری: ab
+❌ خطای اعتبارسنجی: نام کاربری باید حداقل ۳ حرف باشد.
+
+👋 پایان ثبت‌نام.</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا با ورودی صحیح:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       ثبت‌نام کاربر
+=============================================
+نام کاربری: ali2024
+رمز عبور: pass123
+سن: 25
+
+---------------------------------------------
+✅ ثبت‌نام موفق!
+   نام کاربری: ali2024
+   سن: 25 سال
+---------------------------------------------
+
+👋 پایان ثبت‌نام.</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی این راه‌حل</summary>
+          <div class="answer-body">
+            <p>چند نکته‌ی مهم:</p>
+            <ol>
+              <li><strong>استثنای سفارشی:</strong> <code class="inline-code">ValidationError</code> از <code class="inline-code">Exception</code> ارث‌بری می‌کند و برای همه‌ی خطاهای اعتبارسنجی استفاده می‌شود. این باعث می‌شود بتوانیم همه را با یک except بگیریم.</li>
+              <li><strong>raise برای اعتبارسنجی:</strong> در تابع‌های get، به‌جای چاپ پیام خطا، خطا پرتاب می‌کنیم. این تابع را «قابل استفاده مجدد» می‌کند — هم در این برنامه، هم در هر برنامه‌ی دیگر.</li>
+              <li><strong>try/except در main:</strong> تمام فراخوانی‌ها در یک بلوک try/except هستند، چون همه یک نوع خطا (<code class="inline-code">ValidationError</code>) پرتاب می‌کنند.</li>
+              <li><strong>logging جدا:</strong> از logging برای ثبت رویدادها استفاده شده، نه از print. در محیط تولید، فایل لاگ را بررسی می‌کنید.</li>
+              <li><strong>finally:</strong> پیام «پایان ثبت‌نام» را همیشه چاپ می‌کند.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">safe_login.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>با ورودی‌های مختلف (اشتباه و درست) تست کرده‌اید.</li>
+              <li>تفاوت <code class="inline-code">try/except/else/finally</code> را کاملاً می‌فهمید.</li>
+              <li>می‌توانید خطای سفارشی بسازید و پرتاب کنید.</li>
+              <li>تفاوت <code class="inline-code">print</code> و <code class="inline-code">logging</code> را می‌دانید.</li>
+              <li>می‌دانید <em>چه زمانی</em> از try/except استفاده کنید و چه زمانی نه.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ except خالی یا except Exception: pass</b>
+          <p><strong>معنی:</strong> همه‌ی خطاها بی‌صدا نادیده گرفته می‌شوند.</p>
+          <p><strong>علت:</strong> نوشته‌اید <code class="inline-code">except: pass</code> یا <code class="inline-code">except Exception: pass</code>.</p>
+          <p><strong>راه‌حل:</strong> همیشه except <strong>خاص</strong> بنویسید: <code class="inline-code">except ValueError:</code>. اگر واقعاً می‌خواهید همه را بگیرید، حداقل <code class="inline-code">logging.exception(...)</code> بگذارید تا در فایل لاگ ثبت شود.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ ترتیب اشتباه exceptها</b>
+          <p><strong>معنی:</strong> except عمومی قبل از خاص نوشته شده و آن را «می‌بلعد».</p>
+          <p><strong>علت:</strong> مثلاً <code class="inline-code">except Exception: ...</code> را قبل از <code class="inline-code">except ValueError: ...</code> گذاشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> همیشه exceptهای <strong>خاص</strong> را قبل از exceptهای <strong>عمومی</strong> بنویسید. پایتون اولین except منطبق را اجرا می‌کند.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خطا در بلوک finally</b>
+          <p><strong>معنی:</strong> اگر کد داخل finally خطا بدهد، خطای اصلی از بین می‌رود.</p>
+          <p><strong>علت:</strong> بلوک finally هم می‌تواند خطا بدهد.</p>
+          <p><strong>راه‌حل:</strong> بلوک finally را کوچک و امن نگه دارید. اگر نیاز به عملیات پیچیده دارید، آن را در تابع جدا بنویسید و در finally فقط صدایش بزنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ استفاده از try/except به‌جای if</b>
+          <p><strong>معنی:</strong> برای جلوگیری از خطاهای قابل پیش‌بینی از try/except استفاده می‌کنید، در حالی که می‌توانستید با if چک کنید.</p>
+          <p><strong>علت:</strong> مثلاً برای تقسیم، از try/except استفاده می‌کنید به‌جای اینکه با <code class="inline-code">if b != 0</code> مخرج را چک کنید.</p>
+          <p><strong>راه‌حل:</strong> قاعده‌ی ساده: اگر می‌توانید خطا را با یک شرط ساده جلوگیری کنید، از <code class="inline-code">if</code> استفاده کنید. اگر نه، try/except.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ بازنویسی خطا با پیام مبهم</b>
+          <p><strong>معنی:</strong> وقتی خطا را می‌گیرید، پیام اصلی را از دست می‌دهید.</p>
+          <p><strong>علت:</strong> مثلاً می‌نویسید <code class="inline-code">except Exception: print("خطا!")</code> بدون اینکه پیام اصلی را نشان دهید.</p>
+          <p><strong>راه‌حل:</strong> با <code class="inline-code">as e</code> پیام اصلی را بگیرید و نمایش دهید: <code class="inline-code">except Exception as e: print(f"خطا: {e}")</code>. یا حداقل <code class="inline-code">raise</code> کنید تا خطا به بالا برسد.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ فراموش کردن except برای استثنای سفارشی</b>
+          <p><strong>معنی:</strong> خطای سفارشی پرتاب می‌شود ولی هیچ‌جا گرفته نمی‌شود.</p>
+          <p><strong>علت:</strong> استثنای سفارشی تعریف کرده‌اید، پرتاب می‌کنید، اما except مربوطه را ننوشته‌اید.</p>
+          <p><strong>راه‌حل:</strong> حتماً in except برای استثنای سفارشی بنویسید، یا آن را از یک استثنای بالاتر (مثل <code class="inline-code">Exception</code>) ارث‌بری کنید تا با exceptهای عمومی هم گرفته شود.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ logging.exception بیرون از except</b>
+          <p><strong>معنی:</strong> پیام لاگ شامل traceback نیست.</p>
+          <p><strong>علت:</strong> <code class="inline-code">logging.exception(...)</code> را بیرون از بلوک except صدا زده‌اید.</p>
+          <p><strong>راه‌حل:</strong> <code class="inline-code">logging.exception()</code> باید <strong>داخل</strong> بلوک except باشد تا traceback را ثبت کند. اگر بیرون هست، از <code class="inline-code">logging.error()</code> استفاده کنید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+try:
+    x = int("abc")
+except ValueError:
+    print("A")
+print("B")
+
+# مورد 2
+try:
+    result = 10 / 2
+except ZeroDivisionError:
+    print("C")
+else:
+    print("D")
+finally:
+    print("E")
+
+# مورد 3
+try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("F")
+else:
+    print("G")
+finally:
+    print("H")
+
+# مورد 4
+def test():
+    try:
+        return "try"
+    finally:
+        print("finally اجرا شد")
+
+print(test())
+
+# مورد 5
+try:
+    raise ValueError("پیام سفارشی")
+except Exception as e:
+    print(f"گرفته شد: {e}")</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> A و بعد B. خطا گرفته شد، برنامه ادامه داد.</li>
+              <li><strong>مورد ۲:</strong> D و E. چون خطا رخ نداد، else اجرا شد؛ finally همیشه اجرا می‌شود.</li>
+              <li><strong>مورد ۳:</strong> F و H. خطا رخ داد، except اجرا شد؛ else نرفت؛ finally اجرا شد.</li>
+              <li><strong>مورد ۴:</strong> «finally اجرا شد» و بعد «try». چون return هم قبل از خروج، finally را اجرا می‌کند.</li>
+              <li><strong>مورد ۵:</strong> «گرفته شد: پیام سفارشی». پیام خطا با as e ذخیره شد.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — ماشین‌حساب اعتبارسنجی</summary>
+          <div class="answer-body">
+            <p>تابعی بنویسید که میانگین یک لیست از اعداد را حساب کند، ولی خطاهای مختلف را مدیریت کند:</p>
+            <div class="code-box">
+              <div class="code-head"><span>average.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">def safe_average(numbers):
+    """میانگین امن — با مدیریت خطا."""
+    try:
+        # بررسی لیست خالی
+        if not numbers:
+            raise ValueError("لیست نمی‌تواند خالی باشد.")
+        # محاسبه
+        total = sum(numbers)
+        return total / len(numbers)
+    except TypeError:
+        return "❌ همه‌ی اعضا باید عدد باشند."
+    except ValueError as e:
+        return f"❌ {e}"
+    except Exception as e:
+        return f"❌ خطای غیرمنتظره: {e}"
+
+
+# تست
+print(safe_average([10, 20, 30]))        # 20.0
+print(safe_average([]))                  # ❌ لیست نمی‌تواند خالی باشد.
+print(safe_average([10, "abc", 30]))     # ❌ همه‌ی اعضا باید عدد باشند.
+print(safe_average([10, 20, None]))      # ❌ همه‌ی اعضا باید عدد باشند.</code></pre>
+            </div>
+            <p><strong>نکته:</strong> تابع به‌جای این‌که با خطا متوقف شود، پیام مناسب برمی‌گرداند. این الگو به شما اجازه می‌دهد بدون نگرانی از کرش، از تابع استفاده کنید.</p>
+            <p>یک نکته‌ی حرفه‌ای: به‌جای برگرداندن رشته، می‌توانید خطا را <code class="inline-code">raise</code> کنید و در سطح بالاتر مدیریتش کنید. هر دو رویکرد درست است — بسته به اینکه چگونه می‌خواهید برنامه ساختار داشته باشد.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1 — except خیلی عمومی که خطاها را پنهان می‌کند
+try:
+    result = 10 / 0
+except:
+    pass
+
+# خطا 2 — ترتیب اشتباه exceptها
+try:
+    number = int("abc")
+except Exception:
+    print("خطای عمومی")
+except ValueError:
+    print("خطای خاص")
+
+# خطا 3 — finally فقط بعد از except می‌آید ولی بدون try استفاده شده
+finally:
+    print("تمیزکاری")
+
+# خطا 4 — raise بدون استثنای مناسب بیرون از except
+if True:
+    raise "این یک رشته است، نه استثنا"</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">except: pass</code> خطا را بی‌صدا پنهان می‌کند. راه‌حل: <code class="inline-code">except ZeroDivisionError as e: print(f"خطا: {e}")</code> یا حداقل <code class="inline-code">logging</code> کنید.</li>
+              <li><strong>خطا ۲:</strong> <code class="inline-code">except Exception</code> قبل از <code class="inline-code">except ValueError</code> نوشته شده. راه‌حل: ترتیب را برعکس کنید — خاص اول، عمومی بعد.</li>
+              <li><strong>خطا ۳:</strong> <code class="inline-code">finally</code> بدون <code class="inline-code">try</code> استفاده شده. راه‌حل: باید داخل یک بلوک try/except باشد.</li>
+              <li><strong>خطا ۴:</strong> <code class="inline-code">raise</code> باید یک <strong>استثنا</strong> بگیرد، نه یک رشته. راه‌حل: <code class="inline-code">raise ValueError("...")</code> یا <code class="inline-code">raise RuntimeError("...")</code>.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># اصلاح 1
+try:
+    result = 10 / 0
+except ZeroDivisionError as e:
+    print(f"خطا: {e}")
+
+# اصلاح 2
+try:
+    number = int("abc")
+except ValueError:
+    print("خطای خاص")
+except Exception:
+    print("خطای عمومی")
+
+# اصلاح 3
+try:
+    print("انجام کار")
+finally:
+    print("تمیزکاری")
+
+# اصلاح 4
+if True:
+    raise ValueError("پیام خطا")</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-13" data-title="آزمون فصل ۱۳ — استثنا و خطایابی" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) کدام کلیدواژه برای <strong>گرفتن</strong> خطا استفاده می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">catch</button>
+              <button type="button" class="quiz-opt" data-key="b">except</button>
+              <button type="button" class="quiz-opt" data-key="c">grab</button>
+              <button type="button" class="quiz-opt" data-key="d">handle</button>
+            </div>
+            <div class="quiz-explain">💡 در پایتون، خطاها را با <code>except</code> می‌گیریم، نه <code>catch</code> (که در Java و C# رایج است).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) خروجی این کد چیست؟<br><code dir="ltr">try:<br>&nbsp;&nbsp;&nbsp;&nbsp;x = 10 / 0<br>except ZeroDivisionError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("A")<br>finally:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("B")</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط A</button>
+              <button type="button" class="quiz-opt" data-key="b">فقط B</button>
+              <button type="button" class="quiz-opt" data-key="c">A و B</button>
+              <button type="button" class="quiz-opt" data-key="d">هیچ‌کدام</button>
+            </div>
+            <div class="quiz-explain">💡 <code>except</code> اجرا می‌شود (چون ZeroDivisionError رخ داده) و <code>finally</code> هم همیشه اجرا می‌شود. پس هر دو A و B چاپ می‌شوند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) برای پرتاب یک خطا از داخل تابع، از چه دستوری استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">raise</button>
+              <button type="button" class="quiz-opt" data-key="b">throw</button>
+              <button type="button" class="quiz-opt" data-key="c">error</button>
+              <button type="button" class="quiz-opt" data-key="d">panic</button>
+            </div>
+            <div class="quiz-explain">💡 در پایتون از <code>raise</code> استفاده می‌شود (نه <code>throw</code> که در Java و C++ رایج است).</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) کدام except باید <strong>قبل از</strong> بقیه نوشته شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">except Exception</button>
+              <button type="button" class="quiz-opt" data-key="b">except</button>
+              <button type="button" class="quiz-opt" data-key="c">هر ترتیبی درست است</button>
+              <button type="button" class="quiz-opt" data-key="d">exceptهای خاص مثل <code>except ValueError</code></button>
+            </div>
+            <div class="quiz-explain">💡 پایتون اولین except منطبق را اجرا می‌کند. اگر <code>except Exception</code> را اول بگذارید، همه‌ی خطاها را می‌گیرد و exceptهای خاص هرگز اجرا نمی‌شوند. پس <strong>خاص اول، عمومی بعد</strong>.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) <code dir="ltr">finally</code> چه زمانی اجرا می‌شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط وقتی خطا رخ دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">در هر شرایطی، چه خطا رخ دهد چه نه</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط وقتی خطا رخ ندهد</button>
+              <button type="button" class="quiz-opt" data-key="d">هیچ‌وقت</button>
+            </div>
+            <div class="quiz-explain">💡 بلوک <code>finally</code> همیشه اجرا می‌شود — چه خطا رخ دهد، چه نه، حتی اگر با <code>return</code> از تابع خارج شوید. کاربرد اصلی‌اش پاک‌سازی منابع است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) چرا <code dir="ltr">except: pass</code> کار بدی است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">چون کند است</button>
+              <button type="button" class="quiz-opt" data-key="b">چون خطای نگارشی دارد</button>
+              <button type="button" class="quiz-opt" data-key="c">چون همه‌ی خطاها را بی‌صدا پنهان می‌کند و باگ‌ها را پیدا نمی‌کنید</button>
+              <button type="button" class="quiz-opt" data-key="d">درست است، مشکلی ندارد</button>
+            </div>
+            <div class="quiz-explain">💡 <code>except: pass</code> هر خطایی را می‌گیرد و هیچ کاری نمی‌کند. این باعث می‌شود باگ‌های واقعی در کدتان هیچ‌وقت دیده نشوند. همیشه except خاص بنویسید و حداقل خطا را log کنید.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «سیستم ثبت سفارش فروشگاه»</strong> — یک برنامه‌ی کامل که سفارش می‌گیرد، اعتبارسنجی می‌کند، خطاها را مدیریت می‌کند و رویدادها را ثبت می‌کند.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">online_shop.py</code> ذخیره شود.</li>
+          <li>حداقل سه استثنای سفارشی تعریف شوند:
+            <ul>
+              <li><code class="inline-code">OutOfStockError</code> — کالا موجود نیست.</li>
+              <li><code class="inline-code">InvalidQuantityError</code> — تعداد سفارش نامعتبر.</li>
+              <li><code class="inline-code">PaymentError</code> — خطای پرداخت.</li>
+            </ul>
+          </li>
+          <li>یک «انبار» به‌صورت دیکشنری داشته باشید: <code class="inline-code">{"سیب": 50, "موز": 30, "پرتقال": 20}</code>.</li>
+          <li>تابع <code class="inline-code">place_order(product, quantity, payment_method)</code> که:
+            <ul>
+              <li>بررسی کند کالا در انبار هست.</li>
+              <li>بررسی کند تعداد مثبت و عدد باشد.</li>
+              <li>بررسی کند موجودی کافی هست.</li>
+              <li>پرداخت را شبیه‌سازی کند (مثلاً اگر payment_method خالی بود، خطا).</li>
+              <li>در صورت موفقیت، موجودی را کم کند و تأییدیه برگرداند.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">main()</code> با یک منوی تعاملی که:
+            <ul>
+              <li>سفارش جدید می‌گیرد.</li>
+              <li>موجودی انبار را نمایش دهد.</li>
+              <li>هر خطا را با پیام مناسب گزارش دهد.</li>
+              <li>هر رویداد را با <code class="inline-code">logging</code> ثبت کند.</li>
+            </ul>
+          </li>
+          <li>در بلوک <code class="inline-code">finally</code> همیشه یک پیام «اتصال بسته شد» یا مشابه چاپ کنید.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     فروشگاه میوه
+══════════════════════════════════════
+  1. سفارش جدید
+  2. نمایش انبار
+  3. خروج
+──────────────────────────────────────
+
+انتخاب شما: 1
+نام کالا: سیب
+تعداد: 5
+روش پرداخت (کارت/نقد): کارت
+✅ سفارش ثبت شد: 5 عدد سیب. موجودی باقی‌مانده: 45
+
+انتخاب شما: 1
+نام کالا: انار
+❌ خطا: کالای «انار» در انبار موجود نیست.
+
+انتخاب شما: 1
+نام کالا: موز
+تعداد: 100
+❌ خطا: موجودی «موز» کافی نیست (30 عدد موجود است).</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>ذخیره‌ی سفارش‌های موفق در یک لیست و نمایش تاریخچه.</li>
+            <li>اضافه کردن «کد تخفیف» با اعتبارسنجی.</li>
+            <li>ذخیره‌ی انبار و سفارش‌ها در فایل (فصل ۱۴).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>استثنا (Exception) چیست و چطور با خطای Syntax تفاوت دارد.</li>
+          <li>با <code class="inline-code">try/except</code> خطاها را بگیرید.</li>
+          <li>چند <code class="inline-code">except</code> برای خطاهای مختلف بنویسید و ترتیب را رعایت کنید (خاص قبل از عمومی).</li>
+          <li>با <code class="inline-code">as e</code> پیام خطا را بگیرید.</li>
+          <li>با <code class="inline-code">else</code> کدی که فقط در حالت موفقیت اجرا می‌شود بنویسید.</li>
+          <li>با <code class="inline-code">finally</code> مطمئن شوید کد پاک‌سازی همیشه اجرا می‌شود.</li>
+          <li>با <code class="inline-code">raise</code> خطای خودتان بسازید و پرتاب کنید.</li>
+          <li>استثناهای سفارشی طراحی کنید.</li>
+          <li>با <code class="inline-code">logging</code> رویدادها را با سطح‌بندی مناسب ثبت کنید.</li>
+          <li>تفاوت <code class="inline-code">print</code> و <code class="inline-code">logging</code> را می‌دانید.</li>
+          <li>کِی از try/except استفاده کنید و کِی نه.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «خطا دشمن نیست — بخشی از واقعیت است. برنامه‌ی حرفه‌ای، برنامه‌ای نیست که خطا نداشته باشد؛ برنامه‌ای است که خطاها را می‌بیند، مدیریت می‌کند، و به کاربر پاسخ مناسب می‌دهد.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا می‌توانم بیش از یک except برای یک try بنویسم؟</summary><div class="faq-body"><p>بله، هر تعداد که لازم باشد. اما ترتیب مهم است: <strong>خاص‌ترین except را اول، عمومی‌ترین را آخر</strong>. اگر <code>except Exception</code> اول باشد، هیچ except دیگری اجرا نمی‌شود.</p></div></details>
+        <details class="faq-item"><summary>آیا <code dir="ltr">finally</code> همیشه اجرا می‌شود، حتی اگر <code dir="ltr">return</code> در try باشد؟</summary><div class="faq-body"><p>بله، همیشه. این یکی از ویژگی‌های مهم <code>finally</code> است. حتی اگر در try یک <code>return</code> باشد، پایتون اول finally را اجرا می‌کند و بعد از تابع خارج می‌شود. مگر اینکه در finally هم <code>return</code> یا <code>exit()</code> صدا زده شود که اصلاً کار خوبی نیست.</p></div></details>
+        <details class="faq-item"><summary>آیا استثنای سفارشی رو باید از Exception ارث‌بری کنه؟</summary><div class="faq-body"><p>بله، تقریباً همیشه. برای این که بتواند با <code>try/except</code> گرفته شود، باید از <code>Exception</code> (یا زیرکلاس‌های آن) ارث‌بری کند. در فصل ۱۶ (شی‌گرایی) این را کامل یاد می‌گیرید.</p></div></details>
+        <details class="faq-item"><summary>تفاوت <code dir="ltr">logging.error</code> و <code dir="ltr">logging.exception</code> چیست؟</summary><div class="faq-body"><p><code>logging.error(msg)</code> فقط پیام شما را ثبت می‌کند. اما <code>logging.exception(msg)</code> علاوه بر پیام، <strong>traceback کامل</strong> خطا را هم ثبت می‌کند — یعنی دقیقاً می‌فهمید خطا در کدام خط و از کدام تابع آمده. <code>logging.exception</code> را باید <strong>داخل except</strong> صدا بزنید.</p></div></details>
+        <details class="faq-item"><summary>چطور بفهمم چه خطاهایی ممکن است رخ دهد؟</summary><div class="faq-body"><p>سه راه: (۱) تجربه — بعد از چند بار اجرای کد، خطاهای رایج را می‌شناسید. (۲) مستندات — در مستندات رسمی پایتون، بخش "Raises" هر تابع، لیست خطاهای ممکن است. (۳) تست — با ورودی‌های مختلف (به‌ویژه بد) کد را آزمایش کنید.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۴ با <strong>فایل و مسیر</strong> آشنا می‌شوید: چطور داده‌ها را در فایل ذخیره کنید و بخوانید، با مسیرها کار کنید، و با فرمت‌های CSV و JSON سر و کار داشته باشید. این‌ها مکمل طبیعی مباحث این فصل هستند — چون خواندن و نوشتن فایل، پر از موقعیت‌هایی است که به try/except نیاز دارد.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-13" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-13">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-12/index.html">→ فصل قبلی<br><b>🧱 فصل ۱۲</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-14/index.html">فصل بعدی ←<br><b>📄 فصل ۱۴: فایل و مسیر</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۳: استثنا و خطایابی | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

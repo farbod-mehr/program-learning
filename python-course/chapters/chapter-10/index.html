@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۰: دیکشنری و مجموعه — نگاشت کلید به مقدار | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۰ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور با دیکشنری (کلید-مقدار) و مجموعه (set) کار کنید — ساده، عملی و کاربردی.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۰ از ۳۰ — دیکشنری و مجموعه</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۰
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۰ از ۳۰</span>
+    <h1>🗂️ دیکشنری و مجموعه — نگاشت کلید به مقدار</h1>
+    <p>چطور به‌جای ایندکس، از اسم استفاده کنیم؟ — <span class="term" data-term="dictionary">dictionary</span>، <span class="term" data-term="set">set</span>، <span class="term" data-term="key">key</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۷۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در فصل ۹ یاد گرفتیم که چطور چند مقدار را در یک لیست نگه داریم. برای دسترسی به اعضای لیست، از ایندکس (شماره) استفاده می‌کردیم: <code class="inline-code">names[0]</code>، <code class="inline-code">names[1]</code>. اما این روش یک مشکل دارد: <strong>شماره‌ها معنی‌دار نیستند</strong>. اگر کسی بپرسد «تلفن علی چیه؟» نمی‌توانید بگویید «<code class="inline-code">phone_list[3]</code>»!</p>
+        <p>اینجاست که <strong>دیکشنری</strong> وارد می‌شود. دیکشنری به شما اجازه می‌دهد به‌جای ایندکس عددی، از <strong>اسم</strong> استفاده کنید: <code class="inline-code">phone_book["علی"]</code>. این کار نه‌فقط خواناتر است، بلکه طبیعی‌تر هم است. در کنار دیکشنری، با <strong>مجموعه (set)</strong> هم آشنا می‌شوید — نوع خاصی از داده که اعضای یکتا نگه می‌دارد و برای حذف تکراری‌ها و عملیات مجموعه‌ای (مثل اشتراک و اجتماع) عالیه.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>دیکشنری بسازید و با کلید به مقدار دسترسی پیدا کنید.</li>
+          <li>مقادیر دیکشنری را اضافه، ویرایش و حذف کنید.</li>
+          <li>روی دیکشنری‌ها حلقه بزنید (روی کلیدها، مقادیر یا هر دو).</li>
+          <li>از متدهای مهم دیکشنری مثل <code class="inline-code">get()</code>، <code class="inline-code">keys()</code>، <code class="inline-code">values()</code>، <code class="inline-code">items()</code>، <code class="inline-code">update()</code> استفاده کنید.</li>
+          <li>مجموعه (set) بسازید و عملیات مجموعه‌ای (اشتراک، اجتماع، تفاضل) انجام دهید.</li>
+          <li>بدانید کِی از لیست، کِی از دیکشنری و کِی از مجموعه استفاده کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          دیکشنری، پرکاربردترین ساختمان داده در پایتون بعد از لیست است. در پروژه‌های واقعی، تقریباً هر جا داده‌ای با ساختار «فیلد-مقدار» دارید، دیکشنری استفاده می‌شود. مجموعه (set) هم کمتر استفاده می‌شود ولی در موقعیت‌های خاص (مثل حذف تکراری‌ها) حیاتی است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>دیکشنری</h4><p>ساخت، دسترسی، تغییر.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>متدها</h4><p>get، keys، items، update.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>حلقه و شمارش</h4><p>پیمایش + الگوی شمارنده.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>مجموعه</h4><p>Set و عملیات آن.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 تفاوت اصلی لیست و دیکشنری چیست؟</summary>
+          <div class="answer-body"><p>لیست بر اساس <strong>ایندکس عددی</strong> (۰، ۱، ۲، ...) سازماندهی می‌شود — یعنی ترتیب مهم است. دیکشنری بر اساس <strong>کلید</strong> سازماندهی می‌شود — یعنی می‌توانید از هر چیزی که معنی‌دار است استفاده کنید: اسم، شماره دانشجویی، کد ملی. اگر در برنامه‌تان «ترتیب» مهم است، لیست بهتر است. اگر «اسم‌گذاری» مهم است، دیکشنری بهتر است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا <code dir="ltr">my_dict["کلید_ناموجود"]</code> خطا می‌دهد اما <code dir="ltr">my_dict.get("کلید_ناموجود")</code> خطا نمی‌دهد؟</summary>
+          <div class="answer-body"><p>این یکی از زیبایی‌های پایتون است. با کروشه <code>[ ]</code>، اگر کلید وجود نداشته باشد، خطای <code>KeyError</code> می‌گیرید — که یعنی برنامه متوقف می‌شود. اما با <code>.get()</code>، اگر کلید نباشد، مقدار <code>None</code> برمی‌گردد (یا مقداری که خودتان مشخص می‌کنید) بدون اینکه خطا بدهد. در خیلی از موارد، این رفتار «دوستانه‌تر» است. مثلاً در شمارش کلمات، می‌خواهید اگر کلمه‌ای اولین بار دیده می‌شود، صفر حساب شود — <code>.get()</code> این کار را برایتان انجام می‌دهد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چه زمانی از set استفاده کنم و چه زمانی از list؟</summary>
+          <div class="answer-body"><p>از set استفاده کنید اگر: (۱) می‌خواهید اعضای تکراری حذف شوند؛ (۲) فقط می‌خواهید چک کنید که آیا یک مقدار خاص در مجموعه هست یا نه؛ (۳) می‌خواهید عملیات مجموعه‌ای (اشتراک، اجتماع، تفاضل) انجام دهید. از list استفاده کنید اگر: ترتیب اعضا مهم است، یا می‌خواهید اعضای تکراری هم داشته باشید.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی نه فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با متغیرها، انواع داده و عملگرها راحت هستید.</li>
+          <li>شرط‌ها (<code class="inline-code">if</code>/<code class="inline-code">elif</code>/<code class="inline-code">else</code>) و حلقه‌ها (<code class="inline-code">for</code>/<code class="inline-code">while</code>) را می‌دانید.</li>
+          <li>با توابع (<code class="inline-code">def</code>، <code class="inline-code">return</code>، پارامتر) راحت هستید.</li>
+          <li>با لیست‌ها و متدهایشان (فصل ۹) کار کرده‌اید.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک فایل جدید به نام <code class="inline-code">chapter10.py</code> در پوشه‌ی پروژه بسازید. دیکشنری و set ابزارهای عملیاتی زیادی دارند که با تایپ کردن، در ذهن می‌مانند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: دیکشنری و مجموعه</h2></div>
+
+        <h3>۱) دیکشنری چیست؟ — یک دفترچه با کلید</h3>
+        <p>دیکشنری مثل یک دفترچه تلفن است: برای پیدا کردن شماره‌ی «علی»، اسمش را جست‌وجو می‌کنید، نه اینکه صفحه‌به‌صفحه بگردید. هر عضو دیکشنری یک <strong>جفت کلید-مقدار</strong> است: کلید، اسمی است که برمی‌گزینید؛ مقدار، چیزی است که ذخیره می‌کنید. ساختارش با کروشه <code class="inline-code">{ }</code> است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_dict.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># یک دیکشنری از اطلاعات یک شخص
+person = {
+    "name": "علی",
+    "age": 25,
+    "city": "تهران",
+}
+
+# یک دیکشنری خالی
+empty = {}
+
+# دیکشنری دفترچه تلفن
+phone_book = {
+    "علی": "09123456789",
+    "رضا": "09387654321",
+    "سارا": "09121112222",
+}
+
+print(person)
+print(phone_book)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">{'name': 'علی', 'age': 25, 'city': 'تهران'}
+{'علی': '09123456789', 'رضا': '09387654321', 'سارا': '09121112222'}</code></pre>
+        </div>
+        <p>چند نکته:</p>
+        <ul>
+          <li>هر جفت با <strong>دو-نقطه</strong> از هم جدا می‌شود: <code class="inline-code">"کلید": مقدار</code>.</li>
+          <li>جفت‌ها با <strong>کاما</strong> از هم جدا می‌شوند.</li>
+          <li>دیکشنری خالی با <code class="inline-code">{}</code> ساخته می‌شود — توجه کنید که این با set خالی متفاوت است (بعداً توضیح می‌دهیم).</li>
+        </ul>
+
+        <h3>۲) دسترسی به مقادیر — از طریق کلید</h3>
+        <p>برای گرفتن یک مقدار، از کلید استفاده می‌کنیم، داخل کروشه:</p>
+        <div class="code-box">
+          <div class="code-head"><span>access.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {
+    "name": "علی",
+    "age": 25,
+    "city": "تهران",
+}
+
+print(person["name"])   # علی
+print(person["age"])    # 25
+print(person["city"])   # تهران</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار</b>
+          اگر کلیدی که می‌خواهید وجود نداشته باشد، خطای <code class="inline-code">KeyError</code> می‌گیرید:
+          <div class="code-box" style="margin-top:8px">
+            <div class="code-head"><span>خطای کلید نامعتبر</span><span class="lang">Python</span></div>
+            <pre class="code"><code dir='ltr' data-lang="python">print(person["email"])   # KeyError: 'email'</code></pre>
+          </div>
+          در بخش بعدی یاد می‌گیریم چطور این خطا را با <code class="inline-code">.get()</code> جلوگیری کنیم.
+        </div>
+
+        <h3>۳) اضافه کردن و ویرایش کردن</h3>
+        <p>دیکشنری <strong>تغییرپذیر</strong> است. اضافه کردن و ویرایش، سینتکس یکسانی دارند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>add_modify.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25}
+
+# اضافه کردن یک کلید جدید
+person["city"] = "تهران"
+print(person)
+# {'name': 'علی', 'age': 25, 'city': 'تهران'}
+
+# ویرایش یک مقدار موجود
+person["age"] = 26
+print(person)
+# {'name': 'علی', 'age': 26, 'city': 'تهران'}</code></pre>
+        </div>
+        <p>پایتون خودش تشخیص می‌دهد: اگر کلید وجود داشته باشد، مقدارش عوض می‌شود؛ اگر نباشد، کلید جدید اضافه می‌شود.</p>
+
+        <h3>۴) متد <code>get()</code> — دسترسی امن</h3>
+        <p>برای جلوگیری از خطای <code class="inline-code">KeyError</code>، از <code class="inline-code">.get()</code> استفاده کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>safe_get.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25}
+
+# اگر کلید باشد، مقدارش را می‌دهد
+print(person.get("name"))                # علی
+
+# اگر کلید نباشد، None می‌دهد
+print(person.get("email"))               # None
+
+# می‌توانید مقدار پیش‌فرض هم بدهید
+print(person.get("email", "ثبت نشده"))    # ثبت نشده</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 عادت طلایی</b>
+          وقتی مطمئن نیستید کلید وجود دارد یا نه، همیشه از <code class="inline-code">.get()</code> استفاده کنید. این کار باعث می‌شود برنامه‌تان به‌جای کرش کردن، با آرامش ادامه دهد.
+        </div>
+
+        <h3>۵) متدهای مهم دیکشنری</h3>
+
+        <h4>الف) <code>keys()</code>، <code>values()</code>، <code>items()</code></h4>
+        <div class="code-box">
+          <div class="code-head"><span>dict_methods.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25, "city": "تهران"}
+
+# همه‌ی کلیدها
+print(person.keys())
+# dict_keys(['name', 'age', 'city'])
+
+# همه‌ی مقادیر
+print(person.values())
+# dict_values(['علی', 25, 'تهران'])
+
+# همه‌ی جفت‌های کلید-مقدار به‌صورت تاپل
+print(person.items())
+# dict_items([('name', 'علی'), ('age', 25), ('city', 'تهران')])</code></pre>
+        </div>
+        <p>خروجی‌های <code class="inline-code">keys()</code>، <code class="inline-code">values()</code> و <code class="inline-code">items()</code> «شیء view» هستند — یعنی می‌توانید رویشان حلقه بزنید یا با <code class="inline-code">list()</code> به لیست تبدیلشان کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>to_list.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">keys_list = list(person.keys())
+print(keys_list)    # ['name', 'age', 'city']</code></pre>
+        </div>
+
+        <h4>ب) <code>update()</code> — ادغام دو دیکشنری</h4>
+        <div class="code-box">
+          <div class="code-head"><span>update.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25}
+extra = {"city": "تهران", "age": 26}
+
+person.update(extra)
+print(person)
+# {'name': 'علی', 'age': 26, 'city': 'تهران'}</code></pre>
+        </div>
+        <p>نکته: اگر کلید در هر دو دیکشنری باشد (مثل <code class="inline-code">age</code> در مثال بالا)، مقدار دیکشنری دوم، جایگزین می‌شود.</p>
+
+        <h4>ج) <code>pop()</code>، <code>popitem()</code>، <code>del</code> — حذف</h4>
+        <div class="code-box">
+          <div class="code-head"><span>remove.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25, "city": "تهران"}
+
+# pop — حذف با کلید و برگرداندن مقدار
+age = person.pop("age")
+print(age)              # 25
+print(person)           # {'name': 'علی', 'city': 'تهران'}
+
+# pop با مقدار پیش‌فرض (اگر کلید نبود، خطا نده)
+email = person.pop("email", None)
+print(email)            # None
+
+# del — حذف با کلید
+del person["city"]
+print(person)           # {'name': 'علی'}
+
+# popitem — حذف آخرین جفت اضافه‌شده
+person = {"a": 1, "b": 2, "c": 3}
+last = person.popitem()
+print(last)             # ('c', 3)
+print(person)           # {'a': 1, 'b': 2}</code></pre>
+        </div>
+
+        <h3>۶) حلقه روی دیکشنری</h3>
+        <p>دیکشنری‌ها با <code class="inline-code">for</code> خیلی راحت پیمایش می‌شوند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>loop_dict.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">person = {"name": "علی", "age": 25, "city": "تهران"}
+
+# فقط روی کلیدها (پیش‌فرض)
+for key in person:
+    print(key)
+# name
+# age
+# city
+
+# روی کلیدها صریحاً
+for key in person.keys():
+    print(key)
+
+# فقط روی مقادیر
+for value in person.values():
+    print(value)
+# علی
+# 25
+# تهران
+
+# روی هر دو (پرکاربردترین حالت)
+for key, value in person.items():
+    print(f"{key}: {value}")
+# name: علی
+# age: 25
+# city: تهران</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 الگوی پرکاربرد</b>
+          <code class="inline-code">for key, value in person.items():</code> پرکاربردترین الگو برای پیمایش دیکشنری است. اگر فقط کلیدها را می‌خواهید، <code class="inline-code">for key in person:</code> کوتاه‌ترین راه است.
+        </div>
+
+        <h3>۷) دیکشنری تو در تو (Nested Dict)</h3>
+        <p>می‌توانید داخل یک دیکشنری، دیکشنری دیگری داشته باشید. این برای ذخیره‌ی داده‌های سلسله‌مراتبی (مثل اطلاعات چند کاربر) عالیه:</p>
+        <div class="code-box">
+          <div class="code-head"><span>nested_dict.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">users = {
+    "ali": {
+        "name": "علی محمدی",
+        "age": 25,
+        "city": "تهران",
+    },
+    "reza": {
+        "name": "رضا احمدی",
+        "age": 30,
+        "city": "شیراز",
+    },
+}
+
+# دسترسی به اطلاعات یک کاربر
+print(users["ali"]["name"])     # علی محمدی
+print(users["reza"]["city"])     # شیراز
+
+# پیمایش
+for username, info in users.items():
+    print(f"{username} ({info['age']} ساله، {info['city']})")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">ali (25 ساله، تهران)
+reza (30 ساله، شیراز)</code></pre>
+        </div>
+
+        <h3>۸) الگوی شمارنده با دیکشنری</h3>
+        <p>یکی از پرکاربردترین الگوهای دیکشنری: شمارش تعداد تکرار هر عضو:</p>
+        <div class="code-box">
+          <div class="code-head"><span>counter.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># شمارش تعداد تکرار هر حرف در یک متن
+text = "python programming"
+counts = {}
+
+for char in text:
+    if char in counts:
+        counts[char] += 1
+    else:
+        counts[char] = 1
+
+print(counts)
+
+# یا با get که تمیزتر است
+counts = {}
+for char in text:
+    counts[char] = counts.get(char, 0) + 1
+
+print(counts)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">{'p': 2, 'y': 1, 't': 1, 'h': 1, 'o': 2, 'n': 2, ' ': 1, 'r': 2, 'g': 2, 'a': 1, 'm': 2, 'i': 1}</code></pre>
+        </div>
+        <p>الگوی <code class="inline-code">counts[x] = counts.get(x, 0) + 1</code> یکی از معروف‌ترین الگوهای پایتون است. اگر x قبلاً دیده شده، یک اضافه می‌کند؛ اگر نه، از صفر شروع می‌کند.</p>
+
+        <h3>۹) مجموعه (Set) — اعضای یکتا</h3>
+        <p><strong>مجموعه (set)</strong> مجموعه‌ای از اعضاست که: (۱) ترتیبی ندارند؛ (۲) عضو تکراری نمی‌پذیرند؛ (۳) خیلی سریع می‌توان چک کرد که آیا یک مقدار در آن‌ها هست یا نه. ساختارش هم با کروشه است، اما بدون جفت کلید-مقدار:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_set.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># با اعضای مستقیم
+colors = {"قرمز", "سبز", "آبی"}
+print(colors)
+
+# از یک لیست (تکراری‌ها خودکار حذف می‌شوند)
+numbers = [1, 2, 2, 3, 3, 3, 4]
+unique = set(numbers)
+print(unique)              # {1, 2, 3, 4}
+
+# set خالی — دقت کنید!
+empty_set = set()          # ✅ درست
+# empty = {}               # ❌ این یک دیکشنری خالی است، نه set!</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ دام مهم</b>
+          <code class="inline-code">{}</code> یک <strong>دیکشنری</strong> خالی است، نه یک set خالی. برای set خالی باید از <code class="inline-code">set()</code> استفاده کنید.
+        </div>
+
+        <h4>چند متد مهم set</h4>
+        <div class="code-box">
+          <div class="code-head"><span>set_methods.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">fruits = {"سیب", "موز"}
+
+# اضافه کردن
+fruits.add("پرتقال")
+print(fruits)              # {'سیب', 'موز', 'پرتقال'}
+
+# حذف
+fruits.remove("موز")
+print(fruits)              # {'سیب', 'پرتقال'}
+
+# discard — مثل remove ولی خطا نمی‌دهد اگر نبود
+fruits.discard("انگور")    # بدون خطا
+fruits.discard("سیب")      # حذف می‌شود
+print(fruits)              # {'پرتقال'}
+
+# بررسی وجود
+fruits.add("سیب")
+print("سیب" in fruits)      # True
+print("انگور" in fruits)    # False
+
+# تعداد اعضا
+print(len(fruits))          # 2
+
+# خالی کردن
+fruits.clear()
+print(fruits)              # set()</code></pre>
+        </div>
+
+        <h4>عملیات مجموعه‌ای</h4>
+        <p>یک ویژگی زیبای set این است که می‌توانید عملیات ریاضی روی آن انجام دهید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>set_ops.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+# اشتراک (اعضای مشترک)
+print(a & b)                # {3, 4}
+print(a.intersection(b))    # {3, 4}
+
+# اجتماع (همه اعضا بدون تکرار)
+print(a | b)                # {1, 2, 3, 4, 5, 6}
+print(a.union(b))           # {1, 2, 3, 4, 5, 6}
+
+# تفاضل (اعضای a که در b نیستند)
+print(a - b)                # {1, 2}
+print(a.difference(b))      # {1, 2}
+
+# تفاضل متقارن (اعضایی که فقط در یکی هستند)
+print(a ^ b)                # {1, 2, 5, 6}
+print(a.symmetric_difference(b))  # {1, 2, 5, 6}</code></pre>
+        </div>
+        <p>این عملیات وقتی طلایی می‌شوند که بخواهید دو مجموعه را با هم مقایسه کنید — مثلاً «کاربرانی که در هر دو سایت عضو هستند» یا «محصولاتی که در انبار A هست ولی در B نیست».</p>
+
+        <h3>۱۰) کدام ساختمان داده را انتخاب کنم؟</h3>
+        <p>حالا که هر چهار ساختمان داده را می‌شناسید، این جدول تصمیم‌گیری را به‌خاطر بسپارید:</p>
+        <div class="table-wrap">
+          <table class="compare">
+            <thead>
+              <tr><th>ساختمان</th><th>سینتکس</th><th>تغییرپذیر؟</th><th>تکراری مجاز؟</th><th>کاربرد اصلی</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>لیست (list)</td><td><code>[1, 2, 3]</code></td><td>✅</td><td>✅</td><td>دنباله‌ی مرتب داده‌ها</td></tr>
+              <tr><td>تاپل (tuple)</td><td><code>(1, 2, 3)</code></td><td>❌</td><td>✅</td><td>داده‌ی ثابت (مثل مختصات)</td></tr>
+              <tr><td>دیکشنری (dict)</td><td><code>{"k": "v"}</code></td><td>✅</td><td>کلید: ❌ / مقدار: ✅</td><td>نگاشت کلید-مقدار</td></tr>
+              <tr><td>مجموعه (set)</td><td><code>{1, 2, 3}</code></td><td>✅</td><td>❌</td><td>حذف تکراری + بررسی سریع وجود</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>۱۱) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>برنامه‌ای که تعداد تکرار کلمات یک متن را می‌شمارد و پرتکرارترین‌ها را نشان می‌دهد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>word_counter.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""شمارنده کلمات — با دیکشنری."""
+
+
+def count_words(text):
+    """تعداد تکرار هر کلمه را در یک دیکشنری برمی‌گرداند."""
+    words = text.lower().split()
+    counts = {}
+    for word in words:
+        counts[word] = counts.get(word, 0) + 1
+    return counts
+
+
+def show_top(counts, n=5):
+    """n کلمه‌ی پرتکرار را نمایش می‌دهد."""
+    # items() → تاپل‌ها، sort بر اساس مقدار (x[1]) نزولی
+    sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+
+    print(f"\n🏆 {n} کلمه پرتکرار:")
+    for i, (word, count) in enumerate(sorted_items[:n], start=1):
+        print(f"  {i}. {word} — {count} بار")
+
+
+def main():
+    print("=" * 40)
+    print("     شمارنده کلمات")
+    print("=" * 40)
+
+    text = input("یک متن بنویسید:\n").strip()
+
+    if not text:
+        print("⚠️ متن خالی است.")
+        return
+
+    counts = count_words(text)
+    print(f"\n📊 تعداد کلمات یکتا: {len(counts)}")
+    show_top(counts, n=5)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>نمونه‌ی اجرا:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">========================================
+     شمارنده کلمات
+========================================
+یک متن بنویسید:
+پایتون یک زبان ساده است و پایتون برای همه خوب است
+
+📊 تعداد کلمات یکتا: 8
+
+🏆 5 کلمه پرتکرار:
+  1. پایتون — 2 بار
+  2. یک — 1 بار
+  3. زبان — 1 بار
+  4. ساده — 1 بار
+  5. است — 1 بار</code></pre>
+        </div>
+        <p>در این مثال، همه‌ی مفاهیم فصل با هم ترکیب شدند:</p>
+        <ul>
+          <li>دیکشنری برای ذخیره‌ی نگاشت کلمه → تعداد.</li>
+          <li>الگوی <code class="inline-code">get(word, 0) + 1</code> برای شمارش.</li>
+          <li><code class="inline-code">items()</code> برای پیمایش.</li>
+          <li><code class="inline-code">sorted()</code> با <code class="inline-code">key</code> برای مرتب‌سازی بر اساس مقدار.</li>
+          <li>توابع از فصل ۸.</li>
+        </ul>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک «دفترچه تلفن دیکشنری» که همه‌ی متدهای مهم دیکشنری را نشان می‌دهد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>phone_book_dict.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""دفترچه تلفن با دیکشنری."""
+
+
+def add_contact(book):
+    """مخاطب جدید اضافه می‌کند."""
+    name = input("نام: ").strip()
+    if not name:
+        print("⚠️ نام نمی‌تواند خالی باشد.")
+        return
+    if name in book:
+        print(f"⚠️ «{name}» قبلاً وجود دارد.")
+        return
+
+    phone = input("شماره: ").strip()
+    city = input("شهر: ").strip()
+
+    # ذخیره به‌عنوان یک دیکشنری داخلی
+    book[name] = {
+        "phone": phone,
+        "city": city,
+    }
+    print(f"✅ «{name}» اضافه شد.")
+
+
+def show_all(book):
+    """همه‌ی مخاطبین را نمایش می‌دهد."""
+    if not book:
+        print("\n📭 دفترچه خالی است.")
+        return
+
+    print(f"\n📞 دفترچه تلفن ({len(book)} مخاطب):")
+    print("-" * 50)
+    for i, (name, info) in enumerate(book.items(), start=1):
+        print(f"  {i}. {name}")
+        print(f"     ☎️  {info['phone']}")
+        print(f"     🏙️  {info['city']}")
+        print("-" * 50)
+
+
+def search(book):
+    """جست‌وجو در دفترچه."""
+    if not book:
+        print("📭 دفترچه خالی است.")
+        return
+
+    query = input("جست‌وجو (نام یا شهر): ").strip().lower()
+    results = []
+
+    for name, info in book.items():
+        if query in name.lower() or query in info["city"].lower():
+            results.append((name, info))
+
+    if not results:
+        print("❌ نتیجه‌ای یافت نشد.")
+        return
+
+    print(f"\n🔍 {len(results)} نتیجه:")
+    for name, info in results:
+        print(f"  • {name} — {info['phone']} ({info['city']})")
+
+
+def edit_contact(book):
+    """مخاطب موجود را ویرایش می‌کند."""
+    name = input("نام مخاطب برای ویرایش: ").strip()
+
+    if name not in book:
+        print(f"❌ «{name}» پیدا نشد.")
+        return
+
+    print(f"اطلاعات فعلی: {book[name]}")
+    new_phone = input(f"شماره جدید (Enter = بدون تغییر): ").strip()
+    new_city = input(f"شهر جدید (Enter = بدون تغییر): ").strip()
+
+    if new_phone:
+        book[name]["phone"] = new_phone
+    if new_city:
+        book[name]["city"] = new_city
+
+    print("✅ ویرایش شد.")
+
+
+def delete_contact(book):
+    """مخاطب را حذف می‌کند."""
+    name = input("نام مخاطب برای حذف: ").strip()
+
+    if name not in book:
+        print(f"❌ «{name}» پیدا نشد.")
+        return
+
+    book.pop(name)
+    print(f"🗑 «{name}» حذف شد.")
+
+
+def list_cities(book):
+    """شهرهای یکتای دفترچه را نمایش می‌دهد."""
+    if not book:
+        print("📭 دفترچه خالی است.")
+        return
+
+    cities = {info["city"] for info in book.values()}
+    print(f"\n🏙️ شهرهای دفترچه ({len(cities)} شهر یکتا):")
+    for city in sorted(cities):
+        print(f"  • {city}")
+
+
+def main():
+    book = {}
+
+    while True:
+        print("\n" + "=" * 40)
+        print("       دفترچه تلفن دیکشنری")
+        print("=" * 40)
+        print("  1. افزودن مخاطب")
+        print("  2. نمایش همه")
+        print("  3. جست‌وجو")
+        print("  4. ویرایش")
+        print("  5. حذف")
+        print("  6. لیست شهرها (set)")
+        print("  7. خروج")
+        print("-" * 40)
+
+        choice = input("انتخاب شما: ").strip()
+
+        if choice == "1":
+            add_contact(book)
+        elif choice == "2":
+            show_all(book)
+        elif choice == "3":
+            search(book)
+        elif choice == "4":
+            edit_contact(book)
+        elif choice == "5":
+            delete_contact(book)
+        elif choice == "6":
+            list_cities(book)
+        elif choice == "7":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          در این برنامه، دیکشنری تودرتو استفاده شده: <code class="inline-code">book[name] = {"phone": ..., "city": ...}</code>. این یکی از رایج‌ترین الگوهای ذخیره‌ی داده در پایتون است. همچنین تابع <code class="inline-code">list_cities</code> از set برای پیدا کردن شهرهای یکتا استفاده می‌کند — یک کاربرد واقعی از set.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک «سیستم نظرسنجی» بسازید که نظرهای کاربران را در یک دیکشنری نگه دارد و تحلیل کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">survey.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک دیکشنری خالی بسازید که در آن هر کاربر به یک پاسخ رأی داده باشد: <code class="inline-code">votes = {}</code>.</li>
+          <li>از کاربر چند رأی بگیرید. هر رأی شامل «نام کاربر» و «گزینه انتخابی» (مثلاً «A»، «B»، «C») است. تا وقتی کاربر «تمام» نزند، ادامه دهید.</li>
+          <li>اگر یک کاربر قبلاً رأی داده بود، رأی جدیدش جایگزین رأی قبلی شود.</li>
+          <li>تابعی به نام <code class="inline-code">show_results(votes)</code> بسازید که:
+            <ul>
+              <li>تعداد کل رأی‌دهندگان را نمایش دهد.</li>
+              <li>تعداد رأی هر گزینه را با شمارش روی <code class="inline-code">values()</code> نمایش دهد.</li>
+              <li>گزینه‌ی برنده را مشخص کند.</li>
+            </ul>
+          </li>
+          <li>تابعی به نام <code class="inline-code">show_voters(votes)</code> بسازید که نام رأی‌دهندگانی که به یک گزینه‌ی خاص رأی داده‌اند را نمایش دهد (گزینه را از کاربر بگیرید).</li>
+          <li>تابعی به نام <code class="inline-code">get_unique_options(votes)</code> بسازید که با <strong>set</strong>، گزینه‌های یکتای رأی‌داده‌شده را برگرداند.</li>
+          <li>تابع <code class="inline-code">main()</code> با منوی تعاملی که همه‌ی این قابلیت‌ها را به کاربر ارائه دهد.</li>
+          <li>هر تابع یک docstring داشته باشد.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>survey.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""سیستم نظرسنجی — با دیکشنری و set."""
+
+
+def collect_votes():
+    """رأی‌ها را از کاربر جمع می‌کند."""
+    votes = {}
+    print("\nرأی‌گیری شروع شد. گزینه‌ها: A، B، C")
+    print("برای پایان، در فیلد نام بنویسید: تمام\n")
+
+    while True:
+        name = input("نام رأی‌دهنده: ").strip()
+        if name == "تمام":
+            break
+        if not name:
+            print("⚠️ نام نمی‌تواند خالی باشد.")
+            continue
+
+        choice = input("گزینه (A/B/C): ").strip().upper()
+        if choice not in ("A", "B", "C"):
+            print("⚠️ گزینه نامعتبر. فقط A یا B یا C.")
+            continue
+
+        # اگر کاربر قبلاً رأی داده، رأی جدید جایگزین می‌شود
+        if name in votes:
+            print(f"🔄 رأی «{name}» از {votes[name]} به {choice} تغییر کرد.")
+
+        votes[name] = choice
+
+    return votes
+
+
+def show_results(votes):
+    """نتایج نظرسنجی را نمایش می‌دهد."""
+    if not votes:
+        print("\n📭 هیچ رأی‌ای ثبت نشده.")
+        return
+
+    # شمارش آرا
+    counts = {}
+    for choice in votes.values():
+        counts[choice] = counts.get(choice, 0) + 1
+
+    print("\n" + "=" * 45)
+    print("           نتایج نظرسنجی")
+    print("=" * 45)
+    print(f"  تعداد کل رأی‌دهندگان: {len(votes)}")
+    print("-" * 45)
+
+    # مرتب‌سازی گزینه‌ها بر اساس تعداد آرا
+    sorted_options = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+
+    for option, count in sorted_options:
+        # نوار بصری
+        bar = "█" * count
+        percent = count / len(votes) * 100
+        print(f"  {option}: {count} رأی ({percent:.1f}%) {bar}")
+
+    # برنده
+    winner = sorted_options[0]
+    print("-" * 45)
+    print(f"  🏆 برنده: گزینه {winner[0]} با {winner[1]} رأی")
+    print("=" * 45)
+
+
+def show_voters(votes):
+    """رأی‌دهندگان یک گزینه را نشان می‌دهد."""
+    if not votes:
+        print("📭 هیچ رأی‌ای ثبت نشده.")
+        return
+
+    choice = input("کدام گزینه؟ (A/B/C): ").strip().upper()
+    voters = [name for name, c in votes.items() if c == choice]
+
+    if not voters:
+        print(f"❌ هیچ‌کس به گزینه {choice} رأی نداده.")
+        return
+
+    print(f"\n👥 {len(voters)} نفر به گزینه {choice} رأی داده‌اند:")
+    for name in voters:
+        print(f"  • {name}")
+
+
+def get_unique_options(votes):
+    """گزینه‌های یکتا را با set برمی‌گرداند."""
+    return set(votes.values())
+
+
+def main():
+    votes = {}
+
+    while True:
+        print("\n" + "=" * 40)
+        print("         سیستم نظرسنجی")
+        print("=" * 40)
+        print("  1. رأی‌گیری")
+        print("  2. نمایش نتایج")
+        print("  3. رأی‌دهندگان یک گزینه")
+        print("  4. گزینه‌های یکتا (set)")
+        print("  5. خروج")
+        print("-" * 40)
+
+        choice = input("انتخاب شما: ").strip()
+
+        if choice == "1":
+            votes = collect_votes()
+        elif choice == "2":
+            show_results(votes)
+        elif choice == "3":
+            show_voters(votes)
+        elif choice == "4":
+            options = get_unique_options(votes)
+            print(f"\n🎯 {len(options)} گزینه یکتا رأی گرفته‌اند: {sorted(options)}")
+        elif choice == "5":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">انتخاب شما: 1
+
+رأی‌گیری شروع شد. گزینه‌ها: A، B، C
+برای پایان، در فیلد نام بنویسید: تمام
+
+نام رأی‌دهنده: علی
+گزینه (A/B/C): A
+نام رأی‌دهنده: رضا
+گزینه (A/B/C): B
+نام رأی‌دهنده: سارا
+گزینه (A/B/C): A
+نام رأی‌دهنده: علی
+گزینه (A/B/C): C
+🔄 رأی «علی» از A به C تغییر کرد.
+نام رأی‌دهنده: تمام
+
+انتخاب شما: 2
+
+=============================================
+           نتایج نظرسنجی
+=============================================
+  تعداد کل رأی‌دهندگان: 3
+---------------------------------------------
+  A: 1 رأی (33.3%) █
+  B: 1 رأی (33.3%) █
+  C: 1 رأی (33.3%) █
+---------------------------------------------
+  🏆 برنده: گزینه A با 1 رأی
+=============================================</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی این راه‌حل</summary>
+          <div class="answer-body">
+            <p>چند نکته‌ی مهم:</p>
+            <ol>
+              <li><strong>دیکشنری ساده برای رأی‌ها:</strong> <code class="inline-code">votes[name] = choice</code> — کلید اسم، مقدار گزینه. این ساده‌ترین شکل ذخیره‌ی داده است. نکته‌ی جالب: چون کلیدها در دیکشنری یکتا هستند، خودکاراً رأی قبلی یک نفر با رأی جدیدش جایگزین می‌شود — نیازی به کد اضافه نیست!</li>
+              <li><strong>الگوی شمارش:</strong> <code class="inline-code">counts[c] = counts.get(c, 0) + 1</code> — یک الگوی بسیار رایج که در این فصل یاد گرفتید.</li>
+              <li><strong>مرتب‌سازی با key:</strong> <code class="inline-code">sorted(counts.items(), key=lambda x: x[1], reverse=True)</code> — مرتب‌سازی بر اساس عضو دوم تاپل (که مقدار است). lambda در فصل ۱۱ کامل آموزش داده می‌شود.</li>
+              <li><strong>استفاده از set:</strong> <code class="inline-code">set(votes.values())</code> مستقیم گزینه‌های یکتا را می‌دهد — بدون حلقه و بدون مقایسه.</li>
+              <li><strong>list comprehension:</strong> <code class="inline-code">[name for name, c in votes.items() if c == choice]</code> — یک روش کوتاه برای فیلتر کردن. در فصل ۱۱ یاد می‌گیرید.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">survey.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>می‌دانید چرا دیکشنری به‌طور خودکار رأی تکراری را جایگزین می‌کند.</li>
+              <li>با <code class="inline-code">.get()</code> و <code class="inline-code">.items()</code> و <code class="inline-code">.values()</code> راحت هستید.</li>
+              <li>می‌دانید چه زمانی از set به‌جای لیست استفاده کنید.</li>
+              <li>تفاوت دیکشنری خالی <code class="inline-code">{}</code> و set خالی <code class="inline-code">set()</code> را می‌دانید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ KeyError: 'کلید_ناموجود'</b>
+          <p><strong>معنی:</strong> کلیدی که با کروشه صدا زدید، در دیکشنری وجود ندارد.</p>
+          <p><strong>علت:</strong> <code class="inline-code">my_dict["ناموجود"]</code> وقتی کلید وجود ندارد.</p>
+          <p><strong>راه‌حل:</strong> از <code class="inline-code">.get()</code> استفاده کنید: <code class="inline-code">my_dict.get("ناموجود", "پیش‌فرض")</code>. یا قبل از دسترسی با <code class="inline-code">in</code> بررسی کنید: <code class="inline-code">if "key" in my_dict:</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ TypeError: unhashable type: 'list'</b>
+          <p><strong>معنی:</strong> نمی‌توان از لیست به‌عنوان کلید دیکشنری استفاده کرد.</p>
+          <p><strong>علت:</strong> دیکشنری فقط کلیدهای تغییرناپذیر (immutable) می‌پذیرد: رشته، عدد، تاپل. لیست تغییرپذیر است، پس نمی‌شود کلید.</p>
+          <p><strong>راه‌حل:</strong> اگر مجبور به استفاده از چند مقدار به‌عنوان کلید هستید، از تاپل استفاده کنید: <code class="inline-code">my_dict[(1, 2)] = "مقدار"</code>. یا کلید را به رشته تبدیل کنید: <code class="inline-code">str(my_list)</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ دیکشنری خالی <code>{}</code> به‌جای set خالی</b>
+          <p><strong>معنی:</strong> فکر کردید set ساختید، اما دیکشنری ساختید.</p>
+          <p><strong>علت:</strong> <code class="inline-code">x = {}</code> یک دیکشنری خالی است.</p>
+          <p><strong>راه‌حل:</strong> برای set خالی از <code class="inline-code">set()</code> استفاده کنید: <code class="inline-code">x = set()</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ AttributeError: 'dict' object has no attribute 'append'</b>
+          <p><strong>معنی:</strong> دیکشنری متد <code class="inline-code">append</code> ندارد — چون append مخصوص لیست است.</p>
+          <p><strong>علت:</strong> عادت لیست را روی دیکشنری اجرا کرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> برای اضافه کردن به دیکشنری از انتساب استفاده کنید: <code class="inline-code">my_dict["key"] = value</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ تغییر دیکشنری هنگام پیمایش</b>
+          <p><strong>معنی:</strong> RuntimeError: dictionary changed size during iteration</p>
+          <p><strong>علت:</strong> در حال حلقه روی دیکشنری، آن را تغییر می‌دهید.</p>
+          <p><strong>راه‌حل:</strong> از یک کپی از کلیدها استفاده کنید: <code class="inline-code">for key in list(my_dict.keys()):</code> — چون <code class="inline-code">list()</code> یک کپی مستقل می‌سازد.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ set غیرقابل مرتب‌سازی است</b>
+          <p><strong>معنی:</strong> نمی‌توانید set را با <code class="inline-code">set[0]</code> صدا بزنید.</p>
+          <p><strong>علت:</strong> set ترتیب ندارد و ایندکس نمی‌پذیرد.</p>
+          <p><strong>راه‌حل:</strong> اگر به ترتیب نیاز دارید، set را به لیست تبدیل کنید و مرتب نمایید: <code class="inline-code">sorted(my_set)</code> یا <code class="inline-code">list(my_set)</code>.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ تغییر set، تأثیر عجیب روی iteration دارد</b>
+          <p><strong>معنی:</strong> وقتی در حال پیمایش set هستید، اضافه یا حذف کردن، خطا می‌دهد.</p>
+          <p><strong>علت:</strong> شبیه دیکشنری، set هم نمی‌شود هنگام پیمایش تغییر کرد.</p>
+          <p><strong>راه‌حل:</strong> از یک کپی استفاده کنید: <code class="inline-code">for x in list(my_set):</code>.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، خروجی این کدها را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1
+person = {"name": "علی", "age": 25}
+print(person["name"])
+print(person.get("email", "ندارد"))
+
+# مورد 2
+person = {"name": "علی"}
+person["age"] = 25
+person["name"] = "رضا"
+print(person)
+
+# مورد 3
+d = {"a": 1, "b": 2, "c": 3}
+print(list(d.keys()))
+print(list(d.values()))
+
+# مورد 4
+d = {"a": 1, "b": 2}
+for key, value in d.items():
+    print(key, "=", value)
+
+# مورد 5
+s = {1, 2, 2, 3, 3, 3}
+print(s)
+print(len(s))
+
+# مورد 6
+a = {1, 2, 3}
+b = {3, 4, 5}
+print(a & b)
+print(a | b)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> علی، ندارد</li>
+              <li><strong>مورد ۲:</strong> <code class="inline-code">{'name': 'رضا', 'age': 25}</code> — چون name را با رضا جایگزین کردیم و age اضافه شد.</li>
+              <li><strong>مورد ۳:</strong> <code class="inline-code">['a', 'b', 'c']</code> و <code class="inline-code">[1, 2, 3]</code></li>
+              <li><strong>مورد ۴:</strong> a = 1، b = 2 (هر کدام در یک خط)</li>
+              <li><strong>مورد ۵:</strong> <code class="inline-code">{1, 2, 3}</code> و 3 — تکراری‌ها حذف شدند.</li>
+              <li><strong>مورد ۶:</strong> <code class="inline-code">{3}</code> و <code class="inline-code">{1, 2, 3, 4, 5}</code></li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — سیستم ثبت‌نام کلاس</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که اطلاعات دانشجویان را در یک دیکشنری نگه دارد و امکان جست‌وجو بدهد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>students.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">students = {
+    "99001": {"name": "علی محمدی", "gpa": 18.5, "major": "کامپیوتر"},
+    "99002": {"name": "رضا احمدی", "gpa": 17.2, "major": "برق"},
+    "99003": {"name": "سارا رضایی", "gpa": 19.1, "major": "کامپیوتر"},
+}
+
+# جست‌وجو با شماره دانشجویی
+def find_student(student_id):
+    return students.get(student_id)
+
+# میانگین GPA کلاس
+def class_average():
+    if not students:
+        return 0
+    total = sum(s["gpa"] for s in students.values())
+    return total / len(students)
+
+# رشته‌های یکتا (با set)
+def unique_majors():
+    return set(s["major"] for s in students.values())
+
+# بهترین دانشجو
+def top_student():
+    return max(students.items(), key=lambda x: x[1]["gpa"])
+
+# استفاده
+print(find_student("99001"))
+print(f"میانگین: {class_average():.2f}")
+print(f"رشته‌ها: {unique_majors()}")
+print(f"بهترین: {top_student()}")</code></pre>
+            </div>
+            <p><strong>خروجی:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">{'name': 'علی محمدی', 'gpa': 18.5, 'major': 'کامپیوتر'}
+میانگین: 18.27
+رشته‌ها: {'کامپیوتر', 'برق'}
+بهترین: ('99003', {'name': 'سارا رضایی', 'gpa': 19.1, 'major': 'کامپیوتر'})</code></pre>
+            </div>
+            <p><strong>نکته:</strong> در این مثال، دیکشنری تودرتو با <code class="inline-code">values()</code>، <code class="inline-code">items()</code>، set و even generator expression (که در فصل ۱۱ یاد می‌گیرید) همه با هم کار می‌کنند. این خودش نشان می‌دهد که چطور ساختمان‌های داده در پایتون به هم وصل می‌شوند.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1
+person = {"name": "علی"}
+print(person["age"])
+
+# خطا 2
+colors = {}
+colors.add("red")
+
+# خطا 3
+data = {}
+data[[1, 2]] = "value"
+
+# خطا 4
+d = {"a": 1, "b": 2, "c": 3}
+for key in d:
+    if d[key] > 1:
+        del d[key]</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">KeyError</code>. کلید <code class="inline-code">age</code> وجود ندارد. راه‌حل: از <code class="inline-code">person.get("age", "نامشخص")</code> استفاده کنید.</li>
+              <li><strong>خطا ۲:</strong> <code class="inline-code">AttributeError</code>. <code class="inline-code">{}</code> یک دیکشنری است، نه set. دیکشنری متد <code class="inline-code">add</code> ندارد. راه‌حل: <code class="inline-code">colors = set()</code> یا <code class="inline-code">colors["red"] = True</code>.</li>
+              <li><strong>خطا ۳:</strong> <code class="inline-code">TypeError: unhashable type: 'list'</code>. لیست نمی‌تواند کلید دیکشنری باشد. راه‌حل: از تاپل استفاده کنید: <code class="inline-code">data[(1, 2)] = "value"</code>.</li>
+              <li><strong>خطا ۴:</strong> <code class="inline-code">RuntimeError</code>. دیکشنری هنگام پیمایش تغییر می‌کند. راه‌حل: روی یک کپی از کلیدها حلقه بزنید: <code class="inline-code">for key in list(d.keys()):</code>.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># اصلاح 1
+person = {"name": "علی"}
+print(person.get("age", "نامشخص"))
+
+# اصلاح 2
+colors = set()
+colors.add("red")
+print(colors)
+
+# اصلاح 3
+data = {}
+data[(1, 2)] = "value"
+print(data)
+
+# اصلاح 4
+d = {"a": 1, "b": 2, "c": 3}
+for key in list(d.keys()):
+    if d[key] > 1:
+        del d[key]
+print(d)   # {'a': 1}</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-10" data-title="آزمون فصل ۱۰ — دیکشنری و مجموعه" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) کدام سینتکس برای <strong>ساخت یک دیکشنری خالی</strong> درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">dict[]</button>
+              <button type="button" class="quiz-opt" data-key="b">{}</button>
+              <button type="button" class="quiz-opt" data-key="c">()</button>
+              <button type="button" class="quiz-opt" data-key="d">[]</button>
+            </div>
+            <div class="quiz-explain">💡 دیکشنری خالی با <code>{}</code> ساخته می‌شود. <code>[]</code> لیست خالی، <code>()</code> تاپل خالی، و <code>set()</code> set خالی است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) خروجی <code dir="ltr">{"a": 1, "b": 2}.get("c", 0)</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="b">None</button>
+              <button type="button" class="quiz-opt" data-key="c">0</button>
+              <button type="button" class="quiz-opt" data-key="d">"c"</button>
+            </div>
+            <div class="quiz-explain">💡 <code>.get("c", 0)</code> یعنی «اگر c بود، مقدارش را بده؛ وگرنه 0». چون کلید c وجود ندارد، مقدار پیش‌فرض 0 برگردانده می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) کدام یک <strong>set</strong> است، نه دیکشنری؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">{1, 2, 3}</button>
+              <button type="button" class="quiz-opt" data-key="b">{}</button>
+              <button type="button" class="quiz-opt" data-key="c">{"a": 1}</button>
+              <button type="button" class="quiz-opt" data-key="d">{"key"}</button>
+            </div>
+            <div class="quiz-explain">💡 <code>{1, 2, 3}</code> یک set است — چون فقط مقادیر دارد، نه جفت کلید-مقدار. توجه کنید که <code>{"key"}</code> هم یک set تک‌عضوی است، اما گزینه‌ی ج درست، واضح‌ترین است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) خروجی <code dir="ltr">{1, 2, 3} & {3, 4, 5}</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">{1, 2, 3, 4, 5}</button>
+              <button type="button" class="quiz-opt" data-key="b">{1, 2, 4, 5}</button>
+              <button type="button" class="quiz-opt" data-key="c">{1, 2}</button>
+              <button type="button" class="quiz-opt" data-key="d">{3}</button>
+            </div>
+            <div class="quiz-explain">💡 عملگر <code>&</code> اشتراک (intersection) است — یعنی اعضای مشترک. عدد ۳ در هر دو set هست، پس نتیجه <code>{3}</code> است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) کدام الگو برای <strong>شمارش</strong> در دیکشنری صحیح است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>d[key] += 1</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>d[key] = d.get(key, 0) + 1</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>d.append(key)</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>d.count(key)</code></button>
+            </div>
+            <div class="quiz-explain">💡 الگوی <code>d[key] = d.get(key, 0) + 1</code> اگر کلید باشد، به مقدارش یک اضافه می‌کند؛ اگر نباشد، از صفر شروع می‌کند. گزینه‌ی الف برای کلیدهای جدید خطا می‌دهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) برای پیمایش دیکشنری و دسترسی همزمان به <strong>کلید و مقدار</strong>، کدام متد درست است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">.keys()</button>
+              <button type="button" class="quiz-opt" data-key="b">.values()</button>
+              <button type="button" class="quiz-opt" data-key="c">.items()</button>
+              <button type="button" class="quiz-opt" data-key="d">.pairs()</button>
+            </div>
+            <div class="quiz-explain">💡 <code>.items()</code> جفت‌های کلید-مقدار را به‌صورت تاپل برمی‌گرداند. با <code>for k, v in d.items():</code> همزمان به هر دو دسترسی دارید.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «دفترچه نمرات کلاس با دیکشنری»</strong> — همان پروژه‌ی فصل ۹، اما این بار با دیکشنری به‌جای لیست از تاپل‌ها. این مقایسه به شما نشان می‌دهد کدام ساختار برای کدام سناریو مناسب‌تر است.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">grade_book_v2.py</code> ذخیره شود.</li>
+          <li>اطلاعات هر دانشجو در یک دیکشنری داخلی ذخیره شود:
+            <ul>
+              <li>کلید: شماره دانشجویی (مثلاً <code class="inline-code">"99001"</code>)</li>
+              <li>مقدار: دیکشنری با فیلدهای <code class="inline-code">name</code>، <code class="inline-code">score</code>، <code class="inline-code">major</code></li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">add_student(students)</code>: اطلاعات یک دانشجو را می‌گیرد و اضافه می‌کند. اگر شماره دانشجویی تکراری بود، پیام هشدار بدهد.</li>
+          <li>تابع <code class="inline-code">show_all(students)</code>: همه‌ی دانشجوها را در قالب زیبا چاپ کند.</li>
+          <li>تابع <code class="inline-code">find_by_id(students, student_id)</code>: با شماره دانشجویی جست‌وجو کند.</li>
+          <li>تابع <code class="inline-code">search_by_name(students, query)</code>: با بخشی از نام جست‌وجو کند و لیست نتایج را برگرداند.</li>
+          <li>تابع <code class="inline-code">class_average(students)</code>: میانگین نمرات کلاس.</li>
+          <li>تابع <code class="inline-code">unique_majors(students)</code>: رشته‌های یکتا با <strong>set</strong>.</li>
+          <li>تابع <code class="inline-code">top_students(students, n=3)</code>: n دانشجوی برتر را برگرداند.</li>
+          <li>تابع <code class="inline-code">delete_student(students, student_id)</code>: حذف با شماره دانشجویی.</li>
+          <li>تابع <code class="inline-code">main()</code>: منوی تعاملی که همه‌ی این قابلیت‌ها را ارائه دهد.</li>
+          <li>هر تابع یک docstring داشته باشد.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     دفترچه نمرات کلاس
+══════════════════════════════════════
+  1. افزودن دانشجو
+  2. نمایش همه
+  3. جست‌وجو با شماره
+  4. جست‌وجو با نام
+  5. آمار کلاس
+  6. دانشجویان برتر
+  7. حذف دانشجو
+  8. خروج
+──────────────────────────────────────
+
+انتخاب شما: 5
+
+📊 آمار کلاس
+──────────────────────────────────────
+  تعداد دانشجوها: 3
+  میانگین کلاس : 18.27
+  رشته‌های یکتا : {'کامپیوتر', 'برق'}
+──────────────────────────────────────</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>تابعی برای ویرایش نمره‌ی یک دانشجو.</li>
+            <li>نمایش دانشجوها به تفکیک رشته (با set و حلقه).</li>
+            <li>ذخیره‌ی داده‌ها در یک فایل (فصل ۱۴).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>دیکشنری چیست و چطور با <code class="inline-code">{ "کلید": مقدار }</code> بسازید.</li>
+          <li>دسترسی با کروشه <code class="inline-code">[ ]</code> و روش امن با <code class="inline-code">.get()</code>.</li>
+          <li>اضافه کردن و ویرایش با انتساب مستقیم.</li>
+          <li>متدهای مهم: <code class="inline-code">get</code>، <code class="inline-code">keys</code>، <code class="inline-code">values</code>، <code class="inline-code">items</code>، <code class="inline-code">update</code>، <code class="inline-code">pop</code>، <code class="inline-code">popitem</code>.</li>
+          <li>حلقه روی دیکشنری — سه روش مختلف.</li>
+          <li>دیکشنری تودرتو برای داده‌های سلسله‌مراتبی.</li>
+          <li>الگوی شمارنده: <code class="inline-code">d[x] = d.get(x, 0) + 1</code>.</li>
+          <li>مجموعه (set) برای نگه‌داشتن اعضای یکتا.</li>
+          <li>عملیات مجموعه‌ای: اشتراک <code class="inline-code">&</code>، اجتماع <code class="inline-code">|</code>، تفاضل <code class="inline-code">-</code>، تفاضل متقارن <code class="inline-code">^</code>.</li>
+          <li>تفاوت دیکشنری خالی <code class="inline-code">{}</code> و set خالی <code class="inline-code">set()</code>.</li>
+          <li>کدام ساختمان داده برای کدام کاربرد مناسب است.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «اگر داده‌تان اسم دارد، از دیکشنری استفاده کنید؛ اگر می‌خواهید تکراری‌ها حذف شوند، از set. تفاوتشان را بفهمید و در پروژه‌های واقعی، جای درست هر کدام را پیدا کنید.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>آیا دیکشنری ترتیب دارد؟</summary><div class="faq-body"><p>از پایتون ۳.۷ به بعد، <strong>بله</strong> — دیکشنری ترتیب درج اعضا را حفظ می‌کند. یعنی اگر «علی» را اول اضافه کنید و «رضا» را بعد، هنگام پیمایش، علی اول می‌آید. اما توجه کنید که این ترتیب «قابل اعتماد برای منطق برنامه» نیست — به آن به‌عنوان یک ویژگی مفید نگاه کنید، نه تضمین.</p></div></details>
+        <details class="faq-item"><summary>آیا set ترتیب دارد؟</summary><div class="faq-body"><p>خیر — set هیچ ترتیب تضمین‌شده‌ای ندارد. اگر روی یک set حلقه بزنید، ممکن است ترتیب اعضا هر بار متفاوت باشد. اگر ترتیب مهم است، از لیست استفاده کنید یا set را با <code>sorted()</code> مرتب کنید.</p></div></details>
+        <details class="faq-item"><summary>تفاوت <code dir="ltr">pop()</code> و <code dir="ltr">popitem()</code> در دیکشنری چیست؟</summary><div class="faq-body"><p><code>pop(key)</code> با مشخص کردن کلید، آن جفت را حذف می‌کند و مقدارش را برمی‌گرداند. <code>popitem()</code> آخرین جفت اضافه‌شده را حذف می‌کند و خودِ جفت را به‌صورت تاپل برمی‌گرداند — بدون اینکه لازم باشد کلید را بدانید.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌توانم از یک set به‌عنوان کلید دیکشنری استفاده کنم؟</summary><div class="faq-body"><p>خیر — set تغییرپذیر است و کلید دیکشنری باید تغییرناپذیر باشد. اما <code>frozenset</code> (نسخه‌ی تغییرناپذیر set) می‌تواند کلید باشد. این در فصل‌های پیشرفته‌تر کاربرد دارد.</p></div></details>
+        <details class="faq-item"><summary>چطور دو دیکشنری را با هم مقایسه کنم؟</summary><div class="faq-body"><p>می‌توانید با <code>==</code> مقایسه کنید: اگر محتوا و ترتیب یکسان باشد، True برمی‌گردد. برای پیدا کردن تفاوت‌ها، از عملیات set روی <code>keys()</code> استفاده کنید: <code>set(d1.keys()) - set(d2.keys())</code> کلیدهایی که فقط در d1 هستند را می‌دهد.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۱ با <strong>Comprehension و Iterator</strong> آشنا می‌شوید: یک روش کوتاه و پایتونیک برای ساخت لیست، دیکشنری و set در یک خط. این یکی از ویژگی‌های منحصر به‌فرد پایتون است که کد شما را کوتاه‌تر، سریع‌تر و خواناتر می‌کند. اگر تا اینجا با ساختمان‌های داده راحت شده‌اید، فصل ۱۱ لذت واقعی پایتون را نشانتان می‌دهد.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-10" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-10">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-09/index.html">→ فصل قبلی<br><b>📋 فصل ۹</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-11/index.html">فصل بعدی ←<br><b>🧠 فصل ۱۱: Comprehension و Iterator</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۰: دیکشنری و مجموعه | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل ۳: جمع‌آوری اطلاعات (Reconnaissance) | دوره تخصصی امنیت وب</title>
+    <meta name="description" content="آموزش کامل Reconnaissance: Passive/Active، OSINT، Google Dorks، DNS Enumeration، Nmap، Gobuster، Subfinder، Shodan و Wappalyzer — گام‌به‌گام با مثال عملی در آزمایشگاه.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="Reconnaissance, OSINT, Nmap, Gobuster, Shodan, Google Dorks, DNS Enum, Subfinder, Wappalyzer">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        #reading-bar {
+            position: fixed; top: 0; right: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #00d97e, #22ffa0);
+            width: 0; z-index: 999; transition: width .1s linear;
+        }
+        .chapter-hero {
+            background: linear-gradient(135deg, #0f172a, #064e3b);
+            color: white; border-radius: 18px; padding: 34px 28px; margin: 26px 0;
+            border: 1px solid #00d97e;
+            position: relative; overflow: hidden;
+        }
+        .chapter-hero::after {
+            content: ''; position: absolute; left: -80px; top: -80px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,217,126,.25), transparent 70%);
+        }
+        .chapter-hero h1 { margin: 6px 0 8px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+        .chapter-hero .chap-num {
+            display: inline-block; background: rgba(0,217,126,.15);
+            border: 1px solid #00d97e; color: #7ee787; padding: 3px 14px;
+            border-radius: 30px; font-size: .85rem; font-weight: 700;
+            position: relative; z-index: 1;
+        }
+        .chapter-hero p.sub { margin: 8px 0 0; opacity: .9; max-width: 820px; position: relative; z-index: 1; }
+        .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+        .meta-chips span {
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+            border-radius: 30px; padding: 4px 14px; font-size: .8rem;
+            display: inline-flex; gap: 6px; align-items: center;
+        }
+        .chapter-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 26px;
+            align-items: start; margin: 26px 0;
+        }
+        .toc-box {
+            position: sticky; top: 70px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+        }
+        .toc-title {
+            background: #0f172a; color: #7ee787; padding: 10px 16px;
+            font-weight: 800; font-size: .95rem;
+        }
+        .toc-list {
+            list-style: none; margin: 0; padding: 8px;
+            max-height: 60vh; overflow-y: auto;
+        }
+        .toc-list a {
+            display: block; color: var(--muted); font-size: .82rem;
+            padding: 7px 10px; border-radius: 8px;
+            border-right: 3px solid transparent; text-decoration: none;
+            transition: .2s;
+        }
+        .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+        .toc-list a.active {
+            background: rgba(0,217,126,.1); color: var(--accent);
+            border-right-color: var(--accent); font-weight: 700;
+        }
+        .toc-actions {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 8px; border-top: 1px dashed var(--line);
+        }
+        .toc-actions button {
+            background: transparent; color: var(--muted);
+            border: 1px solid var(--line); border-radius: 8px;
+            padding: 6px 10px; font-size: .78rem; cursor: pointer;
+            font-family: inherit; transition: .2s;
+        }
+        .toc-actions button:hover { border-color: var(--accent); color: var(--accent); }
+        .pager {
+            display: flex; justify-content: space-between;
+            margin: 30px 0; gap: 12px;
+        }
+        .pager a {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 14px 20px; color: var(--text);
+            text-decoration: none; font-weight: 700; transition: .2s;
+        }
+        .pager a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .done-bar {
+            background: rgba(0,217,126,.08);
+            border: 1px dashed #00d97e; border-radius: 12px;
+            padding: 14px; margin: 22px 0; text-align: center;
+        }
+        #mark-done {
+            background: var(--accent); color: #0b1220;
+            border: none; border-radius: 30px;
+            padding: 10px 28px; font-weight: 800; cursor: pointer;
+            font-family: inherit; margin-top: 8px;
+        }
+        #mark-done.done { background: #059669; color: white; }
+        .callout {
+            border-radius: 10px; padding: 14px 18px; margin: 14px 0;
+            border-right: 6px solid var(--accent); background: var(--surface-2);
+        }
+        .callout.co-warn { background: #3f1d1d; border-right-color: #ef4444; color: #fecaca; }
+        .callout.co-warn strong { color: #fca5a5; }
+        .callout.co-danger { background: #451a1a; border-right-color: #dc2626; color: #fecaca; }
+        .callout.co-tip { background: #0d2818; border-right-color: #00d97e; color: #a7f3d0; }
+        .callout.co-note { background: #1e293b; border-right-color: #3b82f6; color: #cbd5e1; }
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin: 16px 0;
+        }
+        .kpi {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .kpi .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .kpi .lbl { font-size: .82rem; color: var(--muted); }
+        .timeline {
+            list-style: none; padding: 0; margin: 16px 0;
+            border-right: 3px solid var(--accent); padding-right: 20px;
+        }
+        .timeline li { margin: 12px 0; position: relative; }
+        .timeline li::before {
+            content: '●'; color: var(--accent); position: absolute;
+            right: -28px; top: 2px;
+        }
+        .timeline .year { font-weight: 800; color: var(--accent); }
+        .phase-diagram {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 20px; margin: 16px 0;
+            overflow-x: auto;
+        }
+        .phase-diagram pre { background: transparent; border: none; padding: 0; margin: 0; color: var(--text); }
+        .role-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .role-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; transition: .2s;
+        }
+        .role-card:hover { border-color: var(--accent); }
+        .role-card h6 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+        .role-card p { margin: 4px 0; font-size: .85rem; }
+        .role-card .threat-level {
+            display: inline-block; font-size: .7rem; padding: 2px 10px;
+            border-radius: 20px; font-weight: 700; margin-top: 6px;
+        }
+        .threat-low { background: #166534; color: #bbf7d0; }
+        .threat-mid { background: #854d0e; color: #fef08a; }
+        .threat-high { background: #7f1d1d; color: #fecaca; }
+        .quiz-question {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+        }
+        .quiz-question strong { color: var(--accent); }
+        .checklist li { list-style: none; margin: 8px 0; padding-right: 26px; position: relative; }
+        .checklist li::before {
+            content: '☐'; position: absolute; right: 0; color: var(--accent);
+            font-size: 1.1rem;
+        }
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+        .do-box, .dont-box { border-radius: 10px; padding: 14px 18px; }
+        .do-box { background: #0d2818; border: 1px solid #16a34a; }
+        .do-box h6 { color: #4ade80; margin: 0 0 8px; }
+        .dont-box { background: #451a1a; border: 1px solid #dc2626; }
+        .dont-box h6 { color: #f87171; margin: 0 0 8px; }
+        .do-box li, .dont-box li { margin: 6px 0; font-size: .9rem; }
+        .step-number {
+            display: inline-block; background: var(--accent); color: #0b1220;
+            border-radius: 50%; width: 26px; height: 26px; line-height: 26px;
+            text-align: center; font-weight: 800; margin-left: 8px;
+        }
+        .tool-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; margin: 12px 0;
+            border-right: 4px solid var(--accent);
+        }
+        .tool-card h6 { color: var(--accent); margin: 0 0 6px; font-size: 1.05rem; }
+        .tool-card .use-case {
+            font-size: .82rem; color: var(--muted); margin-bottom: 8px;
+        }
+        @media (max-width: 900px) {
+            .chapter-layout { grid-template-columns: 1fr; }
+            .toc-box { position: static; }
+            .do-dont { grid-template-columns: 1fr; }
+        }
+        @media print {
+            .toc-box, .pager, .site-header, .done-bar, .main-nav { display: none !important; }
+            .chapter-layout { grid-template-columns: 1fr; }
+            body { background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div id="reading-bar"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>فصل ۳ از ۲۱ — جمع‌آوری اطلاعات (Reconnaissance)</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#part-01">📖 شروع فصل</a>
+            <a href="../chapter-02/index.html" id="prev-link">➜ فصل قبل</a>
+            <a href="../chapter-04/index.html" id="next-link">فصل بعد ➜</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chapter-hero">
+            <span class="chap-num">فصل ۳ از ۲۱</span>
+            <h1>🔍 جمع‌آوری اطلاعات (Reconnaissance)</h1>
+            <p class="sub">
+                یاد بگیرید چطور مثل یک مهاجم حرفه‌ای، قبل از هر حمله، ۸۰٪ اطلاعات هدف را از منابع عمومی جمع کنید:
+                OSINT، Google Dorks، DNS Enumeration، Nmap، Gobuster، Subfinder، Shodan و Wappalyzer — همه گام‌به‌گام
+                در آزمایشگاه ایزوله.
+            </p>
+            <div class="meta-chips">
+                <span>🎓 سطح: متوسط</span>
+                <span>⏱ ۱۱۰ دقیقه</span>
+                <span>🔑 OSINT</span>
+                <span>🔑 Nmap</span>
+                <span>🔑 Google Dorks</span>
+                <span>🔑 Gobuster</span>
+                <span>🔑 Shodan</span>
+            </div>
+        </div>
+
+        <div class="chapter-layout">
+            <aside class="toc-box">
+                <div class="toc-title">📑 فهرست ۱۴ بخش این فصل</div>
+                <ul class="toc-list">
+                    <li><a href="#part-01">۱. جعبه عنوان و هویت</a></li>
+                    <li><a href="#part-02">۲. پیش‌نیازها و راه‌اندازی محیط</a></li>
+                    <li><a href="#part-03">۳. اهداف یادگیری</a></li>
+                    <li><a href="#part-04">۴. مقدمه: چرا Recon اولویت اول است؟</a></li>
+                    <li><a href="#part-05">۵. مفاهیم کلیدی و واژگان</a></li>
+                    <li><a href="#part-06">۶. تکنیک‌های Passive و Active Recon</a></li>
+                    <li><a href="#part-07">۷. کارگاه: شکار اطلاعات هدف</a></li>
+                    <li><a href="#part-08">۸. تحلیل دفاعی: کاهش سطح حمله</a></li>
+                    <li><a href="#part-09">۹. نکات حرفه‌ای و دام‌های رایج</a></li>
+                    <li><a href="#part-10">۱۰. پرسش و پاسخ و رفع اشکال</a></li>
+                    <li><a href="#part-11">۱۱. جمع‌بندی و نکات طلایی</a></li>
+                    <li><a href="#part-12">۱۲. خودارزیابی و آزمونک</a></li>
+                    <li><a href="#part-13">۱۳. پروژه هفتگی</a></li>
+                    <li><a href="#part-14">۱۴. منابع و گام بعدی</a></li>
+                </ul>
+                <div class="toc-actions">
+                    <button id="btn-open-answers" type="button">🟢 باز کردن همه پاسخ‌ها</button>
+                    <button id="btn-close-answers" type="button">⚪ بستن همه پاسخ‌ها</button>
+                </div>
+            </aside>
+
+            <div class="main-col">
+
+                <!-- بخش ۱: عنوان -->
+                <div class="section-part" id="part-01">
+                    <h3>۱. جعبه عنوان و هویت</h3>
+
+                    <p><strong>📖 عنوان کامل فصل:</strong> جمع‌آوری اطلاعات (Reconnaissance) — فاز اول هر تست نفوذ که در آن مهاجم، پروفایل کامل هدف را از منابع عمومی و تعاملی می‌سازد.</p>
+
+                    <p><strong>🎓 سطح دشواری:</strong> متوسط. این فصل اولین فصلی است که به‌طور جدی از ترمینال Kali و ابزارهای حرفه‌ای استفاده می‌کنید.</p>
+
+                    <p><strong>⏱ زمان مطالعه:</strong> ۹۰ تا ۱۲۰ دقیقه (بدون احتساب زمان دانلود ابزارها).</p>
+
+                    <p><strong>🛠 پیش‌نیاز فنی:</strong> فصل ۱ و ۲ کامل + آشنایی با ترمینال Linux + مفهوم DNS/HTTP/پورت.</p>
+
+                    <h5>🎯 اهداف کلان این فصل:</h5>
+                    <ol>
+                        <li>تمایز کامل <strong>Passive Recon</strong> (بدون تماس با هدف) از <strong>Active Recon</strong> (با تماس).</li>
+                        <li>اجرای <strong>OSINT</strong> حرفه‌ای با Google Dorks، Shodan، Censys، Wayback Machine.</li>
+                        <li>تسلط بر <strong>Nmap</strong> با تمام سوئیچ‌های کلیدی: <code>-sS</code>, <code>-sV</code>, <code>-A</code>, <code>-O</code>, NSE Scripts.</li>
+                        <li>Directory Brute-forcing با <strong>Gobuster</strong> و <strong>FFUF</strong>.</li>
+                        <li>Subdomain Enumeration با <strong>Subfinder</strong> و <strong>Amass</strong>.</li>
+                        <li>Technology Fingerprinting با <strong>Wappalyzer</strong> و <strong>WhatWeb</strong>.</li>
+                        <li>ساخت <strong>پروفایل هدف</strong> در قالب یک فایل Markdown قابل ارائه.</li>
+                    </ol>
+
+                    <h5>📚 خروجی قابل اندازه‌گیری (پس از این فصل):</h5>
+                    <ul>
+                        <li>یک پروفایل کامل از هدف (IP، پورت‌ها، سرویس‌ها، نسخه‌ها، تکنولوژی، مسیرها).</li>
+                        <li>Nmap scan با گزارش خروجی (قابل ارائه در مصاحبه).</li>
+                        <li>حداقل ۳ Directory کشف‌شده با Gobuster روی Django lab.</li>
+                        <li>تسلط بر ۲۰+ Dork برای Passive Recon.</li>
+                        <li>فایل <code>target-profile.md</code> که به پورتفولیوی امنیتی شما افزوده می‌شود.</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار قانونی — این فصل پرخطرترین فصل از نظر قانونی است:</strong>
+                        <strong>Passive Recon</strong> روی سایت‌های عمومی (خواندن، جستجو در موتورها) از نظر قانونی ساده است، ولی حتی برای Passive، شما نباید سایت‌های حساس (بانک، دولتی) را هدف بگیرید. و <strong>Active Recon</strong> (Nmap، Gobuster، FFUF) روی هر سیستم بدون <strong>مجوز کتبی</strong>، <strong>جرم کیفری</strong> است. تمام تمرین‌های این فصل فقط روی VMهای خودتان (192.168.56.x) یا سرویس‌های آموزشی معتبر (مثل scanme.nmap.org) مجاز است.
+                    </div>
+                </div>
+
+                <!-- بخش ۲: پیش‌نیازها -->
+                <div class="section-part" id="part-02">
+                    <h3>۲. پیش‌نیازها و راه‌اندازی محیط</h3>
+
+                    <h5>💻 نیازمندی‌ها (ادامه از فصل ۲):</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>مؤلفه</th><th>وضعیت لازم</th></tr></thead>
+                        <tbody>
+                            <tr><td>آزمایشگاه فصل ۲</td><td>Kali + Windows + Django فعال و به هم Ping می‌زنند</td></tr>
+                            <tr><td>IPهای استاتیک</td><td>Kali: 192.168.56.10 — Windows: 192.168.56.20</td></tr>
+                            <tr><td>Snapshot</td><td>از هر VM در حالت قبل از شروع فصل ۳</td></tr>
+                            <tr><td>مرورگر Kali</td><td>Firefox ESR با افزونه Wappalyzer نصب‌شده</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🛠 ابزارهای این فصل (روی Kali):</h5>
+                    <p>خوشبختانه اکثر ابزارها روی Kali از پیش نصب هستند. فقط چند مورد را به‌روز یا اضافه می‌کنیم:</p>
+<pre class="code-box"># بررسی نسخه ابزارهای پیش‌فرض
+nmap --version
+gobuster version
+whatweb --version
+wafw00f --version
+
+# نصب ابزارهای تکمیلی
+sudo apt update
+sudo apt install -y \
+    subfinder \
+    amass \
+    ffuf \
+    seclists \
+    dirb \
+    whois \
+    dnsutils \
+    wfuzz
+
+# برای OSINT (پکیج‌های Python)
+pip3 install --user shodan
+pip3 install --user censys
+
+# بررسی Snapshot از قبل وجود دارد؟
+# در VMware: VM → Snapshot → Snapshot Manager
+</pre>
+
+                    <h5>🔧 ابزارهای OSINT وب (خارج از ترمینال):</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>ابزار</th><th>کاربرد</th><th>لینک</th></tr></thead>
+                        <tbody>
+                            <tr><td>Shodan</td><td>موتور جستجوی دستگاه‌های متصل به اینترنت</td><td>shodan.io</td></tr>
+                            <tr><td>Censys</td><td>مشابه Shodan با تمرکز بر TLS/SSL</td><td>search.censys.io</td></tr>
+                            <tr><td>Wayback Machine</td><td>آرشیو صفحات وب قدیمی</td><td>web.archive.org</td></tr>
+                            <tr><td>SecurityTrails</td><td>تاریخچه DNS و subdomainها</td><td>securitytrails.com</td></tr>
+                            <tr><td>crt.sh</td><td>گواهی‌های SSL (کشف subdomainها)</td><td>crt.sh</td></tr>
+                            <tr><td>VirusTotal</td><td>تحلیل دامنه/IP + Passive DNS</td><td>virustotal.com</td></tr>
+                            <tr><td>BuiltWith</td><td>تکنولوژی سایت‌ها</td><td>builtwith.com</td></tr>
+                            <tr><td>Wappalyzer</td><td>افزونه مرورگر برای تکنولوژی</td><td>wappalyzer.com</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته:</strong>
+                        برای استفاده از APIهای Shodan و Censys، به کلید API نیاز دارید. حساب‌های رایگان محدودیت دارند ولی برای تمرین کافی هستند. یک حساب رایگان در <a href="https://shodan.io" target="_blank" rel="noopener">shodan.io</a> بسازید.
+                    </div>
+                </div>
+
+                <!-- بخش ۳: اهداف یادگیری -->
+                <div class="section-part" id="part-03">
+                    <h3>۳. اهداف یادگیری (چه چیزهایی به دست می‌آورید؟)</h3>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حوزه</th><th>هدف مشخص</th><th>معیار سنجش</th><th>وزن</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Passive Recon</strong></td>
+                                <td>استخراج اطلاعات از منابع عمومی</td>
+                                <td>حداقل ۱۰ اطلاعات مفید درباره یک دامنه آموزشی</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DNS Enumeration</strong></td>
+                                <td>کشف زیردامنه‌ها و رکوردهای DNS</td>
+                                <td>کشف حداقل ۵ زیردامنه (روی دامنه آزمایشی خودتان)</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Port Scanning</strong></td>
+                                <td>تسلط بر Nmap و سوئیچ‌های پیشرفته</td>
+                                <td>اسکن کامل VM هدف با گزارش قابل ارائه</td>
+                                <td>۲۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Directory Brute-force</strong></td>
+                                <td>کشف مسیرهای پنهان وب</td>
+                                <td>پیدا کردن حداقل ۳ مسیر روی Django lab</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tech Fingerprinting</strong></td>
+                                <td>شناسایی تکنولوژی و نسخه‌ها</td>
+                                <td>تشخیص دقیق ۵ تکنولوژی روی هدف</td>
+                                <td>۱۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مستندسازی</strong></td>
+                                <td>ساخت پروفایل هدف</td>
+                                <td><code>target-profile.md</code> کامل</td>
+                                <td>۱۰٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>📌 پیش‌نیازهای فکری — این فصل را فقط در صورتی شروع کنید که:</h5>
+                    <ul class="checklist">
+                        <li>می‌توانم از Kali به Windows ping بزنم</li>
+                        <li>Django lab در حال اجراست و از Kali قابل دسترسی است</li>
+                        <li>با ترمینال Linux راحت هستم (حداقل ۱۰ دستور پایه)</li>
+                        <li>می‌دانم پورت چیست و مفهوم TCP/UDP را می‌فهمم</li>
+                        <li>می‌دانم DNS چیست و رکوردهای A و CNAME را می‌شناسم</li>
+                        <li>VPN یا شبکه Host-Only من فعال است (برای جلوگیری از لو رفتن IP واقعی در Passive Recon روی اینترنت)</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۴: مقدمه -->
+                <div class="section-part" id="part-04">
+                    <h3>۴. مقدمه: چرا Recon اولویت اول است؟</h3>
+
+                    <div class="story-box">
+                        <p>📖 <strong>داستان واقعی — عملیات Aurora (۲۰۰۹):</strong></p>
+                        <p>مهاجمان یک عملیات APT پیشرفته را علیه گوگل و چند شرکت بزرگ شروع کردند. اما جالب‌ترین بخش ماجرا این است: <strong>قبل از هر خط کد مخرب</strong>، تیم مهاجم بیش از ۶ ماه را صرف Reconnaissance کرد:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>شناسایی کارمندان کلیدی از LinkedIn و شبکه‌های اجتماعی</li>
+                            <li>کشف معماری شبکه گوگل از مستندات عمومی و جستجوی Google Dorks</li>
+                            <li>یافتن زیردامنه‌های فراموش‌شده و سرورهای تست</li>
+                            <li>شناسایی نسخه‌های نرم‌افزاری از پاسخ‌های Server Header</li>
+                            <li>تحلیل چرخه‌های انتشار نرم‌افزار از بلاگ‌های مهندسی گوگل</li>
+                        </ul>
+                        <p style="margin-top: 10px;">نتیجه: حمله Aurora آن‌قدر دقیق بود که حتی مهندسان ارشد گوگل هم ۳ هفته متوجه نشدند. اگر Recon درست انجام نشود، حمله شکست می‌خورد. اما با Recon درست، حمله تقریباً اجتناب‌ناپذیر می‌شود.</p>
+                    </div>
+
+                    <h5>📊 چرا Recon، ۸۰٪ موفقیت حمله را می‌سازد؟</h5>
+                    <div class="kpi-grid">
+                        <div class="kpi">
+                            <span class="num">۸۰٪</span>
+                            <span class="lbl">زمان تست نفوذ حرفه‌ای، صرف Recon می‌شود</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۶۰٪</span>
+                            <span class="lbl">حملات موفق، از Recon دقیق شروع می‌شوند</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">+۲۰۰</span>
+                            <span class="lbl">ابزار Recon موجود در Kali</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۰</span>
+                            <span class="lbl">تماس لازم در Passive Recon</span>
+                        </div>
+                    </div>
+
+                    <h5>🎯 سه دلیل بنیادی برای اهمیت Recon:</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>🎯 دقت حمله</h6>
+                            <p>بدون Recon، حمله شما کورکورانه است — نمی‌دانید چه پورت‌هایی بازند، چه نسخه‌ای، چه تکنولوژی. با Recon، هر حمله به هدف دقیقی می‌خورد.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>🕵️ پیشگیری از شناسایی</h6>
+                            <p>Recon خوب، شما را از اسکن‌های بیهوده و پر سروصدا نجات می‌دهد. مهاجم حرفه‌ای اول ۸۰٪ اطلاعات را Passive جمع می‌کند، بعد فقط ۲۰٪ آخر را Active.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>📋 سطح حمله وسیع‌تر</h6>
+                            <p>Recon نشان می‌دهد هدف شما فقط یک دامنه نیست: زیردامنه‌ها، سرویس‌های فراموش‌شده، ایمیل‌های لو رفته، اسناد PDF — همه این‌ها سطح حمله را بزرگ‌تر می‌کنند.</p>
+                        </div>
+                    </div>
+
+                    <h5>📜 تاریخچه کوتاه — چطور Recon به یک علم تبدیل شد؟</h5>
+                    <ul class="timeline">
+                        <li><span class="year">۱۹۹۷</span> — Nmap توسط Gordon Lyon (Fyodor) منتشر شد و پایه Port Scanning مدرن شد.</li>
+                        <li><span class="year">۲۰۰۴</span> — انتشار The Art of Scanning (Johnny Long) — مرجع اولیه Active Recon.</li>
+                        <li><span class="year">۲۰۰۹</span> — Shodan تاسیس شد: موتور جستجوی دستگاه‌های متصل به اینترنت.</li>
+                        <li><span class="year">۲۰۱۲</span> — Recon-ng: اولین ابزار چارچوبی برای Recon خودکار.</li>
+                        <li><span class="year">۲۰۱۵</span> — Amass، Subfinder و ابزارهای Subdomain Enumeration ظهور کردند.</li>
+                        <li><span class="year">۲۰۲۰+</span> — عصر OSINT حرفه‌ای با Censys، SecurityTrails، VirusTotal API.</li>
+                        <li><span class="year">۲۰۲۳+</span> — AI در Recon: تحلیل خودکار اطلاعات با GPT و Claude.</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۵: مفاهیم کلیدی -->
+                <div class="section-part" id="part-05">
+                    <h3>۵. مفاهیم کلیدی و واژگان تخصصی</h3>
+
+                    <h5>5.1 — تفاوت Passive و Active Recon (بحرانی):</h5>
+                    <div class="phase-diagram">
+<pre>┌─────────────────────────────────────────────────────────────┐
+│                    Reconnaissance                            │
+│                                                              │
+│  ┌──────────────────────┐      ┌──────────────────────┐    │
+│  │   Passive Recon      │      │   Active Recon       │    │
+│  │                      │      │                      │    │
+│  │  • بدون تماس با هدف  │      │  • تماس مستقیم       │    │
+│  │  • غیرقابل شناسایی   │      │  • قابل شناسایی       │    │
+│  │  • منابع ثالث        │      │  • ردپا می‌گذارد       │    │
+│  │  • ریسک قانونی کم    │      │  • ریسک قانونی زیاد   │    │
+│  └──────────┬───────────┘      └──────────┬───────────┘    │
+│             │                              │                │
+│             ▼                              ▼                │
+│  ┌──────────────────────┐      ┌──────────────────────┐    │
+│  │ Google Dorks         │      │ Nmap                 │    │
+│  │ Shodan, Censys       │      │ Gobuster, FFUF       │    │
+│  │ Wayback Machine      │      │ Nikto, WhatWeb       │    │
+│  │ crt.sh, SecurityTrails│     │ Subfinder (اگر محلی)│    │
+│  │ VirusTotal, LinkedIn │      │ Nessus, OpenVAS      │    │
+│  └──────────────────────┘      └──────────────────────┘    │
+│                                                              │
+│  ترتیب درست: Passive First → Active Second                  │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>معیار</th><th>Passive Recon</th><th>Active Recon</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>تماس با هدف</td>
+                                <td>❌ خیر (فقط منابع ثالث)</td>
+                                <td>✅ بله (مستقیم به هدف)</td>
+                            </tr>
+                            <tr>
+                                <td>قابل شناسایی</td>
+                                <td>❌ تقریباً غیرممکن</td>
+                                <td>✅ در لاگ‌های هدف ثبت می‌شود</td>
+                            </tr>
+                            <tr>
+                                <td>ابزارها</td>
+                                <td>Shodan, Google, Wayback</td>
+                                <td>Nmap, Gobuster, FFUF</td>
+                            </tr>
+                            <tr>
+                                <td>ریسک قانونی</td>
+                                <td>پایین (جستجوهای عمومی)</td>
+                                <td>بالا (نیاز به مجوز کتبی)</td>
+                            </tr>
+                            <tr>
+                                <td>دقت اطلاعات</td>
+                                <td>متوسط (ممکن است کهنه باشد)</td>
+                                <td>بالا (وضعیت لحظه‌ای)</td>
+                            </tr>
+                            <tr>
+                                <td>زمان</td>
+                                <td>بالا (پژوهش طولانی)</td>
+                                <td>سریع‌تر (اسکریپت‌های خودکار)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قانون طلایی Recon:</strong>
+                        «Passive First, Active Second, Always Authorized» — همیشه اول Passive (غیرقابل شناسایی)، بعد Active (با مجوز).
+                    </div>
+
+                    <h5>5.2 — واژه‌نامه تخصصی این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>واژه</th><th>معنی</th><th>کاربرد</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>OSINT</td><td>Open Source Intelligence — اطلاعات از منابع عمومی</td><td>پایه Passive Recon</td></tr>
+                            <tr><td>Footprinting</td><td>جمع‌آوری اطلاعات با جزئیات</td><td>مترادف Recon</td></tr>
+                            <tr><td>Attack Surface</td><td>مجموع نقاط قابل حمله</td><td>هدف Recon گسترش آن</td></tr>
+                            <tr><td>Subdomain</td><td>زیردامنه (مثل api.example.com)</td><td>هدف Subdomain Enum</td></tr>
+                            <tr><td>DNS Record</td><td>رکورد DNS (A, AAAA, MX, TXT, CNAME)</td><td>اطلاعات زیرساخت</td></tr>
+                            <tr><td>Port Scan</td><td>اسکن پورت‌های باز</td><td>Nmap</td></tr>
+                            <tr><td>Banner Grabbing</td><td>استخراج نسخه سرویس از بنر</td><td>Nmap -sV</td></tr>
+                            <tr><td>Directory Busting</td><td>حدس مسیرهای پنهان وب</td><td>Gobuster, FFUF</td></tr>
+                            <tr><td>Fuzzing</td><td>ارسال ورودی‌های تصادفی/نامعتبر</td><td>کشف مسیر/پارامتر</td></tr>
+                            <tr><td>Wordlist</td><td>لیست کلمات برای brute-force</td><td>SecLists</td></tr>
+                            <tr><td>Wayback Machine</td><td>آرشیو صفحات وب قدیمی</td><td>کشف مسیرهای حذف‌شده</td></tr>
+                            <tr><td>Google Dork</td><td>کوئری پیشرفته Google</td><td>کشف اطلاعات پنهان</td></tr>
+                            <tr><td>Shodan Query</td><td>جستجو در Shodan</td><td>یافتن سرورهای عمومی</td></tr>
+                            <tr><td>Robots.txt</td><td>فایل راهنمای خزنده‌ها</td><td>کشف مسیرهای مخفی</td></tr>
+                            <tr><td>NSE</td><td>Nmap Scripting Engine</td><td>اسکریپت‌های تخصصی Nmap</td></tr>
+                            <tr><td>OSINT Tool</td><td>ابزار اختصاصی OSINT</td><td>Recon-ng, theHarvester</td></tr>
+                            <tr><td>CVSS Score</td><td>امتیاز شدت آسیب‌پذیری</td><td>اولویت‌بندی رفع</td></tr>
+                            <tr><td>Passive DNS</td><td>تاریخچه رزولوشن DNS</td><td>کشف زیردامنه‌های قدیمی</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.3 — چرخه کامل Recon در تست نفوذ:</h5>
+                    <div class="phase-diagram">
+<pre>┌──────────────────────────────────────────────────────────────┐
+│                   Reconnaissance Cycle                       │
+│                                                              │
+│  1. Goal Setting    →  تعریف scope و اهداف Recon            │
+│         ↓                                                    │
+│  2. Passive Recon   →  OSINT، Google Dorks، Shodan          │
+│         ↓                                                    │
+│  3. DNS Enum        →  Subdomains، Records، Zone Transfer   │
+│         ↓                                                    │
+│  4. Active Recon    →  Nmap، Port Scan، Banner Grab         │
+│         ↓                                                    │
+│  5. Web Enum        →  Gobuster، Tech Fingerprint           │
+│         ↓                                                    │
+│  6. Document        →  ساخت پروفایل هدف                     │
+│         ↓                                                    │
+│  7. Analyze         →  یافتن نقاط ضعف و اولویت‌بندی          │
+│         ↓                                                    │
+│  (بازگشت به 2 با اطلاعات جدید)                              │
+└──────────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+                </div>
+
+                <!-- بخش ۶: تکنیک‌ها -->
+                <div class="section-part" id="part-06">
+                    <h3>۶. آموزش گام‌به‌گام تکنیک‌های Passive و Active Recon</h3>
+
+                    <p>در این بخش، ۹ ابزار/تکنیک اصلی را می‌آموزیم. هر ابزار با <strong>کاربرد، دستور، مثال و تحلیل</strong> ارائه می‌شود.</p>
+
+                    <!-- ابزار ۱: Google Dorks -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۱: Google Dorks (Passive)</h6>
+                        <p class="use-case">کاربرد: کشف اطلاعات پنهان با کوئری‌های پیشرفته Google</p>
+
+                        <h5>Dorkهای پایه:</h5>
+<pre class="code-box"># پیدا کردن فایل‌های حساس
+site:example.com filetype:pdf
+site:example.com filetype:xlsx
+site:example.com filetype:doc
+
+# پیدا کردن پنل‌های ورود
+site:example.com inurl:admin
+site:example.com inurl:login
+site:example.com intitle:&quot;index of&quot;
+
+# پیدا کردن اطلاعات لاگ یا تنظیمات
+site:example.com ext:log
+site:example.com ext:env
+site:example.com inurl:config
+site:example.com inurl:.git
+
+# پیدا کردن خطاهای افشاگر
+site:example.com intext:&quot;SQL syntax&quot;
+site:example.com intext:&quot;Warning: mysql_&quot;
+site:example.com intext:&quot;Fatal error&quot;
+</pre>
+
+                        <h5>Dorkهای پیشرفته:</h5>
+<pre class="code-box"># کارمندان (LinkedIn)
+site:linkedin.com/in &quot;example company&quot;
+
+# زیردامنه‌های لو رفته
+site:*.example.com -www
+
+# ایمیل‌های لو رفته
+&quot;@example.com&quot; filetype:xlsx
+
+# رمز یا کلید API لو رفته
+site:github.com &quot;example.com&quot; password
+site:pastebin.com &quot;example.com&quot;
+
+# ترکیب‌های قدرتمند (Google Hacking Database)
+site:example.com inurl:phpMyAdmin intitle:phpMyAdmin
+site:example.com ext:sql intext:&quot;INSERT INTO&quot;
+</pre>
+
+                        <p><strong>تحلیل:</strong> Google Dorks از اپراتورهای خاصی استفاده می‌کند که جستجو را محدودتر می‌کنند. مهم‌ترین اپراتورها:</p>
+                        <table class="objectives-table">
+                            <thead><tr><th>اپراتور</th><th>معنی</th><th>مثال</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>site:</code></td><td>محدود به یک دامنه</td><td>site:example.com</td></tr>
+                                <tr><td><code>inurl:</code></td><td>شامل کلمه در URL</td><td>inurl:admin</td></tr>
+                                <tr><td><code>intitle:</code></td><td>شامل کلمه در عنوان</td><td>intitle:login</td></tr>
+                                <tr><td><code>filetype:</code></td><td>نوع فایل</td><td>filetype:pdf</td></tr>
+                                <tr><td><code>ext:</code></td><td>پسوند فایل</td><td>ext:log</td></tr>
+                                <tr><td><code>intext:</code></td><td>شامل در متن صفحه</td><td>intext:&quot;error&quot;</td></tr>
+                                <tr><td><code>-</code></td><td>حذف</td><td>site:example.com -www</td></tr>
+                                <tr><td><code>OR</code></td><td>یا</td><td>inurl:admin OR inurl:login</td></tr>
+                                <tr><td><code>*</code></td><td>هر چیزی</td><td>site:*.example.com</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="callout co-tip">
+                            <strong>💡 GHDB (Google Hacking Database):</strong>
+                            بیش از ۷۰۰۰ Dork آماده در <code>exploit-db.com/google-hacking-database</code>
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۲: Shodan -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۲: Shodan (Passive)</h6>
+                        <p class="use-case">کاربرد: موتور جستجوی دستگاه‌های متصل به اینترنت — از سرورها تا دوربین‌ها</p>
+
+                        <h5>جستجوهای کلیدی Shodan:</h5>
+<pre class="code-box"># جستجوهای پایه
+apache
+nginx
+&quot;default password&quot;
+port:22 country:IR
+
+# جستجوهای تخصصی
+hostname:example.com
+net:192.168.0.0/24
+org:&quot;Example Corp&quot;
+product:&quot;Apache httpd&quot; version:2.4.49
+
+# پیدا کردن دوربین‌ها
+webcam
+&quot;Server: SQ-WEBCAM&quot;
+
+# پیدا کردن سرورهای آسیب‌پذیر
+vuln:CVE-2021-44228
+port:9200 country:IR  (Elasticsearch باز)
+</pre>
+
+                        <h5>استفاده از Shodan API (Python):</h5>
+<pre class="code-box"># نصب و پیکربندی
+pip3 install --user shodan
+shodan init &lt;YOUR_API_KEY&gt;
+
+# جستجو از خط فرمان
+shodan search &quot;apache country:IR&quot; --limit 10
+shodan host 8.8.8.8
+shodan count &quot;nginx&quot;
+shodan info  (اعتبار API شما)
+
+# استفاده در Python
+python3 -c &quot;
+import shodan
+api = shodan.Shodan(&#39;YOUR_API_KEY&#39;)
+results = api.search(&#39;nginx country:IR&#39;)
+print(f&#39;تعداد: {results[&#39;total&#39;]}&#39;)
+for r in results[&#39;matches&#39;][:5]:
+    print(r[&#39;ip_str&#39;], r[&#39;port&#39;], r.get(&#39;product&#39;, &#39;&#39;))
+&quot;
+</pre>
+
+                        <p><strong>تحلیل:</strong> Shodan دائماً اینترنت را اسکن می‌کند و بنر سرویس‌ها را آرشیو می‌کند. یعنی شما می‌توانید ببینید در ۶ ماه پیش چه سرویسی روی یک IP بود، بدون اینکه خودتان به آن IP وصل شوید. این یعنی Passive کامل!</p>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ هشدار حقوقی:</strong>
+                            <strong>جستجو</strong> در Shodan قانونی است. ولی <strong>استفاده</strong> از اطلاعات Shodan برای حمله، جرم است. Shodan در پروژه‌های تست نفوذ قانونی برای شناسایی سطح حمله سازمان خودتان استفاده می‌شود.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۳: Wayback Machine -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۳: Wayback Machine (Passive)</h6>
+                        <p class="use-case">کاربرد: آرشیو صفحات وب قدیمی — کشف مسیرهای حذف‌شده</p>
+
+                        <h5>روش دستی:</h5>
+                        <p>به <code>web.archive.org</code> بروید و URL هدف را وارد کنید.</p>
+
+                        <h5>روش خودکار با waybackurls:</h5>
+<pre class="code-box"># نصب
+go install github.com/tomnomnom/waybackurls@latest
+# یا: sudo apt install waybackurls
+
+# استفاده
+echo &quot;example.com&quot; | waybackurls
+# خروجی: تمام URLهایی که Wayback آرشیو کرده
+
+# فیلتر کردن فایل‌های حساس
+echo &quot;example.com&quot; | waybackurls | grep -E &#39;\.(php|asp|jsp|env|log|bak)$&#39;
+
+# ذخیره در فایل
+echo &quot;example.com&quot; | waybackurls &gt; urls.txt
+wc -l urls.txt
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 چرا Wayback مهم است؟</strong>
+                            سایت‌ها مسیرهای قدیمی را حذف می‌کنند ولی فراموش می‌کنند که Wayback آن‌ها را آرشیو کرده. بعضی اوقات یک صفحه admin قدیمی که «فراموش شده» از نظر مهاجم، طلای خالص است.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۴: DNS Enumeration -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۴: DNS Enumeration (نیمه-Passive)</h6>
+                        <p class="use-case">کاربرد: کشف زیردامنه‌ها، رکوردهای DNS، تاریخچه</p>
+
+                        <h5>رکوردهای اساسی DNS:</h5>
+<pre class="code-box"># ۱) رکورد A (IPv4)
+dig example.com A
+nslookup example.com
+
+# ۲) رکورد AAAA (IPv6)
+dig example.com AAAA
+
+# ۳) رکورد MX (ایمیل)
+dig example.com MX
+# خروجی: mail serverهای سازمان
+
+# ۴) رکورد NS (Name Servers)
+dig example.com NS
+# خروجی: DNS serverهای مسئول
+
+# ۵) رکورد TXT (اطلاعات اضافی)
+dig example.com TXT
+# بعضی اوقات SPF، google-site-verification و...
+
+# ۶) رکورد CNAME
+dig www.example.com CNAME
+
+# ۷) همه رکوردها
+dig example.com ANY
+
+# ۸) رکورد SOA (Start of Authority)
+dig example.com SOA
+</pre>
+
+                        <h5>Subdomain Enumeration با ابزارهای حرفه‌ای:</h5>
+<pre class="code-box"># ۱) Subfinder (Passive — سریع)
+subfinder -d example.com -o subdomains.txt
+subfinder -d example.com -all -recursive
+# زمان: 30 ثانیه — 100+ زیردامنه
+
+# ۲) Amass (جامع‌ترین — کندتر)
+amass enum -passive -d example.com -o amass_subs.txt
+amass enum -active -d example.com -brute -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+# زمان: 5-30 دقیقه — کشف عمیق‌تر
+
+# ۳) Assetfinder (سبک)
+assetfinder example.com
+
+# ۴) crt.sh — از گواهی‌های SSL
+curl -s &quot;https://crt.sh/?q=%25.example.com&amp;output=json&quot; | jq -r &#39;.[].name_value&#39; | sort -u
+
+# ۵) DNSRecon
+dnsrecon -d example.com -t std
+dnsrecon -d example.com -t brt -D /usr/share/wordlists/dnsmap.txt
+</pre>
+
+                        <h5>Zone Transfer (اگر پیکربندی اشتباه باشد):</h5>
+<pre class="code-box"># تست Zone Transfer — اگر سرور DNS اشتباه تنظیم شده باشد،
+# لیست کامل زیردامنه‌ها را می‌دهد!
+dig axfr @ns1.example.com example.com
+
+# یا با ابزار اختصاصی
+dnsrecon -d example.com -t axfr
+fierce -dns example.com
+</pre>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ نکته:</strong>
+                            Zone Transfer اشتباه پیکربندی، یکی از رایج‌ترین خطاهای سازمان‌های بزرگ است. اگر جواب داد، لیست کامل زیردامنه‌ها را در یک دستور می‌گیرید. این یک ضعف امنیتی مهم است.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۵: Nmap -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۵: Nmap (Active) — پادشاه Recon</h6>
+                        <p class="use-case">کاربرد: اسکن پورت، شناسایی سرویس، تشخیص سیستم‌عامل، اسکریپت‌های NSE</p>
+
+                        <h5>۱) اسکن‌های پایه:</h5>
+<pre class="code-box"># سریع‌ترین اسکن (بدون سرویس)
+nmap 192.168.56.20
+
+# اسکن پرسرعت چند پورت
+nmap -F 192.168.56.20
+# فقط 100 پورت رایج
+
+# اسکن همه ۶۵,۵۳۵ پورت
+nmap -p- 192.168.56.20
+
+# اسکن پورت‌های خاص
+nmap -p 80,443,8000,8080 192.168.56.20
+</pre>
+
+                        <h5>۲) شناسایی سرویس و نسخه:</h5>
+<pre class="code-box"># تشخیص نسخه سرویس (Service Detection)
+nmap -sV 192.168.56.20
+# خروجی: port 8000: WSGIServer 0.2 (Django)
+
+# تشخیص سیستم‌عامل
+nmap -O 192.168.56.20
+# نیاز به sudo
+
+# ترکیب همه چیز (Aggressive)
+sudo nmap -A 192.168.56.20
+# -O + -sV + default scripts + traceroute
+
+# اسکن سریع با ۴-سطح تهاجم
+sudo nmap -A -T4 192.168.56.20
+</pre>
+
+                        <h5>۳) تکنیک‌های اسکن پیشرفته:</h5>
+<pre class="code-box"># TCP SYN Scan (نیاز به root — پیش‌فرض با sudo)
+sudo nmap -sS 192.168.56.20
+
+# TCP Connect Scan (بدون root)
+nmap -sT 192.168.56.20
+
+# UDP Scan (کند ولی مهم برای DNS/NTP/SNMP)
+sudo nmap -sU 192.168.56.20
+
+# ترکیب TCP + UDP
+sudo nmap -sS -sU 192.168.56.20
+
+# اسکن مخفیانه (کند)
+sudo nmap -sS -T1 -f 192.168.56.20
+
+# اسکن از طریق FTP bounce یا idle host (پیشرفته)
+sudo nmap -sI &lt;idle_host&gt; 192.168.56.20
+</pre>
+
+                        <h5>۴) Nmap Scripting Engine (NSE) — قدرتمندترین بخش Nmap:</h5>
+<pre class="code-box"># بررسی آسیب‌پذیری‌های رایج (Vulnerability Scan)
+sudo nmap --script=vuln 192.168.56.20
+
+# بررسی رایج‌ترین ضعف‌های وب
+sudo nmap --script=http-vuln* 192.168.56.20
+
+# استخراج اطلاعات HTTP (عنوان، Server Header، روش‌های مجاز)
+sudo nmap --script=http-title,http-headers,http-methods -p 8000 192.168.56.20
+
+# بررسی دایرکتوری‌های پیش‌فرض
+sudo nmap --script=http-enum -p 8000 192.168.56.20
+
+# اسکن SMB
+sudo nmap --script=smb-vuln* -p 445 192.168.56.20
+
+# بررسی SSH Weak Algorithms
+sudo nmap --script=ssh2-enum-algos -p 22 192.168.56.20
+</pre>
+
+                        <h5>۵) خروجی‌گیری حرفه‌ای:</h5>
+<pre class="code-box"># ذخیره در فرمت‌های مختلف
+sudo nmap -A -oN scan.txt 192.168.56.20       # متن ساده
+sudo nmap -A -oX scan.xml 192.168.56.20       # XML (برای ابزارهای دیگر)
+sudo nmap -A -oG scan.gnmap 192.168.56.20     # Grepable
+sudo nmap -A -oA scan_all 192.168.56.20       # همه فرمت‌ها
+
+# تبدیل XML به HTML
+xsltproc scan.xml -o scan.html
+# سپس در مرورگر باز کنید
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 ترکیب استاندارد Nmap برای پنتست:</strong>
+                            <code>sudo nmap -sS -sV -sC -O -p- -T4 -oA target_full_scan 192.168.56.20</code>
+                            <ul style="margin: 6px 0 0 0;">
+                                <li><code>-sS</code>: SYN Scan (سریع)</li>
+                                <li><code>-sV</code>: Service Detection</li>
+                                <li><code>-sC</code>: Default Scripts</li>
+                                <li><code>-O</code>: OS Detection</li>
+                                <li><code>-p-</code>: همه پورت‌ها</li>
+                                <li><code>-T4</code>: سرعت بالا (اجتناب از T5 که نویز می‌کند)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۶: Gobuster -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۶: Gobuster و FFUF (Active)</h6>
+                        <p class="use-case">کاربرد: کشف مسیرها، فایل‌ها، و پارامترهای پنهان وب</p>
+
+                        <h5>۱) Gobuster — سه حالت اصلی:</h5>
+<pre class="code-box"># حالت dir (کشف مسیرها) — رایج‌ترین
+gobuster dir -u http://192.168.56.20:8000 -w /usr/share/wordlists/dirb/common.txt
+
+# حالت dns (کشف زیردامنه)
+gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+
+# حالت vhost (کشف Virtual Hosts)
+gobuster vhost -u http://192.168.56.20 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+
+# ترکیب با فیلتر — خیلی کاربردی
+gobuster dir -u http://192.168.56.20:8000 \
+    -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
+    -x php,html,txt,json \
+    -t 50 \
+    -o gobuster_results.txt \
+    --timeout 10s
+</pre>
+
+                        <h5>۲) FFUF — سریع‌تر و انعطاف‌پذیرتر:</h5>
+<pre class="code-box"># کشف مسیر
+ffuf -u http://192.168.56.20:8000/FUZZ -w /usr/share/wordlists/dirb/common.txt
+
+# با پسوندهای مختلف
+ffuf -u http://192.168.56.20:8000/FUZZ \
+     -w /usr/share/seclists/Discovery/Web-Content/common.txt \
+     -e .php,.html,.txt,.json
+
+# فیلتر پاسخ‌های 403 و 404
+ffuf -u http://192.168.56.20:8000/FUZZ \
+     -w wordlist.txt \
+     -fc 403,404
+
+# کشف Virtual Host
+ffuf -u http://192.168.56.20 \
+     -H &quot;Host: FUZZ.example.com&quot; \
+     -w subdomains.txt \
+     -fs 1234  (اندازه پاسخ اصلی برای فیلتر)
+</pre>
+
+                        <h5>۳) Wordlists — کجا پیدا کنیم؟</h5>
+<pre class="code-box"># بهترین wordlistها در Kali:
+ls /usr/share/wordlists/
+ls /usr/share/seclists/
+
+# مهم‌ترین‌ها:
+/usr/share/seclists/Discovery/Web-Content/
+├── common.txt
+├── directory-list-2.3-small.txt
+├── directory-list-2.3-medium.txt
+├── directory-list-2.3-big.txt
+├── raft-large-directories.txt
+├── big.txt (بزرگ‌ترین)
+
+# Wordlistهای تخصصی
+/usr/share/seclists/Passwords/       # رمزها
+/usr/share/seclists/Usernames/       # نام کاربری‌ها
+/usr/share/seclists/Discovery/DNS/   # زیردامنه‌ها
+
+# نصب SecLists اگر نیست
+sudo apt install seclists
+</pre>
+
+                        <div class="callout co-warn">
+                            <strong>⚠️ نکته مهم درباره Dir Busting:</strong>
+                            این کار <strong>در لاگ سرور هدف ثبت می‌شود</strong> — هزاران درخواست 404 در چند دقیقه. اگر روی هدف غیرمجاز اجرا شود، <strong>اثبات قانونی جرم</strong> است. حتی روی هدف خودتان، اگر سرور روی اینترنت باشد و بدون مجوز، جرم است.
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۷: Wappalyzer -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۷: Wappalyzer و WhatWeb (Passive/Active)</h6>
+                        <p class="use-case">کاربرد: شناسایی تکنولوژی‌های وب (CMS، فریمورک، وب‌سرور، زبان)</p>
+
+                        <h5>۱) Wappalyzer (افزونه مرورگر):</h5>
+                        <ol>
+                            <li>در Firefox Kali، افزونه Wappalyzer را از addons.mozilla.org نصب کنید.</li>
+                            <li>هر سایتی که باز کنید، آیکون Wappalyzer تعداد تکنولوژی‌ها را نشان می‌دهد.</li>
+                            <li>کلیک کنید تا جزئیات را ببینید (نسخه، زبان، CDN).</li>
+                        </ol>
+
+                        <h5>۲) WhatWeb (خط فرمان):</h5>
+<pre class="code-box"># اسکن ساده
+whatweb http://192.168.56.20:8000
+
+# اسکن با شدت بالاتر
+whatweb -a 3 http://192.168.56.20:8000
+
+# خروجی JSON (برای پارس برنامه‌ای)
+whatweb --log-json=whatweb.json http://192.168.56.20:8000
+
+# خروجی خلاصه
+whatweb --log-brief=http://192.168.56.20:8000
+# خروجی: Django, Python, WSGIServer
+</pre>
+
+                        <h5>۳) روش‌های دستی Fingerprinting:</h5>
+<pre class="code-box"># بررسی Server Header
+curl -I http://192.168.56.20:8000
+# خروجی:
+# Server: WSGIServer/0.2 CPython/3.10.4
+# → Django + Python 3.10
+
+# بررسی X-Powered-By
+curl -I http://example.com | grep -i &quot;powered&quot;
+
+# بررسی robots.txt
+curl http://example.com/robots.txt
+
+# بررسی sitemap
+curl http://example.com/sitemap.xml
+
+# بررسی security.txt
+curl http://example.com/.well-known/security.txt
+
+# بررسی HTTP Methods مجاز
+curl -X OPTIONS -i http://example.com/
+# خروجی Allow header
+</pre>
+
+                        <div class="callout co-tip">
+                            <strong>💡 چرا Tech Fingerprinting مهم است؟</strong>
+                            چون مسیر حمله به تکنولوژی بستگی دارد:
+                            <ul style="margin: 6px 0 0 0;">
+                                <li>اگر Django باشد → برای CVEهای Django و کتابخانه‌های Python بگردید</li>
+                                <li>اگر WordPress باشد → برای پلاگین‌های آسیب‌پذیر بگردید</li>
+                                <li>اگر Apache 2.4.49 باشد → CVE-2021-41773 (Path Traversal)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ابزار ۸: theHarvester و Recon-ng -->
+                    <div class="tool-card">
+                        <h6>🛠 ابزار ۸: theHarvester و Recon-ng (Passive OSINT)</h6>
+                        <p class="use-case">کاربرد: جمع‌آوری ایمیل، نام کاربری، هاست‌ها از منابع OSINT</p>
+
+                        <h5>theHarvester — ساده و موثر:</h5>
+<pre class="code-box"># نصب
+sudo apt install theharvester
+
+# جستجو در همه منابع
+theHarvester -d example.com -b all -l 500
+
+# جستجو فقط در Bing
+theHarvester -d example.com -b bing
+
+# ذخیره در HTML
+theHarvester -d example.com -b all -f report.html
+
+# منابع پشتیبانی‌شده
+theHarvester -h | grep &quot;b:\&quot;
+# bing, google, linkedin, twitter, hunter, shodan, ...
+</pre>
+
+                        <h5>Recon-ng — چارچوب حرفه‌ای OSINT:</h5>
+<pre class="code-box"># راه‌اندازی
+recon-ng
+
+# در محیط recon-ng:
+[recon-ng] &gt; marketplace search
+[recon-ng] &gt; marketplace install all
+[recon-ng] &gt; workspaces create example_com
+[recon-ng] &gt; db insert domains
+[recon-ng] &gt; use recon/domains-hosts/hackertarget
+[recon-ng] &gt; run
+[recon-ng] &gt; show hosts
+[recon-ng] &gt; use reporting/html
+[recon-ng] &gt; run
+</pre>
+                    </div>
+
+                    <!-- ابزار ۹: ترتیب کار -->
+                    <div class="tool-card">
+                        <h6>🎯 ترتیب درست Recon (Roadmap حرفه‌ای)</h6>
+                        <p class="use-case">کاربرد: در چه ترتیبی ابزارها را اجرا کنیم؟</p>
+
+                        <div class="phase-diagram">
+<pre>⏱ فاز ۱ (۳۰ دقیقه): Passive OSINT
+   ├─ Google Dorks (15 min)
+   ├─ Shodan / Censys (10 min)
+   └─ Wayback Machine (5 min)
+   ⬇️
+⏱ فاز ۲ (۳۰ دقیقه): DNS + Subdomains
+   ├─ Subfinder
+   ├─ Amass (Passive)
+   ├─ crt.sh
+   └─ theHarvester
+   ⬇️
+⏱ فاز ۳ (۲۰ دقیقه): Tech Fingerprinting
+   ├─ Wappalyzer در مرورگر
+   ├─ WhatWeb
+   └─ بررسی HTTP Headers
+   ⬇️
+⏱ فاز ۴ (۶۰ دقیقه): Active Scanning
+   ├─ Nmap کامل با NSE
+   ├─ Gobuster dir
+   └─ FFUF برای فازهای خاص
+   ⬇️
+⏱ فاز ۵ (۲۰ دقیقه): مستندسازی
+   ├─ پر کردن target-profile.md
+   └─ ساخت گزارش
+</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- بخش ۷: کارگاه -->
+                <div class="section-part" id="part-07">
+                    <h3>۷. کارگاه عملی (اجرا در آزمایشگاه شما)</h3>
+
+                    <div class="workshop-box">
+                        <h5>🛠️ هدف کارگاه: شکار اطلاعات هدف 192.168.56.20</h5>
+                        <p>در این کارگاه، تمام ۹ تکنیک بالا را روی هدف Django lab خودتان اجرا می‌کنید و یک پروفایل کامل می‌سازید.</p>
+                    </div>
+
+                    <h4><span class="step-number">۱</span> آماده‌سازی</h4>
+<pre class="code-box"># Snapshot جدید از دو VM بگیرید
+# در VMware: VM → Snapshot → Take Snapshot
+# نام: pre-recon-baseline
+
+# روی Kali، ترمینال باز کنید و در یک پوشه کاری قرار بگیرید
+mkdir -p ~/recon-lab/chapter-03
+cd ~/recon-lab/chapter-03
+
+# تست اتصال به هدف
+ping -c 2 192.168.56.20
+</pre>
+
+                    <h4><span class="step-number">۲</span> Passive Recon — Google Dorks</h4>
+<pre class="code-box"># روی هدف آزمایشی خودتان، جستجوهای زیر را انجام دهید
+# (اگر هدف اینترنتی دارید — فقط روی دامنه‌های اجازه‌داده‌شده)
+
+# برای هدف خودتان (192.168.56.20)، این مرحله معنی ندارد چون IP داخلی است.
+# ولی برای درک مفهوم، این دستورها را روی یک دامنه آموزشی (مثل example.com) اجرا کنید:
+
+# ۱) جستجو در Google
+# site:example.com filetype:pdf
+# site:example.com inurl:admin
+
+# ۲) ذخیره نتایج برای مستندسازی
+echo &quot;# Google Dorks Results — $(date)&quot; &gt; google-dorks.md
+echo &quot;Target Domain: example.com&quot; &gt;&gt; google-dorks.md
+echo &quot;&quot; &gt;&gt; google-dorks.md
+echo &quot;## ۱) PDF Files&quot; &gt;&gt; google-dorks.md
+echo &quot;Query: site:example.com filetype:pdf&quot; &gt;&gt; google-dorks.md
+echo &quot;Results: [حداقل ۵ نتیجه را اینجا بنویسید]&quot; &gt;&gt; google-dorks.md
+</pre>
+
+                    <h4><span class="step-number">۳</span> Tech Fingerprinting هدف</h4>
+<pre class="code-box"># ۱) بررسی Server Header
+curl -I http://192.168.56.20:8000/
+
+# خروجی مورد انتظار:
+# HTTP/1.1 200 OK
+# Date: ...
+# Server: WSGIServer/0.2 CPython/3.10.4
+# Content-Type: text/html; charset=utf-8
+# X-Frame-Options: DENY
+# Content-Length: 10697
+
+# ذخیره در فایل
+curl -I http://192.168.56.20:8000/ &gt; headers.txt
+
+# ۲) WhatWeb
+whatweb -a 3 http://192.168.56.20:8000/ | tee whatweb.txt
+
+# ۳) بررسی robots.txt
+curl http://192.168.56.20:8000/robots.txt
+
+# ۴) بررسی sitemap
+curl http://192.168.56.20:8000/sitemap.xml
+
+# ۵) بررسی HTTP Methods
+curl -X OPTIONS -i http://192.168.56.20:8000/ | tee methods.txt
+</pre>
+
+                    <h4><span class="step-number">۴</span> Nmap — اسکن هدف</h4>
+<pre class="code-box"># ۱) اسکن سریع برای دیدن پورت‌های باز
+sudo nmap -F 192.168.56.20 -oN nmap-fast.txt
+
+# ۲) اسکن کامل با Service + Script + OS
+sudo nmap -sS -sV -sC -O -p- -T4 \
+    -oA nmap-full-192.168.56.20 \
+    192.168.56.20
+
+# این دستور ممکن است ۵-۱۰ دقیقه طول بکشد. صبر کنید.
+
+# ۳) بررسی HTTP Headers با NSE
+sudo nmap --script=http-headers,http-title,http-methods \
+    -p 8000 192.168.56.20 -oN nmap-http.txt
+
+# ۴) بررسی آسیب‌پذیری‌های رایج (اختیاری — روی هدف قانونی)
+sudo nmap --script=vuln -p 8000 192.168.56.20 -oN nmap-vuln.txt
+
+# ۵) خلاصه نتایج
+cat nmap-fast.txt
+</pre>
+
+                    <p><strong>خروجی مورد انتظار برای هدف Django:</strong></p>
+<pre class="code-box">PORT     STATE SERVICE VERSION
+8000/tcp open  http    WSGIServer 0.2 (Python 3.10.4)
+|_http-server-header: WSGIServer/0.2 CPython/3.10.4
+|_http-title: Django - The Web framework for perfectionists with deadlines
+| http-methods:
+|   Supported Methods: GET HEAD OPTIONS
+|_  Potentially risky methods: (none)
+
+OS details: Linux 5.0 - 5.14 (ممکن است دقیق نباشد)
+</pre>
+
+                    <h4><span class="step-number">۵</span> Gobuster — کشف مسیرها</h4>
+<pre class="code-box"># ۱) با wordlist متوسط
+gobuster dir \
+    -u http://192.168.56.20:8000 \
+    -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt \
+    -x php,html,json,txt \
+    -t 30 \
+    -o gobuster-small.txt
+
+# ۲) با wordlist بزرگ‌تر (کندتر ولی کشف بیشتر)
+gobuster dir \
+    -u http://192.168.56.20:8000 \
+    -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
+    -x php,html,json \
+    -t 40 \
+    -o gobuster-medium.txt
+
+# ۳) صبر کنید تا تمام شود (۵-۱۵ دقیقه)
+
+# ۴) بررسی نتایج
+cat gobuster-small.txt
+grep -v &quot;Status: 404&quot; gobuster-small.txt
+</pre>
+
+                    <p><strong>روی Django lab، مسیرهای کشف‌شده معمولاً:</strong></p>
+<pre class="code-box">/admin/          (Status: 200)  ← پنل مدیریت Django
+/static/         (Status: 200)  ← فایل‌های استاتیک
+/api/            (Status: 200)  ← API endpoints (اگر DRF نصب باشد)
+/healthz/        (Status: 404 یا 200)
+/robots.txt      (Status: 200 یا 404)
+/sitemap.xml     (Status: 200 یا 404)
+</pre>
+
+                    <h4><span class="step-number">۶</span> Passive Subdomain Enumeration</h4>
+<pre class="code-box"># (روی دامنه‌های آزمایشی خودتان مثل یک دامنه ثبت‌شده شما)
+
+# ۱) Subfinder
+subfinder -d example.com -o subfinder.txt -silent
+wc -l subfinder.txt
+
+# ۲) Assetfinder
+assetfinder example.com | sort -u &gt; assetfinder.txt
+
+# ۳) crt.sh — استخراج از گواهی SSL
+curl -s &quot;https://crt.sh/?q=%25.example.com&amp;output=json&quot; \
+    | jq -r &#39;.[].name_value&#39; \
+    | sort -u &gt; crtsh.txt
+
+# ۴) ادغام همه
+cat subfinder.txt assetfinder.txt crtsh.txt | sort -u &gt; all-subdomains.txt
+wc -l all-subdomains.txt
+
+# ۵) بررسی زنده بودن (فقط دامنه‌های خودتان)
+while read sub; do
+    host $sub 2&gt;/dev/null | grep -q &quot;has address&quot; &amp;&amp; echo &quot;$sub ✓&quot;
+done &lt; all-subdomains.txt
+</pre>
+
+                    <h4><span class="step-number">۷</span> تحلیل و مستندسازی</h4>
+                    <p>حالا نوبت ساخت <code>target-profile.md</code> است. این فایل، خروجی نهایی این فصل و اولین قطعه پورتفولیوی شماست:</p>
+
+<pre class="code-box"># Target Profile: Django Lab
+## تاریخ: 1405/XX/XX
+## تحلیل‌گر: [نام شما]
+
+### 1. اطلاعات پایه
+- Hostname: 192.168.56.20
+- نوع: Private IP (Local Lab)
+- دسترسی: Host-Only Network
+
+### 2. سرویس‌های شناسایی‌شده
+| Port | Protocol | State | Service | Version |
+|------|----------|-------|---------|---------|
+| 8000 | TCP | open | http | WSGIServer/0.2 Python/3.10.4 |
+
+### 3. تکنولوژی‌ها (Fingerprint)
+- Web Framework: Django 5.0.x
+- Language: Python 3.10.4
+- Server: WSGIServer (dev server)
+- OS: Linux (5.0 - 5.14)
+
+### 4. مسیرهای کشف‌شده
+- `/admin/` — Django admin panel (Status 200)
+- `/static/` — Static files
+- `/robots.txt` — robots configuration
+
+### 5. HTTP Headers
+- Server: WSGIServer/0.2
+- X-Frame-Options: DENY
+- Content-Type: text/html; charset=utf-8
+
+### 6. نقاط ضعف اولیه (Potential Vulnerabilities)
+- ⚠️ Django Development Server (نه production)
+- ⚠️ WSGIServer بنر نسخه را افشا می‌کند
+- ⚠️ ALLOWED_HOSTS = [&#39;*&#39;] (اگر تنظیم شده)
+
+### 7. توصیه‌های اولویت‌دار برای تست بعدی
+1. تست پنل admin با کلمات ضعیف
+2. بررسی CSRF در فرم‌ها
+3. تست آسیب‌پذیری‌های Django شناخته‌شده
+
+### 8. فایل‌های خام
+- nmap-full-192.168.56.20.xml
+- gobuster-medium.txt
+- whatweb.txt
+- headers.txt
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته حرفه‌ای:</strong>
+                        این فایل را در Git نگه دارید و هر فصل که جلوتر می‌روید، به‌روز کنید. در مصاحبه‌ها، اگر یک پروفایل هدف حرفه‌ای ارائه دهید، شما را از سایر متقاضیان متمایز می‌کند.
+                    </div>
+                </div>
+
+                <!-- بخش ۸: تحلیل دفاعی -->
+                <div class="section-part" id="part-08">
+                    <h3>۸. تحلیل دفاعی و کاهش سطح حمله (Attack Surface Reduction)</h3>
+
+                    <p>در این فصل یاد گرفتید چطور اطلاعات جمع کنید. حالا از دید مدافع ببینیم چطور این اطلاعات را از مهاجم مخفی کنیم.</p>
+
+                    <h5>🛡️ مدل کاهش Attack Surface:</h5>
+                    <div class="phase-diagram">
+<pre>┌───────────────────────────────────────────────────────┐
+│  آنچه مهاجم می‌بیند (Before Hardening)                │
+│  ────────────────────────────────────                 │
+│  • زیردامنه‌های زیاد (some forgotten)                 │
+│  • Server Header افشاگر                               │
+│  • نسخه‌های دقیق تکنولوژی                             │
+│  • مسیرهای پیش‌فرض قابل حدس (admin, login)            │
+│  • Directory Listing باز                              │
+├───────────────────────────────────────────────────────┤
+│  آنچه مهاجم می‌بیند (After Hardening)                 │
+│  ────────────────────────────────────                 │
+│  • فقط سرویس‌های ضروری                                │
+│  • بدون Server Header افشاگر                          │
+│  • بدون نسخه دقیق                                     │
+│  • مسیرهای admin تغییر یافته                          │
+│  • Directory Listing بسته                             │
+│  • WAF جلوی Dir Busting را می‌گیرد                     │
+└───────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>🎯 چک‌لیست دفاعی — در برابر هر ابزار Recon:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حمله</th><th>دفاع</th><th>پیاده‌سازی</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Google Dorks</td>
+                                <td>حذف فایل‌های حساس، robots.txt محافظه‌کارانه</td>
+                                <td>Audit محتوا + Robots.txt مدیریت‌شده</td>
+                            </tr>
+                            <tr>
+                                <td>Shodan</td>
+                                <td>کاهش سرویس‌های عمومی، بنر پاکسازی</td>
+                                <td>نگه‌داشتن سرویس‌ها پشت VPN/Proxy</td>
+                            </tr>
+                            <tr>
+                                <td>Wayback Machine</td>
+                                <td>حذف محتوا از آرشیو، جلوگیری از آرشیو</td>
+                                <td>X-Robots-Tag + درخواست حذف از Wayback</td>
+                            </tr>
+                            <tr>
+                                <td>DNS Enum (Passive)</td>
+                                <td>کاهش زیردامنه‌های عمومی، حذف CNAME قدیمی</td>
+                                <td>Audit دوره‌ای DNS Records</td>
+                            </tr>
+                            <tr>
+                                <td>Zone Transfer</td>
+                                <td>غیرفعال کردن AXFR</td>
+                                <td>allow-transfer در BIND/PowerDNS</td>
+                            </tr>
+                            <tr>
+                                <td>Nmap Port Scan</td>
+                                <td>بستن پورت‌های غیرضروری + Rate Limit</td>
+                                <td>ufw/iptables + fail2ban</td>
+                            </tr>
+                            <tr>
+                                <td>Banner Grab</td>
+                                <td>حذف نسخه از Server Header</td>
+                                <td>ServerTokens Prod (Apache) / server_tokens off (Nginx)</td>
+                            </tr>
+                            <tr>
+                                <td>Dir Busting</td>
+                                <td>Rate Limit + WAF + تغییر مسیرهای پیش‌فرض</td>
+                                <td>ModSecurity + تغییر /admin به /admin-xyz</td>
+                            </tr>
+                            <tr>
+                                <td>Tech Fingerprinting</td>
+                                <td>حذف هدرهای افشاگر، تغییر Server Header</td>
+                                <td>headers-more-nginx یا Apache mod_headers</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔐 نمونه کدهای دفاعی:</h5>
+
+                    <div class="creative-box">
+                        <h6>🔹 Nginx — کاهش Attack Surface</h6>
+<pre class="code-box"># /etc/nginx/nginx.conf
+http &#123;
+    # حذف نسخه Nginx
+    server_tokens off;
+    
+    # هدر امنیتی
+    add_header X-Content-Type-Options &quot;nosniff&quot; always;
+    add_header X-Frame-Options &quot;SAMEORIGIN&quot; always;
+    add_header X-XSS-Protection &quot;1; mode=block&quot; always;
+    
+    # Rate Limit برای Dir Busting
+    limit_req_zone $binary_remote_addr zone=recon_limit:10m rate=5r/s;
+    
+    server &#123;
+        listen 443 ssl http2;
+        
+        location / &#123;
+            limit_req zone=recon_limit burst=10 nodelay;
+            limit_req_status 429;
+            proxy_pass http://127.0.0.1:8000;
+        &#125;
+        
+        # حذف مسیرهای افشاگر
+        location = /robots.txt &#123; return 404; &#125;
+        location = /sitemap.xml &#123; return 404; &#125;
+        
+        # جلوگیری از دسترسی به فایل‌های حساس
+        location ~ /\.(git|env|htaccess) &#123; deny all; &#125;
+    &#125;
+&#125;
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 Django — تنظیمات امنیتی</h6>
+<pre class="code-box"># settings.py — برای تولید
+import os
+
+DEBUG = False
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = &#39;DENY&#39;
+
+# حذف افشا هدر Server
+# در Nginx جلوی Django
+# more_clear_headers Server;
+# add_header Server &quot;WebServer&quot;;
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 تشخیص Dir Busting با تحلیل لاگ</h6>
+<pre class="code-box"># الگوی کلاسیک Dir Busting در لاگ:
+# - هزاران درخواست با Status 404 از یک IP
+# - همه با User-Agent یکسان
+# - در زمان کوتاه (5-30 دقیقه)
+
+# اسکریپت تشخیص ساده (روی سرور تولید):
+awk &#39;&#123;
+    if ($9 == 404) &#123;
+        count[$1]++;
+    &#125;
+&#125;
+END &#123;
+    for (ip in count) &#123;
+        if (count[ip] &gt; 100) &#123;
+            print &quot;مشکوک: &quot; ip &quot; — &quot; count[ip] &quot; خطای 404&quot;;
+        &#125;
+    &#125;
+&#125;&#39; /var/log/nginx/access.log
+
+# خروجی نمونه:
+# مشکوک: 192.168.56.10 — 8450 خطای 404
+# ← این IP در حال Dir Busting است!
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده «Attack Surface Minimalism»:</strong>
+                        هر سرویس، هر پورت، هر زیردامنه، هر مسیری که لازم نیست — حذف کنید. Attack Surface صفر = Recon صفر برای مهاجم. این ساده‌ترین و مؤثرترین دفاع است.
+                    </div>
+                </div>
+
+                <!-- بخش ۹: نکات حرفه‌ای -->
+                <div class="section-part" id="part-09">
+                    <h3>۹. نکات حرفه‌ای و دام‌های رایج</h3>
+
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ کارهای حرفه‌ای:</h6>
+                            <ul>
+                                <li>Passive First, Active Second — همیشه</li>
+                                <li>Snapshot قبل از هر اسکن Active</li>
+                                <li>مستندسازی هر گام با timestamp</li>
+                                <li>استفاده از VPN برای Passive روی هدف اینترنتی</li>
+                                <li>ذخیره همه خروجی‌ها در پوشه اختصاصی</li>
+                                <li>فیلتر کردن نتایج (grep/gawk) برای کشف مهم‌ترین‌ها</li>
+                                <li>ترکیب نتایج چند ابزار (Subfinder + Amass + crt.sh)</li>
+                                <li>توجه به هشدارهای کاربردی: Nmap -T4 نه T5</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>❌ دام‌های رایج:</h6>
+                            <ul>
+                                <li>اجرای Nmap -A روی هدف بدون Snapshot</li>
+                                <li>استفاده از Nmap -T5 (پرخطر — ممکن است سرویس را از کار بیندازد)</li>
+                                <li>اسکن روی هدف اینترنتی بدون مجوز (جرم!)</li>
+                                <li>Recon با IP واقعی خودتان روی هدف حساس</li>
+                                <li>ذخیره نکردن خروجی — فراموشی نتایج</li>
+                                <li>Dir Busting با wordlist خیلی بزرگ روی هدف تولیدی</li>
+                                <li>نادیده گرفتن robots.txt (منبع طلایی!)</li>
+                                <li>Mismatch بین گزارش و اسکرین‌شات‌ها</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5>🎓 نکات پیشرفته که در کتاب‌ها نیست:</h5>
+
+                    <h6>۱) استفاده از Proxy Chain برای Passive/Active:</h6>
+<pre class="code-box"># اگر مجبور به Active روی هدف هستید، IP خود را مخفی کنید:
+# با proxychains روی Kali
+
+sudo apt install proxychains4
+
+# تنظیم /etc/proxychains4.conf:
+# [ProxyList]
+# socks5 127.0.0.1 9050   (Tor)
+# socks5 127.0.0.1 8080   (Burp)
+
+# اجرای Nmap از طریق proxy
+proxychains4 nmap -sT -Pn target.com
+
+# نکته مهم: proxychains با TCP Connect کار می‌کند نه SYN Scan.
+# برای SYN Scan نیاز به Tor network با TransPort دارید.
+</pre>
+
+                    <h6>۲) تکنیک Passive DNS Rebound برای کشف زیردامنه‌های فراموش‌شده:</h6>
+<pre class="code-box"># برای هر زیردامنه کشف‌شده، بررسی کنید آیا هنوز فعال است:
+for sub in $(cat subdomains.txt); do
+    ip=$(dig +short $sub)
+    if [ -n &quot;$ip&quot; ]; then
+        echo &quot;$sub → $ip&quot;
+    fi
+done
+
+# زیردامنه‌های کشف‌شده ممکن است به IPهای متفاوت اشاره کنند.
+# هر IP یک نقطه ورود جدید است.
+</pre>
+
+                    <h6>۳) تحلیل زمان پاسخ برای تشخیص سرویس:</h6>
+<pre class="code-box"># زمان پاسخ Nmap می‌تواند افشاگر باشد:
+# - 1-5ms  → همان شبکه (local)
+# - 10-50ms → همان شهر
+# - 50-200ms → همان کشور
+# - 200ms+ → آن‌طرف دنیا
+
+# اسکن با نمایش زمان دقیق
+sudo nmap -sS --packet-trace -T2 192.168.56.20
+
+# تحلیل CDN:
+# اگر هدف پشت Cloudflare است، Nmap IP Cloudflare را می‌بیند نه سرور واقعی.
+# برای bypass: کشف IP واقعی از طریق:
+# - Passive DNS تاریخی
+# - Subdomain غیرپروکسی
+# - Email headers
+# - SSL certificate
+</pre>
+
+                    <h6>۴) OSINT از GitHub و GitLab:</h6>
+<pre class="code-box"># جستجوی اطلاعات لو رفته در GitHub
+# با API رایگان:
+curl -s &quot;https://api.github.com/search/code?q=example.com+password&quot; \
+    -H &quot;Authorization: token YOUR_GITHUB_TOKEN&quot; \
+    | jq &#39;.items[] | .html_url&#39;
+
+# جستجوی API Keys لو رفته
+# سایت‌های آماده:
+# - github.com/search?q=example.com
+# - sourcegraph.com
+# - grep.app
+
+# ابزار خودکار
+sudo apt install git-dumper
+git-dumper https://example.com/.git/ output_dir
+# اگر .git به اشتباه در دسترس باشد، کد کامل بازیابی می‌شود!
+</pre>
+
+                    <h6>۵) تحلیل HTTP Headers با دقت:</h6>
+<pre class="code-box"># بعضی هدرها اطلاعات طلایی می‌دهند:
+
+# X-Powered-By: Express.js    → Node.js
+# X-Powered-By: PHP/7.4.3     → PHP 7.4.3
+# X-AspNet-Version: 4.0.30319 → ASP.NET 4.0
+# X-Generator: WordPress 5.8  → WordPress
+
+# X-Debug-Token              → Symfony framework + debug mode
+# X-Runtime: 0.045           → Ruby on Rails
+# Server: Werkzeug/2.0        → Python Flask (نه Django!)
+
+# برای خودکارسازی:
+curl -sI https://example.com | grep -Ei &quot;(server|powered|x-|via|version)&quot;
+</pre>
+
+                    <h6>۶) مستندسازی حرفه‌ای — استاندارد پنتست:</h6>
+<pre class="code-box"># استاندارد PTES برای مستندسازی Recon:
+# 1. Intelligence Gathering (فصل ما)
+# 2. Threat Modeling
+# 3. Vulnerability Analysis
+# 4. Exploitation
+# 5. Post-Exploitation
+# 6. Reporting
+#
+# نکات مستندسازی:
+# • هر خروجی را با timestamp ذخیره کنید
+# • اسکرین‌شات بگیرید (نه فقط copy/paste)
+# • Command Complete: دستورات را کامل ذخیره کنید
+# • Reproducibility: هر کسی باید بتواند نتایج را تکرار کند
+# • Correlation: ارتباط بین یافته‌ها را نشان دهید
+</pre>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار درباره Rate Limiting:</strong>
+                        اگر اسکن شما خیلی سریع باشد، ممکن است:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>سرور هدف شما را بلاک کند (ban IP)</li>
+                            <li>WAF شما را به‌عنوان DoS تشخیص دهد</li>
+                            <li>سرویس‌های production از کار بیفتند (شکایت حقوقی)</li>
+                        </ul>
+                        <strong>همیشه با -T2 یا -T3 شروع کنید، سپس اگر لازم شد سرعت را بالا ببرید.</strong>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۰: پرسش و پاسخ -->
+                <div class="section-part" id="part-10">
+                    <h3>۱۰. پرسش و پاسخ و رفع اشکال</h3>
+
+                    <div class="qa-box">
+                        <h5>❓ سوالات متداول این فصل:</h5>
+
+                        <details>
+                            <summary>تفاوت Gobuster با FFUF چیست؟ کدام را انتخاب کنم؟</summary>
+                            <p>
+                                <strong>Gobuster:</strong> ساده‌تر، سریع‌تر برای سناریوهای استاندارد (dir, dns, vhost), زبان Go (تک فایل).<br>
+                                <strong>FFUF:</strong> انعطاف‌پذیرتر، پشتیبانی از FUZZ در URL/Header/Body، فیلتر پیشرفته (اندازه، کلمه، خط)، مناسب برای fuzzing پیچیده.<br>
+                                توصیه: Gobuster برای شروع، FFUF برای موارد پیشرفته.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>Nmap -T5 چرا خطرناک است؟</summary>
+                            <p>
+                                T5 (Insane) پکت‌ها را آن‌قدر سریع می‌فرستد که:
+                                <br>• ممکن است سرویس‌های قدیمی را از کار بیندازد
+                                <br>• Firewall/IDS شما را به‌عنوان DoS بلاک کند
+                                <br>• پکت‌ها گم شوند → نتایج اشتباه
+                                <br>• در محیط قانونی، شبیه حمله دیده می‌شود
+                                <br>همیشه با T2 یا T3 شروع کنید، فقط در شبکه داخلی و با مجوز T4.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا Passive Subdomain Enumeration نتایج دقیق نمی‌دهد؟</summary>
+                            <p>
+                                چون Passive فقط از منابع ثالث استفاده می‌کند:
+                                <br>• Subfinder/Censys → ممکن است دیر آپدیت شوند
+                                <br>• crt.sh → فقط زیردامنه‌های SSL دارند
+                                <br>• Wayback → فقط زیردامنه‌های آرشیوشده
+                                <br>راه‌حل: ترکیب چند منبع + مقایسه + تأیید با Active (DNS lookup).
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>Chrome/Firefox افزونه Wappalyzer نصب نمی‌شود (تحریم)</summary>
+                            <p>
+                                راه‌های جایگزین:
+                                <br>۱) از Firefox ESR که در Kali هست استفاده کنید (معمولاً بدون مشکل)
+                                <br>۲) WhatWeb از خط فرمان (پیشنهاد می‌شود)
+                                <br>۳) افزونه BuiltWith را امتحان کنید
+                                <br>۴) اگر لازم است، از VPN برای نصب افزونه استفاده کنید.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>Shodan API من محدودیت دارد. چه کار کنم؟</summary>
+                            <p>
+                                Shodan Free Tier محدودیت‌هایی دارد:
+                                <br>• 1 API request per second
+                                <br>• محدودیت ماهانه (معمولاً 100 queries)
+                                <br>راه‌حل‌ها:
+                                <br>۱) از وب‌سایت Shodan به‌جای API استفاده کنید
+                                <br>۲) برای پروژه‌های جدی، حساب Academic یا Freelance بگیرید ($49/ماه)
+                                <br>۳) جایگزین: Censys رایگان‌تر و سخاوتمندانه‌تر است.
+                            </p>
+                        </details>
+
+                        <details>
+                            <summary>چرا Nmap هیچ پورتی روی Windows target پیدا نمی‌کند؟</summary>
+                            <p>
+                                چک‌لیست:
+                                <br>۱) Windows Firewall پورت را باز نکرده؟ (فصل ۲ بخش ۷)
+                                <br>۲) Django روی 0.0.0.0 اجرا شده یا 127.0.0.1؟
+                                <br>۳) از VM هدف می‌توانید localhost:8000 بزنید؟
+                                <br>۴) شبکه VMnet1 درست ست شده؟
+                                <br>۵) اسکن با -Pn (بدون ping) را امتحان کنید: <code>nmap -Pn -p 8000 192.168.56.20</code>
+                            </p>
+                        </details>
+                    </div>
+
+                    <h5>🐛 خطاهای رایج و رفع آن‌ها:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>خطا / مشکل</th><th>علت</th><th>راه‌حل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>gobuster: command not found</code></td>
+                                <td>Gobuster نصب نیست</td>
+                                <td><code>sudo apt install gobuster</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>subfinder: no API keys configured</code></td>
+                                <td>Subfinder بدون API هم کار می‌کند ولی محدود</td>
+                                <td>نادیده بگیرید یا در <code>~/.config/subfinder/provider-config.yaml</code> API اضافه کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Nmap با <code>sudo</code> کار می‌کند ولی بدون sudo نه</td>
+                                <td>SYN Scan نیاز به CAP_NET_RAW دارد</td>
+                                <td>طبیعی است — از -sT استفاده کنید یا با sudo اجرا کنید</td>
+                            </tr>
+                            <tr>
+                                <td>اسکن Nmap خیلی کند است</td>
+                                <td>پکت‌های زیاد + فیلتر هدف</td>
+                                <td>کاهش تعداد پورت‌ها (<code>-p 1-1000</code>) یا افزایش <code>-T</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>WhatWeb: Timeout</code></td>
+                                <td>هدف پاسخ نمی‌دهد یا کند است</td>
+                                <td>افزایش timeout: <code>whatweb --read-timeout=30</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>dnsrecon: Module not found</code></td>
+                                <td>کتابخانه Python نصب نیست</td>
+                                <td><code>sudo apt install python3-dnspython</code></td>
+                            </tr>
+                            <tr>
+                                <td>theHarvester: 0 results</td>
+                                <td>API keys تنظیم نشده یا سایت‌ها بلاک کرده‌اند</td>
+                                <td>در فایل <code>~/.theHarvester/api-keys.yaml</code> کلیدها را اضافه کنید</td>
+                            </tr>
+                            <tr>
+                                <td><code>curl: (7) Failed to connect</code></td>
+                                <td>هدف در دسترس نیست</td>
+                                <td>Ping بزنید، IP و پورت را چک کنید</td>
+                            </tr>
+                            <tr>
+                                <td>Dir Busting نتایج اشتباه می‌دهد (همه 200)</td>
+                                <td>سرور برای هر مسیر پاسخ 200 می‌دهد (Wildcard)</td>
+                                <td>با <code>-fw</code> در Gobuster یا <code>-fs</code> در FFUF اندازه پاسخ wildcard را فیلتر کنید</td>
+                            </tr>
+                            <tr>
+                                <td>«Connection reset by peer» در Dir Busting</td>
+                                <td>Rate limit یا WAF فعال است</td>
+                                <td>کاهش سرعت: <code>-t 5</code> در Gobuster</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۱۱: جمع‌بندی -->
+                <div class="section-part" id="part-11">
+                    <h3>۱۱. جمع‌بندی و نکات طلایی</h3>
+
+                    <div class="summary-box">
+                        <h5>📌 خلاصه نکات کلیدی این فصل:</h5>
+                        <ul>
+                            <li>🔹 <strong>Passive First, Active Second</strong> — همیشه با Passive شروع کنید (غیرقابل شناسایی).</li>
+                            <li>🔹 <strong>Google Dorks، Shodan، Wayback</strong> سه منبع طلایی Passive هستند.</li>
+                            <li>🔹 <strong>DNS Enum</strong> (Subfinder، Amass، crt.sh) زیردامنه‌های فراموش‌شده را کشف می‌کند.</li>
+                            <li>🔹 <strong>Nmap</strong> ابزار پادشاه Active Scan است — با سوئیچ‌های -sS, -sV, -sC, -O.</li>
+                            <li>🔹 <strong>Gobuster و FFUF</strong> برای کشف مسیرها و پارامترهای پنهان وب.</li>
+                            <li>🔹 <strong>Wappalyzer و WhatWeb</strong> تکنولوژی و نسخه‌ها را افشا می‌کنند.</li>
+                            <li>🔹 <strong>snapshot قبل و بعد از هر Active scan</strong> — قانون طلایی.</li>
+                            <li>🔹 <strong>مستندسازی حرفه‌ای</strong> (target-profile.md) = نصف ارزش کار شما.</li>
+                            <li>🔹 <strong>Rate Limiting و -T3</strong> — سرعت زیاد، نویز و خطا می‌آورد.</li>
+                            <li>🔹 <strong>Attack Surface Reduction</strong> — دفاع اصلی در برابر همه ابزارهای Recon.</li>
+                        </ul>
+                    </div>
+
+                    <h5>🎓 چرا این فصل، مهم‌ترین فصل عملی دوره است؟</h5>
+                    <p>چون تمام فصل‌های بعدی، «اجرای حمله» روی اطلاعاتی هستند که در این فصل جمع کرده‌اید. یک Recon ضعیف یعنی:</p>
+                    <ul>
+                        <li>هدف‌های اشتباه (نسخه‌های قدیمی، پورت‌های بسته)</li>
+                        <li>زمان هدر رفته روی حمله‌های ناموفق</li>
+                        <li>گزارش نهایی ضعیف و ناقص</li>
+                    </ul>
+                    <p>و یک Recon قوی یعنی:</p>
+                    <ul>
+                        <li>می‌دانید دقیقاً به چه چیزی حمله کنید</li>
+                        <li>با ۳۰٪ تلاش، ۸۰٪ نتیجه می‌گیرید</li>
+                        <li>گزارش شما در سطح حرفه‌ای‌هاست</li>
+                    </ul>
+
+                    <div class="callout co-tip">
+                        <strong>📎 پل به فصل بعد:</strong>
+                        در فصل ۴، با اطلاعات جمع‌شده در این فصل، <strong>اسکن هدف و شناسایی آسیب‌پذیری‌ها</strong> را یاد می‌گیرید:
+                        <strong>Nikto، Wapiti، Nuclei، OpenVAS</strong>. خواهید دید چطور یک ابزار، ۲۰ دقیقه پس از اجرا، لیست اولویت‌بندی‌شده آسیب‌پذیری‌ها را می‌دهد.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۲: خودارزیابی -->
+                <div class="section-part" id="part-12">
+                    <h3>۱۲. خودارزیابی و آزمونک</h3>
+
+                    <div class="self-assessment">
+                        <h5>⭐ چک‌لیست خودارزیابی (صادق باشید):</h5>
+                        <ul class="checklist">
+                            <li>می‌توانم تفاوت Passive و Active Recon را توضیح دهم.</li>
+                            <li>حداقل ۲۰ Google Dork حرفه‌ای را می‌شناسم.</li>
+                            <li>Nmap را با سوئیچ‌های -sS, -sV, -sC, -O, -p- اجرا می‌کنم.</li>
+                            <li>NSE Scripts را برای تشخیص آسیب‌پذیری استفاده می‌کنم.</li>
+                            <li>Gobuster را با Wordlist مناسب اجرا می‌کنم و نتایج را فیلتر می‌کنم.</li>
+                            <li>Subfinder و Amass را برای کشف زیردامنه استفاده می‌کنم.</li>
+                            <li>Wappalyzer/WhatWeb تکنولوژی هدف را تشخیص می‌دهد.</li>
+                            <li>یک پروفایل کامل از هدف (target-profile.md) ساخته‌ام.</li>
+                            <li>می‌دانم چرا Passive قبل از Active است.</li>
+                            <li>Rate Limiting را در ابزارها تنظیم می‌کنم.</li>
+                        </ul>
+                    </div>
+
+                    <h5>📝 آزمونک فصل (۵ سؤال):</h5>
+
+                    <div class="quiz-question">
+                        <strong>۱.</strong> کدام گزینه Passive Recon است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Nmap Port Scan</li>
+                            <li>ب) Gobuster Directory Busting</li>
+                            <li>ج) Shodan Search</li>
+                            <li>د) Nikto Vulnerability Scan</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۲.</strong> در Nmap، کدام سوئیچ نسخه سرویس را تشخیص می‌دهد؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) -sS</li>
+                            <li>ب) -sV</li>
+                            <li>ج) -O</li>
+                            <li>د) -p-</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۳.</strong> کدام ابزار برای Subdomain Enumeration بهتر است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Gobuster</li>
+                            <li>ب) Subfinder</li>
+                            <li>ج) Nmap</li>
+                            <li>د) WhatWeb</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۴.</strong> چرا Nmap -T5 خطرناک است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) کد را اجرا نمی‌کند</li>
+                            <li>ب) ممکن است سرویس‌های هدف را از کار بیندازد و به‌عنوان DoS شناسایی شود</li>
+                            <li>ج) نتایج دقیق‌تری می‌دهد</li>
+                            <li>د) با sudo کار نمی‌کند</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۵.</strong> بهترین دفاع در برابر Shodan و OSINT روی سازمان چیست؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) فعال کردن WAF</li>
+                            <li>ب) کاهش Attack Surface (حذف سرویس‌های غیرضروری و اطلاعات افشاگر)</li>
+                            <li>ج) نصب آنتی‌ویروس</li>
+                            <li>د) تغییر رمز عبور</li>
+                        </ul>
+                    </div>
+
+                    <details>
+                        <summary>✅ نمایش پاسخ‌های صحیح</summary>
+                        <div style="padding: 10px 16px 14px;">
+                            <p><strong>۱. ج</strong> — Shodan بدون تماس با هدف کار می‌کند → Passive.</p>
+                            <p><strong>۲. ب</strong> — -sV = Service Version Detection.</p>
+                            <p><strong>۳. ب</strong> — Subfinder تخصصی برای این کار است (Gobuster برای مسیرها، Nmap برای پورت‌ها).</p>
+                            <p><strong>۴. ب</strong> — T5 پکت‌ها را آن‌قدر سریع می‌فرستد که ممکن است سرویس‌ها crash کنند یا شما را بلاک کنند.</p>
+                            <p><strong>۵. ب</strong> — Attack Surface Reduction یکی از مهم‌ترین استراتژی‌های دفاعی است.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- بخش ۱۳: پروژه هفتگی -->
+                <div class="section-part" id="part-13">
+                    <h3>۱۳. پروژه هفتگی (تمرین مستقل)</h3>
+
+                    <div class="weekly-project">
+                        <h5>🏆 پروژه هفتگی: «گزارش Recon کامل روی سه هدف آموزشی»</h5>
+
+                        <p><strong>هدف:</strong> روی سه هدف زیر Recon کامل انجام دهید و گزارش مقایسه‌ای بنویسید:</p>
+
+                        <ol>
+                            <li><strong>هدف ۱:</strong> Django lab خودتان (192.168.56.20) — Active Recon</li>
+                            <li><strong>هدف ۲:</strong> DVWA lab خودتان (192.168.56.10/dvwa) — Active Recon</li>
+                            <li><strong>هدف ۳:</strong> یک دامنه آموزشی خارجی، مثل <code>scanme.nmap.org</code> (که صریحاً برای اسکن مجاز اعلام شده)</li>
+                        </ol>
+
+                        <h6>مراحل اجرا:</h6>
+                        <ol>
+                            <li>Snapshot از همه VMها بگیرید.</li>
+                            <li>برای هر هدف، هر ۹ تکنیک فصل را اجرا کنید.</li>
+                            <li>همه خروجی‌ها را در پوشه <code>~/recon-lab/project-01/</code> ذخیره کنید.</li>
+                            <li>برای هر هدف، یک <code>target-profile.md</code> کامل بسازید.</li>
+                            <li>در نهایت، یک <code>comparative-report.md</code> بنویسید که سه هدف را مقایسه کند.</li>
+                        </ol>
+
+                        <h6>ساختار گزارش مقایسه‌ای:</h6>
+<pre class="code-box"># Comparative Recon Report
+
+## ۱. خلاصه اجرایی
+- سه هدف اسکن‌شده
+- تفاوت‌های اصلی
+
+## ۲. جدول مقایسه
+| ویژگی | Django Lab | DVWA Lab | scanme.nmap.org |
+|-------|-----------|----------|-----------------|
+| تعداد پورت‌های باز | ... | ... | ... |
+| تکنولوژی | ... | ... | ... |
+| زیردامنه‌ها | ... | ... | ... |
+| نقاط ضعف | ... | ... | ... |
+
+## ۳. تحلیل تفاوت‌ها
+- چرا Django lab کمترین پورت را دارد؟
+- چرا scanme.nmap.org بیشترین پورت را دارد؟
+
+## ۴. درس‌ها
+- بهترین ترتیب ابزارها
+- ابزارهایی که بیشترین بازدهی داشتند
+
+## ۵. توصیه‌ها برای تست نفوذ واقعی
+</pre>
+
+                        <h6>خروجی مورد انتظار:</h6>
+                        <ul>
+                            <li>📄 سه فایل <code>target-profile.md</code> کامل</li>
+                            <li>📊 یک <code>comparative-report.md</code></li>
+                            <li>📁 پوشه سازمان‌یافته با همه خروجی‌ها</li>
+                            <li>🎯 فهرست اولویت‌بندی‌شده نقاط ضعف هر هدف</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;"><strong>💼 نکته:</strong> این گزارش، قطعه دوم پورتفولیوی شماست. در مصاحبه‌ها می‌توانید بگویید: «من سه هدف مختلف را با ۹ ابزار Recon اسکن و مقایسه کرده‌ام» — این نشان می‌دهد شما فقط یک Tutorial دیده، بلکه کار کرده‌اید.</p>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۴: منابع -->
+                <div class="section-part" id="part-14">
+                    <h3>۱۴. منابع تکمیلی و گام بعدی</h3>
+
+                    <div class="resources-box">
+                        <h5>📚 منابع ضروری:</h5>
+                        <table class="objectives-table">
+                            <thead>
+                                <tr><th>منبع</th><th>کاربرد</th><th>لینک</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nmap Book (Gordon Lyon)</td>
+                                    <td>مرجع کامل Nmap</td>
+                                    <td><a href="https://nmap.org/book/" target="_blank" rel="noopener">nmap.org/book</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Nmap NSE Docs</td>
+                                    <td>اسکریپت‌های Nmap</td>
+                                    <td><a href="https://nmap.org/nsedoc/" target="_blank" rel="noopener">nmap.org/nsedoc</a></td>
+                                </tr>
+                                <tr>
+                                    <td>SecLists</td>
+                                    <td>مجموعه Wordlist</td>
+                                    <td><a href="https://github.com/danielmiessler/SecLists" target="_blank" rel="noopener">github.com/SecLists</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Google Hacking Database</td>
+                                    <td>مرجع Dorkها</td>
+                                    <td><a href="https://www.exploit-db.com/google-hacking-database" target="_blank" rel="noopener">exploit-db.com/ghdb</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Shodan Docs</td>
+                                    <td>مستندات Shodan</td>
+                                    <td><a href="https://help.shodan.io/" target="_blank" rel="noopener">help.shodan.io</a></td>
+                                </tr>
+                                <tr>
+                                    <td>MITRE ATT&amp;CK Recon</td>
+                                    <td>مرجع تاکتیک‌های Recon</td>
+                                    <td><a href="https://attack.mitre.org/tactics/TA0043/" target="_blank" rel="noopener">attack.mitre.org/TA0043</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OWASP WSTG — Info Gathering</td>
+                                    <td>مرجع تست نفوذ</td>
+                                    <td><a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/" target="_blank" rel="noopener">owasp.org/WSTG</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OSINT Framework</td>
+                                    <td>درخت کامل ابزارهای OSINT</td>
+                                    <td><a href="https://osintframework.com/" target="_blank" rel="noopener">osintframework.com</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5>📖 کتاب‌های توصیه‌شده:</h5>
+                    <ul>
+                        <li>📕 <strong>Nmap Network Scanning</strong> — Gordon Fyodor Lyon (کتاب رسمی Nmap)</li>
+                        <li>📗 <strong>Open Source Intelligence Techniques</strong> — Michael Bazzell (مرجع OSINT حرفه‌ای)</li>
+                        <li>📘 <strong>The Web Application Hacker&#39;s Handbook</strong> — فصل ۴ (Reconnaissance)</li>
+                        <li>📙 <strong>Practical OSINT</strong> — Rae Baker</li>
+                        <li>📓 <strong>Hands-On Network Forensics</strong> — Nipun Jaswal (برای درک از دید مدافع)</li>
+                    </ul>
+
+                    <h5>🎯 گام بعدی (فصل ۴):</h5>
+                    <p>در فصل ۴، با اطلاعات جمع‌شده در این فصل، وارد فاز <strong>Scanning and Enumeration</strong> می‌شویم:</p>
+                    <ul>
+                        <li>🔍 <strong>Vulnerability Scanning:</strong> OpenVAS، Nuclei</li>
+                        <li>🔍 <strong>Web Scanning:</strong> Nikto، Wapiti، Skipfish</li>
+                        <li>🔍 <strong>API Enumeration:</strong> شناسایی Endpoints API</li>
+                        <li>🔍 <strong>SSL/TLS Analysis:</strong> testssl.sh، sslyze</li>
+                        <li>🔍 <strong>CMS Scanning:</strong> WPScan (اگر WordPress باشد)</li>
+                        <li>🔍 <strong>Burp Suite Spider:</strong> کشف خودکار مسیرها و فرم‌ها</li>
+                    </ul>
+                    <p>در پایان فصل ۴، شما یک <strong>لیست اولویت‌بندی‌شده از آسیب‌پذیری‌ها</strong> با امتیاز CVSS خواهید داشت — آماده برای فاز Exploitation در فصل ۵.</p>
+
+                    <div class="callout co-tip">
+                        <strong>💡 تمرین اختیاری این هفته:</strong>
+                        در TryHackMe، دو اتاق زیر را کامل کنید:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li><strong>Passive Reconnaissance</strong> — اتاق تعاملی OSINT</li>
+                            <li><strong>Active Reconnaissance</strong> — تمرین Nmap و Gobuster</li>
+                        </ul>
+                        این دو اتاق، پیش‌نیاز عالی برای فصل ۴ هستند و در محیط کاملاً قانونی و آموزشی برگزار می‌شوند.
+                    </div>
+
+                    <h5>🎯 آماده برای فصل بعدی؟</h5>
+                    <p>قبل از رفتن به فصل ۴، مطمئن شوید:</p>
+                    <ul class="checklist">
+                        <li>target-profile.md برای Django lab کامل است</li>
+                        <li>همه Snapshotها گرفته شده و نام‌گذاری شده</li>
+                        <li>فایل gobuster-medium.txt نتایج را دارد</li>
+                        <li>Nmap full scan (nmap-full-192.168.56.20.xml) ذخیره شده</li>
+                        <li>روی هدف آزمایشگاه، همه سرویس‌ها هنوز بالا هستند</li>
+                    </ul>
+                </div>
+
+                <div class="done-bar">
+                    <span style="font-weight:800;color:#7ee787">🎯 این فصل را خواندید؟ پیشرفت خود را ذخیره کنید:</span><br>
+                    <button id="mark-done" data-chapter="ch-03" type="button">✔️ این فصل را تمام کردم</button>
+                </div>
+
+                <div class="pager">
+                    <a href="../chapter-02/index.html" id="prev-link">➜ فصل قبل</a>
+                    <a href="../../index.html">🗂️ فهرست فصل‌ها</a>
+                    <a href="../chapter-04/index.html" id="next-link">فصل بعد ➜</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵</p>
+            <p style="font-size:.85rem;color:var(--muted)">این محتوا صرفاً برای آموزش در محیط آزمایشگاه ایزوله تهیه شده است. مسئولیت استفاده نادرست بر عهده کاربر است.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

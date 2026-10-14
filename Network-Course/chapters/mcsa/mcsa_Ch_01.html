@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۱ MCSA — نصب، ذخیره‌سازی و محاسبات</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mcsa" data-chapter="mcsa-01">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📕 فصل ۱ — نصب، ذخیره‌سازی و محاسبات</h1>
+    <div class="meta">
+      <span>📖 ۱۰۰ دقیقه</span>
+      <span>🎯 وزن در آزمون 70-740: بخش اصلی</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      به دنیای <strong>Windows Server</strong> خوش آمدی! در این فصل با نصب و راه‌اندازی
+      Windows Server، مدیریت دیسک‌ها با
+      <span class="term" data-term="storage-spaces">Storage Spaces</span>،
+      مجازی‌سازی با <span class="term" data-term="hyperv">Hyper-V</span>، و
+      راه‌اندازی <span class="term" data-term="failover-cluster">Failover Clustering</span>
+      آشنا می‌شوی.
+    </p>
+    <p>
+      این فصل پایه‌ی کل دوره MCSA است. تمرکز اصلی روی
+      <strong>PowerShell</strong> و ابزارهای گرافیکی Server Manager است —
+      چون در محیط‌های واقعی، مدیران سیستم از هر دو استفاده می‌کنند.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>معرفی Windows Server 2025 و نسخه‌ها</li>
+      <li>نصب Windows Server — Desktop Experience vs Server Core</li>
+      <li>MBR vs GPT — پارتیشن‌بندی دیسک</li>
+      <li>Basic Disk vs Dynamic Disk</li>
+      <li>Volume Types — Simple، Spanned، Striped، Mirrored، RAID-5</li>
+      <li>File System — NTFS، ReFS، FAT32</li>
+      <li>NTFS Permissions و Sharing</li>
+      <li>Storage Spaces — Pool و Virtual Disk</li>
+      <li>Data Deduplication</li>
+      <li>iSCSI Target و Initiator</li>
+      <li>Hyper-V — نصب و پیکربندی</li>
+      <li>Virtual Machine، Virtual Switch، Checkpoint</li>
+      <li>Live Migration و Storage Migration</li>
+      <li>Failover Clustering — Quorum و Witness</li>
+      <li>NLB و Storage Spaces Direct</li>
+      <li>عیب‌یابی و مدیریت روزمره</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت MBR و GPT در چیست و کدام مدرن‌تر است؟</li>
+      <li>چرا Storage Spaces نسبت به RAID سنتی انعطاف‌پذیرتر است؟</li>
+      <li>تفاوت Hyper-V و VirtualBox در چیست و هرکدام برای چه سناریوهایی مناسب‌اند؟</li>
+      <li>Quorum Witness چرا در Failover Clustering حیاتی است؟</li>
+      <li>Data Deduplication چه مزیتی دارد و چه زمانی از آن استفاده نکنیم؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۱.۱ ==== -->
+    <h3>۱.۱ معرفی Windows Server 2025 و نسخه‌ها</h3>
+
+    <p>
+      Windows Server 2025 جدیدترین نسخه‌ی سرور مایکروسافت است که با
+      تمرکز بر <strong>امنیت</strong>، <strong>Cloud Integration</strong> و
+      <strong>Hybrid Management</strong> ارائه شده است.
+    </p>
+
+    <p><strong>نسخه‌های Windows Server 2025:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نسخه</th>
+          <th style="padding:6px;border:1px solid var(--border)">حداکثر CPU</th>
+          <th style="padding:6px;border:1px solid var(--border)">حداکثر RAM</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Essentials</td><td style="padding:6px;border:1px solid var(--border)">۲</td><td style="padding:6px;border:1px solid var(--border)">۶۴ GB</td><td style="padding:6px;border:1px solid var(--border)">SMB کوچک</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Standard</td><td style="padding:6px;border:1px solid var(--border)">۶۴</td><td style="padding:6px;border:1px solid var(--border)">۴ TB</td><td style="padding:6px;border:1px solid var(--border)">سازمانی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Datacenter</td><td style="padding:6px;border:1px solid var(--border)">نامحدود</td><td style="padding:6px;border:1px solid var(--border)">۲۴ TB</td><td style="padding:6px;border:1px solid var(--border)">مراکز داده</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>تفاوت Standard و Datacenter:</strong> تعداد Virtual Machineهای مجاز
+      (Standard: ۲ VM، Datacenter: نامحدود) و ویژگی‌های پیشرفته مثل
+      <strong>Storage Spaces Direct</strong> و <strong>SDN</strong> که فقط در Datacenter موجودند.</p>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ توجه به MCSA</div>
+      مایکروسافت مدرک MCSA را از ۳۱ ژانویه ۲۰۲۱ بازنشسته کرده است.
+      جایگزین رسمی آن <strong>Windows Server Hybrid Administrator Associate</strong>
+      با آزمون‌های <strong>AZ-800</strong> و <strong>AZ-801</strong> است.
+      محتوای MCSA هنوز برای یادگیری مفید است و مفاهیم پایه تغییر نکرده‌اند.
+    </div>
+
+    <!-- ==== ۱.۲ ==== -->
+    <h3>۱.۲ نصب Windows Server — Desktop Experience vs Server Core</h3>
+
+    <p>
+      Windows Server دو حالت نصب دارد که هرکدام مزایا و معایب خودشان را دارند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Desktop Experience</th>
+          <th style="padding:6px;border:1px solid var(--border)">Server Core</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">رابط</td><td style="padding:6px;border:1px solid var(--border)">کامل GUI</td><td style="padding:6px;border:1px solid var(--border)">فقط CLI و PowerShell</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مصرف منابع</td><td style="padding:6px;border:1px solid var(--border)">زیاد</td><td style="padding:6px;border:1px solid var(--border)">کم (حدود ۵۰٪ کمتر)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">سطح حمله</td><td style="padding:6px;border:1px solid var(--border)">بیشتر</td><td style="padding:6px;border:1px solid var(--border)">کمتر — امنیت بالاتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نیاز به Reboot</td><td style="padding:6px;border:1px solid var(--border)">زیاد</td><td style="padding:6px;border:1px solid var(--border)">کمتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مدیریت</td><td style="padding:6px;border:1px solid var(--border)">محلی + راه دور</td><td style="padding:6px;border:1px solid var(--border)">عمدتاً از راه دور</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">SMB کوچک، آموزش</td><td style="padding:6px;border:1px solid var(--border)">Production مدرن</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== بررسی نسخه نصب‌شده =====
+# PowerShell (اجرا به‌عنوان Administrator)
+Get-ComputerInfo | Select WindowsProductName, WindowsVersion, OsHardwareAbstractionLayer
+
+# بررسی Installation Type (Core یا Desktop Experience)
+Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" |
+    Select InstallationType
+
+# یا در Server Core:
+sconfig
+# → گزینه ۱: Display Server Information
+
+# ===== تبدیل Desktop Experience به Server Core =====
+Uninstall-WindowsFeature Server-Gui-Mgmt-Infra, Server-Gui-Shell -Restart
+
+# ===== تبدیل Server Core به Desktop Experience =====
+# ابتدا از Windows Update یا نصب‌کننده:
+Install-WindowsFeature Server-Gui-Mgmt-Infra, Server-Gui-Shell -Restart</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      مایکروسافت توصیه می‌کند برای محیط‌های Production مدرن از
+      <strong>Server Core</strong> استفاده کنی — کم‌مصرف‌تر، امن‌تر و پایدارتر.
+      مدیریت آن از راه دور با <strong>Windows Admin Center</strong> یا
+      <strong>PowerShell Remoting</strong> انجام می‌شود.
+    </div>
+
+    <!-- ==== ۱.۳ ==== -->
+    <h3>۱.۳ MBR vs GPT — پارتیشن‌بندی دیسک</h3>
+
+    <p>
+      دو روش برای پارتیشن‌بندی دیسک وجود دارد که تفاوت‌های مهمی دارند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">MBR</th>
+          <th style="padding:6px;border:1px solid var(--border)">GPT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">حداکثر پارتیشن</td><td style="padding:6px;border:1px solid var(--border)">۴ Primary</td><td style="padding:6px;border:1px solid var(--border)">۱۲۸</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">حداکثر اندازه دیسک</td><td style="padding:6px;border:1px solid var(--border)">۲ TB</td><td style="padding:6px;border:1px solid var(--border)">۱۸ EB</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Redundancy</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (Backup Table)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">CRC</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (Checksum)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پشتیبانی UEFI</td><td style="padding:6px;border:1px solid var(--border)">BIOS Legacy</td><td style="padding:6px;border:1px solid var(--border)">UEFI</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Secure Boot</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">وضعیت</td><td style="padding:6px;border:1px solid var(--border)">قدیمی</td><td style="padding:6px;border:1px solid var(--border)">مدرن</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== بررسی Partition Style =====
+Get-Disk | Select-Object Number, FriendlyName, PartitionStyle, Size
+
+# خروجی نمونه:
+# Number  FriendlyName  PartitionStyle    Size
+# ------  ------------  --------------    ----
+# 0       Samsung SSD   GPT               500GB
+# 1       WD HDD        MBR               2TB
+
+# ===== تبدیل MBR به GPT (فقط با دیسک خالی) =====
+# ابتدا بکاپ کامل بگیر — این کار تمام داده را پاک می‌کند!
+Get-Disk 1 | Set-Disk -PartitionStyle GPT
+
+# یا در DiskPart:
+# select disk 1
+# clean
+# convert gpt
+
+# ===== ایجاد پارتیشن GPT =====
+New-Partition -DiskNumber 1 -UseMaximumSize -DriveLetter D
+Format-Volume -DriveLetter D -FileSystem NTFS -NewFileSystemLabel "Data"</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      تبدیل MBR به GPT <strong>تمام داده‌ی دیسک را پاک می‌کند</strong>.
+      همیشه اول Backup کامل بگیر یا از ابزارهایی مثل
+      <strong>MBR2GPT</strong> استفاده کن که بدون پاک کردن داده تبدیل می‌کند:
+      <pre style="margin:8px 0 0"><code>mbr2gpt /validate /disk:0
+mbr2gpt /convert /disk:0</code></pre>
+    </div>
+
+    <!-- ==== ۱.۴ ==== -->
+    <h3>۱.۴ Basic Disk vs Dynamic Disk</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Basic Disk</th>
+          <th style="padding:6px;border:1px solid var(--border)">Dynamic Disk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پارتیشن</td><td style="padding:6px;border:1px solid var(--border)">Primary / Extended / Logical</td><td style="padding:6px;border:1px solid var(--border)">Simple / Spanned / Striped / Mirrored / RAID-5</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">قابلیت انعطاف</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">بالا</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">گسترش حجم</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">آسان</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پشتیبانی از RAID نرم‌افزاری</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">سیستم‌عامل روی دیسک</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">⚠️ فقط بعضی نسخه‌ها</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">وضعیت فعلی</td><td style="padding:6px;border:1px solid var(--border)">رایج</td><td style="padding:6px;border:1px solid var(--border)">در حال منسوخ شدن</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مشاهده نوع دیسک =====
+Get-Disk | Select Number, FriendlyName, PartitionStyle
+Get-Disk | Get-Partition
+
+# ===== تبدیل Basic به Dynamic =====
+# در PowerShell:
+Set-Disk -Number 1 -IsDynamic $true
+# یا در DiskPart:
+# select disk 1
+# convert dynamic
+
+# ===== نکات مهم =====
+# - تبدیل Basic → Dynamic بدون از دست دادن داده انجام می‌شود
+# - تبدیل Dynamic → Basic نیاز به پاک کردن حجم‌ها دارد
+# - در ویندوزهای مدرن، Storage Spaces جانشین Dynamic Disk شده است
+# - Dynamic Disks از ویندوز Server 2003 وجود دارد ولی در حال منسوخ شدن است</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      مایکروسافت توصیه می‌کند در ویندوز Server 2016 و بالاتر، به‌جای
+      Dynamic Disks از <strong>Storage Spaces</strong> استفاده کنی —
+      انعطاف‌پذیرتر، پایدارتر و با قابلیت‌های مدرن.
+    </div>
+
+    <!-- ==== ۱.۵ ==== -->
+    <h3>۱.۵ Volume Types — Simple تا RAID-5</h3>
+
+    <p>انواع Volume در Dynamic Disk:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">حداقل دیسک</th>
+          <th style="padding:6px;border:1px solid var(--border)">Redundancy</th>
+          <th style="padding:6px;border:1px solid var(--border)">ظرفیت قابل استفاده</th>
+          <th style="padding:6px;border:1px solid var(--border)">Performance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Simple</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">۱</td>
+          <td style="padding:6px;border:1px solid var(--border)">❌</td>
+          <td style="padding:6px;border:1px solid var(--border)">۱۰۰٪</td>
+          <td style="padding:6px;border:1px solid var(--border)">معمولی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Spanned</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">۲ تا ۳۲</td>
+          <td style="padding:6px;border:1px solid var(--border)">❌</td>
+          <td style="padding:6px;border:1px solid var(--border)">۱۰۰٪</td>
+          <td style="padding:6px;border:1px solid var(--border)">ضعیف</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Striped (RAID-0)</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">۲ تا ۳۲</td>
+          <td style="padding:6px;border:1px solid var(--border)">❌</td>
+          <td style="padding:6px;border:1px solid var(--border)">۱۰۰٪</td>
+          <td style="padding:6px;border:1px solid var(--border)">🚀 خیلی خوب</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Mirrored (RAID-1)</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">۲</td>
+          <td style="padding:6px;border:1px solid var(--border)">✅</td>
+          <td style="padding:6px;border:1px solid var(--border)">۵۰٪</td>
+          <td style="padding:6px;border:1px solid var(--border)">خوب</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>RAID-5</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">۳ تا ۳۲</td>
+          <td style="padding:6px;border:1px solid var(--border)">✅ (۱ دیسک)</td>
+          <td style="padding:6px;border:1px solid var(--border)">(N-1)/N</td>
+          <td style="padding:6px;border:1px solid var(--border)">خوب برای خواندن</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== ایجاد Volume با PowerShell =====
+
+# ۱. ایجاد Mirrored Volume (RAID-1)
+New-Volume -FriendlyName "Data-Mirror" `
+    -FileSystem NTFS `
+    -DriveLetter M `
+    -StoragePoolFriendlyName "StoragePool01" `
+    -ResiliencySettingName Mirror
+
+# ۲. ایجاد Volume در Storage Spaces
+New-VirtualDisk -StoragePoolFriendlyName "Pool01" `
+    -FriendlyName "VDisk01" `
+    -Size 500GB `
+    -ResiliencySettingName Mirror `
+    -NumberOfColumns 2
+
+# ۳. ایجاد Volume با Disk Management (GUI)
+# diskmgmt.msc → Right Click on Unallocated → New Volume
+
+# ===== نکات مهم =====
+# - Stripe (RAID-0): سریع ولی بدون Redundancy
+# - Mirror (RAID-1): کندتر ولی امن
+# - RAID-5: تعادل بین ظرفیت و امنیت
+# - Storage Spaces این مفاهیم را مدرن‌تر پیاده می‌کند</code></pre>
+
+    <!-- ==== ۱.۶ ==== -->
+    <h3>۱.۶ File System — NTFS، ReFS، FAT32</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">FAT32</th>
+          <th style="padding:6px;border:1px solid var(--border)">NTFS</th>
+          <th style="padding:6px;border:1px solid var(--border)">ReFS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">حداکثر فایل</td><td style="padding:6px;border:1px solid var(--border)">۴ GB</td><td style="padding:6px;border:1px solid var(--border)">۱۶ TB</td><td style="padding:6px;border:1px solid var(--border)">۱۶ EB</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">حداکثر Volume</td><td style="padding:6px;border:1px solid var(--border)">۲ TB</td><td style="padding:6px;border:1px solid var(--border)">۲۵۶ TB</td><td style="padding:6px;border:1px solid var(--border)">۳۵ PB</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Permissions</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (ACL)</td><td style="padding:6px;border:1px solid var(--border)">✅ (ACL)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Encryption</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (EFS، BitLocker)</td><td style="padding:6px;border:1px solid var(--border)">❌ (خودش)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Compression</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Snapshot</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (VSS)</td><td style="padding:6px;border:1px solid var(--border)">✅ (Block Clone)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Self-Healing</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد اصلی</td><td style="padding:6px;border:1px solid var(--border)">USB، دوربین</td><td style="padding:6px;border:1px solid var(--border)">عمومی، سیستمی</td><td style="padding:6px;border:1px solid var(--border)">Storage Spaces، Backup</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== فرمت Volume =====
+Format-Volume -DriveLetter D -FileSystem NTFS -NewFileSystemLabel "Data"
+
+# ===== با ReFS =====
+Format-Volume -DriveLetter E -FileSystem ReFS -NewFileSystemLabel "Archive"
+
+# ===== تنظیم Allocation Unit Size (Cluster Size) =====
+Format-Volume -DriveLetter D -FileSystem NTFS -AllocationUnitSize 64KB
+
+# نکته: برای فایل‌های حجیم (مثل ویدیو)، Allocation Unit بزرگ‌تر بهتر است
+
+# ===== بررسی File System =====
+Get-Volume | Select DriveLetter, FileSystemType, Size, SizeRemaining</code></pre>
+
+    <!-- ==== ۱.۷ ==== -->
+    <h3>۱.۷ NTFS Permissions و Sharing</h3>
+
+    <p>
+      NTFS Permissions در سطح فایل و پوشه اعمال می‌شوند و
+      <strong>Sharing Permissions</strong> در سطح Share.
+      <strong>محدودکننده‌ترین حالت</strong> بین این دو اعمال می‌شود.
+    </p>
+
+    <p><strong>انواع NTFS Permissions:</strong></p>
+    <ul>
+      <li><strong>Full Control:</strong> کنترل کامل + تغییر Permissions</li>
+      <li><strong>Modify:</strong> خواندن، نوشتن، حذف</li>
+      <li><strong>Read & Execute:</strong> خواندن + اجرا</li>
+      <li><strong>Read:</strong> فقط خواندن</li>
+      <li><strong>Write:</strong> فقط نوشتن</li>
+    </ul>
+
+    <pre><code># ===== مشاهده NTFS Permissions =====
+Get-Acl -Path "C:\Data" | Format-List
+(Get-Acl -Path "C:\Data").Access
+
+# ===== اعطای Permission =====
+$acl = Get-Acl -Path "C:\Data"
+
+$rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    "DOMAIN\Username",     # Identity
+    "Modify",              # Rights
+    "ContainerInherit,ObjectInherit",  # Inheritance
+    "None",                # Propagation
+    "Allow"                # Type
+)
+
+$acl.SetAccessRule($rule)
+Set-Acl -Path "C:\Data" -AclObject $acl
+
+# ===== روش ساده‌تر: icacls =====
+icacls "C:\Data" /grant "DOMAIN\Username:(OI)(CI)M"
+
+# پارامترها:
+# (OI) = Object Inherit
+# (CI) = Container Inherit
+# M = Modify
+
+# ===== ایجاد Share =====
+New-SmbShare -Name "Data" -Path "C:\Data" -FullAccess "DOMAIN\Domain Admins"
+
+# ===== مشاهده Shareها =====
+Get-SmbShare
+
+# ===== نکات مهم =====
+# - Permission مؤثر = محدودکننده‌ترین بین NTFS و Share
+# - همیشه از Groups به‌جای Users مستقیم استفاده کن
+# - از Deny فقط در موارد ضروری استفاده کن
+# - Principle of Least Privilege را رعایت کن</code></pre>
+
+    <!-- ==== ۱.۸ ==== -->
+    <h3>۱.۸ Storage Spaces — Pool و Virtual Disk</h3>
+
+    <p>
+      <strong>Storage Spaces</strong> تکنولوژی مدرن مایکروسافت برای
+      ترکیب چند دیسک فیزیکی در یک استخر (Pool) و ساخت Virtual Disk
+      با قابلیت افزونگی است.
+    </p>
+
+    <p><strong>مزایای Storage Spaces نسبت به RAID سنتی:</strong></p>
+    <ul>
+      <li>مدیریت آسان‌تر</li>
+      <li>افزودن دیسک بدون قطع سرویس</li>
+      <li>Thin Provisioning</li>
+      <li>Tiering خودکار (SSD + HDD)</li>
+      <li>Integration با ReFS و NTFS</li>
+      <li>Powershell Management کامل</li>
+    </ul>
+
+    <pre><code># ===== ایجاد Storage Pool =====
+
+# ۱. مشاهده دیسک‌های موجود
+Get-PhysicalDisk
+
+# ۲. ایجاد Pool از دیسک‌های خاص
+$disks = Get-PhysicalDisk -CanPool $true |
+    Where-Object { $_.MediaType -eq "HDD" }
+
+New-StoragePool -FriendlyName "Pool01" `
+    -StorageSubsystemFriendlyName "Windows Storage*" `
+    -PhysicalDisks $disks
+
+# ۳. ایجاد Virtual Disk
+New-VirtualDisk -StoragePoolFriendlyName "Pool01" `
+    -FriendlyName "VDisk01" `
+    -Size 500GB `
+    -ResiliencySettingName Mirror `
+    -NumberOfColumns 2 `
+    -Interleave 64KB
+
+# ۴. ایجاد Volume روی Virtual Disk
+$vdisk = Get-VirtualDisk -FriendlyName "VDisk01" | Get-Disk
+New-Partition -DiskNumber $vdisk.Number -UseMaximumSize -DriveLetter M
+
+# ۵. فرمت
+Format-Volume -DriveLetter M -FileSystem NTFS -NewFileSystemLabel "Storage"
+
+# ===== بررسی وضعیت =====
+Get-StoragePool
+Get-VirtualDisk
+Get-PhysicalDisk
+Get-StorageJob
+
+# ===== Resiliency Types =====
+# Simple       → بدون Redundancy
+# Mirror       → مشابه RAID-1
+# Parity       → مشابه RAID-5
+# Dual Parity  → مشابه RAID-6</code></pre>
+
+    <!-- ==== ۱.۹ ==== -->
+    <h3>۱.۹ Data Deduplication</h3>
+
+    <p>
+      <strong>Data Deduplication</strong> (Deduplication) یک ویژگی است که
+      فایل‌های تکراری روی Volume را شناسایی و فقط یک نسخه ذخیره می‌کند —
+      با حفظ دسترسی کاربران به هر نسخه.
+    </p>
+
+    <p><strong>مزایا:</strong></p>
+    <ul>
+      <li>صرفه‌جویی ۵۰-۹۰٪ فضا</li>
+      <li>بهترین گزینه برای فایل‌های تکراری (مثل Backup، VDI)</li>
+      <li>مدیریت متمرکز</li>
+    </ul>
+
+    <p><strong>معایب / محدودیت‌ها:</strong></p>
+    <ul>
+      <li>مصرف CPU بیشتر</li>
+      <li>مناسب فایل‌های کم‌حجم زیاد، نه فایل‌های بزرگ اندک</li>
+      <li>نمی‌توان روی Volume بوت استفاده کرد</li>
+      <li>روی ReFS کامل نیست</li>
+    </ul>
+
+    <pre><code># ===== نصب Feature =====
+Install-WindowsFeature -Name FS-Data-Deduplication
+
+# ===== فعال‌سازی روی Volume =====
+Enable-DedupVolume -Volume "D:"
+
+# یا با تنظیمات سفارشی
+Enable-DedupVolume -Volume "D:" -UsageType HyperV
+# Usage Types: Default، HyperV، Backup
+
+# ===== پیکربندی زمان‌بندی =====
+Set-DedupSchedule -Name "Optimization" `
+    -Days Monday,Tuesday,Wednesday,Thursday,Friday,Saturday `
+    -Start 22:00
+
+# ===== مشاهده وضعیت =====
+Get-DedupVolume
+Get-DedupStatus
+Get-DedupJob
+
+# ===== اجرای دستی Optimization =====
+Start-DedupJob -Volume "D:" -Type Optimization
+
+# ===== محاسبه صرفه‌جویی =====
+Get-DedupStatus | Select Volume, FreeSpace, SavedSpace, OptimizedFilesCount
+
+# ===== غیرفعال کردن =====
+Disable-DedupVolume -Volume "D:"</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Data Deduplication عمدتاً برای فایل‌های ثابت (Static) طراحی شده —
+      مثل Backupهای روزانه، VHDxها، یا مخزن‌های فایل.
+      برای فایل‌های مداوم در حال تغییر (مثل Database)، از Dedup استفاده نکن.
+    </div>
+
+    <!-- ==== ۱.۱۰ ==== -->
+    <h3>۱.۱۰ iSCSI Target و Initiator</h3>
+
+    <p>
+      <strong>iSCSI</strong> یک پروتکل است که Storage را روی شبکه IP منتقل می‌کند.
+      Windows Server می‌تواند هم Target (ارائه‌دهنده) و هم Initiator (مصرف‌کننده) باشد.
+    </p>
+
+    <pre><code># ===== راه‌اندازی iSCSI Target (Server) =====
+Install-WindowsFeature FS-iSCSITarget-Server
+
+# ایجاد iSCSI Virtual Disk
+New-IscsiVirtualDisk -Path "C:\iSCSI\disk1.vhdx" -Size 100GB
+
+# ایجاد Target
+New-IscsiServerTarget -TargetName "Target01" -InitiatorIds "IQN:iqn.1991-05.com.microsoft:client01"
+
+# اتصال VDisk به Target
+Add-IscsiVirtualDiskTargetMapping -TargetName "Target01" -DevicePath "C:\iSCSI\disk1.vhdx"
+
+# ===== مشاهده =====
+Get-IscsiVirtualDisk
+Get-IscsiServerTarget
+Get-IscsiServerTarget -TargetName "Target01" | Select -ExpandProperty Sessions
+
+# ===== ======================================================
+# ===== سمت Initiator (Client) =====
+# ===== ======================================================
+
+# ۱. شروع سرویس iSCSI
+Start-Service msiscsi
+Set-Service msiscsi -StartupType Automatic
+
+# ۲. کشف Target
+New-IscsiTargetPortal -TargetPortalAddress 192.168.1.10
+Get-IscsiTarget
+
+# ۳. اتصال به Target
+Connect-IscsiTarget -NodeAddress "iqn.1991-05.com.microsoft:target01" `
+    -TargetPortalAddress 192.168.1.10 `
+    -IsPersistent $true
+
+# ۴. مشاهده دیسک جدید
+Get-Disk
+
+# ۵. مقداردهی اولیه دیسک
+Initialize-Disk -Number 1 -PartitionStyle GPT
+New-Partition -DiskNumber 1 -UseMaximumSize -DriveLetter I
+Format-Volume -DriveLetter I -FileSystem NTFS -NewFileSystemLabel "iSCSI-Data"</code></pre>
+
+    <!-- ==== ۱.۱۱ ==== -->
+    <h3>۱.۱۱ Hyper-V — نصب و پیکربندی</h3>
+
+    <p>
+      <span class="term" data-term="hyperv">Hyper-V</span> یک Hypervisor Type-1
+      مایکروسافت است که برای مجازی‌سازی در محیط‌های Enterprise استفاده می‌شود.
+    </p>
+
+    <p><strong>پیش‌نیازهای Hyper-V:</strong></p>
+    <ul>
+      <li>CPU با پشتیبانی Intel VT-x یا AMD-V</li>
+      <li>SLAT (Second Level Address Translation)</li>
+      <li>حداقل ۴ GB RAM</li>
+      <li>Windows Server 2016+ (یا Windows 10/11 Pro/Enterprise)</li>
+      <li>DEP (Data Execution Prevention) فعال</li>
+    </ul>
+
+    <pre><code># ===== بررسی پیش‌نیازها =====
+systeminfo
+Get-ComputerInfo | Select HyperVRequirement*
+
+# ===== نصب Hyper-V =====
+Install-WindowsFeature -Name Hyper-V -IncludeManagementTools -Restart
+
+# یا در Windows Client:
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+
+# ===== بررسی نصب =====
+Get-WindowsFeature -Name Hyper-V
+
+# ===== تنظیمات اولیه =====
+# مسیر پیش‌فرض VHDx
+Set-VMHost -VirtualHardDiskPath "D:\Hyper-V\VHDs" `
+    -VirtualMachinePath "D:\Hyper-V\VMs"
+
+# ===== مشاهده وضعیت =====
+Get-VMHost
+Get-VMHost | Select ComputerName, LogicalProcessorCount, MemoryCapacity</code></pre>
+
+    <!-- ==== ۱.۱۲ ==== -->
+    <h3>۱.۱۲ Virtual Machine، Virtual Switch، Checkpoint</h3>
+
+    <pre><code># ===== ایجاد Virtual Switch =====
+# External Switch
+New-VMSwitch -Name "ExternalSwitch" -NetAdapterName "Ethernet" -AllowManagementOS $true
+
+# Internal Switch
+New-VMSwitch -Name "InternalSwitch" -SwitchType Internal
+
+# Private Switch
+New-VMSwitch -Name "PrivateSwitch" -SwitchType Private
+
+# مشاهده Switchها
+Get-VMSwitch
+
+# ===== ایجاد VM =====
+New-VM -Name "WebServer01" `
+    -MemoryStartupBytes 4GB `
+    -Generation 2 `
+    -NewVHDPath "D:\Hyper-V\VMs\WebServer01.vhdx" `
+    -NewVHDSizeBytes 60GB `
+    -SwitchName "ExternalSwitch"
+
+# ===== پیکربندی VM =====
+Set-VMProcessor -VMName "WebServer01" -Count 2
+Set-VMMemory -VMName "WebServer01" -DynamicMemoryEnabled $true `
+    -MinimumBytes 2GB -MaximumBytes 8GB
+Add-VMDvdDrive -VMName "WebServer01" -Path "D:\ISOs\Win2025.iso"
+
+# ===== Dynamic Memory =====
+# Min = حداقل | Max = حداکثر | Startup = شروع
+Set-VMMemory -VMName "WebServer01" `
+    -DynamicMemoryEnabled $true `
+    -MinimumBytes 2GB `
+    -MaximumBytes 8GB `
+    -StartupBytes 4GB
+
+# ===== شروع و اتصال =====
+Start-VM -Name "WebServer01"
+vmconnect.exe localhost "WebServer01"
+
+# ===== Checkpoint =====
+Checkpoint-VM -Name "WebServer01" -SnapshotName "Before-Update"
+
+# مشاهده Checkpointها
+Get-VMSnapshot -VMName "WebServer01"
+
+# بازیابی
+Restore-VMSnapshot -VMName "WebServer01" -Name "Before-Update" -Confirm:$false
+
+# حذف Checkpoint
+Remove-VMSnapshot -VMName "WebServer01" -Name "Before-Update"
+
+# ===== Production Checkpoint vs Standard =====
+# Standard: تصویر از حافظه (Snapshot سریع)
+# Production: تصویر سازگار با Backup (پیشنهاد)</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار Checkpoint</div>
+      Checkpoint فقط برای <strong>کوتاه‌مدت</strong> است — نه برای Backup.
+      اگر Checkpoint قدیمی روی VM بماند، دیسک AVHDX بزرگ می‌شود و
+      Performance افت می‌کند. برای Backup از
+      <strong>Windows Server Backup</strong> یا <strong>Veeam</strong> استفاده کن.
+    </div>
+
+    <!-- ==== ۱.۱۳ ==== -->
+    <h3>۱.۱۳ Live Migration و Storage Migration</h3>
+
+    <pre><code># ===== پیش‌نیاز =====
+# - Windows Server با Hyper-V Role
+# - Failover Clustering یا Shared Storage (SMB 3.0، iSCSI، Fiber Channel)
+# - Live Migration روی هر دو Host فعال باشد
+# - CPU Compatibility چک شود (اگر متفاوت است)
+
+# ===== فعال‌سازی Live Migration =====
+Enable-VMMigration
+Set-VMHost -VirtualMachineMigrationAuthenticationType Kerberos
+Set-VMHost -VirtualMachineMigrationPerformanceOption SMB
+
+# ===== Live Migration — انتقال VM بدون قطعی =====
+Move-VM -Name "WebServer01" -DestinationHost "Host02" `
+    -IncludeStorage -DestinationStoragePath "D:\Hyper-V\VMs"
+
+# فقط انتقال حافظه (بدون تغییر Storage)
+Move-VM -Name "WebServer01" -DestinationHost "Host02"
+
+# ===== Storage Migration — انتقال فقط دیسک =====
+Move-VMStorage -VMName "WebServer01" `
+    -DestinationStoragePath "E:\Hyper-V\VMs"
+
+# ===== Share Nothing Live Migration =====
+# بدون نیاز به Cluster
+Move-VM -Name "WebServer01" `
+    -DestinationHost "Host02" `
+    -DestinationStoragePath "D:\VMs" `
+    -IncludeStorage `
+    -VirtualMachinePath "D:\VMs" `
+    -VhdDestinationPath "D:\VMs\VHDs"
+
+# ===== بررسی =====
+Get-VMHost | Select Name, VirtualMachineMigrationEnabled, VirtualMachineMigrationAuthenticationType</code></pre>
+
+    <!-- ==== ۱.۱۴ ==== -->
+    <h3>۱.۱۴ Failover Clustering — Quorum و Witness</h3>
+
+    <p>
+      <strong>Failover Clustering</strong> ویژگی‌ای است که چند سرور را در یک
+      Cluster قرار می‌دهد تا در صورت خرابی یکی، بقیه سرویس را ادامه دهند.
+    </p>
+
+    <p><strong>مفاهیم اصلی:</strong></p>
+    <ul>
+      <li><strong>Node:</strong> هر سرور در Cluster</li>
+      <li><strong>Quorum:</strong> حداقل تعداد Nodeهای فعال برای Cluster سالم</li>
+      <li><strong>Witness:</strong> رای‌دهنده‌ی اضافی (Disk، File Share، Cloud)</li>
+      <li><strong>CSV (Cluster Shared Volume):</strong> Volume مشترک بین Nodeها</li>
+      <li><strong>Cluster Role:</strong> سرویس یا Application که در Cluster اجرا می‌شود</li>
+    </ul>
+
+    <p><strong>انواع Quorum Witness:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Node Majority</td><td style="padding:6px;border:1px solid var(--border)">فقط رای Nodeها</td><td style="padding:6px;border:1px solid var(--border)">Cluster فرد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Node and Disk Majority</td><td style="padding:6px;border:1px solid var(--border)">Node + دیسک Witness</td><td style="padding:6px;border:1px solid var(--border)">Cluster با Shared Storage</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Node and File Share Majority</td><td style="padding:6px;border:1px solid var(--border)">Node + Share Witness</td><td style="padding:6px;border:1px solid var(--border)">Multi-Site Cluster</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Cloud Witness</td><td style="padding:6px;border:1px solid var(--border)">Azure Storage Account</td><td style="padding:6px;border:1px solid var(--border)">مدرن، Multi-Site</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">No Majority</td><td style="padding:6px;border:1px solid var(--border)">بدون رای</td><td style="padding:6px;border:1px solid var(--border)">⚠️ خطرناک</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== نصب Failover Clustering =====
+Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
+
+# اجرای تست پیش‌نیاز
+Test-Cluster -Node "Server01","Server02"
+
+# ===== ایجاد Cluster =====
+New-Cluster -Name "Cluster01" `
+    -Node "Server01","Server02" `
+    -StaticAddress 192.168.1.100
+
+# ===== پیکربندی Quorum =====
+# Cloud Witness
+Set-ClusterQuorum -CloudWitness `
+    -AccountName "mystorageaccount" `
+    -AccessKey "mykey"
+
+# File Share Witness
+Set-ClusterQuorum -NodeAndFileShareMajority "\\fileserver\witness"
+
+# Disk Witness
+Set-ClusterQuorum -NodeAndDiskMajority "Cluster Disk 1"
+
+# ===== بررسی وضعیت =====
+Get-Cluster
+Get-ClusterNode
+Get-ClusterQuorum
+Get-ClusterResource
+Get-ClusterSharedVolume
+
+# ===== افزودن Role =====
+Add-ClusterFileServerRole -Name "FS01" -Storage "Cluster Disk 1"
+Add-ClusterVirtualMachineRole -VMName "WebServer01"</code></pre>
+
+    <!-- ==== ۱.۱۵ ==== -->
+    <h3>۱.۱۵ NLB و Storage Spaces Direct</h3>
+
+    <pre><code># ===== NLB (Network Load Balancing) =====
+Install-WindowsFeature -Name NLB -IncludeManagementTools
+
+# ایجاد Cluster
+New-NlbCluster -InterfaceName "Ethernet" `
+    -ClusterName "WebCluster" `
+    -ClusterPrimaryIP 192.168.1.200 `
+    -OperationMode Multicast
+
+# افزودن سرور دوم
+Add-NlbClusterNode -NewNodeName "Server02" -NewNodeInterface "Ethernet"
+
+# پارامترها:
+# - Unicast: MAC واقعی، فقط یک سرور پاسخ می‌دهد
+# - Multicast: MAC مجازی، همزمان چند سرور
+# - IGMP Multicast: بهینه‌تر
+
+# ===== Storage Spaces Direct (S2D) =====
+# پیش‌نیاز: Windows Server Datacenter + Failover Cluster
+
+Enable-ClusterS2D
+
+# ایجاد Pool
+New-StoragePool -FriendlyName "S2D-Pool" `
+    -StorageSubsystemFriendlyName "Cluster Storage*" `
+    -PhysicalDisks (Get-PhysicalDisk -CanPool $true)
+
+# ایجاد Volume
+New-Volume -FriendlyName "S2D-Volume01" `
+    -FileSystem CSVFS_ReFS `
+    -Size 1TB `
+    -StoragePoolFriendlyName "S2D-Pool" `
+    -ResiliencySettingName Mirror
+
+# ===== مزایای S2D =====
+# - Hyper-Converged Infrastructure
+# - بدون نیاز به Shared Storage
+# - مقیاس‌پذیری بالا
+# - Performance بالا با NVMe</code></pre>
+
+    <!-- ==== ۱.۱۶ ==== -->
+    <h3>۱.۱۶ عیب‌یابی و مدیریت روزمره</h3>
+
+    <pre><code># ===== ابزارهای عیب‌یابی =====
+
+# ۱. بررسی Disk و Volume
+Get-Disk
+Get-Volume
+Get-Partition
+
+# ۲. بررسی Storage Pool
+Get-StoragePool
+Get-VirtualDisk | Format-Table FriendlyName, HealthStatus, OperationalStatus
+
+# ۳. بررسی Hyper-V
+Get-VM
+Get-VM | Select Name, State, CPUUsage, MemoryAssigned
+Get-VMIntegrationService -VMName "WebServer01"
+
+# ۴. بررسی Cluster
+Get-Cluster | Format-List
+Get-ClusterNode
+Get-ClusterGroup
+
+# ۵. Event Logs
+Get-EventLog -LogName System -Source "Hyper-V*" -Newest 20
+Get-EventLog -LogName System -Source "FailoverClustering" -Newest 20
+Get-WinEvent -LogName "Microsoft-Windows-Hyper-V-VMMS-Admin" -MaxEvents 20
+
+# ۶. Performance Monitoring
+Get-Counter "\Hyper-V Virtual Storage Device(*)\Read Bytes/sec"
+Get-Counter "\Hyper-V Hypervisor Logical Processor(_Total)\% Total Run Time"
+
+# ۷. Sconfig (در Server Core)
+sconfig
+# گزینه‌ها:
+# 1) Domain/Workgroup
+# 2) Computer Name
+# 3) Add Local Administrator
+# 4) Configure Remote Management
+# 5) Windows Update Settings
+# 6) Download and Install Updates
+# 7) Remote Desktop
+# 8) Network Settings
+# 9) Date and Time
+# 10) Telemetry Settings
+# 11) Windows Activation
+# 12) Log Off User
+# 13) Restart Server
+# 14) Shut Down Server
+# 15) Exit to Command Line
+
+# ===== چک‌لیست عیب‌یابی =====
+# 1. آیا Disk از نظر فیزیکی سالم است؟ (Get-PhysicalDisk | HealthStatus)
+# 2. آیا Storage Pool در وضعیت Healthy است؟
+# 3. آیا VM Resources کافی دارد؟ (RAM، CPU، Disk)
+# 4. آیا Network درست تنظیم شده؟
+# 5. آیا Integration Services فعال است؟
+# 6. آیا Cluster Quorum برقرار است؟
+# 7. Event Logs را چک کن</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در Windows Server 2025، همه‌چیز با <strong>PowerShell</strong>
+      مدیریت می‌شود. حتی اگر Server Core استفاده نمی‌کنی،
+      عادت کن به PowerShell — اتوماسیون، مقیاس‌پذیری و سرعت بسیار بالاتر.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      تبدیل MBR به GPT بدون Backup، تمام داده را نابود می‌کند.
+      همیشه اول با <strong>mbr2gpt /validate</strong> بررسی کن، بعد
+      با <strong>/convert</strong> تبدیل کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در محیط‌های Production مدرن، از <strong>Storage Spaces Direct</strong>
+      برای Hyper-Converged Infrastructure استفاده کن —
+      دیگر نیازی به SAN گران‌قیمت نداری.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۲ با <span class="term" data-term="dns">DNS</span>،
+      <span class="term" data-term="dhcp">DHCP</span>،
+      <span class="term" data-term="ipam">IPAM</span> و
+      <span class="term" data-term="vpn">VPN</span> آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>Windows Server Hybrid Administrator</strong>
+      (AZ-800 + AZ-801)، مدیریت ترکیبی On-Prem + Azure را یاد می‌گیری.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — نصب کامل Windows Server + Storage Spaces</h3>
+    <pre><code># ===== گام ۱: بررسی سیستم =====
+Get-ComputerInfo | Select WindowsProductName, CsTotalPhysicalMemory, CsNumberOfLogicalProcessors
+Get-Disk
+Get-PhysicalDisk
+
+# ===== گام ۲: ایجاد Storage Pool از ۳ دیسک =====
+$disks = Get-PhysicalDisk -CanPool $true
+New-StoragePool -FriendlyName "DataPool" `
+    -StorageSubsystemFriendlyName "Windows Storage*" `
+    -PhysicalDisks $disks
+
+# ===== گام ۳: ایجاد Virtual Disk (Mirror) =====
+New-VirtualDisk -StoragePoolFriendlyName "DataPool" `
+    -FriendlyName "VData01" `
+    -Size 500GB `
+    -ResiliencySettingName Mirror `
+    -NumberOfColumns 2
+
+# ===== گام ۴: ایجاد پارتیشن و Volume =====
+$vdisk = Get-VirtualDisk -FriendlyName "VData01" | Get-Disk
+Initialize-Disk -Number $vdisk.Number -PartitionStyle GPT
+New-Partition -DiskNumber $vdisk.Number -UseMaximumSize -DriveLetter D
+Format-Volume -DriveLetter D -FileSystem NTFS -NewFileSystemLabel "Data"
+
+# ===== گام ۵: فعال‌سازی Deduplication =====
+Install-WindowsFeature -Name FS-Data-Deduplication
+Enable-DedupVolume -Volume "D:" -UsageType Default
+
+# ===== گام ۶: بررسی =====
+Get-StoragePool
+Get-VirtualDisk
+Get-Volume
+Get-DedupVolume</code></pre>
+
+    <h3>مثال ۲ — راه‌اندازی Hyper-V با VM ویندوز</h3>
+    <pre><code># ===== گام ۱: نصب Hyper-V =====
+Install-WindowsFeature -Name Hyper-V -IncludeManagementTools -Restart
+
+# ===== گام ۲: تنظیمات =====
+Set-VMHost -VirtualHardDiskPath "D:\Hyper-V\VHDs" `
+    -VirtualMachinePath "D:\Hyper-V\VMs"
+
+# ===== گام ۳: Virtual Switch =====
+New-VMSwitch -Name "ExternalSwitch" -NetAdapterName "Ethernet" -AllowManagementOS $true
+
+# ===== گام ۴: ایجاد VM =====
+New-VM -Name "FileServer01" `
+    -MemoryStartupBytes 4GB `
+    -Generation 2 `
+    -NewVHDPath "D:\Hyper-V\VMs\FS01.vhdx" `
+    -NewVHDSizeBytes 100GB `
+    -SwitchName "ExternalSwitch"
+
+# ===== گام ۵: منابع =====
+Set-VMProcessor -VMName "FileServer01" -Count 2
+Set-VMMemory -VMName "FileServer01" `
+    -DynamicMemoryEnabled $true `
+    -MinimumBytes 2GB `
+    -MaximumBytes 8GB
+
+# ===== گام ۶: DVD برای نصب ویندوز =====
+Add-VMDvdDrive -VMName "FileServer01" -Path "D:\ISOs\Server2025.iso"
+Set-VMFirmware -VMName "FileServer01" -FirstBootDevice (
+    Get-VMDvdDrive -VMName "FileServer01"
+)
+
+# ===== گام ۷: شروع =====
+Start-VM -Name "FileServer01"
+vmconnect.exe localhost "FileServer01"
+
+# ===== گام ۸: بعد از نصب، Integration Services =====
+# در ویندوز مهمان:
+Get-VMIntegrationService -VMName "FileServer01"</code></pre>
+
+    <h3>مثال ۳ — راه‌اندازی iSCSI Target</h3>
+    <pre><code># ===== روی Storage Server =====
+Install-WindowsFeature FS-iSCSITarget-Server -IncludeManagementTools
+
+# ایجاد مسیر
+New-Item -Path "D:\iSCSI" -ItemType Directory
+
+# ایجاد VDisk
+New-IscsiVirtualDisk -Path "D:\iSCSI\disk1.vhdx" -Size 200GB
+New-IscsiVirtualDisk -Path "D:\iSCSI\disk2.vhdx" -Size 500GB
+
+# ایجاد Target
+New-IscsiServerTarget -TargetName "Target-Storage01" `
+    -InitiatorIds "IPAddress:192.168.1.20","IPAddress:192.168.1.21"
+
+# اتصال VDiskها
+Add-IscsiVirtualDiskTargetMapping -TargetName "Target-Storage01" -Path "D:\iSCSI\disk1.vhdx"
+Add-IscsiVirtualDiskTargetMapping -TargetName "Target-Storage01" -Path "D:\iSCSI\disk2.vhdx"
+
+# ===== روی Client =====
+Start-Service msiscsi
+New-IscsiTargetPortal -TargetPortalAddress 192.168.1.10
+
+Get-IscsiTarget | Connect-IscsiTarget `
+    -TargetPortalAddress 192.168.1.10 `
+    -IsPersistent $true
+
+# دیسک‌های جدید
+Get-Disk | Where-Object PartitionStyle -eq "RAW" | ForEach-Object {
+    Initialize-Disk -Number $_.Number -PartitionStyle GPT
+    New-Partition -DiskNumber $_.Number -UseMaximumSize -DriveLetter "I"
+    Format-Volume -DriveLetter "I" -FileSystem NTFS -NewFileSystemLabel "iSCSI"
+}</code></pre>
+
+    <h3>مثال ۴ — Failover Cluster با ۲ سرور</h3>
+    <pre><code># ===== روی هر دو سرور =====
+Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
+
+# بررسی دیسک مشترک
+Get-Disk | Where-Object BusType -eq "iSCSI"
+
+# ===== تست =====
+Test-Cluster -Node "Server01","Server02" -ReportName "Cluster-Report"
+
+# ===== ایجاد Cluster =====
+New-Cluster -Name "Cluster01" `
+    -Node "Server01","Server02" `
+    -StaticAddress 192.168.1.100 `
+    -NoStorage
+
+# ===== پیکربندی Quorum با Cloud Witness =====
+Set-ClusterQuorum -CloudWitness `
+    -AccountName "clusterwitness01" `
+    -AccessKey "your-azure-storage-key"
+
+# ===== افزودن Cluster Disk =====
+Get-ClusterAvailableDisk | Add-ClusterDisk
+
+# ===== ساخت CSV =====
+Get-ClusterSharedVolume
+
+# ===== افزودن Role =====
+Add-ClusterFileServerRole -Name "FileServer" -Storage "Cluster Disk 1"
+
+# ===== بررسی =====
+Get-Cluster
+Get-ClusterNode
+Get-ClusterGroup
+Get-ClusterResource</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی Storage Spaces</h3>
+    <pre><code># ===== بررسی سلامت Pool =====
+Get-StoragePool | Format-List FriendlyName, HealthStatus, OperationalStatus
+Get-PhysicalDisk | Format-Table FriendlyName, MediaType, HealthStatus, OperationalStatus
+
+# ===== بررسی Virtual Disk =====
+Get-VirtualDisk | Format-List FriendlyName, Size, HealthStatus, OperationalStatus, ResiliencySettingName
+
+# ===== بررسی Jobهای در حال اجرا =====
+Get-StorageJob
+# اگر Job در حال اجراست، صبر کن
+
+# ===== مشاهده Volume =====
+Get-Volume | Format-Table DriveLetter, FileSystemLabel, FileSystem, HealthStatus, Size
+
+# ===== اگر Pool در وضعیت Warning است: =====
+# 1. دیسک خراب را پیدا کن
+Get-PhysicalDisk | Where-Object HealthStatus -ne "Healthy"
+
+# 2. اگر Self-Healing دارد:
+Repair-VirtualDisk -FriendlyName "VData01"
+
+# 3. اگر دیسک کاملاً خراب است:
+# از Pool خارج کن
+Remove-PhysicalDisk -FriendlyName "Broken Disk" -StoragePoolFriendlyName "DataPool"
+
+# دیسک جدید اضافه کن
+Add-PhysicalDisk -StoragePoolFriendlyName "DataPool" -PhysicalDisks (Get-PhysicalDisk -CanPool $true)
+
+# 4. Optimize
+Optimize-StoragePool -FriendlyName "DataPool"
+
+# ===== چک نهایی =====
+Get-StoragePool | Where-Object FriendlyName -eq "DataPool" | Get-StorageJob
+Get-PhysicalDisk | Format-Table FriendlyName, HealthStatus, OperationalStatus</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>Windows Server 2025 را در حالت Server Core نصب کن</li>
+      <li>با <code>sconfig</code> Hostname، Network و Remote Management را تنظیم کن</li>
+      <li>با <strong>Windows Admin Center</strong> از یک سیستم دیگر به آن وصل شو</li>
+      <li>سه دیسک ۱۰۰GB اضافه کن</li>
+      <li>Storage Pool با این ۳ دیسک بساز</li>
+      <li>Virtual Disk با Resiliency=Mirror بساز</li>
+      <li>Volume با NTFS فرمت کن و یک Share بساز</li>
+      <li>NTFS Permissions با icacls تنظیم کن</li>
+      <li>Data Deduplication روی Volume فعال کن</li>
+      <li>Hyper-V Role نصب کن</li>
+      <li>Virtual Switch External و Internal بساز</li>
+      <li>یک VM ویندوز ۱۰ ایجاد و نصب کن</li>
+      <li>از VM یک Checkpoint بگیر</li>
+      <li>Live Migration VM را بین دو Host تست کن</li>
+      <li>Failover Clustering با دو سرور راه‌اندازی کن</li>
+      <li>Cloud Witness را با Azure Storage پیکربندی کن</li>
+      <li>یک File Server Role به Cluster اضافه کن</li>
+      <li>با Event Logs، Pool و Cluster را پایش کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>تبدیل MBR به GPT داده‌ها را پاک می‌کند:</strong> از mbr2gpt استفاده کن یا اول Backup بگیر.</li>
+      <li><strong>Storage Pool داده‌ها را نمی‌بیند:</strong> دیسک‌ها ممکن است حاوی داده باشند — نیاز به Clean دارند.</li>
+      <li><strong>Deduplication CPU را ۱۰۰٪ می‌کند:</strong> زمان‌بندی شبانه بگذار و Usage Type درست را انتخاب کن.</li>
+      <li><strong>iSCSI Target به Client وصل نمی‌شود:</strong> IQN یا IP اشتباه، یا Firewall پورت 3260 را بسته است.</li>
+      <li><strong>Hyper-V نصب نمی‌شود:</strong> پیش‌نیازهای CPU (VT-x، SLAT) در BIOS فعال نیست.</li>
+      <li><strong>VM شبکه ندارد:</strong> Integration Services نصب نشده یا Virtual Switch اشتباه است.</li>
+      <li><strong>Live Migration کار نمی‌کند:</strong> CPU Compatibility بین دو Host یکسان نیست یا Kerberos Constrained Delegation تنظیم نشده.</li>
+      <li><strong>Cluster Quorum می‌بازد:</strong> تعداد Node فعال کمتر از Quorum است — Witness اضافه کن.</li>
+      <li><strong>Cloud Witness خطا می‌دهد:</strong> Storage Account Key یا Network اتصال Azure اشتباه است.</li>
+      <li><strong>CSV مشکل دارد:</strong> Antivirus روی Volume فعال است یا Diag نام کاربری اشتباه است.</li>
+      <li><strong>S2D همگرا نمی‌شود:</strong> کارت شبکه ۱۰Gbps لازم است یا RDMA غیرفعال است.</li>
+      <li><strong>Checkpoint روی VM می‌ماند:</strong> دیسک AVHDX بزرگ می‌شود — Checkpoint را Merge یا حذف کن.</li>
+      <li><strong>Volume از Mount می‌افتد:</strong> iSCSI Session قطع است — از Multipath I/O استفاده کن.</li>
+      <li><strong>Pool Performance پایین است:</strong> از Tiering (SSD + HDD) استفاده کن یا Column را تغییر بده.</li>
+      <li><strong>Server Core مدیریت نمی‌شود:</strong> Remote Management را با sconfig فعال کن و از RSAT یا WAC استفاده کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="hyperv">Hyper-V</span> •
+      <span class="term" data-term="storage-spaces">Storage Spaces</span> •
+      <span class="term" data-term="failover-cluster">Failover Cluster</span> •
+      <span class="term" data-term="ntfs">NTFS</span> •
+      <span class="term" data-term="iscsi">iSCSI</span> •
+      <span class="term" data-term="quorum">Quorum</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="mcsa-01" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) حداکثر اندازه دیسک در MBR چقدر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> ۵۰۰ GB</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> ۲ TB</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> ۱۶ TB</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> نامحدود</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) تفاوت اصلی Basic Disk و Dynamic Disk چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Basic جدیدتر است</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Dynamic فقط روی SSD</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Dynamic از RAID نرم‌افزاری پشتیبانی می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> Basic سرعت بیشتری دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) کدام Volume حداقل ۳ دیسک می‌خواهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Mirrored</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> RAID-5</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Spanned</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Striped</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) کدام File System از Self-Healing پشتیبانی می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> FAT32</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> NTFS</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> ReFS</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> exFAT</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) Storage Spaces چه مزیتی نسبت به RAID سنتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> افزودن دیسک بدون قطع سرویس</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> ارزان‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> فقط برای SSD است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Data Deduplication چه زمانی مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> Database فعال</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> Volume بوت</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Backup و فایل‌های ثابت</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Virtual Machine فعال</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) تفاوت Hyper-V و VirtualBox در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> VirtualBox روی Server</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Hyper-V Type 1 (Bare-Metal)، VirtualBox Type 2 (Hosted)</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Hyper-V جدیدتر از VirtualBox است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) تفاوت Type 1 و Type 2 Hypervisor چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Type 1 فقط برای Linux</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Type 2 سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Type 1 مستقیماً روی سخت‌افزار، Type 2 روی OS میزبان</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) Checkpoint در Hyper-V چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Backup کامل VM</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> Snapshot لحظه‌ای از VM برای بازگشت سریع</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> انتقال VM به Host دیگر</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> افزایش RAM</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) Failover Clustering چه زمانی استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> برای افزایش سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> برای Backup</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> برای High Availability سرویس‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> برای Container</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) Cloud Witness در Failover Cluster چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> Backup در Cloud</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> Azure Storage به‌عنوان رای‌دهنده در Quorum</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> VM در Cloud</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Storage در Azure</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) تفاوت Server Core و Desktop Experience چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Core کندتر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Desktop ارزان‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Core فقط CLI و PowerShell، Desktop دارای GUI کامل</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) کدام فرمت فایل از ۴ GB بزرگ‌تر نمی‌تواند ذخیره کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> NTFS</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> FAT32</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> ReFS</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> exFAT</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) Storage Spaces Direct (S2D) چه نیازمندی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فقط Windows Standard</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> فقط یک سرور</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Windows Server Datacenter + Failover Cluster + حداقل ۲ Node</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> فقط USB Storage</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) برای مدیریت Windows Server Core از راه دور از چه استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> فقط RDP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Windows Admin Center یا PowerShell Remoting</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> VNC</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> Telnet</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک زیرساخت Hyper-Converged با Windows Server 2025 بساز:</p>
+    <ul>
+      <li><strong>۲ سرور فیزیکی</strong> با Windows Server 2025 Datacenter (Server Core)</li>
+      <li><strong>Storage Spaces Direct</strong> برای Pool ترکیبی SSD + HDD</li>
+      <li><strong>CSV (Cluster Shared Volume)</strong> با ReFS</li>
+      <li><strong>Failover Cluster</strong> با Cloud Witness در Azure</li>
+      <li><strong>Hyper-V</strong> روی هر Node فعال</li>
+      <li><strong>Virtual Switch</strong> External با Teaming</li>
+      <li><strong>حداقل ۳ VM:</strong> یک Domain Controller، یک File Server، یک Web Server</li>
+      <li><strong>Live Migration</strong> بین دو Node تست</li>
+      <li><strong>Storage Migration</strong> برای یک VM</li>
+      <li><strong>Data Deduplication</strong> روی Volume فایل‌ها</li>
+      <li><strong>Checkpoint</strong> برای VMهای مهم</li>
+      <li><strong>Monitoring</strong> با Windows Admin Center</li>
+      <li>مستندسازی کامل با Screenshot و Config</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>S2D را با ۳ Node تست کن و Tiering را پیاده کن.</li>
+        <li>iSCSI Target راه‌اندازی کن و به Cluster اضافه کن.</li>
+        <li>Storage QoS برای یک VM با IOPS Limit پیاده کن.</li>
+        <li>با PowerShell Script، Backup خودکار از VHDxها بساز.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Windows Server 2025:</strong> نسخه‌ها — Essentials، Standard، Datacenter</li>
+      <li><strong>Server Core vs Desktop Experience:</strong> Core سبک‌تر، امن‌تر، Production</li>
+      <li><strong>MBR:</strong> ۲ TB، ۴ پارتیشن — <strong>GPT:</strong> ۱۸ EB، ۱۲۸ پارتیشن</li>
+      <li><strong>Basic vs Dynamic Disk:</strong> Basic ساده، Dynamic با RAID نرم‌افزاری</li>
+      <li><strong>Volume Types:</strong> Simple، Spanned، Striped (RAID-0)، Mirrored (RAID-1)، RAID-5</li>
+      <li><strong>File Systems:</strong> NTFS (عمومی)، ReFS (Self-Healing)، FAT32 (USB)</li>
+      <li><strong>Permission مؤثر:</strong> محدودکننده‌ترین بین NTFS و Share</li>
+      <li><strong>Storage Spaces:</strong> Pool + Virtual Disk + Resiliency (Mirror/Parity)</li>
+      <li><strong>Deduplication:</strong> صرفه‌جویی ۵۰-۹۰٪ برای فایل‌های ثابت — نه Database</li>
+      <li><strong>iSCSI:</strong> Storage روی IP — Target (Server) و Initiator (Client)</li>
+      <li><strong>Hyper-V:</strong> Type 1 Hypervisor — نیاز به VT-x/SLAT</li>
+      <li><strong>Virtual Switch:</strong> External، Internal، Private</li>
+      <li><strong>Checkpoint:</strong> کوتاه‌مدت برای تست — نه Backup</li>
+      <li><strong>Live Migration:</strong> انتقال VM بدون قطعی — نیاز به Cluster یا Shared Storage</li>
+      <li><strong>Failover Cluster:</strong> Quorum — Node Majority، Disk، File Share، Cloud Witness</li>
+      <li><strong>S2D:</strong> Hyper-Converged با Datacenter + Cluster + NVMe</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="../mikrotik/mikrotik_Ch_08.html" data-nav-prev>⬅️ آخرین فصل MikroTik</a>
+      <button class="btn" data-finish-chapter="mcsa-01">✅ پایان فصل</button>
+      <a class="btn" href="mcsa_Ch_02.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

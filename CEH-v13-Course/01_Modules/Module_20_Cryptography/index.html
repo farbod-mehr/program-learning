@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۲۰ - Cryptography - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۲۰ – Cryptography</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – رمزنگاری چیست؟</a></li>
+            <li><a href="#basics">📖 مفاهیم پایه رمزنگاری</a></li>
+            <li><a href="#symmetric">🔐 رمزنگاری متقارن (Symmetric)</a></li>
+            <li><a href="#asymmetric">🔑 رمزنگاری نامتقارن (Asymmetric)</a></li>
+            <li><a href="#hashing">🧩 توابع هش (Hashing)</a></li>
+            <li><a href="#digital-signatures">✍️ امضای دیجیتال (Digital Signatures)</a></li>
+            <li><a href="#pki">🏛️ زیرساخت کلید عمومی (PKI)</a></li>
+            <li><a href="#algorithms">⚙️ الگوریتم‌های معروف</a></li>
+            <li><a href="#cryptanalysis">🔍 تحلیل رمز (Cryptanalysis)</a></li>
+            <li><a href="#attacks">🎯 حملات به رمزنگاری</a></li>
+            <li><a href="#tools">🛠️ ابزارهای رمزنگاری</a></li>
+            <li><a href="#ai-crypto">🤖 هوش مصنوعی در رمزنگاری</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با حملات رمزنگاری</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – رمزنگاری چیست؟</h2>
+        <p>
+            <b>رمزنگاری (Cryptography)</b> علم و هنر نوشتن و حل کردن کدهای مخفی است. در دنیای مدرن، رمزنگاری به عنوان یکی از ستون‌های اصلی امنیت اطلاعات شناخته می‌شود و نقش حیاتی در حفاظت از محرمانگی، یکپارچگی و احراز هویت داده‌ها ایفا می‌کند.
+        </p>
+        <p>
+            رمزنگاری از دوران باستان وجود داشته است، اما با ظهور فناوری اطلاعات و ارتباطات، به یکی از پیچیده‌ترین و حیاتی‌ترین حوزه‌های علوم کامپیوتر تبدیل شده است. امروزه رمزنگاری در تمام جنبه‌های زندگی دیجیتال ما حضور دارد: از ارتباطات اینترنتی (HTTPS)، ایمیل‌ها (PGP/SMIME)، تراکنش‌های بانکی، تا ذخیره‌سازی امن داده‌ها و احراز هویت کاربران.
+        </p>
+        <p>
+            در این ماژول، با مفاهیم پایه رمزنگاری، انواع الگوریتم‌ها، امضای دیجیتال، زیرساخت کلید عمومی (PKI)، تحلیل رمز، حملات رایج و ابزارهای مرتبط آشنا خواهید شد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ نکته مهم:</b> رمزنگاری یک ابزار دو لبه است. هکرها نیز از رمزنگاری برای پنهان‌سازی ارتباطات، بدافزارها و باج‌افزارها استفاده می‌کنند. درک صحیح رمزنگاری هم برای دفاع و هم برای شناسایی حملات ضروری است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: مفاهیم پایه -->
+    <!-- ============================================================ -->
+    <div class="card" id="basics">
+        <h2>📖 مفاهیم پایه رمزنگاری</h2>
+        <p>
+            برای درک رمزنگاری، ابتدا باید با مفاهیم اساسی زیر آشنا شوید:
+        </p>
+
+        <h3>📌 اصطلاحات کلیدی:</h3>
+        <ul>
+            <li><b>متن واضح (Plaintext):</b> داده‌ای که قابل خواندن است و رمزنگاری نشده است.</li>
+            <li><b>متن رمز (Ciphertext):</b> داده‌ای که با استفاده از یک الگوریتم رمزنگاری تبدیل شده و غیرقابل خواندن است.</li>
+            <li><b>کلید (Key):</b> یک رشته اطلاعات که برای رمزنگاری و رمزگشایی استفاده می‌شود.</li>
+            <li><b>الگوریتم رمزنگاری (Cipher):</b> مجموعه قوانین ریاضی برای تبدیل متن واضح به متن رمز و بالعکس.</li>
+            <li><b>رمزگشایی (Decryption):</b> فرآیند تبدیل متن رمز به متن واضح با استفاده از کلید مناسب.</li>
+        </ul>
+
+        <h3>📌 اهداف اصلی رمزنگاری:</h3>
+        <ul>
+            <li><b>محرمانگی (Confidentiality):</b> اطمینان از اینکه فقط افراد مجاز به داده دسترسی دارند.</li>
+            <li><b>یکپارچگی (Integrity):</b> اطمینان از اینکه داده در طول انتقال یا ذخیره‌سازی تغییر نکرده است.</li>
+            <li><b>احراز هویت (Authentication):</b> تأیید هویت فرستنده یا گیرنده داده.</li>
+            <li><b>عدم انکار (Non-Repudiation):</b> جلوگیری از انکار انجام یک عمل توسط یک فرد.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> رمزنگاری یکی از ابزارهای اصلی برای پیاده‌سازی مثلث CIA (محرمانگی، یکپارچگی، در دسترس بودن) است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: رمزنگاری متقارن -->
+    <!-- ============================================================ -->
+    <div class="card" id="symmetric">
+        <h2>🔐 رمزنگاری متقارن (Symmetric Cryptography)</h2>
+        <p>
+            <b>رمزنگاری متقارن</b> از یک کلید واحد برای هر دو عملیات رمزنگاری و رمزگشایی استفاده می‌کند. به همین دلیل به آن <b>رمزنگاری کلید مخفی</b> نیز گفته می‌شود.
+        </p>
+
+        <h3>📌 ویژگی‌ها:</h3>
+        <ul>
+            <li>سریع و کارآمد برای داده‌های حجیم.</li>
+            <li>نیاز به توزیع امن کلید بین طرفین.</li>
+            <li>در صورت افشای کلید، امنیت کامل از بین می‌رود.</li>
+        </ul>
+
+        <h3>📌 الگوریتم‌های معروف متقارن:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>الگوریتم</th><th>طول کلید</th><th>نوع</th><th>کاربرد</th></tr>
+                <tr><td><b>AES (Advanced Encryption Standard)</b></td>
+                    <td>۱۲۸, ۱۹۲, ۲۵۶ بیت</td>
+                    <td>بلوکی (Block)</td>
+                    <td>استاندارد جهانی، پرکاربردترین</td></tr>
+                <tr><td><b>DES (Data Encryption Standard)</b></td>
+                    <td>۵۶ بیت</td>
+                    <td>بلوکی (Block)</td>
+                    <td>قدیمی، ناامن</td></tr>
+                <tr><td><b>3DES (Triple DES)</b></td>
+                    <td>۱۶۸ بیت</td>
+                    <td>بلوکی (Block)</td>
+                    <td>جایگزین DES، ضعیف‌تر از AES</td></tr>
+                <tr><td><b>Blowfish</b></td>
+                    <td>۳۲-۴۴۸ بیت</td>
+                    <td>بلوکی (Block)</td>
+                    <td>سریع، مناسب برای سیستم‌های کم‌منبع</td></tr>
+                <tr><td><b>Twofish</b></td>
+                    <td>۱۲۸, ۱۹۲, ۲۵۶ بیت</td>
+                    <td>بلوکی (Block)</td>
+                    <td>جانشین Blowfish</td></tr>
+                <tr><td><b>RC4</b></td>
+                    <td>متغیر (۴۰-۲۰۴۸ بیت)</td>
+                    <td>جریانی (Stream)</td>
+                    <td>قدیمی، ناامن (در WEP و TLS قدیمی)</td></tr>
+                <tr><td><b>ChaCha20</b></td>
+                    <td>۲۵۶ بیت</td>
+                    <td>جریانی (Stream)</td>
+                    <td>سریع و امن، جایگزین RC4</td></tr>
+            </table>
+        </div>
+
+        <h3>📌 حالت‌های عملکرد (Modes of Operation):</h3>
+        <ul>
+            <li><b>ECB (Electronic Codebook):</b> ساده اما ناامن (تکرار الگوها).</li>
+            <li><b>CBC (Cipher Block Chaining):</b> امن‌تر، نیاز به IV (بردار اولیه).</li>
+            <li><b>CTR (Counter Mode):</b> تبدیل بلوک به جریانی، مناسب برای موازی‌سازی.</li>
+            <li><b>GCM (Galois/Counter Mode):</b> ترکیب رمزنگاری و احراز یکپارچگی.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># رمزنگاری با AES در لینوکس (openssl)
+# رمزنگاری فایل
+openssl enc -aes-256-cbc -salt -in file.txt -out file.enc -pass pass:mysecret
+
+# رمزگشایی فایل
+openssl enc -aes-256-cbc -d -in file.enc -out file.txt -pass pass:mysecret
+
+# با OpenSSL و کلید مشخص
+openssl enc -aes-256-cbc -K 00112233445566778899aabbccddeeff -iv 0102030405060708 -in file.txt -out file.enc</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> هرگز از DES و RC4 استفاده نکنید. این الگوریتم‌ها به راحتی قابل شکستن هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: رمزنگاری نامتقارن -->
+    <!-- ============================================================ -->
+    <div class="card" id="asymmetric">
+        <h2>🔑 رمزنگاری نامتقارن (Asymmetric Cryptography)</h2>
+        <p>
+            <b>رمزنگاری نامتقارن</b> از دو کلید مجزا استفاده می‌کند: <b>کلید عمومی (Public Key)</b> که برای رمزنگاری استفاده می‌شود و <b>کلید خصوصی (Private Key)</b> که برای رمزگشایی استفاده می‌شود.
+        </p>
+
+        <h3>📌 ویژگی‌ها:</h3>
+        <ul>
+            <li>امنیت بالا بدون نیاز به توزیع کلید مخفی.</li>
+            <li>سرعت کمتر نسبت به رمزنگاری متقارن.</li>
+            <li>مناسب برای تبادل کلید و امضای دیجیتال.</li>
+        </ul>
+
+        <h3>📌 الگوریتم‌های معروف نامتقارن:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>الگوریتم</th><th>طول کلید</th><th>کاربرد</th></tr>
+                <tr><td><b>RSA (Rivest-Shamir-Adleman)</b></td>
+                    <td>۱۰۲۴-۴۰۹۶ بیت</td>
+                    <td>پرکاربردترین، تبادل کلید و امضا</td></tr>
+                <tr><td><b>ECC (Elliptic Curve Cryptography)</b></td>
+                    <td>۱۶۰-۵۲۱ بیت</td>
+                    <td>کلیدهای کوتاه‌تر با امنیت بالا، پرکاربرد در موبایل و IoT</td></tr>
+                <tr><td><b>DSA (Digital Signature Algorithm)</b></td>
+                    <td>۱۰۲۴-۳۰۷۲ بیت</td>
+                    <td>امضای دیجیتال (فقط امضا، نه رمزنگاری)</td></tr>
+                <tr><td><b>Diffie-Hellman</b></td>
+                    <td>۱۰۲۴-۴۰۹۶ بیت</td>
+                    <td>تبادل امن کلید (نه رمزنگاری)</td></tr>
+                <tr><td><b>ElGamal</b></td>
+                    <td>متغیر</td>
+                    <td>رمزنگاری و امضا (مبنی بر DH)</td></tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># تولید کلید RSA با OpenSSL
+openssl genrsa -out private.pem 2048
+
+# استخراج کلید عمومی
+openssl rsa -in private.pem -pubout -out public.pem
+
+# رمزنگاری با کلید عمومی
+openssl rsautl -encrypt -in file.txt -out file.enc -pubin -inkey public.pem
+
+# رمزگشایی با کلید خصوصی
+openssl rsautl -decrypt -in file.enc -out file.txt -inkey private.pem</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در عمل، معمولاً از ترکیب رمزنگاری نامتقارن (برای تبادل کلید) و متقارن (برای رمزنگاری داده) استفاده می‌شود. این روش <b>رمزنگاری هیبریدی</b> نام دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: توابع هش -->
+    <!-- ============================================================ -->
+    <div class="card" id="hashing">
+        <h2>🧩 توابع هش (Hashing)</h2>
+        <p>
+            <b>تابع هش (Hash Function)</b> یک تابع ریاضی است که داده‌هایی با هر اندازه را به یک رشته با طول ثابت (هش) تبدیل می‌کند. توابع هش یک‌طرفه هستند و برای تأیید یکپارچگی داده‌ها استفاده می‌شوند.
+        </p>
+
+        <h3>📌 ویژگی‌های توابع هش:</h3>
+        <ul>
+            <li><b>یک‌طرفه (One-way):</b> نمی‌توان از هش به داده اصلی رسید.</li>
+            <li><b>مقاوم در برابر برخورد (Collision Resistant):</b> دو داده مختلف نباید هش یکسان تولید کنند.</li>
+            <li><b>تغییر کوچک = هش کاملاً متفاوت:</b> حتی یک بیت تغییر، هش را به کلی تغییر می‌دهد.</li>
+            <li><b>قطعیت (Deterministic):</b> یک داده همیشه هش یکسانی تولید می‌کند.</li>
+        </ul>
+
+        <h3>📌 الگوریتم‌های هش معروف:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>الگوریتم</th><th>طول خروجی (بیت)</th><th>وضعیت</th><th>کاربرد</th></tr>
+                <tr><td><b>MD5</b></td>
+                    <td>۱۲۸</td>
+                    <td>⚠️ ناامن (برخورد پیدا شده)</td>
+                    <td>قدیمی، چکسام فایل‌ها</td></tr>
+                <tr><td><b>SHA-1</b></td>
+                    <td>۱۶۰</td>
+                    <td>⚠️ ناامن (برخورد عملی)</td>
+                    <td>امضای دیجیتال قدیمی</td></tr>
+                <tr><td><b>SHA-256</b></td>
+                    <td>۲۵۶</td>
+                    <td>✅ امن</td>
+                    <td>استاندارد، پرکاربرد</td></tr>
+                <tr><td><b>SHA-512</b></td>
+                    <td>۵۱۲</td>
+                    <td>✅ امن</td>
+                    <td>امنیت بالاتر</td></tr>
+                <tr><td><b>SHA-3</b></td>
+                    <td>۲۲۴, ۲۵۶, ۳۸۴, ۵۱۲</td>
+                    <td>✅ امن</td>
+                    <td>نسل جدید (Keccak)</td></tr>
+                <tr><td><b>BLAKE2</b></td>
+                    <td>۲۵۶, ۵۱۲</td>
+                    <td>✅ امن</td>
+                    <td>سریع و امن</td></tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># محاسبه هش با OpenSSL
+echo -n "Hello World" | openssl dgst -sha256
+echo -n "Hello World" | openssl dgst -md5
+echo -n "Hello World" | openssl dgst -sha1
+
+# هش فایل
+openssl dgst -sha256 file.txt
+
+# محاسبه هش با ابزارهای لینوکس
+sha256sum file.txt
+md5sum file.txt</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> هرگز از MD5 و SHA-1 برای کاربردهای امنیتی استفاده نکنید. این الگوریتم‌ها به خطر افتاده‌اند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: امضای دیجیتال -->
+    <!-- ============================================================ -->
+    <div class="card" id="digital-signatures">
+        <h2>✍️ امضای دیجیتال (Digital Signatures)</h2>
+        <p>
+            <b>امضای دیجیتال</b> معادل الکترونیکی امضای دستی است و برای تأیید اصالت و یکپارچگی یک سند یا پیام استفاده می‌شود. امضای دیجیتال از رمزنگاری نامتقارن برای ایجاد امضا و تأیید آن استفاده می‌کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد امضای دیجیتال:</h3>
+        <ol>
+            <li><b>ایجاد هش:</b> از محتوای سند یک هش (با استفاده از SHA-256) تولید می‌شود.</li>
+            <li><b>رمزنگاری هش:</b> هش با کلید خصوصی فرستنده رمزنگاری می‌شود (امضا).</li>
+            <li><b>ارسال:</b> سند اصلی به همراه امضا به گیرنده ارسال می‌شود.</li>
+            <li><b>تأیید:</b> گیرنده با استفاده از کلید عمومی فرستنده، امضا را رمزگشایی کرده و هش را بازیابی می‌کند.</li>
+            <li><b>مقایسه:</b> گیرنده هش جدیدی از سند محاسبه کرده و با هش بازیابی‌شده مقایسه می‌کند.</li>
+        </ol>
+
+        <h3>📌 استانداردهای امضای دیجیتال:</h3>
+        <ul>
+            <li><b>RSA-PSS:</b> استاندارد امضای RSA با تابع پر کردن احتمالاتی.</li>
+            <li><b>ECDSA:</b> امضای دیجیتال با منحنی بیضوی (سریع‌تر و با کلید کوچک‌تر).</li>
+            <li><b>DSA:</b> استاندارد قدیمی امضای دیجیتال.</li>
+            <li><b>EdDSA:</b> نسخه مدرن و امن ECDSA.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ایجاد امضای دیجیتال با OpenSSL
+# ۱. تولید کلید RSA
+openssl genrsa -out private.pem 2048
+
+# ۲. استخراج کلید عمومی
+openssl rsa -in private.pem -pubout -out public.pem
+
+# ۳. امضای یک فایل با کلید خصوصی
+openssl dgst -sha256 -sign private.pem -out file.sig file.txt
+
+# ۴. تأیید امضا با کلید عمومی
+openssl dgst -sha256 -verify public.pem -signature file.sig file.txt</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> امضای دیجیتال در برنامه‌های مختلفی مانند ایمیل‌های امن (PGP/SMIME)، به‌روزرسانی نرم‌افزارها، و احراز هویت در سیستم‌های توزیع‌شده استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: زیرساخت کلید عمومی -->
+    <!-- ============================================================ -->
+    <div class="card" id="pki">
+        <h2>🏛️ زیرساخت کلید عمومی (PKI - Public Key Infrastructure)</h2>
+        <p>
+            <b>زیرساخت کلید عمومی (PKI)</b> یک چارچوب برای مدیریت کلیدهای عمومی و گواهی‌های دیجیتال است. PKI امکان احراز هویت امن در شبکه‌های عمومی را فراهم می‌کند.
+        </p>
+
+        <h3>📌 اجزای اصلی PKI:</h3>
+        <ul>
+            <li><b>CA (Certificate Authority):</b> مرجع صدور گواهی که هویت کاربران را تأیید و گواهی‌ها را صادر می‌کند.</li>
+            <li><b>RA (Registration Authority):</b> مرجع ثبت که درخواست‌ها را تأیید و به CA ارسال می‌کند.</li>
+            <li><b>گواهی دیجیتال (Digital Certificate):</b> سندی که هویت یک موجودیت و کلید عمومی آن را به هم متصل می‌کند.</li>
+            <li><b>CRL (Certificate Revocation List):</b> لیست گواهی‌های باطل‌شده.</li>
+            <li><b>OCSP (Online Certificate Status Protocol):</b> پروتکل آنلاین برای بررسی وضعیت گواهی.</li>
+        </ul>
+
+        <h3>📌 استاندارد گواهی‌ها (X.509):</h3>
+        <ul>
+            <li>گواهی‌های دیجیتال بر اساس استاندارد <b>X.509</b> هستند.</li>
+            <li>شامل اطلاعاتی مانند: نام، کلید عمومی، امضای CA، تاریخ انقضا و …</li>
+            <li>فرمت‌های رایج: PEM (.pem, .crt, .cer), DER (.der), PKCS#12 (.p12, .pfx).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># مشاهده اطلاعات یک گواهی
+openssl x509 -in certificate.pem -text -noout
+
+# استخراج کلید عمومی از گواهی
+openssl x509 -in certificate.pem -pubkey -noout
+
+# بررسی گواهی با CA
+openssl verify -CAfile ca.crt certificate.crt
+
+# مشاهده گواهی وب‌سایت
+openssl s_client -connect google.com:443 -showcerts</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> PKI یکی از اصلی‌ترین زیرساخت‌های امنیت اینترنت است و HTTPS بر اساس آن کار می‌کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: الگوریتم‌های معروف -->
+    <!-- ============================================================ -->
+    <div class="card" id="algorithms">
+        <h2>⚙️ الگوریتم‌های معروف رمزنگاری</h2>
+        <p>
+            در این بخش، برخی از مهم‌ترین الگوریتم‌های رمزنگاری و کاربردهای آنها را مرور می‌کنیم:
+        </p>
+
+        <h3>📌 الگوریتم‌های متقارن:</h3>
+        <ul>
+            <li><b>AES:</b> استاندارد جهانی، استفاده در دولتی، نظامی و تجاری.</li>
+            <li><b>DES/3DES:</b> قدیمی و منسوخ، اما همچنان در برخی سیستم‌های قدیمی دیده می‌شود.</li>
+            <li><b>Blowfish/Twofish:</b> سریع، مناسب برای سیستم‌های با منابع محدود.</li>
+            <li><b>ChaCha20:</b> جایگزین مدرن RC4، پرکاربرد در موبایل و TLS 1.3.</li>
+        </ul>
+
+        <h3>📌 الگوریتم‌های نامتقارن:</h3>
+        <ul>
+            <li><b>RSA:</b> پرکاربردترین، در SSL/TLS، SSH، PGP و …</li>
+            <li><b>ECC:</b> کلیدهای کوتاه‌تر با امنیت معادل RSA، پرکاربرد در موبایل، بلاکچین و IoT.</li>
+            <li><b>Diffie-Hellman:</b> تبادل کلید امن در TLS و VPN.</li>
+        </ul>
+
+        <h3>📌 الگوریتم‌های هش:</h3>
+        <ul>
+            <li><b>SHA-256/512:</b> استاندارد در برنامه‌های امنیتی.</li>
+            <li><b>BLAKE2:</b> سریع‌تر از SHA-3 و امن.</li>
+            <li><b>MD5/SHA-1:</b> فقط برای چک‌سام فایل‌ها (غیرامن).</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در انتخاب الگوریتم، همیشه از استانداردهای روز و الگوریتم‌های تأییدشده استفاده کنید.
+        </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۹: تحلیل رمز -->
+        <!-- ============================================================ -->
+        <div class="card" id="cryptanalysis">
+            <h2>🔍 تحلیل رمز (Cryptanalysis)</h2>
+            <p>
+                <b>تحلیل رمز</b> علم و هنر شکستن سیستم‌های رمزنگاری بدون داشتن کلید است. تحلیل‌گران رمز با استفاده از روش‌های ریاضی و آماری، سعی در یافتن نقاط ضعف الگوریتم‌ها یا پیاده‌سازی‌های آنها دارند.
+            </p>
+
+            <h3>📌 انواع تحلیل رمز:</h3>
+            <ul>
+                <li><b>حمله متن واضح شناخته‌شده (Known Plaintext):</b> تحلیل‌گر جفتی از متن واضح و متن رمز را دارد.</li>
+                <li><b>حمله متن واضح انتخابی (Chosen Plaintext):</b> تحلیل‌گر می‌تواند متن واضح انتخابی را رمزنگاری کند.</li>
+                <li><b>حمله متن رمز شناخته‌شده (Ciphertext Only):</b> تحلیل‌گر فقط متن رمز را دارد.</li>
+                <li><b>حمله برخورد (Collision Attack):</b> پیدا کردن دو داده مختلف با هش یکسان.</li>
+                <li><b>حمله زمانی (Timing Attack):</b> تحلیل زمان اجرای عملیات رمزنگاری.</li>
+                <li><b>حمله جانبی (Side-Channel Attack):</b> استفاده از اطلاعات جانبی مانند مصرف توان، صوت و …</li>
+            </ul>
+
+            <div class="warning-box">
+                <b>⚠️ هشدار:</b> بسیاری از الگوریتم‌های قدیمی در برابر حملات تحلیل رمز آسیب‌پذیر هستند. همیشه از الگوریتم‌های به‌روز استفاده کنید.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۰: حملات به رمزنگاری -->
+        <!-- ============================================================ -->
+        <div class="card" id="attacks">
+            <h2>🎯 حملات به رمزنگاری</h2>
+            <p>
+                در این بخش، حملات رایج به سیستم‌های رمزنگاری را معرفی می‌کنیم:
+            </p>
+
+            <h3>📌 حملات به رمزنگاری متقارن:</h3>
+            <ul>
+                <li><b>حمله Brute-Force:</b> امتحان تمام کلیدهای ممکن (با قدرت محاسباتی بالا).</li>
+                <li><b>حمله دیکشنری:</b> امتحان کلیدهای از پیش تعیین‌شده (برای رمزهای ضعیف).</li>
+                <li><b>حمله میانه‌ها (Meet-in-the-Middle):</b> برای 2DES و 3DES.</li>
+                <li><b>حمله CBC Padding Oracle:</b> به پیاده‌سازی CBC.</li>
+            </ul>
+
+            <h3>📌 حملات به رمزنگاری نامتقارن:</h3>
+            <ul>
+                <li><b>حمله عامل (Factoring):</b> فاکتورگیری اعداد بزرگ برای شکستن RSA.</li>
+                <li><b>حمله لگاریتم گسسته (Discrete Logarithm):</b> برای شکستن DH و DSA.</li>
+                <li><b>حمله کانال جانبی:</b> استفاده از اطلاعات فیزیکی (توان، صدا، زمان).</li>
+            </ul>
+
+            <h3>📌 حملات به هش:</h3>
+            <ul>
+                <li><b>حمله برخورد (Collision):</b> پیدا کردن دو داده با هش یکسان (مثلاً MD5 و SHA-1).</li>
+                <li><b>حمله پیش‌تصویر (Preimage Attack):</b> پیدا کردن داده‌ای که هش مشخصی تولید کند.</li>
+                <li><b>حمله تولد (Birthday Attack):</b> پیدا کردن برخورد با احتمال بالا.</li>
+            </ul>
+
+            <div class="info-box">
+                <b>💡 نکته:</b> حملات به رمزنگاری معمولاً به قدرت محاسباتی بالا یا آسیب‌پذیری‌های پیاده‌سازی نیاز دارند.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۱: ابزارهای رمزنگاری -->
+        <!-- ============================================================ -->
+        <div class="card" id="tools">
+            <h2>🛠️ ابزارهای رمزنگاری</h2>
+            <p>
+                ابزارهای متعددی برای رمزنگاری، هش، امضای دیجیتال و تحلیل رمز وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+            </p>
+
+            <div class="table-responsive">
+                <table>
+                    <tr><th>ابزار</th><th>کاربرد اصلی</th><th>پلتفرم</th></tr>
+                    <tr><td><b>OpenSSL</b></td>
+                        <td>مجموعه کامل رمزنگاری</td>
+                        <td>لینوکس/ویندوز</td></tr>
+                    <tr><td><b>GnuPG (GPG)</b></td>
+                        <td>رمزنگاری و امضا (PGP)</td>
+                        <td>لینوکس/ویندوز</td></tr>
+                    <tr><td><b>HashCat</b></td>
+                        <td>کرک هش (Brute-Force)</td>
+                        <td>لینوکس/ویندوز</td></tr>
+                    <tr><td><b>John the Ripper</b></td>
+                        <td>کرک پسورد و هش</td>
+                        <td>لینوکس</td></tr>
+                    <tr><td><b>OpenSSH</b></td>
+                        <td>ارتباط امن با SSH</td>
+                        <td>لینوکس/ویندوز</td></tr>
+                    <tr><td><b>VeraCrypt</b></td>
+                        <td>رمزنگاری دیسک</td>
+                        <td>لینوکس/ویندوز</td></tr>
+                    <tr><td><b>Steganography Tools</b></td>
+                        <td>پنهان‌سازی اطلاعات</td>
+                        <td>لینوکس</td></tr>
+                </table>
+            </div>
+
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># رمزنگاری فایل با GPG
+gpg -c file.txt
+
+# رمزگشایی
+gpg -d file.txt.gpg
+
+# امضای فایل با GPG
+gpg --sign file.txt
+
+# بررسی امضا
+gpg --verify file.txt.sig
+
+# کرک هش با HashCat
+hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt</code></pre>
+            </div>
+
+            <div class="tip-box">
+                <b>💡 نکته:</b> OpenSSL و GnuPG دو ابزار اساسی برای هر متخصص امنیت هستند.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۲: هوش مصنوعی در رمزنگاری -->
+        <!-- ============================================================ -->
+        <div class="card" id="ai-crypto">
+            <h2>🤖 هوش مصنوعی در رمزنگاری</h2>
+            <p>
+                CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در رمزنگاری نیز می‌پردازد.
+            </p>
+
+            <h3>📌 نقش هوش مصنوعی در رمزنگاری:</h3>
+            <ul>
+                <li><b>تحلیل رمز:</b> AI می‌تواند الگوهای آماری در متن رمز را شناسایی کند.</li>
+                <li><b>کرک پسورد هوشمند:</b> AI می‌تواند الگوهای رمز عبور را یاد بگیرد و حملات هدفمندتری انجام دهد.</li>
+                <li><b>تشخیص بدافزارهای رمزنگاری‌شده:</b> AI می‌تواند ترافیک رمزنگاری‌شده را تحلیل کند.</li>
+                <li><b>تولید کلیدهای امن:</b> AI می‌تواند کلیدهای تصادفی قوی تولید کند.</li>
+                <li><b>پیش‌بینی حملات رمزنگاری:</b> AI می‌تواند حملات آینده را پیش‌بینی کند.</li>
+            </ul>
+
+            <h3>📌 ابزارهای AI-Powered Crypto:</h3>
+            <ul>
+                <li><b>AI-Based Password Cracking:</b> ابزارهایی که از AI برای بهینه‌سازی حملات استفاده می‌کنند.</li>
+                <li><b>AI-Driven Cryptanalysis:</b> تحلیل رمز مبتنی بر AI.</li>
+                <li><b>AI-Powered Anomaly Detection:</b> تشخیص ناهنجاری در ترافیک رمزنگاری‌شده.</li>
+            </ul>
+
+            <div class="info-box">
+                <b>💡 چرا هوش مصنوعی در رمزنگاری مهم است؟</b>
+                <p>
+                    هوش مصنوعی می‌تواند حملات رمزنگاری را بسیار سریع‌تر و کارآمدتر از روش‌های سنتی انجام دهد و همچنین سیستم‌های دفاعی را بهبود بخشد.
+                </p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۳: راه‌های مقابله -->
+        <!-- ============================================================ -->
+        <div class="card" id="countermeasures">
+            <h2>🛡️ راه‌های مقابله با حملات رمزنگاری</h2>
+            <p>
+                برای محافظت در برابر حملات رمزنگاری، باید اقدامات زیر را انجام دهید:
+            </p>
+
+            <h3>📌 اقدامات کلی:</h3>
+            <ul>
+                <li><b>استفاده از الگوریتم‌های به‌روز و امن:</b> AES, SHA-256, RSA (با کلید ≥ 2048), ECC.</li>
+                <li><b>مدیریت صحیح کلیدها:</b> ذخیره‌سازی امن کلیدها، استفاده از HSM برای کلیدهای حساس.</li>
+                <li><b>استفاده از salt در هش:</b> جلوگیری از حملات جدول رنگین‌کمانی.</li>
+                <li><b>رمزنگاری داده‌های حساس:</b> حتی در حالت ذخیره‌سازی (Encryption at Rest).</li>
+                <li><b>استفاده از TLS/SSL:</b> برای تمام ارتباطات شبکه.</li>
+                <li><b>بررسی منظم آسیب‌پذیری‌ها:</b> اسکن و پچ کردن سیستم‌ها.</li>
+                <li><b>آموزش کارکنان:</b> آگاهی‌بخشی درباره اهمیت رمزنگاری و تهدیدات.</li>
+            </ul>
+
+            <h3>📌 اقدامات خاص برای هر نوع حمله:</h3>
+            <ul>
+                <li><b>در برابر Brute-Force:</b> استفاده از کلیدهای بلند و پیچیده، محدود کردن تلاش‌های ناموفق.</li>
+                <li><b>در برابر حملات جانبی:</b> استفاده از پیاده‌سازی‌های مقاوم در برابر حملات جانبی.</li>
+                <li><b>در برابر حملات برخورد:</b> استفاده از SHA-256 یا قوی‌تر.</li>
+                <li><b>در برابر حملات فاکتورگیری:</b> استفاده از کلیدهای RSA ≥ 2048 بیت.</li>
+            </ul>
+
+            <div class="highlight-box">
+                <b>💡 نکته:</b> بهترین دفاع در برابر حملات رمزنگاری، استفاده از استانداردهای به‌روز و مدیریت صحیح کلیدها است.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۴: کارگاه عملی -->
+        <!-- ============================================================ -->
+        <div class="card" id="lab-exercise">
+            <h2>🧪 کارگاه عملی – رمزنگاری</h2>
+            <p>
+                در این کارگاه، شما با ابزارهای رمزنگاری آشنا خواهید شد و یک سناریوی کامل از رمزنگاری، امضا و تحلیل رمز را پیاده‌سازی می‌کنید.
+            </p>
+
+            <h3>🎯 هدف کارگاه:</h3>
+            <ul>
+                <li>آشنایی با OpenSSL و GPG.</li>
+                <li>رمزنگاری و رمزگشایی فایل‌ها با AES و RSA.</li>
+                <li>ایجاد و تأیید امضای دیجیتال.</li>
+                <li>محاسبه هش و تأیید یکپارچگی.</li>
+                <li>شبیه‌سازی یک حمله به رمزنگاری (کرک هش).</li>
+            </ul>
+
+            <h3>🖥️ محیط مورد نیاز:</h3>
+            <ul>
+                <li><b>حمله‌کننده:</b> Kali Linux</li>
+                <li><b>ابزارها:</b> OpenSSL, GPG, HashCat, John the Ripper</li>
+            </ul>
+
+            <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+            <h4>مرحله ۱: رمزنگاری با AES (متقارن)</h4>
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># رمزنگاری فایل با AES-256-CBC
+openssl enc -aes-256-cbc -salt -in secret.txt -out secret.enc -pass pass:myStrongPassword
+
+# رمزگشایی
+openssl enc -aes-256-cbc -d -in secret.enc -out secret.txt -pass pass:myStrongPassword</code></pre>
+            </div>
+
+            <h4>مرحله ۲: رمزنگاری با RSA (نامتقارن)</h4>
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># تولید کلید RSA
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -pubout -out public.pem
+
+# رمزنگاری با کلید عمومی
+openssl rsautl -encrypt -in secret.txt -out secret.enc -pubin -inkey public.pem
+
+# رمزگشایی با کلید خصوصی
+openssl rsautl -decrypt -in secret.enc -out secret.txt -inkey private.pem</code></pre>
+            </div>
+
+            <h4>مرحله ۳: امضای دیجیتال</h4>
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># امضای فایل
+openssl dgst -sha256 -sign private.pem -out file.sig file.txt
+
+# تأیید امضا
+openssl dgst -sha256 -verify public.pem -signature file.sig file.txt</code></pre>
+            </div>
+
+            <h4>مرحله ۴: هش و یکپارچگی</h4>
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># محاسبه هش فایل
+sha256sum file.txt
+openssl dgst -sha256 file.txt
+
+# مقایسه هش‌ها برای تأیید یکپارچگی</code></pre>
+            </div>
+
+            <h4>مرحله ۵: شبیه‌سازی کرک هش</h4>
+            <div class="code-block">
+                
+                <pre dir='ltr'><code dir='ltr'># ایجاد یک فایل هش MD5
+echo -n "password123" | md5sum > hash.txt
+
+# کرک با HashCat
+hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+
+# یا با John the Ripper
+john --format=raw-md5 hash.txt --wordlist=/usr/share/wordlists/rockyou.txt</code></pre>
+            </div>
+
+            <div class="highlight-box">
+                <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند رمزنگاری، امضا و تحلیل رمز تهیه کنید.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۵: تمرین‌های عملی -->
+        <!-- ============================================================ -->
+        <div class="card" id="practice-exercises">
+            <h2>📝 تمرین‌های عملی</h2>
+            <p>
+                این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه رمزنگاری را تقویت کنید.
+            </p>
+
+            <ul>
+                <li>
+                    <b>تمرین ۱ – رمزنگاری با AES:</b>
+                    <br>یک فایل متنی ایجاد کنید و با OpenSSL و AES-256-CBC آن را رمزنگاری و سپس رمزگشایی کنید.
+                </li>
+                <li>
+                    <b>تمرین ۲ – رمزنگاری با RSA:</b>
+                    <br>یک کلید RSA 2048 بیتی تولید کنید و یک فایل را با کلید عمومی رمزنگاری و با کلید خصوصی رمزگشایی کنید.
+                </li>
+                <li>
+                    <b>تمرین ۳ – امضای دیجیتال:</b>
+                    <br>یک فایل را با کلید خصوصی امضا کرده و سپس با کلید عمومی تأیید کنید.
+                </li>
+                <li>
+                    <b>تمرین ۴ – هش:</b>
+                    <br>هش SHA-256 یک فایل را محاسبه کرده و سپس با تغییر یک بیت در فایل، هش جدید را محاسبه کرده و تفاوت را مشاهده کنید.
+                </li>
+                <li>
+                    <b>تمرین ۵ – کرک هش:</b>
+                    <br>یک هش MD5 از یک رمز ضعیف ایجاد کنید و با HashCat یا John the Ripper آن را کرک کنید.
+                </li>
+                <li>
+                    <b>تمرین ۶ – تحقیق:</b>
+                    <br>در مورد یکی از حملات معروف رمزنگاری (مثل Heartbleed یا POODLE) تحقیق کنید و گزارشی تهیه کنید.
+                </li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+        <!-- ============================================================ -->
+        <div class="card" id="glossary">
+            <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+            <p>
+                در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+            </p>
+
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th style="min-width:130px;">واژه</th>
+                        <th style="min-width:100px;">ساختار / مخفف</th>
+                        <th>تعریف ساده</th>
+                        <th>کاربرد در هک</th>
+                        <th>مثال</th>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Symmetric Encryption</span></td>
+                        <td>—</td>
+                        <td>رمزنگاری با یک کلید مشترک</td>
+                        <td>رمزنگاری داده‌های حجیم</td>
+                        <td>AES, DES</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Asymmetric Encryption</span></td>
+                        <td>—</td>
+                        <td>رمزنگاری با دو کلید (عمومی و خصوصی)</td>
+                        <td>تبادل امن کلید و امضا</td>
+                        <td>RSA, ECC</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Hash</span></td>
+                        <td>—</td>
+                        <td>تابع یک‌طرفه با طول ثابت</td>
+                        <td>تأیید یکپارچگی</td>
+                        <td>MD5, SHA-256</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Digital Signature</span></td>
+                        <td>—</td>
+                        <td>معادل الکترونیکی امضای دستی</td>
+                        <td>احراز هویت و عدم انکار</td>
+                        <td>RSA-PSS, ECDSA</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">PKI</span></td>
+                        <td><b>P</b>ublic <b>K</b>ey <b>I</b>nfrastructure</td>
+                        <td>زیرساخت کلید عمومی</td>
+                        <td>مدیریت گواهی‌ها و کلیدها</td>
+                        <td>CA, RA, CRL</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">AES</span></td>
+                        <td><b>A</b>dvanced <b>E</b>ncryption <b>S</b>tandard</td>
+                        <td>استاندارد رمزنگاری پیشرفته</td>
+                        <td>رمزنگاری متقارن استاندارد</td>
+                        <td>AES-256</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">RSA</span></td>
+                        <td><b>R</b>ivest-<b>S</b>hamir-<b>A</b>dleman</td>
+                        <td>الگوریتم رمزنگاری نامتقارن</td>
+                        <td>رمزنگاری و امضا</td>
+                        <td>RSA-2048</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">ECC</span></td>
+                        <td><b>E</b>lliptic <b>C</b>urve <b>C</b>ryptography</td>
+                        <td>رمزنگاری منحنی بیضوی</td>
+                        <td>کلید کوتاه با امنیت بالا</td>
+                        <td>ECDSA</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Cryptanalysis</span></td>
+                        <td>—</td>
+                        <td>تحلیل و شکستن رمزنگاری</td>
+                        <td>پیدا کردن نقاط ضعف</td>
+                        <td>حمله Brute-Force</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">Brute-Force</span></td>
+                        <td>—</td>
+                        <td>امتحان تمام کلیدهای ممکن</td>
+                        <td>کرک رمز با قدرت محاسباتی</td>
+                        <td>HashCat, John</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">OpenSSL</span></td>
+                        <td>—</td>
+                        <td>مجموعه ابزار رمزنگاری</td>
+                        <td>رمزنگاری، هش، امضا</td>
+                        <td>openssl enc</td>
+                    </tr>
+
+                    <tr>
+                        <td><span dir='ltr' class="glossary-term">GPG</span></td>
+                        <td><b>G</b>NU <b>P</b>rivacy <b>G</b>uard</td>
+                        <td>ابزار رمزنگاری متن‌باز</td>
+                        <td>رمزنگاری و امضای فایل‌ها</td>
+                        <td>gpg -c</td>
+                    </tr>
+
+                </table>
+            </div>
+
+            <div class="highlight-box">
+                <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۲۰ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- جمع‌بندی نهایی -->
+        <!-- ============================================================ -->
+        <div class="highlight-box">
+            <b>💡 جمع‌بندی ماژول ۲۰:</b>
+            <p>
+                در این ماژول با یکی از پایه‌ای‌ترین و حیاتی‌ترین حوزه‌های امنیت سایبری، یعنی <b>رمزنگاری</b> آشنا شدید:
+            </p>
+            <ul>
+                <li><b>مفاهیم پایه:</b> متن واضح، متن رمز، کلید، الگوریتم.</li>
+                <li><b>رمزنگاری متقارن:</b> AES, DES, Blowfish, ChaCha20.</li>
+                <li><b>رمزنگاری نامتقارن:</b> RSA, ECC, Diffie-Hellman.</li>
+                <li><b>توابع هش:</b> MD5, SHA-1, SHA-256, BLAKE2.</li>
+                <li><b>امضای دیجیتال:</b> RSA-PSS, ECDSA, EdDSA.</li>
+                <li><b>PKI:</b> CA, RA, گواهی X.509، CRL، OCSP.</li>
+                <li><b>تحلیل رمز:</b> حملات مختلف و روش‌های شکستن رمز.</li>
+                <li><b>حملات به رمزنگاری:</b> Brute-Force, Factoring, Collision.</li>
+                <li><b>ابزارهای رمزنگاری:</b> OpenSSL, GPG, HashCat, John.</li>
+                <li><b>نقش هوش مصنوعی:</b> در تحلیل رمز و تشخیص تهدیدات.</li>
+                <li><b>راه‌های مقابله:</b> الگوریتم‌های به‌روز، مدیریت کلید، رمزنگاری داده‌ها.</li>
+            </ul>
+            <p>
+                <b>🎉 تبریک!</b> شما با اتمام این ماژول، تمام ۲۰ ماژول دوره CEH V13 را تکمیل کرده‌اید. اکنون دانش و مهارت‌های لازم برای تبدیل شدن به یک هکر قانونمند حرفه‌ای را دارید. موفق باشید!
+            </p>
+        </div>
+
+        <!-- ===== فوتر ===== -->
+        <div class="footer">
+            <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+            <p style="font-size:0.8rem; margin-top:6px;">ماژول ۲۰ – Cryptography | آخرین به‌روزرسانی: ۱۴۰۴</p>
+        </div>
+
+        <!-- ===== اسکریپت کپی ===== -->
+        <script>
+            function copyCode(btn) {
+                const codeBlock = btn.closest('.code-block');
+                if (!codeBlock) return;
+                const codeElement = codeBlock.querySelector('code');
+                if (!codeElement) return;
+                const text = codeElement.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    const original = btn.innerText;
+                    btn.innerText = '✅ کپی شد!';
+                    setTimeout(() => {
+                        btn.innerText = original;
+                    }, 2000);
+                }).catch(() => {
+                    alert('خطا در کپی کردن متن');
+                });
+            }
+        </script>
+
+    </body>
+    </html>

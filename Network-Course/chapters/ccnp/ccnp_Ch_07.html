@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۷ CCNP — تضمین شبکه و سرویس‌های زیرساخت</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-07">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۷ — تضمین شبکه و سرویس‌های زیرساخت (Network Assurance)</h1>
+    <div class="meta">
+      <span>📖 ۱۰۰ دقیقه</span>
+      <span>🎯 وزن در ENCOR: ۱۰٪ Network Assurance</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در این فصل با <strong>ابزارهای پایش، عیب‌یابی و تضمین کیفیت شبکه</strong> آشنا می‌شوی.
+      دیگر کافی نیست شبکه را فقط راه‌اندازی کنیم — باید بدانیم چه اتفاقی در شبکه می‌افتد،
+      چرا کند است، چه چیزی خراب شده، و چطور قبل از کاربران بفهمیم.
+    </p>
+    <p>
+      با <span class="term" data-term="netflow">NetFlow</span>،
+      <span class="term" data-term="snmp">SNMPv3</span>،
+      <span class="term" data-term="syslog">Syslog</span>،
+      <span class="term" data-term="ip-sla">IP SLA</span>،
+      <span class="term" data-term="bfd">BFD</span>،
+      <span class="term" data-term="span">SPAN</span> و
+      <strong>Cisco DNA Center Assurance</strong> یاد می‌گیری شبکه را در سطح حرفه‌ای پایش کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه‌ی Network Assurance</li>
+      <li>Syslog — سطوح، ساختار، سرور مرکزی</li>
+      <li>SNMP — نسخه‌ها، MIB، OID، Trap vs Inform</li>
+      <li>SNMPv3 — Authentication و Encryption</li>
+      <li>NetFlow — Flexible NetFlow و تحلیل ترافیک</li>
+      <li>IP SLA — پایش Latency، Jitter، Reachability</li>
+      <li>BFD — تشخیص سریع قطعی لینک</li>
+      <li>SPAN/RSPAN/ERSPAN — تحلیل ترافیک</li>
+      <li>Debug، Conditional Debug و Ping/Traceroute</li>
+      <li>Cisco DNA Center — Assurance و Health Score</li>
+      <li>NETCONF و RESTCONF — مدیریت قابل برنامه‌ریزی</li>
+      <li>ابزارهای تحلیل ترافیک و Performance</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>اگر شبکه کند شده، اولین ابزاری که برای عیب‌یابی استفاده می‌کنی چیست؟</li>
+      <li>تفاوت SNMP Trap و Inform چیست؟</li>
+      <li>NetFlow چه چیزی به ما می‌گوید که SNMP نمی‌گوید؟</li>
+      <li>BFD چگونه زمان همگرایی OSPF را از چند ثانیه به چند صد میلی‌ثانیه می‌رساند؟</li>
+      <li>DNA Center Assurance چگونه مشکلات را قبل از کاربران پیدا می‌کند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۷.۱ ==== -->
+    <h3>۷.۱ مفاهیم پایه‌ی Network Assurance</h3>
+    <p>
+      Network Assurance یعنی اطمینان از این‌که شبکه در حال کارکردن طبق طراحی است.
+      سه ستون اصلی:
+    </p>
+
+    <ul>
+      <li><strong>Monitoring (پایش):</strong> دیدن وضعیت لحظه‌ای — SNMP، Syslog، NetFlow</li>
+      <li><strong>Baseline (خط پایه):</strong> ثبت وضعیت عادی — برای مقایسه با زمان مشکل</li>
+      <li><strong>Analytics (تحلیل):</strong> پیش‌بینی و کشف الگو — DNA Center، AIOps</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      قبل از هر عیب‌یابی، Baseline داشته باش. بدون آن، نمی‌دانی «عادی» چه شکلی است.
+    </div>
+
+    <!-- ==== ۷.۲ ==== -->
+    <h3>۷.۲ Syslog — سطوح، ساختار، سرور مرکزی</h3>
+    <p>
+      <span class="term" data-term="syslog">Syslog</span> استاندارد ارسال پیام‌های سیستمی
+      به سرور مرکزی است (RFC 5424). هر دستگاه سیسکو پیام‌های خود را با Priority مشخص
+      به سرور Syslog می‌فرستد.
+    </p>
+
+    <p><strong>۸ سطح Syslog (Severity Level):</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Level</th>
+          <th style="padding:6px;border:1px solid var(--border)">نام</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">0</td><td style="padding:6px;border:1px solid var(--border)">Emergency</td><td style="padding:6px;border:1px solid var(--border)">سیستم از کار افتاده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">Alert</td><td style="padding:6px;border:1px solid var(--border)">اقدام فوری لازم</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">Critical</td><td style="padding:6px;border:1px solid var(--border)">شرایط بحرانی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">Error</td><td style="padding:6px;border:1px solid var(--border)">خطا</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">4</td><td style="padding:6px;border:1px solid var(--border)">Warning</td><td style="padding:6px;border:1px solid var(--border)">هشدار</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">5</td><td style="padding:6px;border:1px solid var(--border)">Notification</td><td style="padding:6px;border:1px solid var(--border)">اطلاع‌رسانی عادی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">6</td><td style="padding:6px;border:1px solid var(--border)">Informational</td><td style="padding:6px;border:1px solid var(--border)">اطلاعات عمومی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">7</td><td style="padding:6px;border:1px solid var(--border)">Debugging</td><td style="padding:6px;border:1px solid var(--border)">پیام‌های Debug</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>ساختار پیام Syslog:</strong></p>
+    <pre><code>%FACILITY-SEVERITY-MNEMONIC: Message text
+
+مثال:
+%LINK-3-UPDOWN: Interface Gi0/1, changed state to up
+%OSPF-5-ADJCHG: Process 1, Nbr 2.2.2.2 on Gi0/0 from LOADING to FULL
+
+Facility: نوع سرویس (LINK, OSPF, SYS, ...)
+Severity: عدد 0-7
+Mnemonic: کد پیام</code></pre>
+
+    <pre><code>! پیکربندی Syslog Client
+Router(config)# logging host 192.168.1.100
+Router(config)# logging trap informational
+! trap = حداکثر سطحی که ارسال می‌شود (5 = Notification، 6 = Informational)
+
+Router(config)# logging source-interface Loopback0
+Router(config)# logging buffered 16384 debugging
+! Buffered: نگه‌داری در حافظه محلی
+! 16384 = حجم Buffer
+
+Router(config)# service timestamps log datetime msec localtime show-timezone
+Router(config)# service sequence-numbers
+! اضافه کردن شماره ترتیبی به هر پیام
+
+! بررسی
+Router# show logging
+Router# show logging | include ERROR
+Router# show logging | include OSPF
+Router# show logging history
+
+! ارسال به چند سرور
+Router(config)# logging host 192.168.1.100
+Router(config)# logging host 192.168.1.101 transport tcp port 514
+! می‌توانی از TCP یا UDP استفاده کنی — TCP مطمئن‌تر</code></pre>
+
+    <!-- ==== ۷.۳ ==== -->
+    <h3>۷.۳ SNMP — نسخه‌ها، MIB، OID، Trap vs Inform</h3>
+    <p>
+      <span class="term" data-term="snmp">SNMP</span> (Simple Network Management Protocol)
+      پروتکل استاندارد پایش و مدیریت دستگاه‌های شبکه است.
+    </p>
+
+    <p><strong>سه نسخه‌ی اصلی:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">SNMPv1</th>
+          <th style="padding:6px;border:1px solid var(--border)">SNMPv2c</th>
+          <th style="padding:6px;border:1px solid var(--border)">SNMPv3</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Authentication</td><td style="padding:6px;border:1px solid var(--border)">Community</td><td style="padding:6px;border:1px solid var(--border)">Community</td><td style="padding:6px;border:1px solid var(--border)">User + Auth</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Encryption</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ (AES/DES)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Bulk Retrieval</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">✅ GetBulk</td><td style="padding:6px;border:1px solid var(--border)">✅ GetBulk</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">امنیت</td><td style="padding:6px;border:1px solid var(--border)">🔴 ضعیف</td><td style="padding:6px;border:1px solid var(--border)">🟡 متوسط</td><td style="padding:6px;border:1px solid var(--border)">🟢 قوی</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>مفاهیم کلیدی SNMP:</strong></p>
+    <ul>
+      <li><strong>MIB (Management Information Base):</strong> دیتابیس سلسله‌مراتبی اطلاعات دستگاه</li>
+      <li><strong>OID (Object Identifier):</strong> آدرس هر مقدار در MIB — مثل <code>1.3.6.1.2.1.1.5</code> (نام دستگاه)</li>
+      <li><strong>Agent:</strong> نرم‌افزار روی دستگاه که به NMS پاسخ می‌دهد</li>
+      <li><strong>NMS (Network Management Station):</strong> سرور پایش (SolarWinds، PRTG، Zabbix)</li>
+      <li><strong>Polling:</strong> NMS به دستگاه درخواست می‌فرستد (Get، GetNext، GetBulk)</li>
+      <li><strong>Trap:</strong> دستگاه خودش به NMS خبر می‌دهد (بدون ACK)</li>
+      <li><strong>Inform:</strong> مثل Trap ولی با ACK — مطمئن‌تر</li>
+    </ul>
+
+    <pre><code>! ===== SNMPv2c =====
+Router(config)# snmp-server community PUBLIC-RO ro
+! RO = فقط خواندن
+Router(config)# snmp-server community PRIVATE-RW rw
+! RW = خواندن و نوشتن (توصیه نمی‌شود)
+
+Router(config)# snmp-server location Tehran-DC1
+Router(config)# snmp-server contact admin@company.ir
+Router(config)# snmp-server host 192.168.1.100 version 2c PUBLIC-RO
+Router(config)# snmp-server enable traps
+Router(config)# snmp-server enable traps ospf
+! محدودسازی Trapها
+
+! بررسی
+Router# show snmp
+Router# show snmp community
+Router# show snmp host
+
+! ===== SNMPv3 =====
+Router(config)# snmp-server group ADMINS v3 priv
+! priv = Auth + Encryption
+
+Router(config)# snmp-server user admin ADMINS v3 auth sha AuthPass@2024 priv aes 128 PrivPass@2024
+
+Router(config)# snmp-server host 192.168.1.100 version 3 priv admin
+
+! بررسی
+Router# show snmp user
+Router# show snmp group</code></pre>
+
+    <!-- ==== ۷.۴ ==== -->
+    <h3>۷.۴ SNMPv3 — Authentication و Encryption</h3>
+    <p>SNMPv3 سه سطح امنیتی دارد:</p>
+
+    <ul>
+      <li><strong>noAuthNoPriv:</strong> بدون Authentication و رمزنگاری (مثل v1/v2c)</li>
+      <li><strong>authNoPriv:</strong> با Authentication ولی بدون رمزنگاری</li>
+      <li><strong>authPriv:</strong> با هر دو — <strong>امن‌ترین</strong></li>
+    </ul>
+
+    <p><strong>الگوریتم‌های Authentication:</strong></p>
+    <ul>
+      <li>MD5 (قدیمی، 128-bit)</li>
+      <li>SHA (Secure Hash Algorithm، 160-bit)</li>
+      <li>SHA-256 (مدرن، توصیه‌شده)</li>
+    </ul>
+
+    <p><strong>الگوریتم‌های Encryption:</strong></p>
+    <ul>
+      <li>DES (56-bit — ضعیف)</li>
+      <li>3DES (168-bit)</li>
+      <li>AES-128 (استاندارد فعلی)</li>
+      <li>AES-256 (قوی‌ترین)</li>
+    </ul>
+
+    <pre><code>! SNMPv3 پیشرفته با AES-256
+Router(config)# snmp-server group SECURE-ADMIN v3 priv
+
+Router(config)# snmp-server user secureadmin SECURE-ADMIN v3 \
+    auth sha AuthKey@2024 \
+    priv aes 256 PrivKey@2024
+
+! Trap به NMS
+Router(config)# snmp-server host 192.168.1.100 version 3 priv secureadmin
+
+! بررسی
+Router# show snmp user secureadmin
+Router# show snmp group SECURE-ADMIN
+
+! تست از NMS با snmpwalk:
+! snmpwalk -v3 -l authPriv -u secureadmin -a SHA -A AuthKey@2024 \
+!          -x AES -X PrivKey@2024 192.168.1.1 1.3.6.1.2.1.1</code></pre>
+
+    <!-- ==== ۷.۵ ==== -->
+    <h3>۷.۵ NetFlow — Flexible NetFlow و تحلیل ترافیک</h3>
+    <p>
+      <span class="term" data-term="netflow">NetFlow</span> یک تکنولوژی سیسکو است
+      که اطلاعات جریان‌های ترافیکی را جمع‌آوری می‌کند. هر «Flow» با ۷ کلید
+      تعریف می‌شود:
+    </p>
+
+    <ul>
+      <li>Source IP</li>
+      <li>Destination IP</li>
+      <li>Source Port</li>
+      <li>Destination Port</li>
+      <li>Protocol (TCP، UDP، ICMP)</li>
+      <li>Type of Service (ToS)</li>
+      <li>Input Interface</li>
+    </ul>
+
+    <p><strong>دو نسخه‌ی NetFlow:</strong></p>
+    <ul>
+      <li><strong>Traditional NetFlow:</strong> ثابت با ۷ کلید</li>
+      <li><strong>Flexible NetFlow:</strong> قابل تنظیم — می‌توانی کلیدها و فیلدهای خروجی را خودت تعریف کنی</li>
+    </ul>
+
+    <pre><code>! ===== Flexible NetFlow =====
+
+! گام ۱: Flow Record — تعریف چه چیزی جمع‌آوری شود
+Router(config)# flow record MY-RECORD
+Router(config-flow-record)# match ipv4 source address
+Router(config-flow-record)# match ipv4 destination address
+Router(config-flow-record)# match ipv4 protocol
+Router(config-flow-record)# match transport source-port
+Router(config-flow-record)# match transport destination-port
+Router(config-flow-record)# collect counter bytes
+Router(config-flow-record)# collect counter packets
+Router(config-flow-record)# collect timestamp sys-uptime first
+Router(config-flow-record)# collect timestamp sys-uptime last
+Router(config-flow-record)# exit
+
+! گام ۲: Flow Exporter — تعریف سرور مقصد
+Router(config)# flow exporter NETFLOW-SRV
+Router(config-flow-exporter)# destination 192.168.1.100
+Router(config-flow-exporter)# source Loopback0
+Router(config-flow-exporter)# transport udp 2055
+Router(config-flow-exporter)# template data timeout 60
+Router(config-flow-exporter)# exit
+
+! گام ۳: Flow Monitor — ترکیب Record و Exporter
+Router(config)# flow monitor MY-MONITOR
+Router(config-flow-monitor)# record MY-RECORD
+Router(config-flow-monitor)# exporter NETFLOW-SRV
+Router(config-flow-monitor)# cache timeout active 60
+Router(config-flow-monitor)# cache timeout inactive 15
+Router(config-flow-monitor)# exit
+
+! گام ۴: اعمال روی Interface
+Router(config)# interface Gi0/0
+Router(config-if)# ip flow monitor MY-MONITOR input
+Router(config-if)# ip flow monitor MY-MONITOR output
+Router(config-if)# exit
+
+! بررسی
+Router# show flow record MY-RECORD
+Router# show flow exporter NETFLOW-SRV
+Router# show flow monitor MY-MONITOR
+Router# show flow monitor MY-MONITOR cache format table
+Router# show flow interface Gi0/0</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 NetFlow در برابر SNMP</div>
+      <ul style="margin:6px 0 0">
+        <li><strong>SNMP:</strong> چه مقدار ترافیک عبور می‌کند؟ (byte counters)</li>
+        <li><strong>NetFlow:</strong> چه نوع ترافیکی از کجا به کجا می‌رود؟ (source/destination)</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۷.۶ ==== -->
+    <h3>۷.۶ IP SLA — پایش Latency، Jitter، Reachability</h3>
+    <p>
+      <span class="term" data-term="ip-sla">IP SLA</span> یک ابزار فعال (Active)
+      است که از یک روتر ترافیک مصنوعی می‌فرستد و پاسخ را اندازه می‌گیرد:
+    </p>
+
+    <p><strong>چیزهایی که IP SLA اندازه می‌گیرد:</strong></p>
+    <ul>
+      <li>RTT (Round Trip Time)</li>
+      <li>Jitter (تغییرات تأخیر)</li>
+      <li>Packet Loss</li>
+      <li>Connectivity (ICMP Echo، TCP Connect، HTTP Get)</li>
+      <li>VoIP Quality (MOS Score)</li>
+    </ul>
+
+    <pre><code>! ===== IP SLA Operation =====
+Router(config)# ip sla 1
+Router(config-ip-sla)# icmp-echo 8.8.8.8 source-interface Loopback0
+Router(config-ip-sla)# frequency 30
+Router(config-ip-sla)# timeout 5000
+Router(config-ip-sla)# threshold 500
+Router(config-ip-sla)# exit
+
+! زمان‌بندی
+Router(config)# ip sla schedule 1 life forever start-time now
+
+! بررسی
+Router# show ip sla configuration 1
+Router# show ip sla statistics 1
+Router# show ip sla summary
+
+! ===== IP SLA با Object Tracking =====
+Router(config)# track 1 ip sla 1 reachability
+! اگر IP SLA شکست خورد، Track Down می‌شود
+
+! استفاده در HSRP
+Router(config)# interface Gi0/0
+Router(config-if)# standby 1 ip 192.168.1.1
+Router(config-if)# standby 1 priority 110
+Router(config-if)# standby 1 track 1 decrement 30
+! اگر Track Down شد، Priority ۳۰ کم می‌شود
+
+! استفاده در Static Route
+Router(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 1
+
+! بررسی
+Router# show track
+Router# show track 1</code></pre>
+
+    <!-- ==== ۷.۷ ==== -->
+    <h3>۷.۷ BFD — تشخیص سریع قطعی لینک</h3>
+    <p>
+      <span class="term" data-term="bfd">BFD</span> (Bidirectional Forwarding Detection)
+      یک پروتکل سبک است که در <strong>چند صد میلی‌ثانیه</strong> قطعی لینک را
+      تشخیص می‌دهد — در مقابل OSPF که چند ثانیه طول می‌کشد.
+    </p>
+
+    <p><strong>مزایای BFD:</strong></p>
+    <ul>
+      <li>همگرایی سریع (sub-second)</li>
+      <li>مستقل از Routing Protocol — روی OSPF، BGP، EIGRP، HSRP کار می‌کند</li>
+      <li>Overhead کم (UDP/3784)</li>
+      <li>Echo Mode با UDP/3785</li>
+    </ul>
+
+    <pre><code>! ===== BFD با OSPF =====
+Router(config)# interface Gi0/0
+Router(config-if)# bfd interval 100 min_rx 100 multiplier 3
+! interval: هر ۱۰۰ms یک Hello BFD
+! multiplier: ۳ بار Hello دریافت نشد → Down
+! زمان تشخیص: 100 × 3 = 300ms
+
+Router(config)# router ospf 1
+Router(config-router)# bfd all-interfaces
+! یا روی Interface خاص:
+Router(config)# interface Gi0/0
+Router(config-if)# ip ospf bfd
+
+! ===== BFD با BGP =====
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.2 fall-over bfd
+
+! ===== BFD با EIGRP =====
+Router(config)# router eigrp 100
+Router(config-router)# bfd all-interfaces
+
+! ===== BFD با HSRP =====
+Router(config)# interface Gi0/0
+Router(config-if)# standby 1 ip 192.168.1.1
+Router(config-if)# standby 1 bfd
+
+! بررسی
+Router# show bfd neighbors
+Router# show bfd neighbors details
+Router# show bfd interface Gi0/0
+Router# show bfd summary</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      BFD برای لینک‌های حیاتی (بین Data Centerها، ISPهای چندگانه) ضروری است.
+      با BFD، همگرایی OSPF از ۴۰ ثانیه به زیر ۱ ثانیه می‌رسد.
+    </div>
+
+    <!-- ==== ۷.۸ ==== -->
+    <h3>۷.۸ SPAN/RSPAN/ERSPAN — تحلیل ترافیک</h3>
+    <p>
+      <span class="term" data-term="span">SPAN</span> (Switched Port Analyzer)
+      مکانیزم کپی کردن ترافیک یک یا چند پورت به یک پورت مقصد است
+      برای تحلیل با Wireshark یا IDS.
+    </p>
+
+    <p><strong>سه نوع SPAN:</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">محدوده</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>SPAN</strong></td><td style="padding:6px;border:1px solid var(--border)">یک سوئیچ</td><td style="padding:6px;border:1px solid var(--border)">تحلیل محلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>RSPAN</strong></td><td style="padding:6px;border:1px solid var(--border)">چند سوئیچ</td><td style="padding:6px;border:1px solid var(--border)">ارسال به سوئیچ دیگر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>ERSPAN</strong></td><td style="padding:6px;border:1px solid var(--border)">بین سایت‌ها</td><td style="padding:6px;border:1px solid var(--border)">ارسال روی L3 با GRE</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! ===== SPAN Local =====
+Switch(config)# monitor session 1 source interface Gi0/1 both
+! both = هر دو جهت — یا rx / tx
+
+Switch(config)# monitor session 1 destination interface Gi0/10
+! یا:
+Switch(config)# monitor session 1 destination interface Gi0/10 encapsulation replicate
+! replicate = حفظ VLAN Tag اصلی
+
+! چند Source
+Switch(config)# monitor session 1 source interface Gi0/1-5 both
+! یا با VLAN:
+Switch(config)# monitor session 1 source vlan 10 both
+
+! بررسی
+Switch# show monitor session 1
+Switch# show monitor session all
+
+! حذف
+Switch(config)# no monitor session 1
+
+! ===== RSPAN =====
+! روی سوئیچ مبدأ
+Source(config)# vlan 999
+Source(config-vlan)# remote-span
+
+Source(config)# monitor session 1 source interface Gi0/1 both
+Source(config)# monitor session 1 destination remote vlan 999
+
+! روی سوئیچ مقصد
+Dest(config)# vlan 999
+Dest(config-vlan)# remote-span
+
+Dest(config)# monitor session 1 source remote vlan 999
+Dest(config)# monitor session 1 destination interface Gi0/10
+
+! ===== ERSPAN =====
+Router(config)# monitor session 1 type erspan-source
+Router(config-mon-erspan-src)# source interface Gi0/1 both
+Router(config-mon-erspan-src)# no shutdown
+Router(config-mon-erspan-src)# destination
+Router(config-mon-erspan-src-dst)# erspan-id 10
+Router(config-mon-erspan-src-dst)# ip address 192.168.1.100
+Router(config-mon-erspan-src-dst)# origin ip address 192.168.1.1
+Router(config-mon-erspan-src-dst)# exit</code></pre>
+
+    <!-- ==== ۷.۹ ==== -->
+    <h3>۷.۹ Debug، Conditional Debug و Ping/Traceroute</h3>
+
+    <p><strong>Debug حرفه‌ای:</strong></p>
+    <pre><code>! همیشه اول، Debug را محدود کن
+Router(config)# logging console debugging
+Router(config)# no logging console
+! غیرفعال کردن Console Log — تا با Debug غرق نشوی
+
+! Debug روی VTY
+Router# terminal monitor
+Router# terminal no monitor
+
+! ===== Conditional Debug =====
+! فقط پیام‌های مربوط به یک Neighbor یا Interface
+Router# debug ip ospf adjacency
+Router# debug condition interface Gi0/0
+! با این Condition، فقط Debugهای Gi0/0 نمایش داده می‌شوند
+
+Router# debug condition ip 2.2.2.2
+! فقط از این IP
+
+! بررسی
+Router# show debug condition
+
+! حذف
+Router# undebug all
+Router# undebug condition all
+
+! ===== Ping و Traceroute پیشرفته =====
+Router# ping 8.8.8.8 source Loopback0 repeat 100 size 1500
+! repeat: تعداد
+! size: اندازه
+! source: Interface مبدأ
+
+Router# ping 8.8.8.8 df-bit size 1500
+! df-bit: Don't Fragment — برای کشف MTU
+
+Router# traceroute 8.8.8.8 numeric timeout 1 probe 3
+! numeric: بدون DNS
+! probe: تعداد Probe در هر Hop
+
+! Ping با Pattern و Timestamp
+Router# ping 8.8.8.8 data 1234
+! data: الگوی Payload
+
+! ===== Extended Ping =====
+Router# ping
+Protocol [ip]:
+Target IP address: 8.8.8.8
+Repeat count [5]: 100
+Datagram size [100]: 1500
+Timeout in seconds [2]:
+Extended commands [n]: y
+Source address or interface: Loopback0
+...
+! خیلی مفید برای تست MTU</code></pre>
+
+    <!-- ==== ۷.۱۰ ==== -->
+    <h3>۷.۱۰ Cisco DNA Center — Assurance و Health Score</h3>
+    <p>
+      <strong>Cisco DNA Center</strong> (الان Catalyst Center) پلتفرم مرکزی سیسکو
+      است. بخش <strong>Assurance</strong> آن قوی‌ترین ابزار AIOps در شبکه‌های
+      سازمانی است.
+    </p>
+
+    <p><strong>اجزای Assurance:</strong></p>
+    <ul>
+      <li><strong>Health Score:</strong> نمره‌ی ۰-۱۰۰ برای هر دستگاه، Client، Application</li>
+      <li><strong>360° View:</strong> نمای کامل یک Client یا Device</li>
+      <li><strong>Issue Detection:</strong> کشف خودکار مشکلات (Onboarding، Connectivity، Performance)</li>
+      <li><strong>Guided Troubleshooting:</strong> راهنمای گام‌به‌گام عیب‌یابی</li>
+      <li><strong>Path Trace:</strong> نمایش مسیر بسته بین دو Endpoint</li>
+      <li><strong>Network Time Travel:</strong> بررسی وضعیت گذشته (Snapshot)</li>
+      <li><strong>AI/ML:</strong> پیش‌بینی مشکلات، Anomaly Detection</li>
+    </ul>
+
+    <pre><code>! نمونه API برای DNA Center Assurance
+GET https://dnac.company.local/dna/intent/api/v1/network-health
+Headers:
+  X-Auth-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+  Content-Type: application/json
+
+! Response:
+{
+  "version": "1.0",
+  "response": [
+    {
+      "healthScore": 92,
+      "totalCount": 245,
+      "goodCount": 230,
+      "fairCount": 12,
+      "poorCount": 3,
+      "unmonitoredCount": 0,
+      "time": 1728398400000
+    }
+  ]
+}
+
+! Client Detail API
+GET /dna/intent/api/v1/client-detail?macAddress=00:11:22:33:44:55
+! خروجی شامل: Connection، Onboarding، Performance، Issues
+
+! Issue API
+GET /dna/intent/api/v1/issues?priority=P1
+! لیست مشکلات با اولویت P1 (Critical)</code></pre>
+
+    <!-- ==== ۷.۱۱ ==== -->
+    <h3>۷.۱۱ NETCONF و RESTCONF — مدیریت قابل برنامه‌ریزی</h3>
+
+    <p>
+      <span class="term" data-term="netconf">NETCONF</span> و
+      <span class="term" data-term="restconf">RESTCONF</span> پروتکل‌های مدرن
+      مدیریت دستگاه‌های شبکه به‌صورت برنامه‌ریزی‌شده هستند.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">NETCONF</th>
+          <th style="padding:6px;border:1px solid var(--border)">RESTCONF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Transport</td><td style="padding:6px;border:1px solid var(--border)">SSH/830</td><td style="padding:6px;border:1px solid var(--border)">HTTPS/443</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Data Format</td><td style="padding:6px;border:1px solid var(--border)">XML</td><td style="padding:6px;border:1px solid var(--border)">JSON یا XML</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Data Model</td><td style="padding:6px;border:1px solid var(--border)">YANG</td><td style="padding:6px;border:1px solid var(--border)">YANG</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Interface</td><td style="padding:6px;border:1px solid var(--border)">RPC</td><td style="padding:6px;border:1px solid var(--border)">RESTful (GET/POST/PUT/DELETE)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! ===== فعال‌سازی NETCONF/RESTCONF روی سیسکو =====
+Router(config)# netconf-yang
+Router(config)# restconf
+! HTTP/HTTPS
+Router(config)# ip http secure-server
+Router(config)# ip http authentication local
+
+! ===== نمونه RESTCONF با curl =====
+! خواندن وضعیت Interface Gi0/1
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet0%2F1" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:password"
+
+! Response JSON:
+{
+  "ietf-interfaces:interface": {
+    "name": "GigabitEthernet0/1",
+    "type": "iana-if-type:ethernetCsmacd",
+    "enabled": true,
+    "ietf-ip:ipv4": {
+      "address": [
+        {
+          "ip": "192.168.1.1",
+          "netmask": "255.255.255.0"
+        }
+      ]
+    }
+  }
+}
+
+! ===== تغییر Interface با PUT =====
+curl -k -X PUT \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet0%2F1" \
+  -H "Content-Type: application/yang-data+json" \
+  -u "admin:password" \
+  -d '{
+    "ietf-interfaces:interface": {
+      "name": "GigabitEthernet0/1",
+      "type": "iana-if-type:ethernetCsmacd",
+      "enabled": true,
+      "description": "Updated via RESTCONF"
+    }
+  }'</code></pre>
+
+    <!-- ==== ۷.۱۲ ==== -->
+    <h3>۷.۱۲ ابزارهای تحلیل ترافیک و Performance</h3>
+
+    <p><strong>ابزارهای داخلی IOS:</strong></p>
+    <ul>
+      <li><strong>show interfaces:</strong> وضعیت، خطاها، آمار</li>
+      <li><strong>show processes cpu:</strong> مصرف CPU</li>
+      <li><strong>show memory statistics:</strong> مصرف حافظه</li>
+      <li><strong>show platform resources:</strong> منابع سخت‌افزاری</li>
+      <li><strong>show ip traffic:</strong> آمار IP</li>
+      <li><strong>show interface counters errors:</strong> خطاهای Interface</li>
+      <li><strong>show controllers:</strong> اطلاعات لایه ۱</li>
+    </ul>
+
+    <pre><code>! ===== تشخیص Performance Issue =====
+
+! ۱. بررسی CPU
+Router# show processes cpu sorted | exclude 0.00
+Router# show processes cpu history
+! ببین: 5 sec, 1 min, 5 min average
+
+! ۲. بررسی Memory
+Router# show memory statistics
+! Head, Total, Used, Free
+
+! ۳. بررسی Interface
+Router# show interfaces Gi0/0
+! ببین: input errors, CRC, collisions, output drops
+Router# show interfaces Gi0/0 | include error|CRC|drop|collision
+
+! ۴. بررسی Queue Drops
+Router# show interfaces Gi0/0 | include output drops|queue
+Router# show policy-map interface Gi0/0
+
+! ۵. Top Talkers (با NetFlow)
+Router# show flow monitor MY-MONITOR cache sort highest counter bytes top 10
+! Top 10 Talkers بر اساس Bytes
+
+! ۶. Application Traffic
+Router# show flow monitor MY-MONITOR cache format table
+! ببین چه اپلیکیشن‌هایی بیشترین ترافیک را دارند
+
+! ۷. Syslog Analysis
+Router# show logging | include %LINK
+Router# show logging | include %OSPF
+Router# show logging | include %BGP</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ توالی عیب‌یابی حرفه‌ای</div>
+      <ol style="margin:6px 0 0">
+        <li>Check Layer 1: کابل، Interface، Errors</li>
+        <li>Check Layer 2: MAC Table، STP، VLAN</li>
+        <li>Check Layer 3: Routing، Ping، Traceroute</li>
+        <li>Check Application: NetFlow، IP SLA</li>
+        <li>Check Performance: CPU، Memory، Queue Drops</li>
+        <li>Analyze Logs: Syslog، SNMP Traps</li>
+        <li>Use DNA Center Assurance برای همبستگی</li>
+      </ol>
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه Syslog Server مرکزی داشته باش. بدون آن، بعد از Reboot روتر، لاگ‌ها از
+      بین می‌روند. Syslog + NTP دقیق = عیب‌یابی حرفه‌ای.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      SNMPv1 و v2c امن نیستند — Community String به‌صورت Plain-text ارسال می‌شود.
+      روی همه‌ی دستگاه‌ها به SNMPv3 با authPriv مهاجرت کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      BFD + IP SLA + Object Tracking یک ترکیب قدرتمند برای High Availability است.
+      BFD لینک قطع را در ۳۰۰ms تشخیص می‌دهد، IP SLA مسیر را پایش می‌کند،
+      و Tracking به HSRP/Static Route می‌گوید چه کاری کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۸ CCNP وارد <strong>Automation پیشرفته</strong> با
+      <span class="term" data-term="rest-api">REST API</span>،
+      <span class="term" data-term="python">Python</span> و
+      <span class="term" data-term="ansible">Ansible</span> می‌شویم.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>AIOps</strong> و <strong>Predictive Analytics</strong> در
+      DNA Center، می‌توانی مشکلات را قبل از رخ دادن پیش‌بینی کنی —
+      در CCIE Enterprise Infrastructure.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — Syslog + SNMPv3 + NetFlow کامل</h3>
+    <pre><code>! NTP برای زمان دقیق
+Router(config)# ntp server pool.ntp.org
+Router(config)# clock timezone IRST +3 30
+
+! Syslog
+Router(config)# logging host 192.168.1.100
+Router(config)# logging trap informational
+Router(config)# logging source-interface Loopback0
+Router(config)# logging buffered 32768 debugging
+Router(config)# service timestamps log datetime msec localtime show-timezone
+
+! SNMPv3
+Router(config)# snmp-server group ADMINS v3 priv
+Router(config)# snmp-server user monitor ADMINS v3 auth sha AuthP@ss priv aes 128 PrivP@ss
+Router(config)# snmp-server host 192.168.1.100 version 3 priv monitor
+Router(config)# snmp-server enable traps
+Router(config)# snmp-server location Tehran-DC1
+Router(config)# snmp-server contact noc@company.ir
+
+! NetFlow
+Router(config)# flow record TRAFFIC-REC
+Router(config-flow-record)# match ipv4 source address
+Router(config-flow-record)# match ipv4 destination address
+Router(config-flow-record)# match ipv4 protocol
+Router(config-flow-record)# collect counter bytes
+
+Router(config)# flow exporter NETFLOW
+Router(config-flow-exporter)# destination 192.168.1.100
+Router(config-flow-exporter)# source Loopback0
+Router(config-flow-exporter)# transport udp 2055
+
+Router(config)# flow monitor TRAFFIC
+Router(config-flow-monitor)# record TRAFFIC-REC
+Router(config-flow-monitor)# exporter NETFLOW
+
+Router(config)# interface Gi0/0
+Router(config-if)# ip flow monitor TRAFFIC input
+Router(config-if)# ip flow monitor TRAFFIC output
+
+! بررسی
+Router# show logging | include OSPF
+Router# show snmp user
+Router# show flow monitor TRAFFIC cache format table</code></pre>
+
+    <h3>مثال ۲ — IP SLA + Track برای Dual ISP Failover</h3>
+    <pre><code>! IP SLA برای ISP-A
+Router(config)# ip sla 1
+Router(config-ip-sla)# icmp-echo 8.8.8.8 source-interface Gi0/0
+Router(config-ip-sla)# frequency 10
+Router(config-ip-sla)# timeout 1000
+Router(config-ip-sla)# threshold 500
+Router(config-ip-sla)# exit
+Router(config)# ip sla schedule 1 life forever start-time now
+
+! IP SLA برای ISP-B
+Router(config)# ip sla 2
+Router(config-ip-sla)# icmp-echo 1.1.1.1 source-interface Gi0/1
+Router(config-ip-sla)# frequency 10
+Router(config-ip-sla)# exit
+Router(config)# ip sla schedule 2 life forever start-time now
+
+! Object Tracking
+Router(config)# track 1 ip sla 1 reachability
+Router(config)# track 2 ip sla 2 reachability
+
+! Static Route با Track
+Router(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1 track 1
+Router(config)# ip route 0.0.0.0 0.0.0.0 198.51.100.1 10 track 2
+! Floating Static با AD=10 برای Backup
+
+! بررسی
+Router# show ip sla statistics
+Router# show track
+Router# show ip route static</code></pre>
+
+    <h3>مثال ۳ — BFD با OSPF و BGP</h3>
+    <pre><code>! ===== BFD روی Interface =====
+Router(config)# interface Gi0/0
+Router(config-if)# bfd interval 100 min_rx 100 multiplier 3
+Router(config-if)# bfd echo
+! echo = استفاده از Echo Mode (کمتر Overhead)
+
+! ===== BFD با OSPF =====
+Router(config)# router ospf 1
+Router(config-router)# bfd all-interfaces
+
+! یا فقط برای Interface خاص:
+Router(config)# interface Gi0/0
+Router(config-if)# ip ospf bfd
+
+! ===== BFD با BGP =====
+Router(config)# router bgp 65001
+Router(config-router)# neighbor 203.0.113.2 fall-over bfd
+Router(config-router)# neighbor 10.1.1.2 fall-over bfd
+
+! ===== BFD با HSRP =====
+Router(config)# interface Gi0/0
+Router(config-if)# standby 1 ip 192.168.1.1
+Router(config-if)# standby 1 bfd
+
+! ===== BFD با EIGRP =====
+Router(config)# router eigrp 100
+Router(config-router)# bfd all-interfaces
+
+! ===== بررسی =====
+Router# show bfd neighbors
+! خروجی: Address، Interface، State (Up)، Uptime
+Router# show bfd neighbors details
+Router# show bfd summary</code></pre>
+
+    <h3>مثال ۴ — RESTCONF برای خواندن پیکربندی</h3>
+    <pre><code>! فعال‌سازی
+Router(config)# restconf
+Router(config)# netconf-yang
+Router(config)# ip http secure-server
+Router(config)# ip http authentication local
+Router(config)# username admin privilege 15 secret AdminPass
+
+! ===== curl Commands =====
+
+! ۱. خواندن لیست Interfaceها
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۲. خواندن IP یک Interface
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces/interface=GigabitEthernet0%2F0/ietf-ip:ipv4" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۳. خواندن وضعیت OSPF (Cisco IOS XE)
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/Cisco-IOS-XE-ospf-oper:ospf-oper-data" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ۴. خواندن Routing Table
+curl -k -X GET \
+  "https://192.168.1.1/restconf/data/ietf-routing:routing" \
+  -H "Accept: application/yang-data+json" \
+  -u "admin:AdminPass"
+
+! ===== نمونه Python =====
+import requests
+requests.packages.urllib3.disable_warnings()
+
+url = "https://192.168.1.1/restconf/data/ietf-interfaces:interfaces"
+headers = {
+    "Accept": "application/yang-data+json",
+    "Content-Type": "application/yang-data+json"
+}
+response = requests.get(url, headers=headers, auth=("admin", "AdminPass"), verify=False)
+interfaces = response.json()
+for intf in interfaces["ietf-interfaces:interfaces"]["interface"]:
+    print(f"{intf['name']}: Enabled={intf.get('enabled', False)}")</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی با Debug Conditional</h3>
+    <pre><code>! ===== مشکل: OSPF Adjacency Down می‌شود =====
+
+! گام ۱: بررسی Neighbor
+Router# show ip ospf neighbor
+! ببین: State Flapping؟ Last Dead Timer?
+
+! گام ۲: فعال‌سازی Debug محدود
+Router# terminal monitor
+Router# debug condition interface Gi0/0
+Router# debug ip ospf adj
+
+! فقط Debugهای Interface Gi0/0 نمایش داده می‌شوند
+
+! گام ۳: تحلیل
+! اگر "Dead timer expired" دیدی → مشکل فیزیکی
+! اگر "MTU mismatch" دیدی → MTU را همسان کن
+! اگر "Authentication failure" دیدی → Key اشتباه
+! اگر "Area mismatch" دیدی → Area ID اشتباه
+
+! گام ۴: غیرفعال
+Router# undebug all
+Router# undebug condition all
+
+! ===== مشکل: BGP Neighbor Up نمی‌شود =====
+Router# terminal monitor
+Router# debug bgp ipv4 unicast updates 192.168.1.1
+Router# debug bgp ipv4 unicast neighbor 203.0.113.2
+
+! ببین: Connection refused؟ Timeout؟ Notification؟</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3/EVE-NG چهار روتر + یک Syslog Server (Linux) بساز</li>
+      <li>NTP روی همه‌ی روترها با Timezone IRST پیاده کن</li>
+      <li>Syslog Client روی همه با ارسال به Server مرکزی</li>
+      <li>SNMPv3 با authPriv راه‌اندازی کن و با snmpwalk تست کن</li>
+      <li>NetFlow Flexible روی Interface WAN پیاده کن</li>
+      <li>با یک ترافیک FTP از سرور، Flow را در NMS شبیه‌سازی‌شده ببین</li>
+      <li>IP SLA برای پایش ISP-A و ISP-B بساز</li>
+      <li>Object Tracking را به HSRP و Static Route وصل کن</li>
+      <li>یک Link Failure عمدی بساز و ببین Failover چقدر طول می‌کشد</li>
+      <li>BFD را فعال کن و مجدداً Link Failure بساز</li>
+      <li>زمان Failover را با BFD و بدون BFD مقایسه کن (زیر ۱ ثانیه)</li>
+      <li>SPAN Local روی یک Interface راه‌اندازی کن و با Wireshark تحلیل کن</li>
+      <li>RESTCONF را روی یک روتر فعال کن و با curl لیست Interfaceها را بگیر</li>
+      <li>عیب‌یابی: با Debug Conditional یک مشکل OSPF را پیدا کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Syslog نمی‌رسد:</strong> پورت UDP/514 باز، Trap Level اشتباه، یا Source-Interface مشخص نشده.</li>
+      <li><strong>Syslog Message Timestamp اشتباه:</strong> NTP پیکربندی نشده یا Timezone اشتباه.</li>
+      <li><strong>SNMPv3 کار نمی‌کند:</strong> Group، User و Host باید با هم هماهنگ باشند — Auth Pass و Priv Pass یکسان در دو طرف.</li>
+      <li><strong>NetFlow داده نمی‌فرستد:</strong> Exporter، Monitor و اعمال روی Interface — هر سه مورد چک شود.</li>
+      <li><strong>IP SLA همیشه Down:</strong> Source Interface پایدار نیست یا Target بلاک ICMP است.</li>
+      <li><strong>BFD Up نمی‌شود:</strong> Interval و Multiplier باید در دو طرف یکسان باشد.</li>
+      <li><strong>BFD با OSPF کار نمی‌کند:</strong> <code>bfd all-interfaces</code> یا <code>ip ospf bfd</code> فراموش شده.</li>
+      <li><strong>SPAN ترافیک را Drop می‌کند:</strong> پورت Destination بیش از حد بار می‌گیرد — از RSPAN یا Filter استفاده کن.</li>
+      <li><strong>Debug CPU را ۱۰۰٪ می‌کند:</strong> همیشه Conditional Debug و Console Logging Off.</li>
+      <li><strong>DNA Center Device را نمی‌بیند:</strong> SNMP، NETCONF، SSH باید روی Device فعال باشد.</li>
+      <li><strong>RESTCONF خطای 401:</strong> Authentication اشتباه یا HTTP Basic Auth غیرفعال.</li>
+      <li><strong>RESTCONF خطای 404:</strong> مسیر YANG اشتباه — از <code>/restconf/data/ietf-yang-library:modules-state</code> لیست را بگیر.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="netflow">NetFlow</span> •
+      <span class="term" data-term="snmp">SNMP</span> •
+      <span class="term" data-term="syslog">Syslog</span> •
+      <span class="term" data-term="ip-sla">IP SLA</span> •
+      <span class="term" data-term="bfd">BFD</span> •
+      <span class="term" data-term="span">SPAN</span> •
+      <span class="term" data-term="netconf">NETCONF</span> •
+      <span class="term" data-term="restconf">RESTCONF</span> •
+      <span class="term" data-term="dnac">DNA Center</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-07" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) Syslog Level 3 چه نام دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Emergency</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Warning</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Error</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Info</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) Syslog Level 7 چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Notification</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Debugging</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Alert</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> Critical</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) تفاوت SNMP Trap و Inform چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Trap با ACK، Inform بدون ACK</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Inform با ACK، Trap بدون ACK</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> هر دو از TCP استفاده می‌کنند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) در SNMPv3، authPriv به چه معناست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> فقط Authentication</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Authentication + Encryption</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> فقط Encryption</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هیچ‌کدام</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) OID در SNMP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> نام سرور</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Community String</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> آدرس هر مقدار در MIB</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> نسخه SNMP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) NetFlow از چه پورتی به‌طور پیش‌فرض استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> UDP/514</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> UDP/2055 (یا 9995، 9996)</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> TCP/2055</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> UDP/161</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) تفاوت NetFlow و SNMP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> SNMP درباره Flow جزئی می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> SNMP آمار کلی، NetFlow جزئیات جریان</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> NetFlow فقط IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) IP SLA چه چیزی را اندازه نمی‌گیرد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Latency</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> CPU Usage</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Jitter</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Packet Loss</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) BFD از چه پورتی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> TCP/179</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> UDP/500</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> UDP/3784 (و 3785 برای Echo)</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> UDP/4500</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) BFD چه مزیتی نسبت به OSPF Hello دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> تشخیص قطعی در چند صد میلی‌ثانیه</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> کم‌مصرف‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> از TCP استفاده می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) تفاوت SPAN و RSPAN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> RSPAN روی یک سوئیچ</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> SPAN بین سوئیچ‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> SPAN روی یک سوئیچ، RSPAN بین سوئیچ‌ها با VLAN اختصاصی</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) دستور <code>monitor session 1 source interface Gi0/1 both</code> چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> فقط RX را مانیتور می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> هر دو جهت RX و TX را مانیتور می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> فقط TX را مانیتور می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> فقط ARP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) DNA Center Assurance چه چیزی را نمایش می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> فقط Ping</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Health Score، 360° View، Path Trace و AI/ML برای کشف مشکل</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> فقط Routing Table</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط Backup</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) NETCONF از کدام پورت و فرمت استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> TCP/22 و JSON</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> HTTPS/443 و XML</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> SSH/830 و XML</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> UDP/161</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) RESTCONF از کدام Verb برای خواندن استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> POST</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> GET</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> PUT</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> DELETE</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۶) Conditional Debug چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> Debug را رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> Debug را سریع‌تر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> فقط Debugهای مربوط به یک Interface یا IP را نشان می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> Debug را ذخیره می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۷) Object Tracking در IP SLA چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> افزایش سرعت</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> اتصال وضعیت IP SLA به HSRP یا Static Route برای Failover</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> Backup Configuration</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۸) در Flexible NetFlow، ترتیب صحیح پیکربندی چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> Exporter → Record → Monitor</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> Monitor → Exporter → Record</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> Record → Exporter → Monitor</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> هر ترتیبی درست است</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی Enterprise با پایش کامل و تضمین کیفیت بساز:</p>
+    <ul>
+      <li><strong>۴ روتر + ۲ سوئیچ:</strong> با OSPF یا EIGRP بین آنها</li>
+      <li><strong>NTP:</strong> روی همه با Timezone IRST تهران</li>
+      <li><strong>Syslog:</strong> ارسال به سرور مرکزی با Trap Level Informational</li>
+      <li><strong>SNMPv3:</strong> با auth sha + priv aes 128</li>
+      <li><strong>NetFlow Flexible:</strong> روی Interface WAN برای شناسایی Top Talkers</li>
+      <li><strong>IP SLA:</strong> پایش دو ISP مجزا با فرکانس ۱۰ ثانیه</li>
+      <li><strong>Object Tracking:</strong> متصل به Static Route برای Failover خودکار</li>
+      <li><strong>BFD:</strong> فعال روی همه‌ی Interfaceهای بین روترها</li>
+      <li><strong>SPAN:</strong> از اینترفیس WAN به یک PC با Wireshark</li>
+      <li><strong>DNA Center (شبیه‌سازی):</strong> با REST API اطلاعات Health Score را بگیر</li>
+      <li><strong>RESTCONF:</strong> با Python لیست Interfaceها و وضعیت OSPF را استخراج کن</li>
+      <li>مستندسازی کامل Monitoring Plan + Thresholdها + Alertها</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>با Grafana یا Zabbix یک Dashboard ساده برای نمایش Health بساز.</li>
+        <li>یک Alert خودکار با Syslog + Object Tracking + EEM (Embedded Event Manager) بساز.</li>
+        <li>در DNA Center Sandbox، یک Issue عمدی بساز و Guided Troubleshooting را اجرا کن.</li>
+        <li>با Python + Netmiko + RESTCONF، یک اسکریپت برای Health Check بنویس.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Syslog Levels:</strong> 0 Emergency تا 7 Debugging</li>
+      <li><strong>Syslog Structure:</strong> %FACILITY-SEVERITY-MNEMONIC: Message</li>
+      <li><strong>SNMPv1/v2c:</strong> Community String (Plain-text) — <strong>SNMPv3:</strong> User + Auth + Priv</li>
+      <li><strong>SNMPv3 Levels:</strong> noAuthNoPriv، authNoPriv، authPriv</li>
+      <li><strong>Auth:</strong> MD5، SHA، SHA-256 | <strong>Priv:</strong> DES، 3DES، AES-128، AES-256</li>
+      <li><strong>MIB:</strong> دیتابیس سلسله‌مراتبی | <strong>OID:</strong> آدرس هر مقدار</li>
+      <li><strong>Trap:</strong> بدون ACK | <strong>Inform:</strong> با ACK (مطمئن‌تر)</li>
+      <li><strong>NetFlow:</strong> ۷ کلید (Src/Dst IP/Port، Protocol، ToS، Input Intf)</li>
+      <li><strong>Flexible NetFlow:</strong> Record + Exporter + Monitor</li>
+      <li><strong>IP SLA:</strong> Active Monitoring — RTT، Jitter، Packet Loss، MOS</li>
+      <li><strong>Object Tracking:</strong> اتصال IP SLA به HSRP/Static Route</li>
+      <li><strong>BFD:</strong> UDP/3784 (Echo 3785)، همگرایی Sub-second</li>
+      <li><strong>BFD با:</strong> OSPF، BGP، EIGRP، HSRP، Static Route</li>
+      <li><strong>SPAN:</strong> Local — <strong>RSPAN:</strong> بین سوئیچ‌ها — <strong>ERSPAN:</strong> روی L3 با GRE</li>
+      <li><strong>Debug:</strong> همیشه Conditional + terminal monitor + no logging console</li>
+      <li><strong>DNA Center Assurance:</strong> Health Score، 360° View، Path Trace، AI/ML</li>
+      <li><strong>NETCONF:</strong> SSH/830، XML، RPC — <strong>RESTCONF:</strong> HTTPS/443، JSON/XML، RESTful</li>
+      <li><strong>YANG:</strong> زبان مدل‌سازی داده برای NETCONF/RESTCONF</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_06.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-07">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_08.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

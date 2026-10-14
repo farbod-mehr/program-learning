@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۲: چاپ متن، کامنت و تورفتگی | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۲ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور متن چاپ کنید، کامنت بنویسید، تورفتگی را رعایت کنید و خطاهای سینتکس را بخوانید — ساده، عملی و بدون پیش‌نیاز.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۲ از ۳۰ — چاپ متن، کامنت و تورفتگی</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🐣 شروع و مبانی ← فصل ۲
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۲ از ۳۰</span>
+    <h1>🔤 چاپ متن، کامنت و تورفتگی</h1>
+    <p>چطور با کاربر حرف بزنیم؟ چطور کدمان را یادداشت‌گذاری کنیم؟ چرا پایتون این‌قدر به فاصله‌ها اهمیت می‌دهد؟ — <span class="term" data-term="print">print</span>، <span class="term" data-term="comment">comment</span>، <span class="term" data-term="indentation">indentation</span>، <span class="term" data-term="syntax">syntax</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۵۰ دقیقه</span>
+      <span class="pill">🎓 کاملاً مبتدی</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>در فصل گذشته، پایتون را نصب کردیم و یک خط ساده نوشتیم: <code class="inline-code">print("سلام دنیا!")</code>. حالا وقت آن است که بفهمیم دقیقاً <strong>چه چیزی نوشتیم</strong> و چرا کار کرد. این فصل، سه ابزار بنیادین برنامه‌نویسی را به شما یاد می‌دهد که در تمام ۲۸ فصل بعدی، هر روز از آن‌ها استفاده می‌کنید:</p>
+        <ul>
+          <li><strong>چاپ متن با <code class="inline-code">print()</code></strong> — چطور با کاربر حرف بزنیم و نتیجه‌ی کارمان را نشان دهیم.</li>
+          <li><strong>کامنت‌ها</strong> — چطور در کدمان یادداشت بگذاریم که هم خودمان و هم دیگران، بعداً بفهمیم چه کار کرده‌ایم.</li>
+          <li><strong>تورفتگی</strong> — چرا پایتون این‌قدر به فاصله‌ی ابتدای خط اهمیت می‌دهد و بدونش کار نمی‌کند.</li>
+        </ul>
+        <p>در کنار این سه، یک مهارت طلایی هم یاد می‌گیرید: <strong>خواندن پیام خطا</strong>. این مهارت به شما یاد می‌دهد به‌جای ترسیدن از پیام‌های قرمز، دقیقاً بفهمید پایتون چه می‌خواهد بگوید. این یکی از مهم‌ترین تفاوت‌های بین کسی است که در یادگیری موفق می‌شود و کسی که بعد از یک هفته رها می‌کند.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>هر متنی را با <code class="inline-code">print()</code> روی صفحه چاپ کنید.</li>
+          <li>چند چیز را با هم، با جداکننده‌ی دلخواه چاپ کنید.</li>
+          <li>برای خودتان یا دیگران، کامنت‌های مفید بنویسید.</li>
+          <li>مفهوم تورفتگی را بفهمید و خطای مربوط به آن را رفع کنید.</li>
+          <li>یک پیام <code class="inline-code">SyntaxError</code> را بخوانید و بفهمید کجای کد مشکل دارد.</li>
+          <li>از کاربر یک ورودی ساده بگیرید (یک اشاره‌ی کوچک، چون جزئیاتش در فصل ۴ می‌آید).</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          قرار نیست در این فصل «کار حرفه‌ای» بکنیم. هدف این است که با <strong>ابزارهای پایه</strong> راحت شوید. در فصل‌های بعدی، همه‌ی این ابزارها را در قالب برنامه‌های واقعی به کار می‌گیریم.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>چاپ متن</h4><p>print و ابزارهای آن.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>کامنت</h4><p>یادداشت در کد.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>تورفتگی</h4><p>چرا مهم است.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>خواندن خطا</h4><p>SyntaxError.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 اصلاً چرا کامنت می‌نویسیم؟ مگر فقط خودمان کد را ننوشتیم؟</summary>
+          <div class="answer-body"><p>فکر کنید یک دفتر خاطرات را ۶ ماه بعد باز کنید. آیا یادتان است آن روز چرا آن حرف را نوشتید؟ کد هم همین‌طور است. کامنت دو کار می‌کند: (۱) به <strong>خودتانِ آینده</strong> یادآوری می‌کند چرا این تصمیم را گرفته‌اید؛ (۲) به <strong>دیگران</strong> (هم‌تیمی‌ها، معلم، دوست) کمک می‌کند کد شما را بفهمند. حتی اگر پروژه‌ی شخصی باشد، ۶ ماه بعد که به آن نگاه کنید، اگر کامنت نداشته باشد، مثل یک کتاب به زبان خارجی است.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا پایتون تورفتگی را اجباری کرده؟ بقیه زبان‌ها با { } کار می‌کنند و مشکلی ندارند!</summary>
+          <div class="answer-body"><p>این یکی از هوشمندانه‌ترین تصمیمات طراحی پایتون است. وقتی تورفتگی <strong>بخشی از قواعد زبان</strong> باشد، همه‌ی کد پایتون در دنیا شکلی یکنواخت و خوانا دارد. مثلاً در C یا Java می‌توان کدی نوشت که کار کند ولی کاملاً بی‌نظم باشد — چون آن‌ها از <code class="inline-code">{ }</code> استفاده می‌کنند. اما در پایتون، بدون تورفتگی درست، برنامه اصلاً اجرا نمی‌شود. نتیجه: کد پایتون را می‌شود راحت‌تر خواند و نگهداری کرد.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا برنامه‌نویس‌ها از پیام خطا نمی‌ترسند؟</summary>
+          <div class="answer-body"><p>چون پیام خطا، <strong>راهنماست</strong>، نه مجازات. پایتون دقیقاً به شما می‌گوید: «خط ۵ مشکل دارد، به خاطر این کاراکتر، این نوع خطا رخ داده». کسی که می‌تواند این راهنما را بخواند، در چند ثانیه مشکل را حل می‌کند. کسی که نمی‌تواند، سردرگم می‌شود. این فصل، این مهارت را به شما یاد می‌دهد.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل، مستقیماً روی فصل ۱ بنا شده. پس باید این‌ها را انجام داده باشید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب شده و دستور <code class="inline-code">python --version</code> عدد نسخه را نشان می‌دهد.</li>
+          <li>یک پوشه‌ی پروژه دارید (مثلاً <code class="inline-code">py-learn</code>) که در فصل ۱ ساختید.</li>
+          <li>یک ویرایشگر کد مثل VS Code دارید (یا حتی Notepad کافی است برای شروع).</li>
+          <li>یک فایل به نام <code class="inline-code">chapter02.py</code> در پوشه‌ی پروژه ساخته‌اید.</li>
+        </ul>
+        <p>اگر همه‌ی این‌ها را دارید، آماده‌اید. اگر نه، سریع به فصل ۱ برگردید و آن‌ها را انجام دهید — فصل ۲ بدون آن پیش‌نیازها معنی ندارد.</p>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          همه‌ی مثال‌های این فصل را در همان فایل <code class="inline-code">chapter02.py</code> بنویسید و اجرا کنید. به‌جای ساختن فایل جدید برای هر مثال، همه را یکجا نگه دارید. دفعه‌ی بعد که به این فصل برگشتید، همه‌ی یادداشت‌ها و کدهاتان یکجا حاضرند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: سه ابزار بنیادی</h2></div>
+
+        <h3>۱) ابزار اول: چاپ متن با print</h3>
+        <p><code class="inline-code">print()</code> ساده‌ترین ابزاری است که در پایتون دارید. کارش این است: هر چیزی که داخل پرانتز بگذارید، روی صفحه نمایش می‌دهد.</p>
+        <div class="code-box">
+          <div class="code-head"><span>print_simple.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("سلام!")
+print("اسم من پایتون است.")
+print("من می‌توانم متن چاپ کنم.")</code></pre>
+        </div>
+        <p>خروجی در ترمینال:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سلام!
+اسم من پایتون است.
+من می‌توانم متن چاپ کنم.</code></pre>
+        </div>
+        <p>هر <code class="inline-code">print()</code>، یک خط جدید چاپ می‌کند. اگر چند <code class="inline-code">print()</code> پشت سر هم بنویسید، هر کدام در یک خط جداگانه نمایش داده می‌شود.</p>
+
+        <h4>چاپ اعداد</h4>
+        <p>لازم نیست همیشه متن داخل گیومه باشد. اعداد را می‌توانید بدون گیومه چاپ کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>print_numbers.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print(1404)
+print(3.14)
+print(2 + 3)
+print(10 * 5)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">1404
+3.14
+5
+50</code></pre>
+        </div>
+        <p>دقت کنید که <code class="inline-code">2 + 3</code> را داخل <code class="inline-code">print</code> گذاشتیم و خروجی <code class="inline-code">5</code> بود — نه <code class="inline-code">2 + 3</code>. چون پایتون اول محاسبه می‌کند و بعد نتیجه را چاپ می‌کند.</p>
+
+        <h4>چاپ چند چیز با هم</h4>
+        <p>می‌توانید چند چیز را با هم، جدا شده با کاما، چاپ کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>print_multi.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("سن من", 25, "سال است.")
+print("حاصل", 2, "+", 3, "می‌شود", 5)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سن من 25 سال است.
+حاصل 2 + 3 می‌شود 5</code></pre>
+        </div>
+        <p>پایتون به‌طور خودکار بین چیزهای کاما-جدا، یک فاصله می‌گذارد. این رفتار پیش‌فرض است — در ادامه یاد می‌گیریم چطور تغییرش دهیم.</p>
+
+        <h4>دو ابزار مفید در print: sep , end</h4>
+        <p><code class="inline-code">print</code> دو تنظیم اختیاری دارد که به شما کنترل بیشتری می‌دهد:</p>
+        <ul>
+          <li><code class="inline-code">sep</code> — تعیین می‌کند بین مقادیر، چه چیزی قرار بگیرد (پیش‌فرض: یک فاصله).</li>
+          <li><code class="inline-code">end</code> — تعیین می‌کند در پایان، چه چیزی چاپ شود (پیش‌فرض: خط جدید).</li>
+        </ul>
+        <div class="code-box">
+          <div class="code-head"><span>print_advanced.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># با sep جداکننده را عوض می‌کنیم
+print("الف", "ب", "ج", sep=" و ")
+# خروجی: الف و ب و ج
+
+print("1404", "01", "01", sep="/")
+# خروجی: 1404/01/01
+
+print("a", "b", "c", sep="")
+# خروجی: abc
+
+# با end، پایان خط را عوض می‌کنیم
+print("در حال بارگذاری", end="")
+print("...")
+# خروجی: در حال بارگذاری...
+
+print("یک", end=" ")
+print("دو", end=" ")
+print("سه")
+# خروجی: یک دو سه</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          از <code class="inline-code">end=""</code> استفاده کنید هر زمان می‌خواهید خروجی یک <code class="inline-code">print</code> بلافاصله بعد از خروجی <code class="inline-code">print</code> قبلی بیاید — نه در خط جدید.
+        </div>
+
+        <h3>۲) ابزار دوم: کامنت (یادداشت در کد)</h3>
+        <p>گاهی می‌خواهید در کدتان یادداشت بگذارید. اما نمی‌خواهید این یادداشت‌ها در برنامه اجرا شوند. برای همین، از <strong>کامنت</strong> استفاده می‌کنید.</p>
+        <p>در پایتون، کامنت با علامت <code class="inline-code">#</code> شروع می‌شود. هر چیزی که بعد از این علامت تا پایان خط بیاید، توسط پایتون <strong>نادیده گرفته می‌شود</strong>:</p>
+        <div class="code-box">
+          <div class="code-head"><span>comments.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># این یک کامنت است — پایتون آن را نادیده می‌گیرد
+
+print("سلام")  # کامنت می‌تواند بعد از کد هم بیاید
+
+# می‌توانید از کامنت برای خاموش کردن موقت یک خط استفاده کنید:
+# print("این خط اجرا نمی‌شود چون کامنت شده")
+
+print("پایان برنامه")</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">سلام
+پایان برنامه</code></pre>
+        </div>
+
+        <h4>چه زمانی کامنت بنویسیم؟ چه زمانی نه؟</h4>
+        <p>کامنت‌ها ابزار خوبی‌اند، اما زیاده‌روی در آن‌ها هم بد است. قاعده‌ی ساده:</p>
+        <ul>
+          <li>✅ <strong>کامنت بگذارید وقتی «چرا» این کار را کرده‌اید مهم است.</strong> مثلاً: «# چک می‌کنیم که ورودی کاربر خالی نباشد».</li>
+          <li>❌ <strong>کامنت نگذارید وقتی «چی» واضح است.</strong> مثلاً: «# این خط عدد ۵ را چاپ می‌کند» برای <code class="inline-code">print(5)</code> — این کامنت تکراری است و فایده‌ای ندارد.</li>
+        </ul>
+
+        <h4>کامنت‌های چندخطی</h4>
+        <p>اگر خواستید چند خط کامنت پشت سر هم بنویسید، دو راه دارید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>multi_comment.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># راه اول: هر خط را با # شروع کنید
+# این یک توضیح طولانی است
+# که به چند خط رسیده
+# و خط به خط نوشته شده
+
+# راه دوم: از سه گیومه استفاده کنید
+"""
+این هم راه دومی است.
+می‌توانید چند خط متن اینجا بنویسید
+و پایتون همه را نادیده می‌گیرد.
+"""
+
+print("اتمام")</code></pre>
+        </div>
+        <p>هر دو راه کار می‌کنند. راه اول رایج‌تر است چون استاندارد پایتون است. راه دوم به‌نوعی «سوءاستفاده‌ی هوشمندانه» است و در بخش‌های بعدی می‌فهمید که استفاده‌ی اصلی‌اش جای دیگری است.</p>
+
+        <h3>۳) ابزار سوم: تورفتگی (Indentation)</h3>
+        <p>حالا مهم‌ترین ابزار این فصل: <strong>تورفتگی</strong>. تورفتگی یعنی فاصله‌ای که در ابتدای یک خط می‌گذارید. در بیشتر زبان‌ها این فاصله اختیاری و فقط برای زیبایی است. اما در پایتون، <strong>تورفتگی بخشی از دستور زبان است</strong> — بدون آن، برنامه کار نمی‌کند.</p>
+        <p>چرا؟ چون پایتون با تورفتگی می‌فهمد چه چیزی داخل چه چیزی است. اما چون هنوز با دستورهای «بلوکی» مثل <code class="inline-code">if</code> و <code class="inline-code">for</code> کار نکرده‌ایم، فعلاً در سطح ساده‌ای با این مفهوم آشنا می‌شویم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>indentation_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("این خط تورفتگی ندارد")
+print("این هم ندارد")
+print("همه در یک سطح، پشت سر هم اجرا می‌شوند")</code></pre>
+        </div>
+        <p>این کد، سه خط چاپ می‌کند. همه‌ی خطوط در سطح صفر (بدون تورفتگی) هستند، پس همه‌شان یکی پس از دیگری اجرا می‌شوند.</p>
+        <p>حالا یک کد با تورفتگی ناخواسته:</p>
+        <div class="code-box">
+          <div class="code-head"><span>bad_indentation.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("خط اول")
+    print("خط دوم با تورفتگی ناخواسته")
+print("خط سوم")</code></pre>
+        </div>
+        <p>اگر این کد را اجرا کنید، خطای زیر را می‌بینید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خطای ناشی از تورفتگی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">File "bad_indentation.py", line 2
+    print("خط دوم با تورفتگی ناخواسته")
+    ^
+IndentationError: unexpected indent</code></pre>
+        </div>
+        <p><strong>معنی خطا:</strong> «تو یه فاصله‌ی غیرمنتظره اول این خط گذاشتی، در حالی که من انتظار نداشتم». پایتون متوجه شده که تورفتگی این خط، هیچ دلیلی ندارد — چون قبلش هیچ دستوری مثل <code class="inline-code">if</code> یا <code class="inline-code">for</code> نیامده.</p>
+
+        <h4>قاعده‌ی استاندارد تورفتگی در پایتون</h4>
+        <ul>
+          <li>هر سطح تورفتگی، <strong>۴ فاصله (Space)</strong> است.</li>
+          <li>هرگز از <code class="inline-code">Tab</code> استفاده نکنید، مگر اینکه مطمئن شوید ویرایشگرتان آن را به ۴ فاصله تبدیل می‌کند.</li>
+          <li>هرگز Tab و Space را با هم قاطی نکنید — این کار باعث خطای گیج‌کننده می‌شود.</li>
+        </ul>
+        <div class="callout warn">
+          <b class="title">⚠️ هشدار مهم</b>
+          در VS Code، تنظیمات را یک‌بار بررسی کنید: پایین-راست پنجره باید <em>Spaces: 4</em> نوشته باشد. اگر نوشته <em>Tab Size: 4</em>، روی آن کلیک کنید و <em>Indent Using Spaces</em> را انتخاب کنید. این کار از ۹۰٪ خطاهای تورفتگی جلوگیری می‌کند.
+        </div>
+
+        <h3>۴) ابزار چهارم: خواندن پیام خطا (بدون ترس)</h3>
+        <p>حتی اگر همه‌چیز را درست بنویسید، گاهی اشتباه می‌کنید و پایتون پیام خطا می‌دهد. خوبی‌اش این است که پایتون پیام‌های <strong>بسیار واضح و راهنما</strong> می‌دهد. فقط باید بدانید چطور بخوانیدشان.</p>
+        <p>پیام خطا از سه بخش تشکیل می‌شود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار پیام خطا</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">File "نام فایل.py", line شماره
+    محتوای خط اشتباه
+    ^  (علامت روی محل مشکل)
+نام خطا: توضیح خطا</code></pre>
+        </div>
+        <p>بیایید چند خطای واقعی را با هم بررسی کنیم. یک فایل جدید با نام <code class="inline-code">errors.py</code> بسازید و این خطوط را در آن تایپ کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>errors.py — سه خطا با هم</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">print("سلام"
+print('خوبی؟")
+print(پایان)</code></pre>
+        </div>
+        <p>پایتون فقط <strong>اولین</strong> خطا را گزارش می‌دهد (چون نمی‌تواند ادامه دهد):</p>
+        <div class="code-box">
+          <div class="code-head"><span>خطای اول</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">File "errors.py", line 1
+    print("سلام"
+         ^
+SyntaxError: '(' was never closed</code></pre>
+        </div>
+        <p>بخوانیدش:</p>
+        <ul>
+          <li><strong>File "errors.py", line 1</strong> — خط ۱ مشکل دارد.</li>
+          <li><strong>print("سلام"</strong> — همین خط را نشان می‌دهد.</li>
+          <li><strong>^</strong> — زیر پرانتز باز.</li>
+          <li><strong>SyntaxError: '(' was never closed</strong> — «پرانتز بسته نشده».</li>
+        </ul>
+        <p>حالا درستش کنید، یعنی در انتهای خط یک <code class="inline-code">)</code> اضافه کنید. سپس فایل را دوباره اجرا کنید تا خطای دوم را ببینید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خطای دوم</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">File "errors.py", line 2
+    print('خوبی؟")
+          ^
+SyntaxError: unterminated string literal</code></pre>
+        </div>
+        <p>یعنی: «رشته‌ی متنی که شروع شده، تموم نشده». علتش این است که با <code class="inline-code">'</code> باز شده و با <code class="inline-code">"</code> بسته شده. باید هر دو یکسان باشند.</p>
+        <p>اصلاح کنید و دوباره اجرا کنید. حالا خطای سوم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خطای سوم</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">File "errors.py", line 3
+    print(پایان)
+    ^
+SyntaxError: invalid character 'پ' (U+067E)</code></pre>
+        </div>
+        <p>این خطا خیلی آموزنده است: «کاراکتر نامعتبر». پایتون به شما می‌گوید که حرف <code class="inline-code">پ</code> در این محل مجاز نیست. چرا؟ چون پایتون فقط داخل <strong>گیومه‌ها</strong> اجازه می‌دهد متن فارسی داشته باشید. بیرون از گیومه، فقط باید از حروف لاتین برای نام متغیرها، توابع و... استفاده کنید.</p>
+        <p>اصلاح صحیح: <code class="inline-code">print("پایان")</code> — متن فارسی داخل گیومه.</p>
+
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          هر وقت پیام <code class="inline-code">SyntaxError</code> دیدید، به این ترتیب عمل کنید: <strong>۱)</strong> شماره‌ی خط را پیدا کنید، <strong>۲)</strong> خود خط را با دقت بخوانید، <strong>۳)</strong> به ترتیب به این سه چیز شک کنید: پرانتز، گیومه، دو-نقطه (<code class="inline-code">:</code>). ۹۰٪ خطاها یکی از همین سه‌تاست.
+        </div>
+
+        <h3>۵) اشاره‌ای کوتاه به ورودی کاربر: input</h3>
+        <p>تا اینجا فقط برنامه حرف می‌زد. حالا بیایید یک اشاره‌ی کوتاه کنیم به اینکه کاربر هم می‌تواند حرف بزند. ابزارش <code class="inline-code">input()</code> است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>first_input.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">name = input("اسم شما چیست؟ ")
+print("سلام", name)
+print("از آشنایی با شما خوشحالم!")</code></pre>
+        </div>
+        <p>وقتی این برنامه را اجرا کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>اجرا در ترمینال</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">اسم شما چیست؟ علی
+سلام علی
+از آشنایی با شما خوشحالم!</code></pre>
+        </div>
+        <p>توضیح ساده: <code class="inline-code">input()</code> یک سؤال می‌پرسد، منتظر می‌ماند تا کاربر جواب بدهد و Enter بزند، و جواب را ذخیره می‌کند در متغیری به نام <code class="inline-code">name</code>. بعد <code class="inline-code">print("سلام", name)</code> هم متن «سلام» و هم اسم کاربر را چاپ می‌کند.</p>
+        <div class="callout info">
+          <b class="title">📌 کمی صبر کنید</b>
+          کلمه‌ی «متغیر» را همین حالا دیدیم. مفهوم متغیر در فصل ۳ به‌طور کامل و عمیق توضیح داده می‌شود. فعلاً کافی است بدانید متغیر یعنی «جایی برای نگه‌داشتن یک مقدار». اگر گیج شده‌اید، نگران نباشید — طبیعی است. فقط همین مقدار بدانید و ادامه دهید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>بیایید همه‌ی ابزارهای این فصل را در یک برنامه‌ی ساده کنار هم بگذاریم. برنامه‌ای که یک «کارت ویزیت ساده» چاپ می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>my_card.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># برنامه‌ای که کارت ویزیت چاپ می‌کند
+# هدف: تمرین print، کامنت و چیدمان متن
+
+print("=" * 30)
+print("        کارت ویزیت من")
+print("=" * 30)
+print()
+print("نام:", "علی محمدی")
+print("شهر:", "تهران")
+print("سن:", 20)
+print()
+print("علاقه‌مندی‌ها:", "برنامه‌نویسی", "کتاب", "ورزش", sep=" - ")
+print()
+print("=" * 30)</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">==============================
+        کارت ویزیت من
+==============================
+
+نام: علی محمدی
+شهر: تهران
+سن: 20
+
+علاقه‌مندی‌ها: برنامه‌نویسی - کتاب - ورزش
+
+==============================</code></pre>
+        </div>
+        <p>در این مثال، چیزهای زیادی با هم ترکیب شدند:</p>
+        <ul>
+          <li>خط <code class="inline-code">"=" * 30</code> — یعنی ۳۰ تا مساوی پشت سر هم. ما این را قبلاً در فصل ۱ تمرین کردیم، اما اینجا استفاده‌ی بهتری از آن شده. به این می‌گویند «تکرار رشته».</li>
+          <li><code class="inline-code">print()</code> بدون هیچ چیز — یک خط خالی چاپ می‌کند.</li>
+          <li><code class="inline-code">print("نام:", "علی محمدی")</code> — دو مقدار با کاما، پایتون بین‌شان فاصله گذاشته.</li>
+          <li><code class="inline-code">sep=" - "</code> — جداکننده را تغییر داده‌ایم، به‌جای فاصله از « - » استفاده می‌کنیم.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          این برنامه را عیناً تایپ کنید، اجرا کنید، و بعد شروع کنید تغییرش دهید. مثلاً <code class="inline-code">"=" * 30</code> را به <code class="inline-code">"*" * 40</code> تغییر دهید. اطلاعات خودتان را جای اطلاعات نمونه بگذارید. عادت تغییر دادن، مهم‌ترین مهارت یادگیری است.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>حالا نوبت شماست که همه‌ی ابزارهای این فصل را با هم تمرین کنید:</p>
+        <ol>
+          <li>یک فایل جدید به نام <code class="inline-code">menue.py</code> در پوشه‌ی پروژه بسازید (توجه: <code class="inline-code">menu</code> نام یک ماژول داخلی پایتون است، پس اسم متفاوتی انتخاب کردیم).</li>
+          <li>در خط اول، یک کامنت بنویسید که هدف برنامه را توضیح دهد.</li>
+          <li>یک «منوی ساده» با <code class="inline-code">print()</code> بسازید که چیزی شبیه این چاپ کند:</li>
+        </ol>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی هدف</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">╔══════════════════════════════╗
+║        منوی اصلی             ║
+╚══════════════════════════════╝
+
+  ۱. شروع بازی
+  ۲. تنظیمات
+  ۳. راهنما
+  ۴. خروج
+
+  برای انتخاب، شماره را وارد کنید:</code></pre>
+        </div>
+        <ol start="4">
+          <li>سپس یک خط اضافه کنید که از کاربر شماره‌ی گزینه را بگیرد: <code class="inline-code">choice = input(">>> ")</code>.</li>
+          <li>بعد از آن، چاپ کنید که کاربر چه گزینه‌ای انتخاب کرده: <code class="inline-code">print("شما گزینه", choice, "را انتخاب کردید")</code>.</li>
+          <li>حالا یک آزمایش جالب: در خط پانزدهم، عمداً تورفتگی اضافه کنید (چهار فاصله اولش بگذارید). برنامه را اجرا کنید و پیام خطا را ببینید و بخوانید.</li>
+          <li>تورفتگی اضافی را رفع کنید. حالا یک جفت گیومه را عمداً باز بگذارید و دوباره خطا را ببینید.</li>
+          <li>هر دو خطا را رفع کنید تا برنامه بدون مشکل اجرا شود.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>menue.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># برنامه منوی ساده — تمرین print، کامنت و ورودی
+
+print("╔══════════════════════════════╗")
+print("║        منوی اصلی            ║")
+print("╚══════════════════════════════╝")
+print()
+print("  1. شروع بازی")
+print("  2. تنظیمات")
+print("  3. راهنما")
+print("  4. خروج")
+print()
+
+choice = input(">>> ")
+print("شما گزینه", choice, "را انتخاب کردید")</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">╔══════════════════════════════╗
+║        منوی اصلی            ║
+╚══════════════════════════════╝
+
+  1. شروع بازی
+  2. تنظیمات
+  3. راهنما
+  4. خروج
+
+>>> 2
+شما گزینه 2 را انتخاب کردید</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ دو خطای عمدی و چگونگی خواندن‌شان</summary>
+          <div class="answer-body">
+            <p><strong>خطای اول — تورفتگی ناخواسته:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>خطا</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">File "menue.py", line 15
+    print("شما گزینه", choice, "را انتخاب کردید")
+    ^
+IndentationError: unexpected indent</code></pre>
+            </div>
+            <p>یعنی: «تو یه تورفتگی غیرمنتظره گذاشتی که هیچ دلیل بلوکی نداره». راه‌حل: تورفتگی چهار فاصله‌ای را حذف کنید تا خط به سطح صفر برگردد.</p>
+            <p><strong>خطای دوم — گیومه‌ی باز:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>خطا</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">File "menue.py", line 15
+    print("شما گزینه", choice, "را انتخاب کردید)
+                                            ^
+SyntaxError: unterminated string literal (detected at line 15)</code></pre>
+            </div>
+            <p>یعنی: «رشته‌ی متنی که با گیومه شروع شد، به پایان نرسید». راه‌حل: گیومه‌ی پایانی را اضافه کنید.</p>
+            <p><strong>درس مهم:</strong> هر دو خطا برای خط ۱۵ گزارش شدند. اما فقط یکی از آن‌ها را در هر اجرا می‌بینید. پایتون ابتدا اولین خطا را می‌گوید، شما رفع می‌کنید، دوباره اجرا می‌کنید و خطای بعدی را می‌بینید. این چرخه‌ی طبیعی برنامه‌نویسی است.</p>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">menue.py</code> ساخته شده و بدون خطا اجرا می‌شود.</li>
+              <li>با هر سه مفهوم اصلی این فصل راحت هستید: print، کامنت، تورفتگی.</li>
+              <li>حداقل یک خطای <code class="inline-code">IndentationError</code> دیده‌اید و رفعش کرده‌اید.</li>
+              <li>حداقل یک خطای <code class="inline-code">SyntaxError</code> دیده‌اید و رفعش کرده‌اید.</li>
+              <li>حس می‌کنید حالا می‌توانید پیام‌های خطا را بفهمید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>در این فصل، با خطاهای «نوشتاری» سر و کار داریم — یعنی اشتباهاتی که هنگام تایپ کد اتفاق می‌افتند. اگر این‌ها را خوب بشناسید، دیگر هیچ‌وقت غافلگیر نمی‌شوید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: unterminated string literal</b>
+          <p><strong>معنی:</strong> رشته‌ی متنی که با گیومه شروع شده، بسته نشده.</p>
+          <p><strong>علت:</strong> یا گیومه‌ی پایانی را فراموش کرده‌اید، یا گیومه‌ی شروع و پایان یکسان نیستند (مثلاً <code class="inline-code">"</code> با <code class="inline-code">'</code>).</p>
+          <p><strong>راه‌حل:</strong> مطمئن شوید هر <code class="inline-code">"</code> یک جفت <code class="inline-code">"</code> دارد، یا هر <code class="inline-code">'</code> یک جفت <code class="inline-code">'</code>. جفت‌کردن را می‌توانید با چشم چک کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: '(' was never closed</b>
+          <p><strong>معنی:</strong> پرانتز باز شده، بسته نشده.</p>
+          <p><strong>علت:</strong> یکی از پرانتزهای <code class="inline-code">print(</code> را نبسته‌اید.</p>
+          <p><strong>راه‌حل:</strong> خط گزارش‌شده و خط بالاتر را چک کنید. شمارش پرانتزها را انجام دهید. در VS Code وقتی زیر موس روی یک پرانتز ببرید، جفتش با رنگ متفاوت نشان داده می‌شود.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ IndentationError: unexpected indent</b>
+          <p><strong>معنی:</strong> تورفتگی این خط، جایی برای «تعلق داشتن» ندارد.</p>
+          <p><strong>علت:</strong> خطی که نباید تورفتگی داشته باشد، تورفتگی دارد. یا Tab و Space را قاطی کرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> تورفتگی اضافی را حذف کنید. اگر مطمئن نیستید Tab است یا Space، در VS Code پایین‌راست را چک کنید. با <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <em>Convert Indentation to Spaces</em> همه‌ی Tabها را به Space تبدیل می‌کند.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: invalid character 'پ' (U+067E)</b>
+          <p><strong>معنی:</strong> یک کاراکتر (معمولاً فارسی یا عربی) در جای غیرمجاز استفاده شده.</p>
+          <p><strong>علت:</strong> متن فارسی را بیرون از گیومه نوشته‌اید. یا ویرگول فارسی «،» یا گیومه‌ی فارسی «" » استفاده کرده‌اید.</p>
+          <p><strong>راه‌حل:</strong> متن فارسی <strong>فقط داخل گیومه‌ها</strong> مجاز است. اگر می‌خواهید در کد چیزی بنویسید که پایتون اجرا کند، از حروف لاتین استفاده کنید. برای ویرگول و گیومه، حتماً نسخه‌ی لاتین را تایپ کنید: <code class="inline-code">,</code> به‌جای «،» و <code class="inline-code">"</code> به‌جای «"».</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ SyntaxError: expected ':'</b>
+          <p><strong>معنی:</strong> جایی که دو-نقطه (<code class="inline-code">:</code>) لازم است، نیست.</p>
+          <p><strong>علت:</strong> بعد از <code class="inline-code">if</code>، <code class="inline-code">for</code>، <code class="inline-code">while</code>، <code class="inline-code">def</code>، <code class="inline-code">class</code> باید <code class="inline-code">:</code> بیاید. این خطا هنوز برای شما پیش نمی‌آید چون این دستورها در فصل‌های بعدی می‌آیند، اما خوب است بدانید.</p>
+          <p><strong>راه‌حل:</strong> در پایان آن خط، <code class="inline-code">:</code> اضافه کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ کار می‌کند ولی خروجی قدیمی است</b>
+          <p><strong>معنی:</strong> فایل ذخیره نشده است.</p>
+          <p><strong>علت:</strong> در VS Code کد را تغییر داده‌اید اما <kbd>Ctrl</kbd>+<kbd>S</kbd> نزده‌اید. VS Code تغییرات ذخیره‌نشده را با یک نقطه‌ی سفید کنار نام فایل نشان می‌دهد.</p>
+          <p><strong>راه‌حل:</strong> <kbd>Ctrl</kbd>+<kbd>S</kbd> را بزنید. عادت کنید: <strong>تایپ → ذخیره → اجرا</strong>. این ساده‌ترین و پربازده‌ترین عادت برنامه‌نویسی است.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ پیام خطا می‌گوید خط ۱۰ مشکل دارد، اما خط ۱۰ سالم به نظر می‌رسد</b>
+          <p><strong>معنی:</strong> خطای واقعی جای دیگری است، معمولاً بالاتر.</p>
+          <p><strong>علت:</strong> شایع‌ترین حالت: یک پرانتز یا گیومه در خط‌های بالاتر باز مانده. پایتون فقط متوجه می‌شود در خط ۱۰ به بن‌بست خورده — اما شروع مشکل جای دیگری است.</p>
+          <p><strong>راه‌حل:</strong> از خط گزارش‌شده به سمت <strong>بالا</strong> بگردید. تعادل پرانتزها و گیومه‌ها را در همه‌ی خطوط قبل از خط گزارش‌شده چک کنید.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — خروجی با sep و end</summary>
+          <div class="answer-body">
+            <p>با استفاده از <code class="inline-code">print</code> و پارامترهای <code class="inline-code">sep</code> و <code class="inline-code">end</code>، برنامه‌ای بنویسید که خروجی زیر را تولید کند:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی هدف</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">1404/01/01
+نام: علی | شهر: تهران | سن: 20
+بارگذاری... تمام شد</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>answer.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("1404", "01", "01", sep="/")
+print("نام: علی", "شهر: تهران", "سن: 20", sep=" | ")
+print("بارگذاری", end="")
+print("... تمام شد")</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — کامنت‌گذاری کد</summary>
+          <div class="answer-body">
+            <p>کد زیر را در فایلی بنویسید و برای هر خط، یک کامنت <strong>مفید</strong> بنویسید (کامنتی که چیزی فراتر از خود کد بگوید):</p>
+            <div class="code-box">
+              <div class="code-head"><span>بدون کامنت</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("=" * 40)
+print("محاسبه‌گر ساده")
+print("=" * 40)
+print()
+print("5 + 3 =", 5 + 3)
+print("10 - 4 =", 10 - 4)
+print("6 * 7 =", 6 * 7)</code></pre>
+            </div>
+            <p><strong>پاسخ نمونه:</strong></p>
+            <div class="code-box">
+              <div class="code-head"><span>answer.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># یک خط جداکننده برای شروع بخش محاسبه‌گر
+print("=" * 40)
+
+# عنوان برنامه
+print("محاسبه‌گر ساده")
+
+# پایان خط جداکننده
+print("=" * 40)
+
+# یک خط خالی برای فاصله بصری
+print()
+
+# نمونه‌های محاسبه: خروجی هر کدام، نتیجه‌ی محاسبه است
+# که خود پایتون انجام می‌دهد
+print("5 + 3 =", 5 + 3)
+print("10 - 4 =", 10 - 4)
+print("6 * 7 =", 6 * 7)</code></pre>
+            </div>
+            <p><strong>نکته:</strong> کامنت‌ها نباید <em>تکرار</em> کد باشند. مثلاً <code class="inline-code"># چاپ می‌کند 5+3 را</code> کامنت بی‌فایده‌ای است. اما <code class="inline-code"># خود پایتون محاسبه را انجام می‌دهد</code> یک توضیح مفید است، چون چیزی می‌گوید که از کد به‌طور واضح پیدا نیست.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — شکار چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد در فایلی به نام <code class="inline-code">broken.py</code> ذخیره شده. چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("خط اول"
+    print("خط دوم")
+print('خط سوم")
+    print("خط چهارم")</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱ — خط ۱:</strong> پرانتز بسته نشده. باید <code class="inline-code">print("خط اول")</code> باشد.</li>
+              <li><strong>خطا ۲ — خط ۲:</strong> تورفتگی ناخواسته (چهار فاصله). باید حذف شود.</li>
+              <li><strong>خطا ۳ — خط ۳:</strong> گیومه‌ی شروع <code class="inline-code">'</code> و گیومه‌ی پایان <code class="inline-code">"</code> با هم متفاوتند. باید هر دو یکسان باشند.</li>
+              <li><strong>خطا ۴ — خط ۴:</strong> تورفتگی ناخواسته (چهار فاصله). باید حذف شود.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">print("خط اول")
+print("خط دوم")
+print("خط سوم")
+print("خط چهارم")</code></pre>
+            </div>
+            <p><strong>نکته‌ی مهم:</strong> پایتون خطاها را یکی‌یکی گزارش می‌دهد. اگر این کد را اجرا کنید، فقط خطای خط ۱ را می‌بینید. باید رفعش کنید، دوباره اجرا کنید، خطای بعدی را ببینید، رفعش کنید، الی آخر. این چرخه‌ی طبیعی است — نه چیزی برای نگرانی.</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-02" data-title="آزمون فصل ۲ — چاپ متن، کامنت و تورفتگی" data-pass="60">
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۱) خروجی این کد چیست؟<br><code dir="ltr">print("a", "b", "c", sep="-")</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">a b c</button>
+              <button type="button" class="quiz-opt" data-key="b">abc</button>
+              <button type="button" class="quiz-opt" data-key="c">a-b-c</button>
+              <button type="button" class="quiz-opt" data-key="d">a، b، c</button>
+            </div>
+            <div class="quiz-explain">💡 پارامتر <code dir='ltr'>sep</code> جداکننده بین مقادیر را تغییر می‌دهد. با <code dir='ltr'>sep="-"</code>، بین مقادیر خط تیره گذاشته می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۲) در پایتون، تورفتگی چه نقشی دارد؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">فقط زیبایی است و اختیاری</button>
+              <button type="button" class="quiz-opt" data-key="b">بخشی از دستور زبان است و برنامه بدون آن کار نمی‌کند</button>
+              <button type="button" class="quiz-opt" data-key="c">فقط برای توابع لازم است</button>
+              <button type="button" class="quiz-opt" data-key="d">معادل کاما در زبان‌های دیگر است</button>
+            </div>
+            <div class="quiz-explain">💡 برخلاف اکثر زبان‌ها، در پایتون تورفتگی بخشی از سینتکس است. بدون تورفتگی درست، برنامه اجرا نمی‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) کدام خط، یک کامنت معتبر در پایتون است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"># این یک کامنت است</button>
+              <button type="button" class="quiz-opt" data-key="b">// این یک کامنت است</button>
+              <button type="button" class="quiz-opt" data-key="c">/* این یک کامنت است */</button>
+              <button type="button" class="quiz-opt" data-key="d">-- این یک کامنت است</button>
+            </div>
+            <div class="quiz-explain">💡 در پایتون کامنت با <code dir='ltr'>#</code> شروع می‌شود. <code dir='ltr'>//</code>، <code dir='ltr'>/* */</code> و <code dir='ltr'>--</code> مربوط به زبان‌های دیگرند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) خروجی این کد چیست؟<br><code dir="ltr">print("سلام", end="")<br>print("دنیا")</code></h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">سلام<br>دنیا</button>
+              <button type="button" class="quiz-opt" data-key="b">فقط سلام</button>
+              <button type="button" class="quiz-opt" data-key="c">خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="d">سلامدنیا</button>
+            </div>
+            <div class="quiz-explain">💡 <code dir='ltr'>end=""</code> باعث می‌شود print در پایان، خط جدید نزند. پس خروجی دو دستور پشت سر هم چاپ می‌شود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) کدام خط، خطای <code dir='ltr'>IndentationError</code> ایجاد می‌کند؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code dir='ltr'>print("سلام")</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code dir='ltr'>&nbsp;&nbsp;&nbsp;&nbsp;print("سلام")</code> (با تورفتگی در ابتدای فایل)</button>
+              <button type="button" class="quiz-opt" data-key="c"><code dir='ltr'>x = 5</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code dir='ltr'>print()</code></button>
+            </div>
+            <div class="quiz-explain">💡 تورفتگی در ابتدای فایل، وقتی هیچ دستور بلوکی قبلش نیامده باشد، خطای <code dir='ltr'>IndentationError</code> می‌دهد.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) معنی خطای <code dir='ltr'>SyntaxError: unterminated string literal</code> چیست؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">پرانتز بسته نشده</button>
+              <button type="button" class="quiz-opt" data-key="b">دو-نقطه فراموش شده</button>
+              <button type="button" class="quiz-opt" data-key="c">رشته‌ی متنی بسته نشده</button>
+              <button type="button" class="quiz-opt" data-key="d">تورفتگی اشتباه است</button>
+            </div>
+            <div class="quiz-explain">💡 «unterminated string» یعنی رشته‌ی متنی به پایان نرسیده. علتش فراموشی گیومه‌ی پایانی است.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «پروفایل شخصی من»</strong> — یک برنامه که اطلاعات شما را در قالب یک پروفایل زیبا نمایش می‌دهد.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">my_profile.py</code> ذخیره شده باشد.</li>
+          <li>برنامه با یک خط جداکننده‌ی زیبا شروع شود.</li>
+          <li>عنوان پروفایل نمایش داده شود (مثلاً «پروفایل شخصی»).</li>
+          <li>اطلاعات شما شامل: نام، شهر، سن، رشته تحصیلی یا شغل.</li>
+          <li>علاقه‌مندی‌ها با <code class="inline-code">sep</code> به‌شکل لیست، در یک خط چاپ شوند.</li>
+          <li>حداقل دو کامنت مفید در برنامه نوشته شده باشد.</li>
+          <li>برنامه از کاربر یک ورودی بگیرد (مثلاً بپرسد «امروز چه روزی است؟») و بعد جواب کاربر را چاپ کند.</li>
+          <li>برنامه با یک جمله‌ی انگیزشی پایان بیابد.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+        پروفایل شخصی
+══════════════════════════════════════
+
+  نام: علی محمدی
+  شهر: تهران
+  سن: 20
+  رشته: مهندسی کامپیوتر
+
+  علاقه‌مندی‌ها: برنامه‌نویسی - کتاب - ورزش
+
+--------------------------------------
+امروز چه روزی است؟ شنبه
+پس امروز شنبه است. روز خوبی داشته باشی!
+--------------------------------------
+
+  «هر روز یک قدم کوچک، بعد از یک سال یک مسیر است.»
+══════════════════════════════════════</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از اجرای موفق، سعی کنید یک خط را عمداً بشکنید (مثلاً گیومه‌ای را باز بگذارید) و ببینید پایتون چه خطایی می‌دهد. این تمرین کوچک، به شما یاد می‌دهد که خطا دشمن شما نیست — راهنمای شماست.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>با <code class="inline-code">print()</code> هر چیزی را چاپ کنید: متن، عدد، محاسبه.</li>
+          <li>با <code class="inline-code">sep</code> و <code class="inline-code">end</code> چیدمان خروجی را کنترل کنید.</li>
+          <li>با <code class="inline-code">#</code> کامنت بنویسید و با قاعده‌ی «چرا نه چی» در کدتان یادداشت بگذارید.</li>
+          <li>درک کنید که تورفتگی در پایتون اجباری است و چرا.</li>
+          <li>پیام‌های <code class="inline-code">SyntaxError</code> و <code class="inline-code">IndentationError</code> را بخوانید و رفع کنید.</li>
+          <li>با <code class="inline-code">input()</code> یک اشاره‌ی کوچک به ورودی کاربر داشته باشید (جزئیاتش در فصل ۴).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «کد خوب، اول برای چشم انسان‌ها نوشته می‌شود، بعد برای کامپیوتر. کامنت و تورفتگی، همین کار را می‌کنند.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا بعد از print، به‌طور خودکار خط جدید می‌آید؟ چطور بدون خط جدید چاپ کنم؟</summary><div class="faq-body"><p>به‌طور پیش‌فرض، <code dir='ltr'>print</code> در پایان کار یک کاراکتر خط جدید (<code dir='ltr'>\n</code>) می‌گذارد. برای جلوگیری، از <code dir='ltr'>end=""</code> استفاده کنید یا <code dir='ltr'>end=" "</code> برای فاصله به‌جای خط جدید.</p></div></details>
+        <details class="faq-item"><summary>چند فاصله برای تورفتگی درست است؟</summary><div class="faq-body"><p>استاندارد پایتون (PEP 8) می‌گوید <strong>۴ فاصله</strong> برای هر سطح. اگر VS Code را طوری تنظیم کنید که هر Tab را به ۴ فاصله تبدیل کند، هیچ‌وقت با Tab کار نخواهید داشت و همه‌چیز مرتب می‌ماند.</p></div></details>
+        <details class="faq-item"><summary>آیا باید حتماً کامنت بنویسم؟</summary><div class="faq-body"><p>خیر. کامنت اجباری نیست، اما یک عادت خوب است. قاعده‌ی کلی: هر جا چیزی است که «از خود کد به‌طور واضح پیدا نیست»، کامنت بگذارید. اما برای کارهای واضح، کامنت نگذارید — چون فقط شلوغی ایجاد می‌کند.</p></div></details>
+        <details class="faq-item"><summary>گاهی خطای عجیبی می‌بینم که شماره‌ی خطش اشتباه است. چرا؟</summary><div class="faq-body"><p>چون پایتون متوجه می‌شود در خط گزارش‌شده «گیر کرده»، اما شروع مشکل ممکن است خط‌های بالاتر باشد. مثلاً پرانتز یک خط بالاتر باز مانده. راه‌حل: از خط گزارش‌شده به سمت <strong>بالا</strong> تعادل پرانتزها و گیومه‌ها را چک کنید.</p></div></details>
+        <details class="faq-item"><summary>می‌توانم از <code dir="ltr">"""..."""</code> به‌جای <code dir='ltr'>#</code> استفاده کنم؟</summary><div class="faq-body"><p>فنی بله، اما توصیه نمی‌شود. <code dir='ltr'>"""..."""</code> در پایتون معنای خاصی دارد (به آن «docstring» می‌گویند) و برای توضیح توابع و ماژول‌ها استفاده می‌شود. برای کامنت‌های معمولی، همیشه از <code dir='ltr'>#</code> استفاده کنید. این استاندارد جامعه‌ی پایتون است.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۳، با مهم‌ترین مفهوم پایه‌ای پایتون آشنا می‌شوید: <strong>متغیرها و انواع داده</strong>. خواهید فهمید چطور مقدارها را در برنامه ذخیره کنید، از چه نوع‌هایی استفاده کنید (اعداد، متن، منطقی)، و چطور آن‌ها را به هم تبدیل کنید. از آنجایی که در این فصل با input آشنا شدید، از فصل بعد می‌توانید برنامه‌های واقعی‌تر بنویسید.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-02" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-02">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-01/index.html">→ فصل قبلی<br><b>🐣 فصل ۱</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-03/index.html">فصل بعدی ←<br><b>📦 فصل ۳: متغیرها و انواع داده</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۲: چاپ متن، کامنت و تورفتگی | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

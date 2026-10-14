@@ -1,0 +1,1862 @@
+/* ============================================================
+   style.css — دوره تخصصی امنیت وب
+   نسخه ریفکتورشده v2 — حرفه‌ای، ریسپانسیو، بدون سرریز
+   ============================================================ */
+
+/* ============================================================
+   ۱) متغیرهای طراحی (Design Tokens)
+   ============================================================ */
+:root {
+    /* --- رنگ‌ها --- */
+    --bg: #0b1220;
+    --bg-2: #050a13;
+    --surface: #111827;
+    --surface-2: #1a2332;
+    --surface-3: #0d1520;
+    --ink: #f8fafc;
+    --ink-2: #e2e8f0;
+    --text: #cbd5e1;
+    --muted: #94a3b8;
+    --line: #1e293b;
+    --line-2: #0f172a;
+
+    /* --- برند --- */
+    --accent: #00d97e;
+    --accent-dark: #00a862;
+    --accent-light: #22ffa0;
+    --accent-soft: rgba(0, 217, 126, 0.10);
+    --accent-glow: rgba(0, 217, 126, 0.18);
+
+    /* --- معنایی --- */
+    --red: #ef4444;
+    --red-soft: #3f1d1d;
+    --red-text: #fecaca;
+    --red-text-2: #fca5a5;
+    --orange: #f59e0b;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --green-soft: #0d2818;
+    --blue-soft: #142438;
+
+    /* --- کد --- */
+    --code-bg: #0a0f1a;
+    --code-text: #7ee787;
+    --code-border: #1e293b;
+
+    /* --- شعاع --- */
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius: 14px;
+    --radius-lg: 18px;
+    --radius-pill: 40px;
+
+    /* --- فاصله‌گذاری --- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+    --space-9: 48px;
+
+    /* --- سایه --- */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 14px 36px rgba(0, 217, 126, 0.14);
+    --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.50);
+
+    /* --- تایپوگرافی --- */
+    --font: 'Vazirmatn', 'IRANSans', 'Segoe UI', Tahoma, sans-serif;
+    --mono: 'JetBrains Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+
+    /* --- انیمیشن --- */
+    --transition-fast: 0.15s ease;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* --- ابعاد ساختاری --- */
+    --container-max: 1120px;
+    --nav-height: 60px;
+    --toc-width: 290px;
+    --code-max-height: 600px;
+}
+
+/* ============================================================
+   ۲) ریست و پایه
+   ============================================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    min-width: 0; /* رفع سرریز پیش‌فرض Grid/Flex */
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-height) + 20px);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-x: clip; /* clip بهتر از hidden — sticky را نمی‌شکند */
+}
+
+body {
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.85;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* دسترس‌پذیری */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+}
+
+::selection {
+    background: var(--accent);
+    color: #0b1220;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--surface-2);
+    border-radius: 5px;
+    border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-dark);
+}
+
+/* ============================================================
+   ۳) کانتینر اصلی — پایه ساختاری همه بخش‌ها
+   ============================================================ */
+.container {
+    max-width: var(--container-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+    min-width: 0;
+}
+
+.container > * {
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* ============================================================
+   ۴) هدر سایت
+   ============================================================ */
+.site-header {
+    background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
+    color: white;
+    padding: var(--space-6) 0;
+    border-bottom: 4px solid var(--accent);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.site-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+    pointer-events: none;
+}
+
+.site-header h1 {
+    margin: 0;
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+}
+
+.site-header p {
+    margin: var(--space-2) 0 0;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    opacity: 0.88;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+   ۵) نویگیشن اصلی
+   ============================================================ */
+.main-nav {
+    background: rgba(17, 24, 39, 0.95);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+    min-height: var(--nav-height);
+}
+
+.main-nav .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    justify-content: center;
+    align-items: center;
+}
+
+.main-nav a {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.main-nav a:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* ============================================================
+   ۶) بخش‌های ۱۴ گانه — پایه اصلی
+   ============================================================ */
+.section-part {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: var(--space-6) var(--space-6) var(--space-7);
+    margin-bottom: var(--space-6);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden; /* جلوگیری از سرریز */
+    max-width: 100%;
+    scroll-margin-top: calc(var(--nav-height) + 24px);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.section-part:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+}
+
+.section-part > * {
+    max-width: 100%;
+}
+
+/* سرفصل‌های درون بخش */
+.section-part h3 {
+    border-right: 5px solid var(--accent);
+    padding: var(--space-1) var(--space-3) var(--space-1) 0;
+    margin: 0 0 var(--space-6);
+    color: var(--ink);
+    font-size: clamp(1.1rem, 2.2vw, 1.28rem);
+    font-weight: 800;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.section-part h4 {
+    color: var(--ink);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: var(--space-6) 0 var(--space-3);
+}
+
+.section-part h5 {
+    color: var(--ink-2);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: var(--space-5) 0 var(--space-2);
+}
+
+.section-part h6 {
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: var(--space-4) 0 var(--space-2);
+}
+
+.section-part p {
+    color: var(--text);
+    margin: var(--space-3) 0;
+    line-height: 1.85;
+}
+
+.section-part li {
+    color: var(--text);
+    margin: var(--space-2) 0;
+    line-height: 1.8;
+}
+
+.section-part ol,
+.section-part ul {
+    padding-right: var(--space-6);
+    margin: var(--space-4) 0;
+}
+
+.section-part li > ul,
+.section-part li > ol {
+    margin: var(--space-2) 0;
+}
+
+/* ============================================================
+   ۷) متن، لینک، بلوک‌نقل
+   ============================================================ */
+strong, b {
+    color: var(--ink);
+    font-weight: 800;
+}
+
+em, i {
+    color: var(--ink-2);
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--accent-light);
+    border-bottom-color: currentColor;
+}
+
+blockquote {
+    border-right: 3px solid var(--accent);
+    background: var(--surface-3);
+    border-radius: var(--radius-xs);
+    padding: var(--space-2) var(--space-4);
+    margin: var(--space-4) 0;
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* ============================================================
+   ۸) جداول
+   ============================================================ */
+.table-wrap {
+    overflow-x: auto;
+    margin: var(--space-5) 0;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+.table-wrap table {
+    margin: 0;
+    border: none;
+    min-width: 520px;
+}
+
+.objectives-table,
+.vocab-table table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: var(--space-5) 0;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    font-size: 0.9rem;
+}
+
+.objectives-table th,
+.objectives-table td,
+.vocab-table th,
+.vocab-table td {
+    padding: var(--space-3) var(--space-4);
+    text-align: right;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.7;
+}
+
+.objectives-table th,
+.vocab-table th {
+    background: var(--line-2);
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+    letter-spacing: 0.01em;
+}
+
+.objectives-table tr:last-child td,
+.vocab-table tr:last-child td {
+    border-bottom: none;
+}
+
+.objectives-table tr:nth-child(even) td,
+.vocab-table tr:nth-child(even) td {
+    background: var(--surface-3);
+}
+
+.objectives-table tbody tr,
+.vocab-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.objectives-table tbody tr:hover td,
+.vocab-table tbody tr:hover td {
+    background: rgba(0, 217, 126, 0.06);
+}
+
+/* ============================================================
+   ۹) جعبه‌های ویژه (Callouts)
+   ============================================================ */
+.story-box,
+.interactive-box,
+.workshop-box,
+.creative-box,
+.ethics-box,
+.qa-box,
+.summary-box,
+.self-assessment,
+.weekly-project,
+.resources-box,
+.callout {
+    background: var(--surface-2);
+    padding: var(--space-5);
+    border-radius: var(--radius-sm);
+    border-right: 5px solid var(--accent);
+    margin: var(--space-5) 0;
+    line-height: 1.85;
+    position: relative;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* رنگ نوار کناره */
+.story-box { border-right-color: var(--purple); }
+.interactive-box { border-right-color: var(--orange); }
+.workshop-box { border-right-color: var(--accent); }
+.creative-box { border-right-color: var(--pink); }
+.ethics-box { border-right-color: var(--red); }
+.qa-box { border-right-color: var(--orange); }
+.summary-box { border-right-color: var(--blue); }
+.self-assessment { border-right-color: var(--teal); }
+.weekly-project { border-right-color: var(--purple); }
+.resources-box { border-right-color: var(--blue); }
+
+/* حذف margin اول و آخر */
+.story-box > *:first-child,
+.interactive-box > *:first-child,
+.workshop-box > *:first-child,
+.creative-box > *:first-child,
+.ethics-box > *:first-child,
+.qa-box > *:first-child,
+.summary-box > *:first-child,
+.self-assessment > *:first-child,
+.weekly-project > *:first-child,
+.resources-box > *:first-child,
+.callout > *:first-child {
+    margin-top: 0;
+}
+
+.story-box > *:last-child,
+.interactive-box > *:last-child,
+.workshop-box > *:last-child,
+.creative-box > *:last-child,
+.ethics-box > *:last-child,
+.qa-box > *:last-child,
+.summary-box > *:last-child,
+.self-assessment > *:last-child,
+.weekly-project > *:last-child,
+.resources-box > *:last-child,
+.callout > *:last-child {
+    margin-bottom: 0;
+}
+
+/* تنوع رنگ کالوت‌ها */
+.callout.co-warn {
+    background: var(--red-soft);
+    border-right-color: var(--red);
+    color: var(--red-text);
+}
+.callout.co-warn strong { color: var(--red-text-2); }
+
+.callout.co-tip {
+    background: var(--green-soft);
+    border-right-color: var(--accent);
+    color: #a7f3d0;
+}
+.callout.co-tip strong { color: #6ee7b7; }
+
+.callout.co-note {
+    background: var(--blue-soft);
+    border-right-color: var(--blue);
+    color: var(--text);
+}
+.callout.co-note strong { color: #93c5fd; }
+
+.callout.co-danger {
+    background: #451a1a;
+    border-right-color: #dc2626;
+    color: var(--red-text);
+}
+.callout.co-danger strong { color: var(--red-text-2); }
+
+/* ============================================================
+   ۱۰) کد و پیش‌فرمت — با کنترل کامل سرریز
+   ============================================================ */
+pre,
+.code-box {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--code-border);
+    margin: var(--space-5) 0;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    max-width: 100%;
+    width: 100%;
+    max-height: var(--code-max-height);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    word-wrap: normal;
+    overflow-wrap: normal;
+}
+
+pre::-webkit-scrollbar,
+.code-box::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+pre::-webkit-scrollbar-track,
+.code-box::-webkit-scrollbar-track {
+    background: #050a13;
+}
+pre::-webkit-scrollbar-thumb,
+.code-box::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+pre::-webkit-scrollbar-thumb:hover,
+.code-box::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-dark);
+}
+
+/* کد inline */
+code {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border: 1px solid var(--code-border);
+    border-radius: var(--radius-xs);
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    line-height: 1.5;
+    direction: ltr;
+    unicode-bidi: embed;
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* کد درون pre */
+pre code {
+    display: block;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 1em;
+    line-height: inherit;
+    white-space: inherit;
+    max-width: none;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+/* ============================================================
+   ۱۱) دکمه کپی کد — رفع مشکل float و اندازه
+   ============================================================ */
+.copy-btn {
+    display: block;
+    width: fit-content;
+    background: var(--accent);
+    color: #0b1220;
+    border: none;
+    border-radius: var(--radius-xs);
+    padding: 4px 12px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.4;
+    cursor: pointer;
+    margin: 0 0 6px 0;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.copy-btn:hover {
+    background: var(--accent-light);
+    transform: translateY(-1px);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+.copy-btn.ok {
+    background: #059669;
+    color: white;
+}
+
+/* ============================================================
+   ۱۲) details (آکاردئون پاسخ‌ها)
+   ============================================================ */
+details {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    margin: var(--space-3) 0;
+    padding: 0;
+    overflow: hidden;
+    max-width: 100%;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+details:hover {
+    border-color: var(--accent);
+}
+
+details[open] {
+    border-color: var(--accent);
+    background: rgba(0, 217, 126, 0.03);
+}
+
+details summary {
+    cursor: pointer;
+    padding: var(--space-3) var(--space-5);
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--accent);
+    list-style: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: background var(--transition-fast);
+}
+
+details summary:hover {
+    background: var(--accent-soft);
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary::before {
+    content: '▶';
+    display: inline-block;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--accent);
+    transition: transform var(--transition);
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+details > p,
+details > ul,
+details > ol,
+details > div,
+details > blockquote {
+    padding: var(--space-2) var(--space-5) var(--space-4);
+    margin: var(--space-1) 0;
+    line-height: 1.85;
+    max-width: 100%;
+}
+
+details > *:last-child {
+    padding-bottom: var(--space-5);
+}
+
+/* ============================================================
+   ۱۳) دکمه‌ها
+   ============================================================ */
+.btn-demo,
+.btn-start,
+button.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: var(--accent);
+    color: #0b1220;
+    padding: var(--space-3) var(--space-6);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.5;
+    text-decoration: none;
+    white-space: nowrap;
+    min-height: 44px;
+    cursor: pointer;
+    transition: background var(--transition-fast),
+                transform var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.btn-demo:hover,
+.btn-start:hover,
+button.btn:hover {
+    background: var(--accent-light);
+    color: #0b1220;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn-demo:active,
+.btn-start:active,
+button.btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================================
+   ۱۴) فوتر
+   ============================================================ */
+.site-footer {
+    background: var(--bg-2);
+    color: var(--muted);
+    text-align: center;
+    padding: var(--space-7) var(--space-5);
+    margin-top: var(--space-8);
+    border-top: 3px solid var(--accent);
+}
+
+.site-footer p {
+    margin: var(--space-2) 0;
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+.site-footer a {
+    color: var(--text);
+    border-bottom: none;
+}
+
+.site-footer a:hover {
+    color: var(--accent);
+}
+
+/* ============================================================
+   ۱۵) صفحه اصلی — کارت‌های فصل
+   ============================================================ */
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-5);
+    margin: var(--space-6) 0;
+}
+
+.chapter-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-6) var(--space-5);
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    transition: transform var(--transition),
+                box-shadow var(--transition),
+                border-color var(--transition);
+}
+
+.chapter-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--transition);
+}
+
+.chapter-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+}
+
+.chapter-card:hover::before {
+    transform: scaleX(1);
+}
+
+.chapter-card .card-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+    margin-bottom: var(--space-3);
+    display: block;
+}
+
+.chapter-card h3 {
+    margin: var(--space-2) 0;
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+}
+
+.chapter-card .card-subtitle {
+    margin: var(--space-2) 0 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* ============================================================
+   ۱۶) بنر فصل (Chapter Hero)
+   ============================================================ */
+.chapter-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);
+    color: white;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-7) var(--space-6);
+    margin: var(--space-6) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.chapter-hero::after {
+    content: '';
+    position: absolute;
+    left: -80px;
+    top: -80px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+    pointer-events: none;
+}
+
+.chapter-hero .chap-num {
+    display: inline-block;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: #7ee787;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+.chapter-hero h1 {
+    margin: var(--space-3) 0 var(--space-2);
+    font-size: clamp(1.35rem, 3vw, 1.95rem);
+    font-weight: 800;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+}
+
+.chapter-hero p.sub {
+    margin: var(--space-2) 0 0;
+    font-size: clamp(0.88rem, 1.8vw, 0.95rem);
+    line-height: 1.8;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+   ۱۷) نوار پیشرفت مطالعه
+   ============================================================ */
+#reading-bar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    width: 0;
+    z-index: 999;
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: width 0.1s linear;
+}
+
+/* ============================================================
+   ۱۸) دو ستون فصل (TOC + محتوا)
+   ============================================================ */
+.chapter-layout {
+    display: grid;
+    grid-template-columns: var(--toc-width) 1fr;
+    gap: var(--space-6);
+    align-items: start;
+    margin: var(--space-6) 0;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.chapter-layout > * {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.main-col {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+/* پاک‌سازی float ها */
+.main-col::after,
+.section-part::after,
+.tool-card::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+/* ============================================================
+   ۱۹) فهرست کنار (TOC)
+   ============================================================ */
+.toc-box {
+    position: sticky;
+    top: calc(var(--nav-height) + 16px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: calc(100vh - var(--nav-height) - 40px);
+    display: flex;
+    flex-direction: column;
+}
+
+.toc-title {
+    background: var(--line-2);
+    color: #7ee787;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 800;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+}
+
+.toc-list {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-2);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.toc-list a {
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    padding: var(--space-2) var(--space-3);
+    border-right: 3px solid transparent;
+    border-radius: var(--radius-xs);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.toc-list a:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+}
+
+.toc-list a.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-right-color: var(--accent);
+    font-weight: 700;
+}
+
+.toc-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    border-top: 1px dashed var(--line);
+    flex-shrink: 0;
+}
+
+.toc-actions button {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xs);
+    padding: var(--space-2) var(--space-3);
+    font-family: inherit;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toc-actions button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* ============================================================
+   ۲۰) Pager و Done Bar
+   ============================================================ */
+.pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-3);
+    margin: var(--space-7) 0;
+    align-items: stretch;
+}
+
+.pager a {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4) var(--space-5);
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    transition: all var(--transition);
+}
+
+.pager a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.done-bar {
+    background: rgba(0, 217, 126, 0.08);
+    border: 1px dashed var(--accent);
+    border-radius: var(--radius-sm);
+    padding: var(--space-5);
+    margin: var(--space-6) 0;
+    text-align: center;
+    line-height: 1.8;
+}
+
+.done-bar button {
+    margin-top: var(--space-3);
+}
+
+#mark-done {
+    background: var(--accent);
+    color: #0b1220;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: var(--space-3) var(--space-6);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    min-height: 44px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+#mark-done:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+#mark-done.done {
+    background: #059669;
+    color: white;
+}
+
+/* ============================================================
+   ۲۱) KPI Grid
+   ============================================================ */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-5) 0;
+}
+
+.kpi {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4);
+    text-align: center;
+    transition: border-color var(--transition-fast);
+}
+
+.kpi:hover {
+    border-color: var(--accent);
+}
+
+.kpi .num {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1.2;
+    margin-bottom: var(--space-2);
+}
+
+.kpi .lbl {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ============================================================
+   ۲۲) Timeline
+   ============================================================ */
+.timeline {
+    list-style: none;
+    padding: 0 var(--space-5) 0 0;
+    margin: var(--space-5) 0;
+    border-right: 3px solid var(--accent);
+}
+
+.timeline li {
+    margin: var(--space-4) 0;
+    padding-right: var(--space-4);
+    position: relative;
+    line-height: 1.8;
+}
+
+.timeline li::before {
+    content: '●';
+    color: var(--accent);
+    position: absolute;
+    right: calc(-1 * var(--space-5) - 8px);
+    top: 6px;
+    font-size: 0.9rem;
+}
+
+.timeline .year {
+    font-weight: 800;
+    color: var(--accent);
+    margin-left: var(--space-2);
+}
+
+/* ============================================================
+   ۲۳) Phase Diagram
+   ============================================================ */
+.phase-diagram {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-5);
+    margin: var(--space-5) 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.phase-diagram pre {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: var(--text);
+    max-height: none;
+    max-width: none;
+    width: max-content;
+    min-width: 100%;
+}
+
+/* ============================================================
+   ۲۴) Role Cards
+   ============================================================ */
+.role-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin: var(--space-5) 0;
+}
+
+.role-card {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4);
+    transition: all var(--transition-fast);
+}
+
+.role-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.role-card h6 {
+    margin: 0 0 var(--space-2);
+    color: var(--accent);
+    font-size: 0.98rem;
+    font-weight: 700;
+}
+
+.role-card p {
+    margin: var(--space-2) 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+.role-card .threat-level {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    margin-top: var(--space-2);
+}
+
+.threat-low { background: #166534; color: #bbf7d0; }
+.threat-mid { background: #854d0e; color: #fef08a; }
+.threat-high { background: #7f1d1d; color: #fecaca; }
+
+/* ============================================================
+   ۲۵) Quiz و Checklist
+   ============================================================ */
+.quiz-question {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4) var(--space-5);
+    margin: var(--space-3) 0;
+    line-height: 1.85;
+}
+
+.quiz-question strong {
+    display: block;
+    color: var(--accent);
+    margin-bottom: var(--space-2);
+}
+
+.quiz-question ul {
+    margin: var(--space-2) 0 0;
+    padding-right: 0;
+}
+
+.checklist {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4) 0;
+}
+
+.checklist li {
+    list-style: none;
+    margin: var(--space-2) 0;
+    padding-right: 28px;
+    position: relative;
+    line-height: 1.8;
+}
+
+.checklist li::before {
+    content: '☐';
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: var(--accent);
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* ============================================================
+   ۲۶) Do / Don't boxes
+   ============================================================ */
+.do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin: var(--space-5) 0;
+}
+
+.do-box,
+.dont-box {
+    border-radius: var(--radius-sm);
+    padding: var(--space-4) var(--space-5);
+    line-height: 1.85;
+}
+
+.do-box {
+    background: var(--green-soft);
+    border: 1px solid #16a34a;
+}
+.do-box h6 {
+    color: #4ade80;
+    margin: 0 0 var(--space-3);
+    font-size: 0.95rem;
+}
+
+.dont-box {
+    background: #451a1a;
+    border: 1px solid #dc2626;
+}
+.dont-box h6 {
+    color: #f87171;
+    margin: 0 0 var(--space-3);
+    font-size: 0.95rem;
+}
+
+.do-box li,
+.dont-box li {
+    margin: var(--space-2) 0;
+    font-size: 0.88rem;
+    line-height: 1.75;
+}
+
+.do-box ul,
+.dont-box ul {
+    padding-right: var(--space-5);
+    margin: 0;
+}
+
+/* ============================================================
+   ۲۷) Step Number
+   ============================================================ */
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    background: var(--accent);
+    color: #0b1220;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    margin-left: var(--space-2);
+    font-size: 0.9rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   ۲۸) Tool Card
+   ============================================================ */
+.tool-card {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-right: 4px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: var(--space-5);
+    margin: var(--space-4) 0;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.tool-card h6 {
+    color: var(--accent);
+    margin: 0 0 var(--space-2);
+    font-size: 1.02rem;
+    font-weight: 700;
+    overflow-wrap: break-word;
+}
+
+.tool-card .use-case {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-3);
+}
+
+/* ============================================================
+   ۲۹) رسانه‌ها (تصاویر، ویدیو)
+   ============================================================ */
+img,
+video,
+iframe {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-xs);
+}
+
+/* ============================================================
+   ۳۰) ریسپانسیو — تبلت (≤ 960px)
+   ============================================================ */
+@media (max-width: 960px) {
+    :root {
+        --toc-width: auto;
+    }
+
+    .chapter-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+    }
+
+    .toc-box {
+        position: static;
+        max-height: none;
+    }
+
+    .toc-list {
+        max-height: 300px;
+    }
+
+    .do-dont {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   ۳۱) ریسپانسیو — موبایل (≤ 700px)
+   ============================================================ */
+@media (max-width: 700px) {
+    :root {
+        --space-5: 16px;
+        --space-6: 18px;
+        --space-7: 24px;
+        --space-8: 32px;
+    }
+
+    body {
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .container {
+        padding: 0 var(--space-4);
+    }
+
+    .site-header {
+        padding: var(--space-5) 0;
+    }
+    .site-header h1 { font-size: 1.2rem; }
+    .site-header p  { font-size: 0.82rem; }
+
+    .main-nav {
+        padding: var(--space-2) 0;
+    }
+    .main-nav .container {
+        gap: var(--space-1) var(--space-2);
+    }
+    .main-nav a {
+        font-size: 0.78rem;
+        padding: var(--space-1) var(--space-2);
+    }
+
+    .section-part {
+        padding: var(--space-4);
+        margin-bottom: var(--space-5);
+        border-radius: var(--radius-sm);
+    }
+
+    .section-part h3 {
+        font-size: 1rem;
+        padding-right: var(--space-2);
+        border-right-width: 4px;
+        margin-bottom: var(--space-4);
+    }
+    .section-part h4 { font-size: 1rem; }
+    .section-part h5 { font-size: 0.95rem; }
+
+    .chapter-hero {
+        padding: var(--space-5) var(--space-4);
+        border-radius: var(--radius);
+    }
+    .chapter-hero h1 { font-size: 1.15rem; }
+
+    .chapter-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .chapter-card {
+        padding: var(--space-5) var(--space-4);
+        min-height: auto;
+    }
+    .chapter-card .card-icon { font-size: 2rem; }
+
+    /* جداول */
+    .objectives-table,
+    .vocab-table table { font-size: 0.78rem; }
+
+    .objectives-table th,
+    .objectives-table td,
+    .vocab-table th,
+    .vocab-table td {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    /* کد — بدون margin منفی (منبع سرریز قبلی) */
+    pre,
+    .code-box {
+        font-size: 0.75rem;
+        padding: var(--space-3) var(--space-4);
+        margin: var(--space-4) 0;
+        border-radius: var(--radius-xs);
+        max-height: 400px;
+    }
+
+    code {
+        font-size: 0.82em;
+        padding: 2px 6px;
+    }
+
+    /* کالوت‌ها */
+    .callout,
+    .story-box,
+    .interactive-box,
+    .workshop-box,
+    .creative-box,
+    .ethics-box,
+    .qa-box,
+    .summary-box,
+    .self-assessment,
+    .weekly-project,
+    .resources-box,
+    .tool-card {
+        padding: var(--space-4);
+        border-right-width: 4px;
+        margin: var(--space-4) 0;
+    }
+
+    /* دکمه‌ها */
+    .btn-demo,
+    .btn-start,
+    button.btn {
+        padding: var(--space-3) var(--space-5);
+        font-size: 0.88rem;
+        white-space: normal;
+        min-height: 44px;
+    }
+
+    /* Pager */
+    .pager {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+    }
+    .pager a {
+        padding: var(--space-3) var(--space-4);
+        min-height: 52px;
+        font-size: 0.9rem;
+    }
+
+    /* KPI */
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: var(--space-2);
+    }
+    .kpi { padding: var(--space-3); }
+    .kpi .num { font-size: 1.3rem; }
+    .kpi .lbl { font-size: 0.72rem; }
+
+    /* Role cards */
+    .role-cards {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+
+    /* Timeline */
+    .timeline { padding-right: var(--space-4); }
+    .timeline li::before {
+        right: calc(-1 * var(--space-4) - 6px);
+    }
+
+    /* Chapter layout */
+    .chapter-layout { margin: var(--space-5) 0; }
+
+    /* details */
+    details summary {
+        padding: var(--space-3) var(--space-4);
+        font-size: 0.9rem;
+    }
+    details > p,
+    details > ul,
+    details > ol,
+    details > div {
+        padding-left: var(--space-4);
+        padding-right: var(--space-4);
+    }
+
+    /* Quiz */
+    .quiz-question { padding: var(--space-3) var(--space-4); }
+}
+
+/* ============================================================
+   ۳۲) ریسپانسیو — موبایل کوچک (≤ 420px)
+   ============================================================ */
+@media (max-width: 420px) {
+    :root {
+        --space-4: 12px;
+        --space-5: 14px;
+        --space-6: 16px;
+    }
+
+    .container { padding: 0 var(--space-3); }
+
+    .site-header h1 { font-size: 1.05rem; }
+    .site-header p  { font-size: 0.75rem; }
+
+    .main-nav a {
+        font-size: 0.72rem;
+        padding: 4px 8px;
+    }
+
+    .section-part {
+        padding: var(--space-3) var(--space-3) var(--space-4);
+    }
+    .section-part h3 { font-size: 0.95rem; }
+
+    pre,
+    .code-box {
+        font-size: 0.7rem;
+        padding: var(--space-2) var(--space-3);
+        margin: var(--space-3) 0;
+    }
+
+    .chapter-card h3 { font-size: 0.95rem; }
+    .role-card h6 { font-size: 0.9rem; }
+}
+
+/* ============================================================
+   ۳۳) چاپ (Print)
+   ============================================================ */
+@media print {
+    *,
+    *::before,
+    *::after {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+        line-height: 1.6;
+    }
+
+    .site-header,
+    .main-nav,
+    .site-footer,
+    #reading-bar,
+    .toc-box,
+    .pager,
+    .done-bar,
+    .toc-actions,
+    .btn-demo,
+    .btn-start,
+    .copy-btn,
+    button {
+        display: none !important;
+    }
+
+    .chapter-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .container {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .section-part {
+        border: 1px solid #ccc !important;
+        padding: 12pt !important;
+        margin-bottom: 12pt !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .section-part h3 {
+        border-right-color: #333 !important;
+        color: #000 !important;
+        font-size: 14pt !important;
+    }
+
+    pre,
+    .code-box {
+        background: #f5f5f5 !important;
+        color: #000 !important;
+        border: 1px solid #ccc !important;
+        font-size: 9pt !important;
+        max-height: none;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: visible;
+        page-break-inside: avoid;
+    }
+
+    code {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+        border: none !important;
+    }
+
+    a {
+        color: #000 !important;
+        text-decoration: underline;
+        border: none !important;
+    }
+
+    .objectives-table th,
+    .vocab-table th {
+        background: #e5e5e5 !important;
+        color: #000 !important;
+    }
+
+    details { border: 1px solid #ccc !important; }
+    details summary::before { color: #000 !important; }
+
+    .callout,
+    .story-box,
+    .interactive-box,
+    .workshop-box,
+    .creative-box,
+    .ethics-box,
+    .qa-box,
+    .summary-box,
+    .self-assessment,
+    .weekly-project,
+    .resources-box,
+    .tool-card {
+        background: #f5f5f5 !important;
+        border: 1px solid #999 !important;
+        border-right-width: 4px !important;
+        page-break-inside: avoid;
+    }
+
+    .chapter-hero {
+        background: white !important;
+        color: black !important;
+        border: 2px solid #333 !important;
+        page-break-after: avoid;
+    }
+    .chapter-hero::after { display: none !important; }
+}
+
+@media print and (color) {
+    pre,
+    .code-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ============================================================
+   ۳۴) حالت High Contrast (دسترس‌پذیری)
+   ============================================================ */
+@media (prefers-contrast: high) {
+    :root {
+        --text: #ffffff;
+        --ink: #ffffff;
+        --ink-2: #f8fafc;
+        --line: #475569;
+        --accent: #00ff88;
+    }
+
+    .section-part {
+        border-width: 2px;
+    }
+}
+
+/* ============================================================
+   ۳۵) ابزارهای کمکی (Utilities)
+   ============================================================ */
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-left   { text-align: left; }
+.mt-0 { margin-top: 0; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mb-0 { margin-bottom: 0; }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.hidden { display: none !important; }
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

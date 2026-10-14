@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۴ MCSA — امنیت (Security)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mcsa" data-chapter="mcsa-04">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📕 فصل ۴ — امنیت (Security) 🎉</h1>
+    <div class="meta">
+      <span>📖 ۱۱۵ دقیقه</span>
+      <span>🎯 وزن در آزمون 70-744: بخش اصلی</span>
+      <span>🧩 ۲۰ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته — آخرین فصل کل دوره</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      این <strong>آخرین فصل کل دوره</strong> است. با امنیت پیشرفته‌ی Windows Server
+      آشنا می‌شوی:
+      <span class="term" data-term="laps">LAPS</span> برای مدیریت رمز Local Admin،
+      <span class="term" data-term="jea">JEA</span> برای دسترسی‌های محدود،
+      <span class="term" data-term="shielded-vm">Shielded VM</span> برای محافظت از VMها،
+      <span class="term" data-term="bitlocker">BitLocker</span> برای رمزنگاری دیسک،
+      و <strong>ATA</strong>، <strong>PAW</strong>، <strong>Credential Guard</strong> برای دفاع در عمق.
+    </p>
+    <p>
+      هدف این فصل: ساختن یک زیرساخت <strong>Zero Trust</strong> که در آن
+      هیچ‌کس — حتی Administrator — بدون احراز هویت قوی نمی‌تواند به منابع حساس دسترسی بگیرد.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم امنیت در لایه‌های ویندوز</li>
+      <li>Server Hardening — اصول و Baseline</li>
+      <li>LAPS — Local Administrator Password Solution</li>
+      <li>JIT و JEA — Just Enough Administration</li>
+      <li>PAW — Privileged Access Workstation</li>
+      <li>Tier Model و ESAE Forest</li>
+      <li>Protected Users Group</li>
+      <li>Credential Guard و Device Guard</li>
+      <li>Shielded VM و Guarded Fabric</li>
+      <li>Host Guardian Service (HGS)</li>
+      <li>BitLocker و Network Unlock</li>
+      <li>Windows Defender و Defender ATP</li>
+      <li>Windows Firewall پیشرفته</li>
+      <li>Audit Policy و Advanced Audit</li>
+      <li>Advanced Threat Analytics (ATA)</li>
+      <li>AppLocker و WDAC</li>
+      <li>Security Baselines با SCT</li>
+      <li>پایش و پاسخ به حادثه</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا رمز Local Administrator روی همه‌ی سرورها یکسان است و چه خطری دارد؟</li>
+      <li>تفاوت JIT و JEA چیست؟</li>
+      <li>Tier Model چطور از Pass-the-Hash جلوگیری می‌کند؟</li>
+      <li>Shielded VM چطور از VM در برابر دسترسی Hypervisor محافظت می‌کند؟</li>
+      <li>BitLocker Network Unlock چه مشکلی را حل می‌کند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۴.۱ ==== -->
+    <h3>۴.۱ مفاهیم امنیت در لایه‌های ویندوز</h3>
+
+    <p>
+      امنیت ویندوز را در <strong>چند لایه</strong> می‌بینیم. مهاجم برای رسیدن به
+      هدف باید از تمام لایه‌ها عبور کند:
+    </p>
+
+    <ul>
+      <li><strong>Physical Security:</strong> دسترسی فیزیکی به سرور</li>
+      <li><strong>Firmware/UEFI:</strong> Secure Boot، TPM</li>
+      <li><strong>Boot:</strong> BitLocker، Measured Boot</li>
+      <li><strong>OS:</strong> Credential Guard، Device Guard، LSA Protection</li>
+      <li><strong>Application:</strong> AppLocker، WDAC، Defender</li>
+      <li><strong>Identity:</strong> Tier Model، PAW، Protected Users</li>
+      <li><strong>Data:</strong> BitLocker، EFS، AD RMS</li>
+      <li><strong>Network:</strong> Firewall، IPsec، SMB Signing</li>
+    </ul>
+
+    <p><strong>مدل Zero Trust:</strong></p>
+    <ul>
+      <li><strong>Verify Explicitly:</strong> همیشه Authenticate کن — حتی در شبکه‌ی داخلی</li>
+      <li><strong>Least Privilege:</strong> حداقل دسترسی لازم</li>
+      <li><strong>Assume Breach:</strong> فرض کن مهاجم داخل شبکه است</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      امنیت یک محصول نیست — یک <strong>فرآیند</strong> است. هیچ‌وقت نمی‌گویی
+      «شبکه‌ام امن است»، می‌گویی «شبکه‌ام در حال حاضر امن است».
+    </div>
+
+    <!-- ==== ۴.۲ ==== -->
+    <h3>۴.۲ Server Hardening — اصول و Baseline</h3>
+
+    <p><strong>اصول Hardening:</strong></p>
+    <ul>
+      <li><strong>Remove Unused Services:</strong> هر سرویس غیرضروری را حذف کن</li>
+      <li><strong>Least Privilege:</strong> حداقل دسترسی به سرویس‌ها و کاربران</li>
+      <li><strong>Patch Management:</strong> همیشه به‌روز</li>
+      <li><strong>Attack Surface Reduction:</strong> کاهش سطح حمله</li>
+      <li><strong>Defense in Depth:</strong> چند لایه دفاعی</li>
+      <li><strong>Monitoring:</strong> Log و Alert</li>
+    </ul>
+
+    <pre><code># ===== Hardening با PowerShell =====
+
+# ۱. حذف Features غیرضروری
+Get-WindowsFeature | Where-Object {$_.Installed -and !$_.BestPracticesModelId} | 
+    Select Name, DisplayName
+
+# حذف SMBv1
+Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart
+
+# غیرفعال کردن PowerShell v2 (کاهش سطح حمله)
+Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2
+
+# ۲. فعال‌سازی SMB Signing
+Set-SmbClientConfiguration -RequireSecuritySignature $true -Force
+Set-SmbServerConfiguration -RequireSecuritySignature $true -Force
+
+# ۳. غیرفعال کردن SMB Guest Access
+Set-SmbClientConfiguration -EnableInsecureGuestLogons $false -Force
+
+# ۴. NTLM Hardening
+# در GPO: Network Security → Restrict NTLM
+# یا در Registry:
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" `
+    -Name "LmCompatibilityLevel" -Value 5
+# 5 = Send NTLMv2 response only, refuse LM & NTLM
+
+# ۵. غیرفعال کردن LLMNR و NetBIOS
+# LLMNR (Link-Local Multicast Name Resolution) — خطرناک
+# در GPO: Turn off multicast name resolution
+
+# NetBIOS over TCP/IP
+Get-WmiObject Win32_NetworkAdapterConfiguration | ForEach-Object {
+    $_.SetTcpipNetbios(2)  # 2 = Disable
+}
+
+# ۶. Windows Firewall — سه Profile
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True `
+    -DefaultInboundAction Block `
+    -DefaultOutboundAction Allow `
+    -NotifyOnListen False
+
+# ۷. Windows Defender
+Set-MpPreference -DisableRealtimeMonitoring $false
+Set-MpPreference -DisableIOAVProtection $false
+Set-MpPreference -MAPSReporting Advanced
+Set-MpPreference -SubmitSamplesConsent SendSafeSamples
+
+Update-MpSignature</code></pre>
+
+    <p><strong>Security Compliance Toolkit (SCT):</strong></p>
+    <ul>
+      <li>Microsoft Security Baselines — تنظیمات پیشنهادی</li>
+      <li>Local Group Policy Object (LGPO) — برای خودکارسازی</li>
+      <li>Policy Analyzer — برای مقایسه با Baseline</li>
+      <li>از <code>microsoft.com/download/details.aspx?id=55319</code></li>
+    </ul>
+
+    <!-- ==== ۴.۳ ==== -->
+    <h3>۴.۳ LAPS — Local Administrator Password Solution</h3>
+
+    <p>
+      <span class="term" data-term="laps">LAPS</span> مشکل «رمز یکسان Local Admin روی همه‌ی
+      سرورها» را حل می‌کند. با LAPS:
+    </p>
+
+    <ul>
+      <li>هر کامپیوتر/سرور رمز Local Admin <strong>یکتا</strong> دارد</li>
+      <li>رمزها خودکار <strong>چرخش</strong> می‌کنند</li>
+      <li>رمزها در Active Directory ذخیره می‌شوند (مخفی از کاربران عادی)</li>
+      <li>دسترسی برای خواندن رمز، با Permissions کنترل می‌شود</li>
+    </ul>
+
+    <p><strong>چرا LAPS مهم است؟</strong></p>
+    <ul>
+      <li>اگر یک کامپیوتر Compromise شد، مهاجم نمی‌تواند با رمز Local Admin به سرورهای دیگر برود</li>
+      <li>Pass-the-Hash به‌شدت سخت‌تر می‌شود</li>
+      <li>Lateral Movement محدود می‌شود</li>
+    </ul>
+
+    <pre><code># ===== نصب LAPS =====
+
+# ۱. Schema Extension (یک بار برای کل Forest)
+Import-Module AdmPwd.PS
+Update-AdmPwdADSchema
+
+# ۲. تنظیم Permissions روی OU
+# به گروه خاصی اجازه بده رمزها را بخوانند
+Set-AdmPwdReadPasswordPermission -OrgUnit "OU=Servers,OU=Company,DC=company,DC=local" `
+    -AllowedPrincipals "COMPANY\LAPS-Readers"
+
+# اجازه به سرورها برای به‌روزرسانی رمز خودشان
+Set-AdmPwdComputerSelfPermission -OrgUnit "OU=Servers,OU=Company,DC=company,DC=local"
+
+# ۳. تنظیم GPO برای LAPS
+New-GPO -Name "LAPS-Settings"
+Set-GPRegistryValue -Name "LAPS-Settings" `
+    -Key "HKLM\Software\Policies\Microsoft Services\AdmPwd" `
+    -ValueName "AdmPwdEnabled" -Type DWord -Value 1
+
+Set-GPRegistryValue -Name "LAPS-Settings" `
+    -Key "HKLM\Software\Policies\Microsoft Services\AdmPwd" `
+    -ValueName "PasswordComplexity" -Type DWord -Value 4
+# 4 = Large letters + small letters + numbers + specials
+
+Set-GPRegistryValue -Name "LAPS-Settings" `
+    -Key "HKLM\Software\Policies\Microsoft Services\AdmPwd" `
+    -ValueName "PasswordLength" -Type DWord -Value 20
+
+Set-GPRegistryValue -Name "LAPS-Settings" `
+    -Key "HKLM\Software\Policies\Microsoft Services\AdmPwd" `
+    -ValueName "PasswordAgeDays" -Type DWord -Value 30
+
+Set-GPRegistryValue -Name "LAPS-Settings" `
+    -Key "HKLM\Software\Policies\Microsoft Services\AdmPwd" `
+    -ValueName "AdminAccountName" -Type String -Value "LocalAdmin"
+
+New-GPLink -Name "LAPS-Settings" `
+    -Target "OU=Servers,OU=Company,DC=company,DC=local"
+
+# ۴. نصب Client روی سرورها
+# از فایل MSI: LAPS.x64.msi
+# نصب در حالت GPO-managed
+msiexec /i LAPS.x64.msi /quiet ADDLOCAL=Management,CDrive
+
+# ۵. خواندن رمز
+Get-AdmPwdPassword -ComputerName "SERVER01" | Select ComputerName, Password, ExpirationTimestamp
+
+# یا با Find-AdmPwdExtendedRights برای مدیریت
+
+# ===== Windows LAPS (نسخه جدید — Windows Server 2022+) =====
+# Built-in در ویندوز، دیگر نیاز به MSI نیست
+Update-LapsADSchema
+Set-LapsADReadPasswordPermission -Identity "OU=Servers,DC=company,DC=local" `
+    -AllowedPrincipals "COMPANY\LAPS-Readers"
+Set-LapsADComputerSelfPermission -Identity "OU=Servers,DC=company,DC=local"
+
+# در GPO:
+# Computer Configuration → Administrative Templates → System → LAPS
+# Configure password backup directory: Active Directory</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در ویندوزهای جدید (Windows 11 + Server 2022/2025)، از <strong>Windows LAPS</strong>
+      استفاده کن که Built-in است. LAPS قدیمی دیگر نیاز به نصب جداگانه ندارد.
+    </div>
+
+    <!-- ==== ۴.۴ ==== -->
+    <h3>۴.۴ JIT و JEA — Just Enough Administration</h3>
+
+    <p>
+      <span class="term" data-term="jea">JEA</span> یک تکنولوژی PowerShell است که
+      اجازه می‌دهد کاربران فقط <strong>دستورات مشخصی</strong> را اجرا کنند —
+      بدون دسترسی Admin کامل.
+    </p>
+
+    <p><strong>تفاوت JIT و JEA:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">JIT</th>
+          <th style="padding:6px;border:1px solid var(--border)">JEA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">رویکرد</td><td style="padding:6px;border:1px solid var(--border)">دسترسی موقت</td><td style="padding:6px;border:1px solid var(--border)">دسترسی محدود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مدت</td><td style="padding:6px;border:1px solid var(--border)">چند ساعت (Time-Bound)</td><td style="padding:6px;border:1px solid var(--border)">دائمی ولی محدود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیاده‌سازی</td><td style="padding:6px;border:1px solid var(--border)">PAM (Privileged Access Management)</td><td style="padding:6px;border:1px solid var(--border)">PowerShell Endpoint</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مثال</td><td style="padding:6px;border:1px solid var(--border)">Admin برای ۴ ساعت</td><td style="padding:6px;border:1px solid var(--border)">فقط Get-Service و Restart-Service</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== ایجاد JEA Endpoint =====
+
+# ۱. ایجاد Role Capability
+New-PSRoleCapabilityFile -Path "C:\JEA\WebAdminRole.psrc"
+
+# ویرایش فایل برای تعریف دستورات مجاز:
+# VisibleCmdlets = @(
+#     'Get-Service',
+#     'Restart-Service',
+#     'Get-EventLog',
+#     'Get-Process'
+# )
+# VisibleFunctions = @()
+# VisibleProviders = @('FileSystem')
+
+# ۲. ایجاد Session Configuration
+New-PSSessionConfigurationFile -Path "C:\JEA\WebAdmin.pssc" `
+    -SessionType RestrictedRemoteServer `
+    -RunAsVirtualAccount `
+    -RoleDefinitions @{
+        'COMPANY\Web-Admins' = @{ RoleCapabilities = 'WebAdminRole' }
+    }
+
+# ۳. ثبت Session Configuration
+Register-PSSessionConfiguration -Path "C:\JEA\WebAdmin.pssc" `
+    -Name "WebAdminEndpoint" -Force
+
+# ۴. تست
+Enter-PSSession -ComputerName SERVER01 -ConfigurationName WebAdminEndpoint `
+    -Credential (Get-Credential)
+
+# بررسی دستورات مجاز
+Get-Command
+
+# فقط دستورات تعریف‌شده اجرا می‌شوند
+# Get-Service OK، Remove-Item خطا
+
+# ===== نکات امنیتی =====
+# - RunAsVirtualAccount: اجرا با حساب مجازی موقت
+# - Transcript Directory: ثبت همه‌ی فعالیت‌ها
+# - Language Mode: NoLanguage برای محدودیت بیشتر</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      JEA در ویندوزهای جدید، نیازمند <strong>Language Mode = NoLanguage</strong>
+      است برای امنیت بیشتر. این باعث می‌شود کاربر نتواند از Script Blocks یا
+      متغیرهای پیشرفته استفاده کند.
+    </div>
+
+    <!-- ==== ۴.۵ ==== -->
+    <h3>۴.۵ PAW — Privileged Access Workstation</h3>
+
+    <p>
+      <strong>PAW</strong> یک کامپیوتر مجزا است که فقط برای کارهای Admin استفاده می‌شود.
+      روی PAW:
+    </p>
+
+    <ul>
+      <li>هیچ Email یا Internet browsing وجود ندارد</li>
+      <li>فقط Admin Tools نصب است</li>
+      <li>دسترسی به اینترنت محدود</li>
+      <li>BitLocker، Credential Guard، Device Guard</li>
+      <li>AppLocker برای فقط برنامه‌های مجاز</li>
+    </ul>
+
+    <p><strong>چرا PAW مهم است؟</strong></p>
+    <ul>
+      <li>اگر Admin با کامپیوتر شخصی کار کند، ممکن است با Malware آلوده شود</li>
+      <li>PAW محیط ایزوله‌ای برای کارهای حساس است</li>
+      <li>کاهش قابل توجه سطح حمله</li>
+    </ul>
+
+    <pre><code># ===== راه‌اندازی PAW =====
+
+# ۱. سخت‌افزار: کامپیوتر مجزا یا VM
+# ۲. ویندوز Enterprise
+
+# ۳. BitLocker اجباری
+Enable-BitLocker -MountPoint "C:" -EncryptionMethod XtsAes256 `
+    -UsedSpaceOnly -TpmProtector
+
+# ۴. Credential Guard
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" `
+    -Name "EnableVirtualizationBasedSecurity" -Value 1
+
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" `
+    -Name "RequirePlatformSecurityFeatures" -Value 1
+
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" `
+    -Name "LsaCfgFlags" -Value 1
+
+# ۵. AppLocker — فقط برنامه‌های مجاز
+# در GPO: Computer Configuration → Windows Settings → Security Settings → AppLocker
+
+# ۶. Internet Restrictions
+# غیرفعال کردن Browser
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\Internet Settings" `
+    -Name "ProxyServer" -Value "0.0.0.0:1"
+
+# ۷. RDP Restrictions
+# فقط از IP مشخص</code></pre>
+
+    <!-- ==== ۴.۶ ==== -->
+    <h3>۴.۶ Tier Model و ESAE Forest</h3>
+
+    <p><strong>Tier Model</strong> دسترسی‌ها را به سه لایه تقسیم می‌کند:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Tier</th>
+          <th style="padding:6px;border:1px solid var(--border)">منابع</th>
+          <th style="padding:6px;border:1px solid var(--border)">Admin Accounts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Tier 0</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">DC، AD، PKI، Backup</td>
+          <td style="padding:6px;border:1px solid var(--border)">Tier 0 Admins (فقط روی PAW)</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Tier 1</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Serverها و Applicationها</td>
+          <td style="padding:6px;border:1px solid var(--border)">Tier 1 Admins</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Tier 2</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Clientها</td>
+          <td style="padding:6px;border:1px solid var(--border)">Helpdesk</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>قانون طلایی:</strong> Admin یک Tier بالاتر نمی‌تواند از کامپیوتر Tier پایین‌تر لاگین کند.</p>
+
+    <p><strong>ESAE Forest (Enhanced Security Administrative Environment):</strong></p>
+    <ul>
+      <li>یک Forest جداگانه برای Admin Accounts</li>
+      <li>One-Way Trust از Production به ESAE</li>
+      <li>Adminها فقط در ESAE Forest وجود دارند</li>
+      <li>Production Forest قابل Compromise است ولی ESAE نه</li>
+    </ul>
+
+    <pre><code># ===== پیاده‌سازی Tier Model =====
+
+# ۱. ساختار OU در AD
+# OU=Tier0,DC=company,DC=local
+# OU=Tier1,DC=company,DC=local
+# OU=Tier2,DC=company,DC=local
+
+# ۲. Admin Accounts جدا برای هر Tier
+New-ADUser -Name "t0-admin" `
+    -SamAccountName "t0-admin" `
+    -Path "OU=Admins,OU=Tier0,DC=company,DC=local" `
+    -AccountPassword (Read-Host -AsSecureString "Pass") `
+    -Enabled $true
+
+# ۳. Deny Logon برای Adminها روی کامپیوترهای Tier پایین
+# در GPO: Computer Configuration → Windows Settings → Security Settings
+# → Local Policies → User Rights Assignment → Deny log on locally
+# Users: COMPANY\Tier0-Admins
+
+# ۴. Protected Users Group
+Add-ADGroupMember -Identity "Protected Users" -Members "t0-admin"
+
+# ===== Protected Users Group =====
+# اعضای این گروه:
+# - NTLM استفاده نمی‌کنند
+# - Kerberos با AES اجباری
+# - Credential Delegation ممنوع
+# - TGT Lifetime کوتاه (4 ساعت)
+# - CredSSP ممنوع
+# نکته: کاربران با Protected Users نباید برای سرویس‌ها استفاده شوند</code></pre>
+
+    <!-- ==== ۴.۷ ==== -->
+    <h3>۴.۷ Protected Users Group</h3>
+
+    <pre><code># ===== افزودن کاربر به Protected Users =====
+Add-ADGroupMember -Identity "Protected Users" -Members "DomainAdmin1","DomainAdmin2"
+
+# ===== مزایای Protected Users =====
+# - عدم استفاده از NTLM
+# - Kerberos Pre-Auth با AES
+# - عدم ذخیره Credential Cache
+# - عدم Delegation
+# - TGT Duration = 4 ساعت (به‌جای 10)
+# - عدم استفاده از CredSSP / WDigest
+
+# ===== هشدار =====
+# اعضای Protected Users:
+# - نمی‌توانند به عنوان Service Account استفاده شوند
+# - اگر دستگاه از NTLM استفاده کند، لاگین نمی‌شوند
+# - روی سیستم‌های قدیمی مشکل دارند
+
+# ===== بررسی =====
+Get-ADGroupMember "Protected Users"
+
+# ===== نکات =====
+# 1. ابتدا روی یک Admin تست کن، بعد بقیه
+# 2. Local Adminها را به این گروه اضافه نکن (سرورهای عضویت Domain)
+# 3. برای Service Accountها از gMSA استفاده کن</code></pre>
+
+    <!-- ==== ۴.۸ ==== -->
+    <h3>۴.۸ Credential Guard و Device Guard</h3>
+
+    <p>
+      <strong>Credential Guard</strong> از Credentialها (مثل NTLM Hash و Kerberos TGT)
+      با Virtualization-Based Security (VBS) محافظت می‌کند. جلوی:
+    </p>
+    <ul>
+      <li>Pass-the-Hash</li>
+      <li>Pass-the-Ticket</li>
+      <li>Credential Dumping (Mimikatz)</li>
+    </ul>
+
+    <p><strong>Device Guard:</strong></p>
+    <ul>
+      <li><strong>Configurable Code Integrity (CI):</strong> فقط کد امضاشده اجرا شود</li>
+      <li><strong>Virtualization-Based Protection of Code Integrity:</strong> با VBS</li>
+    </ul>
+
+    <pre><code># ===== پیش‌نیاز Credential Guard =====
+# - Windows 10 Enterprise / Windows Server 2016+
+# - UEFI + Secure Boot
+# - TPM 2.0
+# - CPU Virtualization Extensions (VT-x، AMD-V)
+# - 64-bit
+
+# ===== فعال‌سازی Credential Guard =====
+# در GPO: Computer Configuration → Administrative Templates → System → Device Guard
+# Turn On Virtualization Based Security: Enabled
+# Select Platform Security Level: Secure Boot and DMA Protection
+# Credential Guard Configuration: Enabled with UEFI lock
+
+# با PowerShell (روی خود سیستم):
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" `
+    -Name "EnableVirtualizationBasedSecurity" -Value 1 -Force
+
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" `
+    -Name "RequirePlatformSecurityFeatures" -Value 1 -Force
+
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" `
+    -Name "LsaCfgFlags" -Value 1 -Force
+
+# ===== بررسی =====
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard
+
+# ===== فعال‌سازی Device Guard =====
+# در GPO: Computer Configuration → Administrative Templates → System → Device Guard
+# - Deploy Code Integrity Policy: Enabled
+# - Policy File: مسیر XML
+
+# ساخت Policy:
+New-CIPolicy -Level Publisher -FilePath "C:\Policies\BasePolicy.xml"
+ConvertFrom-CIPolicy -XmlFilePath "C:\Policies\BasePolicy.xml" `
+    -BinaryFilePath "C:\Policies\BasePolicy.p7b"
+
+# Deploy به %SystemRoot%\System32\CodeIntegrity\CiPolicies\Active\</code></pre>
+
+    <!-- ==== ۴.۹ ==== -->
+    <h3>۴.۹ Shielded VM و Guarded Fabric</h3>
+
+    <p>
+      <span class="term" data-term="shielded-vm">Shielded VM</span> یک VM است که
+      حتی Adminهای Hypervisor هم نمی‌توانند به محتوای آن دسترسی داشته باشند.
+    </p>
+
+    <p><strong>مشکلات VM معمولی:</strong></p>
+    <ul>
+      <li>Admin Hypervisor می‌تواند VHDX را کپی و روی سیستم دیگر اجرا کند</li>
+      <li>می‌تواند Screenshot از Console بگیرد</li>
+      <li>می‌تواند در Memory VM تغییر ایجاد کند</li>
+    </ul>
+
+    <p><strong>راه‌حل: Guarded Fabric = Shielded VM + Host Guardian Service</strong></p>
+
+    <pre><code># ===== اجزای Shielded VM =====
+
+# 1. HGS (Host Guardian Service)
+#    - سرور جداگانه که Hypervisor Hostها را Authorize می‌کند
+#    - از Attestation برای تأیید Hostها استفاده می‌کند
+
+# 2. Shielded VM
+#    - VHDX با BitLocker رمزنگاری شده
+#    - فقط Hostهای تأییدشده می‌توانند اجرا کنند
+
+# 3. Guarded Host
+#    - Hypervisor Host که توسط HGS تأیید شده
+
+# ===== نصب HGS =====
+Install-WindowsFeature -Name HostGuardianServiceRole -IncludeManagementTools
+
+# راه‌اندازی HGS
+Initialize-HgsServer -HgsServiceName "hgs.company.local" `
+    -SigningCertificate "hgs-signing-cert" `
+    -EncryptionCertificate "hgs-encryption-cert"
+
+# TPM Mode (قوی‌تر)
+Initialize-HgsServer -HgsServiceName "hgs.company.local" `
+    -UseHostKeyCertificate "host-key-cert" `
+    -SigningCertificate "hgs-signing-cert" `
+    -EncryptionCertificate "hgs-encryption-cert"
+
+# ===== ساخت Shielded VM Template =====
+# ۱. Template Disk با BitLocker
+# ۲. Shielded VM Template با Windows PowerShell
+
+New-ShieldingDataFile -ShieldingDataFilePath "C:\Shielded\Template.pdk" `
+    -Owner "COMPANY\Administrator" `
+    -KeyProtector "BitLockerKeyProtector" `
+    -SigningCertificate "hgs-signing-cert"
+
+New-ShieldedVMTemplate -Name "ShieldedTemplate" `
+    -TemplateFilePath "C:\Shielded\Template.vhdx" `
+    -ShieldingDataFilePath "C:\Shielded\Template.pdk"
+
+# ===== ایجاد Shielded VM =====
+New-VM -Name "SHIELDED-VM01" `
+    -Generation 2 `
+    -MemoryStartupBytes 4GB `
+    -Shielded `
+    -TemplateFilePath "C:\Shielded\ShieldedTemplate.vhdx" `
+    -ShieldingDataFilePath "C:\Shielded\ShieldedData.pdk"
+
+# ===== بررسی =====
+Get-VM | Select Name, State, IsShielded, HgsAttestationStatus
+Get-HgsServer
+Get-HgsAttestationHostGroup</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      Shielded VM + Guarded Fabric برای محیط‌هایی است که
+      می‌خواهی از VMها در برابر <strong>دسترسی‌های Hypervisor Admin</strong>
+      محافظت کنی — مثل ارائه‌دهندگان Cloud یا سازمان‌هایی با محیط Multi-Tenant.
+    </div>
+
+    <!-- ==== ۴.۱۰ ==== -->
+    <h3>۴.۱۰ Host Guardian Service (HGS)</h3>
+
+    <pre><code># ===== دو حالت Attestation =====
+
+# ۱. TPM Mode
+# - امن‌تر — نیاز به TPM 2.0 در هر Host
+# - Host Certificate از خود TPM
+# - پیشنهاد برای Production
+
+# ۲. Admin-Trusted Attestation
+# - ساده‌تر، بدون TPM
+# - فقط با Kerberos
+# - کمتر امن — توصیه نمی‌شود
+
+# ===== نصب HGS Cluster (برای HA) =====
+Install-WindowsFeature -Name HostGuardianServiceRole -IncludeManagementTools
+
+# روی هر ۳ سرور HGS:
+# ۱. Join Domain
+# ۲. نصب Role
+
+# راه‌اندازی Cluster
+Initialize-HgsServer -HgsServiceName "hgs.company.local" `
+    -SigningCertificate "hgs-signing-cert" `
+    -EncryptionCertificate "hgs-encryption-cert"
+
+# ===== Guarded Host Configuration =====
+# روی هر Hyper-V Host:
+
+# ۱. فعال‌سازی Isolated User Mode
+Enable-WindowsOptionalFeature -Online -FeatureName IsolatedUserMode -NoRestart
+
+# ۲. فعال‌سازی Hyper-V
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+
+# ۳. تنظیم HGS Client
+Set-HgsClientConfiguration -AttestationServerUrl "https://hgs.company.local/Attestation" `
+    -KeyProtectionServerUrl "https://hgs.company.local/KeyProtection"
+
+# ۴. اجرای Attestation
+Get-HgsClientConfiguration
+# ببین: IsHostGuarded: True
+
+# ===== بررسی =====
+Get-HgsServer
+Get-HgsAttestationHostGroup
+Get-HgsAttestationPolicy</code></pre>
+
+    <!-- ==== ۴.۱۱ ==== -->
+    <h3>۴.۱۱ BitLocker و Network Unlock</h3>
+
+    <p>
+      <span class="term" data-term="bitlocker">BitLocker</span> رمزنگاری کامل دیسک است
+      که از داده‌ها در حالت استراحت محافظت می‌کند.
+    </p>
+
+    <p><strong>انواع Protectores:</strong></p>
+    <ul>
+      <li><strong>TPM:</strong> فقط با TPM — Boot بدون رمز</li>
+      <li><strong>TPM + PIN:</strong> امن‌تر — Pre-boot PIN</li>
+      <li><strong>TPM + Startup Key:</strong> USB Key</li>
+      <li><strong>Password:</strong> بدون TPM</li>
+      <li><strong>Network Unlock:</strong> از WDS Server برای Boot خودکار</li>
+      <li><strong>Recovery Password:</strong> 48-digit برای بازیابی</li>
+    </ul>
+
+    <pre><code># ===== پیش‌نیاز =====
+# - TPM 2.0
+# - UEFI + Secure Boot (توصیه‌شده)
+# - دیسک با پارتیشن‌بندی مناسب (System Reserved)
+
+# ===== فعال‌سازی BitLocker روی C: =====
+Enable-BitLocker -MountPoint "C:" `
+    -EncryptionMethod XtsAes256 `
+    -UsedSpaceOnly `
+    -TpmProtector
+
+# با PIN اضافه:
+Add-BitLockerKeyProtector -MountPoint "C:" -TpmAndPinProtector `
+    -Pin (Read-Host -AsSecureString "PIN")
+
+# ===== فعال‌سازی با GPO =====
+# Computer Configuration → Administrative Templates → Windows Components → BitLocker Drive Encryption
+# → Operating System Drives → Require additional authentication at startup: Enabled
+
+# ===== بکاپ Recovery Key در AD =====
+# در GPO: Choose how BitLocker-protected OS drives can be recovered
+# - Save BitLocker recovery information to AD DS: Enabled
+# - Store BitLocker recovery information: Require
+
+# ===== مشاهده وضعیت =====
+Get-BitLockerVolume
+Get-BitLockerVolume -MountPoint "C:" | Select ProtectionStatus, EncryptionPercentage
+
+# ===== بازیابی رمزها از AD =====
+# در ADUC → Computer → Properties → BitLocker Recovery
+# یا با PowerShell:
+Get-ADObject -Filter 'objectClass -eq "msFVE-RecoveryInformation"' `
+    -SearchBase "DC=company,DC=local" `
+    -Properties msFVE-RecoveryPassword
+
+# ===== Network Unlock =====
+# پیش‌نیاز: WDS + Certificate
+Install-WindowsFeature -Name WDS -IncludeManagementTools
+
+Install-WindowsFeature -Name BitLocker-NetworkUnlock -IncludeManagementTools
+
+# نصب Certificate (از CA داخلی)
+# Get-Certificate -Template NetworkUnlock -CertStoreLocation Cert:\LocalMachine\My
+
+# نصب Feature Network Unlock
+Install-WindowsFeature BitLocker-NetworkUnlock
+
+# پیکربندی WDS
+# در GPO: Choose network unlock settings
+# - Allow network unlock at startup: Enabled</code></pre>
+
+    <!-- ==== ۴.۱۲ ==== -->
+    <h3>۴.۱۲ Windows Defender و Defender ATP</h3>
+
+    <pre><code># ===== Windows Defender Antivirus =====
+
+# ===== بررسی وضعیت =====
+Get-MpComputerStatus
+Get-MpPreference
+Get-MpThreatDetection
+
+# ===== تنظیمات پیشرفته =====
+Set-MpPreference -DisableRealtimeMonitoring $false
+Set-MpPreference -DisableIOAVProtection $false
+Set-MpPreference -DisableBehaviorMonitoring $false
+Set-MpPreference -DisableScriptScanning $false
+Set-MpPreference -MAPSReporting Advanced
+Set-MpPreference -SubmitSamplesConsent SendSafeSamples
+Set-MpPreference -CloudBlockLevel High
+Set-MpPreference -CloudExtendedTimeout 50
+Set-MpPreference -EnableNetworkProtection Enabled
+
+# ===== Scan =====
+Start-MpScan -ScanType QuickScan
+Start-MpScan -ScanType FullScan
+Start-MpScan -ScanType CustomScan -ScanPath "D:\Data"
+
+# ===== Exclusion =====
+Add-MpPreference -ExclusionPath "D:\SQL\Data"
+Add-MpPreference -ExclusionProcess "sqlservr.exe"
+Add-MpPreference -ExclusionExtension ".mdf"
+
+# ===== Update Signature =====
+Update-MpSignature
+
+# ===== Attack Surface Reduction (ASR) =====
+Add-MpPreference -AttackSurfaceReductionRules_Ids "BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550" `
+    -AttackSurfaceReductionRules_Actions Enabled
+
+# Rule IDs مهم:
+# BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550 = Block executable content from email
+# D4F940AB-401B-4EFC-AADC-AD5F3C50688A = Block Office apps from creating child processes
+# 3B576869-A4EC-4529-8536-B80A7769E899 = Block Office apps from creating executable content
+# 5BEB7EFE-FD9A-4556-801D-275E5FFC04CC = Block execution of potentially obfuscated scripts
+# 92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B = Block Win32 API calls from Office macros
+
+# ===== Microsoft Defender for Endpoint (Defender ATP) =====
+# برای Enterprise، به Microsoft 365 Defender متصل شوید
+# Onboarding با اسکریپت از Defender Portal
+
+# ===== Defender for Cloud (Azure) =====
+# پایش امنیتی چند-Platform از Azure Portal</code></pre>
+
+    <!-- ==== ۴.۱۳ ==== -->
+    <h3>۴.۱۳ Windows Firewall پیشرفته</h3>
+
+    <pre><code># ===== سه Profile =====
+# Domain   → وقتی به Domain متصل
+# Private  → شبکه خانگی
+# Public   → شبکه عمومی
+
+# ===== تنظیمات پایه =====
+Set-NetFirewallProfile -Profile Domain,Private,Public `
+    -Enabled True `
+    -DefaultInboundAction Block `
+    -DefaultOutboundAction Allow `
+    -NotifyOnListen False `
+    -LogAllowed True `
+    -LogBlocked True `
+    -LogFileName "%SystemRoot%\System32\LogFiles\Firewall\pfirewall.log" `
+    -LogMaxSizeKilobytes 32767
+
+# ===== ایجاد Rule =====
+New-NetFirewallRule -DisplayName "Allow HTTP" `
+    -Direction Inbound `
+    -Protocol TCP `
+    -LocalPort 80 `
+    -Action Allow `
+    -Profile Domain
+
+# ===== Rule برای Application =====
+New-NetFirewallRule -DisplayName "SQL Server" `
+    -Direction Inbound `
+    -Program "%ProgramFiles%\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Binn\sqlservr.exe" `
+    -Action Allow
+
+# ===== Rule برای IP خاص =====
+New-NetFirewallRule -DisplayName "RDP from Mgmt" `
+    -Direction Inbound `
+    -Protocol TCP `
+    -LocalPort 3389 `
+    -RemoteAddress 192.168.1.0/24 `
+    -Action Allow
+
+# ===== Block Rule =====
+New-NetFirewallRule -DisplayName "Block SMBv1" `
+    -Direction Inbound `
+    -Protocol TCP `
+    -LocalPort 445 `
+    -Action Block
+
+# ===== مشاهده =====
+Get-NetFirewallRule
+Get-NetFirewallProfile
+Get-NetFirewallRule -Direction Inbound -Enabled True
+
+# ===== IPsec Connection Security Rules =====
+New-NetIPsecRule -DisplayName "Server Isolation" `
+    -InboundSecurity Require `
+    -OutboundSecurity Require `
+    -RemoteAddress "192.168.1.0/24"
+
+# ===== Domain Isolation =====
+# در GPO: Computer Configuration → Windows Settings → Security Settings
+# → Windows Firewall with Advanced Security → Connection Security Rules
+
+# ===== Windows Defender Firewall with Advanced Security (GUI) =====
+wf.msc</code></pre>
+
+    <!-- ==== ۴.۱۴ ==== -->
+    <h3>۴.۱۴ Audit Policy و Advanced Audit</h3>
+
+    <pre><code># ===== دو نوع Audit =====
+# 1. Basic Audit Policy (Local Security Policy)
+# 2. Advanced Audit Policy (پیشرفته‌تر، پیشنهاد)
+
+# ===== فعال‌سازی Advanced Audit Policy =====
+auditpol /set /category:* /success:enable /failure:enable
+
+# یا در GPO:
+# Computer Configuration → Windows Settings → Security Settings
+# → Advanced Audit Policy Configuration
+
+# ===== دسته‌های مهم =====
+auditpol /set /subcategory:"Logon" /success:enable /failure:enable
+auditpol /set /subcategory:"Logoff" /success:enable
+auditpol /set /subcategory:"Account Lockout" /success:enable /failure:enable
+auditpol /set /subcategory:"Process Creation" /success:enable
+auditpol /set /subcategory:"Removable Storage" /success:enable /failure:enable
+auditpol /set /subcategory:"Registry" /success:enable /failure:enable
+
+# ===== مشاهده =====
+auditpol /get /category:*
+
+# ===== PowerShell =====
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents 20
+# 4624 = Successful Logon
+# 4625 = Failed Logon
+# 4634 = Logoff
+# 4647 = User Initiated Logoff
+# 4648 = Logon with Explicit Credentials
+# 4672 = Special Privileges Assigned
+# 4688 = Process Creation
+# 4720 = User Account Created
+# 4726 = User Account Deleted
+# 4740 = Account Locked Out
+# 4768 = Kerberos TGT Requested
+# 4771 = Kerberos Pre-Auth Failed
+# 4776 = NTLM Authentication
+
+# ===== Event Forwarding =====
+# در Source Computer:
+wecutil qc /q:true
+# در GPO: Computer Configuration → Policies → Windows Settings → 
+#          Administrative Templates → Windows Components → Event Forwarding
+
+# در Collector:
+wecutil qc
+# در Event Viewer → Subscriptions → Create Subscription
+
+# ===== بررسی حجم Log =====
+Get-WinEvent -ListLog Security | Select LogName, MaximumSizeInBytes, FileSize
+# افزایش حجم:
+wevtutil sl Security /ms:1073741824
+# 1 GB
+
+# ===== Sysmon برای Deep Monitoring =====
+# دانلود از sysinternals.com
+sysmon64.exe -accepteula -i sysmonconfig.xml
+
+# Sysmon Event IDs:
+# 1  = Process Create
+# 3  = Network Connect
+# 7  = Image Loaded
+# 11 = File Create
+# 13 = Registry Value Set</code></pre>
+
+    <!-- ==== ۴.۱۵ ==== -->
+    <h3>۴.۱۵ Advanced Threat Analytics (ATA)</h3>
+
+    <p>
+      <strong>ATA</strong> (الان به نام <strong>Microsoft Defender for Identity</strong>)
+      یک سیستم تشخیص نفوذ است که ترافیک AD را تحلیل می‌کند و حملات را کشف می‌کند.
+    </p>
+
+    <p><strong>حملاتی که ATA کشف می‌کند:</strong></p>
+    <ul>
+      <li>Reconnaissance (Passive، Account Enumeration)</li>
+      <li>Compromised Credentials (Brute Force، Pass-the-Hash، Pass-the-Ticket)</li>
+      <li>Lateral Movement</li>
+      <li>Domain Dominance (DCShadow، Golden Ticket، Skeleton Key)</li>
+      <li>Exfiltration</li>
+    </ul>
+
+    <pre><code># ===== ATA On-Premises (نسخه قدیمی) =====
+# ۱. نصب ATA Center روی یک سرور
+# ۲. نصب ATA Gateway روی هر DC (یا Port Mirroring)
+
+# ===== Microsoft Defender for Identity (نسخه جدید Cloud) =====
+# ۱. ساخت Workspace در Microsoft 365 Defender Portal
+# ۲. دانلود Sensor از Portal
+# ۳. نصب روی DCها
+
+# نصب Sensor:
+# Microsoft Defender for Identity Sensor.msi
+
+# ۴. اتصال به Cloud
+# در Portal: Settings → Identities → Sensors → Add
+
+# ===== پیش‌نیازها =====
+# - AD Read Permissions
+# - NTLM، Kerberos Auditing
+# - Event Forwarding
+# - بسته‌های زیر روی DC:
+#   - Npcap
+#   - Microsoft Monitoring Agent
+
+# ===== بررسی =====
+Get-Service "Azure Advanced Threat Protection Sensor"
+Get-Service "Microsoft.Tri.Sensor"
+Get-Service "Microsoft.Tri.Sensor.Updater"
+
+# ===== Alerts مهم =====
+# - Suspected Brute Force Attack
+# - Suspected Pass-the-Hash
+# - Suspected Golden Ticket Usage
+# - DCShadow
+# - Skeleton Key
+# - Reconnaissance using Directory Services</code></pre>
+
+    <!-- ==== ۴.۱۶ ==== -->
+    <h3>۴.۱۶ AppLocker و WDAC</h3>
+
+    <p>
+      <strong>AppLocker</strong> کنترل می‌کند کدام برنامه‌ها اجازه اجرا دارند.
+      <strong>WDAC</strong> (Windows Defender Application Control) نسخه‌ی
+      Kernel-level و قوی‌تر آن است.
+    </p>
+
+    <pre><code># ===== AppLocker =====
+
+# ۱. فعال‌سازی سرویس
+Set-Service AppIDSvc -StartupType Automatic
+Start-Service AppIDSvc
+
+# ۲. ایجاد Policy با GPO
+# Computer Configuration → Windows Settings → Security Settings → AppLocker
+
+# پنج Rule Collection:
+# 1. Executable Rules (.exe، .com)
+# 2. Windows Installer Rules (.msi، .msp)
+# 3. Script Rules (.ps1، .bat، .cmd، .vbs، .js)
+# 4. Packaged App Rules (UWP)
+# 5. DLL Rules (نیاز به فعال‌سازی جداگانه)
+
+# ۳. Default Rules (Deny for Everyone، Allow for Admins)
+# بعد Custom Rules اضافه کن
+
+# مثال Rule:
+# Allow: %ProgramFiles%\Company App\*
+# Deny: همه‌ی بقیه
+
+# ۴. Audit Mode (قبل از Enforce)
+# در Properties هر Rule: Enforce Rules → No
+# Audit Only → Yes
+
+# ۵. بررسی
+Get-AppLockerPolicy -Effective -Xml | Out-File "C:\AppLocker.xml"
+Get-AppLockerPolicy -Local | Test-AppLockerPolicy -Path "C:\test.exe" -User "COMPANY\ali"
+
+# ۶. Event Logs
+Get-WinEvent -LogName "Microsoft-Windows-AppLocker/EXE and DLL" -MaxEvents 20
+
+# ===== WDAC (Windows Defender Application Control) =====
+
+# ۱. ساخت Base Policy
+New-CIPolicy -Level Publisher -FilePath "C:\WDAC\BasePolicy.xml" `
+    -Fallback Hash `
+    -UserPEs
+
+# ۲. Merge با Microsoft Recommended Block Rules
+# دانلود از: https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control/microsoft-recommended-block-rules
+
+Merge-CIPolicy -PolicyPaths "C:\WDAC\BasePolicy.xml","C:\WDAC\MicrosoftBlockRules.xml" `
+    -OutputFilePath "C:\WDAC\MergedPolicy.xml"
+
+# ۳. تبدیل به Binary
+ConvertFrom-CIPolicy -XmlFilePath "C:\WDAC\MergedPolicy.xml" `
+    -BinaryFilePath "C:\WDAC\SiPolicy.p7b"
+
+# ۴. Deploy
+# در GPO: Computer Configuration → Administrative Templates → System → Device Guard
+# - Deploy Code Integrity Policy: Enabled
+# - Policy File: SiPolicy.p7b
+
+# ۵. بررسی
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard
+
+# ===== تفاوت AppLocker و WDAC =====
+# AppLocker: User Mode، ساده‌تر، بر اساس User/Group
+# WDAC: Kernel Mode، پیچیده‌تر، امن‌تر، بر اساس Publisher/Hash</code></pre>
+
+    <!-- ==== ۴.۱۷ ==== -->
+    <h3>۴.۱۷ Security Baselines با SCT</h3>
+
+    <pre><code># ===== Security Compliance Toolkit =====
+# دانلود از: https://www.microsoft.com/en-us/download/details.aspx?id=55319
+
+# ===== اجزای SCT =====
+# 1. Security Baselines (GPO Backups)
+# 2. Local Group Policy Object (LGPO)
+# 3. Policy Analyzer
+# 4. SetObjectSecurity
+
+# ===== استفاده از Baselines =====
+
+# ۱. در GPMC: Right-click Group Policy Objects → New
+# ۲. Right-click → Import Settings → Backup
+# ۳. انتخاب Baseline (مثلاً Windows Server 2025 Security Baseline)
+# ۴. Fine-tune تنظیمات برای محیط خودت
+# ۵. Link به Domain یا OU
+
+# ===== Policy Analyzer برای مقایسه =====
+# - Baseline را باز کن
+# - GPO فعلی را اضافه کن
+# - تفاوت‌ها را ببین
+
+# ===== LGPO برای خودکارسازی =====
+# ابزار Command-Line برای Import/Export تنظیمات
+
+LGPO.exe /g "C:\Baseline\{GUID}"
+# Import GPO Backup
+
+LGPO.exe /parse /m "C:\policy.inf"
+# Parse Registry Policy
+
+# ===== Group Policy Preferences =====
+# جایگزین Scriptها برای تنظیمات محیطی
+# - Local Users and Groups
+# - Registry
+# - File System
+# - Services
+# - Scheduled Tasks
+
+# ===== Best Practices =====
+# 1. Baseline را اول در Lab تست کن
+# 2. Audit Mode برای چند هفته
+# 3. Exceptionهایی که لازم داری، لحاظ کن
+# 4. تدریجی اعمال کن — نه همه‌جا یک باره
+# 5. Backup GPO قبل از Import</code></pre>
+
+    <!-- ==== ۴.۱۸ ==== -->
+    <h3>۴.۱۸ پایش و پاسخ به حادثه (Incident Response)</h3>
+
+    <pre><code># ===== فازهای Incident Response =====
+# 1. Preparation — آماده‌سازی
+# 2. Identification — شناسایی حادثه
+# 3. Containment — کنترل و جلوگیری از گسترش
+# 4. Eradication — حذف علت
+# 5. Recovery — بازیابی
+# 6. Lessons Learned — درس‌آموزی
+
+# ===== ابزارهای Native ویندوز =====
+
+# ۱. Event Viewer
+Get-WinEvent -LogName "Security" -MaxEvents 100
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625; StartTime=(Get-Date).AddHours(-24)}
+
+# ۲. Get-WinEvent برای تحلیل
+# Failed Logons (Brute Force Detection)
+$failedLogons = Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} |
+    Group-Object {$_.Properties[5].Value} |
+    Sort Count -Descending |
+    Select -First 10 Count, Name
+
+# ۳. Unusual Process
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4688} |
+    Group-Object {$_.Properties[5].Value} |
+    Sort Count -Descending |
+    Select -First 20 Count, Name
+
+# ۴. Group Membership Changes
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4728,4732,4756} |
+    Where-Object {$_.Message -match "Domain Admins"}
+
+# ۵. PowerShell Logging
+# در GPO: Computer Configuration → Administrative Templates → Windows Components → 
+#          Windows PowerShell → Turn on PowerShell Script Block Logging: Enabled
+
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" |
+    Where-Object {$_.Id -eq 4104} |
+    Select -First 10
+
+# ===== Sysinternals Tools =====
+
+# ۱. Autoruns
+# بررسی Startup Programs
+autoruns64.exe -accepteula -a * -h -s -o output.txt
+
+# ۲. Process Explorer
+# جایگزین Task Manager
+
+# ۳. Process Monitor (ProcMon)
+# نظارت Real-Time فایل، Registry، Process، Network
+
+# ۴. TCPView
+# مشاهده Connectionهای فعال
+
+# ۵. Sigcheck
+sigcheck64.exe -a -h -s "C:\Suspicious"
+
+# ۶. Sysmon
+# Config: تهیه‌شده از SwiftOnSecurity یا Olaf Hartong
+
+# ===== Microsoft Sentinel (Cloud SIEM) =====
+# - Cloud-Native SIEM
+# - Integration با Defender
+# - KQL برای Query
+# - Playbooks خودکار
+
+# نمونه KQL Query:
+# SecurityEvent
+# | where TimeGenerated > ago(24h)
+# | where EventID == 4625
+# | summarize FailCount = count() by Account, IpAddress
+# | where FailCount > 10
+
+# ===== Best Practices =====
+# 1. Audit Policy کامل
+# 2. Sysmon روی همه‌ی سرورها
+# 3. Event Forwarding به SIEM
+# 4. Baseline رفتار عادی
+# 5. Alert خودکار
+# 6. Playbook برای پاسخ سریع
+# 7. Backup منظم
+# 8. آموزش تیم امنیت</code></pre>
+
+    <!-- ==== ۴.۱۹ ==== -->
+    <h3>۴.۱۹ Windows LAPS (نسخه جدید)</h3>
+
+    <pre><code># ===== Windows LAPS (Windows Server 2022+) =====
+# Built-in، بدون نیاز به MSI
+
+# ===== Schema Extension =====
+Update-LapsADSchema
+
+# ===== Permissions =====
+Set-LapsADReadPasswordPermission -Identity "OU=Servers,DC=company,DC=local" `
+    -AllowedPrincipals "COMPANY\LAPS-Readers"
+
+Set-LapsADComputerSelfPermission -Identity "OU=Servers,DC=company,DC=local"
+
+# ===== در GPO =====
+# Computer Configuration → Administrative Templates → System → LAPS
+# - Configure password backup directory: Active Directory
+# - Password Settings: Length=20، Complexity=Large+small+num+special، Age=30
+# - Name of administrator account to manage: LocalAdmin
+# - Enable password encryption: Enabled (نیاز به CA)
+
+# ===== خواندن رمز =====
+Get-LapsADPassword -Identity "SERVER01" -AsPlainText | 
+    Select ComputerName, Password, ExpirationTimestamp
+
+# ===== Reset خودکار =====
+Reset-LapsPassword -Identity "SERVER01"
+
+# ===== Backup به Azure AD =====
+# در GPO: Configure password backup directory = Azure Active Directory
+# یا Both (برای Hybrid)
+
+# ===== مزایای Windows LAPS =====
+# - Built-in در ویندوز (بدون MSI)
+# - پشتیبانی از Azure AD
+# - Password Encryption (با Certificate)
+# - ROTATION بعد از Login
+# - سیاست‌های بهتر</code></pre>
+
+    <!-- ==== ۴.۲۰ ==== -->
+    <h3>۴.۲۰ Best Practices نهایی امنیت</h3>
+
+    <pre><code># ===== چک‌لیست نهایی امنیت Windows Server =====
+
+# ===== Identity =====
+# ✅ Tier Model پیاده‌سازی شده
+# ✅ Protected Users Group فعال برای Adminها
+# ✅ Adminها روی PAW کار می‌کنند
+# ✅ LAPS/Windows LAPS برای رمز Local Admin
+# ✅ gMSA برای Service Accountها
+# ✅ Kerberos تنها — NTLM محدود
+# ✅ Password Policy قوی (12+ کاراکتر، Complexity)
+# ✅ Fine-Grained Policy برای Adminها
+
+# ===== Access Control =====
+# ✅ Least Privilege
+# ✅ RBAC
+# ✅ JEA برای دسترسی محدود
+# ✅ JIT برای دسترسی موقت
+# ✅ AppLocker/WDAC برای Application Control
+# ✅ Admin Approval Mode (UAC)
+
+# ===== Hardening =====
+# ✅ Security Baselines از SCT
+# ✅ Attack Surface Reduction
+# ✅ Unused Services حذف شده
+# ✅ SMBv1 غیرفعال
+# ✅ LLMNR/NetBIOS غیرفعال
+# ✅ Windows Firewall در همه‌ی Profiles
+# ✅ Windows Defender فعال با Real-Time Protection
+# ✅ Patch Management منظم
+
+# ===== Data Protection =====
+# ✅ BitLocker روی همه‌ی Disks
+# ✅ BitLocker Recovery Key در AD
+# ✅ Network Unlock برای Serverهای بدون Console
+# ✅ EFS برای فایل‌های حساس
+# ✅ AD RMS برای اسناد Office
+
+# ===== Boot & Firmware =====
+# ✅ UEFI + Secure Boot
+# ✅ TPM 2.0
+# ✅ Measured Boot
+
+# ===== Runtime Protection =====
+# ✅ Credential Guard
+# ✅ Device Guard
+# ✅ LSA Protection (RunAsPPL)
+# ✅ Shielded VM برای VMهای حساس
+# ✅ Guarded Fabric
+
+# ===== Monitoring =====
+# ✅ Audit Policy کامل
+# ✅ Advanced Audit
+# ✅ Sysmon روی همه‌ی سرورها
+# ✅ Event Forwarding به SIEM
+# ✅ Defender for Identity / ATA
+# ✅ Alert خودکار
+# ✅ Incident Response Plan
+
+# ===== Network =====
+# ✅ Segmentation (Tierها)
+# ✅ IPsec/Server Isolation
+# ✅ Domain Isolation
+# ✅ Remote Access با MFA
+
+# ===== Recovery =====
+# ✅ System State Backup منظم
+# ✅ DSRM Password امن
+# ✅ AD Recycle Bin فعال
+# ✅ Test Restore ماهانه
+# ✅ Ransomware Protection (Immutable Backup)
+
+# ===== Documentation =====
+# ✅ Network Diagram
+# ✅ Security Policies
+# ✅ Incident Response Plan
+# ✅ Change Management
+# ✅ Regular Security Review
+
+# ===== Continuous Improvement =====
+# ✅ Vulnerability Scan دوره‌ای
+# ✅ Penetration Test سالانه
+# ✅ Red Team / Blue Team
+# ✅ Security Awareness Training
+# ✅ Threat Intelligence Feed</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      امنیت را در <strong>لایه‌ها</strong> پیاده کن — نه یک‌جا. با LAPS شروع کن،
+      بعد Tier Model، بعد Protected Users، بعد BitLocker. تدریجی ولی مداوم.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      <strong>Domain Admin</strong>ها را به Protected Users اضافه نکن بدون تست.
+      ممکن است بعضی سرویس‌ها از کار بیفتند. اول در Lab تست کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      <strong>Assume Breach</strong> — فرض کن مهاجم داخل شبکه است. با این ذهنیت،
+      معماری امنیتی طراحی کن: Tier Model، PAW، JIT، JEA.
+      امنیت واقعی، دفاع در عمق است، نه دیوار بلند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">🎉 تبریک!</div>
+      با این فصل، <strong>کل دوره‌ی جامع شبکه (CCNA + CCNP + MikroTik + MCSA)</strong>
+      کامل شد — <strong>۲۶ فصل</strong> و بیش از <strong>۱۰۰۰ صفحه محتوای آموزشی</strong>.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 قدم بعدی</div>
+      با این دانش، می‌توانی به‌سراغ:
+      <ul style="margin:6px 0 0">
+        <li><strong>AZ-800 + AZ-801</strong> برای Windows Server Hybrid</li>
+        <li><strong>SC-200</strong> برای Security Operations</li>
+        <li><strong>SC-300</strong> برای Identity and Access</li>
+        <li><strong>CCIE</strong> برای Cisco Expert</li>
+        <li><strong>Azure Solutions Architect</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — پیاده‌سازی LAPS کامل</h3>
+    <pre><code># ===== مرحله ۱: پیش‌نیازها =====
+# - Windows Server 2022+ (برای Windows LAPS)
+# - PowerShell as Administrator
+# - Schema Admin Rights
+
+# ===== مرحله ۲: Schema Extension =====
+Import-Module Laps
+Update-LapsADSchema
+
+# ===== مرحله ۳: Permissions =====
+# گروه Readers بساز
+New-ADGroup -Name "LAPS-Readers" -GroupScope Global `
+    -Path "OU=Groups,OU=Company,DC=company,DC=local"
+
+# افزودن Helpdesk به Readers
+Add-ADGroupMember -Identity "LAPS-Readers" -Members "helpdesk-user"
+
+# تنظیم Permissions
+Set-LapsADReadPasswordPermission -Identity "OU=Servers,DC=company,DC=local" `
+    -AllowedPrincipals "COMPANY\LAPS-Readers"
+
+Set-LapsADComputerSelfPermission -Identity "OU=Servers,DC=company,DC=local"
+
+# ===== مرحله ۴: GPO =====
+$gpo = New-GPO -Name "Windows-LAPS-Policy"
+
+# تنظیمات LAPS
+$regPath = "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\LAPS"
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "BackupDirectory" -Type DWord -Value 2
+# 2 = Active Directory
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "PasswordLength" -Type DWord -Value 20
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "PasswordComplexity" -Type DWord -Value 4
+# 4 = Large + small + digit + special
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "PasswordAgeDays" -Type DWord -Value 30
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "AdministratorAccountName" -Type String -Value "LocalAdmin"
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "PostAuthenticationActions" -Type DWord -Value 3
+# 3 = Reset + Logoff
+
+Set-GPRegistryValue -Name "Windows-LAPS-Policy" `
+    -Key $regPath `
+    -ValueName "PostAuthenticationResetDelay" -Type DWord -Value 8
+# Reset بعد از 8 ساعت
+
+# Link به OU
+New-GPLink -Name "Windows-LAPS-Policy" `
+    -Target "OU=Servers,DC=company,DC=local"
+
+# ===== مرحله ۵: تست =====
+# روی Server:
+gpupdate /force
+Get-LapsADPassword -Identity "SERVER01" -AsPlainText</code></pre>
+
+    <h3>مثال ۲ — پیاده‌سازی JEA برای Helpdesk</h3>
+    <pre><code># ===== ساختار =====
+# C:\JEA\WebAdminRole.psrc
+# C:\JEA\HelpdeskSession.pssc
+
+# ===== مرحله ۱: Role Capability =====
+New-PSRoleCapabilityFile -Path "C:\JEA\HelpdeskRole.psrc"
+
+# ویرایش فایل:
+@'
+@{
+    GUID = 'a1b2c3d4-...'
+    Author = 'Admin'
+    CompanyName = 'Company'
+    VisibleCmdlets = @(
+        'Get-Service',
+        'Restart-Service',
+        @{ Name = 'Get-EventLog'; Parameters = @{ Name = 'LogName'; ValidateSet = 'System','Application' } },
+        'Get-Process',
+        @{ Name = 'Get-Process'; Parameters = @{ Name = 'Name' } }
+    )
+    VisibleFunctions = @()
+    VisibleProviders = @('FileSystem')
+    FunctionDefinitions = @()
+    ScriptsToProcess = @()
+    ModulesToImport = @()
+}
+'@ | Out-File "C:\JEA\HelpdeskRole.psrc" -Encoding UTF8
+
+# ===== مرحله ۲: Session Configuration =====
+New-PSSessionConfigurationFile -Path "C:\JEA\HelpdeskSession.pssc" `
+    -SessionType RestrictedRemoteServer `
+    -RunAsVirtualAccount `
+    -RunAsVirtualAccountGroups "SERVER01\Administrators" `
+    -RoleDefinitions @{
+        'COMPANY\Helpdesk' = @{ RoleCapabilities = 'HelpdeskRole' }
+    } `
+    -TranscriptDirectory "C:\JEA\Transcripts" `
+    -LanguageMode NoLanguage `
+    -SchemaVersion 2.0.0.0
+
+# ===== مرحله ۳: Register =====
+Register-PSSessionConfiguration -Path "C:\JEA\HelpdeskSession.pssc" `
+    -Name "HelpdeskEndpoint" -Force
+
+# ===== مرحله ۴: تست =====
+# با Helpdesk User:
+Enter-PSSession -ComputerName SERVER01 `
+    -ConfigurationName HelpdeskEndpoint `
+    -Credential (Get-Credential COMPANY\helpdesk-user)
+
+# داخل Session:
+Get-Service       # کار می‌کند ✅
+Restart-Service   # کار می‌کند ✅
+Remove-Item       # خطا ❌
+Get-Process       # کار می‌کند ✅
+
+# ===== مرحله ۵: Audit =====
+Get-ChildItem "C:\JEA\Transcripts"
+Get-Content "C:\JEA\Transcripts\*.txt"</code></pre>
+
+    <h3>مثال ۳ — Tier Model پیاده‌سازی</h3>
+    <pre><code># ===== ساختار OU =====
+$root = "DC=company,DC=local"
+New-ADOrganizationalUnit -Name "Tier0" -Path $root
+New-ADOrganizationalUnit -Name "Tier1" -Path $root
+New-ADOrganizationalUnit -Name "Tier2" -Path $root
+
+@("Admins","Users","Computers") | ForEach-Object {
+    New-ADOrganizationalUnit -Name $_ -Path "OU=Tier0,$root"
+    New-ADOrganizationalUnit -Name $_ -Path "OU=Tier1,$root"
+    New-ADOrganizationalUnit -Name $_ -Path "OU=Tier2,$root"
+}
+
+# ===== ساخت Admin Accounts =====
+# Tier 0 Admin
+New-ADUser -Name "T0-Admin" `
+    -SamAccountName "t0-admin" `
+    -UserPrincipalName "t0-admin@company.local" `
+    -Path "OU=Admins,OU=Tier0,$root" `
+    -AccountPassword (Read-Host -AsSecureString "Pass") `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true
+
+# ===== افزودن به Protected Users =====
+Add-ADGroupMember -Identity "Protected Users" -Members "t0-admin"
+
+# ===== گروه Tier Admins =====
+New-ADGroup -Name "Tier0-Admins" `
+    -GroupScope Global `
+    -Path "OU=Admins,OU=Tier0,$root"
+Add-ADGroupMember -Identity "Tier0-Admins" -Members "t0-admin"
+
+# ===== GPO: Deny Logon برای Tier پایین =====
+# GPO: Deny-Logon-Tier0-Admins
+$gpo = New-GPO -Name "Deny-Logon-Tier0-Admins"
+
+# در GPO: Computer Configuration → Windows Settings → Security Settings
+# → Local Policies → User Rights Assignment
+# → Deny log on locally: COMPANY\Tier0-Admins
+# → Deny log on through Remote Desktop Services: COMPANY\Tier0-Admins
+
+# باید روی OU=Tier1 و OU=Tier2 Computers لینک شود
+
+# یا با secedit:
+@'
+[Unicode]
+Unicode=yes
+[Version]
+signature="$CHICAGO$"
+Revision=1
+[Privilege Rights]
+SeDenyInteractiveLogonRight = *S-1-5-21-...-Tier0Admins
+SeDenyRemoteInteractiveLogonRight = *S-1-5-21-...-Tier0Admins
+'@ | Out-File "C:\DenyLogon.inf"
+
+# ===== AppLocker روی Tier 0 PAW =====
+# فقط Admin Tools مجاز
+
+# ===== محدودسازی Internet روی Tier 0 =====
+# فقط به Internal Sites اجازه بده
+
+# ===== Logon Restrictions =====
+# Tier0 Admin فقط به DCها
+Set-ADUser -Identity "t0-admin" -LogonWorkstations "DC01,DC02"</code></pre>
+
+    <h3>مثال ۴ — Shielded VM کامل</h3>
+    <pre><code># ===== HGS Setup (روی HGS Server) =====
+Install-WindowsFeature -Name HostGuardianServiceRole -IncludeManagementTools
+
+# Certificate برای Signing و Encryption
+$cert = Get-Certificate -Template "WebServer" -DnsName "hgs.company.local"
+$certPath = "$env:ProgramData\Microsoft\Windows\Hgs"
+
+# راه‌اندازی HGS
+Initialize-HgsServer -HgsServiceName "hgs.company.local" `
+    -SigningCertificate (Get-ChildItem Cert:\LocalMachine\My | Where {$_.Subject -match "hgs"})
+
+# ===== Guarded Host (Hyper-V) =====
+# روی هر Hyper-V Host:
+Set-HgsClientConfiguration -AttestationServerUrl "https://hgs.company.local/Attestation" `
+    -KeyProtectionServerUrl "https://hgs.company.local/KeyProtection"
+
+Start-Service HvHost, vmickvpexchange
+Get-HgsClientConfiguration
+# ببین: IsHostGuarded: True
+
+# ===== Template Disk =====
+# ۱. VM Template با UEFI + BitLocker
+# ۲. Sysprep و Shutdown
+# ۳. Disk را Export کن
+
+# ===== Shielding Data =====
+$owner = Get-ADUser "COMPANY\Administrator"
+$hgsCert = Get-ChildItem Cert:\LocalMachine\My | Where {$_.Subject -match "HGS"}
+
+New-ShieldingDataFile -ShieldingDataFilePath "C:\Shielded\ShieldingData.pdk" `
+    -Owner $owner.SID.Value `
+    -KeyProtector "$($hgsCert.Thumbprint)" `
+    -SigningCertificate $hgsCert
+
+# ===== Shielded VM Template =====
+New-ShieldedVMTemplate -Name "Server2022-Template" `
+    -TemplateFilePath "C:\Shielded\Template.vhdx" `
+    -ShieldingDataFilePath "C:\Shielded\ShieldingData.pdk"
+
+# ===== ایجاد Shielded VM =====
+New-VM -Name "SHIELDED-APP01" `
+    -Generation 2 `
+    -MemoryStartupBytes 8GB `
+    -Shielded `
+    -TemplateFilePath "C:\Shielded\Server2022-Template.vhdx" `
+    -ShieldingDataFilePath "C:\Shielded\ShieldingData.pdk"
+
+# ===== بررسی =====
+Get-VM | Select Name, IsShielded, State, HgsAttestationStatus
+Get-VMHostSupportedVersion
+Get-VMSecurity -VMName "SHIELDED-APP01"</code></pre>
+
+    <h3>مثال ۵ — Incident Response با PowerShell</h3>
+    <pre><code># ===== سناریو: تشخیص Brute Force =====
+
+# ۱. جمع‌آوری Failed Logons
+$failedLogons = Get-WinEvent -FilterHashtable @{
+    LogName='Security'; Id=4625; StartTime=(Get-Date).AddHours(-1)
+} -ErrorAction SilentlyContinue
+
+# ۲. گروه‌بندی بر اساس IP
+$suspiciousIPs = $failedLogons | 
+    ForEach-Object {
+        [PSCustomObject]@{
+            Time = $_.TimeCreated
+            TargetUser = $_.Properties[5].Value
+            SourceIP = $_.Properties[19].Value
+            Workstation = $_.Properties[13].Value
+        }
+    } |
+    Group-Object SourceIP |
+    Where-Object {$_.Count -gt 10} |
+    Sort-Object Count -Descending
+
+# ۳. نمایش
+$suspiciousIPs | Format-Table Name, Count
+
+# ۴. Block کردن IP در Firewall
+foreach ($ip in $suspiciousIPs) {
+    New-NetFirewallRule -DisplayName "Block Brute Force - $($ip.Name)" `
+        -Direction Inbound `
+        -RemoteAddress $ip.Name `
+        -Action Block
+    Write-Host "Blocked: $($ip.Name)" -ForegroundColor Red
+}
+
+# ۵. بررسی Successful Login بعد از Failed
+$successAfterFail = $failedLogons | ForEach-Object {
+    $user = $_.Properties[5].Value
+    $ip = $_.Properties[19].Value
+    $time = $_.TimeCreated
+    
+    Get-WinEvent -FilterHashtable @{
+        LogName='Security'; Id=4624; StartTime=$time
+    } | Where-Object {
+        $_.Properties[5].Value -eq $user -and
+        $_.Properties[18].Value -eq $ip
+    }
+}
+
+if ($successAfterFail) {
+    Write-Warning "Possible Successful Breach!"
+    $successAfterFail | Format-List TimeCreated, Message
+}
+
+# ۶. گزارش
+$report = @{
+    ReportTime = Get-Date
+    FailedCount = $failedLogons.Count
+    SuspiciousIPs = $suspiciousIPs.Count
+    TopAttackers = $suspiciousIPs | Select -First 5
+}
+$report | ConvertTo-Json -Depth 3 | Out-File "C:\Incident\Report-$(Get-Date -Format 'yyyyMMdd-HHmm').json"
+
+# ۷. اعلان
+Send-MailMessage -To "security@company.ir" `
+    -From "alerts@company.ir" `
+    -Subject "Possible Brute Force Attack" `
+    -Body "Detected $($suspiciousIPs.Count) suspicious IPs" `
+    -SmtpServer "smtp.company.ir"</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>Windows Server 2022/2025 نصب کن</li>
+      <li>Domain Controller و DNS راه‌اندازی کن</li>
+      <li>Schema را برای Windows LAPS Extension کن</li>
+      <li>LAPS Group و Permissionها را تنظیم کن</li>
+      <li>GPO LAPS با طول رمز ۲۰ کاراکتر بساز</li>
+      <li>LAPS را روی ۵ سرور تست کن و رمزها را بخوان</li>
+      <li>JEA Role Capability برای Helpdesk بساز</li>
+      <li>JEA Endpoint ثبت کن و با User غیرAdmin تست کن</li>
+      <li>Protected Users Group بساز</li>
+      <li>Adminهای حساس را به Protected Users اضافه کن</li>
+      <li>Tier Model پیاده کن (Tier 0، 1، 2)</li>
+      <li>GPO Deny Logon برای Tier 0 Admins بساز</li>
+      <li>Credential Guard را با GPO فعال کن</li>
+      <li>BitLocker را روی یک سرور با TPM فعال کن</li>
+      <li>Recovery Key را در AD ذخیره کن</li>
+      <li>Network Unlock را با WDS راه‌اندازی کن</li>
+      <li>Shielded VM بساز با HGS</li>
+      <li>Advanced Audit Policy را در GPO فعال کن</li>
+      <li>Sysmon را روی DC نصب و Config کن</li>
+      <li>Event Forwarding به SIEM راه‌اندازی کن</li>
+      <li>AppLocker Policy برای PAW بساز</li>
+      <li>Windows Firewall با سه Profile سخت کن</li>
+      <li>Security Baseline از SCT Import کن</li>
+      <li>Incident Response Playbook بنویس</li>
+      <li>گزارش نهایی امنیت با PowerShell بساز</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>LAPS Schema Extension خطا:</strong> باید با Schema Admin اجرا شود و در Forest Root.</li>
+      <li><strong>LAPS رمز نمی‌چرخاند:</strong> GPO لینک نشده یا Client نصب نشده. <code>Get-LapsADPassword</code> را چک کن.</li>
+      <li><strong>Windows LAPS رمز را نمی‌بیند:</strong> Permission روی OU تنظیم نشده یا Encryption Certificate مشکل دارد.</li>
+      <li><strong>JEA User نمی‌تواند Login کند:</strong> Role Definition یا Group Membership اشتباه.</li>
+      <li><strong>JEA دستور غیرمجاز اجرا می‌کند:</strong> LanguageMode باید NoLanguage باشد.</li>
+      <li><strong>Protected Users مشکل ایجاد کرد:</strong> ممکن است سرویس‌ها از NTLM استفاده کنند. فقط Adminهای خالص.</li>
+      <li><strong>Credential Guard فعال نمی‌شود:</strong> نیاز به UEFI + Secure Boot + TPM 2.0 + CPU Virtualization.</li>
+      <li><strong>BitLocker روی Server خطا:</strong> TPM 2.0 نبوده یا UEFI+Secure Boot ندارد.</li>
+      <li><strong>BitLocker Recovery Key پیدا نمی‌شود:</strong> GPO برای Backup به AD فعال نبوده.</li>
+      <li><strong>Network Unlock کار نمی‌کند:</strong> WDS یا Certificate اشتباه. DHCP و FQDN صحیح چک کن.</li>
+      <li><strong>Shielded VM Start نمی‌شود:</strong> HGS Attestation Failed — Host را در HGS Group اضافه کن.</li>
+      <li><strong>HGS خطای Certificate:</strong> Signing و Encryption Certificate از CA معتبر بگیر.</li>
+      <li><strong>AppLocker همه‌چیز را بلاک می‌کند:</strong> Default Rules (Allow Admins) را فعال نکردی.</li>
+      <li><strong>WDAC بعد از Reboot سیستم بوت نمی‌شود:</strong> Policy را در Audit Mode تست کن قبل از Enforce.</li>
+      <li><strong>ATA/Defender for Identity Alert Flood:</strong> Baseline رفتار عادی را تنظیم کن — Not Every Alert a Breach.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="laps">LAPS</span> •
+      <span class="term" data-term="jea">JEA</span> •
+      <span class="term" data-term="jit">JIT</span> •
+      <span class="term" data-term="paw">PAW</span> •
+      <span class="term" data-term="shielded-vm">Shielded VM</span> •
+      <span class="term" data-term="bitlocker">BitLocker</span> •
+      <span class="term" data-term="credential-guard">Credential Guard</span> •
+      <span class="term" data-term="ata">ATA</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۲۰ سوالی -->
+  <section class="quiz" data-quiz-id="mcsa-04" data-duration="1200">
+    <h2>🧠 آزمون پایان فصل (۲۰ سوال)</h2>
+    <div class="quiz-timer">۲۰:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) LAPS چه مشکلی را حل می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> رمزنگاری دیسک</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> یکتایی و چرخش رمز Local Admin</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> فایروال</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Backup</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) تفاوت JIT و JEA چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> JIT دائمی، JEA موقت</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> JIT دسترسی موقت، JEA دسترسی محدود دائمی</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> JEA فقط برای PowerShell، JIT برای AD</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) در Tier Model، Tier 0 برای چه منابعی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Clientها</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Domain Controller و AD و PKI</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Web Serverها</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Printerها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) Protected Users Group چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> رمزنگاری دیسک</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Backup خودکار</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> جلوگیری از NTLM، Credential Caching و Delegation</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> افزایش پهنای باند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) Credential Guard از چه چیزی محافظت می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> دیسک</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Credentialها (NTLM Hash، Kerberos TGT)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> فایل‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> شبکه</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Shielded VM چه چیزی را محافظت می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> فایل‌های روی دیسک</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> شبکه</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> VM در برابر Admin Hypervisor</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> فقط Boot</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) HGS مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> High Guard System</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Host Guardian Service</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> Hyper-V Guest Service</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Hardware Guard Security</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) BitLocker کدام را رمزنگاری می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> فقط فایل‌های Office</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> فقط System Drive</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> کل Volume (شامل OS، Data، Boot)</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> فقط RAM</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) Network Unlock چه زمانی استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> برای Laptopها</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> برای Serverهای بدون Console در Data Center</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> برای Tabletها</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> برای Printerها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) AppLocker چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> Backup</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> کنترل اجرای برنامه‌ها بر اساس Rules</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Firewall</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) تفاوت AppLocker و WDAC چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> AppLocker User Mode، WDAC Kernel Mode</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> WDAC قدیمی‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> AppLocker امن‌تر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) Advanced Audit Policy چه تفاوتی با Basic دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> هیچ تفاوتی</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Basic دقیق‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Advanced جزئیات بیشتر و Subcategories دارد</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Advanced فقط Event Log</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) ATA مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> Advanced Threat Agent</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Advanced Threat Analytics</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> Applied Trust Algorithm</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> Auto Threat Analyzer</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) Windows LAPS چه مزیتی نسبت به LAPS قدیمی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> ارزان‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Built-in در ویندوز + Azure AD Support + Password Encryption</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> فقط برای سرورها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) برای BitLocker، حداقل چه چیزی لازم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> فقط یک USB</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> TPM 2.0 + UEFI + Secure Boot (توصیه‌شده)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> فقط Password</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط Windows 10</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۶) PAW مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> Public Access Workstation</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> Protected Access Worker</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Privileged Access Workstation</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> Personal Admin Workstation</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۷) JEA چطور محدودیت ایجاد می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> با فایروال</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> با PowerShell Endpoint و Role Capability</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> با رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> با GPO</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۸) در JEA، RunAsVirtualAccount چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> Run As Admin دائمی</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> Run As System</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> اجرا با حساب مجازی موقت با دسترسی مشخص</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> Run Without Credentials</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۹) Security Compliance Toolkit از چه چیزی تشکیل شده؟</div>
+        <label class="quiz-option"><input type="radio" name="q19" value="0"> فقط GPO</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="1"> Baselines + LGPO + Policy Analyzer</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="2"> فقط PowerShell</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="3"> فقط GUI</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲۰) Pass-the-Hash چه حمله‌ای است؟</div>
+        <label class="quiz-option"><input type="radio" name="q20" value="0"> حمله شبکه</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="1"> حمله به فایل</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="2"> استفاده از NTLM Hash بدون کرک کردن رمز</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="3"> حمله به RAM</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل (و کل دوره)</h2>
+    <p>یک زیرساخت امنیتی کامل Windows Server بساز:</p>
+    <ul>
+      <li><strong>Domain:</strong> company.local با ۲ DC</li>
+      <li><strong>Schema Extension:</strong> برای Windows LAPS</li>
+      <li><strong>LAPS:</strong> روی تمام Serverها با رمز ۲۰ کاراکتری</li>
+      <li><strong>JEA:</strong> Endpoint برای Helpdesk با دستورات محدود</li>
+      <li><strong>PAW:</strong> یک VM با BitLocker، Credential Guard، AppLocker</li>
+      <li><strong>Tier Model:</strong> سه Tier با GPO Deny Logon</li>
+      <li><strong>Protected Users:</strong> برای Adminهای Tier 0</li>
+      <li><strong>Credential Guard:</strong> روی همه‌ی Serverهای Windows Server 2022+</li>
+      <li><strong>LSA Protection:</strong> RunAsPPL در Registry</li>
+      <li><strong>Shielded VM:</strong> حداقل ۲ VM با HGS</li>
+      <li><strong>BitLocker:</strong> روی همه‌ی Disks با Backup در AD</li>
+      <li><strong>Network Unlock:</strong> برای Serverهای بدون Console</li>
+      <li><strong>Windows Defender:</strong> با ASR Rules فعال</li>
+      <li><strong>Windows Firewall:</strong> سه Profile با Rules محدود</li>
+      <li><strong>Advanced Audit:</strong> تمام Categoryهای مهم</li>
+      <li><strong>Sysmon:</strong> روی DC و File Server</li>
+      <li><strong>Event Forwarding:</strong> به SIEM (WEC/WEF)</li>
+      <li><strong>AppLocker:</strong> برای PAW و Serverهای Production</li>
+      <li><strong>Security Baseline:</strong> از SCT Import شده</li>
+      <li>مستندسازی کامل Security Policy + Incident Response Plan</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش نهایی</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Red Team Exercise ساده انجام بده — Pass-the-Hash را تست کن و ببین با Credential Guard دفاع می‌کند.</li>
+        <li>یک Mimikatz-like attack را شبیه‌سازی کن (در Lab) و ببین ATA چه Alert می‌دهد.</li>
+        <li>با PowerShell یک گزارش کامل امنیتی از سازمان بساز.</li>
+        <li>با Azure Arc، Windows Serverها را در Azure پایش کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>LAPS:</strong> رمز Local Admin یکتا و چرخشی — ذخیره در AD</li>
+      <li><strong>Windows LAPS:</strong> Built-in + Azure AD + Password Encryption</li>
+      <li><strong>JEA:</strong> PowerShell Endpoint با Role Capability — Least Privilege</li>
+      <li><strong>JIT:</strong> دسترسی موقت — PAM در AD</li>
+      <li><strong>PAW:</strong> کامپیوتر مجزا برای Adminها — بدون Email/Browser</li>
+      <li><strong>Tier Model:</strong> Tier 0، 1، 2 — Admins بالاتر روی Tier پایین Login نمی‌کنند</li>
+      <li><strong>Protected Users:</strong> بدون NTLM، بدون Caching، بدون Delegation</li>
+      <li><strong>Credential Guard:</strong> VBS — Pass-the-Hash Prevention</li>
+      <li><strong>Device Guard:</strong> Code Integrity + VBS</li>
+      <li><strong>Shielded VM:</strong> BitLocker + Guarded Fabric + HGS</li>
+      <li><strong>HGS:</strong> Host Guardian Service — TPM یا Admin-Trusted Attestation</li>
+      <li><strong>BitLocker:</strong> رمزنگاری کامل دیسک — TPM، PIN، Network Unlock</li>
+      <li><strong>Defender:</strong> ASR Rules، Cloud Protection، MAPS</li>
+      <li><strong>Firewall:</strong> سه Profile — Default Inbound Block</li>
+      <li><strong>Advanced Audit:</strong> Subcategory-based — جزئیات بیشتر</li>
+      <li><strong>ATA / Defender for Identity:</strong> کشف حملات به AD</li>
+      <li><strong>AppLocker:</strong> User Mode — Publisher، Path، Hash</li>
+      <li><strong>WDAC:</strong> Kernel Mode — امن‌تر</li>
+      <li><strong>SCT:</strong> Microsoft Security Baselines — Import با GPMC</li>
+      <li><strong>Incident Response:</strong> ۶ فاز — از Preparation تا Lessons Learned</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mcsa_Ch_03.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn gold" data-finish-chapter="mcsa-04">🎉 اتمام کل دوره</button>
+      <a class="btn" href="../../index.html" data-nav-next>🏠 بازگشت به داشبورد</a>
+    </div>
+  </nav>
+
+  <!-- بنر پایان -->
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%);color:#fff;padding:40px 24px;margin-top:40px">
+    <h2 style="color:#fff;margin:0 0 16px;font-size:1.8rem">🎉 تبریک! کل دوره تکمیل شد</h2>
+    <p style="color:#fff;opacity:.95;font-size:1.05rem;margin:0 0 24px">
+      <strong>CCNA (۶ فصل) + CCNP (۸ فصل) + MikroTik (۸ فصل) + MCSA (۴ فصل)</strong><br>
+      ۲۶ فصل — بیش از ۱۰۰۰ صفحه محتوای آموزشی
+    </p>
+    <a class="btn gold" href="../../index.html" style="font-size:1rem;padding:12px 28px">🏠 بازگشت به داشبورد</a>
+  </div>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

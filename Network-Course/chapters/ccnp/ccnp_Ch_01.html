@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۱ CCNP — معماری سازمانی (Enterprise Architecture)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-01">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۱ — معماری سازمانی (Enterprise Architecture)</h1>
+    <div class="meta">
+      <span>📖 ۹۰ دقیقه</span>
+      <span>🎯 وزن در ENCOR: ۱۵٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      وارد CCNP شدی — سطح حرفه‌ای سیسکو. اینجا دیگر خبری از پیکربندی‌های ساده‌ی VLAN و OSPF نیست.
+      در این فصل، <strong>طراحی معماری شبکه‌های سازمانی</strong> را یاد می‌گیری: از مدل‌های
+      سنتی <strong>Two-Tier</strong> و <strong>Three-Tier</strong> تا معماری مدرن
+      <span class="term" data-term="fabric">Fabric</span>، از
+      <span class="term" data-term="sdwan">SD-WAN</span> و
+      <span class="term" data-term="sda">SD-Access</span> تا
+      <span class="term" data-term="vrf">VRF</span> و
+      <span class="term" data-term="vxlan">VXLAN</span>.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>طراحی</strong> است، نه فقط پیکربندی — چرا یک توپولوژی خاص
+      انتخاب می‌شود، چطور مقیاس‌پذیری، افزونگی و Performance را بالا ببریم، و چطور
+      شبکه‌های On-Premise را با Cloud یکپارچه کنیم.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مدل‌های طراحی سلسله‌مراتبی: Two-Tier و Three-Tier</li>
+      <li>معماری Fabric و Spine-Leaf در Data Center</li>
+      <li>High Availability: Redundancy، FHRP و SSO</li>
+      <li>مکانیزم‌های سوئیچینگ: CAM، TCAM، CEF</li>
+      <li>مقایسه Process Switching، Fast Switching و CEF</li>
+      <li>SD-WAN — Control Plane و Data Plane</li>
+      <li>SD-Access — Fabric، Control Plane، Data Plane</li>
+      <li>VXLAN و LISP — پایه‌های Overlay مدرن</li>
+      <li>مجازی‌سازی شبکه: Hypervisor Type 1 و 2</li>
+      <li>VRF، GRE و IPsec Tunneling</li>
+      <li>QoS در شبکه‌های سازمانی</li>
+      <li>Multicast: IGMP، PIM، RP</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا در Data Centerهای مدرن، Topology Spine-Leaf جایگزین Three-Tier شده است؟</li>
+      <li>تفاوت Control Plane و Data Plane در SD-WAN چیست و هرکدام کجا قرار دارند؟</li>
+      <li>VRF چطور به جداسازی ترافیک چند مشتری روی یک روتر کمک می‌کند؟</li>
+      <li>چرا سیسکو در شبکه‌های Campus مدرن از VXLAN به‌جای VLAN استفاده می‌کند؟</li>
+      <li>تفاوت Type 1 و Type 2 Hypervisor چیست و کدام برای Enterprise مناسب‌تر است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۱.۱ ==== -->
+    <h3>۱.۱ مدل‌های طراحی سلسله‌مراتبی</h3>
+    <p>
+      طراحی شبکه‌های سازمانی بر پایه‌ی <strong>سه لایه</strong> بنا شده که هرکدام نقش مشخصی دارند.
+      انتخاب تعداد لایه‌ها (۲ یا ۳) به اندازه‌ی سازمان و بودجه بستگی دارد.
+    </p>
+
+    <p><strong>سه لایه در طراحی سنتی:</strong></p>
+    <ul>
+      <li><strong>Access Layer:</strong> اتصال دستگاه‌های کاربر نهایی (PC، IP Phone، AP، دوربین). تمرکز روی Port Density، PoE و امنیت پورت.</li>
+      <li><strong>Distribution Layer:</strong> Aggregation، اعمال Policy (ACL، QoS)، Inter-VLAN Routing و مرز بین Access و Core.</li>
+      <li><strong>Core Layer:</strong> ستون فقرات شبکه با پهنای باند بالا، Latency کم و بدون هیچ Policy پیچیده.</li>
+    </ul>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🏢 Three-Tier (سنتی):</strong>
+        <p style="margin:6px 0">مناسب سازمان‌های بزرگ با چند ساختمان. Core، Distribution و Access جدا.</p>
+        <pre><code>[Core] ← ستون فقرات
+   ↑↓
+[Distribution] ← Policy & Routing
+   ↑↓
+[Access] ← Endpoints</code></pre>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🏢 Two-Tier (Collapsed Core):</strong>
+        <p style="margin:6px 0">مناسب سازمان‌های متوسط. Core و Distribution در یک لایه ادغام می‌شوند.</p>
+        <pre><code>[Collapsed Core/Distribution]
+   ↑↓
+[Access]</code></pre>
+      </div>
+    </div>
+
+    <!-- ==== ۱.۲ ==== -->
+    <h3>۱.۲ معماری Fabric و Spine-Leaf</h3>
+    <p>
+      <span class="term" data-term="fabric">Fabric</span> یک معماری مدرن است که به‌جای
+      سلسله‌مراتب سنتی، از یک توپولوژی <strong>Full-Mesh بین دو لایه</strong> استفاده می‌کند.
+    </p>
+
+    <p><strong>مشخصات Spine-Leaf:</strong></p>
+    <ul>
+      <li>هر Leaf به <strong>همه‌ی</strong> Spineها وصل می‌شود</li>
+      <li>Leafها به هم وصل <strong>نمی‌شوند</strong></li>
+      <li>Spineها به هم وصل <strong>نمی‌شوند</strong></li>
+      <li>پهنای باند یکنواخت — هر Leaf فقط یک Hop از هر Leaf دیگر فاصله دارد</li>
+      <li>مقیاس‌پذیری افقی: با اضافه کردن Spine یا Leaf جدید، شبکه بزرگ‌تر می‌شود</li>
+      <li>Overlay معمولاً با <span class="term" data-term="vxlan">VXLAN</span> ساخته می‌شود</li>
+    </ul>
+
+    <pre><code>[Spine1]  [Spine2]  [Spine3]
+   │  ╲    ╱  │  ╲    ╱  │
+   │   ╲  ╱   │   ╲  ╱   │
+   │    ╳    │    ╳    │
+   │   ╱  ╲   │   ╱  ╲   │
+   ↓  ╱    ╲  ↓  ╱    ╲  ↓
+[Leaf1]  [Leaf2]  [Leaf3]
+   │        │        │
+[Server] [Server] [Server]</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      برای همگرایی سریع و پایداری در Fabric، معمولاً از <strong>BGP</strong> بین Spine و Leaf
+      استفاده می‌شود (eBGP در Underlay) یا <strong>OSPF</strong> در سناریوهای ساده‌تر.
+    </div>
+
+    <!-- ==== ۱.۳ ==== -->
+    <h3>۱.۳ High Availability — Redundancy، FHRP و SSO</h3>
+    <p>
+      در شبکه‌های سازمانی، هیچ نقطه‌ی شکستی (Single Point of Failure) نباید وجود داشته باشد.
+      HA از سه بخش تشکیل می‌شود:
+    </p>
+
+    <ul>
+      <li><strong>Physical Redundancy:</strong> دو لینک، دو سوئیچ، دو مسیر برق</li>
+      <li><strong>Protocol Redundancy:</strong> پروتکل‌های مسیریابی و سوئیچینگ با همگرایی خودکار</li>
+      <li><strong>Gateway Redundancy:</strong> FHRP برای Gateway کاربران</li>
+    </ul>
+
+    <p><strong>FHRP در CCNP:</strong></p>
+    <ul>
+      <li><strong>HSRP:</strong> اختصاصی سیسکو، Active/Standby، Virtual MAC = 0000.0c07.acXX</li>
+      <li><strong>VRRP:</strong> استاندارد باز، Master/Backup، Virtual MAC = 0000.5e00.01XX</li>
+      <li><strong>GLBP:</strong> اختصاصی سیسکو با قابلیت Load Balancing بین روترها</li>
+    </ul>
+
+    <pre><code>! HSRP پیشرفته با Tracking
+R1(config)# interface Gi0/0
+R1(config-if)# ip address 192.168.10.2 255.255.255.0
+R1(config-if)# standby 1 ip 192.168.10.1
+R1(config-if)# standby 1 priority 150
+R1(config-if)# standby 1 preempt delay minimum 30
+R1(config-if)# standby 1 track Gi0/1 30
+R1(config-if)# standby 1 track 5 decrement 20
+! اگر Gi0/1 قطع شد، ۳۰ واحد از Priority کم می‌شود
+! اگر Track List 5 خطا داد، ۲۰ واحد کم می‌شود</code></pre>
+
+    <p><strong>SSO (Stateful Switchover):</strong> در روترها و سوئیچ‌های Dual-Supervisor،
+      Supervisor فعال State را به Supervisor Standby منتقل می‌کند تا در صورت Failover،
+      جلسات (مثل OSPF Adjacency یا NAT Sessions) حفظ شوند.</p>
+
+    <p><strong>NSF (Non-Stop Forwarding) + SSO</strong> = تجربه‌ی Failover بدون قطعی
+      در پلن Control.</p>
+
+    <!-- ==== ۱.۴ ==== -->
+    <h3>۱.۴ مکانیزم‌های سوئیچینگ: CAM، TCAM و CEF</h3>
+
+    <p><strong>CAM (Content Addressable Memory):</strong> جدول MAC سوئیچ. برای Lookup
+      در لایه ۲ — سرعت جستجو در یک Clock Cycle.</p>
+
+    <p><strong>TCAM (Ternary Content Addressable Memory):</strong> جدول مورد استفاده
+      برای ACL، QoS Classification و Routing در سوئیچ‌های L3. با پشتیبانی از
+      Wildcard و Mask — سرعت بسیار بالا ولی گران‌قیمت.</p>
+
+    <p><strong>CEF (Cisco Express Forwarding):</strong> مکانیزم سوئیچینگ مدرن سیسکو
+      که بر پایه‌ی دو جدول کار می‌کند:</p>
+
+    <ul>
+      <li><strong>FIB (Forwarding Information Base):</strong> کپی سخت‌افزاری از جدول
+        مسیریابی، در TCAM. برای Lookup سریع.</li>
+      <li><strong>Adjacency Table:</strong> اطلاعات لایه ۲ Next-Hop (MAC و Encapsulation).</li>
+    </ul>
+
+    <p>ترکیب FIB + Adjacency → Forwarding سریع بدون پردازش هر بسته در CPU.</p>
+
+    <!-- ==== ۱.۵ ==== -->
+    <h3>۱.۵ مقایسه Process، Fast و CEF Switching</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">روش</th>
+          <th style="padding:6px;border:1px solid var(--border)">Lookup</th>
+          <th style="padding:6px;border:1px solid var(--border)">Performance</th>
+          <th style="padding:6px;border:1px solid var(--border)">وضعیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Process Switching</td>
+          <td style="padding:6px;border:1px solid var(--border)">هر بسته → CPU</td>
+          <td style="padding:6px;border:1px solid var(--border)">🐌 خیلی کند</td>
+          <td style="padding:6px;border:1px solid var(--border)">قدیمی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Fast Switching</td>
+          <td style="padding:6px;border:1px solid var(--border)">Cache Flow</td>
+          <td style="padding:6px;border:1px solid var(--border)">🐢 متوسط</td>
+          <td style="padding:6px;border:1px solid var(--border)">قدیمی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">CEF</td>
+          <td style="padding:6px;border:1px solid var(--border)">FIB + Adjacency در TCAM</td>
+          <td style="padding:6px;border:1px solid var(--border)">🚀 بسیار سریع</td>
+          <td style="padding:6px;border:1px solid var(--border)">استاندارد فعلی</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code>! بررسی CEF
+Router# show ip cef
+Router# show ip cef 192.168.1.0/24 detail
+Router# show adjacency detail
+Router# show ip cef summary
+! در روترهای مدرن، CEF پیش‌فرض فعال است</code></pre>
+
+    <!-- ==== ۱.۶ ==== -->
+    <h3>۱.۶ SD-WAN — معماری و اجزا</h3>
+    <p>
+      <span class="term" data-term="sdwan">SD-WAN</span> (Software-Defined WAN) یک معماری
+      مدرن برای اتصال شعب سازمان است که جایگزین WAN سنتی (MPLS) می‌شود.
+      مزیت اصلی: استفاده از لینک‌های Broadband ارزان در کنار MPLS.
+    </p>
+
+    <p><strong>سه جزء اصلی Cisco SD-WAN (Viptela):</strong></p>
+    <ul>
+      <li><strong>vManage:</strong> رابط مدیریت گرافیکی (NMS) — Provision، Monitor، Troubleshoot</li>
+      <li><strong>vBond:</strong> Orchestrator — احراز هویت اولیه دستگاه‌ها و معرفی آن‌ها به Controller</li>
+      <li><strong>vSmart:</strong> Controller — توزیع Policy و Routing Information به vEdgeها</li>
+    </ul>
+
+    <p><strong>دستگاه‌های Edge:</strong></p>
+    <ul>
+      <li><strong>vEdge / cEdge:</strong> روترهای SD-WAN که در شعب سازمان قرار می‌گیرند</li>
+      <li>Control Plane از Data Plane جدا شده است</li>
+    </ul>
+
+    <pre><code>Control Plane:
+   vBond ←→ vSmart ←→ vManage
+       │
+       ↓ (توزیع Policy و Routes)
+Data Plane:
+   vEdge ←(IPsec/DTLS)→ vEdge
+   (Overlay روی هر لینک فیزیکی — MPLS، Broadband، LTE)</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ مزایای کلیدی SD-WAN</div>
+      <ul style="margin:6px 0 0">
+        <li>Zero Touch Provisioning (ZTP): نصب و راه‌اندازی با یک بار تایپ کردن</li>
+        <li>Application-Aware Routing: انتخاب بهترین لینک بر اساس نوع ترافیک (VoIP vs Bulk)</li>
+        <li>Segmentation: جداسازی ترافیک مشتریان با VPN ID</li>
+        <li>End-to-End Encryption: IPsec خودکار بین همه‌ی سایت‌ها</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۱.۷ ==== -->
+    <h3>۱.۷ SD-Access — Fabric Campus</h3>
+    <p>
+      <span class="term" data-term="sda">SD-Access</span> معماری مدرن سیسکو برای شبکه‌های
+      Campus است که بر پایه‌ی <span class="term" data-term="lisp">LISP</span> (Control Plane)
+      و <span class="term" data-term="vxlan">VXLAN</span> (Data Plane) ساخته می‌شود.
+    </p>
+
+    <p><strong>اجزای اصلی SD-Access:</strong></p>
+    <ul>
+      <li><strong>DNA Center:</strong> مدیریت متمرکز و Provision خودکار</li>
+      <li><strong>Identity Services Engine (ISE):</strong> احراز هویت و اعمال Policy</li>
+      <li><strong>Control Plane Node:</strong> نگه‌داری Database از تمام Endpointها (LISP Map-Server)</li>
+      <li><strong>Edge Node:</strong> سوئیچ‌هایی که Endpointها به آن‌ها وصل می‌شوند</li>
+      <li><strong>Border Node:</strong> مرز Fabric با شبکه‌های خارجی (مثل WAN یا DC)</li>
+      <li><strong>Intermediate Node:</strong> سوئیچ‌های میانی که فقط Forward می‌کنند</li>
+    </ul>
+
+    <p><strong>مزایای SD-Access:</strong></p>
+    <ul>
+      <li>Segmentation با VXLAN: میلیون‌ها Segment (VNI) در مقابل 4096 VLAN</li>
+      <li>Policy متمرکز: مشابه Firewall ولی روی کل Fabric</li>
+      <li>Mobility: Endpoint هر جای شبکه وصل شود، همان Policy اعمال می‌شود</li>
+      <li>Automation: Provision با یک کلیک در DNA Center</li>
+    </ul>
+
+    <!-- ==== ۱.۸ ==== -->
+    <h3>۱.۸ VXLAN و LISP</h3>
+
+    <p><strong>VXLAN (Virtual Extensible LAN):</strong> یک تکنولوژی
+      <strong>MAC-in-UDP</strong> است که فریم‌های L2 را داخل بسته‌های UDP
+      (پورت 4789) کپسوله می‌کند.</p>
+
+    <ul>
+      <li>شناسه‌ی VXLAN: <strong>VNI (VXLAN Network Identifier)</strong> — ۲۴ بیت، حدود ۱۶ میلیون Segment</li>
+      <li>VTEP (VXLAN Tunnel Endpoint): دستگاهی که Encapsulation/Decapsulation را انجام می‌دهد</li>
+      <li>Overlay روی Underlay IP — نیازی به Trunk بین Data Centerها نیست</li>
+    </ul>
+
+    <p><strong>LISP (Locator/ID Separation Protocol):</strong> پروتکل
+      جداسازی <strong>هویت</strong> از <strong>مکان</strong>:</p>
+
+    <ul>
+      <li><strong>EID (Endpoint ID):</strong> آدرس هویت — مثلاً IP هاست</li>
+      <li><strong>RLOC (Routing Locator):</strong> آدرس مکان — مثلاً IP روتر</li>
+      <li><strong>Map-Server:</strong> نگه‌داری Database EID → RLOC</li>
+      <li><strong>Map-Resolver:</strong> پاسخ به درخواست‌های Lookup</li>
+    </ul>
+
+    <pre><code>! نمونه‌ی Mapping در LISP
+EID: 192.168.10.5 (Host IP)
+  ↓
+RLOC: 10.10.10.1 (Edge Node IP)
+
+! وقتی هاست جابه‌جا می‌شود، EID همان می‌ماند ولی RLOC تغییر می‌کند
+! نتیجه: Policy ثابت + Mobility</code></pre>
+
+    <!-- ==== ۱.۹ ==== -->
+    <h3>۱.۹ مجازی‌سازی شبکه — Hypervisor Type 1 و 2</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Type 1 (Bare-Metal)</th>
+          <th style="padding:6px;border:1px solid var(--border)">Type 2 (Hosted)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">اجرا</td><td style="padding:6px;border:1px solid var(--border)">مستقیم روی سخت‌افزار</td><td style="padding:6px;border:1px solid var(--border)">روی OS میزبان</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Performance</td><td style="padding:6px;border:1px solid var(--border)">بالا</td><td style="padding:6px;border:1px solid var(--border)">متوسط</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">Data Center Enterprise</td><td style="padding:6px;border:1px solid var(--border)">تست و توسعه</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نمونه</td><td style="padding:6px;border:1px solid var(--border)">VMware ESXi، Hyper-V، KVM</td><td style="padding:6px;border:1px solid var(--border)">VMware Workstation، VirtualBox</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Virtual Switch در Hypervisor:</strong> پل بین VMها و شبکه‌ی فیزیکی:</p>
+    <ul>
+      <li><strong>vSwitch Standard:</strong> پیکربندی مستقل روی هر ESXi — ساده ولی مدیریت دستی</li>
+      <li><strong>vSwitch Distributed:</strong> پیکربندی متمرکز از vCenter — مقیاس‌پذیر</li>
+      <li><strong>Cisco Nexus 1000V:</strong> سوئیچ مجازی سیسکو با Feature مشابه سوئیچ فیزیکی</li>
+    </ul>
+
+    <!-- ==== ۱.۱۰ ==== -->
+    <h3>۱.۱۰ VRF، GRE و IPsec</h3>
+
+    <p><strong>VRF (Virtual Routing and Forwarding):</strong> چند جدول مسیریابی
+      مستقل روی یک روتر فیزیکی. هر VRF جدا از دیگری است — حتی اگر IP یکسان داشته باشند.</p>
+
+    <pre><code>! پیکربندی VRF
+Router(config)# ip vrf CUSTOMER-A
+Router(config-vrf)# rd 65000:100
+Router(config-vrf)# route-target export 65000:100
+Router(config-vrf)# route-target import 65000:100
+Router(config-vrf)# exit
+
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding CUSTOMER-A
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+
+! بررسی
+Router# show ip vrf
+Router# show ip route vrf CUSTOMER-A</code></pre>
+
+    <p><strong>GRE (Generic Routing Encapsulation):</strong> تونل ساده‌ی L3 بدون رمزنگاری.
+      پروتکل IP با شماره 47. برای انتقال Multicast و Routing Protocol روی تونل مناسب.</p>
+
+    <pre><code>! GRE Tunnel
+R1(config)# interface Tunnel0
+R1(config-if)# ip address 10.1.1.1 255.255.255.252
+R1(config-if)# tunnel source Gi0/0
+R1(config-if)# tunnel destination 203.0.113.2
+
+! نکته: GRE رمزنگاری ندارد — با IPsec ترکیب می‌شود
+! (GRE over IPsec)</code></pre>
+
+    <p><strong>IPsec:</strong> چارچوب رمزنگاری L3 با دو پروتکل:</p>
+    <ul>
+      <li><strong>AH (Authentication Header):</strong> فقط احراز هویت — بدون رمزنگاری</li>
+      <li><strong>ESP (Encapsulating Security Payload):</strong> احراز هویت + رمزنگاری</li>
+    </ul>
+
+    <p><strong>دو حالت IPsec:</strong></p>
+    <ul>
+      <li><strong>Transport Mode:</strong> فقط Payload رمزنگاری می‌شود — برای End-to-End</li>
+      <li><strong>Tunnel Mode:</strong> کل بسته رمزنگاری می‌شود — برای Site-to-Site VPN</li>
+    </ul>
+
+    <!-- ==== ۱.۱۱ ==== -->
+    <h3>۱.۱۱ QoS در شبکه‌های سازمانی</h3>
+    <p>در CCNP، QoS را در سطح معماری می‌بینیم:</p>
+
+    <ul>
+      <li><strong>Trust Boundary:</strong> جایی که Marking اعتماد می‌شود — معمولاً در Access Layer یا روی IP Phone</li>
+      <li><strong>Classification & Marking:</strong> با NBAR یا ACL — DSCP در L3، CoS در L2</li>
+      <li><strong>Queuing:</strong> LLQ (Low Latency Queue) برای VoIP، CBWFQ برای بقیه</li>
+      <li><strong>Congestion Avoidance:</strong> WRED برای جلوگیری از Sync Global</li>
+      <li><strong>Policing / Shaping:</strong> Policing = Drop، Shaping = Buffer</li>
+    </ul>
+
+    <pre><code>! نمونه‌ی Policy Map QoS در CCNP
+Router(config)# class-map match-any VOICE
+Router(config-cmap)# match dscp ef
+Router(config-cmap)# match protocol rtp audio
+
+Router(config)# class-map match-any CRITICAL-DATA
+Router(config-cmap)# match dscp af31 af41
+
+Router(config)# policy-map WAN-QOS
+Router(config-pmap)# class VOICE
+Router(config-pmap-c)# priority percent 20
+Router(config-pmap)# class CRITICAL-DATA
+Router(config-pmap-c)# bandwidth remaining percent 30
+Router(config-pmap)# class class-default
+Router(config-pmap-c)# fair-queue
+
+Router(config)# interface Gi0/1
+Router(config-if)# service-policy output WAN-QOS</code></pre>
+
+    <!-- ==== ۱.۱۲ ==== -->
+    <h3>۱.۱۲ Multicast — IGMP، PIM و RP</h3>
+
+    <p><strong>مفاهیم پایه:</strong></p>
+    <ul>
+      <li><strong>Unicast:</strong> یک به یک | <strong>Broadcast:</strong> یک به همه | <strong>Multicast:</strong> یک به گروه</li>
+      <li>کلاس D: 224.0.0.0/4 — بازه‌ی Multicast</li>
+      <li>224.0.0.0/24 رزرو Local (TTL=1)</li>
+    </ul>
+
+    <p><strong>IGMP (Internet Group Management Protocol):</strong> بین Host و Router محلی:</p>
+    <ul>
+      <li>IGMPv2: Join، Leave، Query</li>
+      <li>IGMPv3: SSM (Source-Specific Multicast)</li>
+      <li><strong>IGMP Snooping:</strong> سوئیچ Multicast را فقط به پورت‌های عضو می‌فرستد</li>
+    </ul>
+
+    <p><strong>PIM (Protocol Independent Multicast):</strong> بین روترها — دو حالت اصلی:</p>
+    <ul>
+      <li><strong>PIM Dense Mode:</strong> ابتدا همه‌جا، بعد Prune — مناسب شبکه‌های کوچک</li>
+      <li><strong>PIM Sparse Mode:</strong> فقط با درخواست — نیازمند RP (Rendezvous Point)</li>
+    </ul>
+
+    <p><strong>RP (Rendezvous Point):</strong> نقطه‌ی ملاقات در Sparse Mode. گزینه‌ها:</p>
+    <ul>
+      <li>Static RP: ساده، دستی</li>
+      <li>Auto-RP: سیسکو اختصاصی</li>
+      <li>BSR (Bootstrap Router): استاندارد باز</li>
+      <li>Anycast RP: مقیاس‌پذیر با MSDP</li>
+    </ul>
+
+    <pre><code>! پیکربندی PIM Sparse Mode
+Router(config)# ip multicast-routing
+Router(config)# ip pim rp-address 10.0.0.1
+Router(config)# interface Gi0/0
+Router(config-if)# ip pim sparse-mode
+
+! بررسی
+Router# show ip mroute
+Router# show ip pim neighbor
+Router# show ip pim rp mapping</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در Spine-Leaf، هر Leaf دقیقاً یک Hop از هر Leaf دیگر دارد.
+      اگر Latency بین Leafها متفاوت است، یعنی طراحی Spine-Leaf شما به‌درستی پیاده نشده.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار طراحی</div>
+      هرگز روی Core Layer سیاست‌های پیچیده (ACL، NAT، QoS سنگین) اعمال نکن.
+      Core باید سریع و بدون Policy باشد — Policy در Distribution.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در SD-Access، تفاوت اصلی با VLAN سنتی این است که VXLAN با VNI می‌تواند
+      میلیون‌ها Segment بسازد در مقابل 4096 VLAN. این یعنی بدون محدودیت طراحی کن.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۲ CCNP با <span class="term" data-term="vrf">VRF</span> در سناریوهای
+      Multi-Tenant و <span class="term" data-term="vxlan">VXLAN</span> در SD-Access عمیق‌تر
+      آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در ENARSI با <span class="term" data-term="mpls">MPLS</span>،
+      <span class="term" data-term="dmvpn">DMVPN</span> و
+      <span class="term" data-term="bgp">BGP</span> معماری‌های پیچیده‌ی WAN و SP می‌سازی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — HSRP با Tracking و Preempt</h3>
+    <pre><code>! R1 — Active با Priority بالا
+R1(config)# track 10 interface Gi0/1 line-protocol
+R1(config)# interface Gi0/0
+R1(config-if)# ip address 192.168.10.2 255.255.255.0
+R1(config-if)# standby 1 ip 192.168.10.1
+R1(config-if)# standby 1 priority 150
+R1(config-if)# standby 1 preempt delay minimum 30
+R1(config-if)# standby 1 track 10 decrement 50
+
+! R2 — Standby
+R2(config)# interface Gi0/0
+R2(config-if)# ip address 192.168.10.3 255.255.255.0
+R2(config-if)# standby 1 ip 192.168.10.1
+R2(config-if)# standby 1 priority 100
+R2(config-if)# standby 1 preempt delay minimum 30
+
+! بررسی
+R1# show standby brief
+R1# show standby</code></pre>
+
+    <h3>مثال ۲ — VRF-Lite برای جداسازی مشتریان</h3>
+    <pre><code>! روتر Multi-Tenant
+Router(config)# ip vrf TENANT-A
+Router(config-vrf)# rd 1:100
+Router(config-vrf)# route-target both 1:100
+Router(config-vrf)# exit
+
+Router(config)# ip vrf TENANT-B
+Router(config-vrf)# rd 1:200
+Router(config-vrf)# route-target both 1:200
+Router(config-vrf)# exit
+
+! اختصاص اینترفیس‌ها
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding TENANT-A
+Router(config-if)# ip address 10.0.0.1 255.255.255.0
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip vrf forwarding TENANT-B
+Router(config-if)# ip address 10.0.0.1 255.255.255.0
+! همان IP — ولی در VRF جدا
+
+! بررسی
+Router# show ip vrf
+Router# show ip route vrf TENANT-A
+Router# ping vrf TENANT-A 10.0.0.2</code></pre>
+
+    <h3>مثال ۳ — GRE over IPsec</h3>
+    <pre><code>! ===== گام ۱: GRE Tunnel =====
+R1(config)# interface Tunnel0
+R1(config-if)# ip address 10.1.1.1 255.255.255.252
+R1(config-if)# tunnel source Gi0/0
+R1(config-if)# tunnel destination 203.0.113.2
+R1(config-if)# tunnel mode gre ip
+
+! ===== گام ۲: IPsec روی GRE =====
+R1(config)# crypto isakmp policy 10
+R1(config-isakmp)# encr aes 256
+R1(config-isakmp)# hash sha256
+R1(config-isakmp)# authentication pre-share
+R1(config-isakmp)# group 14
+R1(config-isakmp)# exit
+
+R1(config)# crypto isakmp key SecureKey123 address 203.0.113.2
+
+R1(config)# crypto ipsec transform-set MY-SET esp-aes 256 esp-sha256-hmac
+
+R1(config)# crypto map GRE-MAP 10 ipsec-isakmp
+R1(config-crypto-map)# set peer 203.0.113.2
+R1(config-crypto-map)# set transform-set MY-SET
+R1(config-crypto-map)# match address 100
+R1(config-crypto-map)# exit
+
+R1(config)# access-list 100 permit gre host 203.0.113.1 host 203.0.113.2
+R1(config)# interface Gi0/0
+R1(config-if)# crypto map GRE-MAP
+
+! بررسی
+R1# show crypto isakmp sa
+R1# show crypto ipsec sa</code></pre>
+
+    <h3>مثال ۴ — QoS کامل روی WAN</h3>
+    <pre><code>Router(config)# class-map match-any VOICE
+Router(config-cmap)# match dscp ef
+
+Router(config)# class-map match-any SIGNALING
+Router(config-cmap)# match dscp cs3
+
+Router(config)# class-map match-any CRITICAL-DATA
+Router(config-cmap)# match dscp af31 af41
+
+Router(config)# policy-map WAN-QOS
+Router(config-pmap)# class VOICE
+Router(config-pmap-c)# priority percent 20
+Router(config-pmap-c)# set dscp ef
+Router(config-pmap)# class SIGNALING
+Router(config-pmap-c)# bandwidth percent 5
+Router(config-pmap)# class CRITICAL-DATA
+Router(config-pmap-c)# bandwidth remaining percent 30
+Router(config-pmap-c)# random-detect dscp-based
+Router(config-pmap)# class class-default
+Router(config-pmap-c)# fair-queue
+
+Router(config)# interface Gi0/1
+Router(config-if)# bandwidth 100000
+Router(config-if)# service-policy output WAN-QOS
+
+! بررسی
+Router# show policy-map interface Gi0/1</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی CEF</h3>
+    <pre><code>! بررسی جدول‌های CEF
+Router# show ip cef
+Router# show ip cef 192.168.1.0/24 detail
+! خروجی:
+! nexthop 10.0.0.2 GigabitEthernet0/1
+
+Router# show adjacency detail
+! اطلاعات Encapsulation برای هر Next Hop
+! Protocol Interface  Address
+! IP       Gi0/1       10.0.0.2(7)
+!   0 packets, 0 bytes
+!   ARP  02:01:00:00:00:02
+
+Router# show ip cef summary
+! آمار FIB و Adjacency
+
+! مقایسه FIB با جدول مسیریابی
+Router# show ip route 192.168.1.0
+! باید همان Next Hop را ببینی</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3 یا EVE-NG یک توپولوژی Spine-Leaf با ۲ Spine و ۳ Leaf بساز</li>
+      <li>Underlay را با OSPF یا eBGP پیکربندی کن</li>
+      <li>یک Overlay ساده با VXLAN بین Leafها بساز (unicast flood-and-learn)</li>
+      <li>یک VRF مشترک بساز و روی VTEPها اعمال کن</li>
+      <li>روی Spine-Leafها IP Multicast PIM Sparse Mode فعال کن</li>
+      <li>یک سوئیچ L3 با VRF-Lite برای جداسازی دو Tenant پیاده کن</li>
+      <li>HSRP با Tracking روی دو روتر لبه پیاده‌سازی کن</li>
+      <li>QoS Policy برای VoIP و داده روی WAN پیاده کن</li>
+      <li>یک GRE Tunnel بین دو سایت بساز</li>
+      <li>GRE را با IPsec (Tunnel Mode با ESP-AES-256) امن کن</li>
+      <li>CEF را روی همه‌ی روترها بررسی کن — FIB و Adjacency</li>
+      <li>IGMP Snooping روی سوئیچ Access برای Multicast فعال کن</li>
+      <li>Multicast بین دو سایت از طریق GRE Tunnel تست کن</li>
+      <li>تأیید نهایی: پینگ و Multicast Ping بین Endpointها</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Spine-Leaf Latency متفاوت:</strong> احتمالاً Underlay مسیریابی بهینه ندارد — BGP/OSPF را بررسی کن.</li>
+      <li><strong>VXLAN Tunnel بالا نمی‌آید:</strong> VTEP Source IP باید در Underlay قابل دسترسی باشد — Ping VTEPها را چک کن.</li>
+      <li><strong>VRF Route Leak:</strong> در Route-Target اشتباه — Export/Import را دو طرف چک کن.</li>
+      <li><strong>HSRP Preempt کار نمی‌کند:</strong> Preempt باید روی Active هم فعال باشد.</li>
+      <li><strong>GRE Tunnel Flapping:</strong> Source Interface باید Up باشد و Stable — از Loopback برای Source استفاده کن.</li>
+      <li><strong>IPsec SA برقرار نمی‌شود:</strong> Pre-Shared Key، Transform-Set و ACL (Match Address) را چک کن.</li>
+      <li><strong>QoS اثری ندارد:</strong> Trust Boundary را چک کن — Marking باید در ورودی انجام و Trust شود.</li>
+      <li><strong>Multicast Flooding:</strong> IGMP Snooping روی سوئیچ Access فعال باشد.</li>
+      <li><strong>CEF در برخی مسیرها از کار افتاده:</strong> ممکن است TCAM Overflow باشد — با <code>show platform tcam</code> بررسی کن.</li>
+      <li><strong>SD-WAN Edge وصل نمی‌شود:</strong> vBond IP و Certificate (Chassis/Serial) را چک کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="fabric">Fabric</span> •
+      <span class="term" data-term="sdwan">SD-WAN</span> •
+      <span class="term" data-term="sda">SD-Access</span> •
+      <span class="term" data-term="vxlan">VXLAN</span> •
+      <span class="term" data-term="lisp">LISP</span> •
+      <span class="term" data-term="vrf">VRF</span> •
+      <span class="term" data-term="mpls">MPLS</span> •
+      <span class="term" data-term="bgp">BGP</span> •
+      <span class="term" data-term="hsrp">HSRP</span> •
+      <span class="term" data-term="vrrp">VRRP</span> •
+      <span class="term" data-term="pbr">PBR</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-01" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) در مدل Three-Tier، کدام لایه مسئول اعمال Policy است؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Core</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Access</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Distribution</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Edge</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) در Spine-Leaf، هر Leaf چند Hop از Leaf دیگر فاصله دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> ۲ Hop</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> دقیقاً ۱ Hop</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> متغیر بسته به تعداد Spine</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> بستگی به OSPF دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) FHRP با چه مکانیزمی دسترس‌پذیری Gateway را تضمین می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> با افزایش پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> با رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> با ساخت IP و MAC مجازی بین چند روتر</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> با QoS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) تفاوت CAM و TCAM در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> CAM در روتر، TCAM در سوئیچ</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> CAM برای MAC (دقیق)، TCAM برای ACL و Routing (با Wildcard/Mask)</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> TCAM فقط در لایه ۲ کار می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) در CEF، کدام جدول برای Lookup سریع استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> جدول مسیریابی اصلی</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> ARP Table</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> FIB در TCAM + Adjacency Table</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> MAC Address Table</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۶) در SD-WAN، نقش vBond چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> Orchestrator — احراز هویت اولیه Edgeها و معرفی به Controller</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> نگه‌داری Routing Table</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> مدیریت گرافیکی</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Encryption Server</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) در SD-Access، VXLAN به‌جای VLAN چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> پهنای باند بیشتر</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> VNI با ۲۴ بیت — میلیون‌ها Segment به‌جای ۴۰۹۶ VLAN</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> رمزنگاری خودکار</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> سازگاری با IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) در LISP، تفاوت EID و RLOC چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> EID آدرس فیزیکی، RLOC آدرس منطقی</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> هر دو آدرس MAC هستند</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> EID هویت (IP هاست)، RLOC مکان (IP روتر)</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> EID برای IPv4، RLOC برای IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) تفاوت Hypervisor Type 1 و 2 چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Type 1 فقط برای Linux، Type 2 برای Windows</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> Type 1 مستقیماً روی سخت‌افزار، Type 2 روی OS میزبان</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> Type 2 سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) VRF چه چیزی را روی یک روتر جدا می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> VLANها</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> MAC Addressها</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> جدول‌های مسیریابی مستقل</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Interfaceها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) در IPsec، تفاوت AH و ESP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> AH رمزنگاری می‌کند، ESP فقط احراز هویت</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> AH فقط احراز هویت، ESP احراز هویت + رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> ESP فقط روی IPv6 کار می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۲) در QoS، تفاوت Policing و Shaping چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Policing = Drop، Shaping = Buffer و تأخیر</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Policing = Buffer، Shaping = Drop</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Shaping فقط برای Ingress</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) در PIM Sparse Mode، نقش RP (Rendezvous Point) چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> رمزنگاری Multicast</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> محدودسازی پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> نقطه‌ی ملاقات Senderها و Receiverها</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> نقش Backup</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) در Spine-Leaf، همگرایی Underlay معمولاً با چه پروتکلی انجام می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> RIP</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> eBGP یا OSPF</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> فقط Static</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> EIGRP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) SSO در High Availability چه چیزی را حفظ می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> فقط پیکربندی</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> فقط ARP Cache</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> State پروتکل‌ها (Adjacency، Sessions) در زمان Failover</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط Syslog</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک معماری کامل Enterprise با SD-WAN و SD-Access طراحی کن:</p>
+    <ul>
+      <li><strong>Fabric Campus:</strong> ۲ Spine + ۴ Leaf با VXLAN Overlay و Underlay eBGP</li>
+      <li><strong>VRF:</strong> حداقل دو Tenant (مثلاً Corporate و Guest)</li>
+      <li><strong>Border Node:</strong> اتصال Fabric به WAN</li>
+      <li><strong>WAN Edge:</strong> SD-WAN شبیه‌سازی‌شده (یا DMVPN به‌جای آن)</li>
+      <li><strong>FHRP:</strong> HSRP یا VRRP برای Gateway کاربران</li>
+      <li><strong>QoS:</strong> LLQ برای VoIP، CBWFQ برای بقیه</li>
+      <li><strong>Multicast:</strong> PIM Sparse Mode با RP روی Border</li>
+      <li><strong>HA:</strong> تمام لینک‌های حیاتی دوگانه (Dual-Homed)</li>
+      <li>مستندسازی کامل معماری (Diagram + IP Plan + Policy Doc)</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>در DNA Center شبیه‌سازی‌شده (DevNet Sandbox)، یک Fabric راه‌اندازی کن.</li>
+        <li>یک Endpoint را از یک Edge به Edge دیگر جابه‌جا کن — Policy باید ثابت بماند.</li>
+        <li>یک Policy Matrix بساز و روی Fabric اعمال کن (Contract بین Groupها).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Three-Tier:</strong> Core + Distribution + Access — سازمان‌های بزرگ</li>
+      <li><strong>Two-Tier:</strong> Collapsed Core — سازمان‌های متوسط</li>
+      <li><strong>Fabric/Spine-Leaf:</strong> Data Center — Latency یکنواخت، مقیاس‌پذیری افقی</li>
+      <li><strong>FHRP:</strong> HSRP (سیسکو)، VRRP (استاندارد باز)، GLBP (Load Balancing)</li>
+      <li><strong>SSO + NSF:</strong> High Availability در Control Plane</li>
+      <li><strong>CAM:</strong> MAC Table — <strong>TCAM:</strong> ACL/Routing Table</li>
+      <li><strong>CEF:</strong> FIB (TCAM) + Adjacency Table → Forwarding سریع</li>
+      <li><strong>SD-WAN اجزا:</strong> vManage (مدیریت) + vBond (Orchestrator) + vSmart (Controller)</li>
+      <li><strong>SD-Access اجزا:</strong> Control Plane Node + Edge Node + Border Node + Intermediate Node</li>
+      <li><strong>VXLAN:</strong> MAC-in-UDP، VNI ۲۴ بیت، ~۱۶M Segment</li>
+      <li><strong>LISP:</strong> جدا کردن EID (هویت) از RLOC (مکان)</li>
+      <li><strong>VRF:</strong> چند جدول مسیریابی مستقل — Multi-Tenant</li>
+      <li><strong>GRE:</strong> تونل L3 بدون رمزنگاری (پروتکل IP/47)</li>
+      <li><strong>IPsec:</strong> AH (Auth) + ESP (Auth+Encrypt) — Transport یا Tunnel Mode</li>
+      <li><strong>QoS:</strong> LLQ برای VoIP، CBWFQ برای داده، WRED برای Congestion Avoidance</li>
+      <li><strong>Multicast:</strong> IGMP (Host↔Router)، PIM (Router↔Router)، RP در Sparse Mode</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="../ccna/ccna_Ch_06.html" data-nav-prev>⬅️ آخرین فصل CCNA</a>
+      <button class="btn" data-finish-chapter="ccnp-01">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_02.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

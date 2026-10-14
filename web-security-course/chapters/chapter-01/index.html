@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل ۱: مبانی امنیت وب و نقشه راه CEH | دوره تخصصی امنیت وب</title>
+    <meta name="description" content="آشنایی با CIA Triad، Cyber Kill Chain، OWASP Top 10، انواع مهاجم، چارچوب قانونی ایران، و نقشه راه گام‌به‌گام تبدیل شدن به متخصص امنیت وب.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="امنیت وب, CEH, CIA Triad, OWASP, Kill Chain, تست نفوذ, ethical hacking">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        #reading-bar {
+            position: fixed; top: 0; right: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #00d97e, #22ffa0);
+            width: 0; z-index: 999; transition: width .1s linear;
+        }
+        .chapter-hero {
+            background: linear-gradient(135deg, #0f172a, #064e3b);
+            color: white; border-radius: 18px; padding: 34px 28px; margin: 26px 0;
+            border: 1px solid #00d97e;
+            position: relative; overflow: hidden;
+        }
+        .chapter-hero::after {
+            content: ''; position: absolute; left: -80px; top: -80px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,217,126,.25), transparent 70%);
+        }
+        .chapter-hero h1 { margin: 6px 0 8px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+        .chapter-hero .chap-num {
+            display: inline-block; background: rgba(0,217,126,.15);
+            border: 1px solid #00d97e; color: #7ee787; padding: 3px 14px;
+            border-radius: 30px; font-size: .85rem; font-weight: 700;
+            position: relative; z-index: 1;
+        }
+        .chapter-hero p.sub { margin: 8px 0 0; opacity: .9; max-width: 820px; position: relative; z-index: 1; }
+        .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+        .meta-chips span {
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+            border-radius: 30px; padding: 4px 14px; font-size: .8rem;
+            display: inline-flex; gap: 6px; align-items: center;
+        }
+        .chapter-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 26px;
+            align-items: start; margin: 26px 0;
+        }
+        .toc-box {
+            position: sticky; top: 70px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+        }
+        .toc-title {
+            background: #0f172a; color: #7ee787; padding: 10px 16px;
+            font-weight: 800; font-size: .95rem;
+        }
+        .toc-list {
+            list-style: none; margin: 0; padding: 8px;
+            max-height: 60vh; overflow-y: auto;
+        }
+        .toc-list a {
+            display: block; color: var(--muted); font-size: .82rem;
+            padding: 7px 10px; border-radius: 8px;
+            border-right: 3px solid transparent; text-decoration: none;
+            transition: .2s;
+        }
+        .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+        .toc-list a.active {
+            background: rgba(0,217,126,.1); color: var(--accent);
+            border-right-color: var(--accent); font-weight: 700;
+        }
+        .toc-actions {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 8px; border-top: 1px dashed var(--line);
+        }
+        .toc-actions button {
+            background: transparent; color: var(--muted);
+            border: 1px solid var(--line); border-radius: 8px;
+            padding: 6px 10px; font-size: .78rem; cursor: pointer;
+            font-family: inherit; transition: .2s;
+        }
+        .toc-actions button:hover { border-color: var(--accent); color: var(--accent); }
+        .pager {
+            display: flex; justify-content: space-between;
+            margin: 30px 0; gap: 12px;
+        }
+        .pager a {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 14px 20px; color: var(--text);
+            text-decoration: none; font-weight: 700; transition: .2s;
+        }
+        .pager a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .done-bar {
+            background: rgba(0,217,126,.08);
+            border: 1px dashed #00d97e; border-radius: 12px;
+            padding: 14px; margin: 22px 0; text-align: center;
+        }
+        #mark-done {
+            background: var(--accent); color: #0b1220;
+            border: none; border-radius: 30px;
+            padding: 10px 28px; font-weight: 800; cursor: pointer;
+            font-family: inherit; margin-top: 8px;
+        }
+        #mark-done.done { background: #059669; color: white; }
+        .callout {
+            border-radius: 10px; padding: 14px 18px; margin: 14px 0;
+            border-right: 6px solid var(--accent); background: var(--surface-2);
+        }
+        .callout.co-warn {
+            background: #3f1d1d; border-right-color: #ef4444; color: #fecaca;
+        }
+        .callout.co-warn strong { color: #fca5a5; }
+        .callout.co-danger {
+            background: #451a1a; border-right-color: #dc2626; color: #fecaca;
+        }
+        .callout.co-tip {
+            background: #0d2818; border-right-color: #00d97e; color: #a7f3d0;
+        }
+        .callout.co-note {
+            background: #1e293b; border-right-color: #3b82f6; color: #cbd5e1;
+        }
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin: 16px 0;
+        }
+        .kpi {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .kpi .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .kpi .lbl { font-size: .82rem; color: var(--muted); }
+        .timeline {
+            list-style: none; padding: 0; margin: 16px 0;
+            border-right: 3px solid var(--accent); padding-right: 20px;
+        }
+        .timeline li { margin: 12px 0; position: relative; }
+        .timeline li::before {
+            content: '●'; color: var(--accent); position: absolute;
+            right: -28px; top: 2px;
+        }
+        .timeline .year { font-weight: 800; color: var(--accent); }
+        .phase-diagram {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 20px; margin: 16px 0;
+            overflow-x: auto;
+        }
+        .phase-diagram pre { background: transparent; border: none; padding: 0; margin: 0; color: var(--text); }
+        .role-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .role-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; transition: .2s;
+        }
+        .role-card:hover { border-color: var(--accent); }
+        .role-card h6 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+        .role-card p { margin: 4px 0; font-size: .85rem; }
+        .role-card .threat-level {
+            display: inline-block; font-size: .7rem; padding: 2px 10px;
+            border-radius: 20px; font-weight: 700; margin-top: 6px;
+        }
+        .threat-low { background: #166534; color: #bbf7d0; }
+        .threat-mid { background: #854d0e; color: #fef08a; }
+        .threat-high { background: #7f1d1d; color: #fecaca; }
+        .quiz-question {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+        }
+        .quiz-question strong { color: var(--accent); }
+        .checklist li { list-style: none; margin: 8px 0; padding-right: 26px; position: relative; }
+        .checklist li::before {
+            content: '☐'; position: absolute; right: 0; color: var(--accent);
+            font-size: 1.1rem;
+        }
+        .do-dont {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0;
+        }
+        .do-box, .dont-box {
+            border-radius: 10px; padding: 14px 18px;
+        }
+        .do-box { background: #0d2818; border: 1px solid #16a34a; }
+        .do-box h6 { color: #4ade80; margin: 0 0 8px; }
+        .dont-box { background: #451a1a; border: 1px solid #dc2626; }
+        .dont-box h6 { color: #f87171; margin: 0 0 8px; }
+        .do-box li, .dont-box li { margin: 6px 0; font-size: .9rem; }
+        @media (max-width: 900px) {
+            .chapter-layout { grid-template-columns: 1fr; }
+            .toc-box { position: static; }
+            .do-dont { grid-template-columns: 1fr; }
+        }
+        @media print {
+            .toc-box, .pager, .site-header, .done-bar, .main-nav { display: none !important; }
+            .chapter-layout { grid-template-columns: 1fr; }
+            body { background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div id="reading-bar"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>فصل ۱ از ۲۱ — مبانی امنیت وب و نقشه راه CEH</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#part-01">📖 شروع فصل</a>
+            <a style="visibility:hidden" id="prev-link">➜ فصل قبل</a>
+            <a href="../chapter-02/index.html" id="next-link">فصل بعد ➜</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chapter-hero">
+            <span class="chap-num">فصل ۱ از ۲۱</span>
+            <h1>🛡️ مبانی امنیت وب و نقشه راه CEH</h1>
+            <p class="sub">
+                پایه‌های نظری و عملی که هر متخصص امنیت باید بداند: مدل CIA، زنجیره کشتار سایبری، OWASP Top 10،
+                انواع مهاجم، چارچوب قانونی ایران، و نقشه راه گام‌به‌گام ورود به بازار کار امنیت.
+            </p>
+            <div class="meta-chips">
+                <span>🎓 سطح: مبتدی</span>
+                <span>⏱ ۱۰۰ دقیقه</span>
+                <span>🔑 CIA Triad</span>
+                <span>🔑 Kill Chain</span>
+                <span>🔑 OWASP</span>
+                <span>🔑 چارچوب قانونی</span>
+            </div>
+        </div>
+
+        <div class="chapter-layout">
+            <aside class="toc-box">
+                <div class="toc-title">📑 فهرست ۱۴ بخش این فصل</div>
+                <ul class="toc-list">
+                    <li><a href="#part-01">۱. جعبه عنوان و هویت</a></li>
+                    <li><a href="#part-02">۲. پیش‌نیازها و راه‌اندازی محیط</a></li>
+                    <li><a href="#part-03">۳. اهداف یادگیری</a></li>
+                    <li><a href="#part-04">۴. مقدمه و اهمیت موضوع</a></li>
+                    <li><a href="#part-05">۵. مفاهیم کلیدی و واژگان</a></li>
+                    <li><a href="#part-06">۶. زنجیره کشتار سایبری</a></li>
+                    <li><a href="#part-07">۷. کارگاه: راه‌اندازی آزمایشگاه</a></li>
+                    <li><a href="#part-08">۸. تحلیل دفاعی و CIA در عمل</a></li>
+                    <li><a href="#part-09">۹. اخلاق حرفه‌ای و قانون</a></li>
+                    <li><a href="#part-10">۱۰. پرسش و پاسخ و رفع اشکال</a></li>
+                    <li><a href="#part-11">۱۱. جمع‌بندی و نکات طلایی</a></li>
+                    <li><a href="#part-12">۱۲. خودارزیابی و آزمونک</a></li>
+                    <li><a href="#part-13">۱۳. پروژه هفتگی</a></li>
+                    <li><a href="#part-14">۱۴. منابع و گام بعدی</a></li>
+                </ul>
+                <div class="toc-actions">
+                    <button id="btn-open-answers" type="button">🟢 باز کردن همه پاسخ‌ها</button>
+                    <button id="btn-close-answers" type="button">⚪ بستن همه پاسخ‌ها</button>
+                </div>
+            </aside>
+
+            <div class="main-col">
+
+                <!-- بخش ۱: عنوان و هویت -->
+                <div class="section-part" id="part-01">
+                    <h3>۱. جعبه عنوان و هویت</h3>
+
+                    <p><strong>📖 عنوان کامل فصل:</strong> مبانی امنیت وب و نقشه راه CEH — بنیادی‌ترین فصل دوره که کل مسیر پیش روی شما را روشن می‌کند.</p>
+
+                    <p><strong>🎓 سطح دشواری:</strong> مبتدی (بدون نیاز به دانش پیشین امنیت). تنها پیش‌نیاز، آشنایی ابتدایی با HTML و یک زبان بک‌اند (ترجیحاً Python/Django) و مفهوم HTTP است.</p>
+
+                    <p><strong>⏱ زمان مطالعه:</strong> ۹۰ تا ۱۲۰ دقیقه (شامل راه‌اندازی آزمایشگاه و انجام کارگاه).</p>
+
+                    <h5>🎯 اهداف کلان این فصل:</h5>
+                    <ol>
+                        <li>درک <strong>مدل CIA</strong> به‌عنوان ستون فقرات هر بحث امنیتی و توانایی تحلیل هر حادثه بر اساس آن.</li>
+                        <li>آشنایی کامل با <strong>Cyber Kill Chain</strong> و هفت مرحله‌ای که هر حمله واقعی طی می‌کند.</li>
+                        <li>شناخت <strong>OWASP Top 10 (2021)</strong> به‌عنوان نقشه راه استاندارد آسیب‌پذیری‌های وب.</li>
+                        <li>تمایز روشن بین <strong>هکرهای کلاه‌سفید/خاکستری/سیاه</strong> و درک مسئولیت حقوقی هر نقش.</li>
+                        <li>راه‌اندازی اولین آزمایشگاه امنیتی شخصی با <strong>VMware + Kali + Django</strong>.</li>
+                    </ol>
+
+                    <h5>📚 خروجی قابل اندازه‌گیری (پس از این فصل):</h5>
+                    <ul>
+                        <li>می‌توانید هر آسیب‌پذیری را در یکی از سه ضلع CIA جای دهید.</li>
+                        <li>می‌توانید هفت فاز Kill Chain را روی یک حمله واقعی (مثل Equifax 2017) نقشه کنید.</li>
+                        <li>آزمایشگاه ایزوله با ۲ ماشین مجازی راه‌اندازی کرده و IPها را تنظیم کرده‌اید.</li>
+                        <li>می‌دانید چه کاری قانونی و چه کاری جرم است (بر اساس قانون ایران).</li>
+                        <li>یک نقشه راه شخصی ۶ ماهه برای ورود به امنیت وب نوشته‌اید.</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار اخلاقی و قانونی (بسیار مهم):</strong>
+                        تمام تکنیک‌های این دوره <strong>فقط در آزمایشگاه ایزوله</strong> و روی سیستم‌هایی که <strong>مالک آن‌ها هستید</strong> یا <strong>مجوز کتبی (Written Authorization)</strong> دارید، مجاز است.
+                        در ایران، مطابق <strong>قانون جرایم رایانه‌ای مصوب ۱۳۸۸</strong> (مواد ۱ تا ۸)، دسترسی غیرمجاز به سیستم‌های رایانه‌ای جرم کیفری محسوب شده و مجازات آن از <strong>حبس ۹۱ روز تا ۱ سال</strong> شروع و در موارد تشدیدشده به <strong>حبس ۵ تا ۱۵ سال</strong> می‌رسد.
+                        یادگیری امنیت، یادگیری <strong>مسئولیت‌پذیری</strong> است.
+                    </div>
+                </div>
+
+                <!-- بخش ۲: پیش‌نیازها -->
+                <div class="section-part" id="part-02">
+                    <h3>۲. پیش‌نیازها و راه‌اندازی محیط</h3>
+
+                    <h5>💻 نیازمندی‌های سخت‌افزاری:</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>مؤلفه</th><th>حداقل</th><th>پیشنهادی</th><th>دلیل</th></tr></thead>
+                        <tbody>
+                            <tr><td>RAM</td><td>۸GB</td><td>۱۶GB</td><td>هر VM حداقل ۲-۴GB مصرف می‌کند</td></tr>
+                            <tr><td>CPU</td><td>۴ هسته</td><td>۸ هسته</td><td>پشتیبانی مجازی‌سازی سخت‌افزاری</td></tr>
+                            <tr><td>فضای دیسک</td><td>۵۰GB</td><td>۱۵۰GB</td><td>هر VM ۲۰-۴۰GB</td></tr>
+                            <tr><td>سیستم‌عامل میزبان</td><td>Windows 10 / Ubuntu 20.04</td><td>Windows 11 / Ubuntu 22.04+</td><td>پشتیبانی به‌روز VMware</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🛠 نرم‌افزارهای لازم:</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>نرم‌افزار</th><th>نسخه</th><th>کاربرد</th></tr></thead>
+                        <tbody>
+                            <tr><td>VMware Workstation Pro / VirtualBox</td><td>۱۷+ / ۷+</td><td>مجازی‌سازی</td></tr>
+                            <tr><td>Kali Linux</td><td>2024.3+</td><td>ماشین مهاجم</td></tr>
+                            <tr><td>Windows 10/11 ISO</td><td>22H2+</td><td>ماشین هدف</td></tr>
+                            <tr><td>Python</td><td>۳.۱۰+</td><td>اجرای Django</td></tr>
+                            <tr><td>Notepad++ / VS Code</td><td>آخرین نسخه</td><td>ویرایش کد</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔧 ابزارهای پیشنهادی این فصل:</h5>
+<pre class="code-box"># ابزارهای پیش‌فرض Kali که در این فصل استفاده می‌کنیم:
+# - Nmap         → اسکن شبکه و پورت
+# - Wireshark    → تحلیل ترافیک
+# - Firefox ESR  → مرورگر با افزونه‌های امنیتی
+# - Burp Suite CE → پروکسی رهگیری درخواست
+# - curl / wget  → تست HTTP از خط فرمان
+# - python3 -m http.server → سرور ساده برای تست
+
+# روی ماشین هدف (Django):
+pip install django==5.0.* requests
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته طلایی — قبل از شروع:</strong>
+                        حتماً از هر VM یک <strong>Snapshot</strong> اولیه بگیرید (اسم بگذارید: <code>clean-install</code>).
+                        هر جلسه که چیزی خراب کردید، با ۳۰ ثانیه برمی‌گردید. این عادت در تست نفوذ واقعی هم نجات‌بخش است.
+                    </div>
+
+                    <div class="callout co-note">
+                        <strong>ℹ️ اگر لپ‌تاپ ضعیف دارید:</strong>
+                        می‌توانید از ترکیب <strong>Kali در WSL2 + Docker</strong> روی Windows استفاده کنید و به‌جای Windows VM، از یک <strong>Docker container Django</strong> به‌عنوان هدف استفاده کنید.
+                        منابع: <code>https://www.kali.org/docs/wsl/</code>
+                    </div>
+                </div>
+
+                <!-- بخش ۳: اهداف یادگیری -->
+                <div class="section-part" id="part-03">
+                    <h3>۳. اهداف یادگیری (چه چیزهایی به دست می‌آورید؟)</h3>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حوزه</th><th>هدف مشخص</th><th>معیار سنجش</th><th>وزن</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>شناختی</strong></td>
+                                <td>درک ریشه‌ای مدل CIA و Kill Chain</td>
+                                <td>توضیح شفاهی ۳ حادثه واقعی بر اساس این دو مدل</td>
+                                <td>۳۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مهارتی</strong></td>
+                                <td>راه‌اندازی آزمایشگاه ایزوله</td>
+                                <td>Ping موفق بین Kali و Windows + اجرای Django روی هدف</td>
+                                <td>۲۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>تحلیلی</strong></td>
+                                <td>تحلیل OWASP Top 10</td>
+                                <td>انتخاب صحیح دسته OWASP برای ۱۰ آسیب‌پذیری نمونه</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>قانونی/اخلاقی</strong></td>
+                                <td>تمایز فعالیت قانونی از جرم</td>
+                                <td>پاسخ صحیح به ۵ سناریوی مرزی</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>گزارش‌نویسی</strong></td>
+                                <td>مستندسازی حرفه‌ای</td>
+                                <td>گزارش ۱ صفحه‌ای از راه‌اندازی آزمایشگاه</td>
+                                <td>۱۰٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>📌 تفکیک اهداف — چه چیزی «یاد می‌گیرید» در برابر «فقط می‌خوانید»:</h5>
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ یاد می‌گیرید (عملی):</h6>
+                            <ul>
+                                <li>راه‌اندازی VM و شبکه Host-Only</li>
+                                <li>اجرای اولین Nmap روی هدف خودتان</li>
+                                <li>تحلیل درخواست HTTP با Burp</li>
+                                <li>نوشتن اولین گزارش امنیتی</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>📖 فقط می‌خوانید (مرجع):</h6>
+                            <ul>
+                                <li>تاریخچه کامل CEH</li>
+                                <li>لیست کامل CVEها</li>
+                                <li>متن کامل قوانین بین‌المللی</li>
+                                <li>جزئیات فنی Buffer Overflow</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- بخش ۴: مقدمه و اهمیت -->
+                <div class="section-part" id="part-04">
+                    <h3>۴. مقدمه و اهمیت موضوع (چرا این حمله خطرناک است؟)</h3>
+
+                    <div class="story-box">
+                        <p>📖 <strong>داستان واقعی — Equifax (۲۰۱۷):</strong> یکی از سه آژانس اعتبارسنجی بزرگ آمریکا، در یک بازه ۷۶ روزه (از ۱۳ می تا ۲۹ جولای ۲۰۱۷) توسط مهاجمان ناشناس نفوذ کرد. ریشه حمله یک آسیب‌پذیری <strong>Apache Struts (CVE-2017-5638)</strong> بود که پچ آن ۲ ماه قبل منتشر شده بود ولی اعمال نشده بود. نتیجه فاجعه‌بار:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>افشای اطلاعات <strong>۱۴۷ میلیون</strong> کاربر (نام، شماره تأمین اجتماعی، تاریخ تولد، شماره گواهینامه)</li>
+                            <li>جریمه ۵۷۵ تا ۷۰۰ میلیون دلاری</li>
+                            <li>استعفای مدیرعامل، CIO و CSO</li>
+                            <li>هزینه کل تخمینی: <strong>حدود ۱.۷ میلیارد دلار</strong></li>
+                        </ul>
+                        <p style="margin-top: 10px;">و همه این‌ها از <strong>یک پچ اعمال‌نشده</strong> شروع شد. درس: در امنیت، «نگهداری» به‌اندازه «طراحی» مهم است.</p>
+                    </div>
+
+                    <h5>📊 آمار و ارقام — چرا امنیت وب جدی است؟</h5>
+                    <div class="kpi-grid">
+                        <div class="kpi"><span class="num">+۳۰٪</span><span class="lbl">رشد حملات وب در ۲۰۲۴</span></div>
+                        <div class="kpi"><span class="num">۴.۴۵M$</span><span class="lbl">میانگین هزینه نقض داده (IBM 2023)</span></div>
+                        <div class="kpi"><span class="num">+۹۳٪</span><span class="lbl">رشد باج‌گیری سایبری در ۳ سال</span></div>
+                        <div class="kpi"><span class="num">۲۷۷</span><span class="lbl">روز میانگین زمان شناسایی نفوذ</span></div>
+                        <div class="kpi"><span class="num">+۳.۵M</span><span class="lbl">موقعیت شغلی خالی در امنیت (جهانی)</span></div>
+                    </div>
+
+                    <h5>🎯 چرا برای شما مهم است؟ (سه دیدگاه):</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>👨‍💻 اگر توسعه‌دهنده هستید</h6>
+                            <p>کدی که امروز می‌نویسید، فردا هدف حمله است. آشنایی با امنیت = نوشتن کد ایمن از ابتدا، نه وصله‌پینه کردن بعد.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>🔐 اگر مهندس امنیت هستید</h6>
+                            <p>بازار کار امنیت وب در ایران و جهان پررونق است. حقوق متوسط یک pentester ایران ۲-۳ برابر یک توسعه‌دهنده معادل است.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>📊 اگر مدیر/کارآفرین هستید</h6>
+                            <p>یک آسیب‌پذیری ساده می‌تواند اعتبار برند شما را برای همیشه نابود کند. آگاهی، ارزان‌ترین بیمه است.</p>
+                        </div>
+                    </div>
+
+                    <h5>📜 یک لنگر تاریخی — چطور به اینجا رسیدیم؟</h5>
+                    <ul class="timeline">
+                        <li><span class="year">۱۹۸۸</span> — کرم Morris: اولین حمله اینترنتی گسترده، ۶۰۰۰ سیستم را آلوده کرد.</li>
+                        <li><span class="year">۲۰۰۲</span> — تأسیس OWASP به‌عنوان مرجع جهانی امنیت وب.</li>
+                        <li><span class="year">۲۰۰۳</span> — اولین انتشار OWASP Top 10.</li>
+                        <li><span class="year">۲۰۱۰</span> — Stuxnet: اولین سلاح سایبری واقعی، هدف: تأسیسات هسته‌ای.</li>
+                        <li><span class="year">۲۰۱۷</span> — Equifax + WannaCry + NotPetya: سال جهنمی نقض‌های وب.</li>
+                        <li><span class="year">۲۰۲۱</span> — Log4Shell: یک آسیب‌پذیری در کتابخانه Java، میلیون‌ها سرور را آلوده کرد.</li>
+                        <li><span class="year">۲۰۲۳-اکنون</span> — عصر AI: حملات هدفمندتر و فازهای recon خودکار.</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۵: مفاهیم کلیدی -->
+                <div class="section-part" id="part-05">
+                    <h3>۵. مفاهیم کلیدی و واژگان تخصصی</h3>
+
+                    <h5>5.1 — مدل CIA Triad (ستون فقرات امنیت):</h5>
+                    <div class="phase-diagram">
+<pre>                    ┌──────────────┐
+                    │    CIA Triad   │
+                    └──────────────┘
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+        ▼                 ▼                 ▼
+  ┌──────────┐     ┌──────────────┐   ┌──────────┐
+  │Confidentiality│  │  Integrity    │   │Availability│
+  │محرمانگی       │  │یکپارچگی       │   │دسترس‌پذیری │
+  └──────────┘     └──────────────┘   └──────────┘
+   فقط افراد مجاز    داده دست‌نخورده    سیستم همیشه در دسترس
+   دسترسی داشته     و قابل اعتماد      کاربران مجاز
+   باشند                               باشد
+</pre>
+                    </div>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>ضلع</th><th>تعریف</th><th>نقض توسط</th><th>نمونه در وب</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>C — محرمانگی</strong></td>
+                                <td>اطلاعات فقط برای افراد مجاز</td>
+                                <td>SQLi, IDOR, XSS سرقت کوکی</td>
+                                <td>استخراج دیتابیس کاربران با SQLi</td>
+                            </tr>
+                            <tr>
+                                <td><strong>I — یکپارچگی</strong></td>
+                                <td>داده دست‌نخورده و معتبر</td>
+                                <td>CSRF, Mass Assignment</td>
+                                <td>تغییر رمز قربانی با CSRF</td>
+                            </tr>
+                            <tr>
+                                <td><strong>A — دسترس‌پذیری</strong></td>
+                                <td>سیستم برای کاربران مجاز در دسترس</td>
+                                <td>DoS, RCE, حذف دیتابیس</td>
+                                <td>از کار انداختن سایت با ضعف سرور</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده طلایی تحلیل:</strong>
+                        هر آسیب‌پذیری که یاد می‌گیرید، اول بپرسید: «کدام ضلع CIA را نقض می‌کند؟»
+                        این سؤال، تحلیل شما را از «حفظ‌کردنی» به «فهمیدنی» تبدیل می‌کند.
+                    </div>
+
+                    <h5>5.2 — واژه‌نامه تخصصی این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>واژه</th><th>معنی</th><th>کاربرد در حمله/دفاع</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Vulnerability (آسیب‌پذیری)</td><td>ضعف قابل بهره‌جویی در سیستم</td><td>منشأ حمله</td></tr>
+                            <tr><td>Threat (تهدید)</td><td>عاملی که می‌تواند از آسیب‌پذیری سواستفاده کند</td><td>فاعل (مهاجم)</td></tr>
+                            <tr><td>Risk (ریسک)</td><td>ترکیب احتمال × شدت آسیب</td><td>مبنای اولویت‌بندی</td></tr>
+                            <tr><td>Exploit (بهره‌جوی)</td><td>کد/تکنیک بهره‌جویی از آسیب‌پذیری</td><td>فاز حمله</td></tr>
+                            <tr><td>Payload (بار)</td><td>بخشی که عملیات اصلی را اجرا می‌کند</td><td>داخل exploit</td></tr>
+                            <tr><td>PoC</td><td>Proof of Concept — اثبات مفهوم</td><td>گزارش امنیتی</td></tr>
+                            <tr><td>CVE</td><td>شناسه جهانی آسیب‌پذیری (مثل CVE-2021-44228)</td><td>طبقه‌بندی رسمی</td></tr>
+                            <tr><td>CVSS</td><td>امتیاز ۰-۱۰ شدت آسیب‌پذیری</td><td>اولویت‌بندی رفع</td></tr>
+                            <tr><td>Zero-day</td><td>آسیب‌پذیری بدون پچ و عمومی‌نشده</td><td>خطرناک‌ترین نوع</td></tr>
+                            <tr><td>WAF</td><td>Web Application Firewall</td><td>لایه دفاعی</td></tr>
+                            <tr><td>Recon</td><td>جمع‌آوری اطلاعات قبل از حمله</td><td>فاز اول حمله</td></tr>
+                            <tr><td>Lateral Movement</td><td>حرکت جانبی داخل شبکه بعد از نفوذ</td><td>فاز پیشرفته حمله</td></tr>
+                            <tr><td>Pivot</td><td>استفاده از یک سیستم نفوذشده برای حمله به بعدی</td><td>مهم در شبکه‌های ایزوله</td></tr>
+                            <tr><td>IoC</td><td>Indicator of Compromise — نشانه نفوذ</td><td>پایه تشخیص</td></tr>
+                            <tr><td>Blue Team / Red Team</td><td>تیم دفاع / تیم حمله</td><td>تمرین‌های امنیتی</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.3 — انواع مهاجم (Threat Actors):</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>🎯 Script Kiddie</h6>
+                            <p>از ابزارهای آماده استفاده می‌کند، فهم عمیقی ندارد.</p>
+                            <span class="threat-level threat-low">تهدید: پایین</span>
+                        </div>
+                        <div class="role-card">
+                            <h6>💼 Hacktivist</h6>
+                            <p>با انگیزه سیاسی/اجتماعی حمله می‌کند (مثل Anonymous).</p>
+                            <span class="threat-level threat-mid">تهدید: متوسط</span>
+                        </div>
+                        <div class="role-card">
+                            <h6>💰 Cybercriminal</h6>
+                            <p>با انگیزه مالی؛ باج‌گیری، فروش داده، کلاهبرداری.</p>
+                            <span class="threat-level threat-high">تهدید: بالا</span>
+                        </div>
+                        <div class="role-card">
+                            <h6>🏢 Insider Threat</h6>
+                            <p>کارمند داخلی ناراضی یا خریده‌شده.</p>
+                            <span class="threat-level threat-high">تهدید: بسیار بالا</span>
+                        </div>
+                        <div class="role-card">
+                            <h6>🕵️ APT</h6>
+                            <p>Advanced Persistent Threat — گروه‌های دولتی با منابع عظیم.</p>
+                            <span class="threat-level threat-high">تهدید: بحرانی</span>
+                        </div>
+                    </div>
+
+                    <h5>5.4 — مدل‌های ذهنی ضروری:</h5>
+                    <ul>
+                        <li><strong>Defense in Depth (دفاع لایه‌ای):</strong> هیچ لایه‌ای تنها کافی نیست؛ ترکیب چند لایه (WAF + کد امن + پایش + آموزش کاربر).</li>
+                        <li><strong>Least Privilege (کمترین امتیاز):</strong> هر کاربر و سرویس فقط حداقل دسترسی لازم را داشته باشد.</li>
+                        <li><strong>Fail Securely:</strong> اگر سیستم شکست خورد، امن شکست بخورد (مثلاً اگر WAF خراب شد، ترافیک بسته شود نه عبور کند).</li>
+                        <li><strong>Trust but Verify:</strong> حتی به کاربران داخلی هم بدون تأیید اعتماد نکنید (Zero Trust).</li>
+                        <li><strong>Attack Surface (سطح حمله):</strong> هر ورودی/سرویس/API جدید، سطح حمله را گسترش می‌دهد.</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۶: Kill Chain -->
+                <div class="section-part" id="part-06">
+                    <h3>۶. زنجیره کشتار سایبری (Cyber Kill Chain)</h3>
+
+                    <p>قبل از یادگیری هر حمله خاص، باید بدانید <strong>هر حمله واقعی چه مراحلی دارد</strong>. مدل <strong>Cyber Kill Chain</strong> که توسط <strong>Lockheed Martin</strong> در ۲۰۱۱ معرفی شد، هفت مرحله دارد. هر مرحله فرصتی برای دفاع است.</p>
+
+                    <div class="phase-diagram">
+<pre>مرحله ۱: Reconnaissance    →  شناسایی و جمع‌آوری اطلاعات
+مرحله ۲: Weaponization     →  ساخت ابزار حمله
+مرحله ۳: Delivery          →  تحویل (ایمیل، وب، USB)
+مرحله ۴: Exploitation      →  بهره‌جویی از آسیب‌پذیری
+مرحله ۵: Installation      →  نصب backdoor
+مرحله ۶: Command &amp; Control →  ارتباط با مهاجم
+مرحله ۷: Actions on Obj.   →  عملیات اصلی (سرقت/تخریب)
+</pre>
+                    </div>
+
+                    <h5>تحلیل گام‌به‌گام — با مثال Equifax 2017:</h5>
+
+                    <div class="interactive-box">
+                        <h5>⚔️ نقشه‌برداری یک حمله واقعی:</h5>
+                        <ol>
+                            <li>
+                                <strong>Reconnaissance:</strong> مهاجم سایت Equifax را بررسی می‌کند، زیردامنه‌ها را با <code>subfinder</code> پیدا می‌کند، تکنولوژی‌ها را با <code>Wappalyzer</code> شناسایی می‌کند → Apache Struts شناسایی می‌شود.
+                            </li>
+                            <li>
+                                <strong>Weaponization:</strong> مهاجم PoC عمومی CVE-2017-5638 را از GitHub برمی‌دارد و برای هدف تجهیز می‌کند (رشته OGNL مخرب در هدر Content-Type).
+                            </li>
+                            <li>
+                                <strong>Delivery:</strong> درخواست HTTP مخرب به endpoint آسیب‌پذیر ارسال می‌شود:
+<pre class="code-box">POST /struts/upload.action HTTP/1.1
+Host: vulnerable.equifax.com
+Content-Type: %&#123;(#_=&#39;multipart/form-data&#39;).(#_memberAccess=&#64;&#64;DEFAULT_MEMBER_ACCESS)...
+&#125;
+</pre>
+                            </li>
+                            <li>
+                                <strong>Exploitation:</strong> Struts هدر را تفسیر می‌کند و کد Java مخرب اجرا می‌شود → RCE (اجرای کد از راه دور).
+                            </li>
+                            <li>
+                                <strong>Installation:</strong> مهاجم Web Shell نصب می‌کند تا دسترسی پایدار داشته باشد.
+                            </li>
+                            <li>
+                                <strong>Command &amp; Control:</strong> از طریق Web Shell با سرور مهاجم (C2) ارتباط برقرار می‌کند.
+                            </li>
+                            <li>
+                                <strong>Actions on Objective:</strong> به‌مدت ۷۶ روز به دیتابیس دسترسی دارد، ۱۴۷ میلیون رکورد استخراج می‌کند.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 درس کلیدی:</strong>
+                        Equifax می‌توانست در <strong>حداقل ۳ مرحله</strong> جلوی حمله را بگیرد:
+                        <ul style="margin: 8px 0 0 0;">
+                            <li>مرحله ۱: شناسایی آسیب‌پذیری → پچ به‌موقع</li>
+                            <li>مرحله ۴: WAF قواعد Struts RCE → بلاک درخواست</li>
+                            <li>مرحله ۷: پایش خروج داده (DLP) → شناسایی استخراج ۱۴۷M رکورد</li>
+                        </ul>
+                        این یعنی: «دفاع لایه‌ای» واقعیت دارد و هر لایه، یک فرصت نجات است.
+                    </div>
+
+                    <h5>📊 جدول نگاشت Kill Chain به OWASP و MITRE ATT&amp;CK:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>Kill Chain</th><th>نمونه در وب</th><th>OWASP Top 10</th><th>دفاع</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Recon</td><td>گوباستر، Nmap، Wappalyzer</td><td>—</td><td>کاهش اطلاعات لو رفته</td></tr>
+                            <tr><td>Weaponization</td><td>ساخت SQLi payload</td><td>A03:2021 Injection</td><td>WAF، Rate Limit</td></tr>
+                            <tr><td>Delivery</td><td>ارسال فرم مخرب، URL آلوده</td><td>A01:2021 Broken Access</td><td>اعتبارسنجی سمت سرور</td></tr>
+                            <tr><td>Exploitation</td><td>SQLi، XSS، RCE</td><td>A03, A07</td><td>Secure Coding، Patch</td></tr>
+                            <tr><td>Installation</td><td>Web Shell آپلود شده</td><td>A04:2021 Insecure Design</td><td>محدودیت آپلود، پایش فایل</td></tr>
+                            <tr><td>C2</td><td>Beacon به سرور مهاجم</td><td>—</td><td>خروجی ترافیک، Threat Intel</td></tr>
+                            <tr><td>Actions</td><td>استخراج دیتابیس، رمزنگاری باج</td><td>A02, A09</td><td>DLP، بکاپ، رمزنگاری داده</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۷: کارگاه -->
+                <div class="section-part" id="part-07">
+                    <h3>۷. کارگاه عملی (اجرا در آزمایشگاه شما)</h3>
+
+                    <div class="workshop-box">
+                        <h5>🛠️ هدف کارگاه: راه‌اندازی اولین آزمایشگاه امنیتی شما</h5>
+                        <p>در پایان این کارگاه، یک آزمایشگاه ایزوله با دو ماشین مجازی خواهید داشت که به هم پینگ می‌زنند و روی یکی Django اجرا می‌شود.</p>
+                    </div>
+
+                    <h5>📐 معماری نهایی آزمایشگاه:</h5>
+                    <div class="phase-diagram">
+<pre>    ┌─────────────────────┐         ┌─────────────────────┐
+    │   Kali Linux        │         │   Windows 10/11     │
+    │   (مهاجم)            │         │   + Django          │
+    │   192.168.56.10     │◄───────►│   192.168.56.20     │
+    └─────────┬───────────┘         └─────────┬───────────┘
+              │                                │
+              └──────────┬─────────────────────┘
+                         │
+              ┌──────────▼──────────┐
+              │  VMware Host-Only   │
+              │  VMnet1: 192.168.56.0/24 │
+              └─────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>مرحله ۱: ساخت شبکه Host-Only در VMware</h5>
+                    <ol>
+                        <li>VMware Workstation → Edit → Virtual Network Editor</li>
+                        <li>Add Network → انتخاب <strong>VMnet1</strong> → Type: <strong>Host-Only</strong></li>
+                        <li>تنظیم Subnet IP: <code>192.168.56.0</code> و Mask: <code>255.255.255.0</code></li>
+                        <li>تیک <strong>Connect a host virtual adapter to this network</strong> را بزنید</li>
+                        <li>تیک <strong>Use local DHCP service</strong> را <u>بردارید</u> (IP استاتیک می‌خواهیم)</li>
+                    </ol>
+
+                    <h5>مرحله ۲: تنظیم IP استاتیک در Kali</h5>
+                    <p>در ترمینال Kali (با کاربر root یا sudo):</p>
+<pre class="code-box"># ۱) پیدا کردن نام اینترفیس
+ip link show
+# معمولاً eth0 یا ens33
+
+# ۲) تنظیم IP استاتیک
+sudo ip addr add 192.168.56.10/24 dev eth0
+sudo ip link set eth0 up
+
+# ۳) تست اولیه
+ip addr show eth0
+# باید 192.168.56.10 را ببینید
+
+# ۴) برای دائمی شدن: ویرایش /etc/network/interfaces
+sudo nano /etc/network/interfaces
+# اضافه کنید:
+# auto eth0
+# iface eth0 inet static
+#     address 192.168.56.10
+#     netmask 255.255.255.0
+</pre>
+
+                    <h5>مرحله ۳: تنظیم IP استاتیک در Windows</h5>
+                    <ol>
+                        <li>Control Panel → Network and Sharing Center → Change adapter settings</li>
+                        <li>راست‌کلیک روی آداپتر VMware (VMnet1) → Properties</li>
+                        <li>Internet Protocol Version 4 (TCP/IPv4) → Properties</li>
+                        <li>Use the following IP address:
+                            <ul>
+                                <li>IP: <code>192.168.56.20</code></li>
+                                <li>Subnet: <code>255.255.255.0</code></li>
+                                <li>Gateway: خالی</li>
+                            </ul>
+                        </li>
+                        <li>OK → OK</li>
+                    </ol>
+
+                    <h5>مرحله ۴: نصب و اجرای Django روی Windows (هدف)</h5>
+                    <p>در PowerShell ویندوز:</p>
+<pre class="code-box"># ۱) نصب پایتون (از python.org، تیک Add to PATH را بزنید)
+python --version
+
+# ۲) ساخت محیط مجازی و نصب Django
+mkdir C:\lab\target
+cd C:\lab\target
+python -m venv venv
+venv\Scripts\activate
+pip install django==5.0.*
+
+# ۳) ساخت پروژه آزمایشی
+django-admin startproject labtarget .
+python manage.py migrate
+
+# ۴) اجرای سرور روی همه اینترفیس‌ها (تا Kali بتواند ببیند)
+python manage.py runserver 0.0.0.0:8000
+</pre>
+
+                    <h5>مرحله ۵: باز کردن پورت در فایروال Windows</h5>
+                    <p>در PowerShell با دسترسی Administrator:</p>
+<pre class="code-box">New-NetFirewallRule -DisplayName &quot;Django Lab 8000&quot; `
+  -Direction Inbound -Protocol TCP -LocalPort 8000 `
+  -Action Allow -Profile Any
+</pre>
+
+                    <h5>مرحله ۶: تست اتصال از Kali</h5>
+<pre class="code-box"># ۱) پینگ به هدف (باید ۰٪ packet loss باشد)
+ping -c 4 192.168.56.20
+
+# ۲) اسکن پورت ۸۰۰۰ (باید باز باشد)
+nmap -p 8000 192.168.56.20
+# Expected: 8000/tcp open http-alt
+
+# ۳) تست HTTP
+curl -I http://192.168.56.20:8000/
+# Expected: HTTP/1.1 200 OK
+#           Server: WSGIServer/0.2 CPython/3.1x.x
+</pre>
+
+                    <h5>مرحله ۷: مستندسازی (مهم‌ترین مرحله)</h5>
+                    <p>یک فایل <code>lab-report.md</code> بسازید و شامل این موارد باشد:</p>
+                    <ul class="checklist">
+                        <li>تاریخ و ساعت راه‌اندازی</li>
+                        <li>نسخه VMware، Kali، Windows، Django، Python</li>
+                        <li>خروجی کامل دستورات IP config هر دو ماشین</li>
+                        <li>خروجی <code>ping</code> و <code>nmap</code></li>
+                        <li>اسکرین‌شات صفحه Django (که در مرورگر Kali باز می‌شود)</li>
+                        <li>Snapshot گرفته‌شده (نام و توضیح)</li>
+                    </ul>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته حرفه‌ای:</strong>
+                        از همین حالا عادت کنید هر کاری را <strong>مستند کنید</strong>. در مصاحبه امنیت، مصاحبه‌گر می‌پرسد: «یک پروژه امنیتی که انجام دادید را توضیح دهید» — اگر گزارش مکتوب دارید، قوی‌ترین برگ برنده شما است.
+                    </div>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ اگر پینگ نشد:</strong>
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>فایروال ویندوز → بررسی Outbound + Inbound</li>
+                            <li>در VMware: تنظیمات شبکه هر VM → Host-Only (نه NAT/Bridged)</li>
+                            <li>IPها در یک Subnet باشند (192.168.56.x)</li>
+                            <li>روی Kali: <code>sudo iptables -L</code> خالی باشد</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- بخش ۸: تحلیل دفاعی -->
+                <div class="section-part" id="part-08">
+                    <h3>۸. تحلیل دفاعی و راهکارهای مقابله</h3>
+
+                    <p>حالا که معماری حمله و Kill Chain را می‌شناسید، برویم سراغ <strong>پاسخ به سؤال اصلی</strong>: چطور در برابر این حملات دفاع کنیم؟</p>
+
+                    <h5>🛡️ مدل دفاع در عمق (Defense in Depth):</h5>
+                    <div class="phase-diagram">
+<pre>        ┌─────────────────────────────────────────┐
+        │  لایه ۵: آگاهی کاربر (UX، Training)     │  ← کاربر = قوی‌ترین و ضعیف‌ترین حلقه
+        ├─────────────────────────────────────────┤
+        │  لایه ۴: پایش و پاسخ (SIEM، SOC)        │
+        ├─────────────────────────────────────────┤
+        │  لایه ۳: WAF و محافظ لبه                │
+        ├─────────────────────────────────────────┤
+        │  لایه ۲: سخت‌سازی سرور (Hardening)      │
+        ├─────────────────────────────────────────┤
+        │  لایه ۱: کد امن (Secure Coding)         │  ← آخرین سنگر دفاعی
+        └─────────────────────────────────────────┘
+                    ▲
+          داده/دارایی (Data/Asset)
+</pre>
+                    </div>
+
+                    <h5>🎯 دفاع مبتنی بر CIA — چک‌لیست عملی:</h5>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>ضلع CIA</th><th>راهکار فنی</th><th>ابزار/روش</th><th>معیار موفقیت</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Confidentiality</strong></td>
+                                <td>رمزنگاری داده، کنترل دسترسی دقیق</td>
+                                <td>HTTPS/HSTS، TLS 1.3، AES-256، RBAC</td>
+                                <td>داده لو رفته در transit/rest وجود ندارد</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Integrity</strong></td>
+                                <td>امضای داده، CSRF Token، Audit Log</td>
+                                <td>HMAC، Django CSRF middleware، تغییرناپذیری log</td>
+                                <td>هر تغییر قابل ردیابی است</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Availability</strong></td>
+                                <td>Load Balancer، Rate Limit، DDoS Protection</td>
+                                <td>Nginx، Cloudflare، DR plan</td>
+                                <td>Uptime بالای ۹۹.۹٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔐 دفاع‌های کلیدی که در این دوره یاد می‌گیرید:</h5>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه کد — نمونه واقعی در Django</h6>
+                        <p>کد آسیب‌پذیر در برابر SQLi:</p>
+<pre class="code-box"># ❌ آسیب‌پذیر — هرگز این کار را نکنید
+def search(request):
+    q = request.GET.get(&#39;q&#39;)
+    cursor = connection.cursor()
+    cursor.execute(f&quot;SELECT * FROM products WHERE name LIKE &#39;%&#123;q&#125;%&#39;&quot;)  # فاجعه!
+    return HttpResponse(cursor.fetchall())
+</pre>
+
+                        <p>کد ایمن معادل:</p>
+<pre class="code-box"># ✅ ایمن — ORM با parameterized query
+def search(request):
+    q = request.GET.get(&#39;q&#39;)
+    products = Product.objects.filter(name__icontains=q)   # ایمن به‌صورت پیش‌فرض
+    return render(request, &#39;products.html&#39;, &#123;&#39;products&#39;: products&#125;)
+
+# ✅ اگر مجبور به SQL خام هستید:
+cursor.execute(&quot;SELECT * FROM products WHERE name LIKE %s&quot;, [f&quot;%&#123;q&#125;%&quot;])  # پارامتری
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه سرور — نمونه Nginx</h6>
+<pre class="code-box"># /etc/nginx/sites-available/labtarget
+server &#123;
+    listen 443 ssl http2;
+    server_name target.local;
+
+    # هدرهای امنیتی
+    add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains&quot; always;
+    add_header X-Frame-Options &quot;DENY&quot; always;
+    add_header X-Content-Type-Options &quot;nosniff&quot; always;
+    add_header Content-Security-Policy &quot;default-src &#39;self&#39;&quot; always;
+
+    # محدودیت نرخ درخواست
+    limit_req zone=one burst=5 nodelay;
+    limit_req_status 429;
+
+    # محدودیت حجم body (آپلود)
+    client_max_body_size 2M;
+
+    location / &#123;
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    &#125;
+&#125;
+
+# در http &#123;&#125; بالای فایل:
+# limit_req_zone $binary_remote_addr zone=one:10m rate=10r/s;
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه WAF — ModSecurity با OWASP CRS</h6>
+<pre class="code-box"># نصب روی Ubuntu/Debian
+sudo apt install libapache2-mod-security2
+sudo cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
+
+# در modsecurity.conf:
+SecRuleEngine On
+SecRequestBodyLimit 13107200
+
+# نصب OWASP Core Rule Set
+git clone https://github.com/coreruleset/coreruleset /etc/modsecurity/crs/
+# در تنظیمات: Include /etc/modsecurity/crs/crs-setup.conf
+#             Include /etc/modsecurity/crs/rules/*.conf
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه پایش — نمونه الگوهای لاگ</h6>
+                        <p>الگوهای مشکوکی که باید هشدار بگیرند:</p>
+<pre class="code-box"># در لاگ Nginx یا Django:
+&#39; OR &#39;1&#39;=&#39;1              → تلاش SQLi
+&lt;script&gt;                 → تلاش XSS
+../../etc/passwd         → تلاش Path Traversal
+$(whoami)                → تلاش Command Injection
+HTTP/1.1 200 ... .env    → تلاش خواندن فایل حساس
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده «۵ دقیقه دفاع» برای هر حمله:</strong>
+                        برای هر حمله‌ای که در این دوره یاد می‌گیرید، این ۵ سؤال را بپرسید:
+                        <ol style="margin: 6px 0 0 0;">
+                            <li>چه ورودی‌ای حمله را امکان‌پذیر می‌کند؟</li>
+                            <li>چه لایه‌ای می‌تواند آن را قبل از رسیدن به کد مسدود کند؟</li>
+                            <li>اگر رد شد، کد چطور می‌تواند تشخیص دهد؟</li>
+                            <li>اگر اجرا شد، کدام لاگ آن را ثبت می‌کند؟</li>
+                            <li>اگر خسارت زد، چطور بازیابی می‌شویم؟</li>
+                        </ol>
+                        این پنج سؤال، شما را از «کسی که حمله بلد است» به «مهندس امنیت» تبدیل می‌کند.
+                    </div>
+                </div>
+
+                <!-- بخش ۹: اخلاق حرفه‌ای و قانون -->
+                <div class="section-part" id="part-09">
+                    <h3>۹. اخلاق حرفه‌ای و قانون (بحرانی‌ترین بخش)</h3>
+
+                    <div class="callout co-danger">
+                        <strong>🚨 قانون طلایی (حفظ کنید):</strong>
+                        «هرگز، تحت هیچ شرایطی، بدون <strong>مجوز کتبی مکتوب</strong> به سیستم‌هایی که مالک آن‌ها نیستید، حمله نکنید. حتی برای «کمک» یا «نمایش آسیب‌پذیری». نیت خوب، جرم را توجیه نمی‌کند.»
+                    </div>
+
+                    <h5>۹.۱ — چارچوب قانونی ایران (قانون جرایم رایانه‌ای ۱۳۸۸):</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>ماده</th><th>موضوع</th><th>مجازات</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ماده ۱</td>
+                                <td>دسترسی غیرمجاز به داده‌های محرمانه</td>
+                                <td>حبس ۹۱ روز تا ۱ سال + جزای نقدی</td>
+                            </tr>
+                            <tr>
+                                <td>ماده ۲</td>
+                                <td>دسترسی غیرمجاز به داده‌های غیرمحرمانه با دور زدن تدابیر امنیتی</td>
+                                <td>حبس ۹۱ روز تا ۶ ماه یا جزای نقدی</td>
+                            </tr>
+                            <tr>
+                                <td>ماده ۳</td>
+                                <td>شنود غیرمجاز داده‌ها</td>
+                                <td>حبس ۹۱ روز تا ۱ سال + جزای نقدی</td>
+                            </tr>
+                            <tr>
+                                <td>ماده ۴</td>
+                                <td>تخریب/اختلال در داده‌ها</td>
+                                <td>حبس ۶ ماه تا ۲ سال</td>
+                            </tr>
+                            <tr>
+                                <td>ماده ۸</td>
+                                <td>کلاهبرداری رایانه‌ای</td>
+                                <td>حبس ۱ تا ۳ سال + رد مال</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-note">
+                        <strong>ℹ️ نکته حقوقی:</strong>
+                        حتی <strong>تلاش ناموفق</strong> برای نفوذ هم جرم است. «فقط چک کردم ببینم باز است» دفاع حقوقی معتبری نیست.
+                        مرجع رسمی: <code>https://rc.majlis.ir/fa/law/show/791050</code>
+                    </div>
+
+                    <h5>۹.۲ — تفاوت سه کلاه (در امنیت):</h5>
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>⚪ هکر کلاه‌سفید (Ethical Hacker)</h6>
+                            <ul>
+                                <li>مجوز کتبی دارد (Scope of Work)</li>
+                                <li>در محدوده تعریف‌شده کار می‌کند</li>
+                                <li>گزارش مسئولانه ارائه می‌دهد</li>
+                                <li>از قوانین پیروی می‌کند (NDA)</li>
+                                <li>مثال: پنتستر شرکت‌ها، Bug Bounty Hunter در محدوده</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>⚫ هکر کلاه‌سیاه (Black Hat)</h6>
+                            <ul>
+                                <li>بدون مجوز وارد می‌شود</li>
+                                <li>با انگیزه مالی/انتقام</li>
+                                <li>داده می‌فروشد یا تخریب می‌کند</li>
+                                <li>ردپا پاک می‌کند</li>
+                                <li>مثال: باج‌گیرها، خرابکاران</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 16px;"><strong>⚫⚪ هکر کلاه‌خاکستری:</strong> بدون مجوز وارد می‌شود ولی گزارش می‌دهد (مثلاً آسیب‌پذیری را پیدا می‌کند و به شرکت اطلاع می‌دهد). این کار <strong>همچنان غیرقانونی است</strong> — هرچند بعضی شرکت‌ها به‌عنوان Bug Bounty با محدودیت‌های مشخص اجازه می‌دهند.</p>
+
+                    <h5>۹.۳ — چک‌لیست «قبل از هر تست» (Scope of Work):</h5>
+                    <ul class="checklist">
+                        <li>مجوز کتبی امضاشده از مالک سیستم</li>
+                        <li>لیست دقیق دارایی‌های مجاز (IP/Domain/API)</li>
+                        <li>بازه زمانی مشخص تست (مثلاً ۳ روز)</li>
+                        <li>تکنیک‌های ممنوع (مثلاً DoS ممنوع)</li>
+                        <li>مخاطب اضطراری (اگر سایت از کار افتاد)</li>
+                        <li>توافق محرمانگی (NDA)</li>
+                        <li>روش انتقال یافته‌ها (Encrypted)</li>
+                        <li>تعهد به گزارش مسئولانه (Responsible Disclosure)</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ دام‌های رایج مبتدیان (پرهیز کنید):</strong>
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>❌ «آزمایش» روی سایت دانشگاه/شرکت «برای درس» بدون مجوز</li>
+                            <li>❌ اسکن کردن IPهای عمومی برای «کنجکاوی»</li>
+                            <li>❌ اعلام آسیب‌پذیری سایت شرکتی در توییتر/لینکدین برای «شهرت»</li>
+                            <li>❌ استفاده از ابزارهای خودکار روی دامنه دیگران حتی بدون intention</li>
+                            <li>❌ اشتراک‌گذاری PoC که اطلاعات حساس قربانی دارد</li>
+                        </ul>
+                        حتی در این موارد، IP شما در لاگ‌ها ثبت می‌شود و قابل پیگرد است.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۰: پرسش و پاسخ -->
+                <div class="section-part" id="part-10">
+                    <h3>۱۰. پرسش و پاسخ و رفع اشکال</h3>
+
+                    <div class="qa-box">
+                        <h5>❓ سوالات متداول این فصل:</h5>
+
+                        <details>
+                            <summary>آیا برای شروع امنیت وب، باید برنامه‌نویسی بلد باشم؟</summary>
+                            <p>بله، در سطح پایه. شما نمی‌توانید حمله SQLi را بفهمید اگر SQL ندانید، یا XSS را نفهمید اگر HTML/JS نداند. حداقل نیاز: HTML + یک زبان سمت سرور (Python/Django) + SQL پایه. اگر ندارید، فصل‌های ۱ تا ۸ دوره Django ما را سریع مرور کنید.</p>
+                        </details>
+
+                        <details>
+                            <summary>تفاوت CEH با OSCP چیست؟ کدام بهتر است؟</summary>
+                            <p><strong>CEH</strong> (Certified Ethical Hacker) = تئوری‌محور، پوشش گسترده، ورودی صنعت. <strong>OSCP</strong> (Offensive Security Certified Professional) = عملی، ۲۴ ساعت آزمون عملی، معتبرترین گواهی پنتست. توصیه: اول CEH برای پایه‌ریزی، بعد از ۶-۱۲ ماه تمرین، OSCP.</p>
+                        </details>
+
+                        <details>
+                            <summary>چرا حمله من در DVWA کار نمی‌کند؟</summary>
+                            <p>چک‌لیست:<br>۱. سطح امنیت در DVWA (باید Low یا Medium باشد برای تمرین)<br>۲. Cookie نشست — DVWA نیاز به login اولیه دارد<br>۳. پروکسی Burp تنظیم نبوده<br>۴. اگر sqlmap استفاده می‌کنید، <code>--cookie</code> و <code>--data</code> لازم است<br>۵. اگر Blind SQLi است، ممکن است نیاز به <code>--level=5 --risk=3</code> باشد</p>
+                        </details>
+
+                        <details>
+                            <summary>آیا Nmap بدون مجوز، جرم است؟</summary>
+                            <p>بله. حتی یک اسکن ساده پورت روی سیستم دیگران (بدون اجازه) در ایران طبق ماده ۱ و ۲ قانون جرایم رایانه‌ای قابل پیگرد است. Nmap در خودش ابزار مجاز است، ولی استفاده‌اش روی هدف غیرمجاز جرم است.</p>
+                        </details>
+
+                        <details>
+                            <summary>چطور یک شغل امنیت وب در ایران پیدا کنم؟</summary>
+                            <p>سه مسیر اصلی:<br>۱. <strong>Bug Bounty:</strong> پلتفرم‌هایی مثل BugCrowd و HackerOne + برنامه‌های داخلی بعضی شرکت‌های ایرانی<br>۲. <strong>استخدام در شرکت‌ها:</strong> بانک‌ها، بیمه‌ها، شرکت‌های PSP (زرین‌پال، آسان‌پرداخت)، شرکت‌های ابری<br>۳. <strong>فریلنس:</strong> پلتفرم‌های خارجی (Upwork) — نیاز به انگلیسی قوی و پورتفولیوی گیت‌هاب<br>در هر سه، <strong>پورتفولیوی مکتوب و مستند</strong> از پروژه‌های تست نفوذ قانونی، بیشترین ارزش را دارد.</p>
+                        </details>
+                    </div>
+
+                    <h5>🐛 خطاهای رایج و رفع آن‌ها:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>خطا</th><th>علت</th><th>راه‌حل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>ping: connect: Network is unreachable</code></td>
+                                <td>IP اشتباه یا اینترفیس down</td>
+                                <td><code>ip addr</code> چک کنید، IP را دوباره assign کنید</td>
+                            </tr>
+                            <tr>
+                                <td><code>nmap: 8000/tcp filtered</code></td>
+                                <td>فایروال هدف پورت را بسته</td>
+                                <td>در Windows: <code>New-NetFirewallRule</code> (بخش ۷ مرحله ۵)</td>
+                            </tr>
+                            <tr>
+                                <td>Django: <code>DisallowedHost</code></td>
+                                <td>ALLOWED_HOSTS تنظیم نشده</td>
+                                <td>در <code>settings.py</code>: <code>ALLOWED_HOSTS = [&#39;*&#39;]</code> (فقط در lab)</td>
+                            </tr>
+                            <tr>
+                                <td><code>Address already in use</code></td>
+                                <td>پورت ۸۰۰۰ مشغول</td>
+                                <td><code>netstat -ano | findstr :8000</code> سپس kill PID</td>
+                            </tr>
+                            <tr>
+                                <td>VMware: Host-Only adapter not found</td>
+                                <td>VMnet1 ساخته نشده</td>
+                                <td>Virtual Network Editor → Add Network → VMnet1 → Host-Only</td>
+                            </tr>
+                            <tr>
+                                <td><code>sqlmap: no parameter found</code></td>
+                                <td>sqlmap URL را پارس نکرد</td>
+                                <td>استفاده از <code>-u &quot;url?id=1&quot;</code>، یا <code>--data=&quot;id=1&quot;</code> برای POST، یا <code>--cookie</code> برای auth</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۱۱: جمع‌بندی -->
+                <div class="section-part" id="part-11">
+                    <h3>۱۱. جمع‌بندی و نکات طلایی</h3>
+
+                    <div class="summary-box">
+                        <h5>📌 خلاصه نکات کلیدی این فصل:</h5>
+                        <ul>
+                            <li>🔹 <strong>مدل CIA</strong> ستون فقرات تحلیل امنیتی است: هر آسیب‌پذیری حداقل یکی از سه ضلع محرمانگی/یکپارچگی/دسترس‌پذیری را نقض می‌کند.</li>
+                            <li>🔹 <strong>Cyber Kill Chain</strong> هفت مرحله دارد: Recon → Weapon → Delivery → Exploit → Install → C2 → Actions.</li>
+                            <li>🔹 در هر مرحله از Kill Chain، <strong>فرصت دفاع</strong> وجود دارد. دفاع در عمق یعنی چیزی به یک لایه وابسته نباشد.</li>
+                            <li>🔹 <strong>OWASP Top 10</strong> مرجع استاندارد آسیب‌پذیری‌های وب است و در فصل ۱۴ به‌طور کامل بررسی می‌شود.</li>
+                            <li>🔹 آزمایشگاه شخصی با <strong>Kali + Windows/Django</strong> روی Host-Only، پایه هر تمرین امنیتی است.</li>
+                            <li>🔹 <strong>مسئولیت قانونی و اخلاقی</strong> برتر از مهارت فنی است. بدون مجوز کتبی، هیچ تستی قانونی نیست.</li>
+                            <li>🔹 در ایران، قانون جرایم رایانه‌ای ۱۳۸۸ هر نوع دسترسی غیرمجاز را جرمانگاری کرده است.</li>
+                        </ul>
+                    </div>
+
+                    <h5>🎓 چرا این فصل، مهم‌ترین فصل دوره است؟</h5>
+                    <p>
+                        چون تمام فصل‌های بعدی، «کاربرد» همین مفاهیم پایه هستند. اگر مدل CIA و Kill Chain را درونی کنید،
+                        به‌جای «حفظ کردن ۵۰ حمله»، «فهمیدن ۵۰ نمونه از ۷ الگو» را تجربه می‌کنید. این تفاوت بین
+                        یک <strong>اسکریپت‌کیدی</strong> و یک <strong>مهندس امنیت</strong> است.
+                    </p>
+
+                    <div class="callout co-tip">
+                        <strong>📎 پل به فصل بعد:</strong>
+                        در فصل ۲، آزمایشگاه را کامل می‌کنیم و اولین ابزارهای reconnaissance را اجرا می‌کنیم:
+                        <strong>Nmap، Gobuster، Subfinder، Wappalyzer</strong>. خواهید دید چطور یک مهاجم حرفه‌ای، قبل از هر حمله،
+                        ۸۰٪ اطلاعات هدف را از منابع عمومی جمع می‌کند.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۲: خودارزیابی و آزمونک -->
+                <div class="section-part" id="part-12">
+                    <h3>۱۲. خودارزیابی و آزمونک</h3>
+
+                    <div class="self-assessment">
+                        <h5>⭐ چک‌لیست خودارزیابی (صادق باشید):</h5>
+                        <ul class="checklist">
+                            <li>می‌توانم هر آسیب‌پذیری را در یکی از اضلاع CIA دسته‌بندی کنم.</li>
+                            <li>می‌توانم هفت مرحله Kill Chain را به‌ترتیب نام ببرم و برای هر کدام یک مثال بزنم.</li>
+                            <li>می‌دانم تفاوت Vulnerability، Threat و Risk چیست.</li>
+                            <li>آزمایشگاه Kali + Windows دارم و پینگ بین دو طرف کار می‌کند.</li>
+                            <li>سرور Django روی هدف اجرا می‌شود و از Kali قابل دسترسی است.</li>
+                            <li>می‌دانم تفاوت سه کلاه (سفید، خاکستری، سیاه) در چیست.</li>
+                            <li>می‌دانم حداقل سه ماده از قانون جرایم رایانه‌ای ۱۳۸۸ ایران.</li>
+                            <li>یک فایل گزارش <code>lab-report.md</code> از راه‌اندازی آزمایشگاه تهیه کرده‌ام.</li>
+                        </ul>
+                    </div>
+
+                    <h5>📝 آزمونک فصل (۵ سؤال، بدون نگاه به متن بالا):</h5>
+
+                    <div class="quiz-question">
+                        <strong>۱.</strong> کدام گزینه، نماد نقض «محرمانگی» (Confidentiality) است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) تغییر رمز کاربر توسط مهاجم</li>
+                            <li>ب) استخراج دیتابیس کاربران با SQL Injection</li>
+                            <li>ج) حمله DDoS و از کار انداختن سایت</li>
+                            <li>د) شکست بکاپ و از دست رفتن داده</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۲.</strong> در Cyber Kill Chain، کدام مرحله «ساخت ابزار حمله» را توصیف می‌کند؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Reconnaissance</li>
+                            <li>ب) Weaponization</li>
+                            <li>ج) Delivery</li>
+                            <li>د) Exploitation</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۳.</strong> کدام CVE مربوط به Apache Struts بود که به نفوذ Equifax در ۲۰۱۷ منجر شد؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) CVE-2017-5638</li>
+                            <li>ب) CVE-2021-44228</li>
+                            <li>ج) CVE-2014-0160</li>
+                            <li>د) CVE-2019-0708</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۴.</strong> طبق قانون جرایم رایانه‌ای ایران، حداقل مجازات «دسترسی غیرمجاز به داده‌های محرمانه» چیست؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) تذکر کتبی</li>
+                            <li>ب) حبس ۹۱ روز تا ۱ سال + جزای نقدی</li>
+                            <li>ج) فقط جزای نقدی</li>
+                            <li>د) حبس ۵ تا ۱۵ سال</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۵.</strong> کدام گزینه «لایه اول دفاعی» در مدل Defense in Depth وب است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) WAF</li>
+                            <li>ب) آموزش کاربر</li>
+                            <li>ج) کد امن (Secure Coding)</li>
+                            <li>د) SIEM</li>
+                        </ul>
+                    </div>
+
+                    <details>
+                        <summary>✅ نمایش پاسخ‌های صحیح</summary>
+                        <div style="padding: 10px 16px 14px;">
+                            <p><strong>۱. ب</strong> — استخراج دیتابیس با SQLi = دسترسی غیرمجاز به داده = نقض محرمانگی.</p>
+                            <p><strong>۲. ب</strong> — Weaponization دقیقاً مرحله «ساخت/تجهیز ابزار حمله» است.</p>
+                            <p><strong>۳. الف</strong> — CVE-2017-5638 (Apache Struts2 RCE) عامل نفوذ Equifax بود.</p>
+                            <p><strong>۴. ب</strong> — ماده ۱ قانون جرایم رایانه‌ای: حبس ۹۱ روز تا ۱ سال + جزای نقدی.</p>
+                            <p><strong>۵. ج</strong> — کد امن (Secure Coding) آخرین سنگر است؛ اگر WAF رد شود، کد باید ایمن باشد.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- بخش ۱۳: پروژه هفتگی -->
+                <div class="section-part" id="part-13">
+                    <h3>۱۳. پروژه هفتگی (تمرین مستقل)</h3>
+
+                    <div class="weekly-project">
+                        <h5>🏆 پروژه هفتگی: «گزارش تحلیلی یک نقض امنیتی واقعی»</h5>
+
+                        <p><strong>هدف:</strong> یکی از پنج رخداد زیر را انتخاب کنید، تحقیق کنید، و بر اساس مدل‌های CIA و Kill Chain تحلیل کنید.</p>
+
+                        <h6>گزینه‌های انتخابی (یکی را انتخاب کنید):</h6>
+                        <ol>
+                            <li>Equifax (۲۰۱۷) — Apache Struts RCE</li>
+                            <li>Yahoo (۲۰۱۳-۲۰۱۴) — SQLi و سرقت ۳ میلیارد حساب</li>
+                            <li>Sony Pictures (۲۰۱۴) — APT، Wiper، افشای داده</li>
+                            <li>British Airways (۲۰۱۸) — Magecart و سرقت ۳۸۰٬۰۰۰ کارت بانکی</li>
+                            <li>یک حادثه بومی ایران (اگر از اخبار معتبر پیدا کردید)</li>
+                        </ol>
+
+                        <h6>ساختار گزارش (حداقل ۳ صفحه، حداکثر ۶ صفحه):</h6>
+                        <ol>
+                            <li><strong>خلاصه اجرایی</strong> (۱۵۰ کلمه): چه اتفاقی افتاد؟ چه کسی؟ چقدر خسارت؟</li>
+                            <li><strong>خط زمانی</strong>: نفوذ → شناسایی → افشا → پیامدها</li>
+                            <li><strong>تحلیل Kill Chain</strong>: هر ۷ مرحله را برای این حادثه نقشه کنید</li>
+                            <li><strong>تحلیل CIA</strong>: کدام اضلاع نقض شدند؟ چرا؟</li>
+                            <li><strong>ریشه فنی</strong>: دقیقاً چه آسیب‌پذیری/ضعفی؟ CVE (اگر دارد)</li>
+                            <li><strong>درس‌ها</strong>: اگر شما CISO بودید، چه می‌کردید؟</li>
+                            <li><strong>منابع</strong>: حداقل ۴ منبع معتبر (SANS، NIST، گزارش‌های رسمی)</li>
+                        </ol>
+
+                        <h6>خروجی مورد انتظار:</h6>
+                        <ul>
+                            <li>📄 فایل PDF یا Markdown در <code>lab-report.md</code></li>
+                            <li>📊 حداقل ۲ نمودار (Kill Chain و CIA)</li>
+                            <li>🔗 لینک منابع در انتها</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;"><strong>💼 نکته:</strong> این گزارش، اولین قطعه پورتفولیوی امنیتی شماست. در مصاحبه‌ها می‌توانید بگویید: «من حادثه X را تحلیل کرده‌ام». این جمله، شما را از ۹۰٪ متقاضیان متمایز می‌کند.</p>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۴: منابع و گام بعدی -->
+                <div class="section-part" id="part-14">
+                    <h3>۱۴. منابع تکمیلی و گام بعدی</h3>
+
+                    <div class="resources-box">
+                        <h5>📚 منابع ضروری (اولویت‌دار):</h5>
+                        <table class="objectives-table">
+                            <thead>
+                                <tr><th>منبع</th><th>نوع</th><th>سطح</th><th>لینک</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>OWASP Top 10 (2021)</td>
+                                    <td>مرجع رسمی</td>
+                                    <td>مبتدی-پیشرفته</td>
+                                    <td><a href="https://owasp.org/Top10/" target="_blank" rel="noopener">owasp.org/Top10</a></td>
+                                </tr>
+                                <tr>
+                                    <td>PortSwigger Web Security Academy</td>
+                                    <td>آموزش تعاملی (رایگان)</td>
+                                    <td>مبتدی-حرفه‌ای</td>
+                                    <td><a href="https://portswigger.net/web-security" target="_blank" rel="noopener">portswigger.net/web-security</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OWASP Web Security Testing Guide</td>
+                                    <td>مرجع تست نفوذ</td>
+                                    <td>حرفه‌ای</td>
+                                    <td><a href="https://owasp.org/www-project-web-security-testing-guide/" target="_blank" rel="noopener">owasp.org/WSTG</a></td>
+                                </tr>
+                                <tr>
+                                    <td>TryHackMe</td>
+                                    <td>آموزش تعاملی</td>
+                                    <td>مبتدی</td>
+                                    <td><a href="https://tryhackme.com/" target="_blank" rel="noopener">tryhackme.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>HackTheBox</td>
+                                    <td>چالش عملی</td>
+                                    <td>متوسط-حرفه‌ای</td>
+                                    <td><a href="https://www.hackthebox.com/" target="_blank" rel="noopener">hackthebox.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CVE Database</td>
+                                    <td>پایگاه آسیب‌پذیری</td>
+                                    <td>مرجع</td>
+                                    <td><a href="https://cve.mitre.org/" target="_blank" rel="noopener">cve.mitre.org</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CVSS Calculator</td>
+                                    <td>محاسبه شدت</td>
+                                    <td>مرجع</td>
+                                    <td><a href="https://www.first.org/cvss/calculator/3.1" target="_blank" rel="noopener">first.org/cvss</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5>📖 مطالعه بیشتر (کتاب‌های توصیه‌شده):</h5>
+                    <ul>
+                        <li>📕 <strong>The Web Application Hacker&#39;s Handbook (2nd Ed)</strong> — Stuttard &amp; Pinto (مرجع کلاسیک، تقریباً تمام دوره)</li>
+                        <li>📗 <strong>Web Hacking Arsenal</strong> — Rafay Baloch (تکنیک‌های پیشرفته)</li>
+                        <li>📘 <strong>Real-World Bug Hunting</strong> — Peter Yaworski (کیس‌های واقعی Bug Bounty)</li>
+                        <li>📙 <strong>Hacking: The Art of Exploitation</strong> — Jon Erickson (پایه‌های عمیق سیستم)</li>
+                        <li>📓 <strong>The Tangled Web</strong> — Michal Zalewski (امنیت مرورگر)</li>
+                    </ul>
+
+                    <h5>🎯 گام بعدی (فصل ۲):</h5>
+                    <p>در فصل ۲، آزمایشگاه را تکمیل می‌کنیم و وارد <strong>فاز Reconnaissance</strong> می‌شویم:</p>
+                    <ul>
+                        <li>🔍 <strong>Passive Recon</strong>: جستجو در Google Dorks، Shodan، Censys، Wayback Machine</li>
+                        <li>🔍 <strong>Active Recon</strong>: DNS enumeration با <code>dig</code>, <code>dnsrecon</code>, <code>subfinder</code></li>
+                        <li>🔍 <strong>Port Scanning</strong>: Nmap با تمام سوییچ‌های کلیدی (<code>-sS</code>, <code>-sV</code>, <code>-A</code>)</li>
+                        <li>🔍 <strong>Directory Brute-forcing</strong>: Gobuster، FFUF، dirsearch</li>
+                        <li>🔍 <strong>Technology Fingerprinting</strong>: Wappalyzer، WhatWeb</li>
+                    </ul>
+                    <p>در پایان فصل ۲، شما قادر خواهید بود <strong>پروفایل کاملی از یک هدف</strong> (سرویس‌ها، نسخه‌ها، تکنولوژی، مسیرهای پنهان) بسازید — همان کاری که هر مهاجم حرفه‌ای قبل از شروع حمله انجام می‌دهد.</p>
+
+                    <div class="callout co-tip">
+                        <strong>💡 تمرین اختیاری این هفته:</strong>
+                        یک حساب رایگان در <a href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe</a> بسازید و دو اتاق رایگان زیر را کامل کنید:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li><strong>Pre Security</strong> — پایه‌های شبکه و وب</li>
+                            <li><strong>OWASP Top 10</strong> — اتاق تعاملی معرفی ده آسیب‌پذیری</li>
+                        </ul>
+                        این دو اتاق، پیش‌نیاز عالی برای فصل ۳ هستند.
+                    </div>
+                </div>
+
+                <div class="done-bar">
+                    <span style="font-weight:800;color:#7ee787">🎯 این فصل را خواندید؟ پیشرفت خود را ذخیره کنید:</span><br>
+                    <button id="mark-done" data-chapter="ch-01" type="button">✔️ این فصل را تمام کردم</button>
+                </div>
+
+                <div class="pager">
+                    <a style="visibility:hidden" id="prev-link">➜ فصل قبل</a>
+                    <a href="../../index.html">🗂️ فهرست فصل‌ها</a>
+                    <a href="../chapter-02/index.html" id="next-link">فصل بعد ➜</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵</p>
+            <p style="font-size:.85rem;color:var(--muted)">این محتوا صرفاً برای آموزش در محیط آزمایشگاه ایزوله تهیه شده است. مسئولیت استفاده نادرست بر عهده کاربر است.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

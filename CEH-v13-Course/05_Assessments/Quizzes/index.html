@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون‌های میان‌ترم - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی ===== */
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .quiz-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 5px solid var(--primary, #4f46e5);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .quiz-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+        }
+        body.dark-mode .quiz-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .quiz-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .quiz-card .icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .quiz-card .module-number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .quiz-card h3 {
+            margin: 4px 0 6px 0;
+            font-size: 1.1rem;
+            color: var(--text-primary, #0f172a);
+        }
+        .quiz-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary, #334155);
+            margin: 4px 0 10px 0;
+            line-height: 1.6;
+        }
+        .quiz-card .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted, #64748b);
+            border-top: 1px solid var(--card-border, rgba(0, 0, 0, 0.06));
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        body.dark-mode .quiz-card .stats {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+        .quiz-card .stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .quiz-card .badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        body.dark-mode .quiz-card .badge {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .quiz-card .badge.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .quiz-card .badge.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .quiz-card .badge.mc {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+        body.dark-mode .quiz-card .badge.mc {
+            background: #172554;
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.15);
+        }
+        .quiz-card .badge.essay {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .quiz-card .badge.essay {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+
+        .quiz-card[data-module="1-5"] {
+            border-right-color: #3b82f6;
+        }
+        .quiz-card[data-module="6-10"] {
+            border-right-color: #8b5cf6;
+        }
+        .quiz-card[data-module="11-15"] {
+            border-right-color: #ec4899;
+        }
+        .quiz-card[data-module="16-20"] {
+            border-right-color: #10b981;
+        }
+        .quiz-card[data-module="final"] {
+            border-right-color: #ef4444;
+        }
+
+        .category-label {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 20px;
+            border-radius: var(--radius-full, 9999px);
+            margin: 20px 0 12px 0;
+            letter-spacing: 0.5px;
+        }
+        .category-base {
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+        }
+        .category-network {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .category-web {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .category-advanced {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        body.dark-mode .category-base {
+            background: #1e293b;
+            color: #818cf8;
+        }
+        body.dark-mode .category-network {
+            background: #172554;
+            color: #60a5fa;
+        }
+        body.dark-mode .category-web {
+            background: #2d1f00;
+            color: #fbbf24;
+        }
+        body.dark-mode .category-advanced {
+            background: #0a1f12;
+            color: #34d399;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--primary, #4f46e5);
+            color: white;
+            padding: 6px 18px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: var(--secondary, #7c3aed);
+            transform: scale(1.04);
+            text-decoration: none;
+            color: white;
+        }
+
+        .sample-question {
+            background: var(--card-bg, rgba(255, 255, 255, 0.4));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            border-right: 4px solid var(--primary);
+            margin: 16px 0;
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.2));
+        }
+        body.dark-mode .sample-question {
+            background: rgba(30, 41, 59, 0.4);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .sample-question .q {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .sample-question .options {
+            padding-right: 20px;
+            margin: 4px 0;
+        }
+        .sample-question .options li {
+            list-style: none;
+            margin: 2px 0;
+        }
+        .sample-question .answer {
+            color: var(--accent-green, #10b981);
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--card-border, rgba(0, 0, 0, 0.06));
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        body.dark-mode .progress-bar {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-full);
+            transition: width 0.8s ease;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-grid {
+                grid-template-columns: 1fr;
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ارزیابی</a>
+        </span>
+    </div>
+
+    <h1>📝 آزمون‌های میان‌ترم جامع</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 معرفی آزمون‌های میان‌ترم</h2>
+        <p>
+            در این بخش، <b>۲۰ آزمون میان‌ترم</b> برای هر یک از ماژول‌های دوره CEH V13 گردآوری شده‌است. هر آزمون شامل <b>۱۰ سوال چهارگزینه‌ای (MCQ)</b> و <b>۲ سوال تشریحی</b> است که مفاهیم کلیدی آن ماژول را پوشش می‌دهد.
+        </p>
+        <p>
+            این آزمون‌ها به‌گونه‌ای طراحی شده‌اند که دقیقاً شبیه به سوالات آزمون اصلی CEH باشند. پس از پاسخ‌دهی، می‌توانید پاسخ‌نامه را بررسی کرده و نقاط ضعف خود را شناسایی کنید.
+        </p>
+        <div class="highlight-box" style="margin-top: 16px;">
+            <b>📌 ساختار هر آزمون:</b>
+            <ul>
+                <li><b>۱۰ سوال چهارگزینه‌ای:</b> مفاهیم تئوری، ابزارها و سناریوهای کلیدی</li>
+                <li><b>۲ سوال تشریحی:</b> تحلیل عمیق‌تر و کاربرد عملی</li>
+                <li><b>زمان پیشنهادی:</b> ۲۰ دقیقه برای هر آزمون</li>
+                <li><b>پاسخنامهٔ تشریحی:</b> توضیح کامل گزینه‌ها و پاسخ‌ها</li>
+            </ul>
+        </div>
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>💡 نکته:</b> برای بهترین نتیجه، هر آزمون را بدون مرور کتاب یا اینترنت حل کنید و سپس پاسخ‌ها را با پاسخنامه مقایسه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: دسته‌بندی آزمون‌ها -->
+    <!-- ============================================================ -->
+
+    <!-- ===== دسته ۱: مبانی (ماژول‌های ۱-۵) ===== -->
+    <span class="category-label category-base">📖 مبانی و شناسایی (ماژول‌های ۱-۵)</span>
+    <div class="quiz-grid">
+
+        <!-- ماژول ۱ -->
+        <div class="quiz-card" data-module="1-5">
+            <span class="icon">🔰</span>
+            <span class="module-number">ماژول ۱</span>
+            <h3>Introduction to Ethical Hacking</h3>
+            <p>مفاهیم پایه هک قانونمند، کلاس‌های هکرها، مثلث CIA، مراحل تست نفوذ.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+                <span class="badge essential">⭐ ضروری</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۲ -->
+        <div class="quiz-card" data-module="1-5">
+            <span class="icon">🔍</span>
+            <span class="module-number">ماژول ۲</span>
+            <h3>Footprinting and Reconnaissance</h3>
+            <p>شناسایی غیرفعال و فعال، WHOIS، DNS Enumeration، Google Hacking، OSINT.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۳ -->
+        <div class="quiz-card" data-module="1-5">
+            <span class="icon">📡</span>
+            <span class="module-number">ماژول ۳</span>
+            <h3>Scanning Networks</h3>
+            <p>اسکن پورت، SYN Scan، TCP Connect، UDP Scan، تشخیص سیستم‌عامل، Nmap.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۴ -->
+        <div class="quiz-card" data-module="1-5">
+            <span class="icon">🔐</span>
+            <span class="module-number">ماژول ۴</span>
+            <h3>Enumeration</h3>
+            <p>NetBIOS, SNMP, LDAP, SMB, NFS, DNS Enumeration، ابزارهای enum4linux و smbclient.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۵ -->
+        <div class="quiz-card" data-module="1-5">
+            <span class="icon">🛡️</span>
+            <span class="module-number">ماژول ۵</span>
+            <h3>Vulnerability Analysis</h3>
+            <p>CVSS، پایگاه‌های داده آسیب‌پذیری، Nessus، OpenVAS، Nmap NSE.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+    </div>
+
+    <!-- ===== دسته ۲: حملات شبکه و سیستم (ماژول‌های ۶-۱۰) ===== -->
+    <span class="category-label category-network">⚔️ حملات شبکه و سیستم (ماژول‌های ۶-۱۰)</span>
+    <div class="quiz-grid">
+
+        <!-- ماژول ۶ -->
+        <div class="quiz-card" data-module="6-10">
+            <span class="icon">⚡</span>
+            <span class="module-number">ماژول ۶</span>
+            <h3>System Hacking</h3>
+            <p>کرک پسورد، افزایش دسترسی، حفظ دسترسی، پاک کردن ردپا، Metasploit، John the Ripper.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+                <span class="badge essential">⭐ ضروری</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۷ -->
+        <div class="quiz-card" data-module="6-10">
+            <span class="icon">🦠</span>
+            <span class="module-number">ماژول ۷</span>
+            <h3>Malware Threats</h3>
+            <p>ویروس، کرم، تروجان، باج‌افزار، روت‌کیت، تشخیص و پاک‌سازی بدافزار.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۸ -->
+        <div class="quiz-card" data-module="6-10">
+            <span class="icon">📡</span>
+            <span class="module-number">ماژول ۸</span>
+            <h3>Sniffing</h3>
+            <p>ARP Spoofing, MAC Flooding, DHCP Starvation, Wireshark, Ettercap.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۹ -->
+        <div class="quiz-card" data-module="6-10">
+            <span class="icon">🎭</span>
+            <span class="module-number">ماژول ۹</span>
+            <h3>Social Engineering</h3>
+            <p>فیشینگ، بهانه‌جویی، طعمه‌گذاری، Tailgating، Vishing، Smishing.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۰ -->
+        <div class="quiz-card" data-module="6-10">
+            <span class="icon">🌊</span>
+            <span class="module-number">ماژول ۱۰</span>
+            <h3>Denial of Service</h3>
+            <p>DoS/DDoS، SYN Flood، UDP Flood، حملات بازتابی، بات‌نت‌ها، LOIC، hping3.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+    </div>
+
+    <!-- ===== دسته ۳: حملات وب و کاربردی (ماژول‌های ۱۱-۱۵) ===== -->
+    <span class="category-label category-web">🌐 حملات وب و کاربردی (ماژول‌های ۱۱-۱۵)</span>
+    <div class="quiz-grid">
+
+        <!-- ماژول ۱۱ -->
+        <div class="quiz-card" data-module="11-15">
+            <span class="icon">🔑</span>
+            <span class="module-number">ماژول ۱۱</span>
+            <h3>Session Hijacking</h3>
+            <p>ربودن جلسه، Session Fixation، Cookie Hijacking، MITM، پیشگیری.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۲ -->
+        <div class="quiz-card" data-module="11-15">
+            <span class="icon">🛡️</span>
+            <span class="module-number">ماژول ۱۲</span>
+            <h3>Evading IDS, Firewalls & Honeypots</h3>
+            <p>دور زدن IDS/IPS، Fragmentation، Decoy IP، Honeypot، تکنیک‌های Bypass.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۳ -->
+        <div class="quiz-card" data-module="11-15">
+            <span class="icon">🖥️</span>
+            <span class="module-number">ماژول ۱۳</span>
+            <h3>Hacking Web Servers</h3>
+            <p>حملات به Apache, IIS, Nginx، Directory Traversal، File Inclusion، Misconfiguration.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۴ -->
+        <div class="quiz-card" data-module="11-15">
+            <span class="icon">🌐</span>
+            <span class="module-number">ماژول ۱۴</span>
+            <h3>Hacking Web Applications</h3>
+            <p>OWASP Top 10، XSS، CSRF، IDOR، File Upload، Burp Suite، OWASP ZAP.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+                <span class="badge essential">⭐ ضروری</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۵ -->
+        <div class="quiz-card" data-module="11-15">
+            <span class="icon">🗄️</span>
+            <span class="module-number">ماژول ۱۵</span>
+            <h3>SQL Injection</h3>
+            <p>انواع SQLi، Union-based، Blind، Error-based، SQLmap، پیشگیری با Prepared Statements.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+                <span class="badge essential">⭐ ضروری</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+    </div>
+
+    <!-- ===== دسته ۴: امنیت پیشرفته (ماژول‌های ۱۶-۲۰) ===== -->
+    <span class="category-label category-advanced">🛡️ امنیت پیشرفته (ماژول‌های ۱۶-۲۰)</span>
+    <div class="quiz-grid">
+
+        <!-- ماژول ۱۶ -->
+        <div class="quiz-card" data-module="16-20">
+            <span class="icon">📶</span>
+            <span class="module-number">ماژول ۱۶</span>
+            <h3>Hacking Wireless Networks</h3>
+            <p>WEP/WPA/WPA2، Aircrack-ng، Reaver، Evil Twin، Deauth Attack.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۷ -->
+        <div class="quiz-card" data-module="16-20">
+            <span class="icon">📱</span>
+            <span class="module-number">ماژول ۱۷</span>
+            <h3>Hacking Mobile Platforms</h3>
+            <p>امنیت اندروید و iOS، مهندسی معکوس، Frida، MobSF، Jailbreak/Root.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۸ -->
+        <div class="quiz-card" data-module="16-20">
+            <span class="icon">🏭</span>
+            <span class="module-number">ماژول ۱۸</span>
+            <h3>IoT and OT Hacking</h3>
+            <p>اینترنت اشیا، سیستم‌های کنترل صنعتی، Stuxnet, Triton, Mirai, Modbus.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۱۹ -->
+        <div class="quiz-card" data-module="16-20">
+            <span class="icon">☁️</span>
+            <span class="module-number">ماژول ۱۹</span>
+            <h3>Cloud Computing</h3>
+            <p>امنیت AWS, Azure, GCP، IAM، S3، کانتینرها، Kubernetes، Cloud Attacks.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+        <!-- ماژول ۲۰ -->
+        <div class="quiz-card" data-module="16-20">
+            <span class="icon">🔐</span>
+            <span class="module-number">ماژول ۲۰</span>
+            <h3>Cryptography</h3>
+            <p>رمزنگاری متقارن/نامتقارن، هش، امضای دیجیتال، PKI، OpenSSL، حملات رمزنگاری.</p>
+            <div>
+                <span class="badge mc">✅ ۱۰ سوال MCQ</span>
+                <span class="badge essay">📝 ۲ تشریحی</span>
+            </div>
+            <div class="stats">
+                <span>⏱️ ۲۰ دقیقه</span>
+                <span>📊 ۱۲ سوال</span>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 0%;"></div></div>
+            <a href="#" class="btn-primary" style="margin-top:8px;">شروع آزمون</a>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: نمونه سوال (پیش‌نمایش) -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🧪 نمونه سوالات شبیه‌سازی‌شده</h2>
+        <p>
+            در زیر یک نمونه از سوالات هر آزمون را مشاهده می‌کنید. این سوالات به‌گونه‌ای طراحی شده‌اند که سطح دشواری مشابه آزمون اصلی CEH داشته باشند.
+        </p>
+
+        <div class="sample-question">
+            <div class="q">سوال ۱ (چهارگزینه‌ای) – ماژول ۳ (Scanning Networks):</div>
+            <p>کدام گزینه یک تکنیک اسکن مخفی (Stealth) محسوب می‌شود که اتصال TCP را کامل نمی‌کند؟</p>
+            <ul class="options">
+                <li>A) TCP Connect Scan</li>
+                <li>B) SYN Scan</li>
+                <li>C) UDP Scan</li>
+                <li>D) ACK Scan</li>
+            </ul>
+            <div class="answer">✅ پاسخ صحیح: B – SYN Scan (Half-Open) اتصال را کامل نمی‌کند و مخفی‌تر است.</div>
+        </div>
+
+        <div class="sample-question">
+            <div class="q">سوال ۲ (تشریحی) – ماژول ۱۵ (SQL Injection):</div>
+            <p>تفاوت بین Boolean-based Blind SQLi و Time-based Blind SQLi را توضیح دهید و یک مثال از هر کدام ارائه دهید.</p>
+            <div class="answer" style="margin-top:8px;">
+                ✅ پاسخ نمونه:
+                <ul style="margin:4px 0 0 20px; padding-right:0;">
+                    <li><b>Boolean-based:</b> با ارسال شرط‌های True/False و مقایسهٔ پاسخ‌ها اطلاعات استخراج می‌شود. مثال: <code dir='ltr'>1' AND 1=1-- -</code> (True) و <code dir='ltr'>1' AND 1=2-- -</code> (False).</li>
+                    <li><b>Time-based:</b> با استفاده از تأخیر زمانی (SLEEP) و اندازه‌گیری زمان پاسخ، اطلاعات استخراج می‌شود. مثال: <code dir='ltr'>1' AND SLEEP(5)-- -</code>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip-box" style="margin-top:16px;">
+            <b>💡 نکته:</b> برای دسترسی به تمام سوالات و پاسخنامه‌ها، روی دکمهٔ «شروع آزمون» هر ماژول کلیک کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی آزمون‌ها</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">MCQ</span></td>
+                    <td>Multiple Choice Question – سوال چهارگزینه‌ای که در آزمون‌های CEH رایج است.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Essay Question</span></td>
+                    <td>سوال تشریحی که نیاز به پاسخ توصیفی و تحلیلی دارد.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Answer Key</span></td>
+                    <td>پاسخنامه شامل گزینه‌های صحیح و توضیحات تشریحی.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Simulation</span></td>
+                    <td>شبیه‌سازی سوالات آزمون اصلی برای آمادگی بهتر.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Time Box</span></td>
+                    <td>زمان محدود برای پاسخ‌دهی به سوالات که به افزایش سرعت و دقت کمک می‌کند.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>هر آزمون را در زمان تعیین‌شده (۲۰ دقیقه) حل کنید.</li>
+            <li>پس از اتمام، پاسخنامه را بررسی کرده و اشتباهات خود را تحلیل کنید.</li>
+            <li>ماژول‌هایی که نمرهٔ پایینی دارید، دوباره مطالعه کنید.</li>
+            <li>پس از تمام آزمون‌ها، به سراغ <a href="Final_Project/index.html" style="color:#2a7de1;">پروژهٔ نهایی</a> بروید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 با حل منظم این آزمون‌ها، آمادگی خود را برای آزمون اصلی CEH به حداکثر برسانید.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">آزمون‌های میان‌ترم | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

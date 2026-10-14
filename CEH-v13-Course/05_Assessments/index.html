@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارزیابی و پروژه - دوره CEH V13</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی ===== */
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .assessment-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 5px solid var(--primary, #4f46e5);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .assessment-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+        }
+        body.dark-mode .assessment-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .assessment-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .assessment-card .icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .assessment-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.2rem;
+            color: var(--text-primary, #0f172a);
+        }
+        .assessment-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 12px 0;
+            line-height: 1.6;
+        }
+        .assessment-card .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted, #64748b);
+            border-top: 1px solid var(--card-border, rgba(0, 0, 0, 0.06));
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        body.dark-mode .assessment-card .meta {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+        .assessment-card .badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 3px 12px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+            margin-top: 4px;
+        }
+        body.dark-mode .assessment-card .badge {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .assessment-card .badge.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .assessment-card .badge.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .assessment-card .badge.quiz {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+        body.dark-mode .assessment-card .badge.quiz {
+            background: #172554;
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.15);
+        }
+        .assessment-card .badge.project {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .assessment-card .badge.project {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+        .assessment-card .badge.final {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        body.dark-mode .assessment-card .badge.final {
+            background: #2d0a0a;
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.15);
+        }
+
+        /* رنگ‌های اختصاصی */
+        .assessment-card[data-type="quizzes"] {
+            border-right-color: #3b82f6;
+        }
+        .assessment-card[data-type="project"] {
+            border-right-color: #10b981;
+        }
+
+        .timeline {
+            position: relative;
+            padding-right: 30px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary), var(--accent-green));
+            border-radius: var(--radius-full);
+        }
+        .timeline-item {
+            position: relative;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.5));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.3));
+            transition: var(--transition);
+        }
+        body.dark-mode .timeline-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .timeline-item:hover {
+            transform: translateX(-4px);
+        }
+        [dir="rtl"] .timeline-item:hover {
+            transform: translateX(4px);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -23px;
+            top: 18px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg, #f0f4ff);
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+        body.dark-mode .timeline-item::before {
+            border-color: var(--bg, #0b1120);
+        }
+        .timeline-item .week {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+        .timeline-item .title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin: 4px 0;
+        }
+        .timeline-item .desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .score-item {
+            background: var(--card-bg, rgba(255, 255, 255, 0.5));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            text-align: center;
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.3));
+        }
+        body.dark-mode .score-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .score-item .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+        .score-item .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .project-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .phase-item {
+            background: var(--card-bg, rgba(255, 255, 255, 0.4));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            border-right: 4px solid var(--primary);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.2));
+        }
+        body.dark-mode .phase-item {
+            background: rgba(30, 41, 59, 0.4);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .phase-item .phase-num {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+        .phase-item .phase-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+            .score-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+            .project-phases {
+                grid-template-columns: 1fr 1fr;
+            }
+            .timeline {
+                padding-right: 20px;
+            }
+            .timeline-item::before {
+                right: -15px;
+                width: 10px;
+                height: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .score-summary {
+                grid-template-columns: 1fr;
+            }
+            .project-phases {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ارزیابی</a>
+        </span>
+    </div>
+
+    <h1>📝 ارزیابی و پروژه نهایی</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 معرفی سیستم ارزیابی</h2>
+        <p>
+            در این بخش، تمام ابزارهای سنجش یادگیری شما گردآوری شده‌است. سیستم ارزیابی دورهٔ CEH V13 شامل <b>آزمون‌های میان‌ترم</b> برای هر ماژول و یک <b>پروژهٔ جامع تست نفوذ</b> در پایان دوره است. این ارزیابی‌ها به شما کمک می‌کنند تا نقاط قوت و ضعف خود را شناسایی کرده و برای آزمون اصلی CEH آماده شوید.
+        </p>
+        <div class="highlight-box" style="margin-top: 16px;">
+            <b>🎯 اهداف ارزیابی:</b>
+            <ul>
+                <li>سنجش درک مفاهیم تئوری هر ماژول</li>
+                <li>ارزیابی مهارت عملی در استفاده از ابزارها</li>
+                <li>آمادگی برای آزمون CEH (۱۲۵ سوال تستی و آزمون عملی)</li>
+                <li>توانایی مستندسازی و گزارش‌نویسی حرفه‌ای</li>
+            </ul>
+        </div>
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>💡 نکته:</b> برای موفقیت در پروژهٔ نهایی، تمام آزمایشگاه‌های عملی را به‌طور کامل انجام دهید و نتایج را مستند کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: کارت‌های اصلی -->
+    <!-- ============================================================ -->
+    <div class="assessment-grid">
+
+        <!-- آزمون‌ها -->
+        <a href="Quizzes/index.html" class="assessment-card" data-type="quizzes">
+            <span class="icon">📝</span>
+            <h3>آزمون‌های میان‌ترم</h3>
+            <p>
+                مجموعهٔ کامل سوالات چهارگزینه‌ای و تشریحی برای هر ۲۰ ماژول دوره. شامل بیش از ۲۰۰ سوال شبیه‌سازی‌شده.
+            </p>
+            <div>
+                <span class="badge quiz">📋 تستی</span>
+                <span class="badge essential">⭐ ضروری</span>
+            </div>
+            <div class="meta">
+                ✅ ۲۰ آزمون جداگانه · پاسخنامهٔ تشریحی · زمان‌بندی پیشنهادی
+            </div>
+        </a>
+
+        <!-- پروژه نهایی -->
+        <a href="Final_Project/index.html" class="assessment-card" data-type="project">
+            <span class="icon">🎯</span>
+            <h3>پروژهٔ جامع تست نفوذ</h3>
+            <p>
+                یک سناریوی واقعی و کامل از تست نفوذ سازمانی: از شناسایی تا بهره‌برداری، گزارش‌نویسی و ارائهٔ راهکار.
+            </p>
+            <div>
+                <span class="badge project">🚀 عملی</span>
+                <span class="badge final">🏆 نهایی</span>
+            </div>
+            <div class="meta">
+                📋 شامل: فازهای ۵‌گانه · مستندات کامل · الگوی گزارش حرفه‌ای
+            </div>
+        </a>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: نقشه راه ارزیابی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🗺️ نقشه راه ارزیابی – گام‌به‌گام</h2>
+        <p>
+            برای بهینه‌سازی زمان و افزایش بازدهی، این برنامهٔ ارزیابی را به‌ترتیب زیر دنبال کنید:
+        </p>
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+                <span class="week">📅 هفته‌های ۱-۴</span>
+                <div class="title">آزمون‌های ماژول‌های ۱ تا ۵</div>
+                <p class="desc">
+                    پس از مطالعهٔ مبانی (Footprinting, Scanning, Enumeration, Vulnerability Analysis)، آزمون‌های مربوطه را حل کنید.
+                </p>
+            </div>
+
+            <div class="timeline-item">
+                <span class="week">📅 هفته‌های ۵-۸</span>
+                <div class="title">آزمون‌های ماژول‌های ۶ تا ۱۲</div>
+                <p class="desc">
+                    پس از مباحث System Hacking, Malware, Sniffing, Social Engineering, DoS, Session Hijacking، آزمون‌ها را انجام دهید.
+                </p>
+            </div>
+
+            <div class="timeline-item">
+                <span class="week">📅 هفته‌های ۹-۱۲</span>
+                <div class="title">آزمون‌های ماژول‌های ۱۳ تا ۲۰</div>
+                <p class="desc">
+                    پس از مباحث Web Hacking, SQL Injection, Wireless, Mobile, IoT, Cloud, Cryptography، آزمون‌ها را حل کنید.
+                </p>
+            </div>
+
+            <div class="timeline-item">
+                <span class="week">📅 هفته‌های ۱۳-۱۴</span>
+                <div class="title">پروژهٔ نهایی</div>
+                <p class="desc">
+                    اجرای کامل سناریوی تست نفوذ و تهیهٔ گزارش نهایی. این پروژه تمام مهارت‌های آموخته‌شده را ترکیب می‌کند.
+                </p>
+            </div>
+
+            <div class="timeline-item">
+                <span class="week">📅 هفتهٔ ۱۵</span>
+                <div class="title">مرور نهایی و شبیه‌سازی آزمون</div>
+                <p class="desc">
+                    مرور تمام آزمون‌ها، رفع اشکالات و شبیه‌سازی آزمون اصلی CEH با ۱۲۵ سوال در ۴ ساعت.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: ساختار پروژه نهایی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🏗️ ساختار پروژهٔ نهایی</h2>
+        <p>
+            پروژهٔ نهایی شامل <b>۵ فاز اصلی</b> است که هر کدام یکی از مراحل تست نفوذ را پوشش می‌دهند. این پروژه به‌گونه‌ای طراحی شده که دقیقاً شبیه به یک مأموریت واقعی در یک سازمان فرضی باشد.
+        </p>
+
+        <div class="project-phases">
+            <div class="phase-item">
+                <div class="phase-num">فاز ۱</div>
+                <div class="phase-title">🔍 شناسایی (Recon)</div>
+                <p style="font-size:0.85rem; margin:4px 0 0 0; color:var(--text-muted);">
+                    جمع‌آوری اطلاعات عمومی، Footprinting، OSINT
+                </p>
+            </div>
+            <div class="phase-item">
+                <div class="phase-num">فاز ۲</div>
+                <div class="phase-title">📡 اسکن و شمارش</div>
+                <p style="font-size:0.85rem; margin:4px 0 0 0; color:var(--text-muted);">
+                    اسکن پورت، شناسایی سرویس‌ها، Enumeration
+                </p>
+            </div>
+            <div class="phase-item">
+                <div class="phase-num">فاز ۳</div>
+                <div class="phase-title">⚡ بهره‌برداری</div>
+                <p style="font-size:0.85rem; margin:4px 0 0 0; color:var(--text-muted);">
+                    شناسایی آسیب‌پذیری و نفوذ به سیستم هدف
+                </p>
+            </div>
+            <div class="phase-item">
+                <div class="phase-num">فاز ۴</div>
+                <div class="phase-title">🔐 پس از نفوذ</div>
+                <p style="font-size:0.85rem; margin:4px 0 0 0; color:var(--text-muted);">
+                    افزایش دسترسی، حفظ دسترسی، پاک کردن ردپا
+                </p>
+            </div>
+            <div class="phase-item">
+                <div class="phase-num">فاز ۵</div>
+                <div class="phase-title">📄 گزارش‌نویسی</div>
+                <p style="font-size:0.85rem; margin:4px 0 0 0; color:var(--text-muted);">
+                    مستندسازی کامل، ارائه راهکارهای امنیتی
+                </p>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 16px;">
+            <b>📌 تحویل پروژه:</b>
+            <ul>
+                <li>یک فایل PDF شامل تمام مراحل، دستورات، خروجی‌ها و تحلیل‌ها</li>
+                <li>گزارش آسیب‌پذیری‌ها با اولویت‌بندی (Critical, High, Medium, Low)</li>
+                <li>راهکارهای پیشنهادی برای رفع هر آسیب‌پذیری</li>
+                <li>یک ویدیوی ۵-۱۰ دقیقه‌ای که پروژه را توضیح می‌دهد (اختیاری)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: آمار و نمره‌دهی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📊 سیستم نمره‌دهی و معیارهای موفقیت</h2>
+
+        <div class="score-summary">
+            <div class="score-item">
+                <span class="number">۲۰</span>
+                <span class="label">آزمون میان‌ترم</span>
+            </div>
+            <div class="score-item">
+                <span class="number">۲۰۰+</span>
+                <span class="label">سوالات شبیه‌سازی</span>
+            </div>
+            <div class="score-item">
+                <span class="number">۱</span>
+                <span class="label">پروژه نهایی</span>
+            </div>
+            <div class="score-item">
+                <span class="number">۵</span>
+                <span class="label">فازهای پروژه</span>
+            </div>
+        </div>
+
+        <h3>📌 معیارهای ارزیابی پروژه نهایی:</h3>
+        <ul>
+            <li><b>دقت و کامل بودن (۴۰٪):</b> اجرای صحیح تمام مراحل تست نفوذ</li>
+            <li><b>مستندسازی (۳۰٪):</b> کیفیت گزارش، شفافیت، و ارائهٔ شواهد</li>
+            <li><b>تحلیل و نتیجه‌گیری (۲۰٪):</b> درک عمیق از آسیب‌پذیری‌ها و تأثیر آنها</li>
+            <li><b>خلاقیت و ابتکار (۱۰٪):</b> استفاده از تکنیک‌های پیشرفته و راهکارهای نوآورانه</li>
+        </ul>
+
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>💡 نکته:</b> برای قبولی در پروژه، باید حداقل <b>۷۰٪</b> از امتیاز کل را کسب کنید. آزمون‌های میان‌ترم نیز هر کدام حداقل نمرهٔ قبولی <b>۶۰٪</b> دارند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی ارزیابی</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">Assessment</span></td>
+                    <td>فرآیند ارزیابی و سنجش دانش و مهارت دانشجو در طول دوره.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Quiz</span></td>
+                    <td>آزمون کوتاه و هدفمند برای سنجش درک یک ماژول خاص.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Midterm Exam</span></td>
+                    <td>آزمون میان‌ترم که پس از چند ماژول برگزار می‌شود و مباحث نیمهٔ اول دوره را پوشش می‌دهد.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Final Project</span></td>
+                    <td>پروژهٔ جامع و عملی که تمام مهارت‌های آموخته‌شده را در یک سناریوی واقعی ترکیب می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Report</span></td>
+                    <td>گزارش مستند و حرفه‌ای از یافته‌ها، آسیب‌پذیری‌ها و راهکارهای پیشنهادی.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Pentest</span></td>
+                    <td>تست نفوذ – شبیه‌سازی حملات واقعی برای ارزیابی امنیت سیستم.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CVSS</span></td>
+                    <td>سیستم امتیازدهی شدت آسیب‌پذیری‌ها (Common Vulnerability Scoring System).</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>پس از اتمام هر ماژول، آزمون مربوطه را در بخش <a href="Quizzes/index.html" style="color:#2a7de1;">آزمون‌ها</a> حل کنید.</li>
+            <li>همزمان با پیشرفت دوره، مستندات پروژهٔ نهایی را جمع‌آوری کنید.</li>
+            <li>برای پروژه، از تمام ابزارها و تکنیک‌های آموخته‌شده استفاده کنید.</li>
+            <li>گزارش نهایی را با الگوی استاندارد و حرفه‌ای تهیه کنید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 با ارزیابی مستمر و پروژهٔ نهایی، آمادگی خود را برای آزمون CEH V13 به حداکثر برسانید.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ارزیابی و پروژه | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 04: ساختارهای شرطی</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input,
+        .live-demo select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .truthy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .truthy-item {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .truthy-item.truthy {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .truthy-item.falsy {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>دوره جامع Python</h1>
+            <p>فصل 04: ساختارهای شرطی</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-03/index.html">قبلی</a>
+            <a href="../chapter-05/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۴: ساختارهای شرطی</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۶ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۴: ساختارهای شرطی</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی کامل با عملگرها و انواع داده از فصل‌های ۲ و ۳)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر متغیرها و انواع داده (فصل ۲)</li>
+                <li>✅ آشنایی کامل با عملگرها (فصل ۳) – به‌ویژه عملگرهای مقایسه‌ای و منطقی</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون (REPL)</li>
+                <li>✅ آشنایی با مفهوم <code dir='ltr'>input()</code> و <code dir='ltr'>print()</code></li>
+            </ul>
+            <p>اگر با عملگرهای مقایسه‌ای و منطقی (فصل ۳) راحت نیستید، حتماً قبل از شروع این فصل آنها را مرور کنید، زیرا قلب ساختارهای شرطی همین عملگرها هستند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ از <strong><code dir='ltr'>if</code></strong> و <strong><code dir='ltr'>else</code></strong> برای تصمیم‌گیری‌های دوطرفه استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>elif</code></strong> زنجیره‌ای از شرط‌ها را بررسی کنید و بهترین گزینه را انتخاب کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>match-case</code></strong> (Python 3.10+) برای مقایسه‌ی یک مقدار با چندین الگوی مختلف استفاده کنید.</li>
+                <li>✔️ با <strong>عملگر شرطی (Ternary)</strong> شرط‌های کوتاه و یک‌خطی را به‌صورت فشرده بنویسید.</li>
+                <li>✔️ مفهوم <strong>Truthy و Falsy</strong> را درک کنید و از آن برای نوشتن شرط‌های مختصرتر استفاده کنید.</li>
+                <li>✔️ <strong>شرط‌های تو در تو (Nested)</strong> را به‌درستی مدیریت کنید و از پیچیدگی بیش از حد آنها جلوگیری کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در دنیای واقعی، هر روز با تصمیم‌گیری‌های مختلف روبرو هستیم: «اگر باران بیاید، چتر برمی‌دارم» یا «اگر گرسنه باشم، غذا می‌خورم» و «اگر هوا سرد باشد، کت می‌پوشم». در برنامه‌نویسی هم دقیقاً همینطور است. <strong>ساختارهای شرطی</strong> به برنامه اجازه می‌دهند بر اساس شرایط مختلف، تصمیم‌گیری کند و مسیرهای مختلفی را طی کند. بدون شرط‌ها، برنامه‌ها فقط یک مسیر ثابت را دنبال می‌کردند و نمی‌توانستند به ورودی‌های کاربر یا تغییرات محیط واکنش نشان دهند.</p>
+            <p>در این فصل با <strong>همه‌ی ابزارهای تصمیم‌گیری در پایتون</strong> آشنا می‌شوید: از <code dir='ltr'>if</code> و <code dir='ltr'>else</code> ساده گرفته تا <code dir='ltr'>elif</code> برای چندین شرط، <code dir='ltr'>match-case</code> برای مقایسه‌ی الگو (مشابه <code dir='ltr'>switch</code> در زبان‌های دیگر)، و عملگر شرطی (Ternary) برای نوشتن شرط‌های کوتاه و خواناتر. همچنین با مفهوم <strong>Truthy و Falsy</strong> آشنا می‌شوید که یکی از مفاهیم کلیدی و منحصربه‌فرد پایتون است و به شما امکان می‌دهد شرط‌ها را به‌صورت بسیار مختصر بنویسید.</p>
+            <p>تسلط بر ساختارهای شرطی، یکی از مهم‌ترین مهارت‌های هر برنامه‌نویسی است. با این فصل، می‌توانید برنامه‌هایی بنویسید که <strong>هوشمندانه</strong> رفتار کنند، به ورودی‌های کاربر پاسخ مناسب بدهند و در شرایط مختلف، بهترین تصمیم را بگیرند. این مهارت‌ها پایه‌ی مباحث بعدی مانند حلقه‌ها و توابع هستند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۴.۱ -->
+            <div class="sub-section">
+                <h4>۴.۱ دستور <code dir='ltr'>if</code> و <code dir='ltr'>else</code></h4>
+                <p><strong><code dir='ltr'>if</code></strong> ساده‌ترین و اساسی‌ترین ساختار شرطی در پایتون است. اگر شرط (که یک عبارت بولی است) <code dir='ltr'>True</code> باشد، بلوک کد زیر آن اجرا می‌شود. <strong><code dir='ltr'>else</code></strong> که اختیاری است، زمانی اجرا می‌شود که شرط <code dir='ltr'>False</code> باشد.</p>
+                <ul>
+                    <li><strong>تورفتگی (Indentation):</strong> در پایتون، به‌جای استفاده از آکولاد <code dir='ltr'>{}</code> (مانند جاوا یا C++)، از <strong>تورفتگی</strong> برای مشخص کردن بلوک کد استفاده می‌شود. این یکی از ویژگی‌های منحصربه‌فرد پایتون است که خوانایی کد را به‌شدت افزایش می‌دهد. استاندارد استفاده از <strong>۴ فاصله (Space)</strong> است (نه Tab).</li>
+                    <li>همیشه بعد از <code dir='ltr'>if</code>، <code dir='ltr'>elif</code> و <code dir='ltr'>else</code> از <strong><code dir='ltr'>:</code></strong> (کولن) استفاده کنید.</li>
+                    <li>شرط می‌تواند هر عبارتی باشد که یک مقدار بولی (<code dir='ltr'>True</code> یا <code dir='ltr'>False</code>) برمی‌گرداند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== if ساده (بدون else) ==========
+age = 18
+if age >= 18:
+    print("شما بزرگسال هستید.")  # این خط اجرا می‌شود
+
+# ========== if/else (دو مسیر) ==========
+temperature = 30
+if temperature > 25:
+    print("هوا گرم است")        # این خط اجرا می‌شود
+else:
+    print("هوا خنک است")
+
+# ========== شرط با ورودی کاربر ==========
+score = int(input("امتیاز خود را وارد کنید: "))
+if score >= 50:
+    print("✅ قبول شدید")
+else:
+    print("❌ رد شدید")
+
+# ========== تورفتگی بسیار مهم است ==========
+if True:
+    print("این خط اجرا می‌شود")
+    print("این خط هم اجرا می‌شود")  # هر دو داخل if هستند
+print("این خط همیشه اجرا می‌شود")   # خارج از if است
+
+# ========== مثال عملی: تعیین وضعیت آب و هوا ==========
+temp = int(input("دمای امروز را وارد کنید: "))
+if temp >= 30:
+    print("🔥 خیلی گرم است، کولر را روشن کنید!")
+else:
+    print("❄️ هوا خنک است، پنجره را باز کنید!")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">شما بزرگسال هستید.</span><br>
+                    <span class="highlight">➜</span> <span class="result">هوا گرم است</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> در پایتون، <strong>تورفتگی (Indentation)</strong> فقط برای زیبایی نیست – بلکه <strong>نحوی (Syntactic)</strong> است و عدم رعایت آن باعث خطای <code dir='ltr'>IndentationError</code> می‌شود. از ۴ فاصله (Space) استفاده کنید و از ترکیب Tab و Space خودداری کنید (بیشتر ویرایشگرها این را به‌طور خودکار مدیریت می‌کنند).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که عددی را از کاربر دریافت کند و با <code dir='ltr'>if/else</code> مشخص کند که عدد زوج است یا فرد. (راهنمایی: از عملگر <code dir='ltr'>%</code> استفاده کنید.)
+                </div>
+            </div>
+
+            <!-- ۴.۲ -->
+            <div class="sub-section">
+                <h4>۴.۲ دستور <code dir='ltr'>elif</code> (چندین شرط)</h4>
+                <p>وقتی بیش از دو حالت (مسیر) داریم، از <strong><code dir='ltr'>elif</code></strong> (مخفف <em>else if</em>) استفاده می‌کنیم. این ساختار به شما اجازه می‌دهد چندین شرط را پشت سر هم بررسی کنید و به محض پیدا کردن اولین شرط <code dir='ltr'>True</code>، بلوک مربوطه را اجرا کرده و از بقیه‌ی شرط‌ها صرف‌نظر کند.</p>
+                <p><strong>نکات کلیدی:</strong></p>
+                <ul>
+                    <li>ترتیب شرط‌ها در <code dir='ltr'>elif</code> <strong>مهم</strong> است. پایتون از بالا به پایین بررسی می‌کند و اولین شرط <code dir='ltr'>True</code> را انتخاب می‌کند.</li>
+                    <li>شرط‌های <strong>خاص‌تر</strong> را <strong>بالاتر</strong> قرار دهید و شرط‌های عمومی‌تر را پایین‌تر.</li>
+                    <li>قسمت <code dir='ltr'>else</code> در انتها اختیاری است و در صورتی اجرا می‌شود که هیچ‌یک از شرط‌ها <code dir='ltr'>True</code> نباشند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== سیستم نمره‌دهی ==========
+score = int(input("نمره خود را وارد کنید: "))
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+elif score >= 70:
+    grade = "C"
+elif score >= 60:
+    grade = "D"
+else:
+    grade = "F"
+print(f"نمره: {score} → {grade}")
+
+# ========== وضعیت آب و هوا بر اساس دما ==========
+temp = int(input("دمای امروز را وارد کنید: "))
+if temp > 35:
+    status = "بسیار گرم ☀️"
+elif temp > 25:
+    status = "گرم 🌤️"
+elif temp > 15:
+    status = "معتدل 🌥️"
+elif temp > 5:
+    status = "خنک 🧥"
+else:
+    status = "سرد 🥶"
+print(f"وضعیت آب و هوا: {status}")
+
+# ========== تشخیص رنج سنی ==========
+age = int(input("سن خود را وارد کنید: "))
+if age < 13:
+    category = "کودک"
+elif age < 18:
+    category = "نوجوان"
+elif age < 65:
+    category = "بزرگسال"
+else:
+    category = "سالمند"
+print(f"گروه سنی: {category}")
+
+# ========== مثال با ترتیب اشتباه (خطرناک!) ==========
+# این کد را اجرا نکنید – ترتیب غلط است!
+# value = 85
+# if value > 50:
+#     print("بیشتر از ۵۰")
+# elif value > 80:   # این هرگز اجرا نمی‌شود چون ۸۵ > ۵۰ است
+#     print("بیشتر از ۸۰")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">نمره: 85 → B</span><br>
+                    <span class="highlight">➜</span> <span class="result">وضعیت آب و هوا: گرم 🌤️</span><br>
+                    <span class="highlight">➜</span> <span class="result">گروه سنی: بزرگسال</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> ترتیب شرط‌ها در <code dir='ltr'>elif</code> حیاتی است. همیشه شرط‌های <strong>خاص‌تر</strong> را <strong>بالاتر</strong> قرار دهید. اگر شرط عمومی‌تر (مثلاً <code dir='ltr'>value > 50</code>) را بالاتر بگذارید، شرط‌های خاص‌تر (<code dir='ltr'>value > 80</code>) هرگز اجرا نمی‌شوند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که سن کاربر را دریافت کند و بر اساس آن، گروه سنی را به‌صورت زیر مشخص کند: زیر ۱۲ سال (کودک)، ۱۲ تا ۱۷ (نوجوان)، ۱۸ تا ۶۴ (بزرگسال)، ۶۵ به بالا (سالمند). از <code dir='ltr'>elif</code> استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۴.۳ -->
+            <div class="sub-section">
+                <h4>۴.۳ <code dir='ltr'>match-case</code> (Python 3.10+)</h4>
+                <p><strong><code dir='ltr'>match-case</code></strong> یک ساختار شرطی جدید است که در پایتون ۳.۱۰ معرفی شده و مشابه <code dir='ltr'>switch</code> در زبان‌های دیگر (مانند جاوا، C++ و JavaScript) عمل می‌کند. این ساختار برای <strong>مقایسه‌ی یک مقدار با چندین الگوی مختلف</strong> بسیار مناسب است و کد را خواناتر می‌کند.</p>
+                <p><strong>نکات کلیدی:</strong></p>
+                <ul>
+                    <li><code dir='ltr'>match</code> مقداری را که می‌خواهیم مقایسه کنیم مشخص می‌کند.</li>
+                    <li><code dir='ltr'>case</code> هر الگو را تعریف می‌کند. اگر الگو با مقدار مطابقت داشته باشد، بلوک مربوطه اجرا می‌شود.</li>
+                    <li><code dir='ltr'>case _</code> مانند <code dir='ltr'>default</code> در <code dir='ltr'>switch</code> عمل می‌کند و اگر هیچ‌یک از الگوها مطابقت نداشت، اجرا می‌شود.</li>
+                    <li>با استفاده از <code dir='ltr'>|</code> (OR) می‌توانید چند مقدار را در یک <code dir='ltr'>case</code> ترکیب کنید.</li>
+                    <li><code dir='ltr'>match-case</code> فراتر از مقایسه‌ی ساده است و از <strong>الگوهای ساختاری (Structural Pattern Matching)</strong> پشتیبانی می‌کند (مثلاً برای تطابق با تاپل‌ها، لیست‌ها و کلاس‌ها).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== مثال ساده: روزهای هفته ==========
+day = 3
+match day:
+    case 1:
+        name = "شنبه"
+    case 2:
+        name = "یکشنبه"
+    case 3:
+        name = "دوشنبه"
+    case 4:
+        name = "سه‌شنبه"
+    case 5:
+        name = "چهارشنبه"
+    case 6:
+        name = "پنج‌شنبه"
+    case 7:
+        name = "جمعه"
+    case _:
+        name = "روز نامعتبر"
+print(f"روز شماره {day}: {name}")  # روز شماره 3: دوشنبه
+
+# ========== match-case با مقادیر مختلف ==========
+command = "start"
+match command:
+    case "start":
+        print("▶️ شروع برنامه")
+    case "stop":
+        print("⏹️ توقف برنامه")
+    case "restart":
+        print("🔄 راه‌اندازی مجدد")
+    case _:
+        print("❌ دستور نامعتبر")
+
+# ========== ترکیب چند مقدار با | (OR) ==========
+number = 5
+match number:
+    case 0:
+        print("صفر")
+    case 1 | 2 | 3:
+        print("یک تا سه")
+    case 4 | 5 | 6:
+        print("چهار تا شش")
+    case _:
+        print("بیشتر از شش")
+
+# ========== استفاده از match-case برای HTTP status codes ==========
+status_code = 404
+match status_code:
+    case 200:
+        message = "OK - موفق"
+    case 201:
+        message = "Created - ایجاد شد"
+    case 400:
+        message = "Bad Request - درخواست نامعتبر"
+    case 404:
+        message = "Not Found - یافت نشد"
+    case 500:
+        message = "Internal Server Error - خطای سرور"
+    case _:
+        message = f"کد وضعیت ناشناخته: {status_code}"
+print(f"وضعیت: {message}")  # وضعیت: Not Found - یافت نشد
+
+# ========== تطابق با الگوهای ساختاری (پیشرفته) ==========
+point = (2, 3)  # یک تاپل
+match point:
+    case (0, 0):
+        print("نقطه در مبدأ")
+    case (x, 0):
+        print(f"روی محور X در {x}")
+    case (0, y):
+        print(f"روی محور Y در {y}")
+    case (x, y):
+        print(f"نقطه در ({x}, {y})")  # نقطه در (2, 3)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">روز شماره 3: دوشنبه</span><br>
+                    <span class="highlight">➜</span> <span class="result">▶️ شروع برنامه</span><br>
+                    <span class="highlight">➜</span> <span class="result">چهار تا شش</span><br>
+                    <span class="highlight">➜</span> <span class="result">وضعیت: Not Found - یافت نشد</span><br>
+                    <span class="highlight">➜</span> <span class="result">نقطه در (2, 3)</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> <code dir='ltr'>match-case</code> از Python 3.10 به بعد در دسترس است. اگر از نسخه‌های قدیمی‌تر پایتون استفاده می‌کنید (مثلاً Python 3.8 یا 3.9)، از <code dir='ltr'>if/elif/else</code> استفاده کنید. برای بررسی نسخه‌ی پایتون، از <code dir='ltr'>python --version</code> در ترمینال استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از <code dir='ltr'>match-case</code> یک برنامه بنویسید که نام ماه (به انگلیسی) را دریافت کند و تعداد روزهای آن ماه را چاپ کند. از <code dir='ltr'>|</code> برای ترکیب ماه‌هایی که روزهای مشابه دارند استفاده کنید (مثلاً فروردین و اردیبهشت و ...).
+                </div>
+            </div>
+
+            <!-- ۴.۴ -->
+            <div class="sub-section">
+                <h4>۴.۴ عملگر شرطی (Ternary Operator)</h4>
+                <p><strong>عملگر شرطی (Ternary Operator)</strong> یک روش کوتاه و فشرده برای نوشتن <code dir='ltr'>if/else</code> ساده است. ساختار آن به این صورت است: <code dir='ltr'>مقدار_درست if شرط else مقدار_نادرست</code>. این عملگر برای زمانی مناسب است که یک شرط ساده دارید و می‌خواهید در یک خط، یکی از دو مقدار را انتخاب کنید.</p>
+                <p><strong>مزایا:</strong></p>
+                <ul>
+                    <li>کد <strong>کوتاه‌تر</strong> و <strong>فشرده‌تر</strong> می‌شود.</li>
+                    <li>برای انتساب شرطی (مقداردهی بر اساس شرط) بسیار مناسب است.</li>
+                    <li>می‌تواند درون <code dir='ltr'>print()</code>، لیست‌ها و سایر عبارات استفاده شود.</li>
+                </ul>
+                <p><strong>معایب:</strong></p>
+                <ul>
+                    <li>برای شرط‌های پیچیده، خوانایی را کاهش می‌دهد.</li>
+                    <li>از <strong>Ternary تو در تو (nested ternary)</strong> باید خودداری کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== Ternary ساده ==========
+age = 20
+status = "بزرگسال" if age >= 18 else "نوجوان"
+print(status)  # "بزرگسال"
+
+# ========== معادل با if/else ==========
+if age >= 18:
+    status = "بزرگسال"
+else:
+    status = "نوجوان"
+
+# ========== استفاده در محاسبات ==========
+score = 85
+result = "قبول" if score >= 60 else "رد"
+print(f"نتیجه: {result}")  # "نتیجه: قبول"
+
+# ========== استفاده درون print() ==========
+x = 10
+y = 20
+print("x بزرگ‌تر است" if x > y else "y بزرگ‌تر است")  # "y بزرگ‌تر است"
+
+# ========== Ternary با توابع ==========
+def get_discount(price):
+    return price * 0.9 if price > 100 else price  # تخفیف ۱۰٪ برای قیمت‌های بالای ۱۰۰
+
+print(get_discount(150))  # 135.0
+print(get_discount(50))   # 50
+
+# ========== ❌ Ternary تو در تو (اجتناب کنید) ==========
+num = 0
+msg = "مثبت" if num > 0 else "منفی" if num < 0 else "صفر"
+print(msg)  # "صفر"
+# بهتر است این را با if/elif/else بنویسید
+
+# ========== ✅ استفاده از Ternary برای انتخاب لیست ==========
+even_odd = ["فرد", "زوج"]
+num = 7
+result = even_odd[num % 2 == 0]  # اگر num % 2 == 0 باشد، index=1 (زوج) وگرنه index=0 (فرد)
+print(f"{num} → {result}")  # 7 → فرد</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">بزرگسال</span><br>
+                    <span class="highlight">➜</span> <span class="result">نتیجه: قبول</span><br>
+                    <span class="highlight">➜</span> <span class="result">y بزرگ‌تر است</span><br>
+                    <span class="highlight">➜</span> <span class="result">135.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">50</span><br>
+                    <span class="highlight">➜</span> <span class="result">صفر</span><br>
+                    <span class="highlight">➜</span> <span class="result">7 → فرد</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از Ternary فقط برای شرط‌های <strong>ساده و کوتاه</strong> (حداکثر یک خط) استفاده کنید. اگر شرط شما بیش از یک سطح تو رفتگی دارد، یا شامل چندین <code dir='ltr'>and</code> یا <code dir='ltr'>or</code> است، از <code dir='ltr'>if/elif/else</code> استفاده کنید. از Ternary تو در تو (nested) <strong>به‌شدت خودداری کنید</strong>، زیرا خوانایی کد را به‌شدت کاهش می‌دهد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از Ternary Operator، یک متغیر <code dir='ltr'>is_even</code> تعریف کنید که اگر عددی زوج بود <code dir='ltr'>True</code> و اگر فرد بود <code dir='ltr'>False</code> برگرداند. همچنین یک پیام مناسب با Ternary چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۴.۵ -->
+            <div class="sub-section">
+                <h4>۴.۵ مفهوم Truthy و Falsy در پایتون</h4>
+                <p>یکی از ویژگی‌های جالب و قدرتمند پایتون، مفهوم <strong>Truthy</strong> و <strong>Falsy</strong> است. در پایتون، <strong>هر مقدار</strong> (نه فقط <code dir='ltr'>True</code> و <code dir='ltr'>False</code>) را می‌توان در یک شرط استفاده کرد. اگر مقدار در شرط معادل <code dir='ltr'>True</code> رفتار کند، آن را <strong>Truthy</strong> و اگر معادل <code dir='ltr'>False</code> رفتار کند، <strong>Falsy</strong> می‌نامیم.</p>
+                <p><strong>مقادیر Falsy در پایتون:</strong></p>
+                <ul>
+                    <li><code dir='ltr'>None</code> – عدم وجود مقدار</li>
+                    <li><code dir='ltr'>False</code> – مقدار بولی نادرست</li>
+                    <li><code dir='ltr'>0</code> و <code dir='ltr'>0.0</code> – عدد صفر (صحیح و اعشاری)</li>
+                    <li><code dir='ltr'>''</code> و <code dir='ltr'>""</code> – رشته‌ی خالی</li>
+                    <li><code dir='ltr'>[]</code> – لیست خالی</li>
+                    <li><code dir='ltr'>{}</code> – دیکشنری خالی</li>
+                    <li><code dir='ltr'>()</code> – تاپل خالی</li>
+                    <li><code dir='ltr'>set()</code> – مجموعه‌ی خالی</li>
+                    <li><code dir='ltr'>range(0)</code> – محدوده‌ی خالی</li>
+                </ul>
+                <p><strong>همه‌ی مقادیر دیگر Truthy هستند.</strong></p>
+                <p><strong>چرا این مفهوم مهم است؟</strong></p>
+                <ul>
+                    <li>به شما اجازه می‌دهد شرط‌ها را <strong>مختصرتر</strong> بنویسید: <code dir='ltr'>if name:</code> به‌جای <code dir='ltr'>if name != "":</code></li>
+                    <li>برای بررسی وجود داده در ساختارها بسیار مفید است: <code dir='ltr'>if items:</code> به‌جای <code dir='ltr'>if len(items) > 0:</code></li>
+                    <li>کد را <strong>خواناتر</strong> و <strong>طبیعی‌تر</strong> می‌کند.</li>
+                </ul>
+                <div class="truthy-grid">
+                    <div class="truthy-item truthy">True</div>
+                    <div class="truthy-item truthy">1, -1</div>
+                    <div class="truthy-item truthy">"سلام"</div>
+                    <div class="truthy-item truthy">[1, 2]</div>
+                    <div class="truthy-item truthy">{"key": "value"}</div>
+                    <div class="truthy-item truthy">(1,)</div>
+                    <div class="truthy-item falsy">False</div>
+                    <div class="truthy-item falsy">None</div>
+                    <div class="truthy-item falsy">0, 0.0</div>
+                    <div class="truthy-item falsy">""</div>
+                    <div class="truthy-item falsy">[]</div>
+                    <div class="truthy-item falsy">{}</div>
+                    <div class="truthy-item falsy">()</div>
+                    <div class="truthy-item falsy">set()</div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== Falsy values ==========
+if False:
+    print("اجرا نمی‌شود")
+if 0:
+    print("اجرا نمی‌شود")
+if "":
+    print("اجرا نمی‌شود")
+if []:
+    print("اجرا نمی‌شود")
+if None:
+    print("اجرا نمی‌شود")
+
+# ========== Truthy values ==========
+if True:
+    print("✅ اجرا می‌شود")
+if 1:
+    print("✅ اجرا می‌شود")
+if -5:
+    print("✅ اجرا می‌شود")      # اعداد غیرصفر Truthy هستند
+if "سلام":
+    print("✅ اجرا می‌شود")
+if [1, 2]:
+    print("✅ اجرا می‌شود")
+if {"key": "value"}:
+    print("✅ اجرا می‌شود")
+
+# ========== استفاده عملی: بررسی ورودی کاربر ==========
+user_input = input("یک متن وارد کنید (یا خالی بگذارید): ")
+if user_input:  # اگر رشته خالی نباشد
+    print(f"شما وارد کردید: {user_input}")
+else:
+    print("⚠️ ورودی خالی است")
+
+# ========== استفاده عملی: بررسی لیست ==========
+items = []
+if items:  # اگر لیست خالی نباشد
+    print(f"آیتم‌ها: {items}")
+else:
+    print("📭 لیست خالی است")
+
+# ========== استفاده عملی: بررسی دیکشنری ==========
+user_data = {}
+if user_data:
+    print("داده‌های کاربر وجود دارد")
+else:
+    print("هیچ داده‌ای برای کاربر وجود ندارد")
+
+# ========== توجه: تفاوت بین None و رشته خالی ==========
+name = None
+if name is None:
+    print("نام تعریف نشده است")  # این خط اجرا می‌شود
+
+name = ""
+if not name:  # هر دو خالی بودن و None را پوشش می‌دهد
+    print("نام خالی یا تعریف نشده است")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">✅ اجرا می‌شود (۴ بار)</span><br>
+                    <span class="highlight">➜</span> <span class="result">⚠️ ورودی خالی است</span><br>
+                    <span class="highlight">➜</span> <span class="result">📭 لیست خالی است</span><br>
+                    <span class="highlight">➜</span> <span class="result">هیچ داده‌ای برای کاربر وجود ندارد</span><br>
+                    <span class="highlight">➜</span> <span class="result">نام تعریف نشده است</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> مفهوم Truthy/Falsy در پایتون بسیار قدرتمند است و به شما اجازه می‌دهد کدهای <strong>مختصر، خوانا و پایتونیک</strong> بنویسید. با این حال، مراقب باشید که در برخی موارد (مثلاً وقتی ۰ یک مقدار معتبر است) استفاده از <code dir='ltr'>if not value</code> ممکن است اشتباه باشد. در چنین مواردی، از مقایسه‌ی صریح استفاده کنید: <code dir='ltr'>if value is None</code> یا <code dir='ltr'>if value == 0</code>.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که یک رشته از کاربر دریافت کند. اگر رشته خالی بود، پیام "ورودی خالی" و اگر نه، پیام "ورودی: [متن]" را با استفاده از <code dir='ltr'>if text:</code> (بدون مقایسه با <code dir='ltr'>""</code>) نمایش دهد. همچنین یک لیست از اعداد تعریف کنید و با <code dir='ltr'>if my_list:</code> بررسی کنید که آیا لیست خالی است یا خیر.
+                </div>
+            </div>
+
+            <!-- ۴.۶ -->
+            <div class="sub-section">
+                <h4>۴.۶ شرط‌های تو در تو (Nested Conditions)</h4>
+                <p>گاهی اوقات نیاز داریم شرطی را داخل شرط دیگری قرار دهیم. به این کار <strong>شرط تو در تو (Nested)</strong> می‌گویند. این کار زمانی مفید است که یک شرط وابسته به شرط دیگری باشد و باید سلسله‌مراتب تصمیم‌گیری را پیاده‌سازی کنیم.</p>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>تا حد امکان از شرط‌های تو در تو با عمق بیش از ۲-۳ سطح <strong>خودداری کنید</strong>، زیرا خوانایی کد را کاهش می‌دهند.</li>
+                    <li>در بسیاری از موارد، می‌توانید با استفاده از عملگرهای <strong><code dir='ltr'>and</code></strong> و <strong><code dir='ltr'>or</code></strong> شرط‌های تو در تو را به یک شرط ترکیبی تبدیل کنید.</li>
+                    <li>اگر شرط‌های تو در تو پیچیده شدند، می‌توانید آنها را به <strong>توابع جداگانه</strong> منتقل کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== بررسی احراز هویت (nested) ==========
+username = "admin"
+password = "12345"
+if username == "admin":
+    if password == "12345":
+        print("✅ ورود موفق")
+    else:
+        print("❌ رمز عبور اشتباه است")
+else:
+    print("❌ نام کاربری اشتباه است")
+
+# ========== بررسی وام (nested) ==========
+age = 25
+income = 6000000
+credit_score = 720
+if age >= 18:
+    if income >= 5000000:
+        if credit_score >= 700:
+            print("✅ وام تایید شد")
+        else:
+            print("❌ امتیاز اعتباری پایین است")
+    else:
+        print("❌ درآمد کافی نیست")
+else:
+    print("❌ سن کافی نیست")
+
+# ========== بهتر: ترکیب شرط‌ها با and ==========
+if age >= 18 and income >= 5000000 and credit_score >= 700:
+    print("✅ وام تایید شد")
+else:
+    print("❌ شرایط را ندارید")
+
+# ========== مثال واقعی: سیستم رزرو هتل ==========
+is_weekend = True
+is_holiday = False
+has_discount_code = True
+room_available = True
+
+if room_available:
+    if is_weekend or is_holiday:
+        price = 150
+        if has_discount_code:
+            price *= 0.9
+            print(f"قیمت با تخفیف: {price} تومان")
+        else:
+            print(f"قیمت تعطیلات: {price} تومان")
+    else:
+        print(f"قیمت عادی: 100 تومان")
+else:
+    print("❌ اتاق موجود نیست")
+
+# ========== جایگزین بهتر با and و or ==========
+if room_available and (is_weekend or is_holiday):
+    price = 150 if not has_discount_code else 135
+    print(f"قیمت: {price} تومان")
+elif room_available:
+    print("قیمت عادی: 100 تومان")
+else:
+    print("❌ اتاق موجود نیست")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">✅ ورود موفق</span><br>
+                    <span class="highlight">➜</span> <span class="result">✅ وام تایید شد</span><br>
+                    <span class="highlight">➜</span> <span class="result">قیمت با تخفیف: 135.0 تومان</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> شرط‌های تو در تو را تا حد ممکن ساده کنید. اگر بیش از ۲-۳ سطح تو در تو دارید، بهتر است از <code dir='ltr'>and</code> و <code dir='ltr'>or</code> برای ترکیب شرط‌ها استفاده کنید یا کد را با <strong>توابع جداگانه</strong> بازنویسی کنید تا خوانایی و قابلیت نگهداری کد افزایش یابد. قانون کلی: اگر کد شما شبیه به یک مثلث (با تورفتگی‌های زیاد) شد، زمان بازنویسی آن فرا رسیده است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که وضعیت یک کاربر را بررسی کند: اگر کاربر وارد شده باشد (<code dir='ltr'>logged_in = True</code>) و ادمین باشد (<code dir='ltr'>is_admin = True</code>)، پیام "خوش آمدید ادمین" را چاپ کند. اگر وارد شده باشد ولی ادمین نباشد، "خوش آمدید کاربر" را چاپ کند. در غیر این صورت "لطفاً وارد شوید" را چاپ کند. از شرط‌های تو در تو استفاده کنید، سپس همان را با <code dir='ltr'>and</code> و <code dir='ltr'>or</code> بازنویسی کنید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک سیستم ارزیابی دانش‌آموز با شرط‌ها</h4>
+            <p>در این کارگاه، یک برنامه‌ی کامل برای ارزیابی عملکرد دانش‌آموزان می‌سازیم که از تمام ساختارهای شرطی این فصل استفاده می‌کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>student_evaluator.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>دریافت ورودی:</strong> نام، سن و نمره (۰ تا ۱۰۰) دانش‌آموز را با <code dir='ltr'>input()</code> دریافت کنید و نمره را به <code dir='ltr'>float</code> تبدیل کنید.</li>
+                <li><strong>تعیین سطح با if/elif/else:</strong> نمره را به یکی از سطوح زیر تبدیل کنید:
+                    <ul>
+                        <li>۹۰-۱۰۰: عالی 🌟</li>
+                        <li>۷۵-۸۹: خوب 👍</li>
+                        <li>۵۰-۷۴: متوسط 📚</li>
+                        <li>کمتر از ۵۰: نیاز به تلاش بیشتر 💪</li>
+                    </ul>
+                </li>
+                <li><strong>پیام تشویقی با match-case:</strong> بر اساس سطح، یک پیام تشویقی مناسب نمایش دهید (مثلاً برای "عالی": "شگفت‌انگیز! ادامه بده!"، برای "خوب": "عالی است، می‌توانی بهتر هم بشوی!" و ...).</li>
+                <li><strong>وضعیت قبولی با Ternary:</strong> با استفاده از Ternary Operator مشخص کنید که آیا دانش‌آموز قبول شده است یا نه (نمره >= ۶۰).</li>
+                <li><strong>شرایط افتخار با Nested:</strong> با شرط‌های تو در تو بررسی کنید که آیا دانش‌آموز واجد شرایط "افتخار" است (نمره >= ۹۰ و سن <= ۱۸).</li>
+                <li><strong>نکته اضافی با Truthy/Falsy:</strong> بررسی کنید که آیا کاربر نام معتبر وارد کرده است (با <code dir='ltr'>if name:</code>) و اگر نه، پیام "نام وارد نشده" نمایش دهید.</li>
+                <li><strong>خروجی نهایی:</strong> همه‌ی نتایج را با f-string به‌صورت یک کارنامه‌ی کامل و زیبا نمایش دهید.</li>
+            </ol>
+            <div class="live-demo">
+                <h4>🎯 سیستم ارزیابی دانش‌آموز</h4>
+                <input type="number" id="scoreInput" placeholder="نمره (۰-۱۰۰)" min="0" max="100">
+                <input type="number" id="ageInput" placeholder="سن" min="1" max="100">
+                <button onclick="checkScore()">ارزیابی کن</button>
+                <div class="result-box" id="scoreResult">منتظر ورود نمره و سن...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>از کاربر یک عدد دریافت کند.</li>
+                <li>با <code dir='ltr'>if/elif/else</code> بررسی کند که عدد مثبت، منفی یا صفر است.</li>
+                <li>با <code dir='ltr'>match-case</code> بررسی کند که عدد در کدام بازه است (۰-۱۰، ۱۱-۲۰، ۲۱-۳۰، ...).</li>
+                <li>با Ternary Operator مشخص کند که عدد زوج است یا فرد.</li>
+                <li>با شرط‌های تو در تو بررسی کند که آیا عدد بخش‌پذیر بر ۳ و ۵ است (یعنی بر ۱۵ بخش‌پذیر).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین <code dir='ltr'>if/elif/else</code> و <code dir='ltr'>match-case</code> چیست؟ هرکدام چه زمانی مناسب‌تر هستند؟</li>
+                <li>مقادیر Falsy در پایتون کدام‌ها هستند؟ چرا این مفهوم در پایتون مهم است؟</li>
+                <li>عملگر Ternary چه زمانی استفاده می‌شود و چه مزیتی نسبت به <code dir='ltr'>if/else</code> دارد؟ چه زمانی نباید از آن استفاده کرد؟</li>
+                <li>چرا تورفتگی (Indentation) در پایتون اهمیت نحوی دارد و چگونه از خطاهای مرتبط با آن جلوگیری کنیم؟</li>
+                <li>چه زمانی باید از شرط‌های تو در تو استفاده کنیم و چه زمانی نه؟ چگونه می‌توان آنها را ساده‌تر کرد؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر یک مقدار Falsy <strong>نیست</strong>؟<br>
+                    أ) <code dir='ltr'>[]</code>  ب) <code dir='ltr'>[0]</code>  ج) <code dir='ltr'>""</code>  د) <code dir='ltr'>None</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>x = 5; result = "بزرگ" if x > 3 else "کوچک"; print(result)</code><br>
+                    أ) "بزرگ"  ب) "کوچک"  ج) None  د) خطای SyntaxError</li>
+                <li>در <code dir='ltr'>match-case</code>، برای مقدار پیش‌فرض (هیچ‌کدام از الگوها مطابقت نداشت) از کدام <code dir='ltr'>case</code> استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>case default:</code>  ب) <code dir='ltr'>case _:</code>  ج) <code dir='ltr'>case else:</code>  د) <code dir='ltr'>case any:</code></li>
+                <li>کدام یک از موارد زیر کد <strong>پایتونیک‌تر</strong> (Pythonic) برای بررسی خالی نبودن یک رشته است؟<br>
+                    أ) <code dir='ltr'>if len(text) > 0:</code>  ب) <code dir='ltr'>if text != "":</code>  ج) <code dir='ltr'>if text:</code>  د) <code dir='ltr'>if text is not None:</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه کامل بنویسید که:</p>
+            <ul>
+                <li>نام، سن و نمره‌ی یک دانش‌آموز را از کاربر دریافت کند.</li>
+                <li>با <code dir='ltr'>if/elif/else</code> نمره را به حرف تبدیل کند (A: ۹۰-۱۰۰، B: ۷۵-۸۹، C: ۵۰-۷۴، D: کمتر از ۵۰).</li>
+                <li>با <code dir='ltr'>match-case</code> یک پیام تشویقی بر اساس نمره‌ی حرفی نمایش دهد.</li>
+                <li>با Ternary Operator مشخص کند که آیا دانش‌آموز قبول شده است یا نه (نمره >= ۶۰).</li>
+                <li>با شرط‌های تو در تو بررسی کند که آیا دانش‌آموز می‌تواند در المپیاد شرکت کند (شرط: نمره >= ۸۰ و سن <= ۱۸).</li>
+                <li>با استفاده از Truthy/Falsy، بررسی کند که آیا کاربر نام معتبر وارد کرده است (رشته خالی نباشد).</li>
+                <li>همه‌ی نتایج را با f-string به‌صورت یک کارنامه‌ی کامل و خوانا نمایش دهد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong><code dir='ltr'>if</code></strong> و <strong><code dir='ltr'>else</code></strong> برای تصمیم‌گیری‌های دوطرفه (یا/یا).</li>
+                <li>🔹 <strong><code dir='ltr'>elif</code></strong> برای بررسی چندین شرط به‌صورت زنجیره‌ای.</li>
+                <li>🔹 <strong><code dir='ltr'>match-case</code></strong> (Python 3.10+) برای مقایسه‌ی یک مقدار با چندین الگوی مختلف (مشابه <code dir='ltr'>switch</code>).</li>
+                <li>🔹 <strong>Ternary Operator (<code dir='ltr'>if</code> ... <code dir='ltr'>else</code>)</strong> برای شرط‌های کوتاه و ساده (حداکثر یک خط).</li>
+                <li>🔹 مقادیر <strong>Falsy</strong>: <code dir='ltr'>None</code>, <code dir='ltr'>False</code>, <code dir='ltr'>0</code>, <code dir='ltr'>0.0</code>, <code dir='ltr'>''</code>, <code dir='ltr'>[]</code>, <code dir='ltr'>{}</code>, <code dir='ltr'>()</code>, <code dir='ltr'>set()</code>.</li>
+                <li>🔹 همه‌ی مقادیر دیگر <strong>Truthy</strong> هستند.</li>
+                <li>🔹 از شرط‌های <strong>تو در تو</strong> با احتیاط استفاده کنید (حداکثر ۲-۳ سطح) و تا حد ممکن از <code dir='ltr'>and</code>/<code dir='ltr'>or</code> برای ترکیب شرط‌ها استفاده کنید.</li>
+                <li>🔹 <strong>تورفتگی (Indentation)</strong> در پایتون <strong>نحوی</strong> است و بلوک‌های کد را مشخص می‌کند.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># ========== if/elif/else ==========
+if condition:
+    # code
+elif condition2:
+    # code
+else:
+    # code
+
+# ========== match-case (Python 3.10+) ==========
+match value:
+    case 1:
+        # code
+    case 2 | 3:
+        # code
+    case _:
+        # code
+
+# ========== Ternary ==========
+result = value_if_true if condition else value_if_false
+
+# ========== Truthy/Falsy ==========
+if value:  # اگر value Truthy باشد (نه خالی، نه صفر، نه None)
+    print("True")
+
+# ========== Nested (با احتیاط) ==========
+if condition1:
+    if condition2:
+        # code</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Conditional (شرطی):</strong> ساختاری که بر اساس یک شرط، تصمیم‌گیری می‌کند و مسیر اجرا را تغییر می‌دهد.</li>
+                <li><strong>if:</strong> دستور شرطی پایه که اگر شرط <code dir='ltr'>True</code> باشد، بلوک کد را اجرا می‌کند.</li>
+                <li><strong>else:</strong> بخشی که در صورت <code dir='ltr'>False</code> بودن شرط <code dir='ltr'>if</code> اجرا می‌شود.</li>
+                <li><strong>elif:</strong> ترکیبی از <code dir='ltr'>else</code> و <code dir='ltr'>if</code> برای بررسی شرط‌های اضافی در یک زنجیره.</li>
+                <li><strong>match-case:</strong> ساختار شرطی برای مقایسه‌ی یک مقدار با چندین الگو (Python 3.10+).</li>
+                <li><strong>Ternary Operator (عملگر شرطی):</strong> یک روش فشرده برای نوشتن <code dir='ltr'>if/else</code> در یک خط.</li>
+                <li><strong>Truthy:</strong> مقداری که در یک شرط، معادل <code dir='ltr'>True</code> رفتار می‌کند (مثلاً رشته‌ی غیرخالی، عدد غیرصفر).</li>
+                <li><strong>Falsy:</strong> مقداری که در یک شرط، معادل <code dir='ltr'>False</code> رفتار می‌کند (مثلاً <code dir='ltr'>None</code>، ۰، رشته‌ی خالی).</li>
+                <li><strong>Indentation (تورفتگی):</strong> فاصله‌ی ابتدای خط (معمولاً ۴ فاصله) که بلوک‌های کد را در پایتون مشخص می‌کند.</li>
+                <li><strong>Nested Condition (شرط تو در تو):</strong> شرطی که داخل شرط دیگری قرار دارد.</li>
+                <li><strong>Structural Pattern Matching:</strong> قابلیت <code dir='ltr'>match-case</code> برای تطابق با ساختارهای داده مانند تاپل‌ها و لیست‌ها.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/controlflow.html" target="_blank" rel="noopener noreferrer">Python: Control Flow (مرجع رسمی)</a></li>
+                <li><a href="https://docs.python.org/3/reference/compound_stmts.html#the-if-statement" target="_blank" rel="noopener noreferrer">Python: if Statement</a></li>
+                <li><a href="https://docs.python.org/3/reference/compound_stmts.html#match" target="_blank" rel="noopener noreferrer">Python: match Statement</a></li>
+                <li><a href="https://realpython.com/python-conditional-statements/" target="_blank" rel="noopener noreferrer">Real Python: Conditional Statements</a></li>
+                <li><a href="https://realpython.com/python-match-case/" target="_blank" rel="noopener noreferrer">Real Python: Python match-case</a></li>
+                <li><a href="https://www.w3schools.com/python/python_conditions.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Conditions</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> <code dir='ltr'>if/else</code> – ۱۵ دقیقه (مبانی تصمیم‌گیری)</li>
+                <li><strong>گام ۲:</strong> <code dir='ltr'>elif</code> – ۱۵ دقیقه (چندین شرط)</li>
+                <li><strong>گام ۳:</strong> <code dir='ltr'>match-case</code> – ۲۰ دقیقه (مقایسه‌ی الگو)</li>
+                <li><strong>گام ۴:</strong> Ternary Operator – ۱۰ دقیقه (شرط‌های کوتاه)</li>
+                <li><strong>گام ۵:</strong> Truthy و Falsy – ۱۵ دقیقه (مفهوم کلیدی)</li>
+                <li><strong>گام ۶:</strong> شرط‌های تو در تو – ۱۰ دقیقه (با احتیاط)</li>
+                <li><strong>گام ۷:</strong> کارگاه عملی – ۳۰ دقیقه (سیستم ارزیابی دانش‌آموز)</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۱۵ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا در پایتون <code dir='ltr'>[]</code> (لیست خالی) Falsy است اما <code dir='ltr'>[""]</code> (لیستی با یک رشته‌ی خالی) Truthy است؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>if x == 0</code> و <code dir='ltr'>if not x</code> وجود دارد؟ در چه شرایطی یکی بر دیگری ارجحیت دارد؟</li>
+                <li>❓ چه زمانی استفاده از <code dir='ltr'>match-case</code> بهتر از <code dir='ltr'>if/elif</code> است؟ چه زمانی برعکس؟</li>
+                <li>❓ آیا می‌توان از Ternary Operator به‌جای <code dir='ltr'>if/else</code> برای شرط‌های پیچیده استفاده کرد؟ چرا؟</li>
+                <li>❓ چرا تورفتگی در پایتون باعث می‌شود کد خوانا‌تر باشد؟ چه مزایا و معایبی نسبت به استفاده از آکولاد <code dir='ltr'>{}</code> دارد؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>:</code> در انتهای خط <code dir='ltr'>if</code>، <code dir='ltr'>elif</code>، <code dir='ltr'>else</code> یا <code dir='ltr'>match</code> که باعث <code dir='ltr'>SyntaxError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>:</code> بعد از شرط استفاده کنید. این یک قانون ثابت در پایتون است.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>=</code> (انتساب) به‌جای <code dir='ltr'>==</code> (مقایسه) در شرط‌ها. این خطا در پایتون باعث <code dir='ltr'>SyntaxError</code> نمی‌شود (در برخی زبان‌ها خطا می‌دهد) اما منطق برنامه را به‌هم می‌زند.<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه از <code dir='ltr'>==</code> استفاده کنید. <code dir='ltr'>if x = 5</code> در پایتون خطای <code dir='ltr'>SyntaxError</code> می‌دهد، اما <code dir='ltr'>if x = y</code> اگر <code dir='ltr'>y</code> قابل انتساب باشد، ممکن است اشتباهاً True شود.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن تورفتگی که باعث <code dir='ltr'>IndentationError</code> می‌شود. مثلاً کد زیر خطا دارد: <br>
+                    <code dir='ltr'>if True:</code><br>
+                    <code dir='ltr'>print("Hello")</code> (بدون تورفتگی)<br>
+                    <strong>🔧 راه حل:</strong> از ۴ فاصله (Space) برای تورفتگی استفاده کنید و همیشه یکنواخت باشید. در VS Code، می‌توانید از <code dir='ltr'>Shift+Tab</code> برای خارج کردن و <code dir='ltr'>Tab</code> برای داخل کردن استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>elif</code> بدون <code dir='ltr'>if</code> قبلی که باعث <code dir='ltr'>SyntaxError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> <code dir='ltr'>elif</code> همیشه بعد از یک <code dir='ltr'>if</code> باید بیاید. نمی‌توان از <code dir='ltr'>elif</code> به‌تنهایی استفاده کرد.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>_</code> در <code dir='ltr'>match-case</code> که باعث می‌شود مقادیر پیش‌بینی‌نشده مدیریت نشوند و برنامه با خطا مواجه شود (اگر هیچ‌یک از <code dir='ltr'>case</code>ها مطابقت نداشته باشد).<br>
+                    <strong>🔧 راه حل:</strong> همیشه یک <code dir='ltr'>case _:</code> برای مقدار پیش‌فرض قرار دهید، حتی اگر فقط یک پیام خطا چاپ کند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>is</code> برای مقایسه‌ی عددی به‌جای <code dir='ltr'>==</code> (مخصوصاً برای اعداد بزرگ).<br>
+                    <strong>🔧 راه حل:</strong> <code dir='ltr'>is</code> برای مقایسه‌ی هویت اشیاء است، نه مقدار. برای مقایسه‌ی اعداد از <code dir='ltr'>==</code> استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی فصل ۴</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم تشخیص وضعیت آب و هوا و پیشنهاد فعالیت</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) کامل بسازید که با دریافت اطلاعات آب و هوا از کاربر، تحلیل‌های مختلف انجام دهد و پیشنهادهای هوشمندانه ارائه کند. این پروژه از تمام ساختارهای شرطی این فصل استفاده می‌کند.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ورودی):</strong> اطلاعات زیر را از کاربر با <code dir='ltr'>input()</code> دریافت کنید:
+                    <ul>
+                        <li>دمای فعلی (عدد اعشاری)</li>
+                        <li>وضعیت بارش (یکی از: باران، برف، آفتابی، ابری، مه‌آلود)</li>
+                        <li>سرعت باد (کیلومتر بر ساعت، عدد)</li>
+                        <li>رطوبت (درصد، عدد)</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۲ (توصیه‌ی لباس با if/elif/else):</strong> بر اساس دما، یک توصیه‌ی لباس ارائه دهید:
+                    <ul>
+                        <li>زیر ۵°C: "کت سنگین، شال گردن و دستکش"</li>
+                        <li>۵ تا ۱۵°C: "کت متوسط و ژاکت"</li>
+                        <li>۱۵ تا ۲۵°C: "لباس معمولی و یک پیراهن سبک"</li>
+                        <li>بالای ۲۵°C: "لباس تابستانی و عینک آفتابی"</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۳ (توصیه‌ی فعالیت با match-case):</strong> بر اساس وضعیت بارش، یک فعالیت پیشنهاد دهید:
+                    <ul>
+                        <li>"آفتابی": "☀️ پیاده‌روی در پارک"</li>
+                        <li>"باران": "🌧️ بمان در خانه و فیلم ببین"</li>
+                        <li>"برف": "❄️ اسکی یا برف‌بازی"</li>
+                        <li>"ابری": "🌥️ دوچرخه‌سواری یا پیاده‌روی سبک"</li>
+                        <li>"مه‌آلود": "🌫️ فعالیت‌های indoor مانند مطالعه"</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۴ (مناسب بودن برای سفر با Ternary):</strong> با Ternary Operator مشخص کنید که آیا هوا برای سفر مناسب است (شرط: دما بین ۱۵ تا ۳۰ درجه و وضعیت بارش "آفتابی" یا "ابری").</li>
+                <li><strong>مرحله ۵ (شرایط خطرناک با Nested):</strong> با شرط‌های تو در تو بررسی کنید که آیا شرایط خطرناک وجود دارد:
+                    <ul>
+                        <li>باد شدید (سرعت باد > ۵۰ کیلومتر بر ساعت) و باران → هشدار طوفان</li>
+                        <li>دمای زیر ۰ و برف → هشدار یخ‌بندان</li>
+                        <li>دمای بالای ۳۵ و رطوبت بالا (> ۶۰٪) → هشدار گرمازدگی</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۶ (اعتبارسنجی با Truthy/Falsy):</strong> با استفاده از <code dir='ltr'>if not</code> یا <code dir='ltr'>if value:</code> بررسی کنید که کاربر همه‌ی داده‌ها را وارد کرده است. اگر ورودی خالی بود، پیام "اطلاعات کامل وارد نشده" نمایش دهید.</li>
+                <li><strong>مرحله ۷ (خروجی):</strong> همه‌ی نتایج را با f-string به‌صورت یک گزارش کامل و زیبا (با خطوط جداکننده و ایموجی‌ها) نمایش دهید.</li>
+            </ul>
+            <p><strong>چالش‌های بیشتر (اختیاری برای کاربران پیشرو):</strong></p>
+            <ul>
+                <li>یک سیستم پیشنهاد سفر بر اساس آب و هوا اضافه کنید (با <code dir='ltr'>match-case</code>).</li>
+                <li>با <code dir='ltr'>and</code> و <code dir='ltr'>or</code> شرط‌های پیچیده‌تری برای تشخیص شرایط اضطراری (سیل، کولاک، گردوغبار) بسازید.</li>
+                <li>از <code dir='ltr'>if</code>های تو در تو برای تحلیل دقیق‌تر (مثل ترکیب دما و رطوبت برای احساس گرما) استفاده کنید.</li>
+                <li>یک سیستم امتیازدهی برای کیفیت هوا (بر اساس دما، رطوبت و باد) با <code dir='ltr'>if/elif/else</code> اضافه کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 weather_advisor.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را با کاربرد عملی همه‌ی ساختارهای شرطی در یک برنامه‌ی واقعی آشنا می‌کند. سعی کنید کد را تمیز، خوانا و با کامنت‌های مناسب بنویسید. از ایموجی‌ها برای جذاب‌تر کردن خروجی استفاده کنید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-03/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-05/index.html" class="btn-demo">رفتن به فصل ۵ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // سیستم ارزیابی دانش‌آموز
+        function checkScore() {
+            const score = parseInt(document.getElementById('scoreInput').value);
+            const age = parseInt(document.getElementById('ageInput').value);
+            const resultBox = document.getElementById('scoreResult');
+
+            // اعتبارسنجی با Truthy/Falsy
+            if (isNaN(score) || score < 0 || score > 100) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً یک نمره معتبر بین ۰ تا ۱۰۰ وارد کنید!';
+                return;
+            }
+
+            if (isNaN(age) || age < 1 || age > 100) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً یک سن معتبر (۱ تا ۱۰۰) وارد کنید!';
+                return;
+            }
+
+            // ========== ۱. تعیین سطح با if/elif/else ==========
+            let level;
+            let emoji;
+            if (score >= 90) {
+                level = 'عالی';
+                emoji = '🌟';
+            } else if (score >= 75) {
+                level = 'خوب';
+                emoji = '👍';
+            } else if (score >= 50) {
+                level = 'متوسط';
+                emoji = '📚';
+            } else {
+                level = 'نیاز به تلاش بیشتر';
+                emoji = '💪';
+            }
+
+            // ========== ۲. پیام تشویقی با match-case (شبیه‌سازی) ==========
+            let encouragement;
+            switch (level) {
+                case 'عالی':
+                    encouragement = '🌟 شگفت‌انگیز! به کار خود ادامه دهید.';
+                    break;
+                case 'خوب':
+                    encouragement = '👍 عالی است، اما می‌توانید بهتر هم بشوید!';
+                    break;
+                case 'متوسط':
+                    encouragement = '📚 خوب، اما با تمرین بیشتر می‌توانید پیشرفت کنید.';
+                    break;
+                default:
+                    encouragement = '💪 ناامید نشوید! با تلاش بیشتر موفق خواهید شد.';
+            }
+
+            // ========== ۳. وضعیت قبولی با Ternary ==========
+            const isPassed = score >= 60;
+            const passedStatus = isPassed ? '✅ قبول شدید' : '❌ نیاز به تلاش بیشتر دارید';
+
+            // ========== ۴. شرایط افتخار با Nested ==========
+            let honorStatus = '';
+            if (score >= 90) {
+                if (age <= 18) {
+                    honorStatus = '⭐ شما واجد شرایط افتخار (Honor) هستید!';
+                } else {
+                    honorStatus = '⭐ نمره عالی دارید، اما برای افتخار سن شما باید ۱۸ یا کمتر باشد.';
+                }
+            } else {
+                honorStatus = 'برای افتخار نیاز به نمره ۹۰+ دارید.';
+            }
+
+            // ========== ۵. نکته اضافی با Truthy ==========
+            // (در اینجا نامی دریافت نشده، ولی برای نمایش)
+
+            // نمایش نتیجه
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                <strong>📊 کارنامه دانش‌آموز</strong><br>
+                نمره: ${score} | سن: ${age}<br>
+                سطح: ${emoji} ${level}<br>
+                ${encouragement}<br>
+                ${passedStatus}<br>
+                ${honorStatus}
+            `;
+        }
+    </script>
+</body>
+</html>

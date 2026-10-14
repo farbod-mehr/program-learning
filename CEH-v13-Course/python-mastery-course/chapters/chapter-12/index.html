@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 12: مدیریت خطاها و استثناها</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .output-demo .error {
+            color: #ef4444;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 12: مدیریت خطاها و استثناها</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-11/index.html">قبلی</a>
+            <a href="../chapter-13/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۲: مدیریت خطاها و استثناها</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۲: مدیریت خطاها و استثناها</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی پایتون)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی پایتون (فصل‌های ۱ تا ۱۱)</li>
+                <li>✅ آشنایی با توابع و ساختارهای شرطی</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ با <strong>انواع خطاها</strong> در پایتون آشنا شوید.</li>
+                <li>✔️ از <strong><code dir='ltr'>try/except</code></strong> برای مدیریت استثناها استفاده کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>else</code></strong> و <strong><code dir='ltr'>finally</code></strong> در کنار try/except استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>raise</code></strong> استثناهای سفارشی ایجاد کنید.</li>
+                <li>✔️ <strong>استثناهای سفارشی (Custom Exceptions)</strong> را تعریف کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>with</code></strong> و <strong>Context Managers</strong> برای مدیریت منابع استفاده کنید.</li>
+                <li>✔️ <strong>بهترین شیوه‌های مدیریت خطا</strong> را رعایت کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>آیا تا به حال برنامه‌ای نوشته‌اید که با ورودی غیرمنتظره کاربر، خطا بدهد و از کار بیفتد؟ یا فایلی که وجود ندارد را باز کرده‌اید و برنامه کرش کرده است؟ اینجاست که <strong>مدیریت خطاها و استثناها (Exception Handling)</strong> وارد می‌شود.</p>
+            <p>در پایتون، خطاها به دو دسته تقسیم می‌شوند: <strong>خطاهای نحوی (Syntax Errors)</strong> که قبل از اجرا شناسایی می‌شوند و <strong>استثناها (Exceptions)</strong> که در زمان اجرا رخ می‌دهند. با مدیریت صحیح استثناها، می‌توانید برنامه‌های <strong>مقاوم و حرفه‌ای</strong> بنویسید که به‌جای کرش کردن، خطا را مدیریت کنند و پیام مناسب به کاربر نشان دهند.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث مدیریت خطاها</strong> آشنا می‌شوید: <code dir='ltr'>try/except</code>، <code dir='ltr'>else</code>، <code dir='ltr'>finally</code>، <code dir='ltr'>raise</code>، استثناهای سفارشی و Context Managers با <code dir='ltr'>with</code>.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۲.۱ -->
+            <div class="sub-section">
+                <h4>۱۲.۱ آشنایی با انواع خطاها و استثناها</h4>
+                <p>در پایتون، خطاها به دو دسته اصلی تقسیم می‌شوند:</p>
+                <ul>
+                    <li><strong>خطاهای نحوی (Syntax Errors):</strong> قبل از اجرا شناسایی می‌شوند.</li>
+                    <li><strong>استثناها (Exceptions):</strong> در زمان اجرا رخ می‌دهند.</li>
+                </ul>
+                <p><strong>انواع رایج استثناها:</strong></p>
+                <ul>
+                    <li><code dir='ltr'>ZeroDivisionError</code> – تقسیم بر صفر</li>
+                    <li><code dir='ltr'>TypeError</code> – عملیات با نوع داده‌ی نامناسب</li>
+                    <li><code dir='ltr'>ValueError</code> – مقدار نامناسب</li>
+                    <li><code dir='ltr'>IndexError</code> – اندیس خارج از محدوده</li>
+                    <li><code dir='ltr'>KeyError</code> – کلید ناموجود در دیکشنری</li>
+                    <li><code dir='ltr'>FileNotFoundError</code> – فایل وجود ندارد</li>
+                    <li><code dir='ltr'>AttributeError</code> – ویژگی یا متد وجود ندارد</li>
+                    <li><code dir='ltr'>ImportError</code> – ماژول وجود ندارد</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># SyntaxError (خطای نحوی)
+# print("Hello"  # ❌ پرانتز بسته نشده
+
+# ZeroDivisionError (تقسیم بر صفر)
+# print(10 / 0)  # ❌ ZeroDivisionError
+
+# TypeError (نوع داده نامناسب)
+# print("10" + 5)  # ❌ TypeError
+
+# ValueError (مقدار نامناسب)
+# int("abc")  # ❌ ValueError
+
+# IndexError (اندیس خارج از محدوده)
+# [1, 2, 3][5]  # ❌ IndexError
+
+# KeyError (کلید ناموجود)
+# {"a": 1}["b"]  # ❌ KeyError</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="error">ZeroDivisionError: division by zero</span><br>
+                    <span class="highlight">➜</span> <span class="error">TypeError: can only concatenate str (not "int") to str</span><br>
+                    <span class="highlight">➜</span> <span class="error">ValueError: invalid literal for int() with base 10: 'abc'</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> همه‌ی استثناها از کلاس پایه <code dir='ltr'>Exception</code> ارث‌بری می‌کنند. این به شما امکان می‌دهد همه‌ی استثناها را با <code dir='ltr'>except Exception</code> بگیرید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> کدهایی که باعث ایجاد هر یک از خطاهای بالا می‌شوند را در محیط تعاملی پایتون اجرا کنید و پیام خطا را مشاهده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۲.۲ -->
+            <div class="sub-section">
+                <h4>۱۲.۲ <code dir='ltr'>try/except</code> – مدیریت استثناها</h4>
+                <p>با استفاده از <strong><code dir='ltr'>try/except</code></strong> می‌توانید استثناها را بگیرید و مدیریت کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># try/except ساده
+try:
+    result = 10 / 0
+    print(result)
+except ZeroDivisionError:
+    print("❌ تقسیم بر صفر مجاز نیست!")
+
+# try/except با چند استثنا
+try:
+    num = int(input("یک عدد وارد کنید: "))
+    result = 10 / num
+    print(f"نتیجه: {result}")
+except ValueError:
+    print("❌ لطفاً یک عدد معتبر وارد کنید!")
+except ZeroDivisionError:
+    print("❌ عدد صفر مجاز نیست!")
+
+# گرفتن چند استثنا با یک except
+try:
+    data = [1, 2, 3]
+    index = int(input("اندیس: "))
+    print(data[index])
+except (ValueError, IndexError) as e:
+    print(f"❌ خطا: {e}")
+
+# گرفتن همه‌ی استثناها
+try:
+    risky_code()
+except Exception as e:
+    print(f"❌ یک خطا رخ داد: {e}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="error">❌ تقسیم بر صفر مجاز نیست!</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>except Exception as e</code> برای گرفتن همه‌ی استثناها استفاده کنید، اما بهتر است تا حد امکان استثناهای خاص را بگیرید تا از پنهان شدن خطاهای غیرمنتظره جلوگیری کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که از کاربر یک عدد دریافت کند و تقسیم ۱۰۰ بر آن را محاسبه کند. خطاهای <code dir='ltr'>ValueError</code> و <code dir='ltr'>ZeroDivisionError</code> را مدیریت کنید.
+                </div>
+            </div>
+
+            <!-- ۱۲.۳ -->
+            <div class="sub-section">
+                <h4>۱۲.۳ <code dir='ltr'>else</code> و <code dir='ltr'>finally</code></h4>
+                <ul>
+                    <li><strong><code dir='ltr'>else</code></strong>: زمانی اجرا می‌شود که هیچ استثنایی رخ ندهد.</li>
+                    <li><strong><code dir='ltr'>finally</code></strong>: همیشه اجرا می‌شود، چه خطا رخ دهد و چه ندهد.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># else - اجرا در صورت عدم وجود خطا
+try:
+    num = int(input("عدد: "))
+    result = 10 / num
+except ValueError:
+    print("❌ عدد معتبر وارد کنید!")
+except ZeroDivisionError:
+    print("❌ صفر مجاز نیست!")
+else:
+    print(f"✅ نتیجه: {result}")
+    print("✅ عملیات با موفقیت انجام شد!")
+
+# finally - همیشه اجرا می‌شود
+try:
+    file = open("test.txt", "r")
+    content = file.read()
+except FileNotFoundError:
+    print("❌ فایل وجود ندارد!")
+finally:
+    print("🧹 پاکسازی منابع...")
+    # file.close() اگر فایل باز شده باشد
+    print("🧹 بستن فایل (اگر باز بود)")
+
+# کاربرد finally برای بستن منابع
+def divide_numbers():
+    try:
+        a = int(input("عدد اول: "))
+        b = int(input("عدد دوم: "))
+        return a / b
+    except ValueError:
+        return "خطا: عدد معتبر وارد کنید!"
+    except ZeroDivisionError:
+        return "خطا: تقسیم بر صفر!"
+    finally:
+        print("🧹 عملیات پایان یافت (چه خطا داشته باشد و چه نه)")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">✅ نتیجه: 5.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">✅ عملیات با موفقیت انجام شد!</span><br>
+                    <span class="highlight">➜</span> <span class="result">🧹 عملیات پایان یافت (چه خطا داشته باشد و چه نه)</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>finally</code> برای <strong>پاکسازی منابع</strong> (بستن فایل‌ها، اتصالات پایگاه داده و ...) بسیار مفید است، حتی اگر خطا رخ دهد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که یک فایل را باز کند، محتوای آن را بخواند و در صورت خطا پیام مناسب نشان دهد. از <code dir='ltr'>finally</code> برای بستن فایل استفاده کنید.
+                </div>
+            </div>
+
+            <!-- ۱۲.۴ -->
+            <div class="sub-section">
+                <h4>۱۲.۴ <code dir='ltr'>raise</code> – ایجاد استثنا</h4>
+                <p>با <strong><code dir='ltr'>raise</code></strong> می‌توانید استثناها را به‌صورت دستی ایجاد کنید. این کار برای اعتبارسنجی و کنترل جریان برنامه مفید است.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># raise ساده
+def divide(a, b):
+    if b == 0:
+        raise ValueError("مقسوم‌علیه نمی‌تواند صفر باشد!")
+    return a / b
+
+try:
+    result = divide(10, 0)
+except ValueError as e:
+    print(f"❌ خطا: {e}")
+
+# raise با شرط
+def get_age(age):
+    if age < 0:
+        raise ValueError("سن نمی‌تواند منفی باشد!")
+    if age > 120:
+        raise ValueError("سن معتبر نیست (حداکثر ۱۲۰)!")
+    return age
+
+try:
+    age = get_age(-5)
+except ValueError as e:
+    print(f"❌ خطا: {e}")
+
+# raise بدون آرگومان (propagate)
+def process_data(data):
+    try:
+        return int(data)
+    except ValueError:
+        print("خطا در تبدیل داده!")
+        raise  # استثنا را به بالا منتقل می‌کند
+
+try:
+    process_data("abc")
+except ValueError:
+    print("❌ خطا در پردازش داده!")
+
+# raise با استثنای سفارشی (در بخش بعدی)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="error">❌ خطا: مقسوم‌علیه نمی‌تواند صفر باشد!</span><br>
+                    <span class="highlight">➜</span> <span class="error">❌ خطا: سن نمی‌تواند منفی باشد!</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>raise</code> برای <strong>اعتبارسنجی ورودی‌ها</strong> و <strong>گزارش خطاهای منطقی</strong> استفاده کنید. این کار باعث می‌شود خطاها زودتر شناسایی شوند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>validate_email</code> بنویسید که یک ایمیل دریافت کند و اگر معتبر نبود، با <code dir='ltr'>raise</code> یک <code dir='ltr'>ValueError</code> ایجاد کند.
+                </div>
+            </div>
+
+            <!-- ۱۲.۵ -->
+            <div class="sub-section">
+                <h4>۱۲.۵ استثناهای سفارشی (Custom Exceptions)</h4>
+                <p>با ایجاد کلاس‌هایی که از <code dir='ltr'>Exception</code> ارث‌بری می‌کنند، می‌توانید <strong>استثناهای سفارشی</strong> تعریف کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># تعریف استثنای سفارشی
+class AgeError(Exception):
+    """خطای مربوط به سن"""
+    pass
+
+class NegativeAgeError(AgeError):
+    """سن نمی‌تواند منفی باشد"""
+    pass
+
+class TooOldError(AgeError):
+    """سن بیش از حد مجاز است"""
+    pass
+
+def validate_age(age):
+    if age < 0:
+        raise NegativeAgeError(f"سن {age} منفی است!")
+    if age > 120:
+        raise TooOldError(f"سن {age} بیش از حد مجاز است!")
+    return age
+
+# استفاده
+try:
+    age = validate_age(-5)
+except NegativeAgeError as e:
+    print(f"❌ خطای سن منفی: {e}")
+except TooOldError as e:
+    print(f"❌ خطای سن زیاد: {e}")
+except AgeError as e:
+    print(f"❌ خطای سن: {e}")
+
+# استثنای سفارشی با پیام سفارشی
+class InsufficientFundsError(Exception):
+    def __init__(self, balance, amount):
+        self.balance = balance
+        self.amount = amount
+        super().__init__(f"موجودی ناکافی! موجودی: {balance}, درخواست: {amount}")
+
+def withdraw(balance, amount):
+    if amount > balance:
+        raise InsufficientFundsError(balance, amount)
+    return balance - amount
+
+try:
+    withdraw(100, 150)
+except InsufficientFundsError as e:
+    print(f"❌ {e}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="error">❌ خطای سن منفی: سن -5 منفی است!</span><br>
+                    <span class="highlight">➜</span> <span class="error">❌ موجودی ناکافی! موجودی: 100, درخواست: 150</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> استثناهای سفارشی به شما امکان می‌دهند خطاهای خاص حوزه‌ی کاری خود را به‌صورت دقیق‌تر مدیریت کنید. نام استثناها باید با حرف بزرگ شروع شود و معمولاً با <code dir='ltr'>Error</code> ختم می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک استثنای سفارشی <code dir='ltr'>InvalidPasswordError</code> تعریف کنید و یک تابع <code dir='ltr'>validate_password</code> بنویسید که اگر رمز عبور کمتر از ۸ کاراکتر بود، این استثنا را ایجاد کند.
+                </div>
+            </div>
+
+            <!-- ۱۲.۶ -->
+            <div class="sub-section">
+                <h4>۱۲.۶ <code dir='ltr'>with</code> و Context Managers</h4>
+                <p><strong><code dir='ltr'>with</code></strong> یک روش ایمن و تمیز برای مدیریت منابع (فایل‌ها، اتصالات، قفل‌ها و ...) است. Context Managers به‌طور خودکار منابع را پس از استفاده پاکسازی می‌کنند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># استفاده از with برای باز کردن فایل
+with open("test.txt", "w") as file:
+    file.write("Hello World!")
+
+# معادل با try/finally
+file = open("test.txt", "w")
+try:
+    file.write("Hello World!")
+finally:
+    file.close()
+
+# چندین منبع با with
+with open("input.txt", "r") as infile, open("output.txt", "w") as outfile:
+    content = infile.read()
+    outfile.write(content.upper())
+
+# ایجاد Context Manager سفارشی با __enter__ و __exit__
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+        self.file = None
+    
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+        return False  # استثنا را propagate می‌کند
+
+# استفاده
+with FileManager("test.txt", "r") as f:
+    content = f.read()
+    print(content)
+
+# استفاده از contextlib برای ایجاد Context Manager ساده
+from contextlib import contextmanager
+
+@contextmanager
+def open_file(filename, mode):
+    f = open(filename, mode)
+    try:
+        yield f
+    finally:
+        f.close()
+
+with open_file("test.txt", "r") as f:
+    print(f.read())</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> همیشه برای کار با فایل‌ها، اتصالات پایگاه داده و سایر منابع از <code dir='ltr'>with</code> استفاده کنید. این کار از نشت منابع (Resource Leak) جلوگیری می‌کند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک Context Manager سفارشی برای یک اتصال پایگاه داده شبیه‌سازی‌شده بنویسید که در <code dir='ltr'>__enter__</code> اتصال را باز کند و در <code dir='ltr'>__exit__</code> آن را ببندد.
+                </div>
+            </div>
+
+            <!-- ۱۲.۷ -->
+            <div class="sub-section">
+                <h4>۱۲.۷ بهترین شیوه‌های مدیریت خطا</h4>
+                <ul>
+                    <li><strong>استثناهای خاص را بگیرید:</strong> به‌جای <code dir='ltr'>except Exception</code>، استثناهای خاص را بگیرید.</li>
+                    <li><strong>از <code dir='ltr'>raise</code> برای اعتبارسنجی استفاده کنید:</strong> به‌جای <code dir='ltr'>return None</code> یا <code dir='ltr'>return False</code>.</li>
+                    <li><strong>از <code dir='ltr'>finally</code> برای پاکسازی منابع استفاده کنید:</strong> یا از <code dir='ltr'>with</code> استفاده کنید.</li>
+                    <li><strong>استثناهای سفارشی معنادار ایجاد کنید:</strong> نام‌های واضح و پیام‌های مفید.</li>
+                    <li><strong>به‌جای <code dir='ltr'>except:</code> خالی، از <code dir='ltr'>except Exception as e</code> استفاده کنید.</li>
+                    <li><strong>خطاها را لاگ کنید:</strong> در برنامه‌های بزرگ، از ماژول <code dir='ltr'>logging</code> استفاده کنید.</li>
+                    <li><strong>از <code dir='ltr'>else</code> برای کدهایی استفاده کنید که فقط در صورت عدم وجود خطا اجرا می‌شوند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre  dir="ltr"><code dir='ltr'># الگوی خوب
+def safe_divide(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        print("⚠️ تقسیم بر صفر!")
+        return None
+    except TypeError:
+        print("⚠️ نوع داده نامناسب!")
+        return None
+    else:
+        print("✅ عملیات موفق")
+        return result
+    finally:
+        print("🧹 پایان عملیات")
+
+# الگوی بد (اجتناب کنید)
+def bad_divide(a, b):
+    try:
+        return a / b
+    except:  # ❌ همه‌ی خطاها را می‌گیرد
+        return None</code></pre>
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> کدهای خود را بازبینی کنید و ببینید آیا از بهترین شیوه‌های مدیریت خطا استفاده می‌کنید یا خیر.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک برنامه‌ی مدیریت کاربران با مدیریت خطا</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>user_manager.py</code> ایجاد کنید.</li>
+                <li>یک کلاس <code dir='ltr'>UserManager</code> با متدهای زیر بسازید:
+                    <ul>
+                        <li><code dir='ltr'>add_user(name, email, age)</code> – افزودن کاربر با اعتبارسنجی.</li>
+                        <li><code dir='ltr'>get_user(email)</code> – دریافت کاربر.</li>
+                        <li><code dir='ltr'>delete_user(email)</code> – حذف کاربر.</li>
+                    </ul>
+                </li>
+                <li>استثناهای سفارشی تعریف کنید:
+                    <ul>
+                        <li><code dir='ltr'>UserNotFoundError</code></li>
+                        <li><code dir='ltr'>DuplicateUserError</code></li>
+                        <li><code dir='ltr'>InvalidEmailError</code></li>
+                        <li><code dir='ltr'>InvalidAgeError</code></li>
+                    </ul>
+                </li>
+                <li>از <code dir='ltr'>try/except/else/finally</code> برای مدیریت خطاها استفاده کنید.</li>
+                <li>از <code dir='ltr'>with</code> برای خواندن/نوشتن داده‌ها در یک فایل JSON استفاده کنید.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> ایجاد کنید.</li>
+                <li>همه‌ی ورودی‌ها را با <code dir='ltr'>raise</code> اعتبارسنجی کنید.</li>
+            </ol>
+            <div class="live-demo" id="exception-demo">
+                <h4>🧪 شبیه‌ساز مدیریت خطا</h4>
+                <input type="text" id="testNumber" placeholder="یک عدد وارد کنید...">
+                <button onclick="testException()">تست مدیریت خطا</button>
+                <div class="result-box" id="exceptionResult">منتظر ورودی...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه با موارد زیر بسازید:</p>
+            <ul>
+                <li>یک تابع <code dir='ltr'>read_file_safe</code> که یک فایل را با مدیریت خطا بخواند.</li>
+                <li>یک Context Manager سفارشی برای مدیریت اتصال به API.</li>
+                <li>یک استثنای سفارشی <code dir='ltr'>APIConnectionError</code>.</li>
+                <li>استفاده از <code dir='ltr'>finally</code> برای بستن اتصالات.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین <code dir='ltr'>else</code> و <code dir='ltr'>finally</code> در <code dir='ltr'>try/except</code> چیست؟</li>
+                <li>چرا باید استثناهای خاص را به‌جای <code dir='ltr'>Exception</code> بگیریم؟</li>
+                <li>استثناهای سفارشی چه مزیتی دارند؟</li>
+                <li><code dir='ltr'>with</code> چه مزیتی نسبت به <code dir='ltr'>try/finally</code> دارد؟</li>
+                <li>چه زمانی از <code dir='ltr'>raise</code> استفاده می‌کنیم؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای بستن خودکار فایل استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>try/finally</code>  ب) <code dir='ltr'>with</code>  ج) <code dir='ltr'>except</code>  د) <code dir='ltr'>raise</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>try: raise ValueError("خطا") except ValueError: print("گرفت"); else: print("ال") finally: print("فاینلی")</code><br>
+                    أ) "گرفت"  ب) "گرفت" و "فاینلی"  ج) "گرفت" و "ال"  د) "گرفت" و "ال" و "فاینلی"</li>
+                <li>برای ایجاد یک استثنای سفارشی، کلاس باید از کدام کلاس ارث‌بری کند؟<br>
+                    أ) <code dir='ltr'>Error</code>  ب) <code dir='ltr'>Exception</code>  ج) <code dir='ltr'>BaseException</code>  د) <code dir='ltr'>RuntimeError</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک تابع <code dir='ltr'>parse_int</code> با مدیریت خطا برای تبدیل رشته به عدد بنویسد.</li>
+                <li>یک استثنای سفارشی <code dir='ltr'>ParseError</code> تعریف کند.</li>
+                <li>با استفاده از <code dir='ltr'>try/except/else/finally</code> خطاها را مدیریت کند.</li>
+                <li>از <code dir='ltr'>with</code> برای خواندن یک فایل استفاده کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong><code dir='ltr'>try/except</code></strong> برای مدیریت استثناها استفاده می‌شود.</li>
+                <li>🔹 <strong><code dir='ltr'>else</code></strong> در صورت عدم وجود خطا اجرا می‌شود.</li>
+                <li>🔹 <strong><code dir='ltr'>finally</code></strong> همیشه اجرا می‌شود (برای پاکسازی منابع).</li>
+                <li>🔹 <strong><code dir='ltr'>raise</code></strong> برای ایجاد دستی استثنا استفاده می‌شود.</li>
+                <li>🔹 <strong>استثناهای سفارشی</strong> با ارث‌بری از <code dir='ltr'>Exception</code> تعریف می‌شوند.</li>
+                <li>🔹 <strong><code dir='ltr'>with</code></strong> و Context Managers منابع را به‌طور خودکار مدیریت می‌کنند.</li>
+                <li>🔹 همیشه استثناهای <strong>خاص</strong> را بگیرید، نه <code dir='ltr'>Exception</code>.</li>
+                <li>🔹 از <code dir='ltr'>raise</code> برای <strong>اعتبارسنجی</strong> ورودی‌ها استفاده کنید.</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre  dir="ltr"><code dir='ltr'># try/except
+try:
+    risky_code()
+except ValueError as e:
+    print(f"خطا: {e}")
+except ZeroDivisionError:
+    print("تقسیم بر صفر!")
+else:
+    print("موفق")
+finally:
+    print("پایان")
+
+# raise
+raise ValueError("پیام خطا")
+
+# استثنای سفارشی
+class MyError(Exception):
+    pass
+
+# with
+with open("file.txt", "r") as f:
+    content = f.read()</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Exception (استثنا):</strong> خطایی که در زمان اجرا رخ می‌دهد.</li>
+                <li><strong>try:</strong> بلوکی که کد خطرناک در آن قرار می‌گیرد.</li>
+                <li><strong>except:</strong> بلوکی که استثناها را مدیریت می‌کند.</li>
+                <li><strong>else:</strong> بلوکی که در صورت عدم وجود خطا اجرا می‌شود.</li>
+                <li><strong>finally:</strong> بلوکی که همیشه اجرا می‌شود.</li>
+                <li><strong>raise:</strong> دستور برای ایجاد استثنا.</li>
+                <li><strong>Custom Exception:</strong> استثنای تعریف‌شده توسط برنامه‌نویس.</li>
+                <li><strong>Context Manager:</strong> شیءی که منابع را با <code dir='ltr'>with</code> مدیریت می‌کند.</li>
+                <li><strong>Resource Leak:</strong> نشت منابع (عدم بستن فایل، اتصال و ...).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/errors.html" target="_blank" rel="noopener noreferrer">Python: Errors and Exceptions</a></li>
+                <li><a href="https://docs.python.org/3/library/exceptions.html" target="_blank" rel="noopener noreferrer">Python: Built-in Exceptions</a></li>
+                <li><a href="https://realpython.com/python-exceptions/" target="_blank" rel="noopener noreferrer">Real Python: Exceptions</a></li>
+                <li><a href="https://www.w3schools.com/python/python_try_except.asp" target="_blank" rel="noopener noreferrer">W3Schools: Try Except</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> انواع خطاها و استثناها – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> try/except – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> else و finally – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> raise – ۱۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> استثناهای سفارشی – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> with و Context Managers – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> بهترین شیوه‌ها – ۱۰ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا باید استثناها را مدیریت کنیم؟ چه اتفاقی می‌افتد اگر مدیریت نکنیم؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>except:</code> و <code dir='ltr'>except Exception as e:</code> وجود دارد؟</li>
+                <li>❓ چرا <code dir='ltr'>finally</code> برای پاکسازی منابع مهم است؟</li>
+                <li>❓ چه زمانی باید استثنای سفارشی ایجاد کنیم؟</li>
+                <li>❓ اگر یک Context Manager بنویسیم، چه مزیتی نسبت به <code dir='ltr'>try/finally</code> دارد؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>except:</code> خالی که همه‌ی خطاها را می‌گیرد و خطاهای واقعی را پنهان می‌کند.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>except Exception as e:</code> استفاده کنید یا استثناهای خاص را بگیرید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>finally</code> برای بستن منابع که باعث نشت حافظه می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از <code dir='ltr'>with</code> برای مدیریت خودکار منابع استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>raise</code> بدون استثنا در خارج از <code dir='ltr'>except</code> که باعث خطا می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> <code dir='ltr'>raise</code> بدون آرگومان فقط در داخل <code dir='ltr'>except</code> کار می‌کند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> ایجاد استثنای سفارشی بدون پیام مفید که دیباگ را سخت می‌کند.<br>
+                    <strong>🔧 راه حل:</strong> در <code dir='ltr'>__init__</code> پیام‌های مفید بنویسید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>else</code> برای کدهایی که ممکن است خطا داشته باشند.<br>
+                    <strong>🔧 راه حل:</strong> <code dir='ltr'>else</code> فقط برای کدهایی استفاده شود که خطا ندارند.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت بانکی با مدیریت خطا</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت حساب‌های بانکی با مدیریت خطاهای جامع بسازید:</p>
+            <ul>
+                <li>یک کلاس <code dir='ltr'>BankAccount</code> با ویژگی‌های شماره حساب، نام صاحب حساب، موجودی و تاریخ ایجاد.</li>
+                <li>متدهای <code dir='ltr'>deposit(amount)</code>، <code dir='ltr'>withdraw(amount)</code>، <code dir='ltr'>get_balance()</code> و <code dir='ltr'>transfer(target_account, amount)</code>.</li>
+                <li>استثناهای سفارشی:
+                    <ul>
+                        <li><code dir='ltr'>InsufficientFundsError</code></li>
+                        <li><code dir='ltr'>InvalidAmountError</code></li>
+                        <li><code dir='ltr'>AccountNotFoundError</code></li>
+                        <li><code dir='ltr'>NegativeAmountError</code></li>
+                    </ul>
+                </li>
+                <li>در متدها از <code dir='ltr'>raise</code> برای اعتبارسنجی استفاده کنید.</li>
+                <li>از <code dir='ltr'>try/except/else/finally</code> برای مدیریت خطاها در منوی اصلی استفاده کنید.</li>
+                <li>داده‌های حساب‌ها را در یک فایل JSON ذخیره کنید و با <code dir='ltr'>with</code> بخوانید/بنویسید.</li>
+                <li>یک Context Manager سفارشی برای مدیریت اتصال به "دیتابیس" (فایل) بنویسید.</li>
+                <li>همه‌ی توابع را با Type Hints و Docstring مستند کنید.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> برای کاربر ایجاد کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>از لاگ‌گیری با ماژول <code dir='ltr'>logging</code> برای ثبت تمام خطاها استفاده کنید.</li>
+                    <li>یک استثنای سفارشی <code dir='ltr'>DatabaseError</code> برای خطاهای مربوط به ذخیره‌سازی ایجاد کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>with</code> و Context Manager، یک تراکنش (Transaction) پیاده‌سازی کنید که در صورت خطا، تغییرات را بازگرداند (Rollback).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-11/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-13/index.html" class="btn-demo">رفتن به فصل ۱۳ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی مدیریت خطا
+        function testException() {
+            const input = document.getElementById('testNumber');
+            const resultBox = document.getElementById('exceptionResult');
+            const value = input.value.trim();
+
+            try {
+                if (!value) {
+                    throw ValueError("ورودی خالی است!");
+                }
+                const num = parseInt(value);
+                if (isNaN(num)) {
+                    throw TypeError("مقدار وارد شده عدد نیست!");
+                }
+                if (num === 0) {
+                    throw ZeroDivisionError("عدد صفر مجاز نیست!");
+                }
+                const result = 100 / num;
+                resultBox.className = 'result-box success';
+                resultBox.textContent = `✅ نتیجه: ${result.toFixed(2)}`;
+            } catch (error) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = `❌ خطا: ${error.message || error}`;
+            } finally {
+                console.log("عملیات پایان یافت");
+            }
+        }
+
+        // شبیه‌سازی کلاس‌های خطا برای دمو
+        class ValueError extends Error {
+            constructor(msg) { super(msg); this.name = "ValueError"; }
+        }
+        class TypeError extends Error {
+            constructor(msg) { super(msg); this.name = "TypeError"; }
+        }
+        class ZeroDivisionError extends Error {
+            constructor(msg) { super(msg); this.name = "ZeroDivisionError"; }
+        }
+    </script>
+</body>
+</html>

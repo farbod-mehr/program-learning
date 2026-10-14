@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 01: آشنایی با پایتون و نصب و راه‌اندازی</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        /* استایل‌های ثابت و یکسان با فایل اصلی - برای جلوگیری از بهم‌ریختگی، دقیقاً همان استایل‌های قبلی اعمال شده‌اند */
+        .sub-section { margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; border-right: 6px solid #ffd43b; }
+        .sub-section h4 { color: #0f172a; margin-top: 0; font-size: 1.3rem; }
+        .example-box { background: #0f172a; color: #e2e8f0; padding: 15px; border-radius: 8px; overflow-x: auto; margin: 10px 0; }
+        .example-box code { color: #ffffff; }
+        .note { background: #fef9c3; padding: 12px 18px; border-radius: 8px; border-right: 4px solid #ffd43b; margin: 15px 0; }
+        .task { background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px dashed #64748b; }
+        .task strong { color: #b91c1c; }
+        .btn-demo { display: inline-block; background: #ffd43b; color: #0f172a; padding: 8px 18px; border-radius: 6px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+        .btn-demo:hover { background: #facc15; }
+        .pro-tip { background: #ecfdf5; padding: 12px 18px; border-radius: 8px; border-right: 4px solid #10b981; margin: 15px 0; }
+        .pro-tip strong { color: #065f46; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .comparison-table th, .comparison-table td { border: 1px solid #94a3b8; padding: 10px; text-align: right; }
+        .comparison-table th { background: #1e293b; color: white; }
+        .comparison-table tr:nth-child(even) { background: #f1f5f9; }
+        .output-demo { background: #0f172a; color: #e2e8f0; padding: 12px 18px; border-radius: 6px; font-family: 'Courier New', monospace; margin: 10px 0; direction: ltr; text-align: left; }
+        .output-demo .highlight { color: #ffd43b; }
+        .output-demo .result { color: #34d399; }
+        .live-demo { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 15px 0; text-align: center; }
+        .live-demo button { background: #ffd43b; color: #0f172a; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .live-demo button:hover { background: #facc15; }
+        .live-demo .result-box { margin-top: 10px; padding: 12px; border-radius: 6px; background: #f1f5f9; font-weight: bold; min-height: 30px; text-align: right; }
+        .live-demo .result-box.success { background: #d1fae5; color: #065f46; }
+        .live-demo .result-box.info { background: #dbeafe; color: #1e40af; }
+        .live-demo .result-box.error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>دوره جامع Python</h1>
+            <p>فصل 01: آشنایی با پایتون و نصب و راه‌اندازی</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#" style="visibility:hidden;"></a>
+            <a href="../chapter-02/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱: آشنایی با پایتون و نصب و راه‌اندازی</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۹۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱: آشنایی با پایتون و نصب و راه‌اندازی</p>
+            <p><strong>زمان مطالعه:</strong> ۹۰ تا ۱۲۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (بدون نیاز به دانش قبلی برنامه‌نویسی)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ آشنایی اولیه با کامپیوتر و سیستم‌عامل (Windows، macOS یا Linux)</li>
+                <li>✅ توانایی نصب نرم‌افزار روی سیستم (دسترسی ادمین یا کاربری با权限 نصب)</li>
+                <li>✅ یک ویرایشگر کد (VS Code به‌شدت توصیه می‌شود، اما Notepad++ یا Sublime نیز کار می‌کنند)</li>
+                <li>✅ هیچ دانش قبلی از برنامه‌نویسی لازم نیست؛ همه‌چیز از صفر آموزش داده می‌شود</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>تشریح</strong> کنید که پایتون چیست، چه ویژگی‌هایی دارد و در چه حوزه‌هایی کاربرد دارد.</li>
+                <li>✔️ <strong>نصب</strong> کنید پایتون را روی سیستم‌عامل خود (ویندوز، لینوکس یا مک).</li>
+                <li>✔️ <strong>راه‌اندازی</strong> کنید محیط توسعه (VS Code) و افزونه‌ی Python را برای برنامه‌نویسی پایتون پیکربندی کنید.</li>
+                <li>✔️ <strong>نوشتن</strong> کنید اولین برنامه‌ی پایتون با تابع <code dir='ltr'>print()</code> و اجرای آن.</li>
+                <li>✔️ <strong>استفاده</strong> کنید از محیط تعاملی (REPL) برای تست سریع دستورات و همچنین اجرای اسکریپت‌های ذخیره‌شده.</li>
+                <li>✔️ <strong>درک</strong> کنید مفهوم <code dir='ltr'>pip</code> به‌عنوان مدیر بسته و نحوه‌ی نصب کتابخانه‌های شخص ثالث.</li>
+                <li>✔️ <strong>آشنایی</strong> کامل پیدا کنید با محیط‌های مجازی (venv) و اهمیت حیاتی آنها در مدیریت وابستگی‌های پروژه.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>پایتون یکی از <strong>محبوب‌ترین زبان‌های برنامه‌نویسی جهان</strong> است که در حال حاضر توسط غول‌های فناوری مانند گوگل، اینستاگرام، اسپاتیفای و نتفلیکس استفاده می‌شود. از توسعه‌ی وب (با Django و Flask) تا دیتا ساینس (با Pandas و NumPy)، از اتومیشن و اسکریپت‌نویسی تا هوش مصنوعی و یادگیری ماشین – پایتون در همه‌جا حضور دارد. اما چه چیزی پایتون را اینقدر خاص می‌کند؟</p>
+            <ul>
+                <li><strong>سادگی و خوانایی:</strong> کد پایتون شبیه به زبان انگلیسی است و یادگیری آن بسیار آسان است. این ویژگی باعث می‌شود تازه‌کاران سریع‌تر پیشرفت کنند.</li>
+                <li><strong>جامعه‌ی بزرگ و پشتیبانی عالی:</strong> هزاران کتابخانه و فریم‌ورک آماده برای هر نیازی (از وب گرفته تا رباتیک) وجود دارد.</li>
+                <li><strong>همه‌کاره بودن:</strong> پایتون یک زبان همه‌منظوره است؛ یعنی می‌توانید با یک زبان، هم وب‌سایت بسازید، هم داده تحلیل کنید و هم بازی بسازید.</li>
+                <li><strong>بازار کار عالی:</strong> تقاضای بالا برای توسعه‌دهندگان پایتون در سراسر جهان، آن را به یکی از پردرآمدترین مهارت‌های حوزه فناوری تبدیل کرده است.</li>
+            </ul>
+            <p>در این فصل، با <strong>مبانی پایتون</strong> آشنا می‌شوید: تاریخچه، نصب، راه‌اندازی محیط توسعه و نوشتن اولین برنامه. این فصل پایه‌ی تمام مباحث بعدی است، پس با دقت و حوصله پیش بروید.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱.۱ -->
+            <div class="sub-section">
+                <h4>۱.۱ پایتون چیست و چه کاربردهایی دارد؟</h4>
+                <p><strong>پایتون (Python)</strong> یک زبان برنامه‌نویسی سطح‌بالا، تفسیری و همه‌کاره است که توسط <strong>خودو فان روسوم</strong> (Guido van Rossum) در سال ۱۹۹۱ ایجاد شد. فلسفه‌ی اصلی پایتون <strong>"خوانایی کد"</strong> است و بر استفاده از فاصله‌گذاری (Indentation) برای مشخص کردن بلوک‌های کد تأکید دارد.</p>
+                <p><strong>کاربردهای اصلی پایتون در دنیای واقعی:</strong></p>
+                <ul>
+                    <li><strong>توسعه‌ی وب (Backend):</strong> Django (برای پروژه‌های بزرگ)، Flask (برای پروژه‌های سبک و API)، FastAPI (برای APIهای فوق‌سریع).</li>
+                    <li><strong>دیتا ساینس و تحلیل داده:</strong> Pandas (دستکاری داده)، NumPy (محاسبات عددی)، Matplotlib و Seaborn (رسم نمودار).</li>
+                    <li><strong>هوش مصنوعی و یادگیری ماشین:</strong> TensorFlow و PyTorch (یادگیری عمیق)، Scikit-learn (یادگیری ماشین کلاسیک).</li>
+                    <li><strong>اتومیشن و اسکریپت‌نویسی:</strong> نوشتن اسکریپت برای انجام کارهای تکراری، مدیریت فایل‌ها، Web Scraping (با BeautifulSoup و Scrapy).</li>
+                    <li><strong>توسعه‌ی دسکتاپ:</strong> Tkinter (ساده)، PyQt و Kivy (حرفه‌ای‌تر و چندسکویی).</li>
+                    <li><strong>توسعه‌ی بازی:</strong> Pygame (برای ساخت بازی‌های دو بعدی).</li>
+                    <li><strong>علوم و مهندسی:</strong> محاسبات علمی، شبیه‌سازی‌های فیزیک و زیست‌شناسی محاسباتی.</li>
+                </ul>
+                <div class="note">
+                    💡 <strong>نکته فرهنگی:</strong> نام "پایتون" از گروه کمدی <strong>Monty Python</strong> گرفته شده است، نه از مار پایتون! این نام نشان‌دهنده‌ی رویکرد شوخ‌طبعانه‌ی خالق آن است و در مستندات رسمی نیز به این گروه اشاره شده است.
+                </div>
+            </div>
+
+            <!-- ۱.۲ -->
+            <div class="sub-section">
+                <h4>۱.۲ تاریخچه و تکامل پایتون (Python 1.x تا Python 3.x)</h4>
+                <p>پایتون در سال ۱۹۹۱ منتشر شد و از آن زمان تاکنون نسخه‌های مختلفی از آن منتشر شده است. درک این تاریخچه به شما کمک می‌کند تا دلیل تفاوت نسخه‌ها را بهتر درک کنید:</p>
+                <ul>
+                    <li><strong>Python 1.0 (۱۹۹۴):</strong> اولین نسخه‌ی رسمی با پشتیبانی از توابع، ماژول‌ها و استثناها.</li>
+                    <li><strong>Python 2.0 (۲۰۰۰):</strong> اضافه شدن List Comprehensions و یک سیستم جمع‌آوری زباله (Garbage Collector) کارآمد.</li>
+                    <li><strong>Python 2.7 (۲۰۱۰):</strong> آخرین نسخه‌ی Python 2 که پشتیبانی آن تا ژانویه ۲۰۲۰ ادامه داشت و اکنون کاملاً منسوخ شده است.</li>
+                    <li><strong>Python 3.0 (۲۰۰۸):</strong> یک تغییر بنیادین و ناسازگار با نسخه‌ی ۲ (مانند تابعی شدن <code dir='ltr'>print</code>، تغییر در تقسیم اعداد و بهبود Unicode).</li>
+                    <li><strong>Python 3.6 (۲۰۱۶):</strong> اضافه شدن f-strings (ساده‌ترین روش فرمت‌دهی رشته‌ها) و نوع‌دهی (Type Hints).</li>
+                    <li><strong>Python 3.8 (۲۰۱۹):</strong> اضافه شدن عملگر <code dir='ltr'>:=</code> (Walrus Operator) برای انتساب درون عبارات.</li>
+                    <li><strong>Python 3.10 (۲۰۲۱):</strong> اضافه شدن <code dir='ltr'>match-case</code> (شبیه به Switch در زبان‌های دیگر).</li>
+                    <li><strong>Python 3.12 (۲۰۲۳):</strong> بهبود قابل توجه عملکرد و رفع اشکالات.</li>
+                    <li><strong>Python 3.13 (۲۰۲۴):</strong> پشتیبانی آزمایشی از کامپایلر JIT و بهبودهای بیشتر در سرعت.</li>
+                </ul>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> امروزه <strong>Python 3</strong> استاندارد اصلی است و Python 2 به‌طور رسمی منسوخ شده است. هنگام جستجوی راهنما یا نصب پکیج‌ها، همیشه مطمئن شوید که آموزش مربوط به Python 3 است.
+                </div>
+            </div>
+
+            <!-- ۱.۳ -->
+            <div class="sub-section">
+                <h4>۱.۳ نصب پایتون روی Windows، macOS و Linux</h4>
+                <p><strong>ویندوز (Windows):</strong></p>
+                <ol>
+                    <li>به سایت <a href="https://python.org" target="_blank">python.org</a> بروید و روی دکمه‌ی دانلود Python کلیک کنید.</li>
+                    <li>آخرین نسخه‌ی Python 3 را دانلود کنید (فایل <code dir='ltr'>.exe</code>).</li>
+                    <li>قبل از کلیک روی Install، حتماً گزینه‌ی <strong>"Add Python to PATH"</strong> را در پایین پنجره فعال کنید. این کار از بروز خطاهای بعدی جلوگیری می‌کند.</li>
+                    <li>روی Install Now کلیک کنید و منتظر بمانید تا نصب کامل شود.</li>
+                </ol>
+                <p><strong>macOS:</strong></p>
+                <ol>
+                    <li>از <a href="https://python.org" target="_blank">python.org</a> نصب‌کننده (فایل <code dir='ltr'>.pkg</code>) را دانلود کنید.</li>
+                    <li>فایل را اجرا کرده و مراحل نصب را طی کنید.</li>
+                    <li>روش جایگزین (برای کاربران حرفه‌ای): اگر Homebrew نصب دارید، با دستور <code dir='ltr'>brew install python</code> پایتون را نصب کنید.</li>
+                </ol>
+                <p><strong>Linux (Ubuntu/Debian و توزیع‌های مشابه):</strong></p>
+                <ol>
+                    <li>ابتدا لیست بسته‌ها را به‌روز کنید: <code dir='ltr'>sudo apt update</code></li>
+                    <li>سپس پایتون ۳ و pip را نصب کنید: <code dir='ltr'>sudo apt install python3 python3-pip</code></li>
+                </ol>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># بررسی صحت نصب (اجرا در ترمینال یا Command Prompt)
+python3 --version
+# خروجی مورد انتظار: Python 3.12.0 (یا نسخه‌ی جدیدتر)
+
+# اجرای محیط تعاملی پایتون (REPL)
+python3
+# خروجی: Python 3.12.0 (main, ...) [GCC ...] on linux
+# Type "help", "copyright", "credits" or "license" for more information.
+# >>></code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">Python 3.12.0</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته عیب‌یابی:</strong> اگر بعد از نصب، دستور <code dir='ltr'>python3</code> در ترمینال شناسایی نشد، یعنی مسیر پایتون به PATH اضافه نشده است. در ویندوز، می‌توانید مسیر <code dir='ltr'>C:\Users\[YourUsername]\AppData\Local\Programs\Python\Python312\</code> را به متغیر محیطی PATH اضافه کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> پایتون را روی سیستم خود نصب کنید و با <code dir='ltr'>python3 --version</code> (یا <code dir='ltr'>python --version</code> در ویندوز) نسخه‌ی نصب‌شده را بررسی کنید. نتیجه را یادداشت کنید.
+                </div>
+            </div>
+
+            <!-- ۱.۴ -->
+            <div class="sub-section">
+                <h4>۱.۴ راه‌اندازی VS Code و نصب افزونه‌ی Python</h4>
+                <p><strong>VS Code (Visual Studio Code)</strong> یکی از محبوب‌ترین و بهترین ویرایشگرهای کد برای پایتون است که به‌صورت رایگان در دسترس است. مراحل راه‌اندازی:</p>
+                <ol>
+                    <li>VS Code را از <a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a> دانلود و نصب کنید.</li>
+                    <li>برنامه را باز کنید و به بخش <strong>Extensions</strong> (با کلیک روی آیکون مستطیل شکل در سمت چپ یا کلیدهای <kbd>Ctrl+Shift+X</kbd>) بروید.</li>
+                    <li>در نوار جستجو، عبارت <strong>Python</strong> را تایپ کنید و افزونه‌ی ارائه‌شده توسط <strong>Microsoft</strong> را انتخاب و نصب کنید. (این افزونه شامل IntelliSense، Linting، Debugging و Jupyter Notebook support است).</li>
+                    <li>پس از نصب، یک پوشه خالی برای پروژه‌های خود ایجاد کنید و آن را در VS Code باز کنید (File > Open Folder).</li>
+                    <li>برای تست، یک فایل جدید با پسوند <code dir='ltr'>.py</code> (مثلاً <code dir='ltr'>hello.py</code>) ایجاد کنید.</li>
+                    <li>در پایین سمت چپ VS Code، مطمئن شوید که Python Interpreter صحیح انتخاب شده است. اگر نه، با <kbd>Ctrl+Shift+P</kbd> و تایپ <code dir='ltr'>Python: Select Interpreter</code> آن را انتخاب کنید.</li>
+                </ol>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># فایل hello.py
+print("سلام دنیا!")
+
+# برای اجرا، می‌توانید از ترمینال داخلی VS Code استفاده کنید
+# (Ctrl + ` برای باز کردن ترمینال) و سپس دستور زیر را وارد کنید:
+# python3 hello.py</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام دنیا!</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> VS Code به‌طور خودکار پیشنهادهای کد (IntelliSense)، اشکال‌زدایی گام‌به‌گام (Debugging) و اجرای مستقیم اسکریپت‌ها را فراهم می‌کند. از کلید <kbd>F5</kbd> برای اجرا در حالت دیباگ و <kbd>Ctrl+F5</kbd> برای اجرای بدون دیباگ استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> VS Code را نصب کنید، افزونه‌ی Python را اضافه کنید و یک فایل <code dir='ltr'>test.py</code> با محتوای <code dir='ltr'>print("Hello from VS Code")</code> ایجاد کنید و آن را اجرا کنید.
+                </div>
+            </div>
+
+            <!-- ۱.۵ -->
+            <div class="sub-section">
+                <h4>۱.۵ اولین برنامه: <code dir='ltr'>print()</code> و محیط تعاملی (REPL)</h4>
+                <p>ساده‌ترین برنامه‌ی پایتون، چاپ یک پیام با تابع <strong><code dir='ltr'>print()</code></strong> است. دو روش اصلی برای اجرای کد پایتون وجود دارد که هرکدام کاربرد خاص خود را دارند:</p>
+                <ul>
+                    <li><strong>محیط تعاملی (REPL):</strong> مخفف Read-Eval-Print Loop. در این روش، کد را خط‌به‌خط تایپ می‌کنید و بلافاصله نتیجه را می‌بینید. برای یادگیری و تست سریع دستورات عالی است. با دستور <code dir='ltr'>python3</code> در ترمینال وارد آن شوید و با <code dir='ltr'>exit()</code> یا <kbd>Ctrl+D</kbd> خارج شوید.</li>
+                    <li><strong>اسکریپت (فایل .py):</strong> کد را در یک فایل متنی با پسوند <code dir='ltr'>.py</code> ذخیره کرده و کل برنامه را یکجا با <code dir='ltr'>python3 filename.py</code> اجرا می‌کنید. این روش برای پروژه‌های واقعی و کدهای طولانی مناسب است.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ===============================
+# ۱. محیط تعاملی (REPL)
+# ===============================
+>>> print("سلام دنیا!")   # چاپ متن ساده
+سلام دنیا!
+>>> 2 + 3                # مفسر پایتون مانند یک ماشین‌حساب عمل می‌کند
+5
+>>> name = "علی"          # تعریف متغیر (در ادامه به آن می‌پردازیم)
+>>> print("سلام", name)   # چاپ ترکیبی
+سلام علی
+>>> exit()               # خروج از محیط تعاملی
+
+# ===============================
+# ۲. اسکریپت (فایل hello.py)
+# ===============================
+# محتوای فایل hello.py:
+print("این یک برنامه‌ی پایتون است")
+print(10 + 20)
+print("نام من:", "رضا")
+
+# اجرا در ترمینال:
+# python3 hello.py</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سلام دنیا!</span><br>
+                    <span class="highlight">➜</span> <span class="result">این یک برنامه‌ی پایتون است</span><br>
+                    <span class="highlight">➜</span> <span class="result">30</span><br>
+                    <span class="highlight">➜</span> <span class="result">نام من: رضا</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> محیط تعاملی (REPL) برای تست سریع کدها، بررسی کتابخانه‌ها و یادگیری مفاهیم جدید بسیار عالی است. از آن به‌عنوان یک "دفترچه‌ی آزمایشی" (Sandbox) استفاده کنید. اما فراموش نکنید که کدهای نهایی را در فایل‌های <code dir='ltr'>.py</code> ذخیره کنید تا از دست نروند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> در محیط تعاملی پایتون، سه پیام مختلف با <code dir='ltr'>print()</code> چاپ کنید (مثلاً نام، سن و شهر خود را). سپس یک فایل <code dir='ltr'>first.py</code> ایجاد کنید، دو خط کد در آن بنویسید و با <code dir='ltr'>python3 first.py</code> اجرا کنید.
+                </div>
+            </div>
+
+            <!-- ۱.۶ -->
+            <div class="sub-section">
+                <h4>۱.۶ آشنایی با <code dir='ltr'>pip</code> و نصب پکیج‌ها</h4>
+                <p><strong><code dir='ltr'>pip</code></strong> مخفف "Pip Installs Packages" است و به‌عنوان مدیر بسته‌های رسمی پایتون شناخته می‌شود. با استفاده از <code dir='ltr'>pip</code> می‌توانید هزاران کتابخانه‌ی شخص ثالث را از مخزن PyPI (Python Package Index) نصب کنید.</p>
+                <ul>
+                    <li><strong>نصب یک پکیج:</strong> <code dir='ltr'>pip install package_name</code></li>
+                    <li><strong>نصب نسخه‌ی خاص:</strong> <code dir='ltr'>pip install package_name==1.2.3</code></li>
+                    <li><strong>آپگرید کردن پکیج:</strong> <code dir='ltr'>pip install --upgrade package_name</code></li>
+                    <li><strong>حذف یک پکیج:</strong> <code dir='ltr'>pip uninstall package_name</code></li>
+                    <li><strong>نمایش پکیج‌های نصب‌شده:</strong> <code dir='ltr'>pip list</code></li>
+                    <li><strong>نمایش اطلاعات یک پکیج:</strong> <code dir='ltr'>pip show package_name</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># نصب پکیج محبوب requests (برای ارسال درخواست HTTP)
+pip install requests
+
+# نصب یک نسخه‌ی خاص از numpy
+pip install numpy==1.24.0
+
+# به‌روزرسانی pip خودش (توصیه می‌شود)
+pip install --upgrade pip
+
+# نصب چند پکیج به‌صورت همزمان
+pip install pandas matplotlib jupyter
+
+# نصب از روی فایل requirements.txt (بسیار کاربردی)
+pip install -r requirements.txt</code></pre>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> پکیج‌های نصب‌شده با <code dir='ltr'>pip</code> در فضای سراسری سیستم (یا در محیط مجازی فعال) نصب می‌شوند. برای جلوگیری از تداخل نسخه‌ها بین پروژه‌های مختلف، همیشه از <strong>محیط‌های مجازی</strong> استفاده کنید که در بخش بعدی توضیح داده می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از <code dir='ltr'>pip</code> پکیج‌های <code dir='ltr'>requests</code> و <code dir='ltr'>numpy</code> را نصب کنید. سپس با دستور <code dir='ltr'>pip list</code> لیست پکیج‌های نصب‌شده را مشاهده کنید.
+                </div>
+            </div>
+
+            <!-- ۱.۷ -->
+            <div class="sub-section">
+                <h4>۱.۷ محیط‌های مجازی (venv) و اهمیت حیاتی آنها</h4>
+                <p><strong>محیط مجازی (Virtual Environment)</strong> یک فضای ایزوله و مستقل برای هر پروژه‌ی پایتون است. فرض کنید پروژه‌ی A نیاز به نسخه‌ی ۱.۰ کتابخانه‌ی X دارد و پروژه‌ی B نیاز به نسخه‌ی ۲.۰ همان کتابخانه. اگر در سیستم به‌صورت سراسری نصب کنید، تداخل رخ می‌دهد. محیط مجازی این مشکل را حل می‌کند.</p>
+                <ul>
+                    <li><strong>ایجاد محیط مجازی:</strong> <code dir='ltr'>python3 -m venv venv</code> (در ویندوز ممکن است <code dir='ltr'>python -m venv venv</code> باشد).</li>
+                    <li><strong>فعال‌سازی در Windows (Command Prompt):</strong> <code dir='ltr'>venv\Scripts\activate</code></li>
+                    <li><strong>فعال‌سازی در Windows (PowerShell):</strong> <code dir='ltr'>venv\Scripts\Activate.ps1</code></li>
+                    <li><strong>فعال‌سازی در macOS/Linux:</strong> <code dir='ltr'>source venv/bin/activate</code></li>
+                    <li><strong>خروج از محیط:</strong> <code dir='ltr'>deactivate</code></li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ۱. ایجاد محیط مجازی با نام myenv
+python3 -m venv myenv
+
+# ۲. فعال‌سازی (در لینوکس/مک)
+source myenv/bin/activate
+
+# ۲. فعال‌سازی (در ویندوز - CMD)
+myenv\Scripts\activate
+
+# پس از فعال‌سازی، نام (myenv) در ابتدای خط ترمینال ظاهر می‌شود
+
+# ۳. نصب پکیج‌ها در این محیط (ایزوله)
+pip install flask
+
+# ۴. ذخیره‌سازی لیست وابستگی‌های فعلی در فایل requirements.txt
+pip freeze > requirements.txt
+
+# ۵. خروج از محیط مجازی
+deactivate
+
+# ۶. برای نصب وابستگی‌ها در محیط جدید (مثلاً روی سیستم دوستتان)
+# ابتدا محیط را فعال کنید، سپس:
+pip install -r requirements.txt</code></pre>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <strong>همیشه</strong> برای هر پروژه‌ی پایتونی، حتی پروژه‌های کوچک، یک محیط مجازی ایجاد کنید. این کار باعث می‌شود پروژه‌ها از هم مستقل باشند و از سردرگمی‌های نسخه‌های مختلف جلوگیری شود. فایل <code dir='ltr'>requirements.txt</code> را همیشه به همراه پروژه ذخیره کنید تا دیگران بتوانند به‌راحتی محیط شما را بازسازی کنند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک محیط مجازی به نام <code dir='ltr'>myproject</code> ایجاد کنید، آن را فعال کنید، پکیج <code dir='ltr'>flask</code> را نصب کنید و وابستگی‌ها را در فایل <code dir='ltr'>requirements.txt</code> ذخیره کنید. سپس از محیط خارج شده و دوباره وارد آن شوید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک برنامه‌ی تعاملی کامل با پایتون</h4>
+            <p>در این کارگاه، یک برنامه می‌نویسیم که از کاربر اطلاعات شخصی دریافت کرده و یک کارت شناسایی ساده برای او چاپ می‌کند.</p>
+            <ol>
+                <li><strong>ایجاد پوشه و محیط:</strong> یک پوشه به نام <code dir='ltr'>my_profile</code> ایجاد کنید. در ترمینال وارد آن شوید و یک محیط مجازی با <code dir='ltr'>python3 -m venv venv</code> بسازید.</li>
+                <li><strong>فعال‌سازی:</strong> محیط را با دستور مربوط به سیستم‌عامل خود فعال کنید.</li>
+                <li><strong>ایجاد فایل:</strong> فایل <code dir='ltr'>profile.py</code> را در VS Code باز کنید.</li>
+                <li><strong>نوشتن کد:</strong> کد زیر را در فایل بنویسید (توجه کنید که از <code dir='ltr'>input()</code> و <code dir='ltr'>print()</code> با فرمت‌دهی استفاده شده است):
+                    <pre dir="ltr" style="background:#0f172a;color:#e2e8f0;padding:10px;border-radius:6px;"># دریافت اطلاعات
+name = input("نام خود را وارد کنید: ")
+age = input("سن خود را وارد کنید: ")
+city = input("شهر محل زندگی: ")
+
+# نمایش کارت شناسایی
+print("\n" + "="*30)
+print("        کارت شناسایی کاربر")
+print("="*30)
+print(f"نام: {name}")
+print(f"سن: {age} سال")
+print(f"شهر: {city}")
+print("="*30)
+print("از همراهی شما متشکریم!")</pre>
+                </li>
+                <li><strong>اجرا:</strong> برنامه را با <code dir='ltr'>python3 profile.py</code> اجرا کنید و اطلاعات خواسته‌شده را وارد کنید.</li>
+                <li><strong>ذخیره وابستگی‌ها:</strong> با <code dir='ltr'>pip freeze > requirements.txt</code> وابستگی‌ها را ذخیره کنید (اگر از پکیج خاصی استفاده نکردید، فایل خالی می‌ماند).</li>
+            </ol>
+            <div class="live-demo">
+                <h4>▶️ شبیه‌ساز اجرای برنامه</h4>
+                <button onclick="document.getElementById('simOutput').innerHTML = '👤 نام: احمد\n📅 سن: ۲۸\n📍 شهر: اصفهان\n\n✅ کارت شناسایی با موفقیت ساخته شد!'" style="background:#ffd43b;color:#0f172a;border:none;padding:8px 20px;border-radius:6px;font-weight:bold;cursor:pointer;">
+                    اجرای برنامه
+                </button>
+                <div class="result-box" id="simOutput">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>از کاربر دو عدد (با <code dir='ltr'>input()</code>) دریافت کند و آن‌ها را به عدد (int) تبدیل کند.</li>
+                <li>مجموع، تفریق، ضرب و تقسیم اعشاری (/) و تقسیم صحیح (//) آنها را محاسبه کند.</li>
+                <li>نتایج را با توضیحات کامل و با <code dir='ltr'>print()</code> در خطوط جداگانه نمایش دهد.</li>
+                <li>در صورت وارد کردن عدد صفر برای تقسیم، پیام "تقسیم بر صفر ممکن نیست" را چاپ کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>پایتون چه مزایایی نسبت به سایر زبان‌های برنامه‌نویسی دارد؟ (حداقل ۴ مورد را توضیح دهید).</li>
+                <li>تفاوت بین Python 2 و Python 3 چیست و چرا باید از Python 3 استفاده کنیم؟</li>
+                <li><code dir='ltr'>pip</code> چیست و چگونه می‌توان یک کتابخانه را با آن نصب یا حذف کرد؟</li>
+                <li>محیط مجازی (venv) چه مزیتی دارد و چرا باید از آن استفاده کنیم؟ تفاوت آن با نصب سراسری چیست؟</li>
+                <li>تفاوت بین محیط تعاملی (REPL) و اجرای اسکریپت چیست؟ هرکدام چه زمانی مناسب‌تر هستند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام دستور برای نصب یک پکیج در پایتون استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>python install</code>  ب) <code dir='ltr'>pip install</code>  ج) <code dir='ltr'>package install</code>  د) <code dir='ltr'>install pip</code></li>
+                <li>برای ایجاد یک محیط مجازی با نام <code dir='ltr'>env</code> از کدام دستور استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>python -m virtual env</code>  ب) <code dir='ltr'>python3 -m venv env</code>  ج) <code dir='ltr'>venv create env</code>  د) <code dir='ltr'>python venv env</code></li>
+                <li>خالق زبان برنامه‌نویسی پایتون چه کسی است؟<br>
+                    أ) Guido van Rossum  ب) Brendan Eich  ج) Linus Torvalds  د) Tim Berners-Lee</li>
+                <li>کدام دستور برای خروج از محیط تعاملی (REPL) استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>exit()</code>  ب) <code dir='ltr'>quit()</code>  ج) <kbd>Ctrl+D</kbd>  د) تمام موارد فوق</li>
+            </ol>
+            <h4>تمرین عملی (پروژه کوچک)</h4>
+            <p>یک پروژه‌ی جدید با محیط مجازی ایجاد کنید و یک برنامه بنویسید که:</p>
+            <ul>
+                <li>نام، سن و شهر کاربر را با <code dir='ltr'>input()</code> دریافت کند.</li>
+                <li>یک پیام خوش‌آمدگویی با تمام اطلاعات در قالبی زیبا نمایش دهد (مثلاً با استفاده از <code dir='ltr'>-</code> یا <code dir='ltr'>*</code> برای خطوط جداکننده).</li>
+                <li>از پکیج <code dir='ltr'>requests</code> برای دریافت اطلاعات یک API عمومی (مثلاً <code dir='ltr'>https://api.github.com</code>) استفاده کرده و وضعیت اتصال را چاپ کند (اختیاری).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>پایتون</strong> یک زبان ساده، خوانا، همه‌کاره و متن‌باز است که برای حوزه‌های مختلف کاربرد دارد.</li>
+                <li>🔹 همیشه از <strong>Python 3</strong> استفاده کنید؛ Python 2 به‌طور کامل منسوخ شده است.</li>
+                <li>🔹 <strong>VS Code</strong> به‌همراه افزونه‌ی Python، یک محیط توسعه‌ی قدرتمند و رایگان است.</li>
+                <li>🔹 <strong><code dir='ltr'>print()</code></strong> برای نمایش خروجی و <strong><code dir='ltr'>input()</code></strong> برای دریافت ورودی از کاربر استفاده می‌شود.</li>
+                <li>🔹 <strong><code dir='ltr'>pip</code></strong> مدیر بسته‌ها است و <strong><code dir='ltr'>venv</code></strong> ابزار ایجاد محیط‌های مجازی.</li>
+                <li>🔹 <strong>همیشه</strong> از محیط مجازی برای ایزوله کردن پروژه‌ها استفاده کنید تا وابستگی‌ها تداخل نکنند.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># چاپ خروجی در کنسول
+print("Hello")
+
+# دریافت ورودی از کاربر
+name = input("نام: ")
+
+# ایجاد محیط مجازی
+python3 -m venv venv
+
+# فعال‌سازی (لینوکس/مک)
+source venv/bin/activate
+
+# فعال‌سازی (ویندوز)
+venv\Scripts\activate
+
+# نصب پکیج با pip
+pip install package_name
+
+# ذخیره وابستگی‌ها
+pip freeze > requirements.txt
+
+# نصب از روی requirements.txt
+pip install -r requirements.txt
+
+# خروج از محیط مجازی
+deactivate</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Python:</strong> زبان برنامه‌نویسی سطح‌بالا، تفسیری و همه‌منظوره.</li>
+                <li><strong>REPL:</strong> محیط تعاملی (Read-Eval-Print Loop) برای اجرای خط‌به‌خط کد.</li>
+                <li><strong>pip:</strong> مدیر بسته‌های استاندارد پایتون (Pip Installs Packages).</li>
+                <li><strong>venv:</strong> ابزار داخلی پایتون برای ایجاد محیط‌های مجازی (Virtual Environment).</li>
+                <li><strong>VS Code:</strong> یک ویرایشگر کد منبع‌باز و سبک از شرکت مایکروسافت.</li>
+                <li><strong>print():</strong> تابع داخلی برای چاپ متن یا متغیرها در خروجی استاندارد (کنسول).</li>
+                <li><strong>input():</strong> تابع داخلی برای دریافت ورودی از کاربر (به‌صورت رشته).</li>
+                <li><strong>requirements.txt:</strong> فایل متنی شامل لیست پکیج‌ها و نسخه‌های مورد نیاز پروژه.</li>
+                <li><strong>PyPI (Python Package Index):</strong> مخزن رسمی و اصلی پکیج‌های پایتون.</li>
+                <li><strong>PATH:</strong> متغیر محیطی که به سیستم‌عامل می‌گوید که فایل‌های اجرایی در کدام مسیرها قرار دارند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://python.org" target="_blank" rel="noopener noreferrer">Python Official Website</a> – دانلود و مستندات رسمی</li>
+                <li><a href="https://docs.python.org/3/" target="_blank" rel="noopener noreferrer">Python 3 Documentation</a> – مرجع کامل زبان</li>
+                <li><a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer">VS Code</a> – دانلود ویرایشگر</li>
+                <li><a href="https://pypi.org/" target="_blank" rel="noopener noreferrer">PyPI - Python Package Index</a> – جستجوی پکیج‌ها</li>
+                <li><a href="https://realpython.com/" target="_blank" rel="noopener noreferrer">Real Python</a> – آموزش‌های عملی و پروژه‌محور</li>
+                <li><a href="https://docs.python-guide.org/" target="_blank" rel="noopener noreferrer">The Hitchhiker's Guide to Python</a> – راهنمای کامل و استاندارد برای توسعه با پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <p>برای مدیریت زمان خود، برنامه‌ی پیشنهادی زیر را دنبال کنید:</p>
+            <ul>
+                <li><strong>گام ۱:</strong> آشنایی با پایتون و کاربردها – ۱۰ دقیقه</li>
+                <li><strong>گام ۲:</strong> تاریخچه و نسخه‌ها – ۱۰ دقیقه</li>
+                <li><strong>گام ۳:</strong> نصب پایتون – ۱۵ دقیقه (با troubleshooting)</li>
+                <li><strong>گام ۴:</strong> راه‌اندازی VS Code – ۱۰ دقیقه</li>
+                <li><strong>گام ۵:</strong> اولین برنامه و آشنایی با print/input – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> pip و نصب پکیج‌ها – ۱۰ دقیقه</li>
+                <li><strong>گام ۷:</strong> محیط‌های مجازی (venv) – ۱۵ دقیقه (مهم)</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی و پروژه – ۳۰ دقیقه</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۲۰ دقیقه (۲ ساعت). اگر وقت کم دارید، گام‌های ۱ و ۲ را سریع مرور کنید.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا پایتون با وجود سرعت کمتر نسبت به زبان‌هایی مثل C++، اینقدر محبوب است؟ (به خوانایی و کتابخانه‌های آن فکر کنید).</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>print()</code> در Python 2 و Python 3 وجود دارد که باعث شد این تغییر ایجاد شود؟</li>
+                <li>❓ چرا باید از محیط‌های مجازی استفاده کنیم؟ اگر از آن استفاده نکنیم، چه مشکلاتی ممکن است در بلندمدت رخ دهد؟</li>
+                <li>❓ اگر <code dir='ltr'>pip</code> به‌درستی کار نکند و ارور بدهد، چه راه‌حل‌هایی وجود دارد؟ (مثلاً بررسی مسیر یا آپگرید pip).</li>
+                <li>❓ محیط تعاملی (REPL) چه مزیتی نسبت به اجرای اسکریپت دارد و در چه سناریوهایی استفاده از آن هوشمندانه‌تر است؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن افزودن پایتون به PATH در هنگام نصب (ویندوز) که باعث می‌شود دستور <code dir='ltr'>python</code> یا <code dir='ltr'>python3</code> در ترمینال شناسایی نشود.<br>
+                    <strong>🔧 راه حل:</strong> در زمان نصب، گزینه‌ی "Add Python to PATH" را فعال کنید. اگر از قبل نصب کرده‌اید، می‌توانید با جستجوی "Edit environment variables" در ویندوز، مسیر پایتون را به‌صورت دستی به PATH اضافه کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>python</code> به‌جای <code dir='ltr'>python3</code> در سیستم‌هایی که Python 2 به‌عنوان پیش‌فرض نصب دارند (مثل بسیاری از توزیع‌های لینوکس).<br>
+                    <strong>🔧 راه حل:</strong> همیشه از <code dir='ltr'>python3</code> استفاده کنید تا مطمئن باشید Python 3 اجرا می‌شود. در ویندوز معمولاً <code dir='ltr'>python</code> به نسخه‌ی ۳ اشاره دارد.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن فعال‌سازی محیط مجازی قبل از نصب پکیج‌ها، که باعث می‌شود پکیج‌ها در فضای سراسری نصب شوند.<br>
+                    <strong>🔧 راه حل:</strong> قبل از هرگونه نصب با <code dir='ltr'>pip</code>، بررسی کنید که نام محیط مجازی در ابتدای خط ترمینال نمایش داده می‌شود. اگر نمایش داده نمی‌شود، با دستور فعال‌سازی، آن را فعال کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> نوشتن کدهای مهم صرفاً در محیط تعاملی (REPL) و بستن ترمینال، که باعث از دست رفتن کامل کدها می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> محیط تعاملی فقط برای تست دستورات کوتاه است. کدهای نهایی و طولانی را همیشه در فایل‌های <code dir='ltr'>.py</code> ذخیره کنید و با اجرای اسکریپت تست کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>print</code> بدون پرانتز (مانند <code dir='ltr'>print "Hello"</code>) که مربوط به Python 2 است و در Python 3 باعث بروز <code dir='ltr'>SyntaxError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> در Python 3، <code dir='ltr'>print</code> یک تابع است و همیشه باید با پرانتز استفاده شود: <code dir='ltr'>print("Hello")</code>.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی فصل ۱</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک دفترچه‌ی یادداشت ساده (Simple Note Keeper)</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) بسازید که به کاربر اجازه دهد یادداشت‌های خود را ذخیره و مشاهده کند. این پروژه مفاهیم حلقه، شرط، ورودی/خروجی و کار با فایل را به‌کار می‌گیرد.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ساختار اصلی):</strong> یک حلقه‌ی <code dir='ltr'>while True</code> ایجاد کنید که تا زمانی که کاربر گزینه‌ی خروج را انتخاب نکند، اجرا شود. سه گزینه به کاربر نشان دهید: ۱. نوشتن یادداشت جدید، ۲. مشاهده یادداشت‌ها، ۳. خروج.</li>
+                <li><strong>مرحله ۲ (ذخیره‌سازی):</strong> وقتی کاربر گزینه‌ی ۱ را انتخاب کرد، یک متن با <code dir='ltr'>input()</code> دریافت کنید و آن را با یک خط جدید (همراه با تاریخ) در انتهای یک فایل متنی به نام <code dir='ltr'>notes.txt</code> اضافه کنید (با حالت <code dir='ltr'>'a'</code> در <code dir='ltr'>open()</code>).</li>
+                <li><strong>مرحله ۳ (نمایش):</strong> وقتی کاربر گزینه‌ی ۲ را انتخاب کرد، فایل <code dir='ltr'>notes.txt</code> را با حالت <code dir='ltr'>'r'</code> باز کنید، تمام خطوط را با <code dir='ltr'>readlines()</code> بخوانید و هر خط را با شماره‌ی ترتیب به کاربر نمایش دهید.</li>
+                <li><strong>مرحله ۴ (پایان):</strong> وقتی کاربر گزینه‌ی ۳ را انتخاب کرد، برنامه با <code dir='ltr'>break</code> از حلقه خارج شده و پیام خروج چاپ شود.</li>
+                <li><strong>مرحله ۵ (مدیریت):</strong> برای این پروژه یک محیط مجازی ایجاد کنید (حتی اگر وابستگی خاصی نداشته باشد، عادت به این کار را در خود تقویت کنید) و یک فایل <code dir='ltr'>requirements.txt</code> برای وابستگی‌ها (در صورت نیاز) ایجاد کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 main.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر (برای کاربران پیشرو):</strong>
+                <ul>
+                    <li>با استفاده از ماژول <code dir='ltr'>datetime</code>، تاریخ و ساعت دقیق ثبت هر یادداشت را به ابتدای آن اضافه کنید.</li>
+                    <li>گزینه‌ی ۴: جستجو در یادداشت‌ها بر اساس یک کلمه‌ی کلیدی اضافه کنید.</li>
+                    <li>گزینه‌ی ۵: حذف یک یادداشت خاص بر اساس شماره‌ی آن را پیاده‌سازی کنید (نیاز به بازنویسی کل فایل دارد).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <span></span>
+            <a href="../chapter-02/index.html" class="btn-demo">رفتن به فصل ۲ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

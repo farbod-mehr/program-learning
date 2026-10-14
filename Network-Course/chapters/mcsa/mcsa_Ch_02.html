@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۲ MCSA — شبکه (Networking)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mcsa" data-chapter="mcsa-02">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📕 فصل ۲ — شبکه (Networking)</h1>
+    <div class="meta">
+      <span>📖 ۱۰۵ دقیقه</span>
+      <span>🎯 وزن در آزمون 70-741: بخش اصلی</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در این فصل با سرویس‌های شبکه‌ی ویندوز سرور آشنا می‌شوی:
+      <span class="term" data-term="dns">DNS</span>،
+      <span class="term" data-term="dhcp">DHCP</span>،
+      <span class="term" data-term="ipam">IPAM</span>،
+      <span class="term" data-term="vpn">VPN</span>،
+      <span class="term" data-term="dfs">DFS</span>،
+      <span class="term" data-term="branchcache">BranchCache</span> و
+      <span class="term" data-term="directaccess">DirectAccess</span>.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>پیکربندی عملی با PowerShell</strong> و
+      درک معماری است — چون این سرویس‌ها پایه‌ی هر شبکه‌ی سازمانی هستند.
+      بعد از این فصل، می‌توانی یک شبکه‌ی کامل با DNS، DHCP و Remote Access راه‌اندازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مرور IPv4 و IPv6 در Windows Server</li>
+      <li>DNS — نقش و معماری</li>
+      <li>DNS Zones — Primary، Secondary، Stub</li>
+      <li>Forwarders و Conditional Forwarders</li>
+      <li>DNS Record Types</li>
+      <li>DNS Integration با Active Directory</li>
+      <li>DHCP — نقش و اجزا</li>
+      <li>DHCP Scope، Reservation، Relay</li>
+      <li>DHCP Failover و Split Scope</li>
+      <li>IPAM — مدیریت متمرکز IP</li>
+      <li>VPN — Remote Access Service</li>
+      <li>DirectAccess vs VPN</li>
+      <li>NPS و RADIUS</li>
+      <li>DFS — Namespace و Replication</li>
+      <li>BranchCache</li>
+      <li>SDN و Network Controller</li>
+      <li>Hyper-V Network Virtualization</li>
+      <li>عیب‌یابی و ابزارها</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت Forward Lookup Zone و Reverse Lookup Zone چیست؟</li>
+      <li>چرا DNS Server جعلی (Rogue DNS) خطرناک است؟</li>
+      <li>DHCP Failover چطور High Availability را تأمین می‌کند؟</li>
+      <li>IPAM چه مشکلی را در سازمان‌های بزرگ حل می‌کند؟</li>
+      <li>تفاوت DFS Namespace و DFS Replication چیست؟</li>
+      <li>DirectAccess چه مزیتی نسبت به VPN سنتی دارد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۲.۱ ==== -->
+    <h3>۲.۱ مرور IPv4 و IPv6 در Windows Server</h3>
+
+    <p>
+      Windows Server از IPv4 و IPv6 به‌طور موازی پشتیبانی می‌کند.
+      آدرس‌دهی از طریق <strong>Network Adapter Settings</strong> یا
+      <strong>PowerShell</strong> پیکربندی می‌شود.
+    </p>
+
+    <pre><code># ===== مشاهده تنظیمات شبکه =====
+Get-NetIPConfiguration
+Get-NetIPAddress
+Get-NetAdapter | Format-Table Name, Status, LinkSpeed
+Get-NetRoute
+
+# ===== تنظیم IP استاتیک =====
+New-NetIPAddress -InterfaceAlias "Ethernet" `
+    -IPAddress 192.168.1.10 `
+    -PrefixLength 24 `
+    -DefaultGateway 192.168.1.1
+
+# ===== تنظیم DNS =====
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" `
+    -ServerAddresses 192.168.1.5,8.8.8.8
+
+# ===== غیرفعال کردن IPv6 موقتاً (توصیه نمی‌شود) =====
+Disable-NetAdapterBinding -Name "Ethernet" -ComponentID ms_tcpip6
+
+# ===== فعال‌سازی مجدد =====
+Enable-NetAdapterBinding -Name "Ethernet" -ComponentID ms_tcpip6
+
+# ===== مشاهده تنظیمات کامل =====
+ipconfig /all
+netsh interface ip show config</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      هرگز IPv6 را کامل غیرفعال نکن — حتی اگر از IPv4 استفاده می‌کنی.
+      برخی سرویس‌های ویندوز (مثل DirectAccess) به IPv6 نیاز دارند.
+      در عوض، IPv6 را با <strong>Prefix Policy</strong> اولویت‌بندی کن.
+    </div>
+
+    <!-- ==== ۲.۲ ==== -->
+    <h3>۲.۲ DNS — نقش و معماری</h3>
+
+    <p>
+      <span class="term" data-term="dns">DNS</span> (Domain Name System)
+      ترجمه‌ی نام دامنه به IP است — پایه‌ی هر شبکه‌ی Active Directory.
+    </p>
+
+    <p><strong>مزایای DNS Server در ویندوز:</strong></p>
+    <ul>
+      <li>کاملاً با Active Directory یکپارچه است</li>
+      <li>پشتیبانی از Dynamic Update (خودکار ثبت رکوردها)</li>
+      <li>Zone Replication از طریق AD</li>
+      <li>DNSSEC برای امنیت</li>
+      <li>DNS Policies و Response Rate Limiting</li>
+      <li>PowerShell کامل</li>
+    </ul>
+
+    <pre><code># ===== نصب DNS Server =====
+Install-WindowsFeature -Name DNS -IncludeManagementTools
+
+# ===== بررسی نصب =====
+Get-WindowsFeature -Name DNS
+Get-Service DNS
+
+# ===== ابزارها =====
+dnsmgmt.msc        # GUI
+Get-DnsServer      # PowerShell
+Resolve-DnsName    # Query DNS
+nslookup           # ابزار کلاسیک</code></pre>
+
+    <!-- ==== ۲.۳ ==== -->
+    <h3>۲.۳ DNS Zones — Primary، Secondary، Stub</h3>
+
+    <p><strong>انواع Zone:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">قابل نوشتن</th>
+          <th style="padding:6px;border:1px solid var(--border)">ذخیره‌سازی</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Primary</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">✅</td>
+          <td style="padding:6px;border:1px solid var(--border)">File یا AD</td>
+          <td style="padding:6px;border:1px solid var(--border)">Zone اصلی — یک دامنه</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Secondary</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">❌ (Read-Only)</td>
+          <td style="padding:6px;border:1px solid var(--border)">File یا AD</td>
+          <td style="padding:6px;border:1px solid var(--border)">کپی از Primary — افزونگی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Stub</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">❌</td>
+          <td style="padding:6px;border:1px solid var(--border)">File یا AD</td>
+          <td style="padding:6px;border:1px solid var(--border)">فقط NS Records — برای Delegation</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>AD-Integrated</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">✅</td>
+          <td style="padding:6px;border:1px solid var(--border)">Active Directory</td>
+          <td style="padding:6px;border:1px solid var(--border)">Replication از طریق AD</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Forward Zone vs Reverse Zone:</strong></p>
+    <ul>
+      <li><strong>Forward Lookup Zone:</strong> نام → IP (مثل server01.company.local → 192.168.1.10)</li>
+      <li><strong>Reverse Lookup Zone:</strong> IP → نام (مثل 192.168.1.10 → server01.company.local)</li>
+    </ul>
+
+    <pre><code># ===== ایجاد Forward Zone =====
+Add-DnsServerPrimaryZone -Name "company.local" `
+    -ReplicationScope "Domain" `
+    -DynamicUpdate "Secure"
+
+# یا از فایل:
+Add-DnsServerPrimaryZone -Name "company.local" `
+    -ZoneFile "company.local.dns"
+
+# ===== ایجاد Reverse Zone =====
+Add-DnsServerPrimaryZone -NetworkID "192.168.1.0/24" `
+    -ReplicationScope "Domain"
+
+# ===== ایجاد Secondary Zone =====
+Add-DnsServerSecondaryZone -Name "company.local" `
+    -ZoneFile "company.local.dns" `
+    -MasterServers 192.168.1.5
+
+# ===== ایجاد Stub Zone =====
+Add-DnsServerStubZone -Name "branch.local" `
+    -MasterServers 10.0.0.5 `
+    -ReplicationScope "Domain"
+
+# ===== مشاهده Zoneها =====
+Get-DnsServerZone
+Get-DnsServerZone | Format-Table ZoneName, ZoneType, IsDsIntegrated, DynamicUpdate</code></pre>
+
+    <!-- ==== ۲.۴ ==== -->
+    <h3>۲.۴ Forwarders و Conditional Forwarders</h3>
+
+    <p>
+      اگر DNS Server شما نمی‌تواند یک نام را Resolve کند، می‌تواند درخواست را
+      به <strong>Forwarder</strong> بفرستد (مثلاً Google DNS یا DNS ISP).
+    </p>
+
+    <pre><code># ===== تنظیم Forwarders =====
+Add-DnsServerForwarder -IPAddress 8.8.8.8,1.1.1.1
+
+# با Timeout و Prioritization:
+Add-DnsServerForwarder -IPAddress 8.8.8.8 -Timeout 3 -EnableReordering
+
+# ===== مشاهده Forwarders =====
+Get-DnsServerForwarder
+
+# ===== حذف Forwarder =====
+Remove-DnsServerForwarder -IPAddress 8.8.8.8
+
+# ===== Conditional Forwarder برای دامنه خاص =====
+# مثلاً برای دامنه‌ی partner.local که DNS Server آن در 10.10.10.5 است
+Add-DnsServerConditionalForwarderZone -Name "partner.local" `
+    -MasterServers 10.10.10.5 `
+    -ReplicationScope "Forest"
+
+# یا برای Forwarder با Port غیر استاندارد (BIND)
+Add-DnsServerConditionalForwarderZone -Name "another.local" `
+    -MasterServers 10.20.20.5 `
+    -ForwarderTimeout 5
+
+# ===== مشاهده =====
+Get-DnsServerZone | Where-Object ZoneType -eq "Forwarder"
+
+# ===== Root Hints =====
+Get-DnsServerRootHint
+# این‌ها همان DNS Serverهای ریشه‌ی اینترنت هستند
+# (a.root-servers.net تا m.root-servers.net)</code></pre>
+
+    <!-- ==== ۲.۵ ==== -->
+    <h3>۲.۵ DNS Record Types</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Record</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">مثال</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>A</strong></td><td style="padding:6px;border:1px solid var(--border)">نام → IPv4</td><td style="padding:6px;border:1px solid var(--border)">server01 → 192.168.1.10</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>AAAA</strong></td><td style="padding:6px;border:1px solid var(--border)">نام → IPv6</td><td style="padding:6px;border:1px solid var(--border)">server01 → 2001:db8::10</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>CNAME</strong></td><td style="padding:6px;border:1px solid var(--border)">نام → نام (Alias)</td><td style="padding:6px;border:1px solid var(--border)">www → server01</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>MX</strong></td><td style="padding:6px;border:1px solid var(--border)">Mail Server</td><td style="padding:6px;border:1px solid var(--border)">@ → mail.company.local</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>NS</strong></td><td style="padding:6px;border:1px solid var(--border)">Name Server</td><td style="padding:6px;border:1px solid var(--border)">Zone → DNS Server</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>SOA</strong></td><td style="padding:6px;border:1px solid var(--border)">Start of Authority</td><td style="padding:6px;border:1px solid var(--border)">اطلاعات Zone</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>PTR</strong></td><td style="padding:6px;border:1px solid var(--border)">IP → نام (Reverse)</td><td style="padding:6px;border:1px solid var(--border)">Reverse Zone</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>SRV</strong></td><td style="padding:6px;border:1px solid var(--border)">Service Locator</td><td style="padding:6px;border:1px solid var(--border)">_ldap._tcp.company.local</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>TXT</strong></td><td style="padding:6px;border:1px solid var(--border)">متن آزاد</td><td style="padding:6px;border:1px solid var(--border)">SPF، DKIM</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== ایجاد Record A =====
+Add-DnsServerResourceRecordA -Name "server01" `
+    -ZoneName "company.local" `
+    -IPv4Address 192.168.1.10
+
+# ===== ایجاد CNAME =====
+Add-DnsServerResourceRecordCName -Name "www" `
+    -HostNameAlias "server01.company.local" `
+    -ZoneName "company.local"
+
+# ===== ایجاد PTR (در Reverse Zone) =====
+Add-DnsServerResourceRecordPtr -Name "10" `
+    -ZoneName "1.168.192.in-addr.arpa" `
+    -PtrDomainName "server01.company.local"
+
+# ===== ایجاد MX =====
+Add-DnsServerResourceRecordMX -Name "@" `
+    -ZoneName "company.local" `
+    -MailExchange "mail.company.local" `
+    -Preference 10
+
+# ===== مشاهده Recordها =====
+Get-DnsServerResourceRecord -ZoneName "company.local"
+Get-DnsServerResourceRecord -ZoneName "company.local" -Name "server01" -RRType A
+
+# ===== Query با PowerShell =====
+Resolve-DnsName server01.company.local
+Resolve-DnsName server01.company.local -Type A
+Resolve-DnsName server01.company.local -Server 192.168.1.5</code></pre>
+
+    <!-- ==== ۲.۶ ==== -->
+    <h3>۲.۶ DNS Integration با Active Directory</h3>
+
+    <p>
+      وقتی DNS Zone را به AD یکپارچه می‌کنی (<strong>AD-Integrated Zone</strong>)،
+      مزایای زیر را می‌گیری:
+    </p>
+
+    <ul>
+      <li><strong>Multi-Master Replication:</strong> هر DC می‌تواند Zone را تغییر دهد</li>
+      <li><strong>Secure Dynamic Update:</strong> فقط دستگاه‌های Authenticated رکورد می‌سازند</li>
+      <li><strong>Replication از طریق AD:</strong> بدون نیاز به Zone Transfer جداگانه</li>
+      <li><strong>Application Partitions:</strong> برای Zoneهای خاص</li>
+    </ul>
+
+    <pre><code># ===== تبدیل Zone معمولی به AD-Integrated =====
+Set-DnsServerPrimaryZone -Name "company.local" `
+    -ReplicationScope "Domain"
+
+# Scopeها:
+# Domain    → همه DCهای همان دامنه
+# Forest    → همه DCهای Forest
+# Legacy    → DCهای Windows 2000
+# Custom    → Application Partition خاص
+
+# ===== تغییر Dynamic Update =====
+Set-DnsServerPrimaryZone -Name "company.local" `
+    -DynamicUpdate "Secure"
+# گزینه‌ها: None، NonsecureAndSecure، Secure
+
+# ===== مشاهده وضعیت =====
+Get-DnsServerZone -Name "company.local" | Format-List
+
+# ===== Aging و Scavenging =====
+# برای پاک کردن رکوردهای قدیمی
+Set-DnsServerZoneAging -Name "company.local" `
+    -Aging $true `
+    -NoRefreshInterval 7.00:00:00 `
+    -RefreshInterval 7.00:00:00
+
+Set-DnsServerScavenging -ScavengingState $true `
+    -ScavengingInterval 7.00:00:00 `
+    -ApplyOnAllZones</code></pre>
+
+    <!-- ==== ۲.۷ ==== -->
+    <h3>۲.۷ DHCP — نقش و اجزا</h3>
+
+    <p>
+      <span class="term" data-term="dhcp">DHCP</span> (Dynamic Host Configuration Protocol)
+      IP، Gateway، DNS و سایر پارامترها را به‌طور خودکار به کلاینت‌ها می‌دهد.
+    </p>
+
+    <p><strong>اجزای اصلی DHCP در Windows Server:</strong></p>
+    <ul>
+      <li><strong>Scope:</strong> محدوده‌ی IPهای قابل تخصیص</li>
+      <li><strong>Exclusion:</strong> IPهایی که تخصیص داده نمی‌شوند</li>
+      <li><strong>Reservation:</strong> IP ثابت بر اساس MAC</li>
+      <li><strong>Lease:</strong> مدت زمان اجاره</li>
+      <li><strong>Options:</strong> تنظیمات اضافی (DNS، Router، NTP، PXE)</li>
+      <li><strong>Superscope:</strong> گروهی از Scopeها</li>
+      <li><strong>Multicast Scope:</strong> برای Multicast Addresses</li>
+    </ul>
+
+    <pre><code># ===== نصب DHCP =====
+Install-WindowsFeature -Name DHCP -IncludeManagementTools
+
+# ===== Authorize در Active Directory =====
+# (پیش‌نیاز: DHCP Server باید در دامنه Authorize شود)
+Add-DhcpServerInDC -DnsName "dhcp01.company.local" `
+    -IPAddress 192.168.1.5
+
+# ===== تنظیم Post-Install =====
+# برای سرورهای جدید:
+netsh dhcp add securitygroups
+
+# ===== ایجاد Scope =====
+Add-DhcpServerv4Scope -Name "LAN-Office" `
+    -StartRange 192.168.1.100 `
+    -EndRange 192.168.1.200 `
+    -SubnetMask 255.255.255.0 `
+    -State Active
+
+# ===== Exclusions =====
+Add-DhcpServerv4ExclusionRange -ScopeId 192.168.1.0 `
+    -StartRange 192.168.1.150 `
+    -EndRange 192.168.1.160
+
+# ===== تنظیم Options =====
+Set-DhcpServerv4OptionValue -ScopeId 192.168.1.0 `
+    -Router 192.168.1.1 `
+    -DnsServer 192.168.1.5,8.8.8.8 `
+    -DnsDomain "company.local"
+
+# ===== مشاهده =====
+Get-DhcpServerv4Scope
+Get-DhcpServerv4OptionValue -ScopeId 192.168.1.0
+Get-DhcpServerv4Lease -ScopeId 192.168.1.0</code></pre>
+
+    <!-- ==== ۲.۸ ==== -->
+    <h3>۲.۸ DHCP Scope، Reservation، Relay</h3>
+
+    <pre><code># ===== Reservation (IP ثابت بر اساس MAC) =====
+Add-DhcpServerv4Reservation -ScopeId 192.168.1.0 `
+    -IPAddress 192.168.1.50 `
+    -ClientId "00-11-22-33-44-55" `
+    -Description "Printer Room 201"
+
+# ===== مشاهده Reservationها =====
+Get-DhcpServerv4Reservation -ScopeId 192.168.1.0
+
+# ===== Lease Time =====
+Set-DhcpServerv4Scope -ScopeId 192.168.1.0 `
+    -LeaseDuration 2.00:00:00
+# LeaseDuration فرمت: DD.HH:MM:SS
+
+# برای SOHO: 1 روز | سازمانی: 8 روز | Guest: 2-4 ساعت
+
+# ===== DHCP Relay Agent =====
+# وقتی سرور DHCP در یک Subnet دیگر است
+Install-WindowsFeature -Name RemoteAccess -IncludeManagementTools
+Install-WindowsFeature -Name Routing
+
+# راه‌اندازی RRAS
+Install-RemoteAccess -VpnType RoutingOnly
+
+# در RRAS Console:
+# IPv4 → General → Right Click → New Routing Protocol → DHCP Relay Agent
+# بعد: Right Click on DHCP Relay Agent → New Interface
+# Interface = کارت سمت کلاینت
+# Right Click → Properties → DHCP Server Address را وارد کن
+
+# یا با netsh:
+netsh routing ip relay add interface "Ethernet"
+netsh routing ip relay add dhcpserver "Ethernet" 192.168.1.5
+
+# ===== Superscope =====
+Add-DhcpServerv4Superscope -SuperscopeName "Multi-Site" `
+    -ScopeId 192.168.1.0,192.168.2.0,192.168.3.0</code></pre>
+
+    <!-- ==== ۲.۹ ==== -->
+    <h3>۲.۹ DHCP Failover و Split Scope</h3>
+
+    <p>
+      برای High Availability، DHCP دو روش دارد:
+      <strong>Failover</strong> و <strong>Split Scope</strong>.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Failover</th>
+          <th style="padding:6px;border:1px solid var(--border)">Split Scope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نسخه</td><td style="padding:6px;border:1px solid var(--border)">Windows Server 2012+</td><td style="padding:6px;border:1px solid var(--border)">همه نسخه‌ها</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">همگام‌سازی</td><td style="padding:6px;border:1px solid var(--border)">✅ خودکار</td><td style="padding:6px;border:1px solid var(--border)">❌ دستی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Scope ID</td><td style="padding:6px;border:1px solid var(--border)">یکسان روی هر دو</td><td style="padding:6px;border:1px solid var(--border)">جداگانه</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Load Balancing</td><td style="padding:6px;border:1px solid var(--border)">✅ Active-Active</td><td style="padding:6px;border:1px solid var(--border)">❌ فقط Failover</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">توصیه</td><td style="padding:6px;border:1px solid var(--border)">✅ مدرن</td><td style="padding:6px;border:1px solid var(--border)">Legacy</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== راه‌اندازی DHCP Failover =====
+Add-DhcpServerv4Failover -ComputerName "dhcp01.company.local" `
+    -Name "DHCP-Failover-01" `
+    -PartnerServer "dhcp02.company.local" `
+    -ScopeId 192.168.1.0 `
+    -SharedSecret "MySecret123" `
+    -Mode LoadBalance `
+    -LoadBalancePercent 50
+
+# Modeها:
+# LoadBalance  → Active-Active (توصیه‌شده)
+# HotStandby   → Active-Passive
+
+# ===== Hot Standby =====
+Add-DhcpServerv4Failover -ComputerName "dhcp01.company.local" `
+    -Name "DHCP-HotStandby" `
+    -PartnerServer "dhcp02.company.local" `
+    -ScopeId 192.168.1.0 `
+    -SharedSecret "MySecret456" `
+    -Mode HotStandby `
+    -ReservePercent 5 `
+    -ServerRole Active `
+    -State SwitchOverInterval=30min
+
+# ===== Force Replication =====
+Invoke-DhcpServerv4FailoverReplication -ComputerName "dhcp01.company.local"
+
+# ===== بررسی وضعیت =====
+Get-DhcpServerv4Failover
+Get-DhcpServerv4Failover -ComputerName "dhcp01.company.local"</code></pre>
+
+    <!-- ==== ۲.۱۰ ==== -->
+    <h3>۲.۱۰ IPAM — مدیریت متمرکز IP</h3>
+
+    <p>
+      <span class="term" data-term="ipam">IPAM</span> (IP Address Management)
+      یک سرویس ویندوز است که DHCP، DNS و IPها را به‌صورت متمرکز مدیریت می‌کند.
+    </p>
+
+    <p><strong>IPAM چه می‌کند؟</strong></p>
+    <ul>
+      <li>کشف خودکار DHCP Serverها، DCها و DNS Serverها</li>
+      <li>مدیریت متمرکز Scopeهای DHCP از چند سرور</li>
+      <li>گزارش استفاده از IP Addressها</li>
+      <li>پایش DNS Zoneها</li>
+      <li>Audit و Tracking تغییرات</li>
+      <li>Role-Based Access Control (RBAC)</li>
+    </ul>
+
+    <pre><code># ===== نصب IPAM =====
+# پیش‌نیاز: Windows Internal Database (WID) یا SQL Server
+Install-WindowsFeature -Name IPAM -IncludeManagementTools
+
+# بعد از نصب، Post-Install Configuration
+Invoke-IpamGpoProvisioning -Domain "company.local" `
+    -GpoPrefixName "IPAM" `
+    -IpamServerFqdn "ipam01.company.local" `
+    -DelegatedGpoUser "Administrator"
+
+# ===== تنظیمات اولیه =====
+# در Server Manager → IPAM → Provision IPAM manually
+
+# ===== روش PowerShell =====
+Set-IpamConfiguration -ProvisioningMethod "Manual"
+
+# ===== اجرای Discovery =====
+Invoke-IpamServerDiscovery -AddressRange 192.168.0.0/16 -Type "Domain"
+
+# یا
+Invoke-IpamServerDiscovery -AddressRange 10.0.0.0/8
+
+# ===== مشاهده سرورهای کشف‌شده =====
+Get-IpamServerInventory
+
+# ===== افزودن دستی Server =====
+Add-IpamServerInventory -Name "dhcp01.company.local" `
+    -ServerType "DHCP" `
+    -ServerRole "DC"
+
+# ===== مشاهده IPها =====
+Get-IpamIPAddress -AddressFamily IPv4
+Get-IpamSubnet
+Get-IpamRange</code></pre>
+
+    <!-- ==== ۲.۱۱ ==== -->
+    <h3>۲.۱۱ VPN — Remote Access Service</h3>
+
+    <p>
+      Windows Server از چند پروتکل VPN پشتیبانی می‌کند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">پروتکل</th>
+          <th style="padding:6px;border:1px solid var(--border)">رمزنگاری</th>
+          <th style="padding:6px;border:1px solid var(--border)">وضعیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PPTP</td><td style="padding:6px;border:1px solid var(--border)">MS-CHAPv2 (شکسته)</td><td style="padding:6px;border:1px solid var(--border)">🔴 توصیه نمی‌شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">L2TP/IPsec</td><td style="padding:6px;border:1px solid var(--border)">AES</td><td style="padding:6px;border:1px solid var(--border)">🟢 استاندارد فعلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">SSTP</td><td style="padding:6px;border:1px solid var(--border)">SSL/TLS</td><td style="padding:6px;border:1px solid var(--border)">🟢 از Firewall عبور می‌کند</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">IKEv2</td><td style="padding:6px;border:1px solid var(--border)">AES</td><td style="padding:6px;border:1px solid var(--border)">🟢 مدرن، مناسب Mobile</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Always On VPN</td><td style="padding:6px;border:1px solid var(--border)">IKEv2/SSTP</td><td style="padding:6px;border:1px solid var(--border)">🟢 جدیدترین (جایگزین DirectAccess)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== نصب Remote Access =====
+Install-WindowsFeature -Name RemoteAccess -IncludeManagementTools
+
+# ===== نصب NPS (RADIUS Server) =====
+Install-WindowsFeature -Name NPAS -IncludeManagementTools
+
+# ===== راه‌اندازی RRAS با PowerShell =====
+Install-RemoteAccess -VpnType VpnS2S,Vpn `
+    -IPv4AddressRange "192.168.100.0,192.168.100.254" `
+    -IPv6Prefix "2001:db8:100::/64"
+
+# پارامترها:
+# Vpn       → Remote Access VPN
+# VpnS2S    → Site-to-Site VPN
+# RoutingOnly → فقط Routing
+
+# ===== مشاهده وضعیت =====
+Get-RemoteAccess
+Get-VpnS2SInterface
+Get-RemoteAccessConnectionStatistics
+
+# ===== فعال‌سازی پروتکل‌ها =====
+# در RRAS Console → Properties → Security
+# یا با netsh:
+netsh ras set vpnprotocol pptp enable
+netsh ras set vpnprotocol l2tp enable
+netsh ras set vpnprotocol sstp enable
+
+# ===== Firewall برای VPN =====
+# PPTP: TCP/1723 + GRE
+# L2TP: UDP/500, 1701, 4500 + ESP
+# SSTP: TCP/443
+# IKEv2: UDP/500, 4500
+
+New-NetFirewallRule -DisplayName "L2TP" `
+    -Direction Inbound -Protocol UDP -LocalPort 500,1701,4500 -Action Allow
+New-NetFirewallRule -DisplayName "SSTP" `
+    -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow</code></pre>
+
+    <!-- ==== ۲.۱۲ ==== -->
+    <h3>۲.۱۲ DirectAccess vs VPN</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">VPN</th>
+          <th style="padding:6px;border:1px solid var(--border)">DirectAccess</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">اتصال</td><td style="padding:6px;border:1px solid var(--border)">دستی توسط کاربر</td><td style="padding:6px;border:1px solid var(--border)">همیشه متصل (Always On)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پروتکل</td><td style="padding:6px;border:1px solid var(--border)">PPTP، L2TP، SSTP، IKEv2</td><td style="padding:6px;border:1px solid var(--border)">IPsec + IPv6 (6to4/Teredo)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Requires Client</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">❌ Built-in</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مدیریت</td><td style="padding:6px;border:1px solid var(--border)">ساده</td><td style="padding:6px;border:1px solid var(--border)">پیچیده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">عمومی</td><td style="padding:6px;border:1px solid var(--border)">Enterprise با Windows Enterprise</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">وضعیت</td><td style="padding:6px;border:1px solid var(--border)">فعال</td><td style="padding:6px;border:1px solid var(--border)">منسوخ → Always On VPN</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== راه‌اندازی DirectAccess =====
+# پیش‌نیاز:
+# - Windows Server 2012+ (Enterprise یا Datacenter)
+# - دو IP عمومی (یکی برای DirectAccess، یکی برای Management)
+# - Certificate (CA) یا Kerberos
+# - IPv6 یا Transition Technology
+
+Install-WindowsFeature -Name DirectAccess-VPN -IncludeManagementTools
+
+# راه‌اندازی با Wizard:
+# Server Manager → Tools → Remote Access Management Console
+# Configuration → DirectAccess → Run Getting Started Wizard
+
+# ===== Always On VPN (جایگزین مدرن) =====
+# مبتنی بر IKEv2 با Certificate
+# نیاز به Certificate Authority + NPS + RRAS
+# مزایا: پشتیبانی Windows 10/11، Domain-Joined و Non-Domain</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      <strong>DirectAccess منسوخ شده است.</strong> مایکروسافت توصیه می‌کند
+      به <strong>Always On VPN</strong> مهاجرت کنی که مبتنی بر IKEv2 است و
+      با Windows 10/11 و Azure AD کار می‌کند.
+    </div>
+
+    <!-- ==== ۲.۱۳ ==== -->
+    <h3>۲.۱۳ NPS و RADIUS</h3>
+
+    <p>
+      <span class="term" data-term="nps">NPS</span> (Network Policy Server)
+      پیاده‌سازی مایکروسافت از RADIUS است. برای:
+    </p>
+
+    <ul>
+      <li>Authentication و Authorization کاربران VPN</li>
+      <li>802.1X برای Wi-Fi و Switch</li>
+      <li>Centralized Management دسترسی‌ها</li>
+      <li>Accounting و Logging</li>
+    </ul>
+
+    <pre><code># ===== نصب NPS =====
+Install-WindowsFeature -Name NPAS -IncludeManagementTools
+
+# ===== ثبت NPS در Active Directory =====
+netsh nps add registeredserver domain=company.local server=nps01.company.local
+
+# ===== ایجاد RADIUS Client (مثلاً VPN Server یا Wi-Fi Controller) =====
+New-NpsRadiusClient -Name "VPN-Server" `
+    -Address "192.168.1.20" `
+    -SharedSecret "RadiusSecret@2024" `
+    -VendorName "RADIUS Standard"
+
+# ===== Policy برای VPN Users =====
+New-NpsRemediationServer
+New-NpsRemediationServerGroup
+
+# بهتر است از GUI استفاده کنی:
+# NPS Console → Policies → Network Policies → New
+
+# مثال: اجازه به Group "VPN-Users"
+# Conditions:
+#   - NAS Port Type = Virtual (VPN)
+#   - Windows Groups = COMPANY\VPN-Users
+# Settings:
+#   - Authentication Methods: MS-CHAP v2، EAP
+#   - Encryption: Strongest
+#   - Idle Timeout: 30 minutes
+
+# ===== مشاهده =====
+Get-NpsRadiusClient
+Get-NpsNetworkPolicy
+Get-NpsAccountingConfiguration</code></pre>
+
+    <!-- ==== ۲.۱۴ ==== -->
+    <h3>۲.۱۴ DFS — Namespace و Replication</h3>
+
+    <p>
+      <span class="term" data-term="dfs">DFS</span> (Distributed File System)
+      دو بخش دارد:
+    </p>
+
+    <ul>
+      <li><strong>DFS Namespace:</strong> یک نقطه‌ی دسترسی یکسان برای منابع مختلف</li>
+      <li><strong>DFS Replication:</strong> همگام‌سازی خودکار بین سرورها</li>
+    </ul>
+
+    <pre><code># ===== نصب =====
+Install-WindowsFeature -Name FS-DFS-Namespace, FS-DFS-Replication -IncludeManagementTools
+
+# ===== DFS Namespace =====
+
+# ۱. ایجاد Namespace
+New-DfsnRoot -Path "\\company.local\Public" `
+    -Type DomainV2 `
+    -TargetPath "C:\DFSRoots\Public"
+
+# Type:
+# Standalone → یک سرور، بدون AD
+# DomainV1   → مبتنی بر AD، فقط NTFS
+# DomainV2   → مبتنی بر AD، NTFS + Access-Based Enumeration
+
+# ۲. ایجاد Folder (Target)
+New-DfsnFolder -Path "\\company.local\Public\Sales" `
+    -TargetPath "\\fileserver01\Sales"
+
+# ۳. افزودن Target دوم (افزونگی)
+New-DfsnFolderTarget -Path "\\company.local\Public\Sales" `
+    -TargetPath "\\fileserver02\Sales"
+
+# ۴. مشاهده
+Get-DfsnRoot
+Get-DfsnFolder -Path "\\company.local\Public\*"
+Get-DfsnFolderTarget -Path "\\company.local\Public\Sales"
+
+# ===== DFS Replication =====
+
+# ۱. ایجاد Replication Group
+New-DfsReplicationGroup -GroupName "RG-Sales"
+
+# ۲. افزودن Memberها
+Add-DfsrMember -GroupName "RG-Sales" -ComputerName "fileserver01","fileserver02"
+
+# ۳. ایجاد Replicated Folder
+Add-DfsrConnection -GroupName "RG-Sales" `
+    -SourceComputerName "fileserver01" `
+    -DestinationComputerName "fileserver02"
+
+New-DfsReplicatedFolder -GroupName "RG-Sales" `
+    -FolderName "Sales" `
+    -DfsnPath "\\company.local\Public\Sales"
+
+# ۴. تنظیم Topology و Schedule
+Set-DfsrMembership -GroupName "RG-Sales" `
+    -FolderName "Sales" `
+    -ComputerName "fileserver01" `
+    -ContentPath "D:\Sales" `
+    -PrimaryMember $true
+
+Set-DfsrMembership -GroupName "RG-Sales" `
+    -FolderName "Sales" `
+    -ComputerName "fileserver02" `
+    -ContentPath "D:\Sales"
+
+# ۵. مشاهده وضعیت
+Get-DfsrMember -GroupName "RG-Sales"
+Get-DfsrMembership
+Get-DfsrBacklog -GroupName "RG-Sales" `
+    -FolderName "Sales" `
+    -SourceComputerName "fileserver01" `
+    -DestinationComputerName "fileserver02"
+Get-DfsrState</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      DFS Namespace + Replication = File Server با High Availability.
+      کاربران با یک مسیر واحد به فایل‌ها دسترسی دارند و
+      داده‌ها خودکار بین سرورها Sync می‌شوند.
+    </div>
+
+    <!-- ==== ۲.۱۵ ==== -->
+    <h3>۲.۱۵ BranchCache</h3>
+
+    <p>
+      <strong>BranchCache</strong> کاهش مصرف پهنای باند WAN با Cache کردن
+      محتوا در شعبه‌هاست.
+    </p>
+
+    <p><strong>دو حالت BranchCache:</strong></p>
+    <ul>
+      <li><strong>Distributed Cache:</strong> کلاینت‌های شعبه خودشان Cache می‌کنند</li>
+      <li><strong>Hosted Cache:</strong> یک سرور اختصاصی در شعبه Cache می‌کند</li>
+    </ul>
+
+    <pre><code># ===== نصب =====
+Install-WindowsFeature -Name BranchCache -IncludeManagementTools
+
+# ===== فعال‌سازی Distributed Cache =====
+Enable-BCHostedClient -ServerNames "bcserver.branch.local" -Force
+# یا:
+Set-BCService -ServiceName BranchCache -Mode DistributedCache -SetCacheSize 50GB
+
+# ===== فعال‌سازی Hosted Cache Server =====
+Install-WindowsFeature -Name BranchCache
+Enable-BCHostedServer -RegisterSCP
+
+# تنظیم اندازه Cache
+Set-BCCache -CacheSize 100GB
+
+# ===== مشاهده وضعیت =====
+Get-BCStatus
+Get-BCStatus | Select ContentInfo
+
+# ===== پاک کردن Cache =====
+Clear-BCCache -Force</code></pre>
+
+    <!-- ==== ۲.۱۶ ==== -->
+    <h3>۲.۱۶ SDN و Network Controller</h3>
+
+    <p>
+      در Windows Server 2016+، مایکروسافت <strong>Software Defined Networking</strong>
+      را با <strong>Network Controller</strong> معرفی کرد که مشابه Cisco DNA Center
+      ولی برای محیط‌های Hyper-V است.
+    </p>
+
+    <p><strong>اجزای SDN:</strong></p>
+    <ul>
+      <li><strong>Network Controller:</strong> کنترلر مرکزی — REST API</li>
+      <li><strong>Hyper-V Network Virtualization (HNV):</strong> مجازی‌سازی شبکه با VXLAN/NVGRE</li>
+      <li><strong>Software Load Balancer (SLB):</strong> Load Balancer نرم‌افزاری</li>
+      <li><strong>RAS Gateway:</strong> Site-to-Site و Remote Access Gateway</li>
+      <li><strong>Datacenter Firewall:</strong> فایروال توزیع‌شده</li>
+    </ul>
+
+    <pre><code># ===== نصب Network Controller =====
+# روی 3 VM یا سرور فیزیکی (Cluster)
+Install-WindowsFeature -Name NetworkController -IncludeManagementTools
+
+# ===== ایجاد Network Controller Cluster =====
+$nodes = @("nc01.company.local", "nc02.company.local", "nc03.company.local")
+
+New-NetworkControllerNodeObject -Name "nc01" `
+    -Server "nc01.company.local" `
+    -FaultDomain "fd:/rack1/host1" `
+    -RestInterface "Ethernet"
+
+New-NetworkControllerCluster -Node $nodes `
+    -ManagementSecurityMode X509 `
+    -Credential (Get-Credential) `
+    -ClusterAuthentication Kerberos
+
+# ===== نمونه REST API Call =====
+# GET https://nc.company.local/networking/v1/LogicalNetworks
+# Header: X-NetworkController-Signed... 
+
+# ===== مزایای SDN =====
+# - Provision سریع شبکه
+# - مدیریت متمرکز با REST API
+# - Integration با System Center و Azure Stack</code></pre>
+
+    <!-- ==== ۲.۱۷ ==== -->
+    <h3>۲.۱۷ Hyper-V Network Virtualization (HNV)</h3>
+
+    <p>
+      HNV اجازه می‌دهد چند شبکه‌ی مجازی روی یک زیرساخت فیزیکی مشترک اجرا شوند،
+      مشابه VXLAN در سیسکو.
+    </p>
+
+    <pre><code># ===== پیش‌نیاز =====
+# - Hyper-V Role
+# - Network Controller (اختیاری برای دستی)
+# - NVGRE یا VXLAN
+
+# ===== نمونه: ایجاد VM Network =====
+# ۱. ایجاد VM Network
+New-VMNetwork -Name "Tenant01-Network"
+
+# ۲. ایجاد Subnet
+$subnet = New-Object Microsoft.HyperV.PowerShell.VMNetworkSubnet
+$subnet.AddressPrefix = "192.168.1.0/24"
+$subnet.Gateway = "192.168.1.1"
+
+# ۳. اتصال VM
+Connect-VMNetworkAdapter -VMName "WebServer01" `
+    -VMNetworkName "Tenant01-Network"
+
+# ===== مزایا =====
+# - جداسازی ترافیک Tenantها
+# - IP Overlapping بدون تداخل
+# - پشتیبانی از Multi-Tenant Cloud
+# - Live Migration بین Subnetهای مختلف</code></pre>
+
+    <!-- ==== ۲.۱۸ ==== -->
+    <h3>۲.۱۸ عیب‌یابی و ابزارها</h3>
+
+    <pre><code># ===== ابزارهای عیب‌یابی شبکه =====
+
+# ۱. مشاهده وضعیت کلی شبکه
+Get-NetAdapter
+Get-NetIPConfiguration
+Get-NetRoute
+Get-NetTCPConnection
+
+# ۲. تست اتصال
+Test-NetConnection -ComputerName server01.company.local -Port 443
+Test-NetConnection -ComputerName 8.8.8.8 -InformationLevel Detailed
+Test-Connection -ComputerName server01 -Count 4
+
+# ۳. DNS
+Resolve-DnsName server01.company.local
+Resolve-DnsName server01.company.local -Type A
+Get-DnsClientCache
+Clear-DnsClientCache
+Get-DnsServerStatistics
+
+# ۴. DHCP
+Get-DhcpServerv4Scope
+Get-DhcpServerv4Lease
+Get-DhcpServerv4Statistics
+
+# ۵. IPAM
+Get-IpamServerInventory
+Get-IpamIPAddress
+
+# ۶. VPN
+Get-RemoteAccess
+Get-RemoteAccessConnectionStatistics
+Get-VpnS2SInterface
+
+# ۷. DFS
+Get-DfsnRoot
+Get-DfsrState
+Get-DfsrBacklog
+
+# ۸. Event Logs
+Get-EventLog -LogName System -Source "Microsoft-Windows-DNS-Server-Service" -Newest 20
+Get-EventLog -LogName System -Source "Microsoft-Windows-DHCP-Server" -Newest 20
+Get-WinEvent -LogName "Microsoft-Windows-RemoteAccess*" -MaxEvents 20
+
+# ۹. Packet Capture
+netsh trace start capture=yes tracefile=C:\trace.etl
+# پس از چند دقیقه:
+netsh trace stop
+# تبدیل ETL به pcap با Netmon یا ETW2Pcap
+
+# ۱۰. Performance Monitoring
+Get-Counter "\Network Interface(*)\Bytes Total/sec"
+Get-Counter "\DNS\Total Query Received/sec"
+Get-Counter "\DHCP Server\Discover Received/sec"
+
+# ===== چک‌لیست عیب‌یابی =====
+# 1. IP Configuration درست است؟
+# 2. DNS Resolution کار می‌کند؟
+# 3. Gateway قابل دسترسی است؟
+# 4. Firewall پورت‌ها را باز گذاشته؟
+# 5. Services (DNS، DHCP، RRAS) در حال اجرا هستند؟
+# 6. Event Logs چه می‌گویند؟
+# 7. آیا زمان بین Server و Client همگام است؟ (Kerberos نیازمند زمان دقیق)</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه DNS Server روی DC را به‌عنوان DNS اصلی برای همه‌ی Serverها و Clientهای دامنه تنظیم کن.
+      در کلاینت‌های دامنه، DNS ISP را به‌عنوان Secondary نگذار —
+      این باعث کندی در Resolve می‌شود.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      DHCP Failover و Split Scope را با هم استفاده نکن —
+      می‌تواند باعث IP Conflict شود. یکی را انتخاب کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      <strong>IPAM</strong> را در سازمان‌های بزرگ پیاده کن —
+      دیگر نیازی نیست جدول Excel برای IPها داشته باشی.
+      کشف خودکار، گزارش و Audit همه‌چیز را مدیریت می‌کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۳ MCSA با <span class="term" data-term="ad">Active Directory</span>،
+      <span class="term" data-term="gpo">GPO</span>،
+      <span class="term" data-term="fsmo">FSMO</span> و Trust آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در <strong>AZ-800</strong> با <strong>Azure Network Adapter</strong> و
+      <strong>Hybrid DNS</strong> (Azure + On-Prem) در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — راه‌اندازی DNS Server کامل</h3>
+    <pre><code># ===== نصب و پیکربندی DNS =====
+Install-WindowsFeature -Name DNS -IncludeManagementTools
+
+# ۱. ایجاد Forward Zone
+Add-DnsServerPrimaryZone -Name "company.local" `
+    -ReplicationScope "Domain" `
+    -DynamicUpdate "Secure"
+
+# ۲. ایجاد Reverse Zone
+Add-DnsServerPrimaryZone -NetworkID "192.168.1.0/24" `
+    -ReplicationScope "Domain"
+
+# ۳. تنظیم Forwarder
+Add-DnsServerForwarder -IPAddress 8.8.8.8,1.1.1.1 -Timeout 3
+
+# ۴. اضافه کردن رکوردهای دستی
+Add-DnsServerResourceRecordA -Name "fileserver" `
+    -ZoneName "company.local" `
+    -IPv4Address 192.168.1.20 `
+    -CreatePtr
+
+Add-DnsServerResourceRecordCName -Name "files" `
+    -HostNameAlias "fileserver.company.local" `
+    -ZoneName "company.local"
+
+# ۵. تنظیم Aging و Scavenging
+Set-DnsServerZoneAging -Name "company.local" -Aging $true
+Set-DnsServerScavenging -ScavengingState $true -ScavengingInterval 7.00:00:00
+
+# ۶. بررسی
+Get-DnsServerZone
+Resolve-DnsName files.company.local</code></pre>
+
+    <h3>مثال ۲ — DHCP Failover برای HA</h3>
+    <pre><code># ===== نصب روی هر دو سرور =====
+# Server 1:
+Install-WindowsFeature -Name DHCP -IncludeManagementTools
+Add-DhcpServerInDC -DnsName "dhcp01.company.local" -IPAddress 192.168.1.5
+
+# Server 2:
+Install-WindowsFeature -Name DHCP -IncludeManagementTools
+Add-DhcpServerInDC -DnsName "dhcp02.company.local" -IPAddress 192.168.1.6
+
+# ===== ایجاد Scope روی Server 1 =====
+Add-DhcpServerv4Scope -Name "Office-LAN" `
+    -StartRange 192.168.1.100 `
+    -EndRange 192.168.1.200 `
+    -SubnetMask 255.255.255.0 `
+    -State Active
+
+Set-DhcpServerv4OptionValue -ScopeId 192.168.1.0 `
+    -Router 192.168.1.1 `
+    -DnsServer 192.168.1.5,192.168.1.6 `
+    -DnsDomain "company.local"
+
+# ===== راه‌اندازی Failover =====
+Add-DhcpServerv4Failover -ComputerName "dhcp01.company.local" `
+    -Name "Office-Failover" `
+    -PartnerServer "dhcp02.company.local" `
+    -ScopeId 192.168.1.0 `
+    -SharedSecret "MySecret@2024" `
+    -Mode LoadBalance `
+    -LoadBalancePercent 50
+
+# ===== تست =====
+# یکی از سرورها را Shutdown کن
+# کلاینت جدید باید همچنان IP بگیرد
+Get-DhcpServerv4Failover -ComputerName "dhcp01.company.local"</code></pre>
+
+    <h3>مثال ۳ — راه‌اندازی SSTP VPN Server</h3>
+    <pre><code># ===== گام ۱: نصب Roleها =====
+Install-WindowsFeature -Name RemoteAccess, NPAS, DirectAccess-VPN -IncludeManagementTools
+
+# ===== گام ۲: Certificate =====
+# از CA داخلی، Certificate برای VPN Server بگیر
+# یا با Self-Signed برای تست:
+New-SelfSignedCertificate -DnsName "vpn.company.local" `
+    -CertStoreLocation "Cert:\LocalMachine\My"
+
+# ===== گام ۳: راه‌اندازی RRAS =====
+Install-RemoteAccess -VpnType Vpn `
+    -IPv4AddressRange "10.10.10.0,10.10.10.254" `
+    -IPv6Prefix "2001:db8:10::/64"
+
+# ===== گام ۴: تنظیم SSTP =====
+# در RRAS Console:
+# Right-click Server → Properties → Security Tab
+# Authentication: MS-CHAP v2، EAP
+# SSL Certificate Binding: Certificate انتخاب کن
+
+# ===== گام ۵: NPS Policy =====
+# NPS Console → Network Policies → New
+# Name: "VPN Users"
+# Conditions:
+#   - NAS Port Type = Virtual (VPN)
+#   - Windows Groups = COMPANY\VPN-Users
+# Settings:
+#   - Authentication: EAP، MS-CHAP v2
+#   - Encryption: Strongest
+#   - Idle Timeout: 60 min
+
+# ===== گام ۶: Firewall =====
+New-NetFirewallRule -DisplayName "SSTP VPN" `
+    -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow
+New-NetFirewallRule -DisplayName "IKEv2" `
+    -Direction Inbound -Protocol UDP -LocalPort 500,4500 -Action Allow
+
+# ===== گام ۷: تست از Windows Client =====
+# Settings → VPN → Add
+# Type: SSTP
+# Server: vpn.company.local
+# Username/Password</code></pre>
+
+    <h3>مثال ۴ — DFS Namespace + Replication</h3>
+    <pre><code># ===== پیش‌نیاز: Active Directory دامنه فعال =====
+
+# ===== نصب Role =====
+Install-WindowsFeature -Name FS-DFS-Namespace, FS-DFS-Replication -IncludeManagementTools
+# روی هر دو سرور
+
+# ===== روی Server 1: Namespace =====
+New-DfsnRoot -Path "\\company.local\Public" `
+    -Type DomainV2 `
+    -TargetPath "C:\DFSRoots\Public"
+
+New-DfsnFolder -Path "\\company.local\Public\Documents" `
+    -TargetPath "\\fileserver01\Documents"
+
+New-DfsnFolderTarget -Path "\\company.local\Public\Documents" `
+    -TargetPath "\\fileserver02\Documents"
+
+# ===== Replication =====
+New-DfsReplicationGroup -GroupName "RG-Documents"
+
+Add-DfsrMember -GroupName "RG-Documents" `
+    -ComputerName "fileserver01","fileserver02"
+
+Add-DfsrConnection -GroupName "RG-Documents" `
+    -SourceComputerName "fileserver01" `
+    -DestinationComputerName "fileserver02"
+
+New-DfsReplicatedFolder -GroupName "RG-Documents" `
+    -FolderName "Documents" `
+    -DfsnPath "\\company.local\Public\Documents"
+
+# ===== Content روی هر Server =====
+New-Item -Path "D:\Documents" -ItemType Directory -Force
+
+Set-DfsrMembership -GroupName "RG-Documents" `
+    -FolderName "Documents" `
+    -ComputerName "fileserver01" `
+    -ContentPath "D:\Documents" `
+    -PrimaryMember $true
+
+Set-DfsrMembership -GroupName "RG-Documents" `
+    -FolderName "Documents" `
+    -ComputerName "fileserver02" `
+    -ContentPath "D:\Documents"
+
+# ===== بررسی =====
+Get-DfsnRoot
+Get-DfsrMember -GroupName "RG-Documents"
+Get-DfsrBacklog -GroupName "RG-Documents" `
+    -FolderName "Documents" `
+    -SourceComputerName "fileserver01" `
+    -DestinationComputerName "fileserver02"</code></pre>
+
+    <h3>مثال ۵ — IPAM Discovery و Management</h3>
+    <pre><code># ===== نصب =====
+Install-WindowsFeature -Name IPAM -IncludeManagementTools
+
+# ===== Post-Install =====
+Invoke-IpamGpoProvisioning -Domain "company.local" `
+    -GpoPrefixName "IPAM" `
+    -IpamServerFqdn "ipam01.company.local" `
+    -DelegatedGpoUser "Administrator"
+
+# ===== Provision manually =====
+Set-IpamConfiguration -ProvisioningMethod "Manual"
+
+# ===== Discovery =====
+Invoke-IpamServerDiscovery -AddressRange 192.168.0.0/16 -Type "Domain"
+
+# برای کلاس C:
+Invoke-IpamServerDiscovery -AddressRange 192.168.1.0/24 -Type "Domain"
+
+# ===== مشاهده سرورهای کشف‌شده =====
+Get-IpamServerInventory
+
+# ===== Import به IPAM =====
+# در Server Manager → IPAM → Server Inventory → Add or Edit
+# یا با PowerShell:
+Get-IpamServerInventory | ForEach-Object {
+    if ($_.ManageabilityStatus -eq "Unspecified") {
+        Set-IpamServerInventory -Name $_.Name -ManageabilityStatus "Managed"
+    }
+}
+
+# ===== مشاهده IP Utilization =====
+Get-IpamSubnet | Format-Table NetworkId, Utilization, TotalIPAddresses
+
+# ===== گزارش =====
+Get-IpamAddressUtilization -AddressFamily IPv4
+Get-IpamIPAddress -AddressFamily IPv4 -SubnetId 192.168.1.0/24</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>Windows Server 2025 نصب کن</li>
+      <li>Promote به Domain Controller با DNS Server (chapter 3 پیش‌نیاز)</li>
+      <li>Forward Zone و Reverse Zone بساز</li>
+      <li>Record A، CNAME و MX ایجاد کن</li>
+      <li>Forwarder به 8.8.8.8 و 1.1.1.1 تنظیم کن</li>
+      <li>DHCP Role نصب کن و در DC Authorize کن</li>
+      <li>Scope برای شبکه 192.168.10.0/24 بساز</li>
+      <li>Options: Router، DNS، Domain را تنظیم کن</li>
+      <li>Reservation برای چاپگر و سرور بساز</li>
+      <li>DHCP Failover با یک سرور دیگر راه‌اندازی کن</li>
+      <li>IPAM نصب کن و Discovery انجام بده</li>
+      <li>DHCP Serverها را به IPAM اضافه کن</li>
+      <li>Report Utilization را بگیر</li>
+      <li>RRAS نصب کن و SSTP VPN راه‌اندازی کن</li>
+      <li>Certificate Self-Signed برای VPN بساز</li>
+      <li>NPS Policy برای VPN Users بساز</li>
+      <li>Firewall را برای VPN پیکربندی کن</li>
+      <li>DFS Namespace و Replication بین دو Server راه‌اندازی کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>DNS Server رکوردها را Resolve نمی‌کند:</strong> Forwarders یا Root Hints اشتباه یا Firewall UDP/53 را بسته.</li>
+      <li><strong>DNS Zone Transfer نمی‌شود:</strong> Master Server آدرس اشتباه یا Allow Zone Transfer فعال نیست.</li>
+      <li><strong>Secure Dynamic Update کار نمی‌کند:</strong> Kerberos مشکل دارد یا Zone AD-Integrated نیست.</li>
+      <li><strong>DHCP IP نمی‌دهد:</strong> Scope Active نیست یا در DC Authorize نشده.</li>
+      <li><strong>DHCP Conflict:</strong> IP استاتیک در محدوده‌ی Scope — Exclusion اضافه کن.</li>
+      <li><strong>DHCP Failover قطع می‌شود:</strong> Shared Secret یکسان نیست یا پورت‌ها بسته‌اند.</li>
+      <li><strong>IPAM Serverها را نمی‌بیند:</strong> Firewall (WMI، RPC)، GPO تنظیم نشده، یا Provisioning Method اشتباه.</li>
+      <li><strong>VPN Client وصل نمی‌شود:</strong> Certificate منقضی، Firewall، یا NPS Policy اشتباه.</li>
+      <li><strong>SSTP کار نمی‌کند:</strong> Certificate در Certificate Store درست Bind نشده.</li>
+      <li><strong>NPS Authenticate نمی‌کند:</strong> RADIUS Client اشتباه یا Shared Secret ناهماهنگ.</li>
+      <li><strong>DFS Replication کند است:</strong> Bandwidth Throttling یا Schedule اشتباه.</li>
+      <li><strong>DFS Backlog بالا:</strong> Connection بین Memberها مشکل دارد یا فایل قفل است.</li>
+      <li><strong>BranchCache کار نمی‌کند:</strong> GPO تنظیم نشده یا Server در SCP Register نشده.</li>
+      <li><strong>DirectAccess Client وصل نمی‌شود:</strong> Certificate یا IPv6 Transition مشکل دارد.</li>
+      <li><strong>Network Controller Cluster بالا نمی‌آید:</strong> Nodeهای FQDN یا Certificate اشتباه.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="dns">DNS</span> •
+      <span class="term" data-term="dhcp">DHCP</span> •
+      <span class="term" data-term="ipam">IPAM</span> •
+      <span class="term" data-term="vpn">VPN</span> •
+      <span class="term" data-term="dfs">DFS</span> •
+      <span class="term" data-term="nps">NPS</span> •
+      <span class="term" data-term="branchcache">BranchCache</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="mcsa-02" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) تفاوت Forward و Reverse Lookup Zone چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Forward برای IPv6، Reverse برای IPv4</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Forward نام → IP، Reverse IP → نام</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Forward رکورد A، Reverse رکورد MX</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) کدام Zone از نظر AD-Integrated توصیه می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Secondary</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Primary AD-Integrated با Secure Dynamic Update</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Stub</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> Forwarder</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) کدام رکورد DNS برای Alias استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> A</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> MX</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> CNAME</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> NS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) تفاوت Forwarder و Conditional Forwarder چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Forwarder برای همه‌ی دامنه‌های ناشناخته، Conditional برای دامنه‌ی خاص</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> Conditional برای همه، Forwarder برای یک</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> Forwarder فقط IPv6</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) کدام Record برای Mail Server استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> A</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> CNAME</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> MX</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> PTR</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) DHCP Failover کدام Mode دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> Split فقط</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> LoadBalance و HotStandby</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Active فقط</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Backup فقط</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) برای Reservation در DHCP از چه چیزی استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> نام کامپیوتر</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> IP</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> MAC Address (Client ID)</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Hostname</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) IPAM چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> فقط DHCP</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> مدیریت متمرکز DHCP، DNS و IP Addresses</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> فقط DNS</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> فقط VPN</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) SSTP از چه پورتی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> TCP/1723</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> UDP/500</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> TCP/443</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> UDP/1194</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) تفاوت DirectAccess و VPN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> هیچ تفاوتی ندارند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> DirectAccess همیشه متصل است، VPN دستی</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> VPN امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> DirectAccess جدیدتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) NPS مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> Network Protocol Server</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> New Policy Service</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> Network Policy Server</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Network Protection System</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) تفاوت DFS Namespace و DFS Replication چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Namespace نقطه‌ی دسترسی یکسان، Replication همگام‌سازی داده‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Namespace همگام‌سازی، Replication دسترسی</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Namespace فقط AD</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) BranchCache در کدام حالت‌ها کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> فقط Distributed</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> فقط Hosted</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> Distributed و Hosted</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط Cloud</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) برای DHCP Relay در Windows Server از چه چیزی استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> DNS</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> RRAS با DHCP Relay Agent</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> IPAM</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> NPS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) کدام نسخه Windows Server برای Always On VPN نیاز است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> Essentials</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Standard و Datacenter</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> هر دو (Standard و Datacenter)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط Datacenter</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) Zone Aging و Scavenging چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> رمزنگاری Zone</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> حذف رکوردهای DNS قدیمی</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Backup Zone</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> Replication</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) کدام Route در RRAS برای Site-to-Site VPN استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> Vpn</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> RoutingOnly</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> VpnS2S</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> Custom</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) SDN در Windows Server از چه چیزی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> فقط CLI</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> Network Controller با REST API</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> فقط SDN Controller خارجی</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> OpenFlow فقط</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک زیرساخت شبکه‌ی کامل با Windows Server بساز:</p>
+    <ul>
+      <li><strong>Domain Controller</strong> با DNS AD-Integrated</li>
+      <li><strong>DNS Zones:</strong> Forward و Reverse برای company.local</li>
+      <li><strong>Forwarder</strong> به 8.8.8.8 و 1.1.1.1</li>
+      <li><strong>Recordهای DNS:</strong> A برای سرورها، CNAME برای Aliases، MX برای Mail</li>
+      <li><strong>DHCP Server</strong> با دو Scope: 192.168.10.0/24 و 192.168.20.0/24</li>
+      <li><strong>DHCP Options:</strong> Router، DNS، Domain، NTP</li>
+      <li><strong>Reservations</strong> برای چاپگر، سرور فایل و سرور وب</li>
+      <li><strong>DHCP Failover</strong> با سرور دوم</li>
+      <li><strong>IPAM</strong> با Discovery و گزارش Utilization</li>
+      <li><strong>SSTP VPN Server</strong> با Certificate</li>
+      <li><strong>NPS Policy</strong> برای VPN Users</li>
+      <li><strong>DFS Namespace</strong> با ۲ Target برای High Availability</li>
+      <li><strong>DFS Replication</strong> بین دو سرور فایل</li>
+      <li><strong>BranchCache</strong> در حالت Distributed</li>
+      <li>مستندسازی کامل با PowerShell Scripts</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>Conditional Forwarder برای یک دامنه‌ی partner بساز.</li>
+        <li>Zone Delegation برای یک زیردامنه پیاده کن.</li>
+        <li>DHCP Policy برای VLAN خاص با Class بساز.</li>
+        <li>IPAM را با RBAC (Role-Based Access Control) تنظیم کن.</li>
+        <li>Always On VPN را با IKEv2 راه‌اندازی کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>DNS Zones:</strong> Primary، Secondary، Stub، AD-Integrated</li>
+      <li><strong>Forward Lookup:</strong> نام → IP | <strong>Reverse Lookup:</strong> IP → نام</li>
+      <li><strong>DNS Records:</strong> A، AAAA، CNAME، MX، NS، SOA، PTR، SRV، TXT</li>
+      <li><strong>Forwarder:</strong> برای همه | <strong>Conditional Forwarder:</strong> برای دامنه‌ی خاص</li>
+      <li><strong>AD-Integrated Zone:</strong> Multi-Master، Secure Update، Replication از AD</li>
+      <li><strong>DHCP اجزا:</strong> Scope، Exclusion، Reservation، Lease، Options</li>
+      <li><strong>DHCP Failover:</strong> LoadBalance یا HotStandby — با Shared Secret</li>
+      <li><strong>DHCP Relay:</strong> در RRAS با DHCP Relay Agent</li>
+      <li><strong>IPAM:</strong> مدیریت متمرکز DHCP + DNS + IP — با Discovery و گزارش</li>
+      <li><strong>VPNها:</strong> PPTP (ناامن)، L2TP/IPsec، SSTP، IKEv2، Always On VPN</li>
+      <li><strong>SSTP:</strong> TCP/443، از فایروال‌ها عبور می‌کند</li>
+      <li><strong>DirectAccess منسوخ شده</strong> → Always On VPN</li>
+      <li><strong>NPS:</strong> پیاده‌سازی RADIUS — برای VPN و 802.1X</li>
+      <li><strong>DFS Namespace:</strong> نقطه‌ی دسترسی یکسان با چند Target</li>
+      <li><strong>DFS Replication:</strong> همگام‌سازی خودکار بین سرورها</li>
+      <li><strong>BranchCache:</strong> Distributed (Client) یا Hosted (Server)</li>
+      <li><strong>SDN:</strong> Network Controller + HNV + SLB + RAS Gateway</li>
+      <li><strong>HNV:</strong> Multi-Tenant با NVGRE یا VXLAN</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mcsa_Ch_01.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mcsa-02">✅ پایان فصل</button>
+      <a class="btn" href="mcsa_Ch_03.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

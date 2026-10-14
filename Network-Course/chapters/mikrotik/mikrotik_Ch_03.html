@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۳ MikroTik — Bridging</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-03">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۳ — Bridging (پل‌سازی در RouterOS)</h1>
+    <div class="meta">
+      <span>📖 ۷۵ دقیقه</span>
+      <span>🎯 وزن در MTCNA: پایه‌ی ضروری</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: مبتدی تا متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      <span class="term" data-term="bridge">Bridge</span> در RouterOS نقش
+      <strong>سوئیچ نرم‌افزاری</strong> را بازی می‌کند. با Bridge می‌توانی چند
+      Interface فیزیکی را در لایه ۲ به هم وصل کنی، Wireless را به Ethernet پل کنی،
+      و شبکه‌ی داخلی یکپارچه بسازی.
+    </p>
+    <p>
+      این فصل یکی از کاربردی‌ترین بخش‌های MTCNA است — بدون درک درست Bridge،
+      نمی‌توانی Access Point، CPE، Router معمولی یا هر سناریوی Wireless را راه‌اندازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفهوم Bridge و تفاوت با Switch</li>
+      <li>سناریوهای کاربرد Bridge</li>
+      <li>ایجاد Bridge در RouterOS</li>
+      <li>افزودن پورت به Bridge</li>
+      <li>Bridge و IP Addressing</li>
+      <li>Bridge VLAN Filtering</li>
+      <li>STP و RSTP در Bridge</li>
+      <li>Bridge با Wireless (Station-Bridge)</li>
+      <li>Bridge Hardware Offload</li>
+      <li>Bridge Port Settings (PVID، Ingress، Egress)</li>
+      <li>Bridge Filters و NAT</li>
+      <li>Bridge Firewall (L2 Firewall)</li>
+      <li>DHCP Snooping روی Bridge</li>
+      <li>عیب‌یابی Bridge</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت Bridge و Switch در RouterOS چیست؟</li>
+      <li>اگر Ethernet و Wireless را پل کنیم، چه اتفاقی می‌افتد؟</li>
+      <li>چرا در بعضی مدل‌ها Bridge خودکار با نام bridge ساخته می‌شود؟</li>
+      <li>Bridge VLAN Filtering چه مزیتی نسبت به VLAN Interface دارد؟</li>
+      <li>Hardware Offload چه زمانی فعال می‌شود و چه تأثیری دارد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۳.۱ ==== -->
+    <h3>۳.۱ مفهوم Bridge و تفاوت با Switch</h3>
+    <p>
+      در RouterOS، <strong>Bridge</strong> یک سوئیچ نرم‌افزاری است که Interfaceهای
+      مختلف را در <strong>لایه ۲</strong> به هم وصل می‌کند.
+    </p>
+
+    <p><strong>Bridge چه چیزی را در بر می‌گیرد:</strong></p>
+    <ul>
+      <li>Interfaceهای Ethernet</li>
+      <li>Interfaceهای Wireless</li>
+      <li>Interfaceهای مجازی (VLAN، EoIP، VPLS)</li>
+      <li>Interfaceهای Tunnel</li>
+    </ul>
+
+    <p><strong>تفاوت Bridge و Switch:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Bridge</th>
+          <th style="padding:6px;border:1px solid var(--border)">Switch (Hardware Chip)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نوع</td><td style="padding:6px;border:1px solid var(--border)">نرم‌افزاری (CPU)</td><td style="padding:6px;border:1px solid var(--border)">سخت‌افزاری (ASIC)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Performance</td><td style="padding:6px;border:1px solid var(--border)">متوسط</td><td style="padding:6px;border:1px solid var(--border)">بالا (Wire-speed)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">انعطاف</td><td style="padding:6px;border:1px solid var(--border)">✅ بالا — VLAN، Filter، NAT</td><td style="padding:6px;border:1px solid var(--border)">❌ محدود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پشتیبانی VLAN</td><td style="padding:6px;border:1px solid var(--border)">✅ (با Filtering)</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">انعطاف، سناریوهای پیچیده</td><td style="padding:6px;border:1px solid var(--border)">Switching ساده و پرسرعت</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      در RouterBOARDهای جدید، Bridge می‌تواند از <strong>Hardware Offload</strong> استفاده کند —
+      یعنی همان Bridge نرم‌افزاری، روی Chip سخت‌افزاری اجرا می‌شود و Performance را بالا می‌برد.
+    </div>
+
+    <!-- ==== ۳.۲ ==== -->
+    <h3>۳.۲ سناریوهای کاربرد Bridge</h3>
+
+    <p><strong>کاربردهای اصلی Bridge:</strong></p>
+    <ul>
+      <li><strong>Router + Switch در یک دستگاه:</strong> چهار پورت Ethernet را به یک Bridge اضافه کن → سوئیچ ۴ پورت بساز</li>
+      <li><strong>Wireless Access Point:</strong> Wireless را با Ethernet پل کن → کاربران WiFi در همان Subnet سیمی قرار می‌گیرند</li>
+      <li><strong>CPE (Customer Premises Equipment):</strong> Wireless Client را با Ethernet LAN پل کن</li>
+      <li><strong>VLAN Switching:</strong> با Bridge VLAN Filtering، سوئیچ با VLAN بساز</li>
+      <li><strong>EoIP / VPLS:</strong> Bridge چند Interface در دو نقطه‌ی جغرافیایی را</li>
+      <li><strong>Bonding:</strong> چند لینک فیزیکی را در یک Bond و سپس Bridge کن</li>
+    </ul>
+
+    <pre><code># ===== سناریو: سوئیچ ۴ پورت با Bridge =====
+/interface bridge add name=bridge-lan
+
+/interface bridge port
+add bridge=bridge-lan interface=ether2
+add bridge=bridge-lan interface=ether3
+add bridge=bridge-lan interface=ether4
+add bridge=bridge-lan interface=ether5
+
+/ip address add address=192.168.88.1/24 interface=bridge-lan
+# حالا IP روتر روی bridge است، نه روی یک Interface خاص
+
+# نتیجه: ether2 تا ether5 یک شبکه‌ی داخلی واحد با Gateway 192.168.88.1</code></pre>
+
+    <!-- ==== ۳.۳ ==== -->
+    <h3>۳.۳ ایجاد Bridge در RouterOS</h3>
+
+    <pre><code># ===== ایجاد Bridge پایه =====
+[admin@MikroTik] > /interface bridge add name=bridge1
+
+# ===== با تنظیمات بیشتر =====
+[admin@MikroTik] > /interface bridge add \
+    name=bridge1 \
+    protocol-mode=rstp \
+    comment="LAN Bridge"
+
+# ===== مشاهده =====
+[admin@MikroTik] > /interface bridge print
+# Flags: X - disabled, R - running
+# 0 R name="bridge1" mtu=auto
+
+# ===== حالت‌های Protocol-Mode =====
+# none  → بدون STP (پیشنهاد برای شبکه‌های ساده)
+# rstp  → Rapid Spanning Tree
+# mstp  → Multiple Spanning Tree (پیشرفته)
+# stp   → Spanning Tree کلاسیک</code></pre>
+
+    <p><strong>پارامترهای مهم Bridge:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">پارامتر</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">name</td><td style="padding:6px;border:1px solid var(--border)">نام Bridge</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">protocol-mode</td><td style="padding:6px;border:1px solid var(--border)">none/rstp/mstp/stp</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">mtu</td><td style="padding:6px;border:1px solid var(--border)">حداکثر اندازه‌ی بسته (auto یا مقدار مشخص)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">mac-address</td><td style="padding:6px;border:1px solid var(--border)">MAC آدرس Bridge</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">vlan-filtering</td><td style="padding:6px;border:1px solid var(--border)">فعال‌سازی VLAN Filtering (yes/no)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">priority</td><td style="padding:6px;border:1px solid var(--border)">اولویت STP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">arp</td><td style="padding:6px;border:1px solid var(--border)">enabled/disabled/proxy-arp/reply-only</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۳.۴ ==== -->
+    <h3>۳.۴ افزودن پورت به Bridge</h3>
+
+    <pre><code># ===== افزودن یک پورت =====
+[admin@MikroTik] > /interface bridge port add \
+    bridge=bridge1 \
+    interface=ether2
+
+# ===== افزودن چند پورت =====
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether3
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether4
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether5
+
+# ===== مشاهده =====
+[admin@MikroTik] > /interface bridge port print
+# Flags: I - inactive, X - disabled, R - running
+# 0   bridge=bridge1 interface=ether2
+# 1 R bridge=bridge1 interface=ether3
+# 2 R bridge=bridge1 interface=ether4
+# 3 R bridge=bridge1 interface=ether5
+
+# ===== نکات مهم =====
+# - یک Interface فقط می‌تواند عضو یک Bridge باشد
+# - پورت‌های Bridge خودشان IP نمی‌گیرند — IP روی Bridge است
+# - برای حذف پورت:
+[admin@MikroTik] > /interface bridge port remove [find interface=ether2]</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      اگر پورت Ethernet قبلاً IP یا DHCP Client داشته، با افزودن به Bridge
+      آن IP غیرفعال می‌شود. همیشه IP روی خود Bridge بگذار.
+    </div>
+
+    <!-- ==== ۳.۵ ==== -->
+    <h3>۳.۵ Bridge و IP Addressing</h3>
+
+    <p>
+      قانون طلایی: <strong>IP روی Bridge، نه روی پورت‌های عضو</strong>.
+    </p>
+
+    <pre><code># ===== اشتباه ❌ =====
+[admin@MikroTik] > /ip address add address=192.168.1.1/24 interface=ether2
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether2
+# نتیجه: IP ether2 از کار می‌افتد چون در Bridge قرار گرفته
+
+# ===== درست ✅ =====
+[admin@MikroTik] > /interface bridge add name=bridge1
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether2
+[admin@MikroTik] > /interface bridge port add bridge=bridge1 interface=ether3
+[admin@MikroTik] > /ip address add address=192.168.1.1/24 interface=bridge1
+
+# ===== چرا؟ =====
+# Bridge = یک Interface مجازی در لایه ۲
+# IP روی Interface لایه ۳ داده می‌شود
+# پورت‌های فیزیکی عضو Bridge، لایه ۲ هستند
+
+# ===== سناریوی رایج: DHCP Server =====
+[admin@MikroTik] > /ip dhcp-server add \
+    name=lan-dhcp \
+    interface=bridge1 \
+    address-pool=lan-pool \
+    disabled=no</code></pre>
+
+    <!-- ==== ۳.۶ ==== -->
+    <h3>۳.۶ Bridge VLAN Filtering</h3>
+
+    <p>
+      Bridge VLAN Filtering یک روش مدرن برای ساخت VLAN روی Bridge است —
+      جایگزین روش قدیمی «یک Bridge جدا برای هر VLAN».
+    </p>
+
+    <pre><code># ===== فعال‌سازی VLAN Filtering =====
+[admin@MikroTik] > /interface bridge set bridge1 vlan-filtering=yes
+
+# ===== تعریف VLANها روی Bridge =====
+[admin@MikroTik] > /interface bridge vlan add \
+    bridge=bridge1 \
+    vlan-ids=10 \
+    tagged=bridge1 \
+    untagged=ether2,ether3
+
+[admin@MikroTik] > /interface bridge vlan add \
+    bridge=bridge1 \
+    vlan-ids=20 \
+    tagged=bridge1 \
+    untagged=ether4,ether5
+
+# ===== تنظیم PVID روی Port =====
+[admin@MikroTik] > /interface bridge port set [find interface=ether2] pvid=10
+[admin@MikroTik] > /interface bridge port set [find interface=ether3] pvid=10
+[admin@MikroTik] > /interface bridge port set [find interface=ether4] pvid=20
+[admin@MikroTik] > /interface bridge port set [find interface=ether5] pvid=20
+
+# ===== VLAN Interface روی Bridge برای Routing =====
+[admin@MikroTik] > /interface vlan add \
+    name=vlan10 \
+    interface=bridge1 \
+    vlan-id=10
+
+[admin@MikroTik] > /interface vlan add \
+    name=vlan20 \
+    interface=bridge1 \
+    vlan-id=20
+
+# ===== IP روی VLAN =====
+[admin@MikroTik] > /ip address add address=192.168.10.1/24 interface=vlan10
+[admin@MikroTik] > /ip address add address=192.168.20.1/24 interface=vlan20
+
+# ===== بررسی =====
+[admin@MikroTik] > /interface bridge vlan print
+[admin@MikroTik] > /interface bridge port print</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در Bridge VLAN Filtering:
+      <ul style="margin:6px 0 0">
+        <li><strong>PVID</strong> = VLAN پیش‌فرض پورت (برای Untagged)</li>
+        <li><strong>Tagged</strong> = پورت‌هایی که فریم را با Tag می‌فرستند (Trunk)</li>
+        <li><strong>Untagged</strong> = پورت‌هایی که فریم بدون Tag می‌گیرند (Access)</li>
+        <li>Bridge خودش به‌عنوان Tagged باید در VLANها ثبت شود</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۳.۷ ==== -->
+    <h3>۳.۷ STP و RSTP در Bridge</h3>
+
+    <p>
+      برای جلوگیری از حلقه (Loop) در Bridge، از STP یا RSTP استفاده می‌کنیم.
+    </p>
+
+    <pre><code># ===== حالت‌های Protocol-Mode =====
+# none → بدون STP (برای شبکه‌های ساده و بدون Loop)
+# stp → Spanning Tree کلاسیک (کند)
+# rstp → Rapid Spanning Tree (سریع، پیشنهاد)
+# mstp → Multiple Spanning Tree (پیشرفته)
+
+# ===== فعال‌سازی RSTP =====
+[admin@MikroTik] > /interface bridge set bridge1 protocol-mode=rstp
+
+# ===== تنظیم Priority (کمتر = Root Bridge) =====
+[admin@MikroTik] > /interface bridge set bridge1 priority=0x1000
+# یا برای Root شدن:
+[admin@MikroTik] > /interface bridge set bridge1 priority=0x0000
+
+# ===== بررسی وضعیت STP =====
+[admin@MikroTik] > /interface bridge monitor bridge1
+# خروجی:
+# state: enabled
+# current-mac-address: XX:XX:XX:XX:XX:XX
+# root-bridge: no
+# root-bridge-id: 0x8000.XX:XX:XX:XX:XX:XX
+# root-path-cost: 20000
+# ...
+
+[admin@MikroTik] > /interface bridge port monitor [find interface=ether2]
+# state: forwarding / blocking / learning
+# role: root-port / designated-port / alternate-port / disabled</code></pre>
+
+    <p><strong>STP Port States:</strong></p>
+    <ul>
+      <li><strong>Disabled:</strong> پورت خاموش</li>
+      <li><strong>Blocking:</strong> فقط BPDU دریافت (در STP کلاسیک)</li>
+      <li><strong>Listening:</strong> BPDU رد و بدل (در STP کلاسیک)</li>
+      <li><strong>Learning:</strong> MAC Learning فعال</li>
+      <li><strong>Forwarding:</strong> کاملاً فعال</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      در شبکه‌های Bridge بدون Loop (مثل یک سوئیچ ساده)، می‌توانی
+      <code>protocol-mode=none</code> بگذاری و Performance را بهبود بدهی.
+    </div>
+
+    <!-- ==== ۳.۸ ==== -->
+    <h3>۳.۸ Bridge با Wireless (Station-Bridge)</h3>
+
+    <p>
+      برای اتصال دو شبکه‌ی Wireless در لایه ۲، از ترکیب
+      <strong>Bridge + Wireless Mode</strong> استفاده می‌کنیم.
+    </p>
+
+    <p><strong>حالت‌های Wireless مرتبط:</strong></p>
+    <ul>
+      <li><strong>ap-bridge:</strong> Access Point استاندارد — کلاینت‌ها با MAC خودشان در Bridge دیده می‌شوند</li>
+      <li><strong>station:</strong> Client ساده — فقط خودش MAC دارد (سایر MACها پشت آن مخفی می‌شوند)</li>
+      <li><strong>station-bridge:</strong> Client برای Bridge — MAC تمام دستگاه‌های LAN را منتقل می‌کند ✅</li>
+      <li><strong>station-pseudobridge:</strong> نسخه‌ی ناقص — برای حالتی که AP از WDS پشتیبانی نمی‌کند</li>
+    </ul>
+
+    <pre><code># ===== سناریو: دو Access Point که LANشان به هم وصل است =====
+
+# ===== AP-1 (Master) =====
+[admin@AP1] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=BridgeLink \
+    frequency=5180 \
+    band=5ghz-a \
+    security-profile=default \
+    disabled=no
+
+[admin@AP1] > /interface bridge add name=bridge1
+[admin@AP1] > /interface bridge port add bridge=bridge1 interface=wlan1
+[admin@AP1] > /interface bridge port add bridge=bridge1 interface=ether1
+[admin@AP1] > /ip address add address=192.168.1.1/24 interface=bridge1
+
+# ===== AP-2 (Client) =====
+[admin@AP2] > /interface wireless set wlan1 \
+    mode=station-bridge \
+    ssid=BridgeLink \
+    frequency=5180 \
+    band=5ghz-a \
+    security-profile=default \
+    disabled=no
+
+[admin@AP2] > /interface bridge add name=bridge1
+[admin@AP2] > /interface bridge port add bridge=bridge1 interface=wlan1
+[admin@AP2] > /interface bridge port add bridge=bridge1 interface=ether1
+[admin@AP2] > /ip address add address=192.168.1.2/24 interface=bridge1
+
+# ===== نتیجه: دو شبکه‌ی LAN کاملاً پل شده =====
+# PC1 در AP1 با PC2 در AP2 در یک شبکه L2 است</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      <strong>station-bridge</strong> فقط با APهای MikroTik کار می‌کند
+      (چون از WDS اختصاصی استفاده می‌کند). برای APهای غیر MikroTik، از
+      <strong>station-pseudobridge</strong> استفاده کن (با محدودیت‌ها).
+    </div>
+
+    <!-- ==== ۳.۹ ==== -->
+    <h3>۳.۹ Bridge Hardware Offload</h3>
+
+    <p>
+      <strong>Hardware Offload</strong> یک ویژگی است که Bridge را روی ASIC
+      سوئیچ اجرا می‌کند — نه CPU. نتیجه: Performance Wire-speed.
+    </p>
+
+    <pre><code># ===== فعال‌سازی Offload (خودکار در بعضی مدل‌ها) =====
+[admin@MikroTik] > /interface bridge port print
+# در ستون H باید ببینی: H = Hardware Offload فعال
+
+# ===== اگر H نشان داده نمی‌شود: =====
+[admin@MikroTik] > /interface bridge port set [find] hw=yes
+
+# ===== بررسی وضعیت Offload =====
+[admin@MikroTik] > /interface ethernet switch print
+[admin@MikroTik] > /interface bridge port print detail
+
+# ===== چه چیزهایی Offload را مختل می‌کنند؟ =====
+# 1. Bridge Firewall فعال
+# 2. VLAN Filtering در بعضی مدل‌ها
+# 3. استفاده از IP روی پورت (به‌جای Bridge)
+# 4. Interface مجازی روی Bridge (VLAN، EoIP)
+
+# ===== بررسی دقیق =====
+[admin@MikroTik] > /interface bridge port print where hw=yes</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      در RouterBOARDهای جدید (مثل hEX، RB4011، CCR)، اگر تمام شرایط
+      Offload برقرار باشد، Bridge می‌تواند چندین Gbps را بدون فشار CPU عبور دهد.
+    </div>
+
+    <!-- ==== ۳.۱۰ ==== -->
+    <h3>۳.۱۰ Bridge Port Settings</h3>
+
+    <p>پارامترهای مهم برای هر پورت Bridge:</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">پارامتر</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">pvid</td><td style="padding:6px;border:1px solid var(--border)">Port VLAN ID — VLAN پیش‌فرض پورت (پیش‌فرض: 1)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">ingress-filtering</td><td style="padding:6px;border:1px solid var(--border)">بررسی VLAN تگ روی فریم‌های ورودی (yes/no)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">frame-types</td><td style="padding:6px;border:1px solid var(--border)">admit-all / admit-only-untagged-and-priority-tagged / admit-only-vlan-tagged</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">tag-stacking</td><td style="padding:6px;border:1px solid var(--border)">افزودن Tag اضافه (برای QinQ)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">horizon</td><td style="padding:6px;border:1px solid var(--border)">جلوگیری از Loop در Bridge بدون STP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">hw</td><td style="padding:6px;border:1px solid var(--border)">Hardware Offload (yes/no/auto)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">edge</td><td style="padding:6px;border:1px solid var(--border)">PortFast — برای پورت‌های Access</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">point-to-point</td><td style="padding:6px;border:1px solid var(--border)">نوع لینک STP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">bpdu-guard</td><td style="padding:6px;border:1px solid var(--border)">BPDU Guard — غیرفعال کردن پورت در صورت دریافت BPDU</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">learn</td><td style="padding:6px;border:1px solid var(--border)">MAC Learning (yes/no)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">trusted</td><td style="padding:6px;border:1px solid var(--border)">پورت Trusted برای DHCP Snooping</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== پیکربندی پورت Access =====
+[admin@MikroTik] > /interface bridge port set [find interface=ether2] \
+    pvid=10 \
+    frame-types=admit-only-untagged-and-priority-tagged \
+    ingress-filtering=yes \
+    edge=yes \
+    bpdu-guard=yes
+
+# ===== پیکربندی پورت Trunk =====
+[admin@MikroTik] > /interface bridge port set [find interface=ether24] \
+    frame-types=admit-only-vlan-tagged \
+    ingress-filtering=yes
+
+# ===== Horizon برای جلوگیری از Loop =====
+[admin@MikroTik] > /interface bridge port set [find interface=ether2] horizon=1
+[admin@MikroTik] > /interface bridge port set [find interface=ether3] horizon=1
+# پورت‌هایی با Horizon یکسان، ترافیک را به هم Forward نمی‌کنند</code></pre>
+
+    <!-- ==== ۳.۱۱ ==== -->
+    <h3>۳.۱۱ Bridge Filters و NAT</h3>
+
+    <p>
+      <strong>Bridge Filters</strong> اجازه می‌دهد در لایه ۲ ترافیک را فیلتر یا تغییر دهی.
+    </p>
+
+    <pre><code># ===== انواع Bridge Filter =====
+# 1. Filter — Drop بسته‌های خاص
+# 2. NAT — تغییر MAC/IP در لایه 2
+
+# ===== مثال ۱: Block کردن ARP در لایه 2 =====
+[admin@MikroTik] > /interface bridge filter add \
+    chain=forward \
+    protocol=arp \
+    action=drop \
+    comment="Block ARP"
+
+# ===== مثال ۲: Block MAC خاص =====
+[admin@MikroTik] > /interface bridge filter add \
+    chain=forward \
+    src-mac-address=00:11:22:33:44:55/FF:FF:FF:FF:FF:FF \
+    action=drop
+
+# ===== مثال ۳: Rate Limit Broadcast =====
+[admin@MikroTik] > /interface bridge filter add \
+    chain=forward \
+    dst-mac-address=FF:FF:FF:FF:FF:FF/FF:FF:FF:FF:FF:FF \
+    action=drop
+
+# ===== Bridge NAT =====
+[admin@MikroTik] > /interface bridge nat add \
+    chain=srcnat \
+    src-mac-address=00:11:22:33:44:55/FF:FF:FF:FF:FF:FF \
+    action=src-nat \
+    to-src-mac-address=AA:BB:CC:DD:EE:FF
+
+# ===== بررسی =====
+[admin@MikroTik] > /interface bridge filter print
+[admin@MikroTik] > /interface bridge nat print</code></pre>
+
+    <!-- ==== ۳.۱۲ ==== -->
+    <h3>۳.۱۲ Bridge Firewall (Layer 2 Firewall)</h3>
+
+    <p>
+      Bridge Firewall نسخه‌ی پیشرفته‌تر Bridge Filter است که از Connection Tracking
+      هم پشتیبانی می‌کند.
+    </p>
+
+    <pre><code># ===== فعال‌سازی Bridge Firewall =====
+# توجه: باید bridge را با use-ip-firewall=yes تنظیم کنی
+[admin@MikroTik] > /interface bridge set bridge1 use-ip-firewall=yes
+
+# حالا Bridge از IP Firewall (filter/nat/mangle) استفاده می‌کند
+
+# ===== کاربرد ۱: اعمال Firewall بین VLANها =====
+# با Bridge VLAN Filtering، وقتی Bridge ترافیک بین VLANها را Route می‌کند،
+# می‌توانی Firewall IP روی Bridge اعمال کنی
+
+[admin@MikroTik] > /ip firewall filter add \
+    chain=forward \
+    in-interface=vlan10 \
+    out-interface=vlan20 \
+    action=drop \
+    comment="Block VLAN10 → VLAN20"
+
+# ===== کاربرد ۲: Isolate Wireless Clients =====
+# روی وایرلس، Client-to-Client Forwarding
+[admin@MikroTik] > /interface bridge port set [find interface=wlan1] horizon=1
+# تمام Wireless Clientها در یک Horizon → نمی‌توانند با هم حرف بزنند
+
+# ===== مقایسه Bridge Filter و Bridge Firewall =====
+# Bridge Filter → L2 فقط، سریع‌تر
+# Bridge Firewall → L3/L4 با Connection Tracking، انعطاف‌پذیرتر</code></pre>
+
+    <!-- ==== ۳.۱۳ ==== -->
+    <h3>۳.۱۳ DHCP Snooping روی Bridge</h3>
+
+    <p>
+      <strong>DHCP Snooping</strong> جلوی DHCP Server جعلی را می‌گیرد.
+      در RouterOS با Bridge Filter پیاده می‌شود.
+    </p>
+
+    <pre><code># ===== فعال‌سازی DHCP Snooping =====
+
+# گام ۱: تعیین پورت‌های Trusted (به‌سمت DHCP Server واقعی)
+[admin@MikroTik] > /interface bridge port set [find interface=ether1] trusted=yes
+# پورت Uplink به DHCP Server
+
+# گام ۲: Bridge Filter برای Block کردن DHCP Offer از Untrusted
+[admin@MikroTik] > /interface bridge filter add \
+    chain=forward \
+    protocol=udp \
+    dst-port=68 \
+    src-port=67 \
+    in-bridge-port=!ether1 \
+    action=drop \
+    comment="DHCP Snooping - Block rogue offers"
+
+# ===== چرا این مهم است؟ =====
+# بدون Snooping، یک مهاجم می‌تواند:
+# - DHCP Offer جعلی بفرستد
+# - خودش را Gateway کند (Man-in-the-Middle)
+# - ترافیک کاربران را بدزدد
+
+# ===== بررسی =====
+[admin@MikroTik] > /interface bridge filter print
+[admin@MikroTik] > /interface bridge port print where trusted=yes</code></pre>
+
+    <!-- ==== ۳.۱۴ ==== -->
+    <h3>۳.۱۴ عیب‌یابی Bridge</h3>
+
+    <pre><code># ===== دستورات عیب‌یابی =====
+
+# ۱. مشاهده وضعیت Bridge
+[admin@MikroTik] > /interface bridge print
+[admin@MikroTik] > /interface bridge print detail
+[admin@MikroTik] > /interface bridge monitor bridge1
+
+# ۲. مشاهده وضعیت پورت‌ها
+[admin@MikroTik] > /interface bridge port print
+[admin@MikroTik] > /interface bridge port print detail
+[admin@MikroTik] > /interface bridge port monitor [find interface=ether2]
+
+# ۳. بررسی VLAN Table
+[admin@MikroTik] > /interface bridge vlan print
+[admin@MikroTik] > /interface bridge vlan print detail
+
+# ۴. مشاهده MAC Table (Host Table)
+[admin@MikroTik] > /interface bridge host print
+[admin@MikroTik] > /interface bridge host print where interface=ether2
+[admin@MikroTik] > /interface bridge host print where mac-address=00:11:22:33:44:55
+
+# ۵. مشاهده Log
+[admin@MikroTik] > /log print where topics~"bridge"
+
+# ۶. تست ارتباط
+[admin@MikroTik] > /ping 192.168.1.10
+[admin@MikroTik] > /tool mac-telnet AA:BB:CC:DD:EE:FF
+
+# ۷. Torch روی Bridge
+[admin@MikroTik] > /tool torch interface=bridge1
+
+# ۸. Packet Sniffer روی Bridge
+[admin@MikroTik] > /tool sniffer quick interface=bridge1
+[admin@MikroTik] > /tool sniffer start</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 چک‌لیست عیب‌یابی Bridge</div>
+      <ol style="margin:6px 0 0">
+        <li>Bridge در حالت <strong>R</strong> (Running) است؟</li>
+        <li>پورت‌ها در Bridge به‌درستی اضافه شده‌اند؟</li>
+        <li>IP روی Bridge است (نه روی پورت)؟</li>
+        <li>VLAN Filtering با PVID و Tagged/Untagged صحیح؟</li>
+        <li>STP حلقه‌ها را بسته؟ یا protocol-mode=none بدون Loop؟</li>
+        <li>MAC Addressها در Host Table دیده می‌شوند؟</li>
+        <li>Firewall و Bridge Filter جلوی ترافیک را نگرفته؟</li>
+      </ol>
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در Bridge، همیشه IP روی خود Bridge بگذار — نه روی پورت‌های عضو.
+      این قانون ۹۰٪ خطاهای پیکربندی را حل می‌کند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      Bridge VLAN Filtering را با احتیاط فعال کن. اگر درست تنظیم نشود،
+      خودت را از دستگاه بیرون می‌اندازی. همیشه از <strong>Safe Mode</strong> استفاده کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای Wireless که می‌خواهی به Bridge وصل شود، از <strong>station-bridge</strong>
+      (نه station) استفاده کن — فقط این حالت MAC تمام دستگاه‌های LAN را منتقل می‌کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۴ MikroTik با <span class="term" data-term="wireless">Wireless</span>،
+      استانداردهای 802.11 و NV2 آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCWE با <strong>WDS</strong>، <strong>NV2</strong> و
+      <strong>Mesh</strong> در RouterOS کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — سوئیچ ۵ پورت با Bridge</h3>
+    <pre><code># ===== سناریو: hEX با ۵ پورت — همه در یک شبکه =====
+
+# ۱. ایجاد Bridge
+[admin@MikroTik] > /interface bridge add name=br-lan protocol-mode=none
+
+# ۲. افزودن همه‌ی پورت‌ها
+[admin@MikroTik] > /interface bridge port
+add bridge=br-lan interface=ether2 hw=yes
+add bridge=br-lan interface=ether3 hw=yes
+add bridge=br-lan interface=ether4 hw=yes
+add bridge=br-lan interface=ether5 hw=yes
+
+# ۳. IP روی Bridge
+[admin@MikroTik] > /ip address add address=192.168.88.1/24 interface=br-lan
+
+# ۴. DHCP Server
+[admin@MikroTik] > /ip pool add name=dhcp-pool ranges=192.168.88.10-192.168.88.254
+[admin@MikroTik] > /ip dhcp-server network add \
+    address=192.168.88.0/24 \
+    gateway=192.168.88.1 \
+    dns-server=192.168.88.1
+[admin@MikroTik] > /ip dhcp-server add \
+    name=lan-dhcp \
+    interface=br-lan \
+    address-pool=dhcp-pool \
+    disabled=no
+
+# ۵. ether1 = WAN با DHCP Client
+[admin@MikroTik] > /ip dhcp-client add interface=ether1 disabled=no
+
+# ۶. NAT
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether1 \
+    action=masquerade
+
+# ۷. بررسی
+[admin@MikroTik] > /interface bridge print
+[admin@MikroTik] > /interface bridge port print
+[admin@MikroTik] > /interface bridge host print</code></pre>
+
+    <h3>مثال ۲ — Bridge با VLAN Filtering (Router + Switch)</h3>
+    <pre><code># ===== سناریو: یک روتر با VLAN 10، 20 و Trunk =====
+
+# ۱. Bridge
+[admin@MikroTik] > /interface bridge add name=br-vlan vlan-filtering=no
+
+# ۲. افزودن پورت‌ها
+# ether2 → Access VLAN 10 (HR)
+# ether3 → Access VLAN 20 (IT)
+# ether4 → Access VLAN 30 (Guest)
+# ether5 → Trunk
+[admin@MikroTik] > /interface bridge port
+add bridge=br-vlan interface=ether2 pvid=10
+add bridge=br-vlan interface=ether3 pvid=20
+add bridge=br-vlan interface=ether4 pvid=30
+add bridge=br-vlan interface=ether5
+
+# ۳. VLAN Table
+[admin@MikroTik] > /interface bridge vlan
+add bridge=br-vlan vlan-ids=10 untagged=ether2 tagged=ether5,br-vlan
+add bridge=br-vlan vlan-ids=20 untagged=ether3 tagged=ether5,br-vlan
+add bridge=br-vlan vlan-ids=30 untagged=ether4 tagged=ether5,br-vlan
+
+# ۴. فعال‌سازی VLAN Filtering
+[admin@MikroTik] > /interface bridge set br-vlan vlan-filtering=yes
+
+# ۵. VLAN Interfaces برای Routing
+[admin@MikroTik] > /interface vlan
+add name=vlan10 interface=br-vlan vlan-id=10
+add name=vlan20 interface=br-vlan vlan-id=20
+add name=vlan30 interface=br-vlan vlan-id=30
+
+# ۶. IP Addresses
+[admin@MikroTik] > /ip address
+add address=192.168.10.1/24 interface=vlan10
+add address=192.168.20.1/24 interface=vlan20
+add address=192.168.30.1/24 interface=vlan30
+
+# ۷. بررسی
+[admin@MikroTik] > /interface bridge vlan print
+[admin@MikroTik] > /interface vlan print
+[admin@MikroTik] > /ip address print</code></pre>
+
+    <h3>مثال ۳ — Wireless Bridge بین دو دفتر</h3>
+    <pre><code># ===== سناریو: اتصال Wireless Point-to-Point با Bridge =====
+
+# ===== AP1 (Master) =====
+[admin@AP1] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=OfficeLink \
+    band=5ghz-a/n/ac \
+    frequency=5500 \
+    channel-width=20/40/80mhz-Ceee \
+    security-profile=secure-profile \
+    disabled=no
+
+[admin@AP1] > /interface bridge add name=br-link
+[admin@AP1] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP1] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP1] > /ip address add address=10.0.0.1/30 interface=br-link
+
+# ===== AP2 (Station-Bridge) =====
+[admin@AP2] > /interface wireless set wlan1 \
+    mode=station-bridge \
+    ssid=OfficeLink \
+    security-profile=secure-profile \
+    disabled=no
+
+[admin@AP2] > /interface bridge add name=br-link
+[admin@AP2] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP2] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP2] > /ip address add address=10.0.0.2/30 interface=br-link
+
+# ===== نتیجه =====
+# تمام دستگاه‌های پشت AP1 و AP2 در یک Broadcast Domain واحد هستند
+# مثل اینکه با کابل به هم وصل شده‌اند
+
+# ===== تست =====
+[admin@AP1] > /ping 10.0.0.2
+[admin@AP1] > /interface bridge host print</code></pre>
+
+    <h3>مثال ۴ — Bridge با STP و BPDU Guard</h3>
+    <pre><code># ===== سناریو: شبکه با Loop بالقوه =====
+
+# ۱. Bridge با RSTP
+[admin@MikroTik] > /interface bridge add \
+    name=br-stp \
+    protocol-mode=rstp \
+    priority=0x1000
+
+# ۲. افزودن پورت‌ها
+[admin@MikroTik] > /interface bridge port
+add bridge=br-stp interface=ether2 edge=yes bpdu-guard=yes
+add bridge=br-stp interface=ether3 edge=yes bpdu-guard=yes
+add bridge=br-stp interface=ether4
+add bridge=br-stp interface=ether5
+
+# ۳. تنظیم Root Bridge
+[admin@MikroTik] > /interface bridge set br-stp priority=0x0000
+# priority کمتر = احتمال Root Bridge بیشتر
+
+# ۴. بررسی وضعیت STP
+[admin@MikroTik] > /interface bridge monitor br-stp
+# ببین: root-bridge: yes (اگر خودت Root شدی)
+
+[admin@MikroTik] > /interface bridge port monitor [find interface=ether4]
+# role: root-port یا designated-port یا alternate-port
+# state: forwarding یا blocking
+
+# ۵. بررسی BPDU Guard
+[admin@MikroTik] > /log print where topics~"bridge"
+# اگر BPDU روی پورت Edge دریافت شود، پیام Log دیده می‌شود</code></pre>
+
+    <h3>مثال ۵ — Bridge Host Table و عیب‌یابی</h3>
+    <pre><code># ===== مشاهده MAC Table =====
+[admin@MikroTik] > /interface bridge host print
+
+# خروجی:
+# MAC-ADDRESS       VID  ON-INTERFACE  BRIDGE  AGE
+# 00:11:22:33:44:55   10  ether2        br-lan  5s
+# AA:BB:CC:DD:EE:FF   20  ether3        br-lan  12s
+
+# ===== فیلتر MAC Table =====
+[admin@MikroTik] > /interface bridge host print where interface=ether2
+[admin@MikroTik] > /interface bridge host print where mac-address=00:11:22:33:44:55
+[admin@MikroTik] > /interface bridge host print where vid=10
+[admin@MikroTik] > /interface bridge host print count-only
+
+# ===== پیدا کردن دستگاه با IP خاص =====
+[admin@MikroTik] > /ip arp print where address=192.168.88.10
+# MAC را بگیر
+[admin@MikroTik] > /interface bridge host print where mac-address=<MAC>
+# Interface را ببین
+
+# ===== پاک کردن MAC Table (اجباری) =====
+[admin@MikroTik] > /interface bridge host remove [find where !local]
+
+# ===== تست شنود یک پورت =====
+[admin@MikroTik] > /tool sniffer set filter-interface=ether2
+[admin@MikroTik] > /tool sniffer start
+# بعد از چند ثانیه:
+[admin@MikroTik] > /tool sniffer stop
+[admin@MikroTik] > /tool sniffer save file-name=capture.pcap</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3 یا EVE-NG دو RouterOS (CHR) بساز</li>
+      <li>به هر RouterOS چند Interface بده (Ethernet و Wireless)</li>
+      <li>روی R1 یک Bridge بساز و ۳ پورت Ethernet اضافه کن</li>
+      <li>IP روی Bridge بگذار و DHCP Server راه‌اندازی کن</li>
+      <li>یک PC به هر پورت وصل کن — همه باید IP بگیرند</li>
+      <li>Bridge VLAN Filtering را فعال کن — VLAN 10، 20، 30</li>
+      <li>هر پورت را به یک VLAN اختصاص بده (PVID)</li>
+      <li>یک VLAN Interface بساز و IP بگذار</li>
+      <li>RSTP را فعال کن و Priority را برای Root تنظیم کن</li>
+      <li>BPDU Guard را روی پورت‌های Edge فعال کن</li>
+      <li>یک Wireless Interface روی R2 را به Bridge وصل کن (station-bridge)</li>
+      <li>R2 را به R1 از طریق Wireless پل کن</li>
+      <li>MAC Table را در هر دو طرف بررسی کن</li>
+      <li>با sniffer یک capture بگیر و بسته‌های Bridge را تحلیل کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>IP روی پورت، نه Bridge:</strong> بعد از افزودن به Bridge، IP پورت غیرفعال می‌شود — IP را روی Bridge بگذار.</li>
+      <li><strong>Bridge بدون STP با Loop:</strong> شبکه دچار Broadcast Storm می‌شود — RSTP را فعال کن.</li>
+      <li><strong>VLAN Filtering بدون VLAN Table:</strong> تمام ترافیک Drop می‌شود — Table را کامل کن.</li>
+      <li><strong>PVID اشتباه:</strong> ترافیک در VLAN نادرست می‌رود — PVID را با VLAN Table هماهنگ کن.</li>
+      <li><strong>station به‌جای station-bridge:</strong> فقط MAC خودش منتقل می‌شود — MACهای پشت آن دیده نمی‌شوند.</li>
+      <li><strong>Hardware Offload از کار افتاده:</strong> Firewall یا VLAN Filtering باعث CPU-based سوئیچینگ می‌شود.</li>
+      <li><strong>BPDU Guard فعال روی Trunk:</strong> پورت Trunk به‌اشتباه Block می‌شود — فقط روی Edge فعال کن.</li>
+      <li><strong>Loop در Bridge بدون STP:</strong> ترافیک Broadcast بی‌نهایت می‌شود — <code>horizon</code> یا RSTP بگذار.</li>
+      <li><strong>Bridge با MTU کم:</strong> بسته‌های بزرگ Drop می‌شوند — MTU را auto یا 1500 بگذار.</li>
+      <li><strong>Trusted Port اشتباه در DHCP Snooping:</strong> سرور DHCP واقعی هم Block می‌شود.</li>
+      <li><strong>MAC Table پر می‌شود:</strong> Aging Time پایین — Aging را چک کن.</li>
+      <li><strong>بعد از تغییر VLAN Filtering اتصال قطع شد:</strong> از Safe Mode استفاده کن — تغییرات بعد از Logout برمی‌گردند.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="bridge">Bridge</span> •
+      <span class="term" data-term="vlan">VLAN</span> •
+      <span class="term" data-term="stp">STP</span> •
+      <span class="term" data-term="portfast">PortFast</span> •
+      <span class="term" data-term="bpdu-guard">BPDU Guard</span> •
+      <span class="term" data-term="wireless">Wireless</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-03" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) Bridge در RouterOS چه نقشی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> روتر لایه ۳</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> سوئیچ نرم‌افزاری لایه ۲</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> فایروال</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> DHCP Server</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) تفاوت Bridge و Switch در RouterOS چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Bridge سریع‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Switch انعطاف‌پذیرتر است</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Bridge نرم‌افزاری و انعطاف‌پذیر، Switch سخت‌افزاری و پرسرعت</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) IP در Bridge روی کدام Interface داده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> ether1</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> خود Bridge</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر پورت جداگانه</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Loopback</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) دستور افزودن پورت به Bridge چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> <code>/interface bridge add-port</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> <code>/interface bridge port set</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> <code>/interface bridge port add bridge=X interface=Y</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> <code>/interface switch add</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) Bridge VLAN Filtering چگونه فعال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> <code>/ip vlan-filtering enable</code></label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> <code>/interface bridge set bridge1 vlan-filtering=yes</code></label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> <code>/interface bridge port set vlan=yes</code></label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> خودکار فعال است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) PVID یعنی چه؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> Port Vendor ID</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> Preferred VLAN ID</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Port VLAN ID — VLAN پیش‌فرض پورت</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Primary Virtual ID</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) در Bridge VLAN Table، «tagged» به چه معناست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> پورت‌هایی که فریم را بدون Tag می‌گیرند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> پورت‌هایی که فریم را با Tag می‌فرستند (Trunk)</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> پورت‌های غیرفعال</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> پورت‌های Wireless</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) برای جلوگیری از Loop در Bridge، چه باید کرد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> VLAN Filtering را فعال کن</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Hardware Offload را فعال کن</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> protocol-mode=rstp (یا horizon)</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Bridge را مجدد بساز</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) در Wireless، کدام Mode برای Bridge مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> station</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> station-bridge</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> ap فقط</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> client</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) Hardware Offload در Bridge چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> کاهش Latency</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> اجرای Bridge روی ASIC — Performance Wire-speed</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> افزایش امنیت</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) چه چیزی Hardware Offload را مختل می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> استفاده از IP روی Bridge</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> فعال بودن Bridge Firewall یا VLAN Filtering در بعضی مدل‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> تعداد زیاد پورت‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> استفاده از Bridge بدون IP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) MAC Table در Bridge را با کدام دستور می‌بینیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> <code>/ip arp print</code></label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> <code>/interface bridge print</code></label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> <code>/interface bridge host print</code></label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> <code>/interface bridge port print</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) BPDU Guard چه زمانی روی Bridge فعال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> روی Trunkها</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> روی پورت‌های Edge که باید BPDU دریافت نکنند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> روی همه‌ی پورت‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> فقط روی Wireless</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) Use-ip-firewall در Bridge چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فعال کردن NAT</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> VLAN Filtering</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> اعمال IP Firewall بین VLANها روی Bridge</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> STP را فعال می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) ستون H در <code>/interface bridge port print</code> چه معنایی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> Heavy Load</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Hardware Offload فعال</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> Half-Duplex</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> Hidden Port</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی لایه ۲ کامل با Bridge بساز:</p>
+    <ul>
+      <li><strong>سخت‌افزار:</strong> RouterOS روی CHR یا سخت‌افزار</li>
+      <li><strong>Bridge با ۴ پورت Ethernet</strong> در یک VLAN</li>
+      <li><strong>VLAN Filtering:</strong> VLAN 10، 20، 30، 99 (Management)</li>
+      <li><strong>VLAN Interface</strong> برای هر VLAN با IP</li>
+      <li><strong>DHCP Server</strong> برای هر VLAN</li>
+      <li><strong>RSTP فعال</strong> با Priority مناسب</li>
+      <li><strong>BPDU Guard</strong> روی پورت‌های Edge</li>
+      <li><strong>DHCP Snooping</strong> با Trusted Port روی Uplink</li>
+      <li><strong>Wireless Interface</strong> به Bridge اضافه شود (Station-Bridge)</li>
+      <li><strong>MAC Table</strong> روی هر دو طرف بررسی و مستندسازی شود</li>
+      <li>مستندسازی کامل با Export و دیاگرام شبکه</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>یک Loop عمدی بساز و ببین RSTP چطور Block می‌کند.</li>
+        <li>یک BPDU جعلی از یک PC بفرست و BPDU Guard را تست کن.</li>
+        <li>با Bridge Filter، ترافیک ARP یک VLAN را Rate Limit کن.</li>
+        <li>با Bridge NAT، MAC یک دستگاه را تغییر بده و تست کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Bridge:</strong> سوئیچ نرم‌افزاری در RouterOS — L2</li>
+      <li><strong>افزودن پورت:</strong> <code>/interface bridge port add</code></li>
+      <li><strong>IP:</strong> همیشه روی Bridge — نه روی پورت‌ها</li>
+      <li><strong>Protocol-Mode:</strong> none / stp / rstp / mstp</li>
+      <li><strong>VLAN Filtering:</strong> Bridge VLAN Table + PVID + Tagged/Untagged</li>
+      <li><strong>PVID:</strong> VLAN پیش‌فرض پورت</li>
+      <li><strong>Tagged:</strong> پورت Trunk — <strong>Untagged:</strong> پورت Access</li>
+      <li><strong>Wireless Bridge:</strong> از station-bridge (نه station)</li>
+      <li><strong>Hardware Offload:</strong> اجرای Bridge روی ASIC — Wire-speed</li>
+      <li><strong>Bridge Firewall:</strong> با use-ip-firewall=yes</li>
+      <li><strong>Horizon:</strong> جلوگیری از Loop بدون STP</li>
+      <li><strong>BPDU Guard:</strong> روی Edge Ports</li>
+      <li><strong>MAC Table:</strong> <code>/interface bridge host print</code></li>
+      <li><strong>DHCP Snooping:</strong> Trusted Port روی Uplink، Block Offer از Untrusted</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_02.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-03">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_04.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۳ MCSA — هویت (Active Directory)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mcsa" data-chapter="mcsa-03">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📕 فصل ۳ — هویت (Active Directory)</h1>
+    <div class="meta">
+      <span>📖 ۱۲۰ دقیقه</span>
+      <span>🎯 وزن در آزمون 70-742: بخش اصلی</span>
+      <span>🧩 ۲۰ سوال پایانی</span>
+      <span>🎓 سطح: متوسط تا پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      <span class="term" data-term="ad">Active Directory</span> قلب هر شبکه‌ی سازمانی
+      ویندوزی است. این فصل، <strong>سنگین‌ترین فصل MCSA</strong> است — از نصب AD DS و
+      ساخت Domain Controller تا مدیریت کاربران، Group Policy،
+      <span class="term" data-term="fsmo">FSMO</span>، Trust، AD CS و RODC.
+    </p>
+    <p>
+      AD DS مخفف <strong>Active Directory Domain Services</strong> است — یک دیتابیس
+      متمرکز برای مدیریت هویت‌ها، دسترسی‌ها و منابع شبکه. تقریباً تمام
+      سرویس‌های سازمانی (Exchange، SharePoint، File Server) به AD وابسته‌اند.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه Active Directory</li>
+      <li>Forest، Tree، Domain — سلسله‌مراتب AD</li>
+      <li>نصب AD DS و Promote به Domain Controller</li>
+      <li>Site و Subnet در AD</li>
+      <li>مدیریت User Account</li>
+      <li>مدیریت Group — Security و Distribution</li>
+      <li>Organizational Unit (OU) و طراحی ساختار</li>
+      <li>Group Policy (GPO) — مفاهیم پایه</li>
+      <li>GPO Processing و LSDOU</li>
+      <li>GPO پیشرفته — Loopback، WMI Filter، Starter GPO</li>
+      <li>Trust بین Domain و Forest</li>
+      <li>FSMO Roles — پنج نقش کلیدی</li>
+      <li>RODC (Read-Only Domain Controller)</li>
+      <li>AD CS — Certificate Services</li>
+      <li>AD FS — Federation Services</li>
+      <li>AD RMS — Rights Management</li>
+      <li>Backup و Recovery AD</li>
+      <li>Replication و عیب‌یابی</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>تفاوت Forest، Tree و Domain در AD چیست؟</li>
+      <li>چرا چند Domain Controller لازم داریم؟</li>
+      <li>نقش‌های FSMO چیست و اگر یکی از کار بیفتد چه اتفاقی می‌افتد؟</li>
+      <li>ترتیب اعمال GPO (LSDOU) چیست و چرا مهم است؟</li>
+      <li>RODC چه کاربردی دارد و چه زمانی از آن استفاده می‌شود؟</li>
+      <li>AD CS چه کاری انجام می‌دهد و چرا لازم است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۳.۱ ==== -->
+    <h3>۳.۱ مفاهیم پایه Active Directory</h3>
+
+    <p>
+      Active Directory یک دیتابیس توزیع‌شده است که از <strong>LDAP</strong>
+      برای دسترسی، <strong>Kerberos</strong> برای Authentication و
+      <strong>DNS</strong> برای Locate کردن سرویس‌ها استفاده می‌کند.
+    </p>
+
+    <p><strong>چهار سرویس اصلی AD:</strong></p>
+    <ul>
+      <li><strong>AD DS:</strong> Domain Services — دیتابیس هویت‌ها (مهم‌ترین)</li>
+      <li><strong>AD CS:</strong> Certificate Services — PKI و Certificate</li>
+      <li><strong>AD FS:</strong> Federation Services — Single Sign-On با سیستم‌های خارجی</li>
+      <li><strong>AD LDS:</strong> Lightweight Directory Services — LDAP سبک برای Application</li>
+      <li><strong>AD RMS:</strong> Rights Management Services — مدیریت دسترسی به اسناد</li>
+    </ul>
+
+    <p><strong>اجزای منطقی AD:</strong></p>
+    <ul>
+      <li><strong>Object:</strong> هر چیزی که در AD ثبت می‌شود (User، Group، Computer، Printer)</li>
+      <li><strong>Attribute:</strong> خصیصه‌های یک Object (مثل Name، Email، Department)</li>
+      <li><strong>Schema:</strong> تعریف ساختار Objectها</li>
+      <li><strong>Global Catalog:</strong> کپی Read-Only از همه‌ی Objectهای Forest</li>
+    </ul>
+
+    <!-- ==== ۳.۲ ==== -->
+    <h3>۳.۲ Forest، Tree، Domain — سلسله‌مراتب AD</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">مفهوم</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">مثال</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Forest</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">مجموعه‌ای از Domainها با Schema و Configuration مشترک</td>
+          <td style="padding:6px;border:1px solid var(--border)">company.local + partner.local</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Tree</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Domainهایی با Namespace پیوسته</td>
+          <td style="padding:6px;border:1px solid var(--border)">company.local، sales.company.local</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Domain</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">واحد مدیریتی و امنیتی — مرز Replication</td>
+          <td style="padding:6px;border:1px solid var(--border)">company.local</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>OU</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">ساختار منطقی داخل Domain — برای Delegation و GPO</td>
+          <td style="padding:6px;border:1px solid var(--border)">OU=Sales، OU=IT</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Site</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">ساختار فیزیکی — بر اساس شبکه</td>
+          <td style="padding:6px;border:1px solid var(--border)">Site=Tehran، Site=Isfahan</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== Domain vs Forest =====
+
+# یک Forest می‌تواند شامل چندین Domain باشد
+# همه‌ی Domainها در یک Forest، Schema و Configuration مشترک دارند
+# همه‌ی Domainها به‌طور خودکار با هم Trust دوسویه دارند
+
+# ===== Child Domain vs Tree Root =====
+company.local                 # Tree Root Domain
+├── sales.company.local       # Child Domain
+├── tech.company.local        # Child Domain
+└── asia.company.local        # Child Domain
+    └── ir.asia.company.local # Grandchild
+
+# ===== Forest Root =====
+# اولین Domain در Forest = Forest Root
+# نمی‌توان آن را حذف کرد (به‌راحتی)
+# Enterprise Admins و Schema Admins در آن هستند
+
+# ===== New Forest vs New Domain =====
+# New Forest → Schema و Configuration جدید
+# New Domain in Existing Forest → Schema مشترک</code></pre>
+
+    <!-- ==== ۳.۳ ==== -->
+    <h3>۳.۳ نصب AD DS و Promote به Domain Controller</h3>
+
+    <pre><code># ===== پیش‌نیازها =====
+# - Windows Server 2016+ (نسخه Standard یا Datacenter)
+# - IP Static
+# - DNS Server (خود DC یا سرور دیگر)
+# - حداقل 20GB فضای دیسک
+# - Administrative Privileges
+
+# ===== نصب Role =====
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+
+# ===== Promote به Domain Controller =====
+
+# ۱. نصب‌کننده PowerShell (قبل از Promote)
+Install-ADDSForest -DomainName "company.local" `
+    -DomainNetbiosName "COMPANY" `
+    -InstallDns `
+    -DomainMode WinThreshold `
+    -ForestMode WinThreshold `
+    -DatabasePath "C:\Windows\NTDS" `
+    -LogPath "C:\Windows\NTDS" `
+    -SysvolPath "C:\Windows\SYSVOL" `
+    -SafeModeAdministratorPassword (Read-Host -AsSecureString "DSRM Password") `
+    -Force
+
+# DomainMode و ForestMode:
+# Win2008R2، Win2012، Win2012R2، WinThreshold (2016+)
+
+# ===== نصب Child Domain =====
+Install-ADDSDomain -NewDomainName "sales" `
+    -ParentDomainName "company.local" `
+    -DomainType ChildDomain `
+    -Credential (Get-Credential COMPANY\Administrator) `
+    -InstallDns `
+    -SafeModeAdministratorPassword (Read-Host -AsSecureString "DSRM Password")
+
+# ===== نصب Domain Controller اضافی (Replica) =====
+Install-ADDSDomainController -DomainName "company.local" `
+    -Credential (Get-Credential COMPANY\Administrator) `
+    -SiteName "Tehran" `
+    -InstallDns `
+    -SafeModeAdministratorPassword (Read-Host -AsSecureString "DSRM Password")
+
+# ===== بررسی بعد از نصب =====
+Get-ADDomain
+Get-ADForest
+Get-ADDomainController -Filter * | Format-Table Name, Site, IPv4Address, OperatingSystem
+Get-Service NTDS, DNS, KDC, Netlogon
+
+# ===== ابزارهای مدیریتی =====
+dsa.msc               # Active Directory Users and Computers
+dssite.msc            # Active Directory Sites and Services
+domain.msc            # Active Directory Domains and Trusts
+schema.msc            # Active Directory Schema (نیاز به Register)
+gpmc.msc              # Group Policy Management Console
+adsiedit.msc          # ADSI Edit
+dsacls.exe            # ACL Management
+repadmin.exe          # Replication
+dcdiag.exe            # Diagnostics</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      قبل از Promote به DC، حتماً:
+      <ul style="margin:6px 0 0">
+        <li>Hostname را تنظیم کن (بعداً نمی‌توان تغییر داد بدون Demote)</li>
+        <li>IP Static بده</li>
+        <li>DNS درست تنظیم کن</li>
+        <li>از سیستم Snapshot یا Backup بگیر (اگر VM است)</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۳.۴ ==== -->
+    <h3>۳.۴ Site و Subnet در AD</h3>
+
+    <p>
+      <strong>Site</strong> برای بهینه‌سازی Replication بین مکان‌های جغرافیایی
+      استفاده می‌شود. اگر دو شعبه در دو شهر دارید، Site جداگانه تعریف کنید.
+    </p>
+
+    <pre><code># ===== ایجاد Site =====
+New-ADReplicationSite -Name "Isfahan"
+New-ADReplicationSite -Name "Shiraz"
+
+# ===== ایجاد Subnet و اتصال به Site =====
+New-ADReplicationSubnet -Name "192.168.1.0/24" -Site "Tehran"
+New-ADReplicationSubnet -Name "192.168.10.0/24" -Site "Isfahan"
+New-ADReplicationSubnet -Name "192.168.20.0/24" -Site "Shiraz"
+
+# ===== ایجاد Site Link =====
+New-ADReplicationSiteLink -Name "Tehran-Isfahan" `
+    -SitesIncluded "Tehran","Isfahan" `
+    -Cost 100 `
+    -ReplicationFrequencyInMinutes 15
+
+# ===== Bridgehead Server =====
+# سرور خاصی که Replication بین Siteها را انجام می‌دهد
+Set-ADReplicationSiteLinkBridge -Name "Default-First-Site-Name"
+
+# ===== مشاهده =====
+Get-ADReplicationSite -Filter *
+Get-ADReplicationSubnet -Filter *
+Get-ADReplicationSiteLink -Filter *
+
+# ===== بررسی Site فعلی کامپیوتر =====
+nltest /dsgetsite
+
+# ===== انتقال DC به Site دیگر =====
+Move-ADDirectoryServer -Identity "DC01" -Site "Isfahan"</code></pre>
+
+    <!-- ==== ۳.۵ ==== -->
+    <h3>۳.۵ مدیریت User Account</h3>
+
+    <pre><code># ===== ایجاد User =====
+New-ADUser -Name "Ali Rezaei" `
+    -GivenName "Ali" `
+    -Surname "Rezaei" `
+    -SamAccountName "ali.rezaei" `
+    -UserPrincipalName "ali.rezaei@company.local" `
+    -EmailAddress "ali.rezaei@company.local" `
+    -DisplayName "Ali Rezaei" `
+    -Department "Sales" `
+    -Title "Sales Manager" `
+    -Office "Tehran" `
+    -OfficePhone "021-12345678" `
+    -Path "OU=Sales,OU=Company,DC=company,DC=local" `
+    -AccountPassword (Read-Host -AsSecureString "Password") `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true
+
+# ===== مشاهده User =====
+Get-ADUser -Identity "ali.rezaei" -Properties *
+Get-ADUser -Filter * -Properties Department,Title | Format-Table Name, SamAccountName, Department
+
+# ===== فیلتر پیشرفته =====
+Get-ADUser -Filter 'Department -eq "Sales"' -Properties Department
+
+# ===== تغییر رمز =====
+Set-ADAccountPassword -Identity "ali.rezaei" `
+    -NewPassword (Read-Host -AsSecureString "New Password") `
+    -Reset
+
+# ===== قفل / باز کردن =====
+Unlock-ADAccount -Identity "ali.rezaei"
+Disable-ADAccount -Identity "ali.rezaei"
+Enable-ADAccount -Identity "ali.rezaei"
+
+# ===== انتقال به OU دیگر =====
+Move-ADObject -Identity "CN=Ali Rezaei,OU=Sales,DC=company,DC=local" `
+    -TargetPath "OU=Marketing,DC=company,DC=local"
+
+# ===== حذف User =====
+Remove-ADUser -Identity "ali.rezaei" -Confirm:$false
+
+# ===== ===== ===== ===== ===== =====
+# ===== Bulk Import از CSV =====
+# ===== ===== ===== ===== ===== =====
+
+# ساختار CSV:
+# SamAccountName,FirstName,LastName,Department,OU
+# ali.rezaei,Ali,Rezaei,Sales,OU=Sales,OU=Company,DC=company,DC=local
+# maryam.h, Maryam,Hosseini,IT,OU=IT,OU=Company,DC=company,DC=local
+
+Import-Csv "C:\Users.csv" | ForEach-Object {
+    $params = @{
+        Name = "$($_.FirstName) $($_.LastName)"
+        GivenName = $_.FirstName
+        Surname = $_.LastName
+        SamAccountName = $_.SamAccountName
+        UserPrincipalName = "$($_.SamAccountName)@company.local"
+        DisplayName = "$($_.FirstName) $($_.LastName)"
+        Department = $_.Department
+        Path = $_.OU
+        AccountPassword = (ConvertTo-SecureString "Welcome@2024" -AsPlainText -Force)
+        Enabled = $true
+        ChangePasswordAtLogon = $true
+    }
+    New-ADUser @params
+    Write-Host "Created: $($_.SamAccountName)"
+}</code></pre>
+
+    <p><strong>انواع User Account:</strong></p>
+    <ul>
+      <li><strong>Domain User:</strong> کاربر عادی</li>
+      <li><strong>Domain Admin:</strong> مدیر دامنه — دسترسی کامل</li>
+      <li><strong>Enterprise Admin:</strong> مدیر Forest — از Forest Root</li>
+      <li><strong>Schema Admin:</strong> تغییر Schema — بسیار حساس</li>
+      <li><strong>Service Account:</strong> برای سرویس‌ها (IIS، SQL)</li>
+      <li><strong>gMSA (Group Managed Service Account):</strong> مدرن — رمز خودکار مدیریت می‌شود</li>
+      <li><strong>Managed Service Account (MSA):</strong> برای یک سرور خاص</li>
+    </ul>
+
+    <pre><code># ===== ایجاد gMSA (پیشنهاد مدرن) =====
+# ۱. ایجاد KDS Root Key (یک بار در Forest)
+Add-KdsRootKey -EffectiveImmediately
+
+# ۲. ایجاد Group برای استفاده
+New-ADGroup -Name "gMSA-WebServers" -GroupScope Global -Path "OU=ServiceAccounts,DC=company,DC=local"
+
+# ۳. ایجاد gMSA
+New-ADServiceAccount -Name "svc-web" `
+    -DNSHostName "svc-web.company.local" `
+    -PrincipalsAllowedToRetrieveManagedPassword "gMSA-WebServers" `
+    -Path "OU=ServiceAccounts,DC=company,DC=local"
+
+# ۴. نصب روی سرور
+Install-ADServiceAccount -Identity "svc-web"
+Test-ADServiceAccount -Identity "svc-web"</code></pre>
+
+    <!-- ==== ۳.۶ ==== -->
+    <h3>۳.۶ مدیریت Group — Security و Distribution</h3>
+
+    <p><strong>دو نوع Group:</strong></p>
+    <ul>
+      <li><strong>Security Group:</strong> برای Permissions و Email</li>
+      <li><strong>Distribution Group:</strong> فقط برای Email (بدون SID)</li>
+    </ul>
+
+    <p><strong>سه Scope اصلی:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Scope</th>
+          <th style="padding:6px;border:1px solid var(--border)">محدوده</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Domain Local</strong></td><td style="padding:6px;border:1px solid var(--border)">همان Domain (برای Permission)</td><td style="padding:6px;border:1px solid var(--border)">دسترسی به منابع</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Global</strong></td><td style="padding:6px;border:1px solid var(--border)">کل Forest (برای Member)</td><td style="padding:6px;border:1px solid var(--border)">گروه‌بندی کاربران</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Universal</strong></td><td style="padding:6px;border:1px solid var(--border)">کل Forest (در Global Catalog)</td><td style="padding:6px;border:1px solid var(--border)">گروه‌های Cross-Domain</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>قاعده‌ی AGDLP (استاندارد مایکروسافت):</strong></p>
+    <pre><code>A → Account (کاربر)
+G → Global Group (گروه کاربران)
+DL → Domain Local Group (دسترسی به منابع)
+P → Permission (مجوزها)
+
+مثال:
+1. Account: ali.rezaei
+2. Global Group: G-Sales-Users
+3. Domain Local Group: DL-Sales-Folder
+4. Permission: Modify روی D:\Sales</code></pre>
+
+    <pre><code># ===== ایجاد Group =====
+New-ADGroup -Name "G-Sales-Users" `
+    -GroupScope Global `
+    -GroupCategory Security `
+    -Path "OU=Sales,OU=Groups,DC=company,DC=local" `
+    -Description "Sales Department Users"
+
+New-ADGroup -Name "DL-Sales-Folder" `
+    -GroupScope DomainLocal `
+    -GroupCategory Security `
+    -Path "OU=Resources,OU=Groups,DC=company,DC=local"
+
+# ===== افزودن Member =====
+Add-ADGroupMember -Identity "G-Sales-Users" -Members "ali.rezaei","maryam.h"
+Add-ADGroupMember -Identity "DL-Sales-Folder" -Members "G-Sales-Users"
+
+# ===== مشاهده Members =====
+Get-ADGroupMember -Identity "G-Sales-Users"
+Get-ADGroupMember -Identity "G-Sales-Users" -Recursive
+
+# ===== مشاهده گروه‌های یک کاربر =====
+Get-ADUser -Identity "ali.rezaei" -Properties MemberOf | Select -ExpandProperty MemberOf
+Get-ADPrincipalGroupMembership -Identity "ali.rezaei"
+
+# ===== حذف Member =====
+Remove-ADGroupMember -Identity "G-Sales-Users" -Members "ali.rezaei" -Confirm:$false
+
+# ===== مشاهده همه‌ی Groupها =====
+Get-ADGroup -Filter * -Properties GroupScope,GroupCategory | Format-Table Name, GroupScope, GroupCategory</code></pre>
+
+    <!-- ==== ۳.۷ ==== -->
+    <h3>۳.۷ Organizational Unit (OU) و طراحی ساختار</h3>
+
+    <p>
+      <strong>OU</strong> یک Container داخل Domain است که برای:
+    </p>
+    <ul>
+      <li>سازماندهی Objectها</li>
+      <li>Delegation مدیریت</li>
+      <li>اعمال GPO</li>
+    </ul>
+
+    <p><strong>سه مدل طراحی OU:</strong></p>
+    <ul>
+      <li><strong>Location-based:</strong> OU=Tehran، OU=Isfahan</li>
+      <li><strong>Department-based:</strong> OU=Sales، OU=IT، OU=HR</li>
+      <li><strong>Function-based:</strong> OU=Users، OU=Computers، OU=Servers</li>
+    </ul>
+
+    <p><strong>مدل ترکیبی (توصیه‌شده):</strong></p>
+    <pre><code>company.local
+└── Company
+    ├── Users
+    │   ├── Sales
+    │   ├── IT
+    │   └── HR
+    ├── Computers
+    │   ├── Sales
+    │   ├── IT
+    │   └── HR
+    ├── Servers
+    ├── Groups
+    │   ├── Global
+    │   └── DomainLocal
+    ├── ServiceAccounts
+    └── Admins</code></pre>
+
+    <pre><code># ===== ایجاد OU =====
+New-ADOrganizationalUnit -Name "Company" `
+    -Path "DC=company,DC=local" `
+    -ProtectedFromAccidentalDeletion $true
+
+New-ADOrganizationalUnit -Name "Users" -Path "OU=Company,DC=company,DC=local"
+New-ADOrganizationalUnit -Name "Sales" -Path "OU=Users,OU=Company,DC=company,DC=local"
+New-ADOrganizationalUnit -Name "IT" -Path "OU=Users,OU=Company,DC=company,DC=local"
+
+New-ADOrganizationalUnit -Name "Computers" -Path "OU=Company,DC=company,DC=local"
+New-ADOrganizationalUnit -Name "Servers" -Path "OU=Company,DC=company,DC=local"
+New-ADOrganizationalUnit -Name "Groups" -Path "OU=Company,DC=company,DC=local"
+
+# ===== مشاهده OU =====
+Get-ADOrganizationalUnit -Filter * | Format-Table Name, DistinguishedName
+
+# ===== حذف OU (فقط اگر خالی باشد) =====
+Remove-ADOrganizationalUnit -Identity "OU=OldOU,DC=company,DC=local" -Confirm:$false
+
+# ===== Delegation مدیریت =====
+# اجازه به یک User برای مدیریت OU
+# در dsa.msc: Right-click OU → Delegate Control
+# یا با dsacls:
+dsacls "OU=Sales,OU=Users,OU=Company,DC=company,DC=local" `
+    /I:S /G "COMPANY\sales-admin:CC;user;all"
+
+# ===== محافظت از OU =====
+Set-ADOrganizationalUnit -Identity "OU=Sales,OU=Users,OU=Company,DC=company,DC=local" `
+    -ProtectedFromAccidentalDeletion $true</code></pre>
+
+    <!-- ==== ۳.۸ ==== -->
+    <h3>۳.۸ Group Policy (GPO) — مفاهیم پایه</h3>
+
+    <p>
+      <strong>GPO</strong> (Group Policy Object) مجموعه‌ای از تنظیمات است که
+      روی Users و Computers اعمال می‌شود.
+    </p>
+
+    <p><strong>GPO دو بخش دارد:</strong></p>
+    <ul>
+      <li><strong>Computer Configuration:</strong> قبل از Login اعمال می‌شود (هر ۹۰ دقیقه)</li>
+      <li><strong>User Configuration:</strong> هنگام Login اعمال می‌شود (هر ۹۰ دقیقه)</li>
+    </ul>
+
+    <p><strong>پردازش GPO در سه مرحله:</strong></p>
+    <ul>
+      <li><strong>Computer Startup:</strong> GPOهای Computer Configuration</li>
+      <li><strong>User Logon:</strong> GPOهای User Configuration</li>
+      <li><strong>Background Refresh:</strong> هر ۹۰ دقیقه +- ۳۰ دقیقه (Random Offset)</li>
+    </ul>
+
+    <pre><code># ===== ایجاد GPO =====
+New-GPO -Name "Sales-Password-Policy" -Comment "Password policy for Sales"
+
+# ===== Link GPO به OU =====
+New-GPLink -Name "Sales-Password-Policy" `
+    -Target "OU=Sales,OU=Users,OU=Company,DC=company,DC=local" `
+    -LinkEnabled Yes
+
+# ===== مشاهده GPOها =====
+Get-GPO -All | Format-Table DisplayName, GpoStatus, CreationTime
+Get-GPOReport -Name "Sales-Password-Policy" -ReportType HTML -Path "C:\gpo.html"
+
+# ===== تغییر تنظیمات GPO =====
+Set-GPRegistryValue -Name "Sales-Password-Policy" `
+    -Key "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate\AU" `
+    -ValueName "NoAutoUpdate" `
+    -Type DWord `
+    -Value 1
+
+# ===== Backup GPO =====
+Backup-GPO -Name "Sales-Password-Policy" -Path "C:\GPO-Backups"
+
+# ===== Restore GPO =====
+Restore-GPO -Name "Sales-Password-Policy" -Path "C:\GPO-Backups"
+
+# ===== Force Update روی یک کامپیوتر =====
+gpupdate /force
+
+# ===== مشاهده نتیجه‌ی GPO =====
+gpresult /r
+gpresult /h C:\gpo-report.html</code></pre>
+
+    <p><strong>GPOهای Default:</strong></p>
+    <ul>
+      <li><strong>Default Domain Policy:</strong> Password Policy، Account Lockout</li>
+      <li><strong>Default Domain Controllers Policy:</strong> تنظیمات DCها</li>
+    </ul>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      تنظیمات <strong>Password Policy</strong> و <strong>Account Lockout</strong>
+      فقط در Default Domain Policy یا در یک GPO Linked به Domain معنی دارند.
+      در OU-level GPO برای Password Policy، فقط روی Userهای همان OU اثر می‌گذارند
+      که رفتار نامطلوبی دارد.
+    </div>
+
+    <!-- ==== ۳.۹ ==== -->
+    <h3>۳.۹ GPO Processing و LSDOU</h3>
+
+    <p>
+      ترتیب اعمال GPOها را با <strong>LSDOU</strong> حفظ کنید:
+    </p>
+
+    <pre><code>L → Local (Local Security Policy)
+S → Site
+D → Domain
+O → Organizational Unit
+U → OU داخلی‌تر (Nested OU)
+
+ترتیب اعمال: از بالا به پایین
+ترتیب اولویت: از پایین به بالا (آخرین برنده است)
+
+مثال:
+1. Local Policy
+2. Site GPO
+3. Domain GPO
+4. Parent OU GPO
+5. Child OU GPO  ← برنده است (اگر Conflict باشد)</code></pre>
+
+    <p><strong>مفاهیم کلیدی:</strong></p>
+    <ul>
+      <li><strong>Inheritance:</strong> GPOهای والد به فرزندان ارث می‌رسند</li>
+      <li><strong>Block Inheritance:</strong> جلوگیری از ارث بردن</li>
+      <li><strong>Enforced (No Override):</strong> GPO بالاتر، برنده است</li>
+      <li><strong>WMI Filter:</strong> اعمال GPO بر اساس شرط WMI</li>
+      <li><strong>Security Filtering:</strong> فقط به گروه خاص اعمال شود</li>
+      <li><strong>Loopback Processing:</strong> تنظیمات User Configuration جایگزین User Settings می‌شود</li>
+    </ul>
+
+    <pre><code># ===== Block Inheritance =====
+Set-GPInheritance -Target "OU=Sales,OU=Users,OU=Company,DC=company,DC=local" `
+    -IsBlocked Yes
+
+# ===== Enforced GPO =====
+Set-GPLink -Name "Default Domain Policy" `
+    -Target "DC=company,DC=local" `
+    -Enforced Yes
+
+# ===== Security Filtering =====
+Set-GPPermission -Name "Sales-Password-Policy" `
+    -TargetName "COMPANY\G-Sales-Users" `
+    -TargetType Group `
+    -PermissionLevel GpoApply
+
+# پاک کردن Authenticated Users و فقط گروه Sales
+Set-GPPermission -Name "Sales-Password-Policy" `
+    -TargetName "Authenticated Users" `
+    -TargetType Group `
+    -PermissionLevel None
+
+# ===== WMI Filter =====
+New-GPO -Name "Win11-Only-GPO"
+New-WmiFilter -Name "Only-Windows-11" `
+    -Query "SELECT * FROM Win32_OperatingSystem WHERE Version LIKE '10.0.2%'" `
+    -Description "Windows 11 Only"
+Set-GPO -Name "Win11-Only-GPO" -WmiFilter "Only-Windows-11"
+
+# ===== Loopback Processing =====
+Set-GPRegistryValue -Name "Loopback-GPO" `
+    -Key "HKLM\Software\Policies\Microsoft\Windows\System" `
+    -ValueName "UserPolicyMode" `
+    -Type DWord -Value 2
+# 1 = Merge (ترکیب)
+# 2 = Replace (جایگزین)
+
+# ===== Force GPO Update =====
+Invoke-GPUpdate -Computer "PC01" -Force</code></pre>
+
+    <!-- ==== ۳.۱۰ ==== -->
+    <h3>۳.۱۰ GPO پیشرفته — Preferences، Starter GPO</h3>
+
+    <pre><code># ===== Group Policy Preferences =====
+# تنظیمات غیراجباری (کابر می‌تواند تغییر دهد)
+# مثل: Mapping درایو، Shortcut، Printer، Scheduled Task
+# در GPMC: Computer/User Configuration → Preferences
+
+# ===== Drive Mapping =====
+# با Preferences → Windows Settings → Drive Maps
+# یا با GPO Registry:
+Set-GPRegistryValue -Name "Sales-Drive-Map" `
+    -Key "HKCU\Network\S" `
+    -ValueName "RemotePath" `
+    -Type String `
+    -Value "\\fileserver\Sales"
+
+# ===== Starter GPO =====
+# قالب آماده برای ساخت GPOهای جدید
+New-GPO -Name "Company-Baseline" `
+    -StarterGpoName "Enterprise Client"
+
+# ===== Group Policy Modeling =====
+# شبیه‌سازی نتیجه‌ی GPO قبل از اعمال
+# در GPMC: Group Policy Modeling Wizard
+
+# ===== Group Policy Results =====
+# مشاهده‌ی نتیجه‌ی GPO روی یک کلاینت
+gpresult /h C:\result.html
+Invoke-GPResult -ComputerName "PC01" -Path "C:\report.xml"</code></pre>
+
+    <!-- ==== ۳.۱۱ ==== -->
+    <h3>۳.۱۱ Trust بین Domain و Forest</h3>
+
+    <p><strong>انواع Trust:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">جهت</th>
+          <th style="padding:6px;border:1px solid var(--border)">Transitive</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Parent-Child</strong></td><td style="padding:6px;border:1px solid var(--border)">دوطرفه</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">خودکار</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Tree-Root</strong></td><td style="padding:6px;border:1px solid var(--border)">دوطرفه</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">خودکار</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>External</strong></td><td style="padding:6px;border:1px solid var(--border)">یک/دوطرفه</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">بین Forest</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Forest</strong></td><td style="padding:6px;border:1px solid var(--border)">یک/دوطرفه</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">بین Forestها</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Realm</strong></td><td style="padding:6px;border:1px solid var(--border)">یک/دوطرفه</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">با Kerberos غیر-Windows</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Shortcut</strong></td><td style="padding:6px;border:1px solid var(--border)">یک‌طرفه</td><td style="padding:6px;border:1px solid var(--border)">✅</td><td style="padding:6px;border:1px solid var(--border)">بهبود عملکرد</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== ایجاد External Trust =====
+New-ADTrust -Name "partner.local" `
+    -Source "company.local" `
+    -Target "partner.local" `
+    -TrustDirection Bidirectional `
+    -TrustType External `
+    -TrustPassword (Read-Host -AsSecureString "Trust Password")
+
+# ===== ایجاد Forest Trust =====
+New-ADTrust -Name "partner.local" `
+    -TrustType Forest `
+    -TrustDirection Bidirectional `
+    -TrustPassword (Read-Host -AsSecureString "Trust Password")
+
+# ===== بررسی Trust =====
+Get-ADTrust -Filter *
+Get-ADTrust -Identity "partner.local" -Properties *
+
+# ===== حذف Trust =====
+Remove-ADTrust -Identity "partner.local" -Confirm:$false
+
+# ===== تست Trust =====
+netdom query trust
+netdom verify partner.local
+
+# ===== Selective Authentication =====
+# در Forest Trust، می‌توان دسترسی را محدود کرد
+Set-ADTrust -Identity "partner.local" -SelectiveAuthentication $true
+
+# بعد در سمت شریک، روی هر Server/User که می‌خواهد دسترسی داشته باشد:
+# Allowed to Authenticate در ADUC</code></pre>
+
+    <!-- ==== ۳.۱۲ ==== -->
+    <h3>۳.۱۲ FSMO Roles — پنج نقش کلیدی</h3>
+
+    <p>
+      <strong>FSMO</strong> (Flexible Single Master Operations) پنج نقش است که
+      فقط روی یک DC فعال هستند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نقش</th>
+          <th style="padding:6px;border:1px solid var(--border)">محدوده</th>
+          <th style="padding:6px;border:1px solid var(--border)">کارکرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Schema Master</strong></td><td style="padding:6px;border:1px solid var(--border)">Forest</td><td style="padding:6px;border:1px solid var(--border)">تغییرات Schema</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Domain Naming Master</strong></td><td style="padding:6px;border:1px solid var(--border)">Forest</td><td style="padding:6px;border:1px solid var(--border)">افزودن/حذف Domain</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>PDC Emulator</strong></td><td style="padding:6px;border:1px solid var(--border)">Domain</td><td style="padding:6px;border:1px solid var(--border)">Time Sync، Password Changes، GPO</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>RID Master</strong></td><td style="padding:6px;border:1px solid var(--border)">Domain</td><td style="padding:6px;border:1px solid var(--border)">تخصیص RID Pools به DCها</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>Infrastructure Master</strong></td><td style="padding:6px;border:1px solid var(--border)">Domain</td><td style="padding:6px;border:1px solid var(--border)">Reference Updates بین Domainها</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مشاهده FSMO Roles =====
+netdom query fsmo
+
+# با PowerShell:
+Get-ADForest | Select SchemaMaster, DomainNamingMaster
+Get-ADDomain | Select PDCEmulator, RIDMaster, InfrastructureMaster
+
+# ===== انتقال FSMO Role =====
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole SchemaMaster, DomainNamingMaster, PDCEmulator, RIDMaster, InfrastructureMaster
+
+# یا یکی یکی:
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" -OperationMasterRole PDCEmulator
+
+# ===== Seize (اجباری) - اگر DC اصلی از کار افتاده =====
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole PDCEmulator `
+    -Force
+
+# ===== نکات مهم =====
+# 1. Schema Master و Domain Naming Master روی یک DC در Forest Root
+# 2. PDC Emulator مهم‌ترین نقش (Time Sync، Urgent Replication)
+# 3. Infrastructure Master نباید روی Global Catalog باشد (اگر چند Domain داری)
+# 4. در Forest با یک Domain، می‌توان همه را روی یک DC گذاشت</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      اگر DC اصلی PDC Emulator از کار بیفتد:
+      <ul style="margin:6px 0 0">
+        <li>Time Sync در Domain مشکل می‌خورد</li>
+        <li>Password Changes ممکن است کندتر انجام شوند</li>
+        <li>GPO Editing ممکن است مشکل داشته باشد</li>
+        <li>Urgent Replication متوقف می‌شود</li>
+      </ul>
+      بلافاصله با <code>-Force</code> به DC دیگر منتقل کن.
+    </div>
+
+    <!-- ==== ۳.۱۳ ==== -->
+    <h3>۳.۱۳ RODC (Read-Only Domain Controller)</h3>
+
+    <p>
+      <strong>RODC</strong> یک Domain Controller فقط-خواندنی است که برای
+      مکان‌های پرخطر (شعبه‌ها، مکان‌های فیزیکی ناامن) طراحی شده.
+    </p>
+
+    <p><strong>مزایای RODC:</strong></p>
+    <ul>
+      <li>دیتابیس فقط-خواندنی — تغییرات باید از DC قابل نوشتن بیاید</li>
+      <li>Password Caching محدود — فقط کاربران مجاز</li>
+      <li>امنیت بالا در صورت دزدیده شدن سخت‌افزار</li>
+      <li>کاهش Replication و پهنای باند</li>
+      <li>Filtered Attribute Set — بعضی Attributeها Replicate نمی‌شوند</li>
+    </ul>
+
+    <pre><code># ===== نصب RODC =====
+
+# ۱. در Forest، ابتدا Recycle Bin را فعال کن (اختیاری)
+Enable-ADOptionalFeature -Identity "Recycle Bin Feature" `
+    -Scope ForestOrConfigurationSet `
+    -Target "company.local"
+
+# ۲. در DC اصلی، یک Staged Account بساز
+Add-ADDSReadOnlyDomainControllerAccount -DomainControllerAccountName "RODC01" `
+    -DomainName "company.local" `
+    -SiteName "Isfahan" `
+    -DelegatedAdministratorAccountName "COMPANY\rodc-admin" `
+    -AllowPasswordReplicationAccountName "COMPANY\Allowed RODC Password Replication Group" `
+    -DenyPasswordReplicationAccountName "COMPANY\Denied RODC Password Replication Group" `
+    -ReplicationSourceDC "DC01.company.local" `
+    -InstallDns
+
+# ۳. در سرور جدید (RODC):
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+
+Install-ADDSDomainController -DomainName "company.local" `
+    -Credential (Get-Credential) `
+    -ReadOnlyReplica `
+    -SiteName "Isfahan" `
+    -InstallDns `
+    -SafeModeAdministratorPassword (Read-Host -AsSecureString "DSRM")
+
+# ===== Password Replication Policy =====
+# کدام Userها اجازه دارند رمزشان در RODC Cache شود
+
+# در ADUC: Domain Controller OU → RODC → Properties → Password Replication Policy
+
+# با PowerShell:
+Get-ADDomainControllerPasswordReplicationPolicy -Identity "RODC01"
+Get-ADDomainControllerPasswordReplicationPolicyUsage -Identity "RODC01" `
+    -AllowedAccounts
+
+# ===== افزودن User به Allowed List =====
+Add-ADDomainControllerPasswordReplicationPolicy -Identity "RODC01" `
+    -AllowedList "COMPANY\G-Branch-Users"
+
+# ===== Credential Caching =====
+# فقط Userهایی که در Allowed هستند، رمزشان Cache می‌شود
+# بقیه باید به DC اصلی برای Authentication وصل شوند</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی امنیتی</div>
+      به‌طور پیش‌فرض، اعضای Domain Admins و Enterprise Admins
+      <strong>هرگز</strong> رمزشان در RODC Cache نمی‌شود.
+      این برای امنیت است — اگر RODC دزدیده شود، رمزهای حساس محافظت می‌شوند.
+    </div>
+
+    <!-- ==== ۳.۱۴ ==== -->
+    <h3>۳.۱۴ AD CS — Certificate Services</h3>
+
+    <p>
+      <strong>AD CS</strong> (Active Directory Certificate Services)
+      پیاده‌سازی PKI مایکروسافت است. برای:
+    </p>
+    <ul>
+      <li>صدور Certificate برای سرویس‌ها (IIS، Exchange)</li>
+      <li>Certificate برای VPN (SSTP، IKEv2)</li>
+      <li>802.1X Authentication (Wi-Fi، Switch)</li>
+      <li>Code Signing</li>
+      <li>Email Encryption (S/MIME)</li>
+      <li>Smart Card Logon</li>
+    </ul>
+
+    <p><strong>انواع CA:</strong></p>
+    <ul>
+      <li><strong>Enterprise CA:</strong> یکپارچه با AD — Auto-Enrollment</li>
+      <li><strong>Standalone CA:</strong> مستقل — Manual Approval</li>
+      <li><strong>Root CA:</strong> ریشه‌ی PKI — Offline توصیه می‌شود</li>
+      <li><strong>Subordinate CA:</strong> زیرمجموعه — Online</li>
+    </ul>
+
+    <pre><code># ===== نصب AD CS =====
+Install-WindowsFeature -Name AD-Certificate -IncludeManagementTools
+
+# ===== راه‌اندازی Root Enterprise CA =====
+Install-AdcsCertificationAuthority -CAType EnterpriseRootCa `
+    -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+    -KeyLength 2048 `
+    -HashAlgorithmName SHA256 `
+    -ValidityPeriod Years `
+    -ValidityPeriodUnits 10 `
+    -Force
+
+# ===== راه‌اندازی Subordinate CA =====
+Install-AdcsCertificationAuthority -CAType EnterpriseSubordinateCa `
+    -ParentCA "company.local\Company-Root-CA" `
+    -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+    -KeyLength 2048 `
+    -HashAlgorithmName SHA256 `
+    -Force
+
+# ===== نصب Web Enrollment =====
+Install-AdcsWebEnrollment -Force
+
+# ===== نصب Online Responder =====
+Install-AdcsOnlineResponder -Force
+
+# ===== نصب NDES (Network Device Enrollment Service) =====
+Install-AdcsNetworkDeviceEnrollmentService -Force
+
+# ===== پیکربندی Template =====
+# در certtmpl.msc → Duplicate Template → تنظیم → Publish در CA
+
+# ===== Auto-Enrollment =====
+# GPO: Computer Configuration → Policies → Windows Settings → Security Settings
+# → Public Key Policies → Certificate Services Client - Auto-Enrollment
+# Enabled: Enabled
+# Renew expired certificates: Enabled
+
+# ===== درخواست Certificate =====
+Get-Certificate -Template "WebServer" -CertStoreLocation "Cert:\LocalMachine\My" `
+    -DnsName "web.company.local"
+
+# ===== مشاهده Certificateها =====
+Get-ChildItem -Path "Cert:\LocalMachine\My"
+certutil -store My
+
+# ===== Revoke Certificate =====
+certutil -revoke "SerialNumber" 1
+
+# ===== مشاهده CRL =====
+certutil -CRL</code></pre>
+
+    <!-- ==== ۳.۱۵ ==== -->
+    <h3>۳.۱۵ AD FS — Federation Services</h3>
+
+    <p>
+      <strong>AD FS</strong> (Active Directory Federation Services)
+      Single Sign-On (SSO) را بین سازمان‌ها یا با Cloud فراهم می‌کند.
+    </p>
+
+    <p><strong>موارد استفاده:</strong></p>
+    <ul>
+      <li>SSO با Office 365 / Azure AD</li>
+      <li>SSO بین دو سازمان</li>
+      <li>دسترسی به SaaS (Salesforce، Dropbox)</li>
+      <li>Claims-Based Authentication</li>
+    </ul>
+
+    <pre><code># ===== نصب AD FS =====
+Install-WindowsFeature -Name ADFS-Federation -IncludeManagementTools
+
+# ===== پیش‌نیاز: Certificate برای AD FS =====
+# Certificate باید از CA معتبر باشد
+# Common Name: fs.company.local
+
+# ===== پیکربندی AD FS Farm =====
+Install-AdfsFarm -CertificateThumbprint "certificate-thumbprint" `
+    -FederationServiceName "fs.company.local" `
+    -FederationServiceDisplayName "Company Federation" `
+    -ServiceAccountCredential (Get-Credential COMPANY\adfs-svc) `
+    -GroupServiceAccountIdentifier "COMPANY\adfs-svc$"
+
+# برای Farm با SQL:
+Install-AdfsFarm -CertificateThumbprint "certificate-thumbprint" `
+    -FederationServiceName "fs.company.local" `
+    -FederationServiceDisplayName "Company Federation" `
+    -ServiceAccountCredential (Get-Credential) `
+    -SQLConnectionString "Data Source=sql01;Initial Catalog=AdfsConfig;Integrated Security=True"
+
+# ===== تنظیم Claim Rules =====
+# در AD FS Management → Relying Party Trusts → Edit Claim Rules
+
+# ===== AD FS Proxy =====
+# در DMZ نصب می‌شود
+Install-WindowsFeature -Name Web-Application-Proxy -IncludeManagementTools
+
+Install-WebApplicationProxy `
+    -FederationServiceName "fs.company.local" `
+    -FederationServiceTrustCredential (Get-Credential)
+
+# ===== بررسی =====
+Get-AdfsProperties
+Get-AdfsRelyingPartyTrust
+Get-AdfsClaimDescription</code></pre>
+
+    <!-- ==== ۳.۱۶ ==== -->
+    <h3>۳.۱۶ AD RMS — Rights Management</h3>
+
+    <p>
+      <strong>AD RMS</strong> (Active Directory Rights Management Services)
+      از اسناد Office و Email محافظت می‌کند — حتی بعد از ارسال به خارج سازمان.
+    </p>
+
+    <p><strong>سناریو:</strong></p>
+    <ul>
+      <li>ارسال ایمیل محرمانه — گیرنده نمی‌تواند Forward کند</li>
+      <li>Document Protection — فقط افراد مشخص می‌توانند باز کنند</li>
+      <li>Corporate Policy — Policy خودکار روی اسناد</li>
+    </ul>
+
+    <pre><code># ===== نصب AD RMS =====
+Install-WindowsFeature -Name ADRMS -IncludeManagementTools
+
+# ===== راه‌اندازی =====
+Initialize-ADRMS -Credential (Get-Credential) `
+    -ClusterName "rms.company.local" `
+    -CertificationMode Enterprise `
+    -CertificationUserId "COMPANY\Administrator"
+
+# یا با GUI:
+# Server Manager → AD RMS → Create New AD RMS Root Cluster
+
+# ===== پیکربندی Rights Policy Templates =====
+# در AD RMS Console → Rights Policy Templates → Create
+# Template: "Confidential - No Forward"
+
+# ===== استفاده در Office =====
+# File → Info → Protect Document → Restrict Access
+
+# ===== نکات =====
+# - AD RMS نیاز به Certificate دارد
+# - باید در Forest با Schema Extension نصب شود
+# - برای Azure، از Azure Information Protection استفاده کن</code></pre>
+
+    <!-- ==== ۳.۱۷ ==== -->
+    <h3>۳.۱۷ Backup و Recovery AD</h3>
+
+    <pre><code># ===== سه نوع Backup برای AD =====
+
+# ۱. System State Backup (شامل AD)
+wbadmin start systemstatebackup -backupTarget:D: -quiet
+
+# ۲. Full Server Backup
+wbadmin start backup -backupTarget:D: -allCritical -quiet
+
+# ۳. AD Recycle Bin (Windows Server 2008 R2+)
+Enable-ADOptionalFeature -Identity "Recycle Bin Feature" `
+    -Scope ForestOrConfigurationSet `
+    -Target "company.local"
+
+# ===== بازیابی Objectهای حذف‌شده =====
+
+# ۱. Active Directory Recycle Bin (ساده‌ترین)
+Get-ADObject -Filter {Deleted -eq $true -and Name -like "*Ali*"} `
+    -IncludeDeletedObjects
+
+Restore-ADObject -Identity "ObjectGUID"
+
+# ۲. Authoritative Restore
+# در حالت DSRM (Directory Services Restore Mode)
+
+# ورود به DSRM:
+bcdedit /set safeboot dsrepair
+Restart-Computer
+
+# بعد از ری‌استارت، با Administrator (رمز DSRM) وارد شوید
+# بعد:
+wbadmin start systemstaterecovery -version:MM/DD/YYYY-HH:MM
+
+# بعد از Restore، Authoritative Restore:
+ntdsutil
+activate instance ntds
+authoritative restore
+restore object "CN=Ali Rezaei,OU=Sales,DC=company,DC=local"
+quit
+quit
+
+# خارج شدن از DSRM:
+bcdedit /deletevalue safeboot
+Restart-Computer
+
+# ۳. Non-Authoritative Restore
+# بازیابی عادی — DC از همسایه‌ها به‌روزرسانی می‌کند
+
+# ===== Snapshot =====
+# برای VM:
+Checkpoint-VM -Name "DC01"
+Restore-VMSnapshot -VMName "DC01" -Name "Before-Change"
+
+# ===== DSRM Password =====
+# رمز DSRM را همیشه در جای امن ذخیره کن
+# اگر گم شد: Reset با ntdsutil</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ مهم</div>
+      رمز DSRM را در جای امن ذخیره کن. بدون آن، در صورت خرابی AD نمی‌توانی
+      بازیابی کنی. با <code>ntdsutil</code> می‌توان Reset کرد ولی نیاز به دسترسی فیزیکی است.
+    </div>
+
+    <!-- ==== ۳.۱۸ ==== -->
+    <h3>۳.۱۸ Replication و عیب‌یابی</h3>
+
+    <pre><code># ===== ابزارهای Replication =====
+
+# ۱. repadmin — ابزار اصلی
+repadmin /replsummary
+repadmin /showrepl
+repadmin /showrepl * /csv > replication.csv
+repadmin /queue
+repadmin /syncall /AdeP
+repadmin /kcc
+repadmin /bridgeheads
+
+# ۲. dcdiag — تشخیص
+dcdiag /test:dns /v
+dcdiag /test:replications
+dcdiag /test:advertising
+dcdiag /test:services
+dcdiag /a
+
+# ۳. nltest
+nltest /dsgetdc:company.local
+nltest /dclist:company.local
+nltest /sc_query:company.local
+
+# ۴. PowerShell
+Get-ADReplicationPartnerMetadata -Target "DC01.company.local"
+Get-ADReplicationFailure -Target "DC01.company.local" -Scope Forest
+Get-ADReplicationUpToDatenessVectorTable -Target "DC01.company.local"
+
+# ===== عیب‌یابی Replication =====
+
+# ۱. اگر Replication قطع است:
+repadmin /showrepl DC01
+# Error Code را ببین
+
+# ۲. اگر RPC Error:
+# - Firewall را چک کن
+# - DNS را چک کن
+# - Time Sync را چک کن
+
+# ۳. اگر KCC Issue:
+repadmin /kcc DC01
+repadmin /kcc *
+
+# ۴. اگر Object Conflict:
+repadmin /showobjmeta DC01 "CN=Ali Rezaei,OU=Sales,DC=company,DC=local"
+
+# ۵. Force Replication
+repadmin /syncall DC01 /AdeP
+
+# ===== چک‌لیست عیب‌یابی =====
+# 1. dcdiag /v → همه‌ی تست‌ها Pass می‌شوند؟
+# 2. DNS Resolution درست است؟
+# 3. Time Sync بین DCها؟
+# 4. Services: NTDS، KDC، Netlogon، DNS، W32Time
+# 5. Firewall: RPC (135), Dynamic RPC, LDAP (389), Kerberos (88)
+# 6. SYSVOL و NETLOGON Share در دسترس؟
+# 7. FRS یا DFSR سالم است؟
+# 8. Event Logs: Directory Service، DFS Replication
+
+# ===== بررسی SYSVOL =====
+dcdiag /test:sysvolcheck
+# SYSVOL باید بین DCها Replicate شود
+# ابزار: DFSR (مدرن) یا FRS (قدیمی)
+
+# ===== بررسی Time Sync =====
+w32tm /query /status
+w32tm /monitor
+w32tm /resync
+# PDC Emulator باید به منبع زمان خارجی Sync شود
+# بقیه DCها از PDC</code></pre>
+
+    <pre><code># ===== Time Sync Hierarchy =====
+# 1. PDC Emulator در Forest Root → منبع خارجی (NTP.ir یا time.windows.com)
+# 2. سایر DCها → از PDC Emulator
+# 3. Member Serverها → از DC نزدیک
+# 4. Clientها → از DC نزدیک
+
+# ===== تنظیم PDC Emulator =====
+w32tm /config /manualpeerlist:"time.windows.com,0x8 ntp.ir,0x8" /syncfromflags:manual /reliable:yes /update
+Restart-Service w32time
+w32tm /resync
+
+# ===== بررسی وضعیت =====
+w32tm /query /source</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      اکثر مشکلات Replication ناشی از <strong>DNS</strong> یا <strong>Time Sync</strong> است.
+      همیشه این دو را اول بررسی کن. Kerberos به زمان دقیق (کمتر از ۵ دقیقه اختلاف)
+      وابسته است.
+    </div>
+
+    <!-- ==== ۳.۱۹ ==== -->
+    <h3>۳.۱۹ AD در Azure — Azure AD Connect</h3>
+
+    <p>
+      در محیط‌های Hybrid، AD On-Premise با Azure AD Sync می‌شود:
+    </p>
+
+    <pre><code># ===== Azure AD Connect =====
+# از سایت مایکروسافت دانلود و نصب کن
+
+# سناریوها:
+# 1. Password Hash Synchronization (PHS) — رایج‌ترین
+# 2. Pass-Through Authentication (PTA)
+# 3. Federation with AD FS
+
+# ===== نصب =====
+# Microsoft Azure AD Connect.msi → Run
+
+# یا Silent Install:
+# AzureADConnect.msi /quiet /log C:\install.log
+
+# ===== بررسی Sync =====
+# در Synchronization Service Manager:
+# miisclient.exe
+
+# یا در PowerShell:
+Import-Module "C:\Program Files\Microsoft Azure AD Sync\Bin\ADSync\ADSync.psd1"
+Get-ADSyncConnector
+Get-ADSyncScheduler
+Start-ADSyncSyncCycle -PolicyType Delta
+Start-ADSyncSyncCycle -PolicyType Initial</code></pre>
+
+    <!-- ==== ۳.۲۰ ==== -->
+    <h3>۳.۲۰ AD Best Practices</h3>
+
+    <pre><code># ===== Best Practices =====
+
+# 1. حداقل ۲ Domain Controller
+# - یکی برای Redundancy
+# - Global Catalog روی حداقل یکی
+
+# 2. DNS = Active Directory
+# - DNS روی همه DCها نصب شود
+# - AD-Integrated Zones استفاده شود
+
+# 3. Time Sync
+# - PDC Emulator به منبع خارجی
+# - همه به PDC Sync
+
+# 4. Backup
+# - System State Backup روزانه
+# - Test Restore حداقل ماهانه
+
+# 5. FSMO Roles
+# - روی DCهای مختلف در صورت امکان
+# - PDC Emulator روی DC قوی
+
+# 6. GPO
+# - Default Domain Policy فقط برای Password Policy
+# - GPOهای دیگر در OUها
+# - Backup و Version Control GPOها
+
+# 7. OU Structure
+# - بر اساس Location + Department
+# - Delegation در سطح OU
+# - Protected from Accidental Deletion
+
+# 8. Monitoring
+# - dcdiag روزانه
+# - repadmin /replsummary روزانه
+# - Event Logs بررسی شوند
+
+# 9. Security
+# - Tier Model (Tier 0، Tier 1، Tier 2)
+# - PAW (Privileged Access Workstation)
+# - LAPS برای Local Admin
+# - Protected Users Group
+
+# 10. Documentation
+# - Topology Diagram
+# - FSMO Placement
+# - OU Design
+# - GPO Documentation</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در Active Directory، همیشه از <strong>Groups</strong> برای دسترسی‌ها استفاده کن —
+      نه User مستقیم. مدل <strong>AGDLP</strong> را رعایت کن. این کار
+      مدیریت را بسیار ساده‌تر می‌کند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      هرگز OU=native یا OU=System را حذف نکن. این‌ها توسط AD مدیریت می‌شوند.
+      همچنین Default Domain Policy را با احتیاط تغییر بده.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در محیط‌های Production، حتماً:
+      <ul style="margin:6px 0 0">
+        <li>Password Policy قوی اعمال کن (۱۲+ کاراکتر، Complexity)</li>
+        <li>LAPS برای Local Admin</li>
+        <li>Protected Users Group برای Adminها</li>
+        <li>Tier Model برای دسترسی‌ها</li>
+        <li>Monitoring با dcdiag و repadmin</li>
+      </ul>
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۴ MCSA با <strong>امنیت ویندوز سرور</strong>،
+      <strong>LAPS</strong>،
+      <strong>BitLocker</strong> و
+      <strong>Shielded VM</strong> آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>AZ-800 و AZ-801</strong>، AD Hybrid و مدیریت
+      Azure AD Connect در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — نصب کامل AD DS از صفر</h3>
+    <pre><code># ===== روی Windows Server 2025 =====
+
+# ۱. تنظیم Hostname و IP
+Rename-Computer -NewName "DC01" -Restart
+
+# بعد از Reboot:
+New-NetIPAddress -InterfaceAlias "Ethernet" `
+    -IPAddress 192.168.1.5 `
+    -PrefixLength 24 `
+    -DefaultGateway 192.168.1.1
+
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" `
+    -ServerAddresses 127.0.0.1
+
+# ۲. نصب AD DS Role
+Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+
+# ۳. Promote به Domain Controller
+$dsrm = Read-Host -AsSecureString "DSRM Password"
+Install-ADDSForest -DomainName "company.local" `
+    -DomainNetbiosName "COMPANY" `
+    -InstallDns `
+    -DomainMode WinThreshold `
+    -ForestMode WinThreshold `
+    -SafeModeAdministratorPassword $dsrm `
+    -Force
+
+# ۴. بعد از Reboot
+Get-ADDomain
+Get-ADForest
+Get-Service NTDS, DNS, KDC, Netlogon
+
+# ۵. تست
+dcdiag /test:dns /v
+dcdiag /a
+nltest /dsgetdc:company.local</code></pre>
+
+    <h3>مثال ۲ — ساختار OU و Bulk User Import</h3>
+    <pre><code># ===== ساختار OU =====
+$rootOU = "DC=company,DC=local"
+New-ADOrganizationalUnit -Name "Company" -Path $rootOU
+$company = "OU=Company,$rootOU"
+
+@("Users","Computers","Servers","Groups","ServiceAccounts","Admins") | ForEach-Object {
+    New-ADOrganizationalUnit -Name $_ -Path $company
+}
+
+@("Sales","IT","HR","Finance") | ForEach-Object {
+    New-ADOrganizationalUnit -Name $_ -Path "OU=Users,$company"
+    New-ADOrganizationalUnit -Name $_ -Path "OU=Computers,$company"
+}
+
+# ===== Bulk Import از CSV =====
+$users = Import-Csv "C:\Users.csv"
+
+foreach ($u in $users) {
+    $password = ConvertTo-SecureString "Welcome@2024" -AsPlainText -Force
+    $params = @{
+        Name = "$($u.FirstName) $($u.LastName)"
+        GivenName = $u.FirstName
+        Surname = $u.LastName
+        SamAccountName = $u.SamAccountName
+        UserPrincipalName = "$($u.SamAccountName)@company.local"
+        DisplayName = "$($u.FirstName) $($u.LastName)"
+        EmailAddress = $u.Email
+        Department = $u.Department
+        Title = $u.Title
+        Path = "OU=$($u.Department),OU=Users,OU=Company,DC=company,DC=local"
+        AccountPassword = $password
+        Enabled = $true
+        ChangePasswordAtLogon = $true
+    }
+    New-ADUser @params
+    Write-Host "Created: $($u.SamAccountName)" -ForegroundColor Green
+}
+
+# ===== ساخت Groups بر اساس دپارتمان =====
+$departments = @("Sales","IT","HR","Finance")
+foreach ($dept in $departments) {
+    New-ADGroup -Name "G-$dept-Users" `
+        -GroupScope Global `
+        -GroupCategory Security `
+        -Path "OU=Groups,OU=Company,DC=company,DC=local"
+    
+    New-ADGroup -Name "DL-$dept-Resources" `
+        -GroupScope DomainLocal `
+        -GroupCategory Security `
+        -Path "OU=Groups,OU=Company,DC=company,DC=local"
+    
+    # افزودن Userها به گروه Global
+    $members = Get-ADUser -Filter "Department -eq '$dept'" -SearchBase "OU=Users,OU=Company,DC=company,DC=local"
+    if ($members) {
+        Add-ADGroupMember -Identity "G-$dept-Users" -Members $members
+    }
+    
+    # افزودن Global به Domain Local (AGDLP)
+    Add-ADGroupMember -Identity "DL-$dept-Resources" -Members "G-$dept-Users"
+}</code></pre>
+
+    <h3>مثال ۳ — GPO پیشرفته برای Password Policy</h3>
+    <pre><code># ===== Password Policy در Default Domain Policy =====
+# در GPMC: Default Domain Policy → Edit → Computer Configuration → 
+#          Policies → Windows Settings → Security Settings → Account Policies
+
+# با PowerShell:
+Set-ADDefaultDomainPasswordPolicy -Identity "company.local" `
+    -MinPasswordLength 12 `
+    -PasswordHistoryCount 24 `
+    -MaxPasswordAge "60.00:00:00" `
+    -MinPasswordAge "1.00:00:00" `
+    -ComplexityEnabled $true `
+    -ReversibleEncryptionEnabled $false `
+    -LockoutThreshold 5 `
+    -LockoutDuration "00:30:00" `
+    -LockoutObservationWindow "00:30:00"
+
+# ===== Fine-Grained Password Policy (PSO) =====
+# برای گروه خاص (مثلاً Admins) Policy جداگانه
+
+New-ADFineGrainedPasswordPolicy -Name "Admin-PSO" `
+    -Precedence 10 `
+    -MinPasswordLength 16 `
+    -PasswordHistoryCount 24 `
+    -MaxPasswordAge "30.00:00:00" `
+    -ComplexityEnabled $true `
+    -LockoutThreshold 3 `
+    -LockoutDuration "01:00:00" `
+    -LockoutObservationWindow "01:00:00" `
+    -AppliesTo "COMPANY\Domain Admins" `
+    -Description "Strict policy for Admins"
+
+# ===== مشاهده PSOها =====
+Get-ADFineGrainedPasswordPolicy -Filter *
+Get-ADFineGrainedPasswordPolicySubject -Identity "Admin-PSO"
+
+# ===== اولویت PSO =====
+# Precedence کمتر = اولویت بالاتر
+# اگر چند PSO برای یک User، کوچک‌ترین Precedence اعمال می‌شود</code></pre>
+
+    <h3>مثال ۴ — FSMO Transfer و Seize</h3>
+    <pre><code># ===== مشاهده FSMO Roles =====
+netdom query fsmo
+
+# ===== Transfer (DC فعال) =====
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole SchemaMaster
+
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole DomainNamingMaster
+
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole PDCEmulator
+
+Move-ADDirectoryMasterOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole RIDMaster
+
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole InfrastructureMaster
+
+# ===== Seize (DC اصلی خراب) =====
+Move-ADDirectoryServerOperationMasterRole -Identity "DC02" `
+    -OperationMasterRole SchemaMaster, DomainNamingMaster, PDCEmulator, RIDMaster, InfrastructureMaster `
+    -Force
+
+# ===== بررسی بعد از Transfer =====
+Get-ADForest | Select SchemaMaster, DomainNamingMaster
+Get-ADDomain | Select PDCEmulator, RIDMaster, InfrastructureMaster
+
+# ===== نکته =====
+# - Transfer: DC اصلی فعال است — تمیز و امن
+# - Seize: DC اصلی خراب است — یک‌طرفه
+# - اگر DC قدیمی برگشت، حتماً Demote کن (ngentlich نمی‌تواند Seize کند)</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی AD با dcdiag و repadmin</h3>
+    <pre><code># ===== dcdiag — تست کامل =====
+dcdiag /v /c /d /e /s:DC01 > C:\dcdiag-report.txt
+
+# پارامترها:
+# /v → Verbose
+# /c → همه‌ی تست‌ها
+# /d → Debug
+# /e → همه‌ی DCها
+# /s:DC01 → سرور خاص
+
+# ===== تست‌های مهم =====
+dcdiag /test:dns /v
+dcdiag /test:replications
+dcdiag /test:advertising
+dcdiag /test:services
+dcdiag /test:sysvolcheck
+dcdiag /test:netlogons
+dcdiag /test:connectivity
+
+# ===== repadmin =====
+repadmin /replsummary
+# خروجی: تعداد خطاها و موفق‌ها
+
+repadmin /showrepl DC01
+# جزئیات Replication Partner
+
+repadmin /showrepl * /csv > C:\replication.csv
+# گزارش کامل
+
+repadmin /queue DC01
+# صف Replication
+
+repadmin /syncall DC01 /AdeP
+# Force Replication
+
+repadmin /kcc
+# بررسی KCC
+
+# ===== عیب‌یابی خاص =====
+
+# ۱. اگر Replication با کد خطا 8524 (DNS Lookup Failure):
+nltest /dsgetdc:company.local
+Resolve-DnsName dc02.company.local
+# DNS را چک کن
+
+# ۲. اگر Replication با کد 1256 (RPC Server Unavailable):
+Test-NetConnection -ComputerName DC02 -Port 135
+# Firewall را چک کن
+# RPC Dynamic Ports را چک کن
+
+# ۳. اگر Authentication مشکل دارد:
+nltest /sc_verify:company.local
+# Secure Channel را بررسی کن
+
+# ۴. Time Sync:
+w32tm /monitor
+w32tm /query /status
+w32tm /resync
+# باید از PDC Sync کند
+
+# ===== گزارش نهایی =====
+Get-ADReplicationFailure -Target "DC01" -Scope Forest
+Get-ADReplicationPartnerMetadata -Target "DC01"
+Get-ADReplicationUpToDatenessVectorTable -Target "DC01"</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>دو Windows Server 2025 در VMware/Hyper-V بساز</li>
+      <li>روی هر دو: Hostname، IP Static، DNS تنظیم کن</li>
+      <li>DC01 را با Domain company.local Promote کن</li>
+      <li>DC02 را به‌عنوان Replica DC نصب کن</li>
+      <li>Site Tehran و Site Isfahan بساز و Subnet اضافه کن</li>
+      <li>ساختار OU را با PowerShell Script ایجاد کن</li>
+      <li>۱۰ User با Bulk Import از CSV بساز</li>
+      <li>گروه‌های Global و Domain Local بساز</li>
+      <li>AGDLP را پیاده کن</li>
+      <li>GPO Password Policy قوی در Default Domain Policy</li>
+      <li>Fine-Grained Password Policy برای Admins</li>
+      <li>GPO برای Drive Mapping</li>
+      <li>GPO برای Wallpaper (User Config)</li>
+      <li>GPO با WMI Filter برای Windows 11 فقط</li>
+      <li>گزارش GPO Results با gpresult</li>
+      <li>AD CS را نصب کن (Enterprise Root CA)</li>
+      <li>Certificate Template برای Web Server</li>
+      <li>Auto-Enrollment با GPO</li>
+      <li>RODC در Site Isfahan نصب کن</li>
+      <li>Password Replication Policy تنظیم کن</li>
+      <li>System State Backup از DC01 بگیر</li>
+      <li>یک User را حذف و با AD Recycle Bin بازیابی کن</li>
+      <li>FSMO Roles را بین DC01 و DC02 تقسیم کن</li>
+      <li>dcdiag و repadmin را اجرا کن و گزارش بگیر</li>
+      <li>Trust بین company.local و partner.local بساز</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Promote DC شکست می‌خورد:</strong> Hostname، DNS، یا رمز DSRM اشتباه. Event Log را چک کن.</li>
+      <li><strong>DC همسایه Replicate نمی‌کند:</strong> DNS Resolution مشکل دارد یا Firewall بسته است.</li>
+      <li><strong>User Login نمی‌شود:</strong> Locked Account، Expired Password، یا Trust Issue.</li>
+      <li><strong>GPO اعمال نمی‌شود:</strong> gpresult /r را چک کن — ترتیب LSDOU یا Block Inheritance.</li>
+      <li><strong>GPO با WMI Filter اعمال نمی‌شود:</strong> WMI Query اشتباه یا WMI Service غیرفعال روی Client.</li>
+      <li><strong>FSMO Transfer شکست می‌خورد:</strong> DC مقصد Offline است یا دسترسی کافی نیست.</li>
+      <li><strong>PDC Emulator از کار افتاد:</strong> Time Sync مشکل می‌خورد — سریعاً Seize به DC دیگر.</li>
+      <li><strong>Trust برقرار نمی‌شود:</strong> DNS Condition Forwarder تنظیم نشده یا رمز Trust اشتباه.</li>
+      <li><strong>RODC Authentication مشکل دارد:</strong> Password Replication Policy اشتباه یا User در Denied List.</li>
+      <li><strong>AD CS Certificate صادر نمی‌کند:</strong> Template اشتباه، CRL منقضی، یا Permissions کافی نیست.</li>
+      <li><strong>AD FS SSO کار نمی‌کند:</strong> Certificate منقضی یا Claim Rules اشتباه.</li>
+      <li><strong>Backup Restore نمی‌شود:</strong> DSRM Password گم شده یا Backup خراب است.</li>
+      <li><strong>Authoritative Restore مشکل می‌سازد:</strong> Object را کامل Restore کن — نه کل دیتابیس.</li>
+      <li><strong>AD Recycle Bin غیرفعال است:</strong> باید یک بار برای همیشه فعال شود (غیرقابل بازگشت).</li>
+      <li><strong>SYSVOL Replicate نمی‌شود:</strong> FRS یا DFSR را چک کن — Event ID 4614 و 4604.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="ad">Active Directory</span> •
+      <span class="term" data-term="dc">Domain Controller</span> •
+      <span class="term" data-term="gpo">Group Policy</span> •
+      <span class="term" data-term="fsmo">FSMO</span> •
+      <span class="term" data-term="trust">Trust</span> •
+      <span class="term" data-term="rodc">RODC</span> •
+      <span class="term" data-term="ad-cs">AD CS</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۲۰ سوالی -->
+  <section class="quiz" data-quiz-id="mcsa-03" data-duration="1200">
+    <h2>🧠 آزمون پایان فصل (۲۰ سوال)</h2>
+    <div class="quiz-timer">۲۰:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) تفاوت Forest و Domain چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Domain بزرگ‌تر از Forest است</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Forest مجموعه‌ای از Domainها با Schema مشترک، Domain واحد مدیریتی</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Forest فقط یک Domain دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) کدام نقش FSMO در Forest است (نه Domain)؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> PDC Emulator</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Schema Master</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> RID Master</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> Infrastructure Master</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) اگر PDC Emulator از کار بیفتد، چه اتفاقی می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> هیچ اتفاقی نمی‌افتد</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> کل شبکه قطع می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Time Sync، Password Changes و GPO کند می‌شوند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> همه‌ی Domainها حذف می‌شوند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) ترتیب اعمال GPO چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> UODSL</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> LSDOU (Local، Site، Domain، OU)</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> SDOUL</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> ترتیب مهم نیست</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) در GPO، کدام گزینه برنده است اگر Conflict باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Parent OU</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Domain GPO</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Child OU (آخرین اعمال)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Site GPO</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) تفاوت Block Inheritance و Enforced چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> Block: جلوگیری از ارث، Enforced: GPO بالاتر برنده است</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> Block برای User، Enforced برای Computer</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Block جدیدتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) AGDLP مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Advanced Group Domain Local Policy</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Account Group Domain Local Permission</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> Account → Global → Domain Local → Permission</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Admin Group Domain Local Policy</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) تفاوت Security Group و Distribution Group چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Security دارای SID (Permission)، Distribution فقط Email</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Distribution امن‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Security فقط برای OU</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) Global Group چه محدوده‌ای دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> فقط Domain خودش</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> فقط Site خودش</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> کل Forest (در Global Catalog)</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> فقط OU خودش</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) کدام Trust به‌طور خودکار در یک Forest وجود دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> External</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> Parent-Child و Tree-Root</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> Forest Trust</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> Realm</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) RODC چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> Domain Controller اضافی</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> Backup DC</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> DC فقط-خواندنی برای مکان‌های ناامن (شعبه‌ها)</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> DC فقط برای تست</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) AD CS چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> مدیریت کاربران</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> PKI و صدور Certificate</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Backup</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Replication</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) Site در AD چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> سازماندهی Userها</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> GPO</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> بهینه‌سازی Replication بین مکان‌های جغرافیایی</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> مدیریت Group</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) برای Fine-Grained Password Policy از چه چیزی استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> GPO معمولی</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> PSO (Password Settings Object)</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Local Policy</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> Default Domain Policy</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) کدام سرویس برای SSO با Azure/Office 365 استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> AD CS</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> AD RMS</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> AD FS</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> AD LDS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) دستور مشاهده وضعیت Replication چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> ipconfig /all</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> repadmin /showrepl</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Get-Service NTDS</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> Get-ADUser</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) اگر رمز DSRM گم شود، چه باید کرد؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> DC را مجدد نصب کن</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> کاری نمی‌توان کرد</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> با ntdsutil Reset کن (نیاز به دسترسی فیزیکی)</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> فقط با Backup</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) AD Recycle Bin چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> Backup</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> بازیابی Objectهای حذف‌شده بدون Restore کامل</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> Replication</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۹) Global Catalog چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q19" value="0"> فقط کاربران</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="1"> فقط Computerها</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="2"> کپی Read-Only از تمام Objectهای Forest</label>
+        <label class="quiz-option"><input type="radio" name="q19" value="3"> فقط Groupها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲۰) بهترین روش Backup برای AD چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q20" value="0"> Copy فایل‌های NTDS</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="1"> System State Backup با wbadmin</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="2"> Snapshot VM فقط</label>
+        <label class="quiz-option"><input type="radio" name="q20" value="3"> Backup دیتابیس AD</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک Active Directory کامل سازمانی با ۵۰ کاربر بساز:</p>
+    <ul>
+      <li><strong>دو Domain Controller</strong> با Replication بین دو Site</li>
+      <li><strong>Siteها:</strong> Tehran و Isfahan با Subnet جداگانه</li>
+      <li><strong>ساختار OU:</strong> ترکیبی از Location و Department</li>
+      <li><strong>۵۰ User</strong> با Bulk Import از CSV</li>
+      <li><strong>گروه‌ها:</strong> Global و Domain Local با مدل AGDLP</li>
+      <li><strong>Password Policy:</strong> ۱۲ کاراکتر، Complexity، ۲۴ History</li>
+      <li><strong>Fine-Grained Policy</strong> برای Admins (۱۶ کاراکتر)</li>
+      <li><strong>GPOهای مختلف:</strong> Drive Map، Wallpaper، Firewall، USB Block</li>
+      <li><strong>WMI Filter</strong> برای Windows 11 Only</li>
+      <li><strong>Group Policy Preferences</strong> برای Shortcuts</li>
+      <li><strong>AD CS Enterprise Root CA</strong></li>
+      <li><strong>Certificate Template</strong> برای Web Server و Auto-Enrollment</li>
+      <li><strong>RODC در Isfahan</strong> با Password Replication Policy</li>
+      <li><strong>Trust</strong> با partner.local</li>
+      <li><strong>FSMO Roles</strong> توزیع شده بین دو DC</li>
+      <li><strong>System State Backup</strong> روزانه</li>
+      <li>مستندسازی کامل با Diagram + OU Design + FSMO Plan</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>gMSA برای Service Account بساز.</li>
+        <li>Fine-Grained Password Policy برای ۳ گروه مختلف.</li>
+        <li>AD FS را نصب کن و با یک SaaS تست SSO.</li>
+        <li>AD RMS را برای محافظت از اسناد Word نصب کن.</li>
+        <li>Azure AD Connect را برای Sync با Azure AD راه‌اندازی کن.</li>
+        <li>PowerShell Script بنویس که هر روز Report از وضعیت AD بدهد.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Forest:</strong> مجموعه‌ای از Domainها با Schema مشترک</li>
+      <li><strong>Domain:</strong> واحد مدیریتی و امنیتی — مرز Replication</li>
+      <li><strong>OU:</strong> ساختار منطقی داخل Domain — برای Delegation و GPO</li>
+      <li><strong>Site:</strong> ساختار فیزیکی — بهینه‌سازی Replication</li>
+      <li><strong>Global Catalog:</strong> کپی Read-Only از تمام Forest</li>
+      <li><strong>FSMO:</strong> ۵ نقش — Schema Master، Domain Naming، PDC، RID، Infrastructure</li>
+      <li><strong>GPO Processing:</strong> LSDOU — Child OU برنده</li>
+      <li><strong>Block Inheritance vs Enforced:</strong> Enforced همیشه برنده</li>
+      <li><strong>Loopback Processing:</strong> جایگزینی User Settings</li>
+      <li><strong>AGDLP:</strong> Account → Global → Domain Local → Permission</li>
+      <li><strong>Trust انواع:</strong> Parent-Child، Tree-Root، External، Forest، Realm، Shortcut</li>
+      <li><strong>RODC:</strong> DC فقط-خواندنی — با Password Replication Policy</li>
+      <li><strong>AD CS:</strong> PKI و Certificate — Enterprise Root CA</li>
+      <li><strong>AD FS:</strong> SSO با Cloud و سایر سازمان‌ها</li>
+      <li><strong>AD RMS:</strong> محافظت از اسناد Office</li>
+      <li><strong>Backup:</strong> System State Backup + DSRM Password + AD Recycle Bin</li>
+      <li><strong>Replication:</strong> repadmin + dcdiag — بیشترین مشکل از DNS و Time Sync</li>
+      <li><strong>Time Sync:</strong> PDC Emulator از منبع خارجی، بقیه از PDC</li>
+      <li><strong>gMSA:</strong> Service Account مدرن با رمز خودکار</li>
+      <li><strong>AD Recycle Bin:</strong> بازیابی Objectهای حذف‌شده (یک بار فعال شود)</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mcsa_Ch_02.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mcsa-03">✅ پایان فصل</button>
+      <a class="btn" href="mcsa_Ch_04.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

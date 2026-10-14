@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فصل ۱۴: فایل و مسیر — ذخیره و خواندن داده‌ها | دوره تخصصی صفر تا صد پایتون</title>
+<meta name="description" content="فصل ۱۴ دوره تخصصی صفر تا صد پایتون: یاد می‌گیرید چطور داده‌ها را در فایل ذخیره و بخوانید — با pathlib، CSV و JSON.">
+<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<script>
+  (function(){try{var t=localStorage.getItem('djc_theme_v1');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('djc_font_v1');if(f)document.documentElement.setAttribute('data-font',f);}catch(e){}})();
+</script>
+</head>
+<body data-page="chapter">
+<div id="reading-bar"></div>
+<a class="skip-link" href="#p1">پرش به محتوای فصل</a>
+
+<header class="site-header">
+  <div class="container topbar">
+    <a class="brand" href="../../index.html">🐍 دوره تخصصی پایتون</a>
+    <nav class="nav-links" aria-label="ناوبری اصلی">
+      <a href="../../index.html">خانه</a>
+      <a href="../../index.html#chapters">فصل‌ها</a>
+      <a href="../../glossary.html">واژه‌نامه جامع</a>
+      <a href="#p11">آزمون فصل</a>
+      <a href="#p15">واژه‌نامه فصل</a>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn" data-theme-toggle aria-label="تغییر حالت روشن/تاریک">🌙</button>
+      <button type="button" class="tool-btn" data-shortcuts aria-label="میان‌برهای کیبورد" title="میان‌برهای کیبورد (؟)">⌨️</button>
+    </div>
+    <p class="header-chapter-title">فصل ۱۴ از ۳۰ — فایل و مسیر</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="مسیر صفحه">
+    <a href="../../index.html">خانه</a> ← 🧱 ساختمان داده و توابع ← فصل ۱۴
+  </nav>
+
+  <section class="chapter-hero">
+    <span class="chap-num">فصل ۱۴ از ۳۰</span>
+    <h1>📄 فایل و مسیر — ذخیره و خواندن داده‌ها</h1>
+    <p>چطور داده‌ها را در فایل ذخیره و بخوانیم؟ — <span class="term" data-term="file">file</span>، <span class="term" data-term="pathlib">pathlib</span>، <span class="term" data-term="encoding">encoding</span>، <span class="term" data-term="csv">csv</span>، <span class="term" data-term="json">json</span>، <span class="term" data-term="python">python</span></p>
+    <div class="hero-pills">
+      <span class="pill">⏱ ۷۰ دقیقه</span>
+      <span class="pill">🎓 متوسط</span>
+      <span class="pill">📑 ۱۶ بخش</span>
+      <span class="pill">📖 <span id="chapter-term-count">۰</span> واژه تخصصی</span>
+      <span class="pill">📝 آزمون ۶ پرسشی</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn" href="#p5">▶ شروع مطالعه</a>
+      <a class="btn ghost" href="#p11">📝 آزمون تعاملی فصل</a>
+      <a class="btn ghost" href="#p15">📖 واژه‌نامه فصل</a>
+      <a class="btn ghost" href="#p16">📓 یادداشت‌های من</a>
+    </div>
+  </section>
+
+  <div class="chapter-layout">
+    <main>
+
+      <!-- ============ بخش ۱: چشم‌انداز فصل ============ -->
+      <section class="part" id="p1">
+        <div class="part-head"><span class="part-num">بخش ۱</span><h2>🔭 چشم‌انداز فصل: اهداف و جایگاه</h2></div>
+        <p>تا اینجا همه‌ی داده‌های برنامه‌هایمان <strong>موقتی</strong> بودند. یعنی وقتی برنامه بسته می‌شد، همه‌چیز از بین می‌رفت. اگر دفترچه تلفنی می‌ساختید و برنامه را می‌بستید، مخاطبین پاک می‌شدند. اما در دنیای واقعی، داده‌ها باید <strong>ماندگار</strong> باشند.</p>
+        <p>راه‌حل، ذخیره‌ی داده در <strong>فایل</strong> است. در این فصل یاد می‌گیرید چطور:</p>
+        <ul>
+          <li>متن را در فایل ذخیره کنید و بعداً بخوانید.</li>
+          <li>مسیرهای فایل را به شکل مستقل از سیستم‌عامل بنویسید (<code class="inline-code">pathlib</code>).</li>
+          <li>داده‌های جدولی (مثل لیست مخاطبین) را در فرمت <strong>CSV</strong> ذخیره کنید.</li>
+          <li>داده‌های ساختاریافته (مثل تنظیمات برنامه) را در فرمت <strong>JSON</strong> ذخیره کنید.</li>
+        </ul>
+        <p>این فصل، پل بین برنامه‌های آموزشی و پروژه‌های واقعی است. هر برنامه‌ی جدی، جایی داده‌ای ذخیره یا می‌خواند.</p>
+        <p><strong>در پایان این فصل، شما می‌توانید:</strong></p>
+        <ul>
+          <li>با <code class="inline-code">open()</code> فایل باز کنید و بخوانید یا بنویسید.</li>
+          <li>از <code class="inline-code">with</code> برای مدیریت خودکار فایل استفاده کنید.</li>
+          <li>همیشه <code class="inline-code">encoding="utf-8"</code> را بگذارید تا متن فارسی درست ذخیره شود.</li>
+          <li>با <code class="inline-code">pathlib.Path</code> مسیرهای مستقل از سیستم‌عامل بسازید.</li>
+          <li>فایل‌های CSV را با ماژول <code class="inline-code">csv</code> بخوانید و بنویسید.</li>
+          <li>فایل‌های JSON را با ماژول <code class="inline-code">json</code> بخوانید و بنویسید.</li>
+          <li>خطاهای رایج فایل (FileNotFoundError، EncodingError، PermissionError) را مدیریت کنید.</li>
+        </ul>
+        <div class="callout info">
+          <b class="title">📌 نکته مهم</b>
+          در این فصل با مفهوم <strong>context manager</strong> (با <code class="inline-code">with</code>) آشنا می‌شوید. این مفهوم، پایه‌ی خیلی از کارهای حرفه‌ای پایتون است — از فایل و شبکه تا دیتابیس.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۲: نقشه راه فصل ============ -->
+      <section class="part" id="p2">
+        <div class="part-head"><span class="part-num">بخش ۲</span><h2>🗺️ نقشه راه فصل</h2></div>
+        <div class="road">
+          <div class="step"><span class="badge">گام ۱</span><h4>open و with</h4><p>باز و بسته کردن فایل.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۲</span><h4>خواندن و نوشتن</h4><p>عملیات اصلی.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۳</span><h4>pathlib</h4><p>مسیر مستقل از OS.</p><span class="arrow">←</span></div>
+          <div class="step"><span class="badge">گام ۴</span><h4>CSV و JSON</h4><p>فرمت‌های واقعی.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۳: سوالات محرک ذهنی ============ -->
+      <section class="part" id="p3">
+        <div class="part-head"><span class="part-num">بخش ۳</span><h2>🤔 سوالات محرک ذهنی</h2></div>
+        <p>قبل از خواندن آموزش، چند لحظه به این سوال‌ها فکر کنید:</p>
+        <details class="answer">
+          <summary>🤔 چرا <code dir="ltr">encoding="utf-8"</code> این‌قدر مهم است؟</summary>
+          <div class="answer-body"><p>تصور کنید متن فارسی را در فایل ذخیره می‌کنید، اما بدون مشخص کردن encoding. برنامه باز می‌شود، اما متن شما به‌جای «سلام» به‌شکل کاراکترهای عجیب مثل <code>Ø³Ù„Ø§Ù…</code> نمایش داده می‌شود. این به خاطر تفاوت در <strong>نحوه‌ی ذخیره‌ی حروف</strong> است. UTF-8 استانداردی جهانی است که همه‌ی حروف — از الفبای انگلیسی و فارسی تا ایموجی — را پشتیبانی می‌کند. اگر encoding را مشخص نکنید، پایتون از encoding پیش‌فرض سیستم استفاده می‌کند که روی ویندوز عموماً <code>cp1256</code> است و روی لینوکس/مک <code>utf-8</code>. به همین دلیل است که همیشه باید <code>encoding="utf-8"</code> را بگذارید.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 چرا باید از <code dir="ltr">with</code> استفاده کنیم؟ مگر نمی‌شود فایل را دستی بست؟</summary>
+          <div class="answer-body"><p>می‌شود، اما خطرناک است. اگر فایل را دستی باز کنید و در میانه‌ی کار خطایی رخ دهد، فایل هیچ‌وقت بسته نمی‌شود. این باعث می‌شود فایل قفل بماند و برنامه‌های دیگر نتوانند به آن دسترسی داشته باشند. <code>with</code> مثل یک محافظ است: هر اتفاقی بیفتد، فایل را می‌بندد. حتی اگر وسط کار خطا رخ دهد یا تابع با <code>return</code> خارج شود، فایل به‌طور خودکار بسته می‌شود. یک قاعده‌ی طلایی در پایتون: <strong>هرگز فایل را بدون with باز نکنید</strong>.</p></div>
+        </details>
+        <details class="answer">
+          <summary>🤔 تفاوت CSV و JSON چیست؟ کدام را استفاده کنم؟</summary>
+          <div class="answer-body"><p>هر کدام برای نوع داده‌ی متفاوتی خوب است:<br>
+          - <strong>CSV</strong>: برای داده‌های جدولی (ردیف‌ها و ستون‌ها). مثل لیست دانشجوها، لیست محصولات، تراکنش‌های بانکی. مثل یک اکسل ساده، ولی در قالب متن.<br>
+          - <strong>JSON</strong>: برای داده‌های ساختاریافته، تودرتو، متنوع. مثل تنظیمات یک برنامه، پروفایل کاربر، پاسخ یک API.<br>
+          اگر داده‌تان جدولی است، CSV. اگر ساختار درختی دارد، JSON. اگر شک کردید، JSON را انتخاب کنید — انعطاف‌پذیرتر است.</p></div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۴: آماده‌سازی و پیش‌نیازها ============ -->
+      <section class="part" id="p4">
+        <div class="part-head"><span class="part-num">بخش ۴</span><h2>🧰 آماده‌سازی و پیش‌نیازها</h2></div>
+        <p>این فصل روی سیزده فصل قبل بنا شده. مطمئن شوید این‌ها را انجام داده‌اید:</p>
+        <ul class="checklist">
+          <li>پایتون نصب است و <code class="inline-code">python --version</code> کار می‌کند.</li>
+          <li>پوشه‌ی پروژه را دارید (مثلاً <code class="inline-code">py-learn</code>).</li>
+          <li>با توابع، لیست، دیکشنری و set راحت هستید.</li>
+          <li>با try/except آشنا هستید (فصل ۱۳).</li>
+          <li>با ماژول و import کار کرده‌اید (فصل ۱۲).</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          یک پوشه‌ی جدید به نام <code class="inline-code">files_demo</code> در پوشه‌ی پروژه بسازید و همه‌ی فایل‌های این فصل را آنجا نگه دارید. فایل‌های داده‌ای (مثل <code class="inline-code">data.txt</code>، <code class="inline-code">users.csv</code>) هم در همان پوشه ساخته می‌شوند تا مرتب بمانند.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۵: آموزش گام‌به‌گام ============ -->
+      <section class="part" id="p5">
+        <div class="part-head"><span class="part-num">بخش ۵</span><h2>📖 آموزش گام‌به‌گام: فایل و مسیر</h2></div>
+
+        <h3>۱) باز و بسته کردن فایل — <code>open</code></h3>
+        <p>برای کار با فایل، اول باید آن را <strong>باز کنید</strong>. تابع <code class="inline-code">open()</code> این کار را انجام می‌دهد. ساختارش:</p>
+        <div class="code-box">
+          <div class="code-head"><span>ساختار کلی open</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">open(نام_فایل, mode, encoding)</code></pre>
+        </div>
+        <p>پارامتر <code class="inline-code">mode</code> تعیین می‌کند چه کاری با فایل می‌خواهید انجام دهید. مهم‌ترین حالت‌ها:</p>
+        <ul>
+          <li><code class="inline-code">"r"</code> — فقط خواندن (پیش‌فرض). اگر فایل نباشد، خطا می‌دهد.</li>
+          <li><code class="inline-code">"w"</code> — نوشتن. اگر فایل موجود باشد، <strong>محتوایش را پاک می‌کند</strong> و از صفر می‌نویسد.</li>
+          <li><code class="inline-code">"a"</code> — افزودن. محتوای موجود را نگه می‌دارد و به آخرش اضافه می‌کند.</li>
+          <li><code class="inline-code">"x"</code> — ساخت فایل جدید. اگر فایل موجود باشد، خطا می‌دهد.</li>
+        </ul>
+        <div class="callout danger">
+          <b class="title">⚠️ هشدار مهم</b>
+          حالت <code class="inline-code">"w"</code> بسیار خطرناک است! اگر فایل مهمی را با این حالت باز کنید، تمام محتوایش پاک می‌شود. مراقب باشید!
+        </div>
+
+        <h3>۲) <code>with</code> — روش درست کار با فایل</h3>
+        <p>روش استاندارد و امن برای کار با فایل، استفاده از <code class="inline-code">with</code> است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>with_statement.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">with open("data.txt", "r", encoding="utf-8") as file:
+    content = file.read()
+    print(content)
+# بعد از این بلوک، فایل خودکار بسته می‌شود</code></pre>
+        </div>
+        <p>بخوانیدش: «فایل data.txt را با حالت خواندن و encoding UTF-8 باز کن، و در بلوک زیر اسمش را <code class="inline-code">file</code> بگذار». وقتی از بلوک بیرون بیایید، فایل خودکار بسته می‌شود — چه کارتان تمام شده باشد، چه خطایی رخ داده باشد.</p>
+
+        <h4>روش اشتباه (بدون with)</h4>
+        <p>برای اینکه بفهمید چرا <code class="inline-code">with</code> این‌قدر مهم است، این نسخه‌ی قدیمی را ببینید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>روش قدیمی و خطرناک</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">file = open("data.txt", "r", encoding="utf-8")
+content = file.read()
+print(content)
+file.close()   # ← اگر قبل از این خط خطا رخ دهد، فایل قفل می‌ماند</code></pre>
+        </div>
+        <p>این روش کار می‌کند، اما خطرناک است. اگر در خط <code class="inline-code">content = file.read()</code> خطایی رخ دهد، خط <code class="inline-code">file.close()</code> هرگز اجرا نمی‌شود و فایل باز می‌ماند. برای همین، <code class="inline-code">with</code> را به‌عنوان استاندارد انتخاب کنید.</p>
+
+        <h3>۳) خواندن از فایل — سه روش</h3>
+        <p>سه راه برای خواندن محتوای یک فایل متنی وجود دارد:</p>
+
+        <h4>الف) <code>read()</code> — کل محتوا به‌صورت یک رشته</h4>
+        <div class="code-box">
+          <div class="code-head"><span>read_all.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">with open("data.txt", "r", encoding="utf-8") as file:
+    content = file.read()
+    print(content)
+    print(f"طول: {len(content)} کاراکتر")</code></pre>
+        </div>
+        <p><strong>مناسب برای:</strong> فایل‌های کوچک که می‌خواهید کل محتوا را یک‌جا داشته باشید.</p>
+
+        <h4>ب) <code>readlines()</code> — همه‌ی خطوط به‌صورت یک لیست</h4>
+        <div class="code-box">
+          <div class="code-head"><span>read_all_lines.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">with open("data.txt", "r", encoding="utf-8") as file:
+    lines = file.readlines()
+    for i, line in enumerate(lines, start=1):
+        print(f"{i}: {line.rstrip()}")</code></pre>
+        </div>
+        <p>هر عضو لیست، یک خط با <code class="inline-code">\n</code> در پایان است. با <code class="inline-code">.rstrip()</code> می‌توانید <code class="inline-code">\n</code> را بردارید.</p>
+
+        <h4>ج) پیمایش مستقیم با for — بهترین روش برای فایل‌های بزرگ</h4>
+        <div class="code-box">
+          <div class="code-head"><span>for_loop_read.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">with open("data.txt", "r", encoding="utf-8") as file:
+    for line in file:
+        print(line.strip())</code></pre>
+        </div>
+        <p><strong>مناسب برای:</strong> فایل‌های بزرگ. چون کل فایل در حافظه بارگذاری نمی‌شود — هر خط یکی‌یکی خوانده می‌شود.</p>
+        <div class="callout tip">
+          <b class="title">💡 کدام را انتخاب کنم؟</b>
+          اگر فایل کوچک است، <code class="inline-code">read()</code> یا <code class="inline-code">readlines()</code>. اگر ممکن است بزرگ باشد (مثلاً چند گیگابایت)، پیمایش مستقیم با <code class="inline-code">for</code>.
+        </div>
+
+        <h3>۴) نوشتن در فایل</h3>
+        <p>برای نوشتن، فایل را با حالت <code class="inline-code">"w"</code> باز کنید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>write_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python"># نوشتن متن
+with open("output.txt", "w", encoding="utf-8") as file:
+    file.write("سلام دنیا!\n")
+    file.write("این یک فایل متنی است.\n")
+
+# اضافه کردن به فایل موجود
+with open("output.txt", "a", encoding="utf-8") as file:
+    file.write("این خط اضافه شد.\n")
+
+# نوشتن چند خط با writelines
+lines = ["خط اول\n", "خط دوم\n", "خط سوم\n"]
+with open("lines.txt", "w", encoding="utf-8") as file:
+    file.writelines(lines)</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ نکته مهم</b>
+          <code class="inline-code">write()</code> خودش <code class="inline-code">\n</code> اضافه نمی‌کند. باید خودتان اضافه کنید. برخلاف <code class="inline-code">print()</code> که خودکار خط جدید می‌زند.
+        </div>
+
+        <h3>۵) کار با مسیر — <code>pathlib</code></h3>
+        <p>برای کار با مسیرها، ماژول <code class="inline-code">pathlib</code> را استفاده کنید (به‌جای رشته‌های ساده). این ماژول:</p>
+        <ul>
+          <li>مسیرها را مستقل از سیستم‌عامل می‌سازد (روی ویندوز <code>\</code>، روی لینوکس <code>/</code>).</li>
+          <li>متدهای راحتی برای چک کردن وجود، ساختن پوشه، و... دارد.</li>
+        </ul>
+        <div class="code-box">
+          <div class="code-head"><span>pathlib_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from pathlib import Path
+
+# پوشه‌ی جاری
+current = Path.cwd()
+print("پوشه جاری:", current)
+
+# ساخت مسیر با / (روش پایتونیک)
+file_path = Path("data") / "users.txt"
+print(file_path)   # data/users.txt (روی لینوکس) یا data\users.txt (روی ویندوز)
+
+# بررسی وجود
+print(file_path.exists())
+print(file_path.is_file())
+print(file_path.is_dir())
+
+# خواندن و نوشتن آسان
+text_file = Path("hello.txt")
+text_file.write_text("سلام دنیا!", encoding="utf-8")
+content = text_file.read_text(encoding="utf-8")
+print(content)
+
+# ساختن پوشه
+new_dir = Path("my_folder")
+new_dir.mkdir(exist_ok=True)   # اگر نبود، بساز</code></pre>
+        </div>
+        <p>متد <code class="inline-code">.write_text()</code> و <code class="inline-code">.read_text()</code> جایگزین‌های بسیار ساده‌ی <code class="inline-code">open()</code> برای فایل‌های کوچک هستند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>read_write_text.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from pathlib import Path
+
+p = Path("note.txt")
+
+# نوشتن
+p.write_text("این یادداشت من است.\n", encoding="utf-8")
+
+# خواندن
+text = p.read_text(encoding="utf-8")
+print(text)
+
+# اضافه کردن
+with p.open("a", encoding="utf-8") as f:
+    f.write("این خط اضافه شد.\n")</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 کدام را استفاده کنیم؟</b>
+          <code class="inline-code">Path.write_text()</code> و <code class="inline-code">Path.read_text()</code> برای فایل‌های کوچک بسیار راحت‌اند. اما برای فایل‌های بزرگ یا کارهای پیچیده، همان <code class="inline-code">with open()</code> روش مناسب‌تری است.
+        </div>
+
+        <h3>۶) فایل CSV — داده‌های جدولی</h3>
+        <p><strong>CSV</strong> مخفف Comma-Separated Values است — یعنی «مقادیر جدا شده با کاما». هر خط، یک ردیف. هر مقدار در ردیف، با کاما از دیگری جدا شده.</p>
+        <p>بیایید یک فایل CSV ساده ببینیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>users.csv</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">name,age,city
+علی,25,تهران
+رضا,30,شیراز
+سارا,28,اصفهان</code></pre>
+        </div>
+        <p>خط اول، «سرستون» است. خطوط بعدی داده‌های واقعی. حالا بیایید این فایل را با پایتون بسازیم و بخوانیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>csv_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import csv
+
+# نوشتن در CSV
+with open("users.csv", "w", encoding="utf-8", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow(["name", "age", "city"])       # سرستون
+    writer.writerow(["علی", 25, "تهران"])
+    writer.writerow(["رضا", 30, "شیراز"])
+    writer.writerow(["سارا", 28, "اصفهان"])
+
+# خواندن از CSV
+with open("users.csv", "r", encoding="utf-8") as file:
+    reader = csv.reader(file)
+    for row in reader:
+        print(row)
+# خروجی:
+# ['name', 'age', 'city']
+# ['علی', '25', 'تهران']
+# ['رضا', '30', 'شیراز']
+# ['سارا', '28', 'اصفهان']</code></pre>
+        </div>
+        <div class="callout warn">
+          <b class="title">⚠️ نکته مهم</b>
+          در حالت <code class="inline-code">"w"</code>، حتماً <code class="inline-code">newline=""</code> را بگذارید. اگر نگذارید، روی ویندوز بین خطوط، خط خالی اضافه می‌شود. این یک دام معروف است.
+        </div>
+
+        <h4>خواندن با <code>DictReader</code> — خیلی راحت‌تر</h4>
+        <p>وقتی فایل CSV سرستون دارد، می‌توانید از <code class="inline-code">DictReader</code> استفاده کنید تا هر ردیف به‌صورت دیکشنری برگردد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>dict_reader.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import csv
+
+with open("users.csv", "r", encoding="utf-8") as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        print(f"{row['name']} ({row['age']} ساله، {row['city']})")
+# خروجی:
+# علی (25 ساله، تهران)
+# رضا (30 ساله، شیراز)
+# سارا (28 ساله، اصفهان)</code></pre>
+        </div>
+        <p>با <code class="inline-code">DictReader</code> مستقیماً با اسم ستون به مقدار دسترسی دارید — خیلی خواناتر!</p>
+
+        <h4>نوشتن با <code>DictWriter</code></h4>
+        <div class="code-box">
+          <div class="code-head"><span>dict_writer.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import csv
+
+users = [
+    {"name": "علی", "age": 25, "city": "تهران"},
+    {"name": "رضا", "age": 30, "city": "شیراز"},
+]
+
+with open("users2.csv", "w", encoding="utf-8", newline="") as file:
+    fieldnames = ["name", "age", "city"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(users)</code></pre>
+        </div>
+
+        <h3>۷) فایل JSON — داده‌های ساختاریافته</h3>
+        <p><strong>JSON</strong> مخفف JavaScript Object Notation است — ولی امروز در همه‌ی زبان‌ها استفاده می‌شود. ساختارش شبیه دیکشنری و لیست پایتون است:</p>
+        <div class="code-box">
+          <div class="code-head"><span>user.json</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">{
+    "name": "علی",
+    "age": 25,
+    "city": "تهران",
+    "skills": ["Python", "Django"],
+    "is_active": true
+}</code></pre>
+        </div>
+        <p>با ماژول <code class="inline-code">json</code> پایتون می‌توانید به‌راحتی این نوع داده را بخوانید و بنویسید:</p>
+        <div class="code-box">
+          <div class="code-head"><span>json_demo.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import json
+
+# نوشتن در JSON
+user = {
+    "name": "علی",
+    "age": 25,
+    "city": "تهران",
+    "skills": ["Python", "Django"],
+    "is_active": True,
+}
+
+with open("user.json", "w", encoding="utf-8") as file:
+    json.dump(user, file, ensure_ascii=False, indent=2)
+
+# خواندن از JSON
+with open("user.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
+    print(data)
+    print(f"نام: {data['name']}")
+    print(f"مهارت‌ها: {', '.join(data['skills'])}")</code></pre>
+        </div>
+        <p>چند نکته‌ی مهم:</p>
+        <ul>
+          <li><code class="inline-code">json.dump()</code> — برای <strong>نوشتن</strong> به فایل. با <code class="inline-code">ensure_ascii=False</code>، متن فارسی مستقیم نوشته می‌شود (نه با کدهای عجیب <code>\u</code>).</li>
+          <li><code class="inline-code">json.load()</code> — برای <strong>خواندن</strong> از فایل.</li>
+          <li><code class="inline-code">indent=2</code> — فایل خروجی را خوانا می‌کند.</li>
+        </ul>
+
+        <h4>تبدیل رشته به JSON و برعکس</h4>
+        <p>گاهی می‌خواهید با رشته کار کنید، نه فایل:</p>
+        <div class="code-box">
+          <div class="code-head"><span>json_string.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">import json
+
+# دیکشنری به رشته JSON
+data = {"name": "علی", "age": 25}
+text = json.dumps(data, ensure_ascii=False)
+print(text)   # {"name": "علی", "age": 25}
+print(type(text))   # &lt;class 'str'&gt;
+
+# رشته JSON به دیکشنری
+parsed = json.loads('{"x": 1, "y": 2}')
+print(parsed)   # {'x': 1, 'y': 2}
+print(type(parsed))   # &lt;class 'dict'&gt;</code></pre>
+        </div>
+        <p>تفاوت <code class="inline-code">dump</code> و <code class="inline-code">dumps</code>؟ دومی <strong>s</strong> دارد یعنی string. <code class="inline-code">dump</code> برای فایل، <code class="inline-code">dumps</code> برای رشته.</p>
+
+        <h3>۸) خطاهای رایج — مدیریت با try/except</h3>
+        <p>کار با فایل پر از خطاهای ممکن است. بیایید مهم‌ترین‌ها را با try/except مدیریت کنیم:</p>
+        <div class="code-box">
+          <div class="code-head"><span>safe_file_read.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">from pathlib import Path
+
+def read_file(path):
+    """یک فایل را امن می‌خواند."""
+    file_path = Path(path)
+
+    try:
+        content = file_path.read_text(encoding="utf-8")
+        return content
+    except FileNotFoundError:
+        return f"❌ فایل '{path}' وجود ندارد."
+    except PermissionError:
+        return f"❌ اجازه دسترسی به '{path}' ندارید."
+    except UnicodeDecodeError:
+        return f"❌ فایل '{path}' با UTF-8 خوانده نمی‌شود."
+    except Exception as e:
+        return f"❌ خطای نامعلوم: {e}"
+
+
+print(read_file("hello.txt"))       # محتوا یا پیام خطا
+print(read_file("missing.txt"))     # پیام "وجود ندارد"</code></pre>
+        </div>
+
+        <h3>۹) کاربرد واقعی — همه‌چیز در کنار هم</h3>
+        <p>یک برنامه‌ی «دفترچه یادداشت» که یادداشت‌ها را در فایل JSON ذخیره می‌کند:</p>
+        <div class="code-box">
+          <div class="code-head"><span>notes_app.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""دفترچه یادداشت با ذخیره در فایل JSON."""
+
+import json
+from pathlib import Path
+from datetime import datetime
+
+
+NOTES_FILE = Path("notes.json")
+
+
+def load_notes():
+    """یادداشت‌ها را از فایل می‌خواند. اگر فایل نبود، لیست خالی."""
+    if not NOTES_FILE.exists():
+        return []
+    try:
+        with NOTES_FILE.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        print("⚠️ فایل یادداشت‌ها خراب است. از صفر شروع می‌کنیم.")
+        return []
+
+
+def save_notes(notes):
+    """یادداشت‌ها را در فایل ذخیره می‌کند."""
+    with NOTES_FILE.open("w", encoding="utf-8") as f:
+        json.dump(notes, f, ensure_ascii=False, indent=2)
+
+
+def add_note(notes):
+    """یادداشت جدید اضافه می‌کند."""
+    text = input("متن یادداشت: ").strip()
+    if not text:
+        print("⚠️ یادداشت نمی‌تواند خالی باشد.")
+        return
+
+    notes.append({
+        "text": text,
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    })
+    save_notes(notes)
+    print("✅ یادداشت ذخیره شد.")
+
+
+def list_notes(notes):
+    """همه‌ی یادداشت‌ها را نمایش می‌دهد."""
+    if not notes:
+        print("📭 هنوز یادداشتی ندارید.")
+        return
+
+    print(f"\n📝 {len(notes)} یادداشت:")
+    for i, note in enumerate(notes, start=1):
+        print(f"  {i}. [{note['created_at']}] {note['text']}")
+
+
+def delete_note(notes):
+    """یادداشت را حذف می‌کند."""
+    if not notes:
+        print("📭 لیست خالی است.")
+        return
+
+    list_notes(notes)
+    try:
+        index = int(input("\nشماره یادداشت برای حذف: ")) - 1
+        if 0 <= index < len(notes):
+            removed = notes.pop(index)
+            save_notes(notes)
+            print(f"🗑 حذف شد: {removed['text']}")
+        else:
+            print("⚠️ شماره نامعتبر.")
+    except ValueError:
+        print("⚠️ لطفاً یک عدد وارد کنید.")
+
+
+def main():
+    notes = load_notes()
+
+    while True:
+        print("\n" + "=" * 40)
+        print("       دفترچه یادداشت")
+        print("=" * 40)
+        print(f"  📁 فایل: {NOTES_FILE.absolute()}")
+        print("  1. افزودن یادداشت")
+        print("  2. نمایش یادداشت‌ها")
+        print("  3. حذف یادداشت")
+        print("  4. خروج")
+        print("-" * 40)
+
+        choice = input("انتخاب: ").strip()
+
+        if choice == "1":
+            add_note(notes)
+        elif choice == "2":
+            list_notes(notes)
+        elif choice == "3":
+            delete_note(notes)
+        elif choice == "4":
+            print("👋 خداحافظ!")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>در این برنامه، همه‌ی مفاهیم فصل بکار گرفته شده‌اند:</p>
+        <ul>
+          <li><strong>pathlib.Path</strong> برای مسیر فایل.</li>
+          <li><strong>exists()</strong> برای چک کردن وجود.</li>
+          <li><strong>json</strong> برای ذخیره‌ی ساختاریافته.</li>
+          <li><strong>try/except</strong> برای مدیریت فایل خراب.</li>
+          <li><strong>with open</strong> برای خواندن و نوشتن.</li>
+          <li><strong>datetime</strong> برای ثبت زمان.</li>
+        </ul>
+        <p>فایل <code class="inline-code">notes.json</code> بعد از استفاده، چیزی شبیه این خواهد بود:</p>
+        <div class="code-box">
+          <div class="code-head"><span>notes.json</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">[
+  {
+    "text": "یادگیری فایل در پایتون",
+    "created_at": "2025-01-15 14:30"
+  },
+  {
+    "text": "تمرین با JSON و CSV",
+    "created_at": "2025-01-15 14:32"
+  }
+]</code></pre>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۶: مثال عملی ============ -->
+      <section class="part" id="p6">
+        <div class="part-head"><span class="part-num">بخش ۶</span><h2>💻 مثال عملی</h2></div>
+        <p>یک برنامه که لیست دانشجوها را به CSV تبدیل می‌کند و گزارش می‌دهد:</p>
+        <div class="code-box">
+          <div class="code-head"><span>student_report.py</span><span class="lang">Python</span></div>
+          <pre class="code"><code dir='ltr' data-lang="python">"""ساخت گزارش دانشجوها — با CSV."""
+
+import csv
+from pathlib import Path
+
+
+def create_sample_csv():
+    """یک فایل CSV نمونه می‌سازد."""
+    students = [
+        {"name": "علی", "age": 20, "score": 18.5},
+        {"name": "رضا", "age": 22, "score": 15.0},
+        {"name": "سارا", "age": 19, "score": 19.5},
+        {"name": "مریم", "age": 21, "score": 12.0},
+        {"name": "حسن", "age": 23, "score": 8.5},
+    ]
+
+    csv_path = Path("students.csv")
+    with csv_path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["name", "age", "score"])
+        writer.writeheader()
+        writer.writerows(students)
+
+    print(f"✅ فایل {csv_path} ساخته شد.")
+
+
+def show_report():
+    """گزارش کامل دانشجوها را نمایش می‌دهد."""
+    csv_path = Path("students.csv")
+
+    if not csv_path.exists():
+        print("❌ فایل CSV پیدا نشد.")
+        return
+
+    students = []
+    try:
+        with csv_path.open("r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                students.append({
+                    "name": row["name"],
+                    "age": int(row["age"]),
+                    "score": float(row["score"]),
+                })
+    except (ValueError, KeyError) as e:
+        print(f"❌ فایل CSV معتبر نیست: {e}")
+        return
+
+    if not students:
+        print("📭 هیچ دانشجویی یافت نشد.")
+        return
+
+    # آمار
+    total = len(students)
+    avg_score = sum(s["score"] for s in students) / total
+    passed = [s for s in students if s["score"] >= 10]
+    top = max(students, key=lambda s: s["score"])
+
+    print(f"\n{'=' * 50}")
+    print("           گزارش دانشجوها")
+    print(f"{'=' * 50}")
+    print(f"  تعداد کل      : {total}")
+    print(f"  میانگین نمرات : {avg_score:.2f}")
+    print(f"  قبول‌شده‌ها    : {len(passed)} از {total}")
+    print(f"  🏆 بهترین    : {top['name']} ({top['score']})")
+    print(f"{'=' * 50}\n")
+
+    print(f"{'#':<4}{'نام':<15}{'سن':<6}{'نمره':<10}{'وضعیت':<10}")
+    print("-" * 50)
+    for i, s in enumerate(students, start=1):
+        status = "✅ قبول" if s["score"] >= 10 else "❌ مردود"
+        print(f"{i:<4}{s['name']:<15}{s['age']:<6}{s['score']:<10}{status:<10}")
+    print("-" * 50)
+
+
+def main():
+    print("=" * 50)
+    print("        گزارش دانشجوها")
+    print("=" * 50)
+
+    if not Path("students.csv").exists():
+        create_sample_csv()
+        print()
+
+    show_report()
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+        </div>
+        <p>خروجی:</p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">==================================================
+        گزارش دانشجوها
+==================================================
+
+==================================================
+           گزارش دانشجوها
+==================================================
+  تعداد کل      : 5
+  میانگین نمرات : 14.70
+  قبول‌شده‌ها    : 4 از 5
+  🏆 بهترین    : سارا (19.5)
+==================================================
+
+#   نام            سن    نمره      وضعیت
+--------------------------------------------------
+1   علی            20    18.5      ✅ قبول
+2   رضا            22    15.0      ✅ قبول
+3   سارا           19    19.5      ✅ قبول
+4   مریم           21    12.0      ✅ قبول
+5   حسن            23    8.5       ❌ مردود
+--------------------------------------------------</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 نکته طلایی</b>
+          ترفند <code class="inline-code">f"{name:&lt;15}"</code> برای ترازبندی چپ با عرض ۱۵ کاراکتر است. برای راست‌چین از <code class="inline-code">&gt;</code> و برای وسط‌چین از <code class="inline-code">^</code> استفاده کنید.
+        </div>
+      </section>
+
+      <!-- ============ بخش ۷: کارگاه عملی ============ -->
+      <section class="part" id="p7">
+        <div class="part-head"><span class="part-num">بخش ۷</span><h2>🛠️ کارگاه عملی</h2></div>
+        <p>یک برنامه‌ی «دفترچه تلفن با ذخیره‌سازی» بسازید که از همه‌ی مفاهیم این فصل استفاده کند:</p>
+        <ol>
+          <li>فایل جدیدی به نام <code class="inline-code">phonebook_v2.py</code> در پوشه‌ی پروژه بسازید.</li>
+          <li>یک فایل JSON به نام <code class="inline-code">phonebook.json</code> برای ذخیره‌ی مخاطبین استفاده کنید.</li>
+          <li>تابع <code class="inline-code">load_contacts()</code> بسازید که:
+            <ul>
+              <li>اگر فایل نبود، دیکشنری خالی برگرداند.</li>
+              <li>اگر بود، محتوایش را از JSON بخواند.</li>
+              <li>خطاهای <code class="inline-code">json.JSONDecodeError</code> و <code class="inline-code">FileNotFoundError</code> را مدیریت کند.</li>
+            </ul>
+          </li>
+          <li>تابع <code class="inline-code">save_contacts(contacts)</code> بسازید که دیکشنری را در JSON ذخیره کند (با <code class="inline-code">ensure_ascii=False</code> و <code class="inline-code">indent=2</code>).</li>
+          <li>تابع <code class="inline-code">add_contact(contacts)</code> — نام و شماره می‌گیرد، اضافه می‌کند و <code class="inline-code">save_contacts()</code> صدا می‌زند.</li>
+          <li>تابع <code class="inline-code">list_contacts(contacts)</code> — همه را نمایش می‌دهد.</li>
+          <li>تابع <code class="inline-code">search_contact(contacts, query)</code> — جست‌وجو در نام یا شماره.</li>
+          <li>تابع <code class="inline-code">delete_contact(contacts, name)</code> — حذف می‌کند و ذخیره می‌کند.</li>
+          <li>تابع <code class="inline-code">export_to_csv(contacts)</code> — مخاطبین را در یک فایل <code class="inline-code">phonebook.csv</code> هم ذخیره می‌کند (برای امکان باز کردن در اکسل).</li>
+          <li>تابع <code class="inline-code">main()</code> با منوی تعاملی که همه‌ی این‌ها را ارائه دهد.</li>
+          <li>همه‌ی خطاها را با <code class="inline-code">try/except</code> مدیریت کنید.</li>
+          <li>همه‌ی عملیات مهم را با <code class="inline-code">logging</code> ثبت کنید.</li>
+        </ol>
+      </section>
+
+      <!-- ============ بخش ۸: پاسخ کامل کارگاه عملی ============ -->
+      <section class="part" id="p8">
+        <div class="part-head"><span class="part-num">بخش ۸</span><h2>✅ پاسخ کامل کارگاه عملی</h2></div>
+        <details class="answer">
+          <summary>✅ راه‌حل پیشنهادی</summary>
+          <div class="answer-body">
+            <div class="code-box">
+              <div class="code-head"><span>phonebook_v2.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">"""دفترچه تلفن با ذخیره‌سازی در JSON و خروجی CSV."""
+
+import json
+import csv
+import logging
+from pathlib import Path
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+
+
+JSON_FILE = Path("phonebook.json")
+CSV_FILE = Path("phonebook.csv")
+
+
+def load_contacts():
+    """مخاطبین را از فایل JSON می‌خواند."""
+    if not JSON_FILE.exists():
+        logging.info("فایل مخاطبین وجود ندارد. شروع از صفر.")
+        return {}
+
+    try:
+        with JSON_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            logging.info(f"{len(data)} مخاطب از فایل بارگذاری شد.")
+            return data
+    except json.JSONDecodeError:
+        logging.error("فایل JSON خراب است.")
+        print("⚠️ فایل مخاطبین خراب است. با فایل خالی شروع می‌کنیم.")
+        return {}
+    except UnicodeDecodeError:
+        logging.error("مشکل در encoding فایل.")
+        return {}
+
+
+def save_contacts(contacts):
+    """مخاطبین را در فایل JSON ذخیره می‌کند."""
+    try:
+        with JSON_FILE.open("w", encoding="utf-8") as f:
+            json.dump(contacts, f, ensure_ascii=False, indent=2)
+        logging.info(f"{len(contacts)} مخاطب ذخیره شد.")
+        return True
+    except Exception as e:
+        logging.error(f"خطای ذخیره: {e}")
+        print(f"❌ خطای ذخیره‌سازی: {e}")
+        return False
+
+
+def add_contact(contacts):
+    """مخاطب جدید اضافه می‌کند."""
+    name = input("نام: ").strip()
+    if not name:
+        print("⚠️ نام نمی‌تواند خالی باشد.")
+        return
+
+    if name in contacts:
+        print(f"⚠️ «{name}» قبلاً وجود دارد.")
+        return
+
+    phone = input("شماره: ").strip()
+    city = input("شهر: ").strip()
+
+    contacts[name] = {
+        "phone": phone,
+        "city": city,
+    }
+    save_contacts(contacts)
+    print(f"✅ «{name}» اضافه شد.")
+
+
+def list_contacts(contacts):
+    """همه‌ی مخاطبین را نمایش می‌دهد."""
+    if not contacts:
+        print("📭 دفترچه خالی است.")
+        return
+
+    print(f"\n📞 {len(contacts)} مخاطب:")
+    print("-" * 50)
+    for i, (name, info) in enumerate(contacts.items(), start=1):
+        print(f"  {i}. {name} — {info['phone']} ({info['city']})")
+    print("-" * 50)
+
+
+def search_contact(contacts, query):
+    """جست‌وجو در مخاطبین."""
+    query = query.lower()
+    results = []
+
+    for name, info in contacts.items():
+        if (query in name.lower()
+                or query in info["phone"]
+                or query in info["city"].lower()):
+            results.append((name, info))
+
+    if not results:
+        print(f"❌ نتیجه‌ای برای «{query}» پیدا نشد.")
+        return
+
+    print(f"\n🔍 {len(results)} نتیجه:")
+    for name, info in results:
+        print(f"  • {name}: {info['phone']} ({info['city']})")
+
+
+def delete_contact(contacts):
+    """مخاطب را حذف می‌کند."""
+    name = input("نام مخاطب برای حذف: ").strip()
+
+    if name not in contacts:
+        print(f"❌ «{name}» پیدا نشد.")
+        return
+
+    del contacts[name]
+    save_contacts(contacts)
+    print(f"🗑 «{name}» حذف شد.")
+
+
+def export_to_csv(contacts):
+    """مخاطبین را در CSV ذخیره می‌کند."""
+    if not contacts:
+        print("📭 دفترچه خالی است.")
+        return
+
+    try:
+        with CSV_FILE.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["name", "phone", "city"])
+            writer.writeheader()
+            for name, info in contacts.items():
+                writer.writerow({
+                    "name": name,
+                    "phone": info["phone"],
+                    "city": info["city"],
+                })
+        logging.info(f"خروجی CSV ساخته شد: {CSV_FILE}")
+        print(f"✅ خروجی CSV در «{CSV_FILE}» ذخیره شد.")
+    except Exception as e:
+        logging.error(f"خطای CSV: {e}")
+        print(f"❌ خطای CSV: {e}")
+
+
+def main():
+    contacts = load_contacts()
+
+    while True:
+        print("\n" + "=" * 45)
+        print("       دفترچه تلفن (با ذخیره)")
+        print("=" * 45)
+        print(f"  📁 فایل: {JSON_FILE.absolute()}")
+        print("  1. افزودن مخاطب")
+        print("  2. نمایش همه")
+        print("  3. جست‌وجو")
+        print("  4. حذف")
+        print("  5. خروجی CSV")
+        print("  6. خروج")
+        print("-" * 45)
+
+        choice = input("انتخاب شما: ").strip()
+
+        if choice == "1":
+            add_contact(contacts)
+        elif choice == "2":
+            list_contacts(contacts)
+        elif choice == "3":
+            q = input("جست‌وجو: ").strip()
+            if q:
+                search_contact(contacts, q)
+        elif choice == "4":
+            delete_contact(contacts)
+        elif choice == "5":
+            export_to_csv(contacts)
+        elif choice == "6":
+            print("👋 خداحافظ!")
+            logging.info("برنامه بسته شد.")
+            break
+        else:
+            print("⚠️ گزینه نامعتبر.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p>نمونه‌ی اجرا:</p>
+            <div class="code-box">
+              <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+              <pre class="code"><code dir='ltr' data-lang="bash">=============================================
+       دفترچه تلفن (با ذخیره)
+=============================================
+  📁 فایل: /home/user/py-learn/phonebook.json
+  1. افزودن مخاطب
+  2. نمایش همه
+  3. جست‌وجو
+  4. حذف
+  5. خروجی CSV
+  6. خروج
+---------------------------------------------
+
+انتخاب شما: 1
+نام: علی محمدی
+شماره: 09123456789
+شهر: تهران
+✅ «علی محمدی» اضافه شد.
+
+انتخاب شما: 1
+نام: سارا رضایی
+شماره: 09876543210
+شهر: اصفهان
+✅ «سارا رضایی» اضافه شد.
+
+انتخاب شما: 2
+
+📞 2 مخاطب:
+--------------------------------------------------
+  1. علی محمدی — 09123456789 (تهران)
+  2. سارا رضایی — 09876543210 (اصفهان)
+--------------------------------------------------
+
+انتخاب شما: 5
+✅ خروجی CSV در «phonebook.csv» ذخیره شد.</code></pre>
+            </div>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ نکته‌های کلیدی این راه‌حل</summary>
+          <div class="answer-body">
+            <p>نکته‌های مهم:</p>
+            <ol>
+              <li><strong>ذخیره‌ی خودکار:</strong> بعد از هر تغییر (افزودن یا حذف)، بلافاصله <code class="inline-code">save_contacts()</code> صدا زده می‌شود. یعنی حتی اگر برق قطع شود یا برنامه کرش کند، داده‌ها از دست نمی‌روند.</li>
+              <li><strong>مدیریت خطاهای فایل:</strong> <code class="inline-code">try/except</code> برای فایل خراب، <code class="inline-code">JSONDecodeError</code> برای JSON نامعتبر.</li>
+              <li><strong>Logging:</strong> هر عملیات مهم با <code class="inline-code">logging</code> ثبت می‌شود. در محیط تولید، این logها برای عیب‌یابی حیاتی هستند.</li>
+              <li><strong>دو فرمت خروجی:</strong> JSON برای خواندن و نوشتن توسط برنامه، CSV برای باز کردن در اکسل یا نرم‌افزارهای جدولی.</li>
+              <li><strong>Pathlib:</strong> از <code class="inline-code">Path</code> برای مسیرها استفاده شد — این کد روی ویندوز و لینوکس یکسان کار می‌کند.</li>
+            </ol>
+          </div>
+        </details>
+        <details class="answer">
+          <summary>✅ بازبینی نهایی</summary>
+          <div class="answer-body">
+            <p>پیش از رفتن به بخش بعد، این چک‌لیست را بررسی کنید:</p>
+            <ul>
+              <li>فایل <code class="inline-code">phonebook_v2.py</code> بدون خطا اجرا می‌شود.</li>
+              <li>بعد از بستن و اجرای دوباره، داده‌ها باقی می‌مانند (چون ذخیره شده‌اند).</li>
+              <li>فایل <code class="inline-code">phonebook.json</code> را باز کنید و ببینید متن فارسی درست ذخیره شده.</li>
+              <li>فایل <code class="inline-code">phonebook.csv</code> را در اکسل یا هر برنامه‌ی جدولی باز کنید.</li>
+              <li>می‌دانید چرا همیشه باید <code class="inline-code">encoding="utf-8"</code> بگذارید.</li>
+              <li>تفاوت CSV و JSON را کاملاً می‌فهمید.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۹: خطاهای رایج ============ -->
+      <section class="part" id="p9">
+        <div class="part-head"><span class="part-num">بخش ۹</span><h2>🐞 خطاهای رایج و رفع آن‌ها</h2></div>
+        <p>این خطاها را در تمرین‌ها زیاد می‌بینید:</p>
+
+        <div class="err-card">
+          <b class="err-title">❌ FileNotFoundError: No such file or directory</b>
+          <p><strong>معنی:</strong> فایلی که می‌خواهید باز کنید، وجود ندارد.</p>
+          <p><strong>علت:</strong> مسیر اشتباه است، یا فایل در آن پوشه نیست.</p>
+          <p><strong>راه‌حل:</strong> با <code class="inline-code">Path("file.txt").exists()</code> وجود فایل را چک کنید. همچنین مسیر جاری را با <code class="inline-code">Path.cwd()</code> ببینید — ممکن است در پوشه‌ی اشتباهی باشید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ UnicodeDecodeError: 'utf-8' codec can't decode byte...</b>
+          <p><strong>معنی:</strong> فایل با UTF-8 ذخیره نشده، یا فایل باینری است.</p>
+          <p><strong>علت:</strong> فایل را با encoding دیگری ذخیره کرده‌اید (مثلاً <code>cp1256</code> در ویندوز).</p>
+          <p><strong>راه‌حل:</strong> encoding فایل را پیدا کنید و در <code class="inline-code">open()</code> مشخص کنید: <code class="inline-code">open("file.txt", encoding="cp1256")</code>. اگر نمی‌دانید، از <code class="inline-code">errors="ignore"</code> استفاده کنید (اما این کاراکترها را حذف می‌کند).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ داده‌های فارسی به‌هم‌ریخته (ÙØ§...)</b>
+          <p><strong>معنی:</strong> متن فارسی درست نمایش داده نمی‌شود.</p>
+          <p><strong>علت:</strong> فایل بدون <code class="inline-code">encoding="utf-8"</code> باز شده. روی ویندوز، پایتون به‌طور پیش‌فرض از <code class="inline-code">cp1256</code> استفاده می‌کند.</p>
+          <p><strong>راه‌حل:</strong> همیشه <code class="inline-code">encoding="utf-8"</code> را در <code class="inline-code">open()</code> بگذارید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ PermissionError: [Errno 13] Permission denied</b>
+          <p><strong>معنی:</strong> اجازه‌ی خواندن یا نوشتن در فایل را ندارید.</p>
+          <p><strong>علت:</strong> فایل توسط برنامه‌ی دیگری باز است، یا در پوشه‌ای محافظت‌شده می‌خواهید بنویسید.</p>
+          <p><strong>راه‌حل:</strong> بررسی کنید فایل جای دیگری باز نباشد. اگر پوشه‌ی سیستمی است، مسیر دیگری انتخاب کنید (مثلاً پوشه‌ی پروژه).</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ پاک شدن محتوای فایل با حالت "w"</b>
+          <p><strong>معنی:</strong> فایل باز شد ولی محتوایش از دست رفت.</p>
+          <p><strong>علت:</strong> حالت <code class="inline-code">"w"</code> فایل را از صفر باز می‌کند — محتوای قبلی پاک می‌شود.</p>
+          <p><strong>راه‌حل:</strong> اگر می‌خواهید به فایل موجود اضافه کنید، از <code class="inline-code">"a"</code> (append) استفاده کنید. اگر می‌خواهید کاملاً بازنویسی کنید، <code class="inline-code">"w"</code> درست است — فقط هوشیار باشید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ json.JSONDecodeError</b>
+          <p><strong>معنی:</strong> فایل JSON شما معتبر نیست.</p>
+          <p><strong>علت:</strong> فایل خراب است، یا محتوایش JSON نیست (مثلاً یک متن ساده).</p>
+          <p><strong>راه‌حل:</strong> با یک ویرایشگر JSON (مثل VS Code) فایل را باز کنید تا خطا را ببینید. راه‌حل موقت: <code class="inline-code">try/except json.JSONDecodeError</code> و در صورت خطا، از فایل خالی شروع کنید.</p>
+        </div>
+
+        <div class="err-card">
+          <b class="err-title">❌ خط خالی اضافه در CSV روی ویندوز</b>
+          <p><strong>معنی:</strong> فایل CSV که می‌سازید، بین خطوط، خط خالی دارد.</p>
+          <p><strong>علت:</strong> فراموش کردن <code class="inline-code">newline=""</code> در <code class="inline-code">open()</code> هنگام نوشتن CSV.</p>
+          <p><strong>راه‌حل:</strong> همیشه در حالت نوشتن CSV بنویسید: <code class="inline-code">open("file.csv", "w", encoding="utf-8", newline="")</code>.</p>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۰: تمرین‌های تثبیت ============ -->
+      <section class="part" id="p10">
+        <div class="part-head"><span class="part-num">بخش ۱۰</span><h2>🏋️ تمرین‌های تثبیت</h2></div>
+        <p>پاسخ‌ها را اول خودتان بنویسید، بعد باز کنید:</p>
+
+        <details class="answer">
+          <summary>🏋️ تمرین پایه — پیش‌بینی خروجی</summary>
+          <div class="answer-body">
+            <p>بدون اجرا، رفتار کدهای زیر را حدس بزنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>predict.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># مورد 1 — بعد از این کد، محتوای فایل چیست؟
+with open("test.txt", "w", encoding="utf-8") as f:
+    f.write("سلام\n")
+    f.write("خوبی؟\n")
+
+with open("test.txt", "a", encoding="utf-8") as f:
+    f.write("خداحافظ\n")
+
+# مورد 2 — چه چیزی چاپ می‌شود؟
+with open("test.txt", "r", encoding="utf-8") as f:
+    for line in f:
+        print(line.strip())
+
+# مورد 3 — کدام خطا رخ می‌دهد؟
+with open("does_not_exist.txt", "r", encoding="utf-8") as f:
+    print(f.read())
+
+# مورد 4 — این فایل روی ویندوز چه مشکلی دارد؟
+import csv
+with open("data.csv", "w", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["a", "b"])
+    writer.writerow(["1", "2"])</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>مورد ۱:</strong> فایل شامل سه خط می‌شود: سلام، خوبی؟، خداحافظ. حالت <code class="inline-code">"a"</code> محتوای قبلی را نگه می‌دارد و به آخر اضافه می‌کند.</li>
+              <li><strong>مورد ۲:</strong> سه خط چاپ می‌شود: سلام، خوبی؟، خداحافظ. <code class="inline-code">.strip()</code> کاراکتر <code>\n</code> را حذف می‌کند.</li>
+              <li><strong>مورد ۳:</strong> خطای <code class="inline-code">FileNotFoundError</code>. چون حالت <code>"r"</code> است و فایل وجود ندارد.</li>
+              <li><strong>مورد ۴:</strong> فراموش شده <code class="inline-code">newline=""</code>. روی ویندوز، بین خطوط، خط خالی اضافه می‌شود.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین توسعه — ذخیره و بازیابی لیست</summary>
+          <div class="answer-body">
+            <p>برنامه‌ای بنویسید که اعداد را در یک لیست ذخیره کند و در فایل JSON نگه دارد:</p>
+            <div class="code-box">
+              <div class="code-head"><span>numbers_app.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python">import json
+from pathlib import Path
+
+
+def load_numbers():
+    """اعداد را از فایل می‌خواند."""
+    path = Path("numbers.json")
+    if not path.exists():
+        return []
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print("⚠️ فایل خراب است.")
+        return []
+
+
+def save_numbers(numbers):
+    """اعداد را در فایل ذخیره می‌کند."""
+    path = Path("numbers.json")
+    path.write_text(
+        json.dumps(numbers, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+
+
+def main():
+    numbers = load_numbers()
+    print(f"📂 اعداد قبلی: {numbers}")
+
+    while True:
+        text = input("عدد (یا 'خروج'): ").strip()
+        if text == "خروج":
+            break
+        try:
+            numbers.append(float(text))
+            save_numbers(numbers)
+            print(f"✅ ذخیره شد. مجموع: {sum(numbers)}")
+        except ValueError:
+            print("⚠️ لطفاً عدد معتبر وارد کنید.")
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+            <p><strong>نکته:</strong> هر بار که یک عدد اضافه می‌شود، فایل بلافاصله ذخیره می‌شود. اگر برنامه کرش کند، داده‌ها از دست نمی‌روند. این الگو در برنامه‌های واقعی خیلی استفاده می‌شود.</p>
+          </div>
+        </details>
+
+        <details class="answer">
+          <summary>🏋️ تمرین خطایابی — چهار خطا</summary>
+          <div class="answer-body">
+            <p>این کد چهار خطا دارد. هر کدام را پیدا کنید:</p>
+            <div class="code-box">
+              <div class="code-head"><span>broken.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># خطا 1 — فراموشی encoding
+with open("data.txt", "w") as f:
+    f.write("سلام دنیا")
+
+# خطا 2 — فایل بسته شده و بعد می‌خوانیم
+with open("data.txt", "r") as f:
+    content = f.read()
+print(content)
+f.read()   # ← خطا!
+
+# خطا 3 — استفاده از "w" روی فایل مهم
+with open("important.txt", "w") as f:
+    f.write("داده جدید")
+
+# خطا 4 — JSON بدون ensure_ascii=False
+import json
+with open("user.json", "w") as f:
+    json.dump({"name": "علی"}, f)</code></pre>
+            </div>
+            <p><strong>پاسخ:</strong></p>
+            <ul>
+              <li><strong>خطا ۱:</strong> <code class="inline-code">encoding</code> مشخص نشده. راه‌حل: <code class="inline-code">open("data.txt", "w", encoding="utf-8")</code>.</li>
+              <li><strong>خطا ۲:</strong> <code class="inline-code">f.read()</code> بعد از بلوک <code class="inline-code">with</code> صدا زده شده — فایل بسته است. راه‌حل: خواندن دوم را داخل بلوک ببرید یا فایل را دوباره باز کنید.</li>
+              <li><strong>خطا ۳:</strong> این خطا نیست، ولی خطرناک است. حالت <code class="inline-code">"w"</code> محتوای قبلی را پاک می‌کند. اگر می‌خواهید اضافه کنید، از <code class="inline-code">"a"</code> استفاده کنید.</li>
+              <li><strong>خطا ۴:</strong> <code class="inline-code">ensure_ascii=False</code> فراموش شده. راه‌حل: <code class="inline-code">json.dump({"name": "علی"}, f, ensure_ascii=False)</code>. بدون این، متن فارسی با کدهای <code>\u</code> ذخیره می‌شود.</li>
+            </ul>
+            <p>نسخه‌ی اصلاح‌شده:</p>
+            <div class="code-box">
+              <div class="code-head"><span>fixed.py</span><span class="lang">Python</span></div>
+              <pre class="code"><code dir='ltr' data-lang="python"># اصلاح 1
+with open("data.txt", "w", encoding="utf-8") as f:
+    f.write("سلام دنیا")
+
+# اصلاح 2
+with open("data.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+print(content)
+# اگر دوباره می‌خواهید بخوانید:
+with open("data.txt", "r", encoding="utf-8") as f:
+    content2 = f.read()
+
+# اصلاح 3 — استفاده از "a" به‌جای "w"
+with open("important.txt", "a", encoding="utf-8") as f:
+    f.write("داده جدید اضافه شد\n")
+
+# اصلاح 4
+import json
+with open("user.json", "w", encoding="utf-8") as f:
+    json.dump({"name": "علی"}, f, ensure_ascii=False, indent=2)</code></pre>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ بخش ۱۱: آزمون تعاملی فصل ============ -->
+      <section class="part" id="p11">
+        <div class="part-head"><span class="part-num">بخش ۱۱</span><h2>📝 آزمون تعاملی فصل</h2></div>
+        <p>پرسش‌های چهارگزینه‌ای زیر را پاسخ دهید؛ بلافاصله بعد از انتخاب، پاسخ درست و توضیحش را می‌بینید. حد نصاب قبولی <strong>۶۰٪</strong> است و بهترین نمره‌تان ذخیره می‌شود.</p>
+
+        <div class="quiz" data-id="ch-14" data-title="آزمون فصل ۱۴ — فایل و مسیر" data-pass="60">
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۱) کدام حالت <code dir="ltr">open()</code> فایل را برای <strong>افزودن</strong> باز می‌کند (بدون پاک کردن محتوای قبلی)؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">"w"</button>
+              <button type="button" class="quiz-opt" data-key="b">"a"</button>
+              <button type="button" class="quiz-opt" data-key="c">"r"</button>
+              <button type="button" class="quiz-opt" data-key="d">"x"</button>
+            </div>
+            <div class="quiz-explain">💡 <code>"a"</code> مخفف append است — به آخر فایل اضافه می‌کند. حالت <code>"w"</code> محتوای قبلی را پاک می‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۲) چرا باید همیشه <code dir="ltr">encoding="utf-8"</code> بگذاریم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">چون سرعت را زیاد می‌کند</button>
+              <button type="button" class="quiz-opt" data-key="b">چون اجباری است و بدون آن خطا می‌دهد</button>
+              <button type="button" class="quiz-opt" data-key="c">تا متن فارسی و کاراکترهای خاص درست ذخیره و خوانده شوند</button>
+              <button type="button" class="quiz-opt" data-key="d">چون فایل‌ها را کوچک‌تر می‌کند</button>
+            </div>
+            <div class="quiz-explain">💡 بدون مشخص کردن encoding، پایتون از encoding پیش‌فرض سیستم استفاده می‌کند که روی ویندوز معمولاً <code>cp1256</code> است و متن فارسی را درست ذخیره نمی‌کند.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="a">
+            <h4 class="quiz-q-text">۳) کدام روش برای کار با فایل <strong>امن‌تر</strong> است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">استفاده از <code>with open(...) as f:</code></button>
+              <button type="button" class="quiz-opt" data-key="b">باز کردن با <code>f = open(...)</code> و بستن دستی با <code>f.close()</code></button>
+              <button type="button" class="quiz-opt" data-key="c">باز کردن و بستن نکردن</button>
+              <button type="button" class="quiz-opt" data-key="d">استفاده از <code>eval()</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>with</code> اطمینان می‌دهد که فایل در هر شرایطی (حتی با خطا) بسته می‌شود. روش دستی خطرناک است چون ممکن است <code>close()</code> هرگز اجرا نشود.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="d">
+            <h4 class="quiz-q-text">۴) برای ذخیره‌ی داده‌های ساختاریافته‌ی تودرتو (مثل تنظیمات برنامه)، کدام فرمت بهتر است؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a">TXT</button>
+              <button type="button" class="quiz-opt" data-key="b">CSV</button>
+              <button type="button" class="quiz-opt" data-key="c">HTML</button>
+              <button type="button" class="quiz-opt" data-key="d">JSON</button>
+            </div>
+            <div class="quiz-explain">💡 JSON برای داده‌های تودرتو و پیچیده عالی است. CSV برای داده‌های جدولی (ردیف-ستون) بهتر است.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="b">
+            <h4 class="quiz-q-text">۵) برای جست‌وجوی وجود یک فایل، از کدام روش با <code dir="ltr">pathlib</code> استفاده می‌کنیم؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>Path.file_exists()</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>Path.exists()</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>Path.check()</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>Path.find()</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>Path.exists()</code> بررسی می‌کند که فایل یا پوشه وجود دارد. با <code>is_file()</code> می‌توانید مطمئن شوید فایل است (نه پوشه)، و با <code>is_dir()</code> برعکس.</div>
+          </div>
+
+          <div class="quiz-q" data-answer="c">
+            <h4 class="quiz-q-text">۶) در نوشتن JSON، کدام پارامتر باعث می‌شود متن فارسی به‌درستی و بدون کدهای <code dir="ltr">\u</code> ذخیره شود؟</h4>
+            <div class="quiz-opts">
+              <button type="button" class="quiz-opt" data-key="a"><code>indent=2</code></button>
+              <button type="button" class="quiz-opt" data-key="b"><code>encoding="utf-8"</code></button>
+              <button type="button" class="quiz-opt" data-key="c"><code>ensure_ascii=False</code></button>
+              <button type="button" class="quiz-opt" data-key="d"><code>persian=True</code></button>
+            </div>
+            <div class="quiz-explain">💡 <code>ensure_ascii=False</code> به پایتون می‌گوید که متن فارسی را مستقیم ذخیره کند، نه با کدهای escape مثل <code>\u0639</code>. <code>indent=2</code> برای خوانایی است و <code>encoding</code> باید در <code>open()</code> باشد.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۲: پروژه عملی فصل ============ -->
+      <section class="part" id="p12">
+        <div class="part-head"><span class="part-num">بخش ۱۲</span><h2>🏗️ پروژه عملی فصل</h2></div>
+        <p><strong>پروژه: «مدیر هزینه‌های شخصی»</strong> — برنامه‌ای که هزینه‌های روزانه را ثبت می‌کند و گزارش می‌دهد. همه‌ی داده‌ها در فایل CSV ذخیره می‌شوند تا بتوانید در اکسل بازشان کنید.</p>
+        <p><strong>نیازمندی‌ها:</strong></p>
+        <ul class="checklist">
+          <li>فایل در پوشه‌ی پروژه به نام <code class="inline-code">expense_tracker.py</code> ذخیره شود.</li>
+          <li>از فایل <code class="inline-code">expenses.csv</code> برای ذخیره استفاده کنید (با <code class="inline-code">pathlib</code>).</li>
+          <li>ساختار فایل CSV: <code class="inline-code">date, category, description, amount</code>.</li>
+          <li>توابع زیر پیاده شوند:
+            <ul>
+              <li><code class="inline-code">load_expenses()</code> — خواندن از CSV به لیست دیکشنری‌ها.</li>
+              <li><code class="inline-code">save_expenses(expenses)</code> — نوشتن لیست به CSV.</li>
+              <li><code class="inline-code">add_expense()</code> — افزودن هزینه جدید با تاریخ امروز.</li>
+              <li><code class="inline-code">show_all()</code> — نمایش همه‌ی هزینه‌ها در جدول.</li>
+              <li><code class="inline-code">filter_by_category()</code> — فیلتر بر اساس دسته.</li>
+              <li><code class="inline-code">total_by_category()</code> — جمع هزینه‌ها به تفکیک دسته (با dict comprehension یا حلقه).</li>
+              <li><code class="inline-code">show_stats()</code> — آمار: مجموع کل، میانگین، بیشترین هزینه.</li>
+            </ul>
+          </li>
+          <li>تاریخ هر هزینه، به‌صورت خودکار با <code class="inline-code">datetime</code> ثبت شود.</li>
+          <li>همه‌ی خطاها (فایل خراب، ورودی نامعتبر) با <code class="inline-code">try/except</code> مدیریت شوند.</li>
+          <li>همه‌ی عملیات مهم با <code class="inline-code">logging</code> ثبت شوند.</li>
+          <li>منوی تعاملی برای همه‌ی قابلیت‌ها.</li>
+        </ul>
+        <p><strong>خروجی هدف (نمونه):</strong></p>
+        <div class="code-box">
+          <div class="code-head"><span>خروجی</span><span class="lang">Text</span></div>
+          <pre class="code"><code dir='ltr' data-lang="bash">══════════════════════════════════════
+     مدیریت هزینه‌ها
+══════════════════════════════════════
+  1. ثبت هزینه جدید
+  2. نمایش همه
+  3. فیلتر بر اساس دسته
+  4. جمع بر اساس دسته
+  5. آمار کلی
+  6. خروج
+──────────────────────────────────────
+
+انتخاب شما: 1
+
+دسته (خوراک/حمل‌ونقل/تفریح/سایر): خوراک
+توضیح: ناهار
+مبلغ: 85000
+✅ هزینه ثبت شد.
+
+انتخاب شما: 5
+
+📊 آمار کلی
+──────────────────────────────────────
+  تعداد هزینه‌ها: 3
+  مجموع کل     : 350,000 تومان
+  میانگین      : 116,667 تومان
+  بیشترین      : 200,000 تومان (خرید کتاب)
+──────────────────────────────────────</code></pre>
+        </div>
+        <div class="callout tip">
+          <b class="title">💡 چالش اختیاری</b>
+          بعد از این که پروژه کار کرد، این قابلیت‌ها را اضافه کنید:
+          <ul style="margin-top:8px">
+            <li>گزارش ماهانه (فیلتر بر اساس تاریخ).</li>
+            <li>ذخیره‌ی نسخه‌ی پشتیبان در JSON به‌صورت موازی.</li>
+            <li>نمودار ساده‌ی دسته‌ها (با ستاره یا کاراکتر).</li>
+            <li>امکان ویرایش یا حذف هزینه بر اساس شماره.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۳: جمع‌بندی و دستاوردها ============ -->
+      <section class="part" id="p13">
+        <div class="part-head"><span class="part-num">بخش ۱۳</span><h2>🎯 جمع‌بندی و دستاوردها</h2></div>
+        <p><strong>در این فصل یاد گرفتید:</strong></p>
+        <ul>
+          <li>فایل را با <code class="inline-code">open()</code> باز کنید.</li>
+          <li>حالت‌های مختلف فایل: <code class="inline-code">"r"</code> (خواندن)، <code class="inline-code">"w"</code> (نوشتن)، <code class="inline-code">"a"</code> (افزودن)، <code class="inline-code">"x"</code> (ساخت).</li>
+          <li>از <code class="inline-code">with</code> برای مدیریت امن فایل استفاده کنید.</li>
+          <li>همیشه <code class="inline-code">encoding="utf-8"</code> را بگذارید تا متن فارسی درست ذخیره شود.</li>
+          <li>سه روش خواندن فایل: <code class="inline-code">read()</code>، <code class="inline-code">readlines()</code>، پیمایش با <code class="inline-code">for</code>.</li>
+          <li>نوشتن با <code class="inline-code">write()</code> و <code class="inline-code">writelines()</code>.</li>
+          <li>با <code class="inline-code">pathlib.Path</code> مسیرهای مستقل از سیستم‌عامل بسازید.</li>
+          <li>متدهای مفید <code class="inline-code">Path</code>: <code class="inline-code">exists</code>، <code class="inline-code">is_file</code>، <code class="inline-code">is_dir</code>، <code class="inline-code">mkdir</code>، <code class="inline-code">read_text</code>، <code class="inline-code">write_text</code>.</li>
+          <li>کار با فایل‌های CSV با <code class="inline-code">csv</code> ماژول (<code class="inline-code">reader</code>، <code class="inline-code">writer</code>، <code class="inline-code">DictReader</code>، <code class="inline-code">DictWriter</code>).</li>
+          <li>کار با فایل‌های JSON با <code class="inline-code">json</code> ماژول (<code class="inline-code">load</code>، <code class="inline-code">dump</code>، <code class="inline-code">loads</code>، <code class="inline-code">dumps</code>).</li>
+          <li>خطاهای رایج فایل: <code class="inline-code">FileNotFoundError</code>، <code class="inline-code">UnicodeDecodeError</code>، <code class="inline-code">PermissionError</code> و مدیریت آن‌ها.</li>
+        </ul>
+        <div class="callout tip">
+          <b class="title">💡 ✨ یک‌جمله‌ای که باید یادتان بماند</b>
+          «برنامه‌ای که داده‌ها را ذخیره نمی‌کند، فقط یک اسباب‌بازی است. وقتی برنامه‌های شما داده را در فایل نگه می‌دارند، از سطح آموزش به سطح ابزار واقعی می‌رسند.»
+        </div>
+      </section>
+
+      <!-- ============ بخش ۱۴: سوالات متداول و گام بعدی ============ -->
+      <section class="part" id="p14">
+        <div class="part-head"><span class="part-num">بخش ۱۴</span><h2>❓ سوالات متداول و گام بعدی</h2></div>
+        <details class="faq-item"><summary>چرا از <code dir="ltr">with</code> استفاده کنیم؟ نمی‌شه فایل رو با کد مدیریت کرد؟</summary><div class="faq-body"><p>فنی می‌شه، اما <code>with</code> سه مزیت مهم داره: (۱) فایل رو <strong>در هر شرایطی</strong> می‌بنده — حتی اگر خطا رخ بده یا return باشه. (۲) کد رو کوتاه‌تر و خواناتر می‌کنه. (۳) باعث می‌شه نتونید فراموش کنید فایل رو ببندید. از پایتون ۳ به بعد، <code>with</code> استاندارد طلایی کار با فایل است.</p></div></details>
+        <details class="faq-item"><summary>چه تفاوتی بین <code dir="ltr">json.dump</code> و <code dir="ltr">json.dumps</code> هست؟</summary><div class="faq-body"><p>حرف <code>s</code> در آخر مخفف <strong>string</strong> است. <code>json.dump</code> به یک فایل می‌نویسد (نتیجه‌ی رشته‌ای رو مستقیم می‌فرسته به فایل). <code>json.dumps</code> یک رشته برمی‌گرداند که خودتان می‌تونید جایی ذخیره کنید. همین منطق برای <code>load</code> و <code>loads</code> هم صادقه.</p></div></details>
+        <details class="faq-item"><summary>تفاوت CSV و JSON چیست و کدام را استفاده کنم؟</summary><div class="faq-body"><p>CSV برای <strong>داده‌های جدولی</strong> (ردیف‌های متناظر، مثل لیست مخاطبین یا محصولات). JSON برای <strong>داده‌های ساختاریافته و تودرتو</strong> (مثل تنظیمات، پروفایل کاربر، پاسخ API). اگر داده‌تان جدولی است، CSV. اگر شک کردید، JSON — انعطاف‌پذیرتره.</p></div></details>
+        <details class="faq-item"><summary>آیا می‌تونم فایل رو در پوشه‌ای بیرون از پروژه بسازم؟</summary><div class="faq-body"><p>بله، اما مراقب باشید. با مسیر مطلق (مثل <code>/home/user/file.txt</code> یا <code>C:\\Users\\Ali\\file.txt</code>) می‌تونید هر جایی بنویسید. اما معمولاً بهتره همه‌ی داده‌های یک پروژه در پوشه‌ی خودش باشن. اگر بیرون از پوشه بنویسید، بعداً پیدا کردن یا پاک‌کردنش سخت‌تره.</p></div></details>
+        <details class="faq-item"><summary>چطور فایل CSV رو در اکسل باز کنم؟</summary><div class="faq-body"><p>روی فایل راست‌کلیک کنید و Open with → Excel (یا هر برنامه‌ی جدولی مثل LibreOffice Calc). اما یک نکته: اگر فایل با UTF-8 ذخیره شده، ممکنه اکسل متن فارسی رو به‌هم بریزه. راه‌حل: اکسل رو باز کنید، از منوی Data → From Text/CSV، فایل رو انتخاب کنید و در تنظیمات، encoding رو UTF-8 بذارید.</p></div></details>
+        <div style="margin-top:16px"><div class="callout info">
+          <b class="title">📌 🧭 گام بعدی</b>
+          در فصل ۱۵ با <strong>تاریخ، زمان و الگوهای متنی</strong> آشنا می‌شوید: چطور با <code class="inline-code">datetime</code> تاریخ و ساعت را مدیریت کنید، و با <code class="inline-code">re</code> (عبارات باقاعده) الگوهای پیچیده‌ی متنی رو پیدا یا جایگزین کنید. این‌ها ابزارهای پیشرفته‌ای هستند که در کار با داده‌ها و اعتبارسنجی ورودی‌ها بسیار به‌کار میان.
+        </div></div>
+      </section>
+
+      <!-- ============ بخش ۱۵: واژه‌نامه تخصصی فصل ============ -->
+      <section class="part" id="p15">
+        <div class="part-head"><span class="part-num">بخش ۱۵</span><h2>📖 واژه‌نامه تخصصی فصل</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">
+          این فهرست <strong>به‌طور خودکار</strong> از واژه‌های تخصصی به‌کاررفته در همین فصل ساخته شده است.
+          روی هر کارت بزنید تا اولین کاربرد آن واژه در متن فصل پیدا و برجسته شود. برای همه واژه‌های دوره،
+          <a href="../../glossary.html">واژه‌نامه جامع</a> را ببینید.
+        </p>
+        <div class="chapter-glossary" data-auto="true"></div>
+      </section>
+
+      <!-- ============ بخش ۱۶: یادداشت‌های من ============ -->
+      <section class="part" id="p16">
+        <div class="part-head"><span class="part-num">بخش ۱۶</span><h2>📓 یادداشت‌های من</h2></div>
+        <p style="color:var(--muted);font-size:.88rem">نکته‌ها، پاسخ پروژه عملی و خلاصه‌های شخصی‌تان را اینجا بنویسید؛ <strong>خودکار در همین مرورگر ذخیره می‌شود</strong> و هیچ‌وقت گم نمی‌شود.</p>
+        <textarea class="notes-box" data-chapter="ch-14" placeholder="نکته‌های شخصی این فصل را اینجا بنویسید..."></textarea>
+        <div class="notes-head" style="margin-top:6px">
+          <span class="notes-status">یادداشت‌ها خودکار ذخیره می‌شوند.</span>
+          <span class="notes-count"></span>
+          <button type="button" class="btn small ghost" data-notes-clear>🗑 پاک کردن یادداشت‌ها</button>
+        </div>
+      </section>
+
+      <!-- ============ نوار پایان فصل ============ -->
+      <div class="done-bar">
+        <button id="mark-done" type="button" class="btn" data-chapter="ch-14">✔️ این فصل را تمام کردم</button>
+        <span style="font-size:.82rem;color:var(--muted)">با زدن این دکمه، پیشرفت شما در داشبورد صفحه اصلی ثبت می‌شود.</span>
+      </div>
+
+      <nav class="pager" aria-label="پیمایش فصل‌ها">
+        <a class="pager-item prev" id="prev-chap" href="../chapter-13/index.html">→ فصل قبلی<br><b>🛡️ فصل ۱۳</b></a>
+        <a class="pager-item home-btn" href="../../index.html">🏠<br><b>صفحه اصلی</b></a>
+        <a class="pager-item next" id="next-chap" href="../chapter-15/index.html">فصل بعدی ←<br><b>⏱️ فصل ۱۵: تاریخ، زمان و الگوهای متنی</b></a>
+      </nav>
+    </main>
+
+    <!-- ============ فهرست شناور بخش‌ها ============ -->
+    <aside class="toc-box" aria-label="فهرست بخش‌های فصل">
+      <h4>📑 فهرست فصل <span style="font-weight:400;font-size:.75rem;color:var(--muted)">۱۶ بخش</span></h4>
+      <div class="toc-tools">
+        <button type="button" id="btn-open-answers">باز کردن همه پاسخ‌ها</button>
+        <button type="button" id="btn-close-answers">بستن همه پاسخ‌ها</button>
+      </div>
+      <ol class="toc-list">
+        <li><a href="#p1"><span class="toc-n">۱</span> چشم‌انداز فصل</a></li>
+        <li><a href="#p2"><span class="toc-n">۲</span> نقشه راه فصل</a></li>
+        <li><a href="#p3"><span class="toc-n">۳</span> سوالات محرک ذهنی</a></li>
+        <li><a href="#p4"><span class="toc-n">۴</span> آماده‌سازی و پیش‌نیازها</a></li>
+        <li><a href="#p5"><span class="toc-n">۵</span> آموزش گام‌به‌گام</a></li>
+        <li><a href="#p6"><span class="toc-n">۶</span> مثال عملی</a></li>
+        <li><a href="#p7"><span class="toc-n">۷</span> کارگاه عملی</a></li>
+        <li><a href="#p8"><span class="toc-n">۸</span> پاسخ کامل کارگاه ✅</a></li>
+        <li><a href="#p9"><span class="toc-n">۹</span> خطاهای رایج</a></li>
+        <li><a href="#p10"><span class="toc-n">۱۰</span> تمرین‌های تثبیت</a></li>
+        <li><a href="#p11"><span class="toc-n">۱۱</span> آزمون تعاملی فصل 📝</a></li>
+        <li><a href="#p12"><span class="toc-n">۱۲</span> پروژه عملی فصل</a></li>
+        <li><a href="#p13"><span class="toc-n">۱۳</span> جمع‌بندی و دستاوردها</a></li>
+        <li><a href="#p14"><span class="toc-n">۱۴</span> سوالات متداول و گام بعدی</a></li>
+        <li><a href="#p15"><span class="toc-n">۱۵</span> واژه‌نامه تخصصی فصل 📖</a></li>
+        <li><a href="#p16"><span class="toc-n">۱۶</span> یادداشت‌های من 📓</a></li>
+      </ol>
+    </aside>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="copyright">© ۱۴۰۵ — پایتون — فصل ۱۴: فایل و مسیر | <a href="../../index.html">بازگشت به صفحه اصلی</a> • <a href="../../glossary.html">واژه‌نامه جامع</a></div>
+  </div>
+</footer>
+
+<div class="toolbar" aria-label="ابزارهای نمایش">
+  <button type="button" class="tool-btn" data-theme-toggle title="حالت تاریک/روشن">🌙</button>
+  <button type="button" class="tool-btn" data-font-plus title="بزرگ‌تر کردن متن">＋</button>
+  <button type="button" class="tool-btn" data-font-minus title="کوچک‌تر کردن متن">－</button>
+  <button type="button" class="tool-btn" onclick="window.print()" title="چاپ فصل">🖨️</button>
+  <button type="button" class="tool-btn" data-shortcuts title="میان‌برهای کیبورد">⌨️</button>
+</div>
+<button id="toTop" type="button" title="بازگشت به بالا" aria-label="بازگشت به بالا">⬆</button>
+<div id="toast-wrap" aria-live="polite"></div>
+
+<div class="modal" id="shortcuts-modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="میان‌برهای کیبورد">
+    <h3>⌨️ میان‌برهای کیبورد</h3>
+    <div class="shortcut-row"><span>نمایش/بستن همین راهنما</span><kbd>?</kbd></div>
+    <div class="shortcut-row"><span>تغییر حالت تاریک/روشن</span><kbd>D</kbd></div>
+    <div class="shortcut-row"><span>فصل بعدی</span><kbd>←</kbd></div>
+    <div class="shortcut-row"><span>فصل قبلی</span><kbd>→</kbd></div>
+    <div class="shortcut-row"><span>بستن پنجره‌ها و تولتیپ واژه</span><kbd>Esc</kbd></div>
+    <button type="button" class="btn" data-close-modal style="width:100%;margin-top:14px">بستن</button>
+  </div>
+</div>
+
+<script src="../../assets/js/course-config.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>دوره‌ی جامع شبکه</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-track="ccna">
+
+<div class="container">
+
+  <header class="dashboard-header">
+    <h1>🌐 دوره‌ی جامع شبکه</h1>
+    <p>مسیر کامل از CCNA تا CCNP، از MikroTik تا MCSA</p>
+  </header>
+
+  <div class="track-tabs" id="track-tabs"></div>
+  <div class="track-info" id="track-info"></div>
+  <div class="chapter-grid" id="chapter-grid"></div>
+
+</div>
+
+<script src="assets/js/util.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/glossary.js"></script>
+<script src="assets/js/quiz.js"></script>
+<script src="assets/js/app.js"></script>
+
+<script>
+/* ======================================================
+   داده‌ی دوره‌ها
+   ====================================================== */
+const TRACKS = {
+  ccna: {
+    name: 'CCNA', icon: '📘',
+    title: 'CCNA — Cisco Certified Network Associate',
+    desc: 'مبانی شبکه، سوئیچینگ، مسیریابی، امنیت و اتوماسیون',
+    level: 'مقدماتی تا متوسط',
+    prereq: 'آشنایی پایه با شبکه',
+    prefix: 'ccna',
+    chapters: [
+      { num: 1, title: 'مبانی شبکه',     desc: 'OSI/TCP-IP، آدرس‌دهی، Subnetting', time: '۴۵ دقیقه' },
+      { num: 2, title: 'دسترسی به شبکه', desc: 'VLAN، Trunk، EtherChannel، STP',   time: '۵۰ دقیقه' },
+      { num: 3, title: 'اتصال IP',        desc: 'مسیریابی، OSPF، FHRP',              time: '۵۵ دقیقه' },
+      { num: 4, title: 'سرویس‌های IP',    desc: 'NAT، DHCP، NTP، QoS',              time: '۴۰ دقیقه' },
+      { num: 5, title: 'مبانی امنیت',     desc: 'SSH، ACL، Port Security',           time: '۴۰ دقیقه' },
+      { num: 6, title: 'اتوماسیون',       desc: 'SDN، REST API، Ansible، JSON',     time: '۳۵ دقیقه' }
+    ]
+  },
+  ccnp: {
+    name: 'CCNP', icon: '📙',
+    title: 'CCNP Enterprise (ENCOR + ENARSI)',
+    desc: 'معماری، مجازی‌سازی، مسیریابی پیشرفته، VPN و امنیت',
+    level: 'پیشرفته',
+    prereq: 'CCNA + تجربه کاری',
+    prefix: 'ccnp',
+    chapters: [
+      { num: 1, title: 'معماری سازمانی',       desc: 'Two-Tier، SD-WAN، SD-Access',         time: '۵۰ دقیقه' },
+      { num: 2, title: 'مجازی‌سازی',            desc: 'Hypervisor، VRF، GRE، IPsec، VXLAN',  time: '۴۵ دقیقه' },
+      { num: 3, title: 'زیرساخت لایه ۲',        desc: 'Trunking، RSTP/MSTP، EtherChannel',   time: '۴۵ دقیقه' },
+      { num: 4, title: 'زیرساخت لایه ۳',        desc: 'EIGRP، OSPFv2/v3، BGP، PBR',          time: '۶۰ دقیقه' },
+      { num: 5, title: 'شبکه‌های بی‌سیم',        desc: 'RF، Roaming، عیب‌یابی Wireless',       time: '۴۰ دقیقه' },
+      { num: 6, title: 'سرویس‌های IP پیشرفته', desc: 'NTP، Multicast، QoS',                 time: '۴۵ دقیقه' },
+      { num: 7, title: 'MPLS و DMVPN',         desc: 'LDP، VRF-Lite، NHRP، Spoke-to-Spoke', time: '۵۰ دقیقه' },
+      { num: 8, title: 'امنیت زیرساخت',         desc: 'CoPP، uRPF، IPv6 FHS',               time: '۵۰ دقیقه' }
+    ]
+  },
+  mikrotik: {
+    name: 'MikroTik', icon: '📗',
+    title: 'MikroTik MTCNA',
+    desc: 'RouterOS، Routing، Wireless، Firewall، QoS، VPN',
+    level: 'مقدماتی تا متوسط',
+    prereq: 'درک TCP/IP و Subnetting',
+    prefix: 'mikrotik',
+    chapters: [
+      { num: 1, title: 'معرفی RouterOS', desc: 'Winbox، Webfig، Backup، License',       time: '۴۵ دقیقه' },
+      { num: 2, title: 'مسیریابی',        desc: 'Static Route، Default Route، Flags',    time: '۴۰ دقیقه' },
+      { num: 3, title: 'Bridging',       desc: 'Bridge Concepts، افزودن پورت',           time: '۳۵ دقیقه' },
+      { num: 4, title: 'شبکه بی‌سیم',     desc: '802.11، NV2، Access List، WPA2',        time: '۵۰ دقیقه' },
+      { num: 5, title: 'ARP و DHCP',     desc: 'ARP Modes، DHCP Server، Netwatch',       time: '۴۰ دقیقه' },
+      { num: 6, title: 'فایروال',         desc: 'Filter، Address-List، NAT، FastTrack',   time: '۴۵ دقیقه' },
+      { num: 7, title: 'QoS و Queue',    desc: 'Simple Queue، Queue Tree، PCQ، Mangle',  time: '۴۰ دقیقه' },
+      { num: 8, title: 'تونل‌ها (VPN)',   desc: 'PPP، IP Pool، PPTP، L2TP، OpenVPN',     time: '۴۵ دقیقه' }
+    ]
+  },
+  mcsa: {
+    name: 'MCSA', icon: '📕',
+    title: 'MCSA — Windows Server',
+    desc: 'نصب، ذخیره‌سازی، شبکه، هویت و امنیت ویندوز سرور',
+    level: 'متوسط',
+    prereq: 'آشنایی با Windows Client',
+    prefix: 'mcsa',
+    warning: '⚠️ مایکروسافت MCSA را از ۳۱ ژانویه ۲۰۲۱ بازنشسته کرده. جایگزین رسمی: Windows Server Hybrid Administrator Associate (AZ-800 + AZ-801).',
+    chapters: [
+      { num: 1, title: 'نصب و ذخیره‌سازی', desc: 'Storage Spaces، Hyper-V، Failover Cluster', time: '۵۰ دقیقه' },
+      { num: 2, title: 'شبکه',            desc: 'DNS، DHCP، IPAM، VPN، DFS',                 time: '۴۵ دقیقه' },
+      { num: 3, title: 'هویت (AD)',       desc: 'AD DS، GPO، FSMO، Trust، AD CS',            time: '۵۵ دقیقه' },
+      { num: 4, title: 'امنیت',           desc: 'LAPS، JEA، Shielded VM، BitLocker',         time: '۴۵ دقیقه' }
+    ]
+  }
+};
+
+/* ======================================================
+   رندر داشبورد
+   ====================================================== */
+(function renderDashboard() {
+  const tabsEl = document.getElementById('track-tabs');
+  const infoEl = document.getElementById('track-info');
+  const gridEl = document.getElementById('chapter-grid');
+
+  let current = localStorage.getItem('course-track') || 'ccna';
+
+  function chapterId(track, num) {
+    return `${track}-${String(num).padStart(2, '0')}`;
+  }
+  function fileName(track, num) {
+    const tr = TRACKS[track];
+    return `${tr.prefix}_Ch_${String(num).padStart(2, '0')}.html`;
+  }
+
+  function renderTabs() {
+    tabsEl.innerHTML = Object.keys(TRACKS).map(k => `
+      <div class="track-tab ${k === current ? 'active' : ''}" data-track="${k}">
+        ${TRACKS[k].icon} ${TRACKS[k].name}
+      </div>
+    `).join('');
+
+    tabsEl.querySelectorAll('.track-tab').forEach(t => {
+      t.addEventListener('click', () => {
+        current = t.dataset.track;
+        localStorage.setItem('course-track', current);
+        renderTabs();
+        renderContent();
+      });
+    });
+  }
+
+  function renderContent() {
+    const tr = TRACKS[current];
+    document.body.dataset.track = current;
+
+    infoEl.innerHTML = `
+      <h2>${tr.icon} ${tr.title}</h2>
+      <p>${tr.desc}</p>
+      <p><strong>سطح:</strong> ${tr.level} &nbsp;|&nbsp; <strong>پیش‌نیاز:</strong> ${tr.prereq}</p>
+      ${tr.warning ? `<div class="box warning" style="margin-top:12px"><div class="box-title">توجه</div>${tr.warning}</div>` : ''}
+    `;
+
+    gridEl.innerHTML = tr.chapters.map(ch => {
+      const id = chapterId(current, ch.num);
+      const done = CourseUtil.isChapterDone(id);
+      const href = `chapters/${current}/${fileName(current, ch.num)}`;
+      return `
+        <a class="chapter-card" href="${href}">
+          <div class="num">${ch.num}</div>
+          <h3>${ch.title}</h3>
+          <p>${ch.desc}</p>
+          <div class="status ${done ? 'done' : ''}">
+            ${done ? '✅ مطالعه شده' : '⏱ ' + ch.time}
+          </div>
+        </a>`;
+    }).join('');
+  }
+
+  renderTabs();
+  renderContent();
+})();
+</script>
+
+</body>
+</html>

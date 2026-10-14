@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منابع و لینک‌ها - دوره CEH V13</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی این صفحه ===== */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .resource-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 5px solid var(--primary, #4f46e5);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .resource-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+        }
+        body.dark-mode .resource-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .resource-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .resource-card .icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .resource-card h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.2rem;
+            color: var(--text-primary, #0f172a);
+        }
+        .resource-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 12px 0;
+            line-height: 1.6;
+        }
+        .resource-card .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted, #64748b);
+            border-top: 1px solid var(--card-border, rgba(0, 0, 0, 0.06));
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        body.dark-mode .resource-card .meta {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+        .resource-card .badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 3px 12px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+            margin-top: 4px;
+        }
+        body.dark-mode .resource-card .badge {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+
+        .resource-card .badge.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .resource-card .badge.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+
+        /* رنگ‌های اختصاصی کارت‌ها */
+        .resource-card[data-type="books"] {
+            border-right-color: #2a7de1;
+        }
+        .resource-card[data-type="videos"] {
+            border-right-color: #e74c3c;
+        }
+        .resource-card[data-type="links"] {
+            border-right-color: #27ae60;
+        }
+        .resource-card[data-type="official"] {
+            border-right-color: #8e44ad;
+        }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0;
+        }
+        .quick-links a {
+            background: var(--card-bg, rgba(255,255,255,0.6));
+            backdrop-filter: blur(8px);
+            padding: 8px 20px;
+            border-radius: var(--radius-full, 9999px);
+            border: 1px solid var(--card-border, rgba(255,255,255,0.4));
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .quick-links a:hover {
+            background: var(--primary, #4f46e5);
+            color: white;
+            transform: scale(1.04);
+            text-decoration: none;
+        }
+        body.dark-mode .quick-links a {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .quick-links a:hover {
+            background: var(--primary, #4f46e5);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+            .quick-links {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .quick-links a {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">منابع</a>
+        </span>
+    </div>
+
+    <h1>📚 منابع و لینک‌های طلایی</h1>
+
+    <!-- ===== مقدمه ===== -->
+    <div class="card">
+        <h2>🔰 معرفی منابع دوره</h2>
+        <p>
+            در این بخش، تمام منابع آموزشی، کتاب‌ها، ویدیوها، وب‌سایت‌های مرجع و مستندات رسمی مورد نیاز برای موفقیت در دورهٔ CEH V13 گردآوری شده‌است.
+            هر منبع با توضیح مختصری معرفی شده تا بتوانید بر اساس نیاز خود، بهترین مسیر یادگیری را انتخاب کنید.
+        </p>
+        <div class="highlight-box" style="margin-top: 16px;">
+            <b>💡 سه منبع ضروری برای شروع:</b>
+            <ol>
+                <li><b>کتاب‌ها:</b> «CEH Certified Ethical Hacker All-in-One Exam Guide» – مرجع اصلی.</li>
+                <li><b>ویدیوها:</b> دورهٔ رایگان «Ethical Hacking in 15 Hours» – برای مرور سریع.</li>
+                <li><b>لینک‌های مفید:</b> OWASP Top 10 و مستندات Nmap – برای مرجع سریع.</li>
+            </ol>
+        </div>
+        <div class="tip-box" style="margin-top: 12px;">
+            <b>📌 نکته:</b> پس از بازدید از هر بخش، از دکمهٔ «بازگشت» در نوار ناوبری برای برگشت به این صفحه استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ===== کارت‌های منابع ===== -->
+    <div class="resource-grid">
+
+        <!-- کتاب‌ها -->
+        <a href="Books/index.html" class="resource-card" data-type="books">
+            <span class="icon">📖</span>
+            <h3>کتاب‌های مرجع</h3>
+            <p>
+                مجموعهٔ کامل کتاب‌های اصلی و مکمل برای مطالعهٔ تئوری و آمادگی آزمون CEH.
+            </p>
+            <div>
+                <span class="badge essential">⭐ ضروری</span>
+                <span class="badge">۲۰+ کتاب</span>
+            </div>
+            <div class="meta">
+                📚 شامل: راهنمای رسمی EC-Council، کتاب Matt Walker، Web Application Hacker's Handbook و ...
+            </div>
+        </a>
+
+        <!-- ویدیوها -->
+        <a href="Videos/index.html" class="resource-card" data-type="videos">
+            <span class="icon">🎥</span>
+            <h3>دوره‌های ویدیویی</h3>
+            <p>
+                بهترین پلی‌لیست‌های یوتیوب، دوره‌های Udemy و آموزش‌های عملی برای هر ماژول.
+            </p>
+            <div>
+                <span class="badge">۳۰+ ساعت</span>
+                <span class="badge">رایگان + پولی</span>
+            </div>
+            <div class="meta">
+                🎬 شامل: دورهٔ رایگان «Ethical Hacking in 15 Hours»، آموزش Burp Suite، Metasploit و ...
+            </div>
+        </a>
+
+        <!-- لینک‌های مفید -->
+        <a href="useful_links.html" class="resource-card" data-type="links">
+            <span class="icon">🔗</span>
+            <h3>لینک‌های طلایی</h3>
+            <p>
+                وب‌سایت‌های مرجع، ابزارهای آنلاین، دیکشنری‌ها، پایگاه‌های داده آسیب‌پذیری و انجمن‌های تخصصی.
+            </p>
+            <div>
+                <span class="badge essential">⭐ پرکاربرد</span>
+                <span class="badge">۵۰+ لینک</span>
+            </div>
+            <div class="meta">
+                🌐 شامل: OWASP، Exploit-DB، Nmap Docs، PortSwigger Academy، HackTheBox و ...
+            </div>
+        </a>
+
+        <!-- مستندات رسمی -->
+        <a href="#" class="resource-card" data-type="official" style="cursor: default;">
+            <span class="icon">📜</span>
+            <h3>مستندات رسمی</h3>
+            <p>
+                مستندات ابزارها، پروتکل‌ها و استانداردهای امنیتی که در طول دوره به آنها نیاز خواهید داشت.
+            </p>
+            <div>
+                <span class="badge">مرجع</span>
+                <span class="badge">PDF + HTML</span>
+            </div>
+            <div class="meta">
+                📄 شامل: مستندات Nmap، Metasploit، Wireshark، Burp Suite و RFCهای مرتبط.
+            </div>
+        </a>
+
+    </div>
+
+    <!-- ===== لینک‌های سریع ===== -->
+    <div class="card">
+        <h2>⚡ لینک‌های سریع به زیربخش‌ها</h2>
+        <p>برای دسترسی فوری به هر بخش، روی لینک‌های زیر کلیک کنید:</p>
+        <div class="quick-links">
+            <a href="Books/index.html">📖 کتاب‌ها</a>
+            <a href="Videos/index.html">🎥 ویدیوها</a>
+            <a href="useful_links.html">🔗 لینک‌های مفید</a>
+            <a href="https://owasp.org/" target="_blank">🌐 OWASP</a>
+            <a href="https://nmap.org/docs.html" target="_blank">📡 Nmap Docs</a>
+            <a href="https://portswigger.net/web-security" target="_blank">🛡️ PortSwigger</a>
+        </div>
+    </div>
+
+    <!-- ===== توصیه‌های مطالعه ===== -->
+    <div class="card">
+        <h2>🧠 توصیه‌های مطالعه و استفاده از منابع</h2>
+        <ul>
+            <li><b>ترکیب تئوری و عملی:</b> پس از مطالعهٔ هر فصل از کتاب، بلافاصله آزمایشگاه مربوطه را در بخش <a href="../02_Labs/index.html" style="color:var(--primary);">آزمایشگاه‌ها</a> انجام دهید.</li>
+            <li><b>ویدیوها را با سرعت ۱٫۲۵ ببینید:</b> برای صرفه‌جویی در زمان و حفظ تمرکز، از قابلیت افزایش سرعت پخش استفاده کنید.</li>
+            <li><b>لینک‌های مفید را نشانه‌گذاری کنید:</b> در مرورگر خود یک پوشهٔ مخصوص برای لینک‌های CEH ایجاد کنید تا دسترسی سریع داشته باشید.</li>
+            <li><b>از چیت‌شیت‌ها غافل نشوید:</b> بخش <a href="../03_Tools/index.html" style="color:var(--primary);">چیت‌شیت ابزارها</a> را در حین کار با ابزارها باز نگه دارید.</li>
+            <li><b>مطالعهٔ گروهی:</b> با دوستان یا هم‌دوره‌ای‌ها مطالب را مرور کنید و مفاهیم را برای یکدیگر توضیح دهید.</li>
+        </ul>
+        <div class="highlight-box" style="margin-top: 16px;">
+            <b>⏳ برنامهٔ هفتگی پیشنهادی:</b>
+            <ul>
+                <li><b>شنبه و یکشنبه:</b> مطالعهٔ کتاب (تئوری) – ۲ ساعت</li>
+                <li><b>دوشنبه و سه‌شنبه:</b> تماشای ویدیو و یادداشت‌برداری – ۱٫۵ ساعت</li>
+                <li><b>چهارشنبه و پنجشنبه:</b> آزمایشگاه عملی و تمرین با ابزارها – ۲ ساعت</li>
+                <li><b>جمعه:</b> مرور لینک‌های مفید و حل سوالات آزمون – ۱ ساعت</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===== واژه‌نامه تخصصی ===== -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی منابع</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">Resource</span></td>
+                    <td>هرگونه منبع آموزشی شامل کتاب، ویدیو، وب‌سایت، مستندات یا ابزار که به یادگیری کمک می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Cheat Sheet</span></td>
+                    <td>برگهٔ مرجع فشرده شامل دستورات، گزینه‌ها و مثال‌های سریع برای یک ابزار یا مبحث خاص.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Playlist</span></td>
+                    <td>مجموعه‌ای از ویدیوهای مرتبط که به‌صورت پشت‌سر هم قابل پخش هستند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Documentation</span></td>
+                    <td>مستندات رسمی یک ابزار، شامل راهنما، مثال‌ها و توضیحات فنی.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Forum</span></td>
+                    <td>انجمن آنلاین برای پرسش و پاسخ، تبادل تجربه و رفع اشکال.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Tutorial</span></td>
+                    <td>آموزش گام‌به‌گام که معمولاً به‌صورت متن یا ویدیو ارائه می‌شود.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی ===== -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>اگر به دنبال مطالعهٔ تئوری هستید، از بخش <a href="Books/index.html" style="color:#2a7de1;">کتاب‌ها</a> شروع کنید.</li>
+            <li>اگر یادگیری بصری را ترجیح می‌دهید، به بخش <a href="Videos/index.html" style="color:#2a7de1;">ویدیوها</a> بروید.</li>
+            <li>برای دسترسی سریع به ابزارها و مراجع آنلاین، <a href="useful_links.html" style="color:#2a7de1;">لینک‌های مفید</a> را مرور کنید.</li>
+            <li>همیشه بخش <a href="../03_Tools/index.html" style="color:#2a7de1;">چیت‌شیت ابزارها</a> را برای مرور سریع در دسترس داشته باشید.</li>
+        </ul>
+        <p style="margin-top: 12px;">
+            <b>🚀 با استفادهٔ هوشمندانه از این منابع، مسیر موفقیت خود را هموار کنید.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">منابع و لینک‌ها | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

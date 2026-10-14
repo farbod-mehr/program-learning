@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۶ CCNA — اتوماسیون و برنامه‌پذیری</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccna" data-chapter="ccna-06">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📘 فصل ۶ — اتوماسیون و برنامه‌پذیری</h1>
+    <div class="meta">
+      <span>📖 ۷۰ دقیقه</span>
+      <span>🎯 وزن در آزمون: ۱۰٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      تا اینجا شبکه را دستی پیکربندی کردیم — یک CLI، یک دستور، یکی‌یکی. اما در شبکه‌های
+      امروزی با هزاران دستگاه، این روش کارآمد نیست. در این فصل یاد می‌گیری چطور با
+      <span class="term" data-term="sdn">SDN</span>،
+      <span class="term" data-term="rest-api">REST API</span>،
+      <span class="term" data-term="json">JSON</span>،
+      <span class="term" data-term="python">Python</span> و
+      <span class="term" data-term="ansible">Ansible</span>،
+      شبکه را به‌صورت خودکار و برنامه‌پذیر مدیریت کنی.
+    </p>
+    <p>
+      این فصل پل بین <strong>دنیای شبکه‌ی سنتی</strong> و <strong>NetDevOps</strong> است.
+      بعد از آن می‌توانی با یک اسکریپت ساده، ۱۰۰ سوئیچ را همزمان پیکربندی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>چرا اتوماسیون شبکه ضروری است؟</li>
+      <li>شبکه‌ی سنتی vs Controller-based</li>
+      <li>معماری SDN — سه لایه و دو API</li>
+      <li>Control Plane و Data Plane در SDN</li>
+      <li>Overlay، Underlay و Fabric</li>
+      <li>مدل‌های مدیریتی: CLI، SNMP، NETCONF، RESTCONF</li>
+      <li>REST API — مفاهیم و HTTP Verbs</li>
+      <li>فرمت داده‌ها: JSON، XML، YAML</li>
+      <li>ابزارهای اتوماسیون: Ansible، Puppet، Chef</li>
+      <li>Python Basics برای مهندس شبکه</li>
+      <li>IaC — Infrastructure as Code</li>
+      <li>Cisco DNA Center و SD-Access/SD-WAN</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>اگر یک تغییر VLAN روی ۲۰۰ سوئیچ لازم باشد، چقدر طول می‌کشد؟ با اتوماسیون چطور؟</li>
+      <li>تفاوت On-Premises و Cloud از دید معماری شبکه چیست؟</li>
+      <li>چرا REST API امروز جایگزین SNMP شده است؟</li>
+      <li>می‌شود بدون نوشتن کد، یک زیرساخت را خودکار کرد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۶.۱ ==== -->
+    <h3>۶.۱ چرا اتوماسیون شبکه؟</h3>
+    <p>شبکه‌های مدرن با چالش‌های جدیدی روبرو هستند:</p>
+    <ul>
+      <li><strong>مقیاس:</strong> هزاران دستگاه، دستی پیکربندی کردن غیرممکن است</li>
+      <li><strong>سرعت تغییر:</strong> کسب‌وکار انتظار تغییرات سریع دارد</li>
+      <li><strong>خطای انسانی:</strong> ۷۰٪ از Outageها ناشی از خطای انسانی است</li>
+      <li><strong>یکنواختی:</strong> پیکربندی باید بین همه‌ی دستگاه‌ها یکسان باشد</li>
+      <li><strong>هزینه:</strong> کار دستی پرهزینه و کند است</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 مثال واقعی</div>
+      تغییر یک ACL روی ۲۰۰ روتر با CLI: ۱۰ روز کاری.
+      با Ansible: ۱۰ دقیقه + صفر خطای انسانی.
+    </div>
+
+    <!-- ==== ۶.۲ ==== -->
+    <h3>۶.۲ شبکه‌ی سنتی vs Controller-based</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">سنتی (Distributed)</th>
+          <th style="padding:6px;border:1px solid var(--border)">Controller-based (SDN)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کنترل</td><td style="padding:6px;border:1px solid var(--border)">هر دستگاه مستقل</td><td style="padding:6px;border:1px solid var(--border)">متمرکز در Controller</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیکربندی</td><td style="padding:6px;border:1px solid var(--border)">CLI/SSH هر دستگاه</td><td style="padding:6px;border:1px solid var(--border)">API متمرکز</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Control Plane</td><td style="padding:6px;border:1px solid var(--border)">درون هر دستگاه</td><td style="padding:6px;border:1px solid var(--border)">جدا از Data Plane</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">دید کلی</td><td style="padding:6px;border:1px solid var(--border)">❌ محدود</td><td style="padding:6px;border:1px solid var(--border)">✅ کل شبکه یکپارچه</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">مقیاس‌پذیری</td><td style="padding:6px;border:1px solid var(--border)">کم</td><td style="padding:6px;border:1px solid var(--border)">بالا</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۶.۳ ==== -->
+    <h3>۶.۳ معماری SDN — سه لایه</h3>
+    <p>
+      <span class="term" data-term="sdn">SDN</span> (Software-Defined Networking) معماری
+      شبکه را به سه لایه تقسیم می‌کند و Control Plane را از Data Plane جدا می‌سازد:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📱 Application Layer</strong>
+        <p style="margin:6px 0">اپلیکیشن‌های شبکه — Cisco DNA Center، Firewall Management، Load Balancer Controller</p>
+        <p style="margin:0;color:var(--accent-dark)">↕ از طریق <strong>Northbound API (NBI)</strong> با Controller صحبت می‌کند</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🧠 Control Layer</strong>
+        <p style="margin:6px 0">SDN Controller — مغز شبکه؛ تصمیم‌های مسیریابی و سیاست‌ها</p>
+        <p style="margin:0;color:var(--accent-dark)">↕ از طریق <strong>Southbound API (SBI)</strong> با زیرساخت صحبت می‌کند</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🔌 Infrastructure Layer</strong>
+        <p style="margin:6px 0">دستگاه‌های فیزیکی و مجازی — روترها، سوئیچ‌ها، فایروال‌ها</p>
+      </div>
+    </div>
+
+    <p><strong>دو API کلیدی:</strong></p>
+    <ul>
+      <li><strong>Northbound API (NBI):</strong> بین Application و Controller —
+        REST API رایج‌ترین. با این API برنامه‌نویس‌ها با شبکه حرف می‌زنند.</li>
+      <li><strong>Southbound API (SBI):</strong> بین Controller و دستگاه‌ها —
+        OpenFlow، NETCONF، RESTCONF، SNMP.</li>
+    </ul>
+
+    <pre><code>┌─────────────────────────────────────────┐
+│   Application Layer (DNA Center, etc.)  │
+└────────────────┬────────────────────────┘
+                 │ Northbound API (REST)
+┌────────────────▼────────────────────────┐
+│   Control Layer (SDN Controller)        │
+└────────────────┬────────────────────────┘
+                 │ Southbound API
+                 │ (OpenFlow, NETCONF, RESTCONF)
+┌────────────────▼────────────────────────┐
+│   Infrastructure (Routers, Switches)    │
+└─────────────────────────────────────────┘</code></pre>
+
+    <!-- ==== ۶.۴ ==== -->
+    <h3>۶.۴ Control Plane و Data Plane</h3>
+    <p><strong>تفکیک Planeها، پایه‌ی SDN است:</strong></p>
+
+    <ul>
+      <li><strong>Control Plane:</strong> تصمیم می‌گیرد بسته کجا برود — پروتکل‌های مسیریابی، جدول‌های مسیریابی</li>
+      <li><strong>Data Plane (Forwarding Plane):</strong> بسته را واقعاً ارسال می‌کند — ASIC، جدول Forwarding</li>
+    </ul>
+
+    <p>در شبکه‌ی سنتی، این دو در یک دستگاه هستند. در SDN، Control Plane از دستگاه جدا می‌شود و در Controller مرکزی قرار می‌گیرد.</p>
+
+    <!-- ==== ۶.۵ ==== -->
+    <h3>۶.۵ Overlay، Underlay و Fabric</h3>
+
+    <ul>
+      <li><strong>Underlay:</strong> شبکه‌ی فیزیکی زیرین — IP routing، OSPF، BGP</li>
+      <li><strong>Overlay:</strong> تونل‌های منطقی روی Underlay — VXLAN، GRE، LISP</li>
+      <li><strong>Fabric:</strong> معماری کامل Underlay + Overlay + Control Plane — مثال: SD-Access</li>
+    </ul>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ مثال ساده</div>
+      Underlay مثل جاده‌های بین‌شهری است. Overlay مثل اتوبان‌های اختصاصی که روی آن جاده‌ها ساخته می‌شوند. Fabric یعنی کل سیستم حمل و نقل با کنترل مرکزی.
+    </div>
+
+    <!-- ==== ۶.۶ ==== -->
+    <h3>۶.۶ مدل‌های مدیریتی: CLI، SNMP، NETCONF، RESTCONF</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">روش</th>
+          <th style="padding:6px;border:1px solid var(--border)">Transport</th>
+          <th style="padding:6px;border:1px solid var(--border)">Data Format</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">CLI/SSH</td><td style="padding:6px;border:1px solid var(--border)">TCP/22</td><td style="padding:6px;border:1px solid var(--border)">Text</td><td style="padding:6px;border:1px solid var(--border)">دستی، قدیمی، شکننده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">SNMP</td><td style="padding:6px;border:1px solid var(--border)">UDP/161</td><td style="padding:6px;border:1px solid var(--border)">MIB/OID</td><td style="padding:6px;border:1px solid var(--border)">پایش، قدیمی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">NETCONF</td><td style="padding:6px;border:1px solid var(--border)">SSH/830</td><td style="padding:6px;border:1px solid var(--border)">XML</td><td style="padding:6px;border:1px solid var(--border)">مدیریت مدرن، تراکنشی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">RESTCONF</td><td style="padding:6px;border:1px solid var(--border)">HTTPS/443</td><td style="padding:6px;border:1px solid var(--border)">JSON/XML</td><td style="padding:6px;border:1px solid var(--border)">مدرن، مبتنی بر HTTP</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>NETCONF</strong> پروتکلی برای مدیریت دستگاه‌های شبکه با ساختار درختی داده است و از <strong>YANG</strong> برای مدل‌سازی داده استفاده می‌کند. تراکنشی است (همه یا هیچ).</p>
+
+    <p><strong>RESTCONF</strong> یک نسخه‌ی ساده‌تر از NETCONF روی HTTP است — مثل REST API کار می‌کند و برای برنامه‌نویس‌ها آسان‌تر است.</p>
+
+    <!-- ==== ۶.۷ ==== -->
+    <h3>۶.۷ REST API — مفاهیم پایه</h3>
+    <p>
+      <span class="term" data-term="rest-api">REST API</span> امروزه محبوب‌ترین روش
+      ارتباط برنامه‌ها با شبکه است. REST یعنی <strong>Representational State Transfer</strong>.
+    </p>
+
+    <p><strong>اصول REST:</strong></p>
+    <ul>
+      <li><strong>Stateless:</strong> هر درخواست مستقل است</li>
+      <li><strong>Client-Server:</strong> جداسازی کامل</li>
+      <li><strong>Cacheable:</strong> قابلیت Cache کردن پاسخ‌ها</li>
+      <li><strong>Uniform Interface:</strong> رابط یکسان با HTTP Verbs</li>
+    </ul>
+
+    <p><strong>HTTP Verbs (CRUD):</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Verb</th>
+          <th style="padding:6px;border:1px solid var(--border)">CRUD</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">GET</td><td style="padding:6px;border:1px solid var(--border)">Read</td><td style="padding:6px;border:1px solid var(--border)">خواندن اطلاعات</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">POST</td><td style="padding:6px;border:1px solid var(--border)">Create</td><td style="padding:6px;border:1px solid var(--border)">ایجاد منبع جدید</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PUT</td><td style="padding:6px;border:1px solid var(--border)">Update/Replace</td><td style="padding:6px;border:1px solid var(--border)">جایگزینی کامل</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PATCH</td><td style="padding:6px;border:1px solid var(--border)">Update</td><td style="padding:6px;border:1px solid var(--border)">بروزرسانی جزئی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">DELETE</td><td style="padding:6px;border:1px solid var(--border)">Delete</td><td style="padding:6px;border:1px solid var(--border)">حذف منبع</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>HTTP Status Codes مهم:</strong></p>
+    <ul>
+      <li><strong>200 OK:</strong> موفق</li>
+      <li><strong>201 Created:</strong> منبع جدید ساخته شد</li>
+      <li><strong>400 Bad Request:</strong> درخواست اشتباه</li>
+      <li><strong>401 Unauthorized:</strong> احراز هویت لازم</li>
+      <li><strong>403 Forbidden:</strong> دسترسی رد شد</li>
+      <li><strong>404 Not Found:</strong> منبع پیدا نشد</li>
+      <li><strong>500 Internal Server Error:</strong> خطای سرور</li>
+    </ul>
+
+    <pre><code># نمونه درخواست REST به Cisco DNA Center
+GET https://dnac.company.local/dna/intent/api/v1/network-device
+Headers:
+  X-Auth-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+  Content-Type: application/json
+
+# پاسخ JSON
+{
+  "response": [
+    {
+      "hostname": "SW1",
+      "managementIpAddress": "10.10.10.1",
+      "platformId": "C9300-48P",
+      "softwareVersion": "17.6.3"
+    }
+  ]
+}</code></pre>
+
+    <!-- ==== ۶.۸ ==== -->
+    <h3>۶.۸ فرمت داده‌ها: JSON، XML، YAML</h3>
+
+    <p><strong>JSON (JavaScript Object Notation):</strong> سبک، خوانا، رایج‌ترین در REST API.</p>
+    <pre><code>{
+  "hostname": "R1",
+  "interfaces": [
+    {
+      "name": "Gi0/0",
+      "ip": "192.168.1.1",
+      "status": "up"
+    },
+    {
+      "name": "Gi0/1",
+      "ip": "10.0.0.1",
+      "status": "up"
+    }
+  ]
+}</code></pre>
+
+    <p><strong>XML:</strong> قدیمی‌تر، پرجزئیات‌تر، در NETCONF استفاده می‌شود.</p>
+    <pre><code>&lt;device&gt;
+  &lt;hostname&gt;R1&lt;/hostname&gt;
+  &lt;interfaces&gt;
+    &lt;interface&gt;
+      &lt;name&gt;Gi0/0&lt;/name&gt;
+      &lt;ip&gt;192.168.1.1&lt;/ip&gt;
+      &lt;status&gt;up&lt;/status&gt;
+    &lt;/interface&gt;
+  &lt;/interfaces&gt;
+&lt;/device&gt;</code></pre>
+
+    <p><strong>YAML:</strong> فوق‌العاده خوانا، در Ansible و Terraform استفاده می‌شود.</p>
+    <pre><code>device:
+  hostname: R1
+  interfaces:
+    - name: Gi0/0
+      ip: 192.168.1.1
+      status: up
+    - name: Gi0/1
+      ip: 10.0.0.1
+      status: up</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      تفاوت JSON و YAML؟ YAML با Indentation کار می‌کند و برای انسان‌ها خواناتر است.
+      JSON با براکت و آکولاد و برای ماشین‌ها دقیق‌تر. هر دو معادل هستند.
+    </div>
+
+    <!-- ==== ۶.۹ ==== -->
+    <h3>۶.۹ ابزارهای اتوماسیون: Ansible، Puppet، Chef</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ابزار</th>
+          <th style="padding:6px;border:1px solid var(--border)">مدل</th>
+          <th style="padding:6px;border:1px solid var(--border)">زبان</th>
+          <th style="padding:6px;border:1px solid var(--border)">Agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Ansible</td><td style="padding:6px;border:1px solid var(--border)">Push</td><td style="padding:6px;border:1px solid var(--border)">YAML (Playbook)</td><td style="padding:6px;border:1px solid var(--border)">❌ Agentless (SSH)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Puppet</td><td style="padding:6px;border:1px solid var(--border)">Pull</td><td style="padding:6px;border:1px solid var(--border)">DSL</td><td style="padding:6px;border:1px solid var(--border)">✅ Agent</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Chef</td><td style="padding:6px;border:1px solid var(--border)">Pull</td><td style="padding:6px;border:1px solid var(--border)">Ruby</td><td style="padding:6px;border:1px solid var(--border)">✅ Agent</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Terraform</td><td style="padding:6px;border:1px solid var(--border)">Push</td><td style="padding:6px;border:1px solid var(--border)">HCL</td><td style="padding:6px;border:1px solid var(--border)">❌ Agentless</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>نمونه Playbook ساده Ansible برای پیکربندی VLAN روی چند سوئیچ:</strong></p>
+    <pre><code>---
+- name: Configure VLANs on Cisco switches
+  hosts: switches
+  gather_facts: no
+  tasks:
+    - name: Create VLAN 10
+      ios_vlan:
+        vlan_id: 10
+        name: HR
+        state: present
+
+    - name: Create VLAN 20
+      ios_vlan:
+        vlan_id: 20
+        name: IT
+        state: present
+
+    - name: Save configuration
+      ios_config:
+        save_when: modified</code></pre>
+
+    <!-- ==== ۶.۱۰ ==== -->
+    <h3>۶.۱۰ Python Basics برای مهندس شبکه</h3>
+    <p>
+      <span class="term" data-term="python">Python</span> زبان استاندارد اتوماسیون شبکه است.
+      چرا؟ ساده، کتابخانه‌های غنی (Netmiko، NAPALM، Nornir)، جامعه‌ی بزرگ.
+    </p>
+
+    <pre><code># ۱. متغیر و انواع داده
+hostname = "SW1"
+port_count = 48
+is_active = True
+vlans = [10, 20, 30, 40]        # لیست
+device = {                       # دیکشنری
+    "hostname": "SW1",
+    "ip": "10.10.10.1",
+    "model": "C9300"
+}
+
+# ۲. شرط
+if port_count > 24:
+    print("This is a high-density switch")
+else:
+    print("Small switch")
+
+# ۳. حلقه
+for vlan in vlans:
+    print(f"Configuring VLAN {vlan}")
+
+# ۴. تابع
+def calculate_subnet_size(prefix):
+    return 2 ** (32 - prefix)
+
+print(calculate_subnet_size(24))   # 256
+print(calculate_subnet_size(26))   # 64</code></pre>
+
+    <p><strong>نمونه‌ی اتصال به روتر سیسکو با Netmiko:</strong></p>
+    <pre><code>from netmiko import ConnectHandler
+
+device = {
+    "device_type": "cisco_ios",
+    "host": "192.168.1.1",
+    "username": "admin",
+    "password": "secret",
+    "secret": "enable-secret"
+}
+
+connection = ConnectHandler(**device)
+connection.enable()
+
+output = connection.send_command("show ip interface brief")
+print(output)
+
+config_commands = [
+    "vlan 10",
+    "name HR",
+    "exit",
+    "interface Gi0/1",
+    "switchport mode access",
+    "switchport access vlan 10"
+]
+connection.send_config_set(config_commands)
+connection.save_config()
+
+connection.disconnect()</code></pre>
+
+    <p><strong>نمونه‌ی REST API با Python:</strong></p>
+    <pre><code>import requests
+import json
+
+url = "https://dnac.company.local/dna/intent/api/v1/network-device"
+headers = {
+    "X-Auth-Token": "your-token-here",
+    "Content-Type": "application/json"
+}
+
+# GET
+response = requests.get(url, headers=headers, verify=False)
+devices = response.json()
+
+for dev in devices["response"]:
+    print(f'{dev["hostname"]} - {dev["managementIpAddress"]}')</code></pre>
+
+    <!-- ==== ۶.۱۱ ==== -->
+    <h3>۶.۱۱ IaC — Infrastructure as Code</h3>
+    <p>
+      <span class="term" data-term="iac">Infrastructure as Code (IaC)</span> یعنی
+      تعریف زیرساخت به‌صورت کد، به‌جای پیکربندی دستی. مزایا:
+    </p>
+    <ul>
+      <li><strong>تکرارپذیری:</strong> همان کد، همان نتیجه — همیشه</li>
+      <li><strong>کنترل نسخه:</strong> با Git همه‌ی تغییرات قابل ردیابی است</li>
+      <li><strong>همکاری:</strong> تیم‌ها روی یک مخزن مشترک کار می‌کنند</li>
+      <li><strong>تست:</strong> کد را می‌توان قبل از اعمال، تست کرد</li>
+      <li><strong>مستندسازی:</strong> کد، خودش مستند است</li>
+    </ul>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      تفاوت IaC با پیکربندی دستی، مثل تفاوت برنامه‌نویسی با کپی‌پیست است.
+      یک بار نوشتن کد درست، هزاران بار اجرای بدون خطا.
+    </div>
+
+    <!-- ==== ۶.۱۲ ==== -->
+    <h3>۶.۱۲ Cisco DNA Center و SD-Access/SD-WAN</h3>
+    <p>
+      <strong>Cisco DNA Center</strong> (که حالا به نام Catalyst Center شناخته می‌شود)
+      پلتفرم مرکزی سیسکو برای مدیریت، اتوماسیون و تضمین شبکه است. چهار بخش اصلی:
+    </p>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🎨 Design</strong>
+        <p style="margin:6px 0">طراحی سایت‌ها، تنظیمات شبکه (Network Settings)، Templates</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📦 Policy</strong>
+        <p style="margin:6px 0">تعریف سیاست‌ها بر اساس Group (مثلاً Employees، Guests، IoT)</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🚀 Provision</strong>
+        <p style="margin:6px 0">پیکربندی خودکار دستگاه‌ها با Template، Plug-and-Play (PnP)</p>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>📊 Assurance</strong>
+        <p style="margin:6px 0">پایش Health، عیب‌یابی هوشمند، AI/ML برای پیش‌بینی مشکلات</p>
+      </div>
+    </div>
+
+    <p><strong>SD-Access:</strong> معماری Campus مدرن سیسکو که بر پایه‌ی
+      <span class="term" data-term="lisp">LISP</span> و
+      <span class="term" data-term="vxlan">VXLAN</span> ساخته شده و
+      Fabric مرکزی ایجاد می‌کند.</p>
+
+    <p><strong>SD-WAN:</strong> معماری مدرن WAN که Control Plane و Data Plane را
+      جدا می‌کند. مزایا نسبت به WAN سنتی:</p>
+    <ul>
+      <li>مدیریت متمرکز از یک Controller</li>
+      <li>انتخاب بهترین لینک (Broadband، MPLS، LTE) به‌صورت خودکار</li>
+      <li>رمزنگاری End-to-End بدون پیچیدگی DMVPN</li>
+      <li>Zero Touch Provisioning (ZTP)</li>
+    </ul>
+
+    <!-- ==== ۶.۱۳ ==== -->
+    <h3>۶.۱۳ هوش مصنوعی در شبکه</h3>
+    <p>AI و ML در عملیات شبکه (AIOps) کاربردهای جدیدی دارند:</p>
+    <ul>
+      <li><strong>Predictive AI:</strong> پیش‌بینی خرابی دستگاه قبل از وقوع</li>
+      <li><strong>Generative AI:</strong> نوشتن پیکربندی از روی توضیحات متنی (Natural Language)</li>
+      <li><strong>Anomaly Detection:</strong> تشخیص ترافیک غیرعادی</li>
+      <li><strong>Automated Remediation:</strong> رفع خودکار مشکلات شناخته‌شده</li>
+    </ul>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      برای شروع، با Python + Netmiko شروع کن. این ترکیب ساده‌ترین راه ورود به اتوماسیون شبکه است.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      اتوماسیون بدون تست روی Lab، فاجعه‌بار است. همیشه اول روی یک محیط تست
+      (Cisco DevNet Sandbox یا GNS3/EVE-NG) اجرا کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      آنچه برای اتوماسیون حیاتی است، <strong>مدل‌سازی داده</strong> است نه صرفاً کد زدن.
+      اگر داده‌ات ساختاریافته باشد (JSON/YAML)، بقیه‌ی کار ساده است.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      با این فصل، مسیر CCNA کامل شد. 🎉 حالا آماده‌ای برای CCNP Enterprise،
+      MikroTik MTCNA یا MCSA.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCNP با <span class="term" data-term="rest-api">REST API</span>،
+      <span class="term" data-term="netconf">NETCONF</span>،
+      <span class="term" data-term="restconf">RESTCONF</span> و
+      <span class="term" data-term="sdwan">SD-WAN</span> در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — یک REST API Call ساده با curl</h3>
+    <pre><code># احراز هویت و دریافت Token در DNA Center
+curl -X POST https://dnac.company.local/dna/system/api/v1/auth/token \
+  -H "Content-Type: application/json" \
+  -u "admin:password" \
+  -k
+
+# پاسخ:
+# {"Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6..."}
+
+# استفاده از Token برای دریافت لیست دستگاه‌ها
+curl -X GET https://dnac.company.local/dna/intent/api/v1/network-device \
+  -H "X-Auth-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6..." \
+  -H "Content-Type: application/json" \
+  -k</code></pre>
+
+    <h3>مثال ۲ — Python Script برای پیکربندی چند روتر</h3>
+    <pre><code>from netmiko import ConnectHandler
+
+routers = [
+    {"host": "192.168.1.1", "username": "admin", "password": "pass"},
+    {"host": "192.168.1.2", "username": "admin", "password": "pass"},
+    {"host": "192.168.1.3", "username": "admin", "password": "pass"}
+]
+
+config = [
+    "interface Loopback0",
+    "ip address 10.255.255.1 255.255.255.255",
+    "description Managed by Automation",
+    "exit"
+]
+
+for router in routers:
+    conn = ConnectHandler(
+        device_type="cisco_ios",
+        host=router["host"],
+        username=router["username"],
+        password=router["password"]
+    )
+    conn.send_config_set(config)
+    conn.save_config()
+    print(f"✅ {router['host']} configured")
+    conn.disconnect()</code></pre>
+
+    <h3>مثال ۳ — Ansible Playbook برای Backup خودکار</h3>
+    <pre><code>---
+- name: Daily Backup of Cisco Devices
+  hosts: cisco_devices
+  gather_facts: no
+  tasks:
+    - name: Get running config
+      ios_command:
+        commands:
+          - show running-config
+      register: config_output
+
+    - name: Save to file
+      copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: "/backups/{{ inventory_hostname }}_{{ ansible_date_time.date }}.cfg"</code></pre>
+
+    <h3>مثال ۴ — JSON Parsing با Python</h3>
+    <pre><code>import json
+
+# خواندن پاسخ JSON از فایل
+with open("devices.json", "r") as f:
+    data = json.load(f)
+
+# فیلتر کردن سوئیچ‌های Catalyst 9300
+for device in data["response"]:
+    if device["platformId"] == "C9300-48P":
+        print(f"Switch: {device['hostname']} - IP: {device['managementIpAddress']}")
+
+# تبدیل داده به JSON با Indent
+filtered = [d for d in data["response"] if "C9300" in d["platformId"]]
+print(json.dumps(filtered, indent=2))</code></pre>
+
+    <h3>مثال ۵ — مقایسه CLI سنتی و اتوماسیون</h3>
+    <pre><code># ===== روش سنتی =====
+برای ۱۰۰ سوئیچ:
+  for switch in switches:
+    ssh admin@switch
+    config terminal
+    vlan 100
+    name NEW-VLAN
+    exit
+    exit
+    write memory
+    exit
+
+⏱ زمان تقریبی: ۴-۶ ساعت
+❌ خطای انسانی: بالا
+❌ یکنواختی: پایین
+
+# ===== روش اتوماسیون =====
+ansible-playbook create-vlan.yml
+
+⏱ زمان: ۳-۵ دقیقه
+✅ خطای انسانی: صفر
+✅ یکنواختی: ۱۰۰٪</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>Python 3 را روی سیستم نصب کن (python.org)</li>
+      <li>با <code>pip install netmiko requests</code> کتابخانه‌ها را نصب کن</li>
+      <li>در GNS3 یا Packet Tracer سه روتر بساز و SSH را روی آن‌ها فعال کن</li>
+      <li>یک اسکریپت Python بنویس که به هر سه روتر وصل شود و <code>show ip interface brief</code> بگیرد</li>
+      <li>نتیجه را در یک فایل متنی ذخیره کن</li>
+      <li>اسکریپت را توسعه بده که روی هر روتر Loopback0 پیکربندی کند</li>
+      <li>Ansible را نصب کن (<code>pip install ansible</code>)</li>
+      <li>یک Inventory file با آی‌پی روترها بساز</li>
+      <li>یک Playbook ساده بنویس که روی همه‌ی روترها VLAN 100 ایجاد کند</li>
+      <li>Playbook را اجرا کن و خروجی را بررسی کن</li>
+      <li>یک اسکریپت Python بنویس که با REST API، اطلاعات دستگاه‌ها را از یک Controller شبیه‌سازی‌شده (یا DevNet Sandbox) بگیرد</li>
+      <li>پاسخ JSON را Parse کن و در Console گزارش بده</li>
+      <li>همه‌ی کدها را در یک Git Repository قرار بده (GitHub یا GitLab)</li>
+      <li>یک README.md برای مستندسازی پروژه بنویس</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>اتصال SSH در Netmiko نمی‌گیرد:</strong> چک کن SSH روی روتر فعال است و <code>device_type</code> درست انتخاب شده.</li>
+      <li><strong>Python Script کند اجرا می‌شود:</strong> از <code>paramiko</code> بدون Pool استفاده می‌کنی — Nornir یا Thread Pool بگذار.</li>
+      <li><strong>REST API خطای 401 می‌دهد:</strong> Token منقضی شده — دوباره احراز هویت کن.</li>
+      <li><strong>JSON Parse Error:</strong> داده‌ی دریافتی کامل نیست یا ساختار متفاوت است — <code>print(response.text)</code> بزن و ببین.</li>
+      <li><strong>Ansible به روتر وصل نمی‌شود:</strong> Inventory و Credential را چک کن، روی روتر SSH فعال باشد.</li>
+      <li><strong>YAML Syntax Error:</strong> Indentation با Space (نه Tab) باشد.</li>
+      <li><strong>پیکربندی اشتباه اتوماسیون همه‌ی دستگاه‌ها را خراب می‌کند:</strong> همیشه اول روی یک دستگاه تست کن، سپس Roll Out کن.</li>
+      <li><strong>Backupها Overwrite می‌شوند:</strong> از timestamp در نام فایل استفاده کن (مثلاً <code>Date</code>).</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="sdn">SDN</span> •
+      <span class="term" data-term="rest-api">REST API</span> •
+      <span class="term" data-term="json">JSON</span> •
+      <span class="term" data-term="python">Python</span> •
+      <span class="term" data-term="ansible">Ansible</span> •
+      <span class="term" data-term="iac">IaC</span> •
+      <span class="term" data-term="netconf">NETCONF</span> •
+      <span class="term" data-term="restconf">RESTCONF</span> •
+      <span class="term" data-term="sdwan">SD-WAN</span> •
+      <span class="term" data-term="vxlan">VXLAN</span> •
+      <span class="term" data-term="lisp">LISP</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccna-06" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) در معماری SDN، کدام لایه مسئول تصمیم‌گیری مسیریابی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Application Layer</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Control Layer (SDN Controller)</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Infrastructure Layer</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Physical Layer</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) تفاوت Northbound API و Southbound API چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> NBI روی SSH، SBI روی HTTP</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> NBI به دستگاه‌ها، SBI به برنامه‌ها</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> NBI بین Application و Controller، SBI بین Controller و Infrastructure</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) تفاوت Overlay و Underlay در چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Underlay روی Overlay ساخته می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Underlay شبکه‌ی فیزیکی، Overlay تونل‌های منطقی روی آن</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Overlay فقط برای Wireless است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) در REST API، کدام Verb برای خواندن داده استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> POST</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> GET</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> PUT</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> DELETE</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) HTTP Status Code «401» به چه معناست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Internal Server Error</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Not Found</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Unauthorized (نیاز به احراز هویت)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Bad Request</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) تفاوت JSON و YAML چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> YAML فقط برای ماشین است</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> YAML خواناتر برای انسان (Indentation)، JSON دقیق‌تر برای ماشین (Bracket)</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> JSON جدیدتر از YAML است</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) Ansible از چه مدلی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Pull با Agent</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Pull بدون Agent</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> Push بدون Agent (از طریق SSH)</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> فقط برای Cloud</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۸) کدام زبان برای Playbook در Ansible استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> YAML</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Python</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Ruby</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> JSON</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) NETCONF از چه پورت و فرمتی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> UDP/161 و MIB</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> TCP/22 و JSON</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> SSH/830 و XML</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> HTTPS/443 و YAML</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) تفاوت RESTCONF و NETCONF چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> RESTCONF فقط برای Wireless است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> RESTCONF روی HTTPS با JSON/XML، NETCONF روی SSH با XML</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> NETCONF جدیدتر است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) IaC (Infrastructure as Code) چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> کاهش هزینه‌ی سخت‌افزار</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> تکرارپذیری، کنترل نسخه و کاهش خطای انسانی</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> افزایش سرعت لینک</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> رمزنگاری خودکار</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۲) در Cisco DNA Center، بخش «Assurance» چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> طراحی توپولوژی</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> تعریف Policy</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> پایش Health، عیب‌یابی هوشمند و AI/ML</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> پیکربندی دستگاه‌ها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۳) در Python، دیکشنری با کدام علامت تعریف می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> [ ]</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> { }</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> ( )</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> &lt; &gt;</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۴) کدام کتابخانه Python محبوب‌ترین برای اتصال به Cisco IOS است؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> pandas</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> numpy</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Netmiko</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> flask</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) SD-WAN چه مزیتی نسبت به WAN سنتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> فقط ارزان‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> کنترل متمرکز، انتخاب خودکار بهترین لینک، Zero Touch Provisioning</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> فقط برای Cloud است</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> جایگزین LAN است</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل (و دوره CCNA)</h2>
+    <p>یک پروژه‌ی کامل اتوماسیون شبکه بساز:</p>
+    <ul>
+      <li>سه روتر مجازی در GNS3 یا EVE-NG راه‌اندازی کن</li>
+      <li>روی هر سه SSH فعال کن و یک کاربر ادمین بساز</li>
+      <li>یک اسکریپت Python بنویس که:
+        <ul>
+          <li>به هر سه روتر وصل شود</li>
+          <li>Backup از Config بگیرد و در پوشه‌ی <code>backups/</code> با تاریخ ذخیره کند</li>
+          <li>VLAN 100 روی هر سه ایجاد کند</li>
+          <li>روی هر روتر یک Loopback با IP یکتا بسازد</li>
+        </ul>
+      </li>
+      <li>یک Ansible Playbook بنویس که همان کار را انجام دهد</li>
+      <li>هر دو روش را زمان‌بندی کن (Cron یا Task Scheduler)</li>
+      <li>همه‌ی کدها را در GitHub قرار بده با README کامل</li>
+      <li>در README توضیح بده: چه چیزی ساخته‌ای، چطور کار می‌کند، چطور اجرا می‌شود</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>از REST API یک Controller شبیه‌سازی‌شده (مثل DevNet Sandbox) لیست دستگاه‌ها را بگیر و در Console گزارش بده.</li>
+        <li>یک داشبورد ساده با Flask بساز که وضعیت روترها را نمایش دهد.</li>
+        <li>با GitHub Actions یک CI/CD Pipeline ساده بساز که هر بار Push، Config را تست کند.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>SDN:</strong> جدا کردن Control Plane از Data Plane</li>
+      <li><strong>سه لایه SDN:</strong> Application، Control، Infrastructure</li>
+      <li><strong>NBI:</strong> بین Application و Controller (معمولاً REST)</li>
+      <li><strong>SBI:</strong> بین Controller و دستگاه‌ها (OpenFlow، NETCONF، RESTCONF)</li>
+      <li><strong>Overlay vs Underlay:</strong> تونل‌های منطقی vs شبکه‌ی فیزیکی</li>
+      <li><strong>REST API:</strong> Stateless، مبتنی بر HTTP Verbs</li>
+      <li><strong>HTTP Verbs:</strong> GET (Read)، POST (Create)، PUT (Update)، DELETE (Delete)</li>
+      <li><strong>Status Codes:</strong> 200 OK، 201 Created، 401 Unauthorized، 404 Not Found، 500 Server Error</li>
+      <li><strong>JSON/YAML/XML:</strong> فرمت‌های داده؛ JSON و YAML رایج‌ترند</li>
+      <li><strong>NETCONF:</strong> SSH/830، XML، تراکنشی — <strong>RESTCONF:</strong> HTTPS، JSON/XML</li>
+      <li><strong>Ansible:</strong> Push، Agentless، YAML Playbook — <strong>Puppet/Chef:</strong> Pull، Agent-based</li>
+      <li><strong>Python + Netmiko:</strong> ساده‌ترین راه ورود به اتوماسیون</li>
+      <li><strong>IaC:</strong> تعریف زیرساخت به‌صورت کد، با Git و CI/CD</li>
+      <li><strong>Cisco DNA Center:</strong> Design، Policy، Provision، Assurance</li>
+      <li><strong>SD-Access:</strong> بر پایه LISP + VXLAN — <strong>SD-WAN:</strong> Control/Data Plane جدا</li>
+      <li><strong>AIOps:</strong> Predictive، Generative، Anomaly Detection، Remediation</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccna_Ch_05.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccna-06">✅ پایان فصل</button>
+      <a class="btn" href="../ccnp/ccnp_Ch_01.html" data-nav-next>شروع CCNP ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

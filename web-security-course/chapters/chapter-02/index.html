@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل ۲: راه‌اندازی آزمایشگاه امن (Kali + Windows + Django) | دوره تخصصی امنیت وب</title>
+    <meta name="description" content="راهنمای کامل راه‌اندازی آزمایشگاه ایزوله امنیت وب: VMware، شبکه Host-Only، Kali Linux، Windows هدف، Django، DVWA، ابزارها و Snapshot.">
+    <meta name="author" content="دوره تخصصی امنیت وب">
+    <meta name="keywords" content="آزمایشگاه امنیت, Kali Linux, VMware, شبکه ایزوله, DVWA, Django security lab">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        #reading-bar {
+            position: fixed; top: 0; right: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #00d97e, #22ffa0);
+            width: 0; z-index: 999; transition: width .1s linear;
+        }
+        .chapter-hero {
+            background: linear-gradient(135deg, #0f172a, #064e3b);
+            color: white; border-radius: 18px; padding: 34px 28px; margin: 26px 0;
+            border: 1px solid #00d97e;
+            position: relative; overflow: hidden;
+        }
+        .chapter-hero::after {
+            content: ''; position: absolute; left: -80px; top: -80px;
+            width: 240px; height: 240px;
+            background: radial-gradient(circle, rgba(0,217,126,.25), transparent 70%);
+        }
+        .chapter-hero h1 { margin: 6px 0 8px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+        .chapter-hero .chap-num {
+            display: inline-block; background: rgba(0,217,126,.15);
+            border: 1px solid #00d97e; color: #7ee787; padding: 3px 14px;
+            border-radius: 30px; font-size: .85rem; font-weight: 700;
+            position: relative; z-index: 1;
+        }
+        .chapter-hero p.sub { margin: 8px 0 0; opacity: .9; max-width: 820px; position: relative; z-index: 1; }
+        .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; position: relative; z-index: 1; }
+        .meta-chips span {
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+            border-radius: 30px; padding: 4px 14px; font-size: .8rem;
+            display: inline-flex; gap: 6px; align-items: center;
+        }
+        .chapter-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 26px;
+            align-items: start; margin: 26px 0;
+        }
+        .toc-box {
+            position: sticky; top: 70px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+        }
+        .toc-title {
+            background: #0f172a; color: #7ee787; padding: 10px 16px;
+            font-weight: 800; font-size: .95rem;
+        }
+        .toc-list {
+            list-style: none; margin: 0; padding: 8px;
+            max-height: 60vh; overflow-y: auto;
+        }
+        .toc-list a {
+            display: block; color: var(--muted); font-size: .82rem;
+            padding: 7px 10px; border-radius: 8px;
+            border-right: 3px solid transparent; text-decoration: none;
+            transition: .2s;
+        }
+        .toc-list a:hover { background: var(--surface-2); color: var(--ink); }
+        .toc-list a.active {
+            background: rgba(0,217,126,.1); color: var(--accent);
+            border-right-color: var(--accent); font-weight: 700;
+        }
+        .toc-actions {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 8px; border-top: 1px dashed var(--line);
+        }
+        .toc-actions button {
+            background: transparent; color: var(--muted);
+            border: 1px solid var(--line); border-radius: 8px;
+            padding: 6px 10px; font-size: .78rem; cursor: pointer;
+            font-family: inherit; transition: .2s;
+        }
+        .toc-actions button:hover { border-color: var(--accent); color: var(--accent); }
+        .pager {
+            display: flex; justify-content: space-between;
+            margin: 30px 0; gap: 12px;
+        }
+        .pager a {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 14px 20px; color: var(--text);
+            text-decoration: none; font-weight: 700; transition: .2s;
+        }
+        .pager a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        .done-bar {
+            background: rgba(0,217,126,.08);
+            border: 1px dashed #00d97e; border-radius: 12px;
+            padding: 14px; margin: 22px 0; text-align: center;
+        }
+        #mark-done {
+            background: var(--accent); color: #0b1220;
+            border: none; border-radius: 30px;
+            padding: 10px 28px; font-weight: 800; cursor: pointer;
+            font-family: inherit; margin-top: 8px;
+        }
+        #mark-done.done { background: #059669; color: white; }
+        .callout {
+            border-radius: 10px; padding: 14px 18px; margin: 14px 0;
+            border-right: 6px solid var(--accent); background: var(--surface-2);
+        }
+        .callout.co-warn { background: #3f1d1d; border-right-color: #ef4444; color: #fecaca; }
+        .callout.co-warn strong { color: #fca5a5; }
+        .callout.co-danger { background: #451a1a; border-right-color: #dc2626; color: #fecaca; }
+        .callout.co-tip { background: #0d2818; border-right-color: #00d97e; color: #a7f3d0; }
+        .callout.co-note { background: #1e293b; border-right-color: #3b82f6; color: #cbd5e1; }
+        .kpi-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px; margin: 16px 0;
+        }
+        .kpi {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .kpi .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+        .kpi .lbl { font-size: .82rem; color: var(--muted); }
+        .timeline {
+            list-style: none; padding: 0; margin: 16px 0;
+            border-right: 3px solid var(--accent); padding-right: 20px;
+        }
+        .timeline li { margin: 12px 0; position: relative; }
+        .timeline li::before {
+            content: '●'; color: var(--accent); position: absolute;
+            right: -28px; top: 2px;
+        }
+        .timeline .year { font-weight: 800; color: var(--accent); }
+        .phase-diagram {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 20px; margin: 16px 0;
+            overflow-x: auto;
+        }
+        .phase-diagram pre { background: transparent; border: none; padding: 0; margin: 0; color: var(--text); }
+        .role-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .role-card {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 12px; padding: 16px; transition: .2s;
+        }
+        .role-card:hover { border-color: var(--accent); }
+        .role-card h6 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+        .role-card p { margin: 4px 0; font-size: .85rem; }
+        .role-card .threat-level {
+            display: inline-block; font-size: .7rem; padding: 2px 10px;
+            border-radius: 20px; font-weight: 700; margin-top: 6px;
+        }
+        .threat-low { background: #166534; color: #bbf7d0; }
+        .threat-mid { background: #854d0e; color: #fef08a; }
+        .threat-high { background: #7f1d1d; color: #fecaca; }
+        .quiz-question {
+            background: var(--surface-2); border: 1px solid var(--line);
+            border-radius: 10px; padding: 14px 18px; margin: 12px 0;
+        }
+        .quiz-question strong { color: var(--accent); }
+        .checklist li { list-style: none; margin: 8px 0; padding-right: 26px; position: relative; }
+        .checklist li::before {
+            content: '☐'; position: absolute; right: 0; color: var(--accent);
+            font-size: 1.1rem;
+        }
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+        .do-box, .dont-box { border-radius: 10px; padding: 14px 18px; }
+        .do-box { background: #0d2818; border: 1px solid #16a34a; }
+        .do-box h6 { color: #4ade80; margin: 0 0 8px; }
+        .dont-box { background: #451a1a; border: 1px solid #dc2626; }
+        .dont-box h6 { color: #f87171; margin: 0 0 8px; }
+        .do-box li, .dont-box li { margin: 6px 0; font-size: .9rem; }
+        .step-number {
+            display: inline-block; background: var(--accent); color: #0b1220;
+            border-radius: 50%; width: 26px; height: 26px; line-height: 26px;
+            text-align: center; font-weight: 800; margin-left: 8px;
+        }
+        @media (max-width: 900px) {
+            .chapter-layout { grid-template-columns: 1fr; }
+            .toc-box { position: static; }
+            .do-dont { grid-template-columns: 1fr; }
+        }
+        @media print {
+            .toc-box, .pager, .site-header, .done-bar, .main-nav { display: none !important; }
+            .chapter-layout { grid-template-columns: 1fr; }
+            body { background: #fff; color: #000; }
+        }
+    </style>
+</head>
+<body>
+    <div id="reading-bar"></div>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>🛡️ دوره تخصصی امنیت وب</h1>
+            <p>فصل ۲ از ۲۱ — راه‌اندازی آزمایشگاه امن</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="#part-01">📖 شروع فصل</a>
+            <a href="../chapter-01/index.html" id="prev-link">➜ فصل قبل</a>
+            <a href="../chapter-03/index.html" id="next-link">فصل بعد ➜</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chapter-hero">
+            <span class="chap-num">فصل ۲ از ۲۱</span>
+            <h1>🧪 راه‌اندازی آزمایشگاه امن (Kali + Windows + Django)</h1>
+            <p class="sub">
+                ساخت گام‌به‌گام آزمایشگاه ایزوله امنیت وب: نصب VMware، تنظیم شبکه Host-Only، نصب Kali Linux و
+                Windows هدف، راه‌اندازی Django، استقرار DVWA، و چک‌لیست کامل ابزارهای لازم — همه در محیطی کاملاً
+                جدا از اینترنت و شبکه واقعی.
+            </p>
+            <div class="meta-chips">
+                <span>🎓 سطح: مبتدی تا متوسط</span>
+                <span>⏱ ۱۲۰ دقیقه</span>
+                <span>🔑 VMware</span>
+                <span>🔑 Host-Only</span>
+                <span>🔑 Kali Linux</span>
+                <span>🔑 DVWA</span>
+                <span>🔑 Snapshot</span>
+            </div>
+        </div>
+
+        <div class="chapter-layout">
+            <aside class="toc-box">
+                <div class="toc-title">📑 فهرست ۱۴ بخش این فصل</div>
+                <ul class="toc-list">
+                    <li><a href="#part-01">۱. جعبه عنوان و هویت</a></li>
+                    <li><a href="#part-02">۲. پیش‌نیازها و راه‌اندازی محیط</a></li>
+                    <li><a href="#part-03">۳. اهداف یادگیری</a></li>
+                    <li><a href="#part-04">۴. مقدمه: چرا آزمایشگاه ایزوله؟</a></li>
+                    <li><a href="#part-05">۵. مفاهیم کلیدی و واژگان</a></li>
+                    <li><a href="#part-06">۶. معماری گام‌به‌گام آزمایشگاه</a></li>
+                    <li><a href="#part-07">۷. کارگاه: راه‌اندازی کامل</a></li>
+                    <li><a href="#part-08">۸. تحلیل دفاعی و ایزوله‌سازی</a></li>
+                    <li><a href="#part-09">۹. نکات حرفه‌ای و دام‌های رایج</a></li>
+                    <li><a href="#part-10">۱۰. پرسش و پاسخ و رفع اشکال</a></li>
+                    <li><a href="#part-11">۱۱. جمع‌بندی و نکات طلایی</a></li>
+                    <li><a href="#part-12">۱۲. خودارزیابی و آزمونک</a></li>
+                    <li><a href="#part-13">۱۳. پروژه هفتگی</a></li>
+                    <li><a href="#part-14">۱۴. منابع و گام بعدی</a></li>
+                </ul>
+                <div class="toc-actions">
+                    <button id="btn-open-answers" type="button">🟢 باز کردن همه پاسخ‌ها</button>
+                    <button id="btn-close-answers" type="button">⚪ بستن همه پاسخ‌ها</button>
+                </div>
+            </aside>
+
+            <div class="main-col">
+
+                <!-- بخش ۱: عنوان -->
+                <div class="section-part" id="part-01">
+                    <h3>۱. جعبه عنوان و هویت</h3>
+
+                    <p><strong>📖 عنوان کامل فصل:</strong> راه‌اندازی آزمایشگاه امن (Kali + Windows + Django) — سفر عملی از «صفر» تا «آماده برای اولین آزمایش نفوذ قانونی».</p>
+
+                    <p><strong>🎓 سطح دشواری:</strong> مبتدی تا متوسط. تنها پیش‌نیاز، آشنایی ابتدایی با ترمینال لینوکس و ویندوز و مفهوم IP و شبکه است.</p>
+
+                    <p><strong>⏱ زمان مطالعه:</strong> ۹۰ تا ۱۲۰ دقیقه (نصب VMware و ماشین‌های مجازی زمان بیشتری می‌گیرد — بخش نصب را می‌توانید روی یک روز و بخش تنظیمات را روز بعد انجام دهید).</p>
+
+                    <h5>🎯 اهداف کلان این فصل:</h5>
+                    <ol>
+                        <li>درک تفاوت انواع شبکه در VMware (NAT، Bridged، Host-Only) و انتخاب صحیح برای هر سناریو.</li>
+                        <li>نصب و پیکربندی کامل <strong>Kali Linux</strong> به‌عنوان ماشین مهاجم.</li>
+                        <li>نصب و پیکربندی <strong>Windows 10/11 + Django</strong> به‌عنوان ماشین هدف.</li>
+                        <li>ساخت شبکه ایزوله <strong>Host-Only (VMnet1)</strong> و IP استاتیک.</li>
+                        <li>استقرار <strong>DVWA</strong> (هدف آسیب‌پذیر کلاسیک) و Snapshot اولیه.</li>
+                        <li>تسلط بر استراتژی Snapshot و مستندسازی آزمایشگاه.</li>
+                    </ol>
+
+                    <h5>📚 خروجی قابل اندازه‌گیری (پس از این فصل):</h5>
+                    <ul>
+                        <li>یک آزمایشگاه ایزوله با دو VM فعال که به هم ping می‌زنند.</li>
+                        <li>Django روی Windows هدف اجرا می‌شود و از Kali با مرورگر قابل دسترسی است.</li>
+                        <li>DVWA در Ubuntu/Kali به‌عنوان هدف اضافه راه‌اندازی شده.</li>
+                        <li>حداقل ۳ Snapshot از حالت‌های مختلف (clean-install، tools-installed، dvwa-ready) گرفته‌اید.</li>
+                        <li>یک فایل <code>lab-report.md</code> با اطلاعات کامل آزمایشگاه دارید.</li>
+                        <li>ابزارهای پایه (Nmap، Burp، sqlmap، Wireshark) روی Kali نصب و تست شده‌اند.</li>
+                    </ul>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار اخلاقی (تکرار می‌کنیم چون حیاتی است):</strong>
+                        این آزمایشگاه فقط و فقط برای تمرین قانونی طراحی شده است. هیچ‌گاه VM هدف را به اینترنت یا شبکه سازمانی وصل نکنید — حتی لحظه‌ای. اگر می‌خواهید درک کنید چرا: آسیب‌پذیری‌های DVWA (مثل Command Injection) به‌صورت خودکار روی هر سروری که به آن متصل شود، اجرا می‌شود و می‌تواند فاجعه بیافریند.
+                    </div>
+                </div>
+
+                <!-- بخش ۲: پیش‌نیازها -->
+                <div class="section-part" id="part-02">
+                    <h3>۲. پیش‌نیازها و راه‌اندازی محیط</h3>
+
+                    <h5>💻 نیازمندی‌های سخت‌افزاری (بحرانی — این فصل بیشترین فشار منابع را دارد):</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>مؤلفه</th><th>حداقل</th><th>پیشنهادی</th><th>توضیح</th></tr></thead>
+                        <tbody>
+                            <tr><td>RAM</td><td>۱۲GB</td><td>۱۶GB یا بیشتر</td><td>Kali ~4GB + Windows ~6GB + سیستم میزبان ~2GB</td></tr>
+                            <tr><td>CPU</td><td>۴ هسته با VT-x/AMD-V</td><td>۸ هسته</td><td>باید در BIOS مجازی‌سازی سخت‌افزاری فعال باشد</td></tr>
+                            <tr><td>فضای دیسک</td><td>۸۰GB SSD</td><td>۱۵۰GB NVMe</td><td>هر VM ~30GB + Snapshotها</td></tr>
+                            <tr><td>کارت گرافیک</td><td>هر چیزی</td><td>—</td><td>محاسبات سنگین GPU نداریم</td></tr>
+                            <tr><td>شبکه</td><td>کارت شبکه 100Mbps</td><td>Gigabit</td><td>فقط برای دانلود ISOها</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-note">
+                        <strong>ℹ️ اگر RAM کم دارید:</strong>
+                        می‌توانید یکی از این سناریوها را امتحان کنید:
+                        <ul style="margin: 8px 0 0 0;">
+                            <li><strong>سناریوی سبک:</strong> Kali (2GB) + یک VM لینوکسی سبک (Ubuntu Server 1GB) به‌جای Windows.</li>
+                            <li><strong>سناریوی WSL2:</strong> Kali در WSL2 (روی خود ویندوز) + Docker برای هدف — نیاز به Virtual Machine Platform در ویندوز.</li>
+                            <li><strong>سناریوی ابری:</strong> یک VPS رایگان/ارزان (Oracle Free Tier، Hetzner) با SSH، Kali محلی روی VirtualBox سبک.</li>
+                        </ul>
+                    </div>
+
+                    <h5>🛠 نرم‌افزارهای لازم — جدول دانلود:</h5>
+                    <table class="objectives-table">
+                        <thead><tr><th>نرم‌افزار</th><th>نسخه پیشنهادی</th><th>حجم تقریبی</th><th>منبع رسمی</th></tr></thead>
+                        <tbody>
+                            <tr><td>VMware Workstation Pro</td><td>۱۷.۵+</td><td>~600MB</td><td>vmware.com (رایگان برای استفاده شخصی از 2024)</td></tr>
+                            <tr><td>VirtualBox (جایگزین)</td><td>۷.۰+</td><td>~100MB</td><td>virtualbox.org</td></tr>
+                            <tr><td>Kali Linux ISO</td><td>2024.4+</td><td>~4GB (Installer) یا ~3GB (Live)</td><td>kali.org/get-kali</td></tr>
+                            <tr><td>Windows 10/11 ISO</td><td>22H2 / 23H2</td><td>~5.5GB</td><td>microsoft.com/software-download</td></tr>
+                            <tr><td>Ubuntu Server ISO (اختیاری برای DVWA)</td><td>22.04 LTS</td><td>~1.5GB</td><td>ubuntu.com/download/server</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔑 چک‌لیست پیش از شروع نصب:</h5>
+                    <ul class="checklist">
+                        <li>در BIOS/UEFI: Virtualization Technology (VT-x/AMD-V) فعال است</li>
+                        <li>در Windows: Hyper-V و Windows Defender Virtualization خاموش (تداخل با VMware)</li>
+                        <li>حداقل ۸۰GB فضای خالی روی درایو (ترجیحاً SSD)</li>
+                        <li>دانلود تمام ISOها کامل شده (Checksum با SHA256 تطبیق داده شده)</li>
+                        <li>رمزهای عبور قوی برای VMها آماده در ذهن یا Password Manager</li>
+                        <li>یک پوشه تمیز مثل <code>C:\security-lab\</code> برای همه VMها</li>
+                    </ul>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته طلایی:</strong>
+                        قبل از نصب هر VM، مطمئن شوید فایل ISO روی SSD داخلی شماست (نه روی USB یا درایو خارجی). اجرای VM از دیسک خارجی = تجربه کندی طاقت‌فرسا.
+                    </div>
+                </div>
+
+                <!-- بخش ۳: اهداف یادگیری -->
+                <div class="section-part" id="part-03">
+                    <h3>۳. اهداف یادگیری (چه چیزهایی به دست می‌آورید؟)</h3>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>حوزه</th><th>هدف مشخص</th><th>معیار سنجش</th><th>وزن</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>شبکه</strong></td>
+                                <td>درک تفاوت NAT/Bridged/Host-Only و انتخاب صحیح</td>
+                                <td>توضیح کتبی سه سناریو و انتخاب شبکه درست</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مجازی‌سازی</strong></td>
+                                <td>نصب و پیکربندی VMware و دو VM</td>
+                                <td>هر دو VM بالا می‌آیند و به هم ping می‌زنند</td>
+                                <td>۳۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ابزارشناسی</strong></td>
+                                <td>نصب و تست ابزارهای پایه امنیت</td>
+                                <td>Nmap، Burp، sqlmap، Wireshark همه کار می‌کنند</td>
+                                <td>۲۰٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مدیریت محیط</strong></td>
+                                <td>Snapshot و استراتژی پشتیبان‌گیری از VM</td>
+                                <td>سه Snapshot در حالت‌های مختلف گرفته شده</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                            <tr>
+                                <td><strong>مستندسازی</strong></td>
+                                <td>گزارش‌نویسی حرفه‌ای آزمایشگاه</td>
+                                <td><code>lab-report.md</code> با تمام اطلاعات فنی</td>
+                                <td>۱۵٪</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>📌 پیش‌نیازهای فکری — قبل از شروع این فصل، این سؤالات را از خود بپرسید:</h5>
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ اگر پاسخ «بله» است، آماده‌اید:</h6>
+                            <ul>
+                                <li>می‌توانم IP یک سیستم را از خط فرمان ببینم</li>
+                                <li>می‌دانم 192.168.x.x یک آدرس خصوصی است</li>
+                                <li>می‌توانم یک فایل ISO را روی USB رایت کنم</li>
+                                <li>با ترمینال Bash کار کرده‌ام</li>
+                                <li>می‌دانم Virtual Machine چیست</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>📖 اگر پاسخ «خیر» است، اول:</h6>
+                            <ul>
+                                <li>مبانی شبکه (IP، Subnet، Port) را مرور کنید</li>
+                                <li>یک ترمینال لینوکس ساده کار کنید (مثلاً Ubuntu WSL)</li>
+                                <li>با اصطلاح VM، Hypervisor، ISO آشنا شوید</li>
+                                <li>مقدمه‌ای از خط فرمان ببینید (جدول دستورات پایه)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- بخش ۴: مقدمه -->
+                <div class="section-part" id="part-04">
+                    <h3>۴. مقدمه: چرا آزمایشگاه ایزوله؟</h3>
+
+                    <div class="story-box">
+                        <p>📖 <strong>یک داستان واقعی که در بسیاری از کلاس‌ها اتفاق افتاده:</strong></p>
+                        <p>دانشجویی مشتاق، پس از یادگیری SQL Injection، تصمیم گرفت «کمی آزمایش» کند. او یک VM با Damn Vulnerable Web Application (DVWA) نصب کرد و بدون ایزوله‌سازی، آن را روی حالت Bridged اجرا کرد. پس از چند دقیقه، یک ربات اسکنر اینترنتی که به‌طور مداوم کل فضای IP را اسکن می‌کند، آن را کشف کرد و از آسیب‌پذیری Command Injection برای اجرای یک Crypto Miner استفاده کرد. در عرض ۴۸ ساعت:</p>
+                        <ul style="margin-top: 10px;">
+                            <li>دانشجو پیام اخطار از ISP گرفت (استفاده ۹۸٪ CPU)</li>
+                            <li>بخش اداری دانشگاه پیگیر «ترافیک شبکه مشکوک» شد</li>
+                            <li>حساب کاربری‌اش در شبکه دانشگاه مسدود شد</li>
+                            <li>و بدتر: تمام اطلاعات دانشجویان دیگر روی شبکه دانشگاه در معرض خطر قرار گرفت</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>درس:</strong> آزمایشگاه امنیت، <em>ایزوله بودن</em> را از قبل می‌طلبد، نه بعد از فاجعه. این فصل، دقیقاً همان «قبل از فاجعه» است.</p>
+                    </div>
+
+                    <h5>📊 چرا آزمایشگاه ایزوله غیرقابل‌مذاکره است؟</h5>
+                    <div class="kpi-grid">
+                        <div class="kpi">
+                            <span class="num">۹۸٪</span>
+                            <span class="lbl">ربات‌های اسکنر فعال روی اینترنت</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">&lt;۵دق</span>
+                            <span class="lbl">میانگین زمان کشف یک سرویس آسیب‌پذیر جدید</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۳۴۰K</span>
+                            <span class="lbl">بدافزار جدید در روز (AV-TEST 2024)</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="num">۱۰۰٪</span>
+                            <span class="lbl">مسئولیت قانونی بر عهده صاحب شبکه</span>
+                        </div>
+                    </div>
+
+                    <h5>🎯 سه دلیل بنیادی برای ایزوله‌سازی:</h5>
+                    <div class="role-cards">
+                        <div class="role-card">
+                            <h6>🔒 دلیل ۱: ایمنی حقوقی</h6>
+                            <p>اگر DVWA روی شبکه واقعی شما آسیب‌پذیر باشد و کسی از آن سواستفاده کند، <strong>شما</strong> مسئول قانونی هستید — نه مهاجم. ایزوله‌سازی، شما را از این مسئولیت محافظت می‌کند.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>🛡️ دلیل ۲: ایمنی فنی</h6>
+                            <p>جدایی کامل از اینترنت یعنی هیچ رباتی نمی‌تواند به VM هدف شما برسد. حتی اگر آسیب‌پذیری خطرناکی مثل RCE را فعال کنید، مهاجم راهی به آن ندارد.</p>
+                        </div>
+                        <div class="role-card">
+                            <h6>📚 دلیل ۳: تمرکز آموزشی</h6>
+                            <p>در شبکه ایزوله، می‌توانید آزادانه آزمایش کنید، خراب کنید، بازسازی کنید. هیچ ترسی از خرابی ندارید و همین آزادی، سرعت یادگیری را چند برابر می‌کند.</p>
+                        </div>
+                    </div>
+
+                    <h5>📜 تاریخچه کوتاه — چطور به «آزمایشگاه ایزوله» رسیدیم؟</h5>
+                    <ul class="timeline">
+                        <li><span class="year">۲۰۰۵</span> — VMware Workstation 5.5 قابلیت Snapshot را فراگیر کرد.</li>
+                        <li><span class="year">۲۰۱۰</span> — Metasploitable 1 به‌عنوان اولین هدف آموزشی استاندارد منتشر شد.</li>
+                        <li><span class="year">۲۰۱۴</span> — DVWA نسخه ۱.۹ با درجه‌بندی سطح امنیت (Low/Medium/High).</li>
+                        <li><span class="year">۲۰۱۷</span> — VirtualBox رایگان به رقیب جدی VMware تبدیل شد.</li>
+                        <li><span class="year">۲۰۲۰</span> — عصر WSL2 و Docker در ویندوز: آزمایشگاه‌های سبک.</li>
+                        <li><span class="year">۲۰۲۳+</span> — Kali Linux Purple و Metasploitable3 برای تمرین دفاع و حمله.</li>
+                    </ul>
+                </div>
+
+                <!-- بخش ۵: مفاهیم کلیدی -->
+                <div class="section-part" id="part-05">
+                    <h3>۵. مفاهیم کلیدی و واژگان تخصصی</h3>
+
+                    <h5>5.1 — انواع شبکه در VMware (بحرانی — این تفاوت را باید درونی کنید):</h5>
+
+                    <div class="phase-diagram">
+<pre>┌─────────────────────────────────────────────────────────────┐
+│                    سیستم میزبان شما                          │
+│                                                              │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    │
+│   │   VM-A      │    │   VM-B      │    │   VM-C      │    │
+│   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘    │
+│          │                  │                  │            │
+│          ▼                  ▼                  ▼            │
+│   ┌──────────┐      ┌──────────┐      ┌──────────┐        │
+│   │  VMnet0  │      │  VMnet8  │      │  VMnet1  │        │
+│   │  Bridged │      │   NAT    │      │Host-Only │        │
+│   └────┬─────┘      └────┬─────┘      └────┬─────┘        │
+│        │                 │                 │              │
+└────────┼─────────────────┼─────────────────┼──────────────┘
+         ▼                 ▼                 ▼
+    ┌─────────┐      ┌──────────┐      ┌──────────────┐
+    │ اینترنت │      │ اینترنت  │      │ فقط میزبان  │
+    │ + شبکه  │      │ + میزبان │      │ (بدون       │
+    │ واقعی   │      │ فقط      │      │  اینترنت)   │
+    └─────────┘      └──────────┘      └──────────────┘
+      ⚠️ خطرناک!     🔸 نیمه ایزوله    ✅ امن (هدف ما)
+</pre>
+                    </div>
+
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>نوع شبکه</th><th>اتصال اینترنت</th><th>ارتباط با میزبان</th><th>کاربرد در امنیت</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Bridged (VMnet0)</strong></td>
+                                <td>✅ کامل</td>
+                                <td>✅ کامل</td>
+                                <td>⚠️ خطرناک — هرگز برای VM هدف</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NAT (VMnet8)</strong></td>
+                                <td>✅ از طریق میزبان</td>
+                                <td>✅</td>
+                                <td>مناسب برای به‌روزرسانی Kali</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Host-Only (VMnet1)</strong></td>
+                                <td>❌ قطع</td>
+                                <td>✅ فقط میزبان</td>
+                                <td><strong>✅ ایده‌آل برای VM هدف</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Custom (VMnet2+)</strong></td>
+                                <td>قابل تنظیم</td>
+                                <td>قابل تنظیم</td>
+                                <td>سناریوهای چندسطحی پیشرفته</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.2 — واژه‌نامه تخصصی این فصل:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>واژه</th><th>معنی</th><th>کاربرد در این فصل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Hypervisor</td><td>نرم‌افزار مدیریت VM (VMware، VirtualBox)</td><td>پایه همه‌چیز</td></tr>
+                            <tr><td>Host (میزبان)</td><td>سیستم فیزیکی که VMها را اجرا می‌کند</td><td>لپ‌تاپ شما</td></tr>
+                            <tr><td>Guest (مهمان)</td><td>سیستم داخل VM</td><td>Kali، Windows</td></tr>
+                            <tr><td>Snapshot</td><td>عکس لحظه‌ای از کل VM (RAM + Disk)</td><td>بازگشت سریع</td></tr>
+                            <tr><td>Clone (کلون)</td><td>کپی کامل از VM</td><td>ساخت VM جدید از پایه</td></tr>
+                            <tr><td>VDI / VMDK</td><td>فرمت فایل دیسک VM</td><td>VirtualBox / VMware</td></tr>
+                            <tr><td>VT-x / AMD-V</td><td>مجازی‌سازی سخت‌افزاری</td><td>الزامی برای VM</td></tr>
+                            <tr><td>VMnet</td><td>شبکه‌های مجازی VMware</td><td>VMnet0/1/8</td></tr>
+                            <tr><td>ISO</td><td>تصویر دیسک نصب سیستم‌عامل</td><td>Kali، Windows</td></tr>
+                            <tr><td>DHCP</td><td>تخصیص خودکار IP</td><td>در lab ما خاموش</td></tr>
+                            <tr><td>Static IP</td><td>آدرس IP دستی (ثابت)</td><td>IPهای ثابت برای Kali و Windows</td></tr>
+                            <tr><td>Subnet</td><td>محدوده آدرس‌های هم‌شبکه</td><td>192.168.56.0/24</td></tr>
+                            <tr><td>Ping</td><td>تست اتصال بین دو سیستم</td><td>اولین تأیید ارتباط</td></tr>
+                            <tr><td>Firewall</td><td>فیلترکننده ترافیک</td><td>در ویندوز هدف باید پورت باز شود</td></tr>
+                            <tr><td>Django</td><td>فریمورک Python برای وب</td><td>هدف آسیب‌پذیر سفارشی</td></tr>
+                            <tr><td>DVWA</td><td>Damn Vulnerable Web App</td><td>هدف کلاسیک آموزشی</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5>5.3 — سه لایه امنیت آزمایشگاه:</h5>
+                    <div class="phase-diagram">
+<pre>         لایه ۳: جدایی شبکه‌ای
+         ┌───────────────────────────────┐
+         │ Host-Only یا NAT وابسته       │  ← VMها فقط با میزبان حرف می‌زنند
+         └───────────────────────────────┘
+                        ▲
+         لایه ۲: جدایی از شبکه واقعی
+         ┌───────────────────────────────┐
+         │ قطع کامل اینترنت روی هدف      │  ← حتی با Bridged هم، هدف اینترنت ندارد
+         └───────────────────────────────┘
+                        ▲
+         لایه ۱: جدایی از سیستم میزبان
+         ┌───────────────────────────────┐
+         │ فایروال میزبان + آگاهی         │  ← میزبان هم نباید آلوده شود
+         └───────────────────────────────┘
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده طلایی:</strong>
+                        «اگر مطمئن نیستید یک VM کجا متصل است، از آن استفاده نکنید تا مطمئن شوید.» — در VMware، قبل از روشن کردن هر VM، در پایین-راست پنجره VMware، آیکون شبکه و نام VMnet را ببینید.
+                    </div>
+                </div>
+
+                <!-- بخش ۶: معماری گام‌به‌گام -->
+                <div class="section-part" id="part-06">
+                    <h3>۶. معماری گام‌به‌گام آزمایشگاه</h3>
+
+                    <h5>📐 معماری نهایی:</h5>
+                    <div class="phase-diagram">
+<pre>┌───────────────────────────────────────────────────────────────────┐
+│              سیستم میزبان (Host) — Windows/Linux/macOS            │
+│              VMware Workstation 17.x                              │
+│                                                                    │
+│  ┌────────────────────────┐       ┌────────────────────────┐     │
+│  │    Kali Linux          │       │    Windows 10/11       │     │
+│  │    (مهاجم — Attacker)   │       │    (هدف — Target)       │     │
+│  │                        │       │                        │     │
+│  │  IP: 192.168.56.10     │◄─────►│  IP: 192.168.56.20     │     │
+│  │  OS: Kali 2024.4+      │       │  OS: Win 10/11 22H2+   │     │
+│  │  RAM: 4GB              │       │  RAM: 4-6GB            │     │
+│  │  Disk: 40GB            │       │  Disk: 50GB            │     │
+│  │                        │       │                        │     │
+│  │  ابزارها:              │       │  سرویس‌ها:              │     │
+│  │  - Nmap, Burp          │       │  - Django:8000         │     │
+│  │  - sqlmap, Wireshark   │       │  - DVWA (اختیاری)      │     │
+│  │  - Metasploit          │       │  - Python 3.10+        │     │
+│  └───────────┬────────────┘       └───────────┬────────────┘     │
+│              │                                │                  │
+│              └────────────┬───────────────────┘                  │
+│                           │                                      │
+│              ┌────────────▼────────────┐                        │
+│              │   VMware VMnet1         │                        │
+│              │   Host-Only Network     │                        │
+│              │   Subnet: 192.168.56.0/24│                       │
+│              │   DHCP: DISABLED        │                        │
+│              │   Internet: BLOCKED     │                        │
+│              └─────────────────────────┘                        │
+└───────────────────────────────────────────────────────────────────┘
+
+❌ هیچ‌کدام از VMها به اینترنت دسترسی ندارند.
+❌ هیچ‌کدام به شبکه داخلی سازمان/خانه وصل نیستند.
+✅ فقط با میزبان و با همدیگر می‌توانند حرف بزنند.
+</pre>
+                    </div>
+
+                    <h5>🗓️ نقشه راه اجرا — تقسیم بر چهار جلسه:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>جلسه</th><th>مدت</th><th>فعالیت‌ها</th><th>خروجی</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>جلسه ۱</strong></td>
+                                <td>۴۵ دقیقه</td>
+                                <td>نصب VMware + ساخت VMnet1 + آماده‌سازی ISOها</td>
+                                <td>VMware آماده، شبکه Host-Only ساخته‌شده</td>
+                            </tr>
+                            <tr>
+                                <td><strong>جلسه ۲</strong></td>
+                                <td>۴۵ دقیقه</td>
+                                <td>نصب Kali + تنظیم IP استاتیک + Snapshot اول</td>
+                                <td>Kali فعال با IP 192.168.56.10</td>
+                            </tr>
+                            <tr>
+                                <td><strong>جلسه ۳</strong></td>
+                                <td>۶۰ دقیقه</td>
+                                <td>نصب Windows + Python + Django + باز کردن فایروال</td>
+                                <td>Django روی هدف در دسترس از Kali</td>
+                            </tr>
+                            <tr>
+                                <td><strong>جلسه ۴</strong></td>
+                                <td>۳۰ دقیقه</td>
+                                <td>نصب DVWA (اختیاری) + Snapshot نهایی + مستندسازی</td>
+                                <td>آزمایشگاه آماده و مستندشده</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout co-note">
+                        <strong>ℹ️ اگر وقت کم دارید:</strong>
+                        جلسه ۱ و ۲ (نصب Kali + شبکه) را حتماً در یک روز جدا انجام دهید. هیچ‌چیز بدتر از این نیست که وسط نصب Windows، خسته شوید و نیمه‌کاره بگذارید. VMها آن‌قدر سنگین هستند که خستگی شما را چند برابر می‌کنند.
+                    </div>
+                </div>
+
+                <!-- بخش ۷: کارگاه -->
+                <div class="section-part" id="part-07">
+                    <h3>۷. کارگاه عملی (اجرا در آزمایشگاه شما)</h3>
+
+                    <div class="workshop-box">
+                        <h5>🛠️ هدف کارگاه: ساخت کامل آزمایشگاه امن در چهار مرحله</h5>
+                        <p>در پایان این کارگاه، یک آزمایشگاه کامل با Kali و Windows + Django خواهید داشت که به‌صورت ایزوله به هم متصل هستند.</p>
+                    </div>
+
+                    <h4><span class="step-number">۱</span> نصب VMware Workstation</h4>
+                    <ol>
+                        <li>از سایت رسمی <code>vmware.com/products/workstation-pro</code> نسخه Pro را دانلود کنید (از ۲۰۲۴ برای استفاده شخصی رایگان شده).</li>
+                        <li>نصب‌کننده را اجرا کنید و مسیر پیش‌فرض را بپذیرید.</li>
+                        <li>در پایان، لایسنس <em>Personal Use</em> را انتخاب کنید.</li>
+                        <li>بررسی کنید: <code>Help → About</code> نسخه ۱۷.۵ به بالا را نشان دهد.</li>
+                        <li>در BIOS، VT-x/AMD-V فعال باشد. تست: در Windows با Task Manager → Performance → CPU، در گوشه پایین باید <strong>Virtualization: Enabled</strong> دیده شود.</li>
+                    </ol>
+
+                    <h4><span class="step-number">۲</span> ساخت شبکه Host-Only (VMnet1)</h4>
+                    <p>این مرحله <strong>مهم‌ترین مرحله ایزوله‌سازی</strong> است. دقیقاً دنبال کنید:</p>
+                    <ol>
+                        <li>VMware Workstation را باز کنید.</li>
+                        <li>منوی <strong>Edit → Virtual Network Editor</strong>.</li>
+                        <li>روی <strong>Change Settings</strong> (پایین) کلیک کنید و تأیید Administrator بدهید.</li>
+                        <li>روی <strong>Add Network</strong> کلیک کنید و <strong>VMnet1</strong> را انتخاب کنید.</li>
+                        <li>در بخش تنظیمات VMnet1، این موارد را اعمال کنید:
+                            <ul>
+                                <li><strong>Type:</strong> Host-Only</li>
+                                <li><strong>Subnet IP:</strong> 192.168.56.0</li>
+                                <li><strong>Subnet Mask:</strong> 255.255.255.0</li>
+                                <li>✅ <strong>Connect a host virtual adapter to this network</strong></li>
+                                <li>❌ <strong>Use local DHCP service</strong> — تیک را <u>بردارید</u></li>
+                                <li>❌ <strong>Connect a host virtual adapter to this network</strong> — اگر ناخواسته اینترنت میزبان را به VM می‌دهد، تیکش را بردارید.</li>
+                            </ul>
+                        </li>
+                        <li>روی <strong>Apply</strong> و <strong>OK</strong> بزنید.</li>
+                    </ol>
+
+                    <div class="callout co-tip">
+                        <strong>💡 چرا DHCP را خاموش می‌کنیم؟</strong>
+                        چون IPهای ثابت (Static) می‌خواهیم. با IP ثابت:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>دستورهای nmap/sqlmap همیشه کار می‌کنند</li>
+                            <li>لینک‌های کالی به Django همیشه یکسان است</li>
+                            <li>اسکریپت‌ها و گزارش‌های شما قابل تکرار می‌شوند</li>
+                        </ul>
+                    </div>
+
+                    <h4><span class="step-number">۳</span> نصب Kali Linux (ماشین مهاجم)</h4>
+                    <p><strong>مرحله ۳.۱ — ساخت VM جدید:</strong></p>
+                    <ol>
+                        <li><strong>File → New Virtual Machine</strong> (Ctrl+N)</li>
+                        <li>گزینه <strong>Typical</strong> را انتخاب کنید</li>
+                        <li><strong>Installer disc image file (ISO):</strong> مسیر فایل ISO کالی را بدهید</li>
+                        <li>نام VM: <code>Kali-Attacker</code></li>
+                        <li>Disk size: <strong>۵۰GB</strong> (Store as single file)</li>
+                        <li>روی <strong>Customize Hardware</strong> کلیک کنید:
+                            <ul>
+                                <li>Memory: <strong>۴۰۹۶ MB</strong></li>
+                                <li>Processors: <strong>۲ هسته</strong></li>
+                                <li>Network Adapter: <strong>Custom → VMnet1</strong></li>
+                                <li>Display: <strong>Accelerate 3D graphics</strong> را فعال کنید</li>
+                            </ul>
+                        </li>
+                        <li><strong>Close → Finish</strong></li>
+                    </ol>
+
+                    <p><strong>مرحله ۳.۲ — نصب Kali (فقط اگر ISO Installer دارید):</strong></p>
+                    <ol>
+                        <li>VM را روشن کنید و <strong>Graphical Install</strong> را انتخاب کنید.</li>
+                        <li>زبان: English (چون خطاها و مستندات انگلیسی هستند).</li>
+                        <li>Location: Other → Asia → Iran</li>
+                        <li>Keyboard: English (US)</li>
+                        <li>Hostname: <code>kali</code></li>
+                        <li>Domain: خالی</li>
+                        <li>Root password: رمز قوی (مثلاً <code>KaliLab2026!</code>)</li>
+                        <li>User: <code>student</code> با رمز <code>Student2026!</code></li>
+                        <li>Partition: Guided → Use entire disk → All files in one partition</li>
+                        <li>Software selection: <strong>Default (XFCE/KDE)</strong> + مطمئن شوید Metapackages پیش‌فرض هستند.</li>
+                        <li>GRUB: Yes, install to MBR</li>
+                        <li>پس از نصب، VM را ری‌استارت کنید.</li>
+                    </ol>
+
+                    <p><strong>مرحله ۳.۳ — تنظیم IP استاتیک روی Kali:</strong></p>
+                    <p>پس از ورود به Kali، یک ترمینال باز کنید و دستورات زیر را اجرا کنید:</p>
+<pre class="code-box"># ۱) پیدا کردن نام اینترفیس شبکه
+ip link show
+# انتظار می‌رود خروجی مثل: eth0 یا ens33 یا ens160 باشد
+# فرض: eth0
+
+# ۲) تنظیم IP استاتیک (موقت — برای تست سریع)
+sudo ip addr add 192.168.56.10/24 dev eth0
+sudo ip link set eth0 up
+
+# ۳) بررسی
+ip addr show eth0
+# باید ببینید: inet 192.168.56.10/24
+
+# ۴) تنظیم دائمی با nmcli (روش مدرن — پیشنهادی)
+sudo nmcli con add type ethernet \
+    con-name &quot;kali-lab&quot; ifname eth0 \
+    ipv4.method manual \
+    ipv4.addresses 192.168.56.10/24 \
+    ipv4.gateway &quot;&quot; \
+    ipv4.dns &quot;&quot;
+
+# ۵) فعال کردن اتصال
+sudo nmcli con up kali-lab
+
+# ۶) تست نهایی
+ip addr show eth0
+# باید IP 192.168.56.10 را نشان دهد
+</pre>
+
+                    <p><strong>مرحله ۳.۴ — اولین Snapshot (حتماً بگیرید):</strong></p>
+                    <ol>
+                        <li>VM را روشن نگه دارید.</li>
+                        <li>در VMware: <strong>VM → Snapshot → Take Snapshot</strong></li>
+                        <li>نام: <code>clean-install-net-configured</code></li>
+                        <li>توضیح: <em>Kali تازه نصب‌شده با IP 192.168.56.10 و ابزارهای پیش‌فرض</em></li>
+                        <li>OK بزنید.</li>
+                    </ol>
+
+                    <h4><span class="step-number">۴</span> نصب Windows 10/11 (ماشین هدف)</h4>
+                    <p><strong>مرحله ۴.۱ — ساخت VM جدید:</strong></p>
+                    <ol>
+                        <li><strong>File → New Virtual Machine</strong></li>
+                        <li>Typical → ISO ویندوز</li>
+                        <li>نام: <code>Windows-Target</code></li>
+                        <li>Disk: <strong>۶۰GB</strong></li>
+                        <li>Customize Hardware:
+                            <ul>
+                                <li>Memory: <strong>۶۱۴۴ MB</strong></li>
+                                <li>Processors: <strong>۲ هسته</strong></li>
+                                <li>Network: <strong>Custom → VMnet1</strong></li>
+                                <li>شبکه Host-Only باید <u>بدون اینترنت</u> باشد</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p><strong>مرحله ۴.۲ — نکته مهم درباره ویندوز بدون اینترنت:</strong></p>
+                    <div class="callout co-warn">
+                        <strong>⚠️ ویندوز ۱۱ به اینترنت نیاز دارد!</strong>
+                        اگر Windows 11 نصب می‌کنید، مایکروسافت الزام کرده که برای نصب به اینترنت وصل باشید. راه‌حل‌ها:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li><strong>راه‌حل ۱ (توصیه‌شده):</strong> Windows 10 22H2 نصب کنید — به اینترنت نیاز ندارد.</li>
+                            <li><strong>راه‌حل ۲:</strong> موقتاً شبکه VM را به NAT تغییر دهید تا نصب تمام شود، بعد به VMnet1 برگردانید.</li>
+                            <li><strong>راه‌حل ۳:</strong> در صفحه نصب Windows 11، <code>Shift+F10</code> بزنید → <code>oobe\bypassnro</code> → Enter. سیستم ری‌استارت می‌شود و می‌توانید بدون اینترنت ادامه دهید.</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>مرحله ۴.۳ — تنظیم IP استاتیک در Windows:</strong></p>
+                    <ol>
+                        <li>Control Panel → Network and Internet → Network Connections</li>
+                        <li>آداپتور Ethernet را راست‌کلیک → Properties</li>
+                        <li>Internet Protocol Version 4 (TCP/IPv4) → Properties</li>
+                        <li>Use the following IP address:
+                            <ul>
+                                <li>IP address: <code>192.168.56.20</code></li>
+                                <li>Subnet mask: <code>255.255.255.0</code></li>
+                                <li>Default gateway: خالی</li>
+                                <li>Preferred DNS: خالی</li>
+                            </ul>
+                        </li>
+                        <li>OK → Close</li>
+                    </ol>
+
+                    <p><strong>مرحله ۴.۴ — نصب Python و Django:</strong></p>
+                    <ol>
+                        <li>اگر اینترنت ندارید، فایل‌های نصبی را روی یک USB منتقل کنید. اگر اینترنت دارید، می‌توانید موقتاً VM را به NAT برگردانید.</li>
+                        <li>Python 3.10+ را از python.org نصب کنید و <strong>تیک Add Python to PATH را بزنید</strong>.</li>
+                        <li>در PowerShell (Run as Administrator):</li>
+                    </ol>
+<pre class="code-box"># ساخت پوشه هدف
+mkdir C:\lab\target
+cd C:\lab\target
+
+# ساخت محیط مجازی
+python -m venv venv
+.\venv\Scripts\activate
+
+# نصب Django
+pip install django==5.0.*
+
+# ساخت پروژه آزمایشی
+django-admin startproject labtarget .
+python manage.py migrate
+
+# تست
+python manage.py runserver 127.0.0.1:8000
+# Ctrl+C برای توقف
+</pre>
+
+                    <p><strong>مرحله ۴.۵ — اجرای Django روی همه اینترفیس‌ها:</strong></p>
+<pre class="code-box"># اجرا روی همه آدرس‌ها (تا Kali بتواند ببیند)
+python manage.py runserver 0.0.0.0:8000
+</pre>
+
+                    <p><strong>مرحله ۴.۶ — تنظیم ALLOWED_HOSTS در Django:</strong></p>
+                    <p>فایل <code>C:\lab\target\labtarget\settings.py</code> را باز کنید و این خط را تغییر دهید:</p>
+<pre class="code-box"># قبل (پیش‌فرض):
+ALLOWED_HOSTS = []
+
+# بعد (در lab):
+ALLOWED_HOSTS = [&#39;*&#39;]   # ⚠️ فقط در lab مجاز است!
+</pre>
+
+                    <p><strong>مرحله ۴.۷ — باز کردن پورت در فایروال Windows:</strong></p>
+                    <p>در PowerShell با دسترسی Administrator:</p>
+<pre class="code-box">New-NetFirewallRule -DisplayName &quot;Django Lab 8000&quot; `
+  -Direction Inbound -Protocol TCP -LocalPort 8000 `
+  -Action Allow -Profile Any
+
+# تست
+Get-NetFirewallRule -DisplayName &quot;Django Lab 8000&quot;
+</pre>
+
+                    <h4><span class="step-number">۵</span> تست ارتباط از Kali</h4>
+<pre class="code-box"># ۱) Ping به هدف — باید ۰٪ packet loss باشد
+ping -c 4 192.168.56.20
+
+# ۲) اسکن پورت ۸۰۰۰ با Nmap — باید open باشد
+nmap -p 8000 192.168.56.20
+# Expected: 8000/tcp open http-alt
+
+# ۳) تست HTTP از خط فرمان
+curl -I http://192.168.56.20:8000/
+# Expected: HTTP/1.1 200 OK
+
+# ۴) باز کردن در مرورگر Kali (Firefox):
+# http://192.168.56.20:8000/
+# باید صفحه پیش‌فرض Django را ببینید
+</pre>
+
+                    <h4><span class="step-number">۶</span> نصب DVWA (هدف اضافی — توصیه می‌شود)</h4>
+                    <p>DVWA یک وب‌اپلیکیشن عمداً آسیب‌پذیر است که ۱۰ آسیب‌پذیری OWASP را پوشش می‌دهد. توصیه می‌شود آن را روی یک Ubuntu Server سبک نصب کنید یا مستقیماً روی Kali (چون Kali خودش Apache/PHP/MySQL دارد).</p>
+<pre class="code-box"># روی Kali (چون هدف سبک است، این کار توصیه می‌شود):
+cd /var/www/html
+sudo rm -rf dvwa
+sudo git clone https://github.com/digininja/DVWA.git dvwa
+sudo chown -R www-data:www-data dvwa
+sudo chmod -R 755 dvwa
+
+# راه‌اندازی دیتابیس
+sudo service mysql start
+sudo mysql -e &quot;CREATE DATABASE dvwa;&quot;
+sudo mysql -e &quot;CREATE USER &#39;dvwa&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;p@ssw0rd&#39;;&quot;
+sudo mysql -e &quot;GRANT ALL ON dvwa.* TO &#39;dvwa&#39;@&#39;localhost&#39;;&quot;
+
+# کانفیگ DVWA
+sudo cp dvwa/config/config.inc.php.dist dvwa/config/config.inc.php
+sudo nano dvwa/config/config.inc.php
+# در فایل، این‌ها را تنظیم کنید:
+# $_DVWA[ &#39;db_user&#39; ]     = &#39;dvwa&#39;;
+# $_DVWA[ &#39;db_password&#39; ] = &#39;p@ssw0rd&#39;;
+# $_DVWA[ &#39;db_database&#39; ] = &#39;dvwa&#39;;
+
+# راه‌اندازی Apache
+sudo service apache2 start
+
+# دسترسی از Windows (اگر نیاز داشتید):
+# http://192.168.56.10/dvwa/
+# نام کاربری: admin / رمز: password
+</pre>
+
+                    <h4><span class="step-number">۷</span> Snapshot نهایی و مستندسازی</h4>
+                    <p>حالا که همه‌چیز کار می‌کند، از هر دو VM Snapshot بگیرید:</p>
+                    <ul>
+                        <li><strong>Kali:</strong> <code>kali-ready-with-tools</code></li>
+                        <li><strong>Windows:</strong> <code>target-django-running</code></li>
+                    </ul>
+
+                    <p>و فایل <code>lab-report.md</code> را با این محتوا بسازید:</p>
+<pre class="code-box"># گزارش آزمایشگاه امنیت وب — تاریخ: ۱۴۰۵/XX/XX
+
+## مشخصات سخت‌افزار میزبان
+- CPU: ...
+- RAM: ...
+- Disk: ...
+
+## VMها
+| نام | OS | IP | RAM | Disk | نقش |
+|-----|----|----|-----|------|-----|
+| Kali-Attacker | Kali 2024.4 | 192.168.56.10 | 4GB | 50GB | مهاجم |
+| Windows-Target | Win 10 22H2 | 192.168.56.20 | 6GB | 60GB | هدف |
+
+## شبکه
+- نوع: Host-Only (VMnet1)
+- Subnet: 192.168.56.0/24
+- DHCP: Disabled
+- اینترنت: Disabled
+
+## سرویس‌های هدف
+- Django 5.0.* روی پورت 8000
+- DVWA روی http://192.168.56.10/dvwa (اختیاری)
+
+## ابزارهای نصب‌شده روی Kali
+- Nmap 7.94
+- Burp Suite Community 2024.x
+- sqlmap 1.7+
+- Wireshark 4.x
+- Metasploit Framework 6.x
+
+## Snapshotها
+- Kali: clean-install-net-configured
+- Kali: kali-ready-with-tools
+- Windows: clean-install
+- Windows: target-django-running
+
+## تست‌های انجام‌شده
+✅ Ping از Kali به Windows: موفق
+✅ Nmap 8000 روی Windows: open
+✅ curl http://192.168.56.20:8000/: 200 OK
+
+## مشکلات حل‌شده
+- (مثلاً) فایروال ویندوز ابتدا پورت 8000 را بسته بود، با New-NetFirewallRule حل شد
+- (مثلاً) Django با ALLOWED_HOSTS = [] خطا می‌داد، با [&#39;*&#39;] در lab حل شد
+</pre>
+
+                    <div class="callout co-tip">
+                        <strong>💡 نکته حرفه‌ای:</strong>
+                        این فایل را در Git نگه دارید (مثلاً یک repo خصوصی <code>security-lab</code>). هر فصل که جلوتر می‌روید، این گزارش را به‌روز کنید. در مصاحبه‌ها می‌توانید بگویید: «من یک آزمایشگاه امنیت وب دارم و مستنداتش اینجاست» — این جمله، ۹۰٪ متقاضیان را کنار می‌زند.
+                    </div>
+                </div>
+
+                <!-- بخش ۸: تحلیل دفاعی -->
+                <div class="section-part" id="part-08">
+                    <h3>۸. تحلیل دفاعی و ایزوله‌سازی</h3>
+
+                    <p>این فصل، ماهیت دفاعی دارد — چون یاد می‌گیرید چطور یک محیط را <strong>کاملاً از شبکه واقعی جدا کنید</strong>. درک این جداسازی، پایه‌ای برای تمام دفاع‌های بعدی است.</p>
+
+                    <h5>🛡️ مدل جداسازی در سه لایه:</h5>
+                    <div class="phase-diagram">
+<pre>┌─────────────────────────────────────────────────────────┐
+│  لایه ۱: جدایی منطقی (Logical Isolation)                 │
+│  ─────────────────────────────────────────               │
+│  • Host-Only Network                                     │
+│  • Subnet اختصاصی                                        │
+│  • DHCP خاموش                                            │
+├─────────────────────────────────────────────────────────┤
+│  لایه ۲: جدایی فیزیکی-مجازی (Hypervisor Isolation)       │
+│  ─────────────────────────────────────────               │
+│  • VMware Network Adapter                                │
+│  • Snapshot جداگانه                                      │
+│  • Shared Folder (اگر لازم نیست، خاموش)                  │
+├─────────────────────────────────────────────────────────┤
+│  لایه ۳: جدایی میزبان (Host Isolation)                   │
+│  ─────────────────────────────────────────               │
+│  • Firewall میزبان (Inbound/Outbound)                    │
+│  • آنتی‌ویروس میزبان                                     │
+│  • Guest Isolation در VMware                             │
+└─────────────────────────────────────────────────────────┘
+</pre>
+                    </div>
+
+                    <h5>🎯 چک‌لیست دفاعی — قبل از شروع هر تست نفوذ:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>#</th><th>بررسی</th><th>ابزار تایید</th><th>اگر «خیر» بود چه؟</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>۱</td>
+                                <td>آیا VM هدف روی Host-Only است؟</td>
+                                <td>VM Settings → Network Adapter</td>
+                                <td>تغییر فوری به VMnet1</td>
+                            </tr>
+                            <tr>
+                                <td>۲</td>
+                                <td>آیا VM هدف اینترنت ندارد؟</td>
+                                <td>ping 8.8.8.8 از داخل VM</td>
+                                <td>بررسی VM Settings → DHCP</td>
+                            </tr>
+                            <tr>
+                                <td>۳</td>
+                                <td>آیا Snapshot تازه گرفته‌شده؟</td>
+                                <td>VM → Snapshot Manager</td>
+                                <td>گرفتن Snapshot جدید</td>
+                            </tr>
+                            <tr>
+                                <td>۴</td>
+                                <td>آیا Shared Folder غیرفعال است؟</td>
+                                <td>VM Settings → Options → Shared Folders</td>
+                                <td>غیرفعال کردن</td>
+                            </tr>
+                            <tr>
+                                <td>۵</td>
+                                <td>آیا Clipboard/Drag-Drop غیرفعال است؟</td>
+                                <td>VM Settings → Options → Guest Isolation</td>
+                                <td>غیرفعال کردن</td>
+                            </tr>
+                            <tr>
+                                <td>۶</td>
+                                <td>آیا فایروال میزبان درست تنظیم شده؟</td>
+                                <td>Windows Defender Firewall</td>
+                                <td>چک inbound rules</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5>🔐 مباحث دفاعی که در این فصل یاد می‌گیرید:</h5>
+                    <div class="creative-box">
+                        <h6>🔹 لایه ۱: Host-Only Network — جدایی از اینترنت</h6>
+                        <p>نمایش دقیق: تفاوت Subnet شما با شبکه واقعی:</p>
+<pre class="code-box">شبکه واقعی شما:  192.168.1.x  (روتر خانگی، اینترنت)
+شبکه آزمایشگاه:  192.168.56.x (فقط میزبان، بدون اینترنت)
+
+اگر مهاجمی از بیرون بخواهد به VM هدف شما برسد:
+- باید از روتر خانگی شما عبور کند (که IP خصوصی است و پورت‌فوروارد ندارد)
+- باید Subnet 192.168.56.0/24 را کشف کند (که فقط در حافظه میزبان شماست)
+- باید به VMnet1 برسد (که VMware فقط برای میزبان ایجاد کرده)
+
+نتیجه: عملاً غیرممکن.
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه ۲: Snapshot — جدایی زمانی</h6>
+<pre class="code-box">قبل از هر آزمایش:
+  [VM] ──── Snapshot ────► [نسخه مهرشده]
+
+حین آزمایش:
+  [VM] ──── آلوده شد ────► ⚠️ به نسخه مهرشده دست نمی‌زند
+
+بعد از آزمایش:
+  [VM] ── Revert ──► [نسخه مهرشده، سالم و تمیز]
+
+مزیت: همیشه می‌توانید به «قبل از آزمایش» برگردید — در ثانیه‌ها، نه ساعت‌ها.
+</pre>
+                    </div>
+
+                    <div class="creative-box">
+                        <h6>🔹 لایه ۳: Firewall میزبان — جدایی از سیستم‌عامل</h6>
+<pre class="code-box"># در Windows Firewall (میزبان):
+# هدف: جلوگیری از دسترسی VM هدف به فایل‌های میزبان
+
+# ۱) در Windows Defender Firewall → Advanced Settings
+# ۲) روی Outbound Rules → New Rule
+# ۳) Rule Type: Port → TCP → Local port: 445 (SMB)
+# ۴) Action: Block the connection
+# ۵) Profile: Domain + Private + Public
+# ۶) Name: Block VM-SMB-outbound
+
+# این کار جلوی یکی از رایج‌ترین سناریوها را می‌گیرد:
+# اگر VM آلوده به باج‌گیر شود، نمی‌تواند فایل‌های میزبان را رمزنگاری کند.
+</pre>
+                    </div>
+
+                    <div class="callout co-tip">
+                        <strong>💡 قاعده «۳ چک قبل از هر Session»:</strong>
+                        قبل از اینکه هر تست نفوذی را شروع کنید، همیشه این سه چک را انجام دهید:
+                        <ol style="margin: 6px 0 0 0;">
+                            <li><strong>چک شبکه:</strong> VM هدف روی Host-Only است؟</li>
+                            <li><strong>چک Snapshot:</strong> Snapshot تازه دارید؟</li>
+                            <li><strong>چک هدف:</strong> مطمئن هستید که VM هدف درست است (نه یک VM دیگر)؟</li>
+                        </ol>
+                        این ۳۰ ثانیه چک، شما را از فاجعه‌های چندساعته نجات می‌دهد.
+                    </div>
+                </div>
+
+                <!-- بخش ۹: نکات حرفه‌ای -->
+                <div class="section-part" id="part-09">
+                    <h3>۹. نکات حرفه‌ای و دام‌های رایج</h3>
+
+                    <div class="do-dont">
+                        <div class="do-box">
+                            <h6>✅ کارهای حرفه‌ای:</h6>
+                            <ul>
+                                <li>نام‌گذاری معنادار VM (Kali-Attacker، Windows-Target)</li>
+                                <li>Snapshot قبل از هر تغییر مهم</li>
+                                <li>مستندسازی فوری هر تغییری که می‌دهید</li>
+                                <li>نگه‌داشتن فایل <code>.vmx</code> در Git (بدون فایل دیسک)</li>
+                                <li>IPهای ثابت با Subnet معنادار (192.168.56.x)</li>
+                                <li>یک پوشه اختصاصی برای همه VMها در SSD</li>
+                                <li>غیرفعال کردن Bluetooth/USB/Shared Folder در VM هدف</li>
+                            </ul>
+                        </div>
+                        <div class="dont-box">
+                            <h6>❌ دام‌های رایج:</h6>
+                            <ul>
+                                <li>اجرای VM هدف روی Bridged</li>
+                                <li>اتصال VM هدف به اینترنت برای «آپدیت»</li>
+                                <li>فراموشی Snapshot قبل از تست بزرگ</li>
+                                <li>استفاده از رمز ضعیف در VM (چون «فقط lab است»)</li>
+                                <li>کپی فایل بین میزبان و VM از طریق Drag-and-Drop</li>
+                                <li>نصب DVWA روی VM میزبان بدون ایزوله‌سازی</li>
+                                <li>بلعیدن حجم دیسک با Snapshotهای زیاد بدون مدیریت</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5>🎓 نکات پیشرفته که در کتاب‌های آموزشی نمی‌بینید:</h5>
+
+                    <h6>۱) استراتژی درست Snapshot — سه لایه نه یکی:</h6>
+<pre class="code-box">لایه ۱: Base (تازه نصب، بدون تنظیمات)
+        └─ نام: &quot;01-base&quot;
+        └─ هرگز دست نمی‌زنیم
+
+لایه ۲: Configured (شبکه + ابزارها + تنظیمات پایه)
+        └─ نام: &quot;02-configured&quot;
+        └─ اگر نصب جدید خواستیم، از این شروع می‌کنیم
+
+لایه ۳: Pre-Experiment (قبل از هر آزمایش خاص)
+        └─ نام: &quot;03-pre-sqli-test-YYYYMMDD&quot;
+        └─ اگر آزمایش خراب شد، از این برمی‌گردیم
+
+قاعده: هر لایه فقط یک لایه بالاتر را رویش می‌گذارید.
+اگر همه را یکی کردید، مدیریت Snapshot فاجعه می‌شود.
+</pre>
+
+                    <h6>۲) مدیریت فضای دیسک — Snapshotها اندازه می‌گیرند:</h6>
+<pre class="code-box"># بررسی فضای Snapshotها (VMware):
+# در پوشه VM، فایل‌های -delta.vmdk حجم واقعی Snapshotها هستند.
+# هر Snapshot می‌تواند 2-10GB حجم بگیرد.
+
+# قاعده طلایی:
+# - بیش از ۵ Snapshot روی یک VM نداشته باشید
+# - Snapshotهای قدیمی‌تر از ۳۰ روز را حذف کنید (Commit کنید)
+# - برای Snapshot دائمی، از Clone استفاده کنید نه Snapshot
+
+# در VMware: VM → Snapshot → Snapshot Manager → Delete/Delete All
+</pre>
+
+                    <h6>۳) تنظیمات پیشرفته VMware برای امنیت بیشتر:</h6>
+<pre class="code-box"># در VM Settings:
+# Options → Advanced:
+#   ✅ Disable acceleration for binary translation (اگر x86 قدیمی)
+# Options → Guest Isolation:
+#   ❌ Enable drag and drop    (غیرفعال!)
+#   ❌ Enable copy and paste   (غیرفعال!)
+# Options → Shared Folders:
+#   ❌ Always enabled          (غیرفعال!)
+# Options → Snapshots:
+#   ✅ Show snapshot in the snapshot manager
+</pre>
+
+                    <h6>۴) پاک‌سازی VM قبل از Snapshot نهایی:</h6>
+<pre class="code-box"># روی Kali قبل از Snapshot:
+sudo apt update &amp;&amp; sudo apt upgrade -y
+sudo apt autoremove -y
+sudo apt clean
+# حذف لاگ‌های حساس
+sudo truncate -s 0 /var/log/auth.log
+sudo truncate -s 0 /var/log/syslog
+# پاک کردن تاریخچه bash
+history -c &amp;&amp; history -w
+
+# روی Windows:
+# Disk Cleanup → پاک کردن Temporary Files
+# defrag اختیاری (فقط روی HDD، نه SSD)
+</pre>
+
+                    <h6>۵) Backup کامل VM — نه فقط Snapshot:</h6>
+<pre class="code-box"># روش ۱: کپی کل پوشه VM
+# - ابتدا VM را خاموش کنید (Shut Down، نه Suspend)
+# - کل پوشه VM را به یک درایو دیگر کپی کنید
+# - این روش، بکاپ کامل و قابل انتقال می‌دهد
+
+# روش ۲: VMware Export به OVF
+# File → Export to OVF
+# مزیت: فایل تک‌فایلی، قابل ایمپورت در VirtualBox هم
+
+# روش ۳ (پیشرفته): Automation با PowerCLI
+# برای محیط‌های حرفه‌ای و مدیریت چند VM
+</pre>
+
+                    <div class="callout co-warn">
+                        <strong>⚠️ هشدار مهم درباره فضای دیسک:</strong>
+                        Snapshotها با هر تغییر، فضای بیشتری می‌گیرند و می‌توانند کل SSD شما را پر کنند. اگر یک روز صبح دیدید VM باز نمی‌شود یا کند شده، اول از همه فضای پوشه VM را چک کنید. بهتر است یک اسکریپت زمان‌بندی‌شده برای پاک کردن Snapshotهای قدیمی بسازید.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۰: پرسش و پاسخ -->
+                <div class="section-part" id="part-10">
+                    <h3>۱۰. پرسش و پاسخ و رفع اشکال</h3>
+
+                    <div class="qa-box">
+                        <h5>❓ سوالات متداول این فصل:</h5>
+
+                        <details>
+                            <summary>آیا می‌توانم از VirtualBox به‌جای VMware استفاده کنم؟</summary>
+                            <p>بله، کاملاً. VirtualBox رایگان است و بیشتر قابلیت‌های موردنیاز ما را دارد. تفاوت‌ها: VMware کمی سریع‌تر و پایدارتر است، VirtualBox کمی سبک‌تر و رایگان‌تر. مفاهیم شبکه در VirtualBox متفاوت است: به‌جای VMnet1، از <strong>Host-Only Adapter</strong> استفاده می‌کنید. IP را در <code>File → Host Network Manager</code> تنظیم می‌کنید.</p>
+                        </details>
+
+                        <details>
+                            <summary>RAM من فقط ۸GB است. می‌توانم این دوره را ادامه دهم؟</summary>
+                            <p>بله، با تنظیمات زیر:
+                            <br>• Kali: 2GB RAM به‌جای 4GB
+                            <br>• Windows: 3GB RAM به‌جای 6GB (کمی کند ولی کار می‌کند)
+                            <br>• میزبان: 3GB برای ویندوز/لینوکس
+                            <br>یا از Kali در WSL2 استفاده کنید (نیاز به RAM کمتری دارد).</p>
+                        </details>
+
+                        <details>
+                            <summary>چرا VM هدف به اینترنت وصل نمی‌شود؟</summary>
+                            <p>این <strong>ویژگی</strong> است، نه باگ. Host-Only به‌طور عمد اینترنت را قطع می‌کند تا VM ایزوله بماند. اگر واقعاً برای نصب پکیج نیاز دارید:
+                            <br>۱) موقتاً VM را به NAT تغییر دهید
+                            <br>۲) آپدیت‌ها را انجام دهید
+                            <br>۳) بلافاصله به VMnet1 برگردانید
+                            <br>۴) Snapshot جدید بگیرید
+                            <br>هرگز VM را روی Bridged نگه ندارید، حتی برای لحظه!</p>
+                        </details>
+
+                        <details>
+                            <summary>IP استاتیک کار نمی‌کند، پینگ نمی‌شود</summary>
+                            <p>چک‌لیست سه‌مرحله‌ای:
+                            <br>۱) در VMware: هر دو VM روی <strong>VMnet1</strong> هستند؟
+                            <br>۲) در terminal: <code>ip addr show</code> روی Kali، <code>ipconfig</code> روی Windows — IPها درست هستند؟
+                            <br>۳) در Kali: <code>sudo iptables -L</code> — هیچ rule مسدودکننده‌ای نیست؟
+                            <br>۴) در Windows: <code>Get-NetFirewallProfile</code> — فایروال روی Block نیست؟
+                            <br>اگر همه درست است ولی هنوز کار نمی‌کند: VMware را ری‌استارت کنید (نه فقط VM، خود VMware).</p>
+                        </details>
+
+                        <details>
+                            <summary>آیا می‌توانم Kali و هدف را روی یک VM داشته باشم؟</summary>
+                            <p>بله — از <strong>Docker</strong> استفاده کنید:
+                            <br>• Kali را به‌عنوان VM میزبان داشته باشید
+                            <br>• DVWA یا Django را در Docker Container اجرا کنید
+                            <br>• با <code>docker run -p 8000:8000 vulhub/django</code> شروع کنید
+                            <br>مزیت: سبک‌تر، سریع‌تر. عیب: پیچیدگی Docker یادگیری بیشتری می‌خواهد.</p>
+                        </details>
+
+                        <details>
+                            <summary>DVWA چرا خطای «Could not connect to database» می‌دهد؟</summary>
+                            <p>این خطا ۹۰٪ مواقع به دلیل تنظیمات config است:
+                            <br>۱) فایل <code>config.inc.php</code> وجود دارد؟
+                            <br>۲) نام کاربری/رمز MySQL درست است؟
+                            <br>۳) دیتابیس DVWA ساخته شده؟
+                            <br>دستور تعمیر: <code>sudo mysql -e "SHOW DATABASES;"</code> — باید dvwa را ببینید. اگر نیست: <code>sudo mysql -e "CREATE DATABASE dvwa;"</code>.</p>
+                        </details>
+                    </div>
+
+                    <h5>🐛 خطاهای رایج و رفع آن‌ها:</h5>
+                    <table class="objectives-table">
+                        <thead>
+                            <tr><th>خطا / مشکل</th><th>علت محتمل</th><th>راه‌حل</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>VT-x is disabled in BIOS</code></td>
+                                <td>مجازی‌سازی سخت‌افزاری خاموش</td>
+                                <td>BIOS → Advanced → CPU Config → Intel VT-x: Enabled</td>
+                            </tr>
+                            <tr>
+                                <td><code>Hyper-V is enabled and conflicts with VMware</code></td>
+                                <td>Hyper-V تداخل دارد</td>
+                                <td>PowerShell admin: <code>Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All</code></td>
+                            </tr>
+                            <tr>
+                                <td>پینگ از Kali به Windows: Request Timeout</td>
+                                <td>فایروال Windows ICMP را می‌بندد</td>
+                                <td><code>New-NetFirewallRule -DisplayName "Allow ICMP" -Protocol ICMPv4 -IcmpType 8 -Direction Inbound -Action Allow</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>curl: Connection refused</code></td>
+                                <td>Django روی 127.0.0.1 اجرا شده، نه 0.0.0.0</td>
+                                <td>از <code>runserver 0.0.0.0:8000</code> استفاده کنید</td>
+                            </tr>
+                            <tr>
+                                <td><code>DisallowedHost at /</code></td>
+                                <td>ALLOWED_HOSTS خالی است</td>
+                                <td>در settings.py: <code>ALLOWED_HOSTS = ['*']</code> (فقط lab)</td>
+                            </tr>
+                            <tr>
+                                <td><code>Address already in use</code></td>
+                                <td>پورت 8000 مشغول است</td>
+                                <td><code>netstat -ano | findstr :8000</code> سپس <code>taskkill /PID &lt;PID&gt; /F</code></td>
+                            </tr>
+                            <tr>
+                                <td>VMware Tools روی Kali نصب نمی‌شود</td>
+                                <td>Kali خودش open-vm-tools دارد</td>
+                                <td><code>sudo apt install open-vm-tools open-vm-tools-desktop</code></td>
+                            </tr>
+                            <tr>
+                                <td>رزولوشن صفحه Kali کوچک است</td>
+                                <td>VMware Tools نصب نیست</td>
+                                <td>بعد از نصب open-vm-tools: <code>xrandr --auto</code> و ری‌استارت</td>
+                            </tr>
+                            <tr>
+                                <td>Clipboard کار نمی‌کند (کپی/پیست بین Kali و میزبان)</td>
+                                <td>Guest Isolation فعال است</td>
+                                <td>VM Settings → Options → Guest Isolation → غیرفعال کنید (امن‌تر)</td>
+                            </tr>
+                            <tr>
+                                <td>Snapshotها فضای زیادی می‌گیرند</td>
+                                <td>Snapshotهای انباشته</td>
+                                <td>Snapshot Manager → Delete All (Commit به دیسک اصلی)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- بخش ۱۱: جمع‌بندی -->
+                <div class="section-part" id="part-11">
+                    <h3>۱۱. جمع‌بندی و نکات طلایی</h3>
+
+                    <div class="summary-box">
+                        <h5>📌 خلاصه نکات کلیدی این فصل:</h5>
+                        <ul>
+                            <li>🔹 <strong>Host-Only (VMnet1)</strong> تنها شبکه مناسب برای VM هدف است — نه Bridged، نه NAT.</li>
+                            <li>🔹 <strong>DHCP را خاموش</strong> کنید و از IPهای استاتیک (192.168.56.10 / .20) استفاده کنید.</li>
+                            <li>🔹 <strong>Kali Linux</strong> به‌عنوان ماشین مهاجم، با ابزارهای پیش‌فرض نصب می‌شود.</li>
+                            <li>🔹 <strong>Windows + Django</strong> به‌عنوان هدف سفارشی، با ALLOWED_HOSTS = ['*'] و پورت 8000 باز.</li>
+                            <li>🔹 <strong>DVWA</strong> را به‌عنوان هدف کلاسیک اضافه کنید — ۱۰ آسیب‌پذیری OWASP در یک محیط.</li>
+                            <li>🔹 <strong>Snapshot</strong> در سه لایه: base، configured، pre-experiment.</li>
+                            <li>🔹 <strong>مستندسازی</strong> (lab-report.md) پایه پورتفولیوی شماست.</li>
+                            <li>🔹 <strong>جدایی سه‌لایه</strong>: منطقی (Host-Only)، فنی (Snapshot)، میزبان (Firewall).</li>
+                        </ul>
+                    </div>
+
+                    <h5>🎓 چرا این فصل، «پایه همه فصل‌های بعدی» است؟</h5>
+                    <p>
+                        هر آسیب‌پذیری که در فصل‌های بعد یاد می‌گیرید، در همین آزمایشگاه تست می‌شود. اگر آزمایشگاه شما درست نباشد:
+                    </p>
+                    <ul>
+                        <li>خطاها را نمی‌توانید تشخیص دهید از خود آسیب‌پذیری</li>
+                        <li>نمی‌توانید حمله را تکرار کنید (IP عوض می‌شود)</li>
+                        <li>نمی‌توانید با خیال راحت خراب کنید و برگردید</li>
+                        <li>نمی‌توانید روی مصاحبه بگویید «آزمایشگاه شخصی دارم»</li>
+                    </ul>
+                    <p>
+                        یک آزمایشگاه حرفه‌ای، شما را از «کسی که tutorial دیده» به «کسی که واقعاً کار کرده» تبدیل می‌کند.
+                    </p>
+
+                    <div class="callout co-tip">
+                        <strong>📎 پل به فصل بعد:</strong>
+                        در فصل ۳، با آزمایشگاه آماده، اولین فاز تست نفوذ — <strong>Reconnaissance</strong> — را شروع می‌کنیم:
+                        <strong>OSINT، DNS Enumeration، Google Dorks، Subfinder، Shodan</strong>. خواهید دید چطور یک مهاجم حرفه‌ای قبل از هر حمله،
+                        پروفایل کاملی از هدف می‌سازد.
+                    </div>
+                </div>
+
+                <!-- بخش ۱۲: خودارزیابی -->
+                <div class="section-part" id="part-12">
+                    <h3>۱۲. خودارزیابی و آزمونک</h3>
+
+                    <div class="self-assessment">
+                        <h5>⭐ چک‌لیست خودارزیابی (صادق باشید):</h5>
+                        <ul class="checklist">
+                            <li>VMware Workstation روی سیستم میزبان نصب است و VT-x فعال است.</li>
+                            <li>شبکه VMnet1 (Host-Only) با Subnet 192.168.56.0/24 ساخته شده و DHCP خاموش است.</li>
+                            <li>VM کالی نصب شده، به VMnet1 وصل است و IP 192.168.56.10 دارد.</li>
+                            <li>VM ویندوز نصب شده، به VMnet1 وصل است و IP 192.168.56.20 دارد.</li>
+                            <li>از Kali به Windows با موفقیت ping می‌زنم.</li>
+                            <li>Python و Django روی Windows نصب و اجرا می‌شوند.</li>
+                            <li>پورت 8000 روی فایروال Windows باز است و از Kali قابل دسترسی است.</li>
+                            <li>DVWA (اختیاری) راه‌اندازی شده و در مرورگر باز می‌شود.</li>
+                            <li>حداقل ۳ Snapshot از Kali و ۲ از Windows گرفته‌ام.</li>
+                            <li>فایل <code>lab-report.md</code> کامل و به‌روز است.</li>
+                        </ul>
+                    </div>
+
+                    <h5>📝 آزمونک فصل (۵ سؤال، بدون نگاه به متن بالا):</h5>
+
+                    <div class="quiz-question">
+                        <strong>۱.</strong> برای VM هدف در آزمایشگاه امنیت، کدام نوع شبکه مناسب‌تر است؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) Bridged (VMnet0)</li>
+                            <li>ب) NAT (VMnet8)</li>
+                            <li>ج) Host-Only (VMnet1)</li>
+                            <li>د) Custom</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۲.</strong> در شبکه Host-Only، DHCP را چرا خاموش می‌کنیم؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) برای افزایش سرعت</li>
+                            <li>ب) برای داشتن IPهای ثابت و قابل تکرار</li>
+                            <li>ج) چون VMware پشتیبانی نمی‌کند</li>
+                            <li>د) برای کاهش مصرف حافظه</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۳.</strong> تفاوت اصلی Snapshot با Clone چیست؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) هیچ تفاوتی ندارند</li>
+                            <li>ب) Snapshot سریع است، Clone کند</li>
+                            <li>ج) Snapshot از وضعیت فعلی نگه می‌دارد ولی Clone یک VM کامل جدید می‌سازد</li>
+                            <li>د) فقط Clone قابل بازگشت است</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۴.</strong> در Django، ALLOWED_HOSTS = ['*'] چه می‌کند؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) به همه دامنه‌ها اجازه دسترسی می‌دهد</li>
+                            <li>ب) پورت را باز می‌کند</li>
+                            <li>ج) فایروال را غیرفعال می‌کند</li>
+                            <li>د) HTTPS را فعال می‌کند</li>
+                        </ul>
+                    </div>
+
+                    <div class="quiz-question">
+                        <strong>۵.</strong> چرا هرگز نباید VM هدف را روی Bridged بگذاریم؟
+                        <ul style="list-style: none; padding-right: 0;">
+                            <li>الف) کند می‌شود</li>
+                            <li>ب) چون از شبکه واقعی و اینترنت قابل دسترسی می‌شود و ربات‌ها می‌توانند به آن حمله کنند</li>
+                            <li>ج) VMware پشتیبانی نمی‌کند</li>
+                            <li>د) IP نمی‌گیرد</li>
+                        </ul>
+                    </div>
+
+                    <details>
+                        <summary>✅ نمایش پاسخ‌های صحیح</summary>
+                        <div style="padding: 10px 16px 14px;">
+                            <p><strong>۱. ج</strong> — Host-Only ایزوله‌ترین حالت است و هیچ رباتی از اینترنت به آن دسترسی ندارد.</p>
+                            <p><strong>۲. ب</strong> — IP ثابت باعث تکرارپذیری می‌شود؛ دستورهای nmap/sqlmap همیشه یکسان کار می‌کنند.</p>
+                            <p><strong>۳. ج</strong> — Snapshot مثل «Ctrl+S» موقت است؛ Clone یک VM مستقل می‌سازد.</p>
+                            <p><strong>۴. الف</strong> — به Django می‌گوید هر هدر Host را بپذیر (خطرناک در تولید، مجاز در lab).</p>
+                            <p><strong>۵. ب</strong> — Bridged یعنی اتصال مستقیم به شبکه واقعی؛ فاجعه حقوقی و فنی.</p>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- بخش ۱۳: پروژه هفتگی -->
+                <div class="section-part" id="part-13">
+                    <h3>۱۳. پروژه هفتگی (تمرین مستقل)</h3>
+
+                    <div class="weekly-project">
+                        <h5>🏆 پروژه هفتگی: «آزمایشگاه سه‌سطحی پیشرفته»</h5>
+
+                        <p><strong>هدف:</strong> آزمایشگاه فعلی را گسترش دهید با یک سناریوی واقعی و پیشرفته که ترکیبی از مفاهیم این فصل و فصل ۱ باشد.</p>
+
+                        <h6>سناریو:</h6>
+                        <p>یک فروشگاه اینترنتی را شبیه‌سازی کنید که پشت یک Load Balancer و Firewall قرار دارد. مهاجم باید:</p>
+                        <ol>
+                            <li>ابتدا از Kali به Public Interface حمله کند</li>
+                            <li>سپس با Pivoting به شبکه داخلی دسترسی پیدا کند</li>
+                            <li>نهایتاً به دیتابیس حساس (که در شبکه داخلی است) برسد</li>
+                        </ol>
+
+                        <h6>معماری پیشنهادی:</h6>
+<pre class="code-box">[Kali: 192.168.56.10]
+        │
+        ▼
+[Nginx Proxy: 192.168.56.30]      ← شبکه DMZ (VMnet2)
+        │
+        ├─► [Web App 1: 192.168.57.10]  ← شبکه داخلی (VMnet3)
+        │
+        ├─► [Web App 2: 192.168.57.11]
+        │
+        ▼
+[Database: 192.168.57.20]         ← شبکه بسیار محافظت‌شده
+
+هدف: از Kali، فقط به Nginx دسترسی دارید.
+هدف ثانویه: پس از نفوذ به Web App، به DB برسید.
+</pre>
+
+                        <h6>خروجی مورد انتظار:</h6>
+                        <ul>
+                            <li>📄 سند معماری کامل با دیاگرام شبکه (Markdown یا PDF)</li>
+                            <li>🔧 فایل‌های docker-compose یا اسکریپت نصب همه سرویس‌ها</li>
+                            <li>📊 Snapshot از همه VMها در حالت initial</li>
+                            <li>📖 گزارش فنی از راه‌اندازی (چالش‌ها، راه‌حل‌ها، زمان صرف‌شده)</li>
+                            <li>🎥 (اختیاری) ویدیوی ۵ دقیقه‌ای از آزمایشگاه در حال کار</li>
+                        </ul>
+
+                        <h6>معیار ارزشیابی:</h6>
+                        <ul class="checklist">
+                            <li>شبکه‌ها به‌درستی ایزوله هستند</li>
+                            <li>از Kali فقط می‌توان به Nginx دسترسی داشت</li>
+                            <li>VMها با IPهای ثابت پیکربندی شده‌اند</li>
+                            <li>Snapshotهای چندلایه گرفته شده</li>
+                            <li>مستندسازی کامل و حرفه‌ای است</li>
+                        </ul>
+
+                        <p style="margin-top: 12px;"><strong>💼 نکته:</strong> این پروژه، یک قطعه قوی در پورتفولیوی امنیتی شماست. در مصاحبه‌ها می‌توانید بگویید: «من یک آزمایشگاه سه‌سطحی با Load Balancer و Pivoting طراحی کرده‌ام» — این جمله، شما را از ۹۵٪ متقاضیان متمایز می‌کند.</p>
+                    </div>
+                </div>
+
+                <!-- بخش ۱۴: منابع -->
+                <div class="section-part" id="part-14">
+                    <h3>۱۴. منابع تکمیلی و گام بعدی</h3>
+
+                    <div class="resources-box">
+                        <h5>📚 منابع ضروری — مستندات رسمی:</h5>
+                        <table class="objectives-table">
+                            <thead>
+                                <tr><th>منبع</th><th>کاربرد</th><th>لینک</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>VMware Docs</td>
+                                    <td>مستندات رسمی VMware Workstation</td>
+                                    <td><a href="https://docs.vmware.com/en/VMware-Workstation-Pro/" target="_blank" rel="noopener">docs.vmware.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Kali Docs</td>
+                                    <td>مستندات رسمی Kali Linux</td>
+                                    <td><a href="https://www.kali.org/docs/" target="_blank" rel="noopener">kali.org/docs</a></td>
+                                </tr>
+                                <tr>
+                                    <td>DVWA GitHub</td>
+                                    <td>سورس و راهنمای نصب DVWA</td>
+                                    <td><a href="https://github.com/digininja/DVWA" target="_blank" rel="noopener">github.com/digininja/DVWA</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Django Installation</td>
+                                    <td>مستندات رسمی نصب Django</td>
+                                    <td><a href="https://docs.djangoproject.com/en/stable/intro/install/" target="_blank" rel="noopener">docs.djangoproject.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>VulnHub</td>
+                                    <td>VMهای هدف رایگان برای تمرین</td>
+                                    <td><a href="https://www.vulnhub.com/" target="_blank" rel="noopener">vulnhub.com</a></td>
+                                </tr>
+                                <tr>
+                                    <td>OWASP BWA</td>
+                                    <td>Broken Web Applications — مجموعه اهداف</td>
+                                    <td><a href="https://github.com/OWASP/OWASP-VWAD" target="_blank" rel="noopener">github.com/OWASP</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h5>📖 مطالعه بیشتر — کتاب‌های توصیه‌شده:</h5>
+                    <ul>
+                        <li>📕 <strong>Mastering VMware vSphere</strong> — Nick Marshall (برای محیط‌های سازمانی)</li>
+                        <li>📗 <strong>Kali Linux Revealed</strong> — Raphael Hertzog (کتاب رسمی و رایگان Offensive Security)</li>
+                        <li>📘 <strong>The Hacker Playbook 3</strong> — Peter Kim (سناریوهای آزمایشگاهی واقعی)</li>
+                        <li>📙 <strong>Penetration Testing</strong> — Georgia Weidman (کتاب جامع با آزمایشگاه کامل)</li>
+                    </ul>
+
+                    <h5>🎯 گام بعدی (فصل ۳):</h5>
+                    <p>در فصل ۳، آزمایشگاه شما وارد <strong>فاز Reconnaissance</strong> می‌شود:</p>
+                    <ul>
+                        <li>🔍 <strong>Passive Recon:</strong> Shodan، Censys، Wayback Machine، OSINT</li>
+                        <li>🔍 <strong>DNS Enumeration:</strong> dig, dnsrecon, subfinder</li>
+                        <li>🔍 <strong>Google Dorks:</strong> over ۲۰۰ dork پیشرفته برای کشف اطلاعات</li>
+                        <li>🔍 <strong>Port Scanning:</strong> Nmap با تمام سوئیچ‌های حرفه‌ای</li>
+                        <li>🔍 <strong>Directory Brute-forcing:</strong> Gobuster, FFUF, dirsearch</li>
+                    </ul>
+                    <p>در پایان فصل ۳، یک <strong>پروفایل کامل از هدف</strong> (سرویس‌ها، نسخه‌ها، تکنولوژی، مسیرهای پنهان، زیردامنه‌ها) خواهید داشت — همان چیزی که یک مهاجم حرفه‌ای قبل از هر حمله می‌سازد.</p>
+
+                    <div class="callout co-tip">
+                        <strong>💡 تمرین اختیاری این هفته:</strong>
+                        قبل از شروع فصل ۳، این دو کار را انجام دهید:
+                        <ul style="margin: 6px 0 0 0;">
+                            <li>یک snapshot به نام <code>pre-recon-baseline</code> از هر دو VM بگیرید</li>
+                            <li>یک فایل <code>target-profile-template.md</code> بسازید با این بخش‌ها: IP, OS, Open Ports, Technologies, Subdomains, Potential Vulnerabilities</li>
+                        </ul>
+                        در فصل ۳، این فایل را پر خواهیم کرد — و همین تبدیل به یکی از مهارت‌های اصلی شما می‌شود.
+                    </div>
+                </div>
+
+                <div class="done-bar">
+                    <span style="font-weight:800;color:#7ee787">🎯 این فصل را خواندید؟ پیشرفت خود را ذخیره کنید:</span><br>
+                    <button id="mark-done" data-chapter="ch-02" type="button">✔️ این فصل را تمام کردم</button>
+                </div>
+
+                <div class="pager">
+                    <a href="../chapter-01/index.html" id="prev-link">➜ فصل قبل</a>
+                    <a href="../../index.html">🗂️ فهرست فصل‌ها</a>
+                    <a href="../chapter-03/index.html" id="next-link">فصل بعد ➜</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🛡️ دوره تخصصی امنیت وب — © ۱۴۰۵</p>
+            <p style="font-size:.85rem;color:var(--muted)">این محتوا صرفاً برای آموزش در محیط آزمایشگاه ایزوله تهیه شده است. مسئولیت استفاده نادرست بر عهده کاربر است.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/script.js"></script>
+</body>
+</html>

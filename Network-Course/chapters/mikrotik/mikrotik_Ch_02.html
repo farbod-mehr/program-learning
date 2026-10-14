@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۲ MikroTik — مسیریابی (Routing)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-02">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۲ — مسیریابی (Routing)</h1>
+    <div class="meta">
+      <span>📖 ۸۰ دقیقه</span>
+      <span>🎯 وزن در MTCNA: پایه</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: مبتدی تا متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      مسیریابی قلب هر شبکه است. در این فصل یاد می‌گیری RouterOS چطور
+      بسته‌ها را بین شبکه‌ها هدایت می‌کند: از مفاهیم پایه‌ی
+      <span class="term" data-term="static-route">Static Route</span> تا
+      <span class="term" data-term="default-route">Default Route</span> و
+      درک دقیق <strong>Route Flags</strong>.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>سناریوهای واقعی</strong> است — دو شبکه‌ی داخلی، اتصال به ISP،
+      و مسیرهای پشتیبان. بعد از این فصل می‌توانی هر سناریوی مسیریابی Static را
+      در RouterOS پیاده‌سازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم Routing Overview</li>
+      <li>ساختار جدول مسیریابی در RouterOS</li>
+      <li>Route Flags — A، S، C، D، O و...</li>
+      <li>Connected Route (خودکار)</li>
+      <li>Static Route — پیکربندی پایه</li>
+      <li>Default Route (0.0.0.0/0)</li>
+      <li>Static Route با Distance</li>
+      <li>Gateway به‌جای Interface یا برعکس</li>
+      <li>Scope و Target-Scope</li>
+      <li>Check Gateway (Ping/ARP)</li>
+      <li>Route با چند Gateway (ECMP)</li>
+      <li>Recursive Route</li>
+      <li>Route Mark و Mangle</li>
+      <li>عیب‌یابی مسیریابی</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>RouterOS چطور تشخیص می‌دهد یک بسته باید به کدام Interface برود؟</li>
+      <li>تفاوت Connected Route و Static Route چیست؟</li>
+      <li>اگر دو مسیر با مقصد یکسان داشته باشیم، RouterOS چطور انتخاب می‌کند؟</li>
+      <li>منظور از Scope در RouterOS چیست؟</li>
+      <li>Check Gateway چه کاری انجام می‌دهد و چرا مهم است؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۲.۱ ==== -->
+    <h3>۲.۱ مفاهیم Routing Overview</h3>
+    <p>
+      <strong>Routing</strong> فرآیند انتخاب مسیر برای بسته‌های IP از یک شبکه به شبکه‌ی دیگر است.
+      RouterOS از سه روش مسیریابی پشتیبانی می‌کند:
+    </p>
+
+    <ul>
+      <li><strong>Connected:</strong> شبکه‌هایی که مستقیم به Interfaceهای روتر وصل هستند</li>
+      <li><strong>Static:</strong> مسیرهایی که دستی تعریف می‌کنیم</li>
+      <li><strong>Dynamic:</strong> مسیرهایی که با پروتکل‌های داینامیک (OSPF، BGP، RIP) یادگرفته می‌شوند</li>
+    </ul>
+
+    <p><strong>RouterOS چطور مسیر را انتخاب می‌کند؟</strong></p>
+    <ol>
+      <li>بهترین تطبیق مقصد (Longest Prefix Match)</li>
+      <li>کمترین <strong>Distance</strong> (مشابه Administrative Distance)</li>
+      <li>در صورت مساوی بودن Distance، همه را در جدول می‌گذارد (ECMP یا Backup)</li>
+    </ol>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کلیدی</div>
+      در RouterOS، برخلاف Cisco که از اصطلاح AD استفاده می‌شود،
+      معادل آن <strong>Distance</strong> است — عدد کمتر، اولویت بالاتر.
+    </div>
+
+    <!-- ==== ۲.۲ ==== -->
+    <h3>۲.۲ ساختار جدول مسیریابی در RouterOS</h3>
+
+    <pre><code>[admin@MikroTik] > /ip route print
+
+# خروجی نمونه:
+Flags: X - disabled, A - active, D - dynamic, C - connect,
+       S - static, r - rip, b - bgp, o - ospf, m - mme,
+       B - blackhole, U - unreachable, P - prohibit
+
+ #      DST-ADDRESS      PREF-SRC        GATEWAY       DISTANCE
+ 0 A S  0.0.0.0/0                        203.0.113.1   1
+ 1 ADC  192.168.88.0/24   192.168.88.1    ether2        0
+ 2 A S  10.10.10.0/24                   192.168.88.2  1
+ 3 A S  10.20.20.0/24                   192.168.88.3  5
+ 4 ADC  203.0.113.0/24   203.0.113.2    ether1        0
+
+# ستون‌های مهم:
+# DST-ADDRESS → مقصد
+# PREF-SRC → Preferred Source (IP مبدأ)
+# GATEWAY → Next Hop یا Interface
+# DISTANCE → اولویت (کمتر = بهتر)
+# Flags → وضعیت مسیر</code></pre>
+
+    <!-- ==== ۲.۳ ==== -->
+    <h3>۲.۳ Route Flags — راهنمای کامل</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Flag</th>
+          <th style="padding:6px;border:1px solid var(--border)">معنی</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>A</strong></td><td style="padding:6px;border:1px solid var(--border)">Active</td><td style="padding:6px;border:1px solid var(--border)">مسیر فعال و در حال استفاده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>S</strong></td><td style="padding:6px;border:1px solid var(--border)">Static</td><td style="padding:6px;border:1px solid var(--border)">مسیر استاتیک (دستی تعریف شده)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>C</strong></td><td style="padding:6px;border:1px solid var(--border)">Connect</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌ی مستقیم متصل (Connected)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>D</strong></td><td style="padding:6px;border:1px solid var(--border)">Dynamic</td><td style="padding:6px;border:1px solid var(--border)">مسیر داینامیک (از DHCP Client و...)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>X</strong></td><td style="padding:6px;border:1px solid var(--border)">Disabled</td><td style="padding:6px;border:1px solid var(--border)">مسیر غیرفعال</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>r</strong></td><td style="padding:6px;border:1px solid var(--border)">RIP</td><td style="padding:6px;border:1px solid var(--border)">مسیر یادگرفته از RIP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>o</strong></td><td style="padding:6px;border:1px solid var(--border)">OSPF</td><td style="padding:6px;border:1px solid var(--border)">مسیر یادگرفته از OSPF</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>b</strong></td><td style="padding:6px;border:1px solid var(--border)">BGP</td><td style="padding:6px;border:1px solid var(--border)">مسیر یادگرفته از BGP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>B</strong></td><td style="padding:6px;border:1px solid var(--border)">Blackhole</td><td style="padding:6px;border:1px solid var(--border)">بسته Drop می‌شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>U</strong></td><td style="padding:6px;border:1px solid var(--border)">Unreachable</td><td style="padding:6px;border:1px solid var(--border)">ICMP Unreachable برگردانده می‌شود</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>P</strong></td><td style="padding:6px;border:1px solid var(--border)">Prohibit</td><td style="padding:6px;border:1px solid var(--border)">ICMP Prohibited برگردانده می‌شود</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      Flag <strong>A</strong> (Active) در هر مسیر نشان می‌دهد که آن مسیر واقعاً
+      در حال استفاده است. اگر مسیری Active نباشد، یعنی Next Hop آن قابل دسترس نیست
+      یا مسیر دیگری با Distance کمتر اولویت دارد.
+    </div>
+
+    <!-- ==== ۲.۴ ==== -->
+    <h3>۲.۴ Connected Route (خودکار)</h3>
+
+    <p>
+      به‌محض دادن IP به یک Interface، RouterOS خودکار دو مسیر اضافه می‌کند:
+    </p>
+
+    <pre><code>[admin@MikroTik] > /ip address add address=192.168.10.1/24 interface=ether3
+
+[admin@MikroTik] > /ip route print where !dynamic
+# خروجی:
+# 1 ADC  192.168.10.0/24   192.168.10.1   ether3   0
+
+# ADC = Active Dynamic Connected
+# Distance = 0 (بالاترین اولویت)
+# این مسیر خودکار حذف می‌شود اگر Interface down شود</code></pre>
+
+    <p><strong>ویژگی‌های Connected Route:</strong></p>
+    <ul>
+      <li>خودکار ایجاد می‌شود (Dynamic)</li>
+      <li>Distance آن <strong>0</strong> است — بالاترین اولویت</li>
+      <li>با حذف IP یا Down شدن Interface، خودش حذف می‌شود</li>
+      <li>قابل ویرایش یا حذف دستی نیست</li>
+    </ul>
+
+    <!-- ==== ۲.۵ ==== -->
+    <h3>۲.۵ Static Route — پیکربندی پایه</h3>
+
+    <p>
+      Static Route یک مسیر دستی است که ما تعریف می‌کنیم. ساختار پایه:
+    </p>
+
+    <pre><code># ساختار:
+/ip route add dst-address=X.X.X.X/Y gateway=Z.Z.Z.Z
+
+# مثال: مسیر به شبکه 10.10.10.0/24 از طریق 192.168.88.2
+[admin@MikroTik] > /ip route add \
+    dst-address=10.10.10.0/24 \
+    gateway=192.168.88.2 \
+    comment="Route to Office Branch"
+
+# بررسی
+[admin@MikroTik] > /ip route print
+# 2 A S  10.10.10.0/24              192.168.88.2  1
+
+# حذف
+[admin@MikroTik] > /ip route remove [find dst-address="10.10.10.0/24"]
+
+# غیرفعال کردن (بدون حذف)
+[admin@MikroTik] > /ip route disable [find dst-address="10.10.10.0/24"]</code></pre>
+
+    <p><strong>سه راه برای مشخص کردن Gateway:</strong></p>
+    <ol>
+      <li><strong>IP آدرس:</strong> <code>gateway=192.168.88.2</code></li>
+      <li><strong>Interface:</strong> <code>gateway=ether2</code> (فقط برای Point-to-Point)</li>
+      <li><strong>IP + Interface:</strong> <code>gateway=192.168.88.2%ether2</code></li>
+    </ol>
+
+    <!-- ==== ۲.۶ ==== -->
+    <h3>۲.۶ Default Route (0.0.0.0/0)</h3>
+
+    <p>
+      Default Route مسیری است که اگر هیچ مسیر دیگری برای یک مقصد پیدا نشد،
+      استفاده می‌شود. معمولاً به سمت ISP.
+    </p>
+
+    <pre><code># ===== روش ۱: Default Route دستی =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    comment="Default Route to ISP"
+
+# ===== روش ۲: خودکار با DHCP Client =====
+[admin@MikroTik] > /ip dhcp-client add \
+    interface=ether1 \
+    disabled=no \
+    add-default-route=yes \
+    use-peer-dns=yes \
+    use-peer-ntp=yes
+
+# RouterOS خودکار Default Route را با Distance=1 اضافه می‌کند
+
+# ===== روش ۳: با PPPoE Client =====
+[admin@MikroTik] > /interface pppoe-client add \
+    interface=ether1 \
+    user=myuser \
+    password=mypass \
+    add-default-route=yes \
+    use-peer-dns=yes \
+    disabled=no
+
+# ===== بررسی =====
+[admin@MikroTik] > /ip route print where dst-address="0.0.0.0/0"
+# 0 A S  0.0.0.0/0              203.0.113.1   1
+# یا
+# 0 ADS  0.0.0.0/0              203.0.113.1   1  ← D یعنی Dynamic (از DHCP)</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      اگر می‌خواهی Default Route از DHCP نگیری، در DHCP Client
+      <code>add-default-route=no</code> بگذار و خودت مسیر را تعریف کن.
+    </div>
+
+    <!-- ==== ۲.۷ ==== -->
+    <h3>۲.۷ Static Route با Distance (پشتیبان)</h3>
+
+    <p>
+      <strong>Distance</strong> در RouterOS معادل Administrative Distance است.
+      عدد کمتر = اولویت بالاتر. اگر دو مسیر به یک مقصد داشته باشیم،
+      مسیر با Distance کمتر در جدول Active می‌شود.
+    </p>
+
+    <p><strong>مقادیر پیش‌فرض Distance:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">منبع</th>
+          <th style="padding:6px;border:1px solid var(--border)">Distance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Connected</td><td style="padding:6px;border:1px solid var(--border)">0</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Static</td><td style="padding:6px;border:1px solid var(--border)">1</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">eBGP</td><td style="padding:6px;border:1px solid var(--border)">20</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">OSPF</td><td style="padding:6px;border:1px solid var(--border)">110</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">RIP</td><td style="padding:6px;border:1px solid var(--border)">120</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">iBGP</td><td style="padding:6px;border:1px solid var(--border)">200</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== دو ISP با اولویت =====
+# ISP اصلی (Distance پیش‌فرض 1)
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=1 \
+    comment="Primary ISP"
+
+# ISP پشتیبان (Distance بالاتر — فقط در صورت قطع اولی)
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    distance=10 \
+    comment="Backup ISP"
+
+# حالا اگر ISP اصلی قطع شود و Interface down شود،
+# مسیر Backup به‌طور خودکار فعال می‌شود</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ مهم</div>
+      برای اینکه Backup Route واقعاً فعال شود، Interface مسیر اصلی باید
+      <strong>Down</strong> شود. اگر لینک Up بماند ولی ترافیک رد نشود،
+      باید <strong>Check Gateway</strong> فعال کنی.
+    </div>
+
+    <!-- ==== ۲.۸ ==== -->
+    <h3>۲.۸ Gateway — IP یا Interface؟</h3>
+
+    <p>در RouterOS Gateway می‌تواند سه شکل داشته باشد:</p>
+
+    <pre><code># ===== ۱. IP Address =====
+# استانداردترین روش — نیاز به Next Hop IP
+[admin@MikroTik] > /ip route add \
+    dst-address=10.10.10.0/24 \
+    gateway=192.168.88.2
+
+# ===== ۲. Interface =====
+# فقط برای Interfaceهای Point-to-Point (مثل PPPoE، Tunnel، PtP Wireless)
+[admin@MikroTik] > /ip route add \
+    dst-address=10.10.10.0/24 \
+    gateway=pppoe-out1
+
+# ===== ۳. IP + Interface (Recommended) =====
+# وقتی می‌خواهی صریحاً بگویی Next Hop از کدام Interface است
+[admin@MikroTik] > /ip route add \
+    dst-address=10.10.10.0/24 \
+    gateway=192.168.88.2%ether2
+
+# چرا این مهم است؟
+# در سناریوهای Multi-Access، RouterOS بدون Interface نمی‌داند
+# Next Hop از کدام Subnet است — با %interface مشخص می‌کنیم</code></pre>
+
+    <!-- ==== ۲.۹ ==== -->
+    <h3>۲.۹ Scope و Target-Scope</h3>
+
+    <p>
+      <strong>Scope</strong> و <strong>Target-Scope</strong> در RouterOS
+      برای کنترل <strong>Recursive Routing</strong> و اعتبار مسیرها استفاده می‌شوند.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع Route</th>
+          <th style="padding:6px;border:1px solid var(--border)">Scope</th>
+          <th style="padding:6px;border:1px solid var(--border)">Target-Scope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Connected</td><td style="padding:6px;border:1px solid var(--border)">10</td><td style="padding:6px;border:1px solid var(--border)">10</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Static</td><td style="padding:6px;border:1px solid var(--border)">30</td><td style="padding:6px;border:1px solid var(--border)">10</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Default Static (0.0.0.0/0)</td><td style="padding:6px;border:1px solid var(--border)">30</td><td style="padding:6px;border:1px solid var(--border)">10</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">VPN/Route Marked</td><td style="padding:6px;border:1px solid var(--border)">30</td><td style="padding:6px;border:1px solid var(--border)">30</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">eBGP</td><td style="padding:6px;border:1px solid var(--border)">40</td><td style="padding:6px;border:1px solid var(--border)">40</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">OSPF</td><td style="padding:6px;border:1px solid var(--border)">110</td><td style="padding:6px;border:1px solid var(--border)">10</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>قانون طلایی:</strong> Next Hop یک مسیر فقط زمانی می‌تواند به عنوان Gateway استفاده شود که
+      <strong>Target-Scope آن ≤ Scope مسیر فعلی</strong> باشد.</p>
+
+    <div class="box tip">
+      <div class="box-title">💡 مثال ساده</div>
+      یک Static Route با Scope=30 نمی‌تواند به‌عنوان Gateway برای مسیر دیگری استفاده شود
+      مگر Target-Scope آن مسیر دیگر ≤ 30 باشد. این قانون جلوی Loop در Recursive Routing را می‌گیرد.
+    </div>
+
+    <!-- ==== ۲.۱۰ ==== -->
+    <h3>۲.۱۰ Check Gateway (Ping/ARP)</h3>
+
+    <p>
+      <strong>Check Gateway</strong> یک ویژگی مهم است که RouterOS با آن
+      به‌طور دوره‌ای وضعیت Gateway را بررسی می‌کند — حتی اگر Interface Up باشد.
+    </p>
+
+    <p><strong>دو حالت Check Gateway:</strong></p>
+    <ul>
+      <li><strong>ping:</strong> ارسال ICMP Echo به Gateway — مناسب Gatewayهای IP</li>
+      <li><strong>arp:</strong> بررسی ARP Table — سریع‌تر از ping ولی فقط برای L2</li>
+    </ul>
+
+    <pre><code># ===== فعال‌سازی Check Gateway روی یک Route =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    check-gateway=ping \
+    comment="Primary ISP with health check"
+
+# اگر Gateway به‌مدت ~10 ثانیه پاسخ ندهد، Route غیرفعال می‌شود
+
+# ===== Cisco-like Tracking با Recursive Route =====
+# یک Route به IP خاص با Check Gateway
+[admin@MikroTik] > /ip route add \
+    dst-address=8.8.8.8/32 \
+    gateway=203.0.113.1 \
+    scope=10 \
+    target-scope=10 \
+    check-gateway=ping \
+    comment="Track ISP reachability"
+
+# بعد Default Route با آن به‌عنوان Gateway
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=8.8.8.8 \
+    distance=1
+
+# حالا اگر 8.8.8.8 از طریق ISP1 قطع شود، Default Route هم غیرفعال می‌شود</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      در سناریوهای Dual-ISP، حتماً از Check Gateway + Recursive Route استفاده کن.
+      بدون این، اگر لینک ISP Up باشد ولی ترافیک رد نکند، شبکه‌ات به‌هم می‌ریزد.
+    </div>
+
+    <!-- ==== ۲.۱۱ ==== -->
+    <h3>۲.۱۱ Route با چند Gateway (ECMP)</h3>
+
+    <p>
+      اگر دو مسیر با <strong>Distance یکسان</strong> به یک مقصد داشته باشیم،
+      RouterOS هر دو را در جدول نگه می‌دارد و ترافیک را بین آن‌ها توزیع می‌کند
+      (Equal Cost Multi-Path).
+    </p>
+
+    <pre><code># ===== ECMP با دو ISP =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=1 \
+    check-gateway=ping
+
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    distance=1 \
+    check-gateway=ping
+
+# حالا RouterOS ترافیک را بین دو ISP توزیع می‌کند
+# Load Balancing بر اساس Connection (5-tuple)
+
+# بررسی
+[admin@MikroTik] > /ip route print where dst-address="0.0.0.0/0"
+# 0 A S  0.0.0.0/0   203.0.113.1   1
+# 1 A S  0.0.0.0/0   198.51.100.1  1  ← هر دو Active</code></pre>
+
+    <p><strong>معایب ECMP خالص:</strong></p>
+    <ul>
+      <li>Sessionهای خاص (مثل بانکی) ممکن است قطع شوند چون IP مبدأ عوض می‌شود</li>
+      <li>Load Balancing بر اساس 5-tuple است — نه Source IP</li>
+      <li>برای Load Balancing بهتر، باید از Mangle + Route Mark استفاده کنی</li>
+    </ul>
+
+    <!-- ==== ۲.۱۲ ==== -->
+    <h3>۲.۱۲ Recursive Route</h3>
+
+    <p>
+      Recursive Route یعنی Next Hop یک مسیر، خودش از طریق یک مسیر دیگر قابل دسترس است.
+      RouterOS خودکار این را حل می‌کند — ولی برای سناریوهای پیچیده،
+      باید Scope را دستی تنظیم کنی.
+    </p>
+
+    <pre><code># ===== سناریو: Default Route از طریق Gateway که خودش از ISP دیگر میاد =====
+
+# مسیر اول: به شبکه ISP1
+[admin@MikroTik] > /ip route add \
+    dst-address=203.0.113.0/24 \
+    gateway=ether1 \
+    scope=10 \
+    target-scope=10 \
+    comment="ISP1 Network"
+
+# مسیر دوم: به IP خاص در ISP1
+[admin@MikroTik] > /ip route add \
+    dst-address=8.8.8.8/32 \
+    gateway=203.0.113.1 \
+    scope=10 \
+    target-scope=10 \
+    check-gateway=ping
+
+# مسیر سوم: Default Route با Gateway IP خاص
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=8.8.8.8 \
+    scope=30 \
+    target-scope=10
+
+# اگر 8.8.8.8 پاسخ نده، هر سه مسیر به‌ترتیب غیرفعال می‌شوند</code></pre>
+
+    <!-- ==== ۲.۱۳ ==== -->
+    <h3>۲.۱۳ Route Mark و Mangle</h3>
+
+    <p>
+      برای Load Balancing هوشمند بین چند ISP (مثلاً تقسیم ترافیک بر اساس
+      Source IP یا نوع ترافیک)، از <strong>Mangle + Route Mark</strong> استفاده می‌کنیم.
+    </p>
+
+    <pre><code># ===== سناریو: PC1 از ISP1، PC2 از ISP2 =====
+
+# گام ۱: تعریف Route Mark روی مسیرها
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    routing-mark=ISP1 \
+    comment="For PC1 via ISP1"
+
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    routing-mark=ISP2 \
+    comment="For PC2 via ISP2"
+
+# Default Route اصلی (اگر Mark نخورد)
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=2 \
+    comment="Default fallback"
+
+# گام ۲: Mangle برای Mark کردن ترافیک
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    src-address=192.168.88.10 \
+    action=mark-routing \
+    new-routing-mark=ISP1 \
+    comment="PC1 → ISP1"
+
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    src-address=192.168.88.11 \
+    action=mark-routing \
+    new-routing-mark=ISP2 \
+    comment="PC2 → ISP2"
+
+# حالا PC1 از ISP1 و PC2 از ISP2 می‌رود</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ کاربردهای Route Mark</div>
+      <ul style="margin:6px 0 0">
+        <li>Load Balancing بر اساس Source IP</li>
+        <li>Force VoIP از یک ISP خاص</li>
+        <li>Policy-Based Routing (PBR)</li>
+        <li>جداسازی ترافیک مشتریان مختلف</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۲.۱۴ ==== -->
+    <h3>۲.۱۴ عیب‌یابی مسیریابی</h3>
+
+    <pre><code># ===== ابزارهای عیب‌یابی =====
+
+# ۱. مشاهده جدول کامل مسیریابی
+[admin@MikroTik] > /ip route print
+[admin@MikroTik] > /ip route print detail
+[admin@MikroTik] > /ip route print where active
+[admin@MikroTik] > /ip route print where static
+[admin@MikroTik] > /ip route print where dst-address="0.0.0.0/0"
+
+# ۲. بررسی Active/Inactive
+[admin@MikroTik] > /ip route print where !active
+# مسیرهای غیرفعال را نشان می‌دهد
+
+# ۳. Ping و Traceroute
+[admin@MikroTik] > /ping 8.8.8.8
+[admin@MikroTik] > /ping 8.8.8.8 count=5 interface=ether1
+[admin@MikroTik] > /tool traceroute 8.8.8.8
+
+# ۴. بررسی Interface و IP
+[admin@MikroTik] > /ip address print
+[admin@MikroTik] > /interface print
+
+# ۵. ARP Table
+[admin@MikroTik] > /ip arp print
+
+# ۶. بررسی Firewall
+[admin@MikroTik] > /ip firewall filter print
+[admin@MikroTik] > /ip firewall nat print
+
+# ۷. Torch — تحلیل ترافیک یک Interface
+[admin@MikroTik] > /tool torch interface=ether1
+
+# ۸. Packet Sniffer
+[admin@MikroTik] > /tool sniffer quick interface=ether1
+[admin@MikroTik] > /tool sniffer start
+
+# ۹. IP Scan — کشف دستگاه‌های شبکه
+[admin@MikroTik] > /tool ip-scan 192.168.88.0/24
+[admin@MikroTik] > /tool ip-scan address-range=192.168.88.1-254
+
+# ۱۰. بررسی Log
+[admin@MikroTik] > /log print
+[admin@MikroTik] > /log print where topics~"route"</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 چک‌لیست عیب‌یابی</div>
+      <ol style="margin:6px 0 0">
+        <li>Interface Up است؟ (<code>/interface print</code>)</li>
+        <li>IP درست دارد؟ (<code>/ip address print</code>)</li>
+        <li>Connected Route فعال است؟ (<code>/ip route print where connected</code>)</li>
+        <li>Static Route تعریف شده؟ Active است؟</li>
+        <li>Gateway قابل ping است؟ (<code>/ping X.X.X.X</code>)</li>
+        <li>Firewall جلوی ترافیک را گرفته؟</li>
+        <li>NAT درست پیکربندی شده؟</li>
+      </ol>
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      همیشه Gateway را با <strong>IP + Interface</strong> تعریف کن:
+      <code>gateway=192.168.1.1%ether2</code> — این کار جلوی خیلی از مشکلات
+      مسیریابی در سناریوهای Multi-Access را می‌گیرد.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      وقتی Connected Route خودکار ساخته می‌شود، Distance آن 0 است.
+      هر Static Route با Distance=1 هم <strong>قبل از</strong> آن قرار نمی‌گیرد
+      مگر مقصد متفاوت باشد. همیشه مراقب Overlapping Networks باش.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای Failover خودکار بین دو ISP، از ترکیب
+      <strong>Recursive Route + Check Gateway + Distance</strong> استفاده کن.
+      این روش، مشکل «لینک Up است ولی ترافیک رد نمی‌شود» را حل می‌کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۳ با <span class="term" data-term="bridge">Bridge</span> و
+      <span class="term" data-term="switch">Switch</span> در RouterOS آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCRE و MTCINE با <span class="term" data-term="ospf">OSPF</span>،
+      <span class="term" data-term="bgp">BGP</span> و
+      <span class="term" data-term="mpls">MPLS</span> در RouterOS کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — مسیریابی بین دو شبکه</h3>
+    <pre><code># سناریو: روتر با دو Interface — هرکدام یک شبکه
+
+[admin@MikroTik] > /ip address add address=192.168.1.1/24 interface=ether2
+[admin@MikroTik] > /ip address add address=192.168.2.1/24 interface=ether3
+
+# Connected Routes خودکار ساخته می‌شوند:
+# 192.168.1.0/24 via ether2
+# 192.168.2.0/24 via ether3
+
+# حالا PC در شبکه 1 می‌تواند PC در شبکه 2 را Ping کند
+# هیچ Static Route اضافی نیاز نیست!
+
+# بررسی
+[admin@MikroTik] > /ip route print where dst-address~"192.168"
+# ADC  192.168.1.0/24  ether2  0
+# ADC  192.168.2.0/24  ether3  0</code></pre>
+
+    <h3>مثال ۲ — Default Route از ISP + پشتیبان</h3>
+    <pre><code># ===== ISP اصلی با Check Gateway =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=1 \
+    check-gateway=ping \
+    comment="Primary ISP - ping check"
+
+# ===== ISP پشتیبان =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    distance=5 \
+    check-gateway=ping \
+    comment="Backup ISP"
+
+# حالا:
+# - اگر ISP1 Up باشد → ترافیک از ISP1
+# - اگر ISP1 Down شود → ISP2 در 10 ثانیه فعال می‌شود
+# - وقتی ISP1 برگردد → دوباره ISP1 فعال می‌شود</code></pre>
+
+    <h3>مثال ۳ — Static Route به چند Branch</h3>
+    <pre><code># ===== Header Office Network =====
+[admin@MikroTik] > /ip address add address=192.168.88.1/24 interface=ether2
+
+# ===== مسیرها به Branchهای مختلف =====
+# Branch 1
+[admin@MikroTik] > /ip route add \
+    dst-address=10.10.10.0/24 \
+    gateway=192.168.88.10 \
+    comment="Branch Tehran"
+
+# Branch 2
+[admin@MikroTik] > /ip route add \
+    dst-address=10.20.20.0/24 \
+    gateway=192.168.88.20 \
+    comment="Branch Isfahan"
+
+# Branch 3
+[admin@MikroTik] > /ip route add \
+    dst-address=10.30.30.0/24 \
+    gateway=192.168.88.30 \
+    comment="Branch Shiraz"
+
+# ===== بررسی وضعیت =====
+[admin@MikroTik] > /ip route print detail where static
+
+# حالا می‌توانی به هر Branch Ping بزنی
+[admin@MikroTik] > /ping 10.10.10.1
+[admin@MikroTik] > /tool traceroute 10.30.30.5</code></pre>
+
+    <h3>مثال ۴ — Load Balancing ECMP بین دو ISP</h3>
+    <pre><code># ===== دو ISP با Distance یکسان =====
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    distance=1 \
+    check-gateway=ping
+
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    distance=1 \
+    check-gateway=ping
+
+# ===== NAT برای هر دو ISP =====
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether1 \
+    action=masquerade
+
+[admin@MikroTik] > /ip firewall nat add \
+    chain=srcnat \
+    out-interface=ether2 \
+    action=masquerade
+
+# ===== نتیجه: Load Balancing =====
+# RouterOS ترافیک را بین دو ISP توزیع می‌کند (5-tuple hash)
+
+# ===== بررسی =====
+[admin@MikroTik] > /tool torch interface=ether1
+[admin@MikroTik] > /tool torch interface=ether2</code></pre>
+
+    <h3>مثال ۵ — Route Mark برای Policy-Based Routing</h3>
+    <pre><code># ===== سناریو: ترافیک VoIP از ISP-A، ترافیک Data از ISP-B =====
+
+# گام ۱: Route Mark روی مسیرها
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=203.0.113.1 \
+    routing-mark=VOIP \
+    comment="VoIP via ISP-A"
+
+[admin@MikroTik] > /ip route add \
+    dst-address=0.0.0.0/0 \
+    gateway=198.51.100.1 \
+    routing-mark=DATA \
+    comment="Data via ISP-B"
+
+# گام ۲: Mangle برای Mark
+# اول: Connection Mark
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    protocol=udp \
+    dst-port=5060,10000-20000 \
+    action=mark-connection \
+    new-connection-mark=voip-conn \
+    comment="Mark VoIP connections"
+
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    connection-mark=!voip-conn \
+    action=mark-connection \
+    new-connection-mark=data-conn \
+    comment="Mark Data connections"
+
+# دوم: Route Mark
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    connection-mark=voip-conn \
+    action=mark-routing \
+    new-routing-mark=VOIP
+
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    connection-mark=data-conn \
+    action=mark-routing \
+    new-routing-mark=DATA
+
+# ===== نتیجه: VoIP از ISP-A، Data از ISP-B =====
+[admin@MikroTik] > /ip firewall mangle print</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3 یا EVE-NG سه RouterOS (CHR) بساز</li>
+      <li>به هر RouterOS دو Interface بده</li>
+      <li>R1 و R2 را با شبکه 10.0.0.0/30 به هم وصل کن</li>
+      <li>R2 و R3 را با شبکه 10.0.1.0/30 به هم وصل کن</li>
+      <li>به R1 یک LAN 192.168.1.0/24 بده</li>
+      <li>به R3 یک LAN 192.168.3.0/24 بده</li>
+      <li>روی R1 و R3 مسیرهای Static تعریف کن تا به هم دسترسی داشته باشند</li>
+      <li>روی R1 یک Default Route بگذار به سمت R2</li>
+      <li>از R1 به LAN پشت R3 Ping بزن</li>
+      <li>روی R2 یک Loopback 8.8.8.8/32 اضافه کن</li>
+      <li>از R1 مسیر 8.8.8.8/32 را با Check Gateway تعریف کن</li>
+      <li>Default Route را از طریق 8.8.8.8 با Recursive Route تعریف کن</li>
+      <li>یک Default Route پشتیبان با Distance بالاتر به R3 اضافه کن</li>
+      <li>Interface R2 را Down کن و ببین Backup فعال می‌شود</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Route Active نمی‌شود:</strong> Gateway قابل دسترس نیست یا Interface Down است.</li>
+      <li><strong>Ping به LAN دور نمی‌رسد:</strong> Static Route به Subnet مقصد نداری.</li>
+      <li><strong>Failover بین ISPها کار نمی‌کند:</strong> Interface ISP Down نمی‌شود ولی ترافیک رد نمی‌شود — Check Gateway فعال کن.</li>
+      <li><strong>ECMP ترافیک را نامتعادل تقسیم می‌کند:</strong> 5-tuple hash است — برای کنترل دقیق از Mangle استفاده کن.</li>
+      <li><strong>بعد از Route Mark، ترافیک قطع می‌شود:</strong> مسیر Default بدون Mark نداری — یک مسیر Fallback بگذار.</li>
+      <li><strong>Route Loop:</strong> دو مسیر با Scope/Target-Scope اشتباه — قانون Scope را رعایت کن.</li>
+      <li><strong>Recursive Route کار نمی‌کند:</strong> Scope مسیر پایه باید کمتر از Target-Scope مسیر وابسته باشد.</li>
+      <li><strong>بعد از تعریف Static Route، Connected Route حذف شد:</strong> اشتباه در Subnet Mask — Overlap را چک کن.</li>
+      <li><strong>Gateway با %interface کار نمی‌کند:</strong> Interface اسم اشتباه یا Subnet Gateway اشتباه است.</li>
+      <li><strong>Firewall جلوی ترافیک Routing را می‌گیرد:</strong> Filter Rule در Chain=Forward با Action=Drop.</li>
+      <li><strong>Connection Mark برای همه ترافیک اعمال می‌شود:</strong> ترتیب Mangle Rules — اول VoIP، بعد Data.</li>
+      <li><strong>بعد از تغییر Distance، Route قطع شد:</strong> Distance را یادت رفته که نسبت به Backup کمتر بگذاری.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="static-route">Static Route</span> •
+      <span class="term" data-term="default-route">Default Route</span> •
+      <span class="term" data-term="ospf">OSPF</span> •
+      <span class="term" data-term="bgp">BGP</span> •
+      <span class="term" data-term="mpls">MPLS</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-02" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) Flag «A» در جدول مسیریابی RouterOS یعنی چه؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Always</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Automatic</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Active — مسیر در حال استفاده</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Backup</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) Connected Route به‌طور پیش‌فرض چه Distance دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> 1</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> 0</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> 5</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> 255</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) تفاوت Default Route با Static Route معمولی چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> هیچ تفاوتی ندارند</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Default سرعت بالاتری دارد</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Default Route برای مقصد 0.0.0.0/0 است — Fallback</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Default فقط برای IPv6 است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۴) دستور درست برای Default Route چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> <code>/ip route add dst-address=0.0.0.0/0 gateway=203.0.113.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> <code>/ip default-route add gw=203.0.113.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> <code>/ip route default gateway=203.0.113.1</code></label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> <code>/route default 203.0.113.1</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) اگر دو Default Route با Distance=1 و Distance=5 داشته باشیم چه می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> هر دو استفاده می‌شوند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> فقط Distance=1 فعال است، Distance=5 به‌عنوان Backup</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> هیچ‌کدام</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Only Distance=5</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) Check Gateway با مقدار ping چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> فقط ARP بررسی می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> هیچ کاری نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> به‌طور دوره‌ای به Gateway Ping می‌زند و اگر پاسخ نداد، Route غیرفعال می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> Route را حذف می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) Scope در RouterOS چه چیزی را کنترل می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> سرعت مسیر</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> اعتبار مسیر برای استفاده به‌عنوان Gateway در Recursive Route</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> تعداد Hop</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> نوع پروتکل</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۸) ECMP یعنی چه؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Equal Cost Multi-Path — چند مسیر با Distance یکسان برای Load Balancing</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> External Cost Multi-Protocol</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Enhanced Cisco Multi-Path</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Encrypted Multi-Path</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) Route Mark در RouterOS چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> رمزنگاری مسیر</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> Priority مسیر</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> مسیریابی بر اساس سیاست (PBR) — برای Load Balancing یا جدا کردن ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> Backup خودکار</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) دستور <code>/ip route print where !active</code> چه چیزی نشان می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> مسیرهای فعال</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> مسیرهای غیرفعال (Inactive)</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> مسیرهای Dynamic</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> مسیرهای Disabled</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) کدام Gateway در RouterOS برای PPPoE درست است؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> فقط IP Address</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> فقط MAC Address</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> نام Interface (مثل pppoe-out1)</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> هر سه یکسان است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) کدام پرچم نشان‌دهنده‌ی مسیر یادگرفته از OSPF است؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> r</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> o</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> b</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> D</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) در <code>gateway=192.168.1.1%ether2</code> علامت % یعنی چه؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> درصد موفقیت</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Priority</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> تعیین Interface خروجی برای Next Hop</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> Scope</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۴) برای سناریوی «دو شبکه‌ی داخلی روی یک روتر»، چه نیازی به Static Route است؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> هیچ — Connected Routes خودکار کافی است</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> یک مسیر برای هر شبکه</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> فقط یک Default Route</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> حتماً ۲ Route</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) دستور فعال‌سازی Check Gateway با ARP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> <code>check-gateway=icmp</code></label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> <code>check-gateway=arp</code></label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> <code>check-gateway=mac</code></label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> <code>check-gateway=layer2</code></label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی سازمانی کوچک با دو ISP و Branchهای مختلف بساز:</p>
+    <ul>
+      <li><strong>دفتر مرکزی:</strong> یک RouterOS با LAN 192.168.10.0/24</li>
+      <li><strong>دو ISP:</strong> ISP-A با Distance=1 و ISP-B با Distance=5</li>
+      <li><strong>دو Branch:</strong> شعب در شبکه‌های 10.10.10.0/24 و 10.20.20.0/24</li>
+      <li><strong>Static Route:</strong> برای دسترسی به هر Branch</li>
+      <li><strong>Default Route:</strong> به ISP-A با Check Gateway=ping</li>
+      <li><strong>Backup Route:</strong> به ISP-B با Distance بالاتر</li>
+      <li><strong>Recursive Route:</strong> Default Route از طریق یک IP خاص در ISP-A</li>
+      <li><strong>NAT Masquerade:</strong> برای هر دو ISP</li>
+      <li><strong>Route Mark:</strong> ترافیک VoIP از ISP-A و Data از ISP-B</li>
+      <li><strong>Test:</strong> با Down کردن Interface ISP-A، Failover به ISP-B</li>
+      <li>مستندسازی کامل با Export و دیاگرام</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>با Mangle، ترافیک کاربران VIP را از ISP-A و بقیه را از ISP-B بفرست.</li>
+        <li>با Netwatch، اگر Branch 1 قطع شد، یک Email هشدار بفرست.</li>
+        <li>ECMP بین دو ISP را پیاده کن و با Torch تحلیل کن.</li>
+        <li>یک Blackhole Route برای یک IP خاص تعریف کن و تست کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>Connected Route:</strong> خودکار با دادن IP، Distance=0</li>
+      <li><strong>Static Route:</strong> دستی، Distance پیش‌فرض = 1</li>
+      <li><strong>Default Route:</strong> <code>dst-address=0.0.0.0/0</code></li>
+      <li><strong>Flags:</strong> A=Active، S=Static، C=Connect، D=Dynamic، X=Disabled</li>
+      <li><strong>Route Flags پروتکل:</strong> r=RIP، o=OSPF، b=BGP، B=Blackhole، U=Unreachable</li>
+      <li><strong>Distance:</strong> کمتر = اولویت بالاتر — برای Failover استفاده کن</li>
+      <li><strong>Gateway:</strong> IP یا Interface یا <code>IP%Interface</code></li>
+      <li><strong>Check Gateway:</strong> ping یا arp — برای Failover هوشمند</li>
+      <li><strong>Recursive Route:</strong> Route از طریق IP که خودش از Route دیگر میاد</li>
+      <li><strong>Scope/Target-Scope:</strong> کنترل Recursive Routing</li>
+      <li><strong>ECMP:</strong> دو Route با Distance یکسان → Load Balancing</li>
+      <li><strong>Route Mark:</strong> Policy-Based Routing با Mangle</li>
+      <li><strong>عیب‌یابی:</strong> /ping، /tool traceroute، /tool torch، /tool sniffer</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_01.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-02">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_03.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

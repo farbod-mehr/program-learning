@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لینک‌های طلایی - دوره CEH V13</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* ===== استایل‌های اختصاصی ===== */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .link-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            border-right: 4px solid var(--primary, #4f46e5);
+        }
+        .link-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+        }
+        body.dark-mode .link-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .link-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .link-card .icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .link-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+        }
+        .link-card h3 a {
+            color: var(--text-primary, #0f172a);
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .link-card h3 a:hover {
+            color: var(--primary, #4f46e5);
+            text-decoration: underline;
+        }
+        .link-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 10px 0;
+            line-height: 1.6;
+        }
+        .link-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .link-card .tags .tag {
+            font-size: 0.6rem;
+            padding: 2px 10px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+        body.dark-mode .link-card .tags .tag {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .link-card .tags .tag.essential {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .link-card .tags .tag.essential {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .link-card .tags .tag.practice {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .link-card .tags .tag.practice {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+        .link-card .tags .tag.reference {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.15);
+        }
+        body.dark-mode .link-card .tags .tag.reference {
+            background: #172554;
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.15);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0 12px 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 8px;
+        }
+        .category-title span {
+            font-size: 1.8rem;
+        }
+
+        .priority-box {
+            background: linear-gradient(135deg, var(--primary-light, #eef2ff), rgba(124, 58, 237, 0.08));
+            border-radius: var(--radius-sm);
+            padding: 18px 24px;
+            border-right: 5px solid var(--primary);
+            margin: 16px 0;
+        }
+        body.dark-mode .priority-box {
+            background: rgba(30, 41, 59, 0.6);
+        }
+        .priority-box ul {
+            margin: 6px 0 0 0;
+            padding-right: 20px;
+        }
+        .priority-box ul li {
+            margin: 4px 0;
+        }
+        .priority-box ul li a {
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .link-grid {
+                grid-template-columns: 1fr;
+            }
+            .category-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">خانه</a> |
+            <a href="../index.html">منابع</a>
+        </span>
+    </div>
+
+    <h1>🔗 لینک‌های طلایی – مرجع جامع وب‌سایت‌های CEH</h1>
+
+    <!-- ===== مقدمه ===== -->
+    <div class="card">
+        <h2>🔰 راهنمای استفاده از لینک‌های طلایی</h2>
+        <p>
+            در این بخش، <b>بیش از ۳۰ وب‌سایت و ابزار آنلاین</b> را گردآوری کرده‌ایم که هر هکر قانونمند باید آنها را بشناسد.
+            این لینک‌ها به ۶ دستهٔ اصلی تقسیم شده‌اند: <b>چارچوب‌های امنیتی، پایگاه‌های داده آسیب‌پذیری، پلتفرم‌های تمرین، ابزارهای شناسایی (OSINT)، مستندات رسمی و جوامع تخصصی</b>.
+        </p>
+        <div class="priority-box">
+            <b>⭐ ۵ لینک ضروری که حتماً باید نشانه‌گذاری کنید:</b>
+            <ul>
+                <li><a href="https://owasp.org/Top10/" target="_blank">OWASP Top 10</a> – مهم‌ترین مرجع آسیب‌پذیری‌های وب</li>
+                <li><a href="https://www.exploit-db.com/" target="_blank">Exploit-DB</a> – بزرگترین آرشیو کدهای بهره‌برداری</li>
+                <li><a href="https://portswigger.net/web-security" target="_blank">PortSwigger Academy</a> – بهترین آموزش عملی وب اپلیکیشن</li>
+                <li><a href="https://www.hackthebox.com/" target="_blank">HackTheBox</a> – معروف‌ترین پلتفرم تست نفوذ عملی</li>
+                <li><a href="https://nmap.org/docs.html" target="_blank">Nmap Documentation</a> – مرجع کامل قدرتمندترین ابزار اسکن</li>
+            </ul>
+        </div>
+        <div class="tip-box" style="margin-top:12px;">
+            <b>💡 نکته:</b> تمام لینک‌ها در پنجرهٔ جدید باز می‌شوند. برای برگشت به این صفحه، کافی است تب را ببندید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۱: چارچوب‌ها و استانداردها -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>📋</span> چارچوب‌های امنیتی و استانداردها
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">🛡️</span>
+            <h3><a href="https://owasp.org/Top10/" target="_blank">OWASP Top 10</a></h3>
+            <p>لیست ۱۰ آسیب‌پذیری برتر برنامه‌های وب – مرجع اصلی برای هر تست‌کنندهٔ وب.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">⚔️</span>
+            <h3><a href="https://attack.mitre.org/" target="_blank">MITRE ATT&CK</a></h3>
+            <p>پایگاه دانش تاکتیک‌ها و تکنیک‌های هکرها – برای تحلیل تهدیدات و دفاع بسیار مفید است.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🏛️</span>
+            <h3><a href="https://www.nist.gov/cyberframework" target="_blank">NIST CSF</a></h3>
+            <p>چارچوب امنیت سایبری موسسه ملی استاندارد و فناوری آمریکا – استاندارد جهانی مدیریت ریسک.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📘</span>
+            <h3><a href="https://owasp.org/www-project-web-security-testing-guide/" target="_blank">OWASP Testing Guide</a></h3>
+            <p>راهنمای جامع تست نفوذ وب – شامل سناریوها و روش‌های دقیق تست.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۲: پایگاه‌های داده آسیب‌پذیری -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>🔎</span> پایگاه‌های داده آسیب‌پذیری و Exploit
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">💣</span>
+            <h3><a href="https://www.exploit-db.com/" target="_blank">Exploit-DB</a></h3>
+            <p>بزرگترین آرشیو کدهای بهره‌برداری (Exploit) – معادل آنلاین ابزار <code dir='ltr'>searchsploit</code>.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🗂️</span>
+            <h3><a href="https://nvd.nist.gov/" target="_blank">NVD</a></h3>
+            <p>پایگاه داده ملی آسیب‌پذیری‌های آمریکا – کامل‌ترین منبع برای جستجوی CVEها.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📊</span>
+            <h3><a href="https://www.cvedetails.com/" target="_blank">CVE Details</a></h3>
+            <p>نمایش آماری و جزئیات کامل آسیب‌پذیری‌ها با امتیاز CVSS و محصولات تحت تأثیر.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🔐</span>
+            <h3><a href="https://vulners.com/" target="_blank">Vulners</a></h3>
+            <p>موتور جستجوی امنیتی با پوشش گسترده از CVEها، Exploit‌ها و مقالات امنیتی.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🌪️</span>
+            <h3><a href="https://packetstormsecurity.com/" target="_blank">Packet Storm</a></h3>
+            <p>یکی از قدیمی‌ترین و معتبرترین منابع ابزارهای امنیتی، Exploit و مستندات.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۳: پلتفرم‌های تمرین و CTF -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>🧪</span> پلتفرم‌های تمرین عملی و CTF
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">🎯</span>
+            <h3><a href="https://www.hackthebox.com/" target="_blank">HackTheBox</a></h3>
+            <p>محبوب‌ترین پلتفرم تست نفوذ با ماشین‌های واقعی و چالش‌های متنوع.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📚</span>
+            <h3><a href="https://tryhackme.com/" target="_blank">TryHackMe</a></h3>
+            <p>پلتفرم آموزشی با راهنماهای گام‌به‌گام – مناسب برای مبتدیان تا حرفه‌ای‌ها.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🎓</span>
+            <h3><a href="https://portswigger.net/web-security" target="_blank">PortSwigger Academy</a></h3>
+            <p>بهترین آموزش رایگان هک وب با چالش‌های عملی و محیط آزمایشگاهی اختصاصی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">💻</span>
+            <h3><a href="https://pentesterlab.com/" target="_blank">PentesterLab</a></h3>
+            <p>تمرین‌های عملی با سناریوهای واقعی وب و شبکه – مناسب برای یادگیری عمیق.</p>
+            <div class="tags">
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🖥️</span>
+            <h3><a href="https://www.vulnhub.com/" target="_blank">VulnHub</a></h3>
+            <p>دانلود رایگان ماشین‌های مجازی آسیب‌پذیر برای تمرین آفلاین تست نفوذ.</p>
+            <div class="tags">
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🐧</span>
+            <h3><a href="https://overthewire.org/" target="_blank">OverTheWire</a></h3>
+            <p>بازی‌های وارگیم (Wargames) برای یادگیری لینوکس، شبکه و امنیت به‌صورت تعاملی.</p>
+            <div class="tags">
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۴: ابزارهای OSINT و شناسایی -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>🔍</span> ابزارهای شناسایی (OSINT & Recon)
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">🌍</span>
+            <h3><a href="https://www.shodan.io/" target="_blank">Shodan</a></h3>
+            <p>موتور جستجوی دستگاه‌های متصل به اینترنت – برای پیدا کردن سرورها، دوربین‌ها و تجهیزات آسیب‌پذیر.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🔎</span>
+            <h3><a href="https://censys.io/" target="_blank">Censys</a></h3>
+            <p>موتور جستجوی پیشرفته برای شناسایی دارایی‌های اینترنتی و تحلیل سطح حمله.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🦠</span>
+            <h3><a href="https://www.virustotal.com/" target="_blank">VirusTotal</a></h3>
+            <p>اسکن فایل‌ها و URLها با بیش از ۶۰ آنتی‌ویروس – برای تحلیل بدافزارها ضروری است.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🔐</span>
+            <h3><a href="https://haveibeenpwned.com/" target="_blank">Have I Been Pwned</a></h3>
+            <p>بررسی نشت اطلاعات ایمیل‌ها و رمزهای عبور در حملات گذشته.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📡</span>
+            <h3><a href="https://www.wappalyzer.com/" target="_blank">Wappalyzer</a></h3>
+            <p>شناسایی فناوری‌های استفاده‌شده در وب‌سایت‌ها (CMS، فریم‌ورک، سرور و …).</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🌐</span>
+            <h3><a href="https://dnsdumpster.com/" target="_blank">DNSdumpster</a></h3>
+            <p>جستجوی زیردامنه‌ها و نقشه‌برداری DNS به‌صورت گرافیکی.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۵: مستندات رسمی و چیت‌شیت‌ها -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>📄</span> مستندات رسمی و چیت‌شیت‌ها
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">📡</span>
+            <h3><a href="https://nmap.org/docs.html" target="_blank">Nmap Documentation</a></h3>
+            <p>راهنمای کامل Nmap شامل تمام گزینه‌ها، اسکریپت‌های NSE و مثال‌های پیشرفته.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">⚡</span>
+            <h3><a href="https://www.offensive-security.com/metasploit-unleashed/" target="_blank">Metasploit Unleashed</a></h3>
+            <p>دورهٔ رایگان و کامل Metasploit از Offensive Security – مرجع اصلی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📦</span>
+            <h3><a href="https://github.com/danielmiessler/SecLists" target="_blank">SecLists</a></h3>
+            <p>بزرگترین مجموعه دیکشنری‌های جهان (نام‌کاربری، رمز، مسیرها، payloadها و …).</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🛠️</span>
+            <h3><a href="https://portswigger.net/burp/documentation" target="_blank">Burp Suite Docs</a></h3>
+            <p>مستندات رسمی Burp Suite – راهنمای کامل ابزارهای Proxy، Intruder، Scanner و …</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📊</span>
+            <h3><a href="https://www.wireshark.org/docs/" target="_blank">Wireshark Docs</a></h3>
+            <p>مستندات کامل Wireshark برای تحلیل عمیق بسته‌های شبکه.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🐍</span>
+            <h3><a href="https://sqlmap.org/" target="_blank">SQLmap Official</a></h3>
+            <p>وب‌سایت رسمی SQLmap با مستندات، مثال‌ها و راهنمای کامل.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- دسته ۶: جوامع و انجمن‌های تخصصی -->
+    <!-- ============================================================ -->
+    <div class="category-title">
+        <span>💬</span> جوامع و انجمن‌های تخصصی
+    </div>
+    <div class="link-grid">
+
+        <div class="link-card">
+            <span class="icon">👾</span>
+            <h3><a href="https://www.reddit.com/r/netsec/" target="_blank">Reddit r/netsec</a></h3>
+            <p>بزرگترین انجمن امنیت شبکه و سایبری در ردیت – اخبار، تحلیل‌ها و بحث‌های تخصصی.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🤝</span>
+            <h3><a href="https://www.reddit.com/r/cybersecurity/" target="_blank">Reddit r/cybersecurity</a></h3>
+            <p>جامعهٔ عمومی امنیت سایبری با مباحث متنوع از مبتدی تا پیشرفته.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🧠</span>
+            <h3><a href="https://stackoverflow.com/questions/tagged/security" target="_blank">Stack Overflow (Security)</a></h3>
+            <p>پرسش و پاسخ فنی برای مشکلات امنیتی، کدنویسی و پیکربندی ابزارها.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">🎙️</span>
+            <h3><a href="https://discord.gg/thecybermentor" target="_blank">The Cyber Mentor Discord</a></h3>
+            <p>یکی از فعال‌ترین سرورهای دیسکورد برای هکرهای قانونمند – پشتیبانی و هم‌یاری.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📺</span>
+            <h3><a href="https://www.youtube.com/c/TheCyberMentor" target="_blank">The Cyber Mentor (YouTube)</a></h3>
+            <p>یکی از بهترین کانال‌های آموزشی تست نفوذ با دوره‌های رایگان و پروژه‌های عملی.</p>
+            <div class="tags">
+                <span class="tag essential">⭐ ضروری</span>
+                <span class="tag practice">عملی</span>
+            </div>
+        </div>
+
+        <div class="link-card">
+            <span class="icon">📰</span>
+            <h3><a href="https://www.darkreading.com/" target="_blank">Dark Reading</a></h3>
+            <p>منبع معتبر اخبار امنیت سایبری، تهدیدات روز و تحلیل‌های حرفه‌ای.</p>
+            <div class="tags">
+                <span class="tag reference">مرجع</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی</h2>
+        <div class="table-responsive">
+            <table>
+                <tr><th style="min-width:140px;">واژه</th><th>توضیح</th></tr>
+                <tr>
+                    <td><span class="glossary-term">OSINT</span></td>
+                    <td>Open Source Intelligence – جمع‌آوری اطلاعات از منابع عمومی برای شناسایی هدف.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CVE</span></td>
+                    <td>Common Vulnerabilities and Exposures – شناسهٔ استاندارد برای آسیب‌پذیری‌های شناخته‌شده.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Exploit</span></td>
+                    <td>کد یا تکنیکی که از یک آسیب‌پذیری برای نفوذ به سیستم استفاده می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">CTF</span></td>
+                    <td>Capture The Flag – مسابقه‌های امنیتی که در آن شرکت‌کنندگان با حل چالش‌ها، پرچم (Flag) را پیدا می‌کنند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">WAF</span></td>
+                    <td>Web Application Firewall – فایروالی که از برنامه‌های وب در برابر حملات محافظت می‌کند.</td>
+                </tr>
+                <tr>
+                    <td><span class="glossary-term">Recon</span></td>
+                    <td>مرحلهٔ شناسایی و جمع‌آوری اطلاعات قبل از هرگونه حمله.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی نهایی ===== -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>با <b>OWASP Top 10</b> و <b>Exploit-DB</b> شروع کنید تا با چارچوب حملات آشنا شوید.</li>
+            <li>برای تمرین عملی، حتماً در <b>HackTheBox</b> یا <b>PortSwigger Academy</b> ثبت‌نام کنید.</li>
+            <li>از <b>SecLists</b> و <b>Shodan</b> برای تست‌های واقعی استفاده کنید.</li>
+            <li>برای رفع اشکال و پرسش، به انجمن‌های <b>r/netsec</b> و <b>Stack Overflow</b> سر بزنید.</li>
+        </ul>
+        <p style="margin-top:12px;">
+            <b>🚀 این لینک‌ها را در مرورگر خود نشانه‌گذاری (Bookmark) کنید تا همیشه در دسترس باشند.</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">لینک‌های طلایی | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>

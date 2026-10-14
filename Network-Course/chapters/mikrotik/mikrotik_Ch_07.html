@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۷ MikroTik — QoS و Queue</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-07">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۷ — QoS و Queue</h1>
+    <div class="meta">
+      <span>📖 ۹۵ دقیقه</span>
+      <span>🎯 وزن در MTCNA: بخش مهم و کاربردی</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: متوسط تا پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      با فایروال، امنیت شبکه را تأمین کردیم. حالا نوبت به <strong>کیفیت سرویس</strong> است.
+      <span class="term" data-term="qos">QoS</span> تعیین می‌کند چه ترافیکی اولویت دارد و
+      چطور پهنای باند بین کاربران تقسیم شود.
+    </p>
+    <p>
+      در این فصل یاد می‌گیری چطور با <strong>Simple Queue</strong>،
+      <strong>Queue Tree</strong>، <strong>PCQ</strong>،
+      <strong>Mangle</strong> و <strong>HTB</strong> پهنای باند را مدیریت کنی —
+      از محدود کردن یک کاربر تا توزیع عادلانه بین صدها کاربر و اولویت‌بندی VoIP.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه QoS و اهمیت آن</li>
+      <li>انواع Queue در RouterOS</li>
+      <li>Simple Queue — ساده و سریع</li>
+      <li>Simple Queue با Target و Limit</li>
+      <li>Simple Queue با Burst</li>
+      <li>Queue Types — FQ_Codel، RED، SFQ، HTB</li>
+      <li>PCQ — Per Connection Queue</li>
+      <li>Queue Tree — پیکربندی درختی</li>
+      <li>Mangle — Mark کردن ترافیک</li>
+      <li>Connection Mark و Packet Mark</li>
+      <li>ترکیب Mangle و Queue Tree</li>
+      <li>Priority و اولویت‌بندی VoIP</li>
+      <li>Rate Limiting بر اساس Subnet</li>
+      <li>Bandwidth Sharing بین کاربران</li>
+      <li>Burst برای پهنای باند پویا</li>
+      <li>عیب‌یابی و مانیتورینگ Queue</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا بدون QoS، یک کاربر می‌تواند تمام پهنای باند را بخورد؟</li>
+      <li>تفاوت Simple Queue و Queue Tree چیست؟</li>
+      <li>PCQ چطور پهنای باند را عادلانه تقسیم می‌کند؟</li>
+      <li>Burst چه زمانی مفید است و چه زمانی مضر؟</li>
+      <li>چرا Queue Tree بدون Mangle کار نمی‌کند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۷.۱ ==== -->
+    <h3>۷.۱ مفاهیم پایه QoS</h3>
+    <p>
+      <span class="term" data-term="qos">QoS</span> (Quality of Service) مجموعه‌ای از
+      تکنیک‌هاست که ترافیک شبکه را در شرایط کمبود پهنای باند مدیریت می‌کند.
+    </p>
+
+    <p><strong>چرا QoS لازم است؟</strong></p>
+    <ul>
+      <li><strong>کمبود پهنای باند:</strong> پهنای باند اینترنت محدود است</li>
+      <li><strong>ترافیک‌های حساس:</strong> VoIP، Gaming، Video Conference نیاز به Latency کم دارند</li>
+      <li><strong>عدالت:</strong> یک کاربر نباید تمام پهنای باند را بخورد</li>
+      <li><strong>کنترل هزینه:</strong> کاهش نیاز به افزایش پهنای باند</li>
+      <li><strong>تجربه‌ی کاربری:</strong> مرور وب روان‌تر، تماس VoIP با کیفیت بالاتر</li>
+    </ul>
+
+    <p><strong>سه عنصر اصلی QoS:</strong></p>
+    <ul>
+      <li><strong>Classification:</strong> شناسایی و دسته‌بندی ترافیک (با Mangle)</li>
+      <li><strong>Marking:</strong> علامت‌گذاری بسته‌ها (با Mangle)</li>
+      <li><strong>Queuing:</strong> صف‌بندی و ارسال بر اساس اولویت (با Queue)</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      QoS در RouterOS فقط روی ترافیک <strong>خروجی</strong> اعمال می‌شود —
+      چون فقط روی Interface خروجی می‌توان ترافیک را کنترل کرد.
+      برای کنترل ورودی، از <strong>Queue Tree + Global</strong> استفاده کن.
+    </div>
+
+    <!-- ==== ۷.۲ ==== -->
+    <h3>۷.۲ انواع Queue در RouterOS</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Simple Queue</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">صف ساده با Target مشخص</td>
+          <td style="padding:6px;border:1px solid var(--border)">محدود کردن یک IP یا Subnet</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Queue Tree</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">صف درختی با Parent</td>
+          <td style="padding:6px;border:1px solid var(--border)">مدیریت پیچیده و چندسطحی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>Interface Queue</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">صف پیش‌فرض Interface</td>
+          <td style="padding:6px;border:1px solid var(--border)">حالت پایه</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>مقایسه Simple Queue و Queue Tree:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Simple Queue</th>
+          <th style="padding:6px;border:1px solid var(--border)">Queue Tree</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Target</td><td style="padding:6px;border:1px solid var(--border)">IP یا Subnet</td><td style="padding:6px;border:1px solid var(--border)">Packet Mark</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">جهت</td><td style="padding:6px;border:1px solid var(--border)">Two-Way (Default)</td><td style="padding:6px;border:1px solid var(--border)">Up/Down (Global یا Interface)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Mangle لازم</td><td style="padding:6px;border:1px solid var(--border)">❌ خیر</td><td style="padding:6px;border:1px solid var(--border)">✅ بله</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">پیچیدگی</td><td style="padding:6px;border:1px solid var(--border)">کم</td><td style="padding:6px;border:1px solid var(--border)">زیاد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">انعطاف</td><td style="padding:6px;border:1px solid var(--border)">محدود</td><td style="padding:6px;border:1px solid var(--border)">بسیار بالا</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۷.۳ ==== -->
+    <h3>۷.۳ Simple Queue — ساده و سریع</h3>
+
+    <pre><code># ===== محدود کردن یک IP ساده =====
+[admin@MikroTik] > /queue simple add \
+    name=limit-user1 \
+    target=192.168.88.10/32 \
+    max-limit=5M/10M \
+    comment="User1: 5M Up, 10M Down"
+
+# max-limit فرمت: upload/download
+# 5M/10M = 5Mbps آپلود، 10Mbps دانلود
+
+# ===== محدود کردن یک Subnet =====
+[admin@MikroTik] > /queue simple add \
+    name=limit-lan \
+    target=192.168.88.0/24 \
+    max-limit=50M/100M \
+    comment="LAN: 50M Up, 100M Down"
+
+# ===== محدود کردن ترافیک از یک Interface =====
+[admin@MikroTik] > /queue simple add \
+    name=limit-wan \
+    target=ether1 \
+    max-limit=100M/100M
+
+# ===== مشاهده وضعیت =====
+[admin@MikroTik] > /queue simple print
+[admin@MikroTik] > /queue simple print stats
+# ستون‌ها:
+# rate: نرخ فعلی (up/down)
+# packet-rate: نرخ بسته
+# queued-bytes: بسته‌های در صف
+# dropped: بسته‌های Drop شده
+# total-rate: نرخ کل
+# total-bytes: بایت کل</code></pre>
+
+    <!-- ==== ۷.۴ ==== -->
+    <h3>۷.۴ Simple Queue با Target و Limit</h3>
+
+    <pre><code># ===== Target — چه چیزی محدود شود =====
+
+# ۱. یک IP
+target=192.168.88.10/32
+
+# ۲. یک Subnet
+target=192.168.88.0/24
+
+# ۳. Range
+target=192.168.88.10-192.168.88.20
+
+# ۴. Interface
+target=ether1
+
+# ۵. ترکیبی (دو طرف)
+target=192.168.88.10/32,ether1
+
+# ===== فرمت max-limit =====
+
+# max-limit=UPLOAD/DOWNLOAD
+
+# نمونه‌ها:
+max-limit=1M/2M         # 1Mbps آپلود، 2Mbps دانلود
+max-limit=512k/2M       # 512kbps آپلود، 2Mbps دانلود
+max-limit=10M/10M       # 10Mbps هر دو جهت
+
+# واحدها:
+# k = Kilobit (1000 bit)
+# M = Megabit (1,000,000 bit)
+# G = Gigabit
+
+# ===== Limit-at (حداقل تضمینی) =====
+[admin@MikroTik] > /queue simple add \
+    name=guaranteed \
+    target=192.168.88.0/24 \
+    max-limit=100M/100M \
+    limit-at=10M/10M
+# limit-at: حداقل پهنای باند تضمینی
+# max-limit: حداکثر پهنای باند مجاز
+
+# ===== Priority =====
+[admin@MikroTik] > /queue simple set [find name=limit-user1] priority=1/1
+# priority: 1 (بالاترین) تا 8 (پایین‌ترین)
+# فرمت: upload/download
+
+# ===== Queue Type =====
+[admin@MikroTik] > /queue simple set [find name=limit-user1] queue=default/default
+# انواع: default، ethernet-default، wireless-default، pcq-upload-default، pcq-download-default</code></pre>
+
+    <!-- ==== ۷.۵ ==== -->
+    <h3>۷.۵ Simple Queue با Burst</h3>
+
+    <p>
+      <strong>Burst</strong> یعنی اجازه دادن به کاربر که به‌طور موقت بیش از حد مجاز
+      پهنای باند بگیرد — به شرط آنکه میانگین مصرف زیر حد تعیین‌شده باشد.
+    </p>
+
+    <pre><code># ===== پیکربندی Burst =====
+[admin@MikroTik] > /queue simple add \
+    name=burst-user \
+    target=192.168.88.10/32 \
+    max-limit=5M/10M \
+    burst-limit=10M/20M \
+    burst-threshold=3M/5M \
+    burst-time=10s/10s
+
+# توضیح:
+# max-limit: پهنای باند عادی (5M/10M)
+# burst-limit: پهنای باند Burst (10M/20M)
+# burst-threshold: آستانه برای فعال شدن Burst (3M/5M)
+# burst-time: بازه‌ی میانگین (10s)
+
+# ===== نحوه‌ی کار =====
+# 1. کاربر شروع به دانلود می‌کند
+# 2. اگر میانگین مصرف زیر burst-threshold باشد → burst-limit اعمال می‌شود
+# 3. اگر میانگین بالای threshold برود → به max-limit برمی‌گردد
+
+# ===== مثال کاربردی =====
+# کاربر عادی: 5M/10M
+# Burst در هنگام بارگذاری سریع: 10M/20M
+# اگر مداوم دانلود کند: به 5M/10M برمی‌گردد
+
+# ===== نکته =====
+# Burst برای تجربه‌ی بهتر کاربر است — صفحه‌ها سریع‌تر باز می‌شوند
+# ولی اگر همیشه در حالت Burst باشد، عملاً بی‌فایده است
+
+# ===== غیرفعال کردن Burst =====
+[admin@MikroTik] > /queue simple set [find name=burst-user] burst-limit=0/0</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      Burst را برای وایبر، اینستاگرام، مرور وب فعال کن — تجربه‌ی کاربر خیلی بهتر می‌شود.
+      برای دانلود مداوم و P2P غیرفعال کن.
+    </div>
+
+    <!-- ==== ۷.۶ ==== -->
+    <h3>۷.۶ Queue Types — FQ_Codel، RED، SFQ، HTB</h3>
+
+    <p>
+      RouterOS چند نوع الگوریتم صف‌بندی دارد. هرکدام رفتار متفاوتی در
+      شرایط ازدحام دارند.
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>default</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">صف پایه FIFO</td>
+          <td style="padding:6px;border:1px solid var(--border)">عمومی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>ethernet-default</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">مشابه default با تنظیمات Ethernet</td>
+          <td style="padding:6px;border:1px solid var(--border)">Interfaceهای Ethernet</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>pcq-upload-default</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">PCQ آماده برای Upload</td>
+          <td style="padding:6px;border:1px solid var(--border)">توزیع عادلانه</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>pcq-download-default</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">PCQ آماده برای Download</td>
+          <td style="padding:6px;border:1px solid var(--border)">توزیع عادلانه</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>fq-codel</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Fair Queue CoDel — مدرن، Latency پایین</td>
+          <td style="padding:6px;border:1px solid var(--border)">VoIP، Gaming</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>sfq</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Stochastic Fair Queue</td>
+          <td style="padding:6px;border:1px solid var(--border)">توزیع عادلانه قدیمی</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>red</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Random Early Detection</td>
+          <td style="padding:6px;border:1px solid var(--border)">جلوگیری از ازدحام</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)"><strong>codel</strong></td>
+          <td style="padding:6px;border:1px solid var(--border)">Controlled Delay</td>
+          <td style="padding:6px;border:1px solid var(--border)">Latency پایین</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مشاهده Queue Types موجود =====
+[admin@MikroTik] > /queue type print
+
+# ===== ساخت Queue Type سفارشی =====
+[admin@MikroTik] > /queue type add \
+    name=my-pcq-upload \
+    kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=src-address \
+    pcq-total-limit=2000
+
+[admin@MikroTik] > /queue type add \
+    name=my-pcq-download \
+    kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=dst-address \
+    pcq-total-limit=2000
+
+# پارامترهای PCQ:
+# pcq-rate          → نرخ برای هر کاربر (0 = خودکار)
+# pcq-limit         → حداکثر بسته در صف هر کاربر
+# pcq-classifier    → معیار تفکیک کاربران
+# pcq-total-limit   → حداکثر بسته در صف کل
+
+# ===== FQ_Codel =====
+[admin@MikroTik] > /queue type add \
+    name=fq-codel-voip \
+    kind=fq-codel \
+    fq-codel-limit=10240 \
+    fq-codel-interval=100ms</code></pre>
+
+    <!-- ==== ۷.۷ ==== -->
+    <h3>۷.۷ PCQ — Per Connection Queue</h3>
+
+    <p>
+      <strong>PCQ</strong> یکی از مفیدترین ویژگی‌های RouterOS است —
+      پهنای باند را به‌طور <strong>عادلانه</strong> بین کاربران تقسیم می‌کند.
+    </p>
+
+    <p><strong>چطور کار می‌کند؟</strong></p>
+    <ul>
+      <li>RouterOS ترافیک را بر اساس <strong>pcq-classifier</strong> تفکیک می‌کند</li>
+      <li>برای هر گروه یک صف جداگانه می‌سازد</li>
+      <li>پهنای باند را به‌طور مساوی تقسیم می‌کند</li>
+    </ul>
+
+    <p><strong>pcq-classifier:</strong></p>
+    <ul>
+      <li><strong>src-address:</strong> برای Upload — هر IP یک صف</li>
+      <li><strong>dst-address:</strong> برای Download — هر IP یک صف</li>
+      <li><strong>src-address,dst-address:</strong> ترکیبی</li>
+    </ul>
+
+    <pre><code># ===== سناریو: 100 کاربر، 100Mbps اینترنت =====
+# هر کاربر باید 1Mbps بگیرد — ولی اگر بقیه بیکار باشند، بیشتر بگیرد
+
+# ۱. ساخت Queue Type برای Upload
+[admin@MikroTik] > /queue type add \
+    name=pcq-up \
+    kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=src-address \
+    pcq-total-limit=5000
+
+# ۲. برای Download
+[admin@MikroTik] > /queue type add \
+    name=pcq-down \
+    kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=dst-address \
+    pcq-total-limit=5000
+
+# ۳. اعمال در Simple Queue
+[admin@MikroTik] > /queue simple add \
+    name=LAN-PCQ \
+    target=192.168.88.0/24 \
+    max-limit=100M/100M \
+    queue=pcq-up/pcq-down \
+    comment="PCQ for LAN"
+
+# ===== نتیجه =====
+# - اگر 1 کاربر آنلاین: 100Mbps می‌گیرد
+# - اگر 10 کاربر: هرکدام 10Mbps
+# - اگر 100 کاربر: هرکدام 1Mbps
+# - توزیع کاملاً عادلانه!
+
+# ===== محدود کردن هر کاربر به حداکثر X =====
+[admin@MikroTik] > /queue type set pcq-up pcq-rate=10M
+[admin@MikroTik] > /queue type set pcq-down pcq-rate=20M
+# حالا هر کاربر حداکثر 10Mbps آپلود و 20Mbps دانلود
+# ولی اگر تنها باشد، حداکثر 10/20 می‌گیرد (نه بیشتر)</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      PCQ بهترین روش برای توزیع عادلانه پهنای باند بین صدها کاربر است —
+      بدون نیاز به Queue جداگانه برای هر کاربر. این ویژگی MikroTik را از سایر
+      روترها متمایز می‌کند.
+    </div>
+
+    <!-- ==== ۷.۸ ==== -->
+    <h3>۷.۸ Queue Tree — پیکربندی درختی</h3>
+
+    <p>
+      <strong>Queue Tree</strong> یک صف سلسله‌مراتبی است که از Mangle استفاده می‌کند
+      و انعطاف بسیار بالاتری نسبت به Simple Queue دارد.
+    </p>
+
+    <p><strong>مفاهیم اصلی:</strong></p>
+    <ul>
+      <li><strong>Parent:</strong> والد صف — Interface یا Global</li>
+      <li><strong>Packet Mark:</strong> علامت بسته از Mangle</li>
+      <li><strong>Global:</strong> برای کل روتر — نیازمند HTB در Mangle</li>
+    </ul>
+
+    <pre><code># ===== پیکربندی Queue Tree =====
+
+# گام ۱: Mark کردن ترافیک با Mangle
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=postrouting \
+    out-interface=ether1 \
+    action=mark-packet \
+    new-packet-mark=upload-all \
+    passthrough=no \
+    comment="Mark all upload"
+
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    in-interface=ether1 \
+    action=mark-packet \
+    new-packet-mark=download-all \
+    passthrough=no \
+    comment="Mark all download"
+
+# گام ۲: Queue Tree
+[admin@MikroTik] > /queue tree add \
+    name=upload \
+    parent=ether1 \
+    max-limit=50M \
+    packet-mark=upload-all \
+    comment="Upload Queue"
+
+[admin@MikroTik] > /queue tree add \
+    name=download \
+    parent=global \
+    max-limit=100M \
+    packet-mark=download-all \
+    comment="Download Queue"
+
+# ===== مشاهده =====
+[admin@MikroTik] > /queue tree print
+[admin@MikroTik] > /queue tree print stats</code></pre>
+
+    <!-- ==== ۷.۹ ==== -->
+    <h3>۷.۹ Mangle — Mark کردن ترافیک</h3>
+
+    <p>
+      <strong>Mangle</strong> ابزار اصلی برای علامت‌گذاری بسته‌هاست — پیش‌نیاز
+      Queue Tree و بسیاری از سناریوهای QoS.
+    </p>
+
+    <p><strong>Chains در Mangle:</strong></p>
+    <ul>
+      <li><strong>prerouting:</strong> قبل از تصمیم Routing — برای Download</li>
+      <li><strong>postrouting:</strong> بعد از تصمیم Routing — برای Upload</li>
+      <li><strong>forward:</strong> برای ترافیک عبوری</li>
+      <li><strong>input/output:</strong> برای ترافیک خود روتر</li>
+    </ul>
+
+    <pre><code># ===== Mark کردن ساده =====
+
+# ۱. Mark تمام Upload
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=postrouting \
+    out-interface=ether1 \
+    action=mark-packet \
+    new-packet-mark=all-upload \
+    passthrough=no
+
+# ۲. Mark تمام Download
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    in-interface=ether1 \
+    action=mark-packet \
+    new-packet-mark=all-download \
+    passthrough=no
+
+# ۳. Mark فقط ترافیک کاربر خاص
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    src-address=192.168.88.10 \
+    in-interface=bridge-lan \
+    action=mark-packet \
+    new-packet-mark=user1-upload \
+    passthrough=no
+
+# ۴. Mark بر اساس Protocol
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=forward \
+    protocol=udp \
+    dst-port=5060,10000-20000 \
+    action=mark-packet \
+    new-packet-mark=voip \
+    passthrough=no
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip firewall mangle print
+[admin@MikroTik] > /ip firewall mangle print stats</code></pre>
+
+    <!-- ==== ۷.۱۰ ==== -->
+    <h3>۷.۱۰ Connection Mark و Packet Mark</h3>
+
+    <p>
+      <strong>Connection Mark</strong> برای علامت‌گذاری کل اتصال و
+      <strong>Packet Mark</strong> برای علامت‌گذاری هر بسته استفاده می‌شود.
+    </p>
+
+    <p><strong>چرا Connection Mark بهتر است؟</strong></p>
+    <ul>
+      <li>یک بار در ابتدای Connection اعمال می‌شود</li>
+      <li>Packetهای بعدی به‌صورت خودکار همان Mark را می‌گیرند</li>
+      <li>مصرف CPU کمتر</li>
+    </ul>
+
+    <pre><code># ===== سناریو: علامت‌گذاری VoIP =====
+
+# گام ۱: Connection Mark
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    protocol=udp \
+    dst-port=5060,10000-20000 \
+    action=mark-connection \
+    new-connection-mark=voip-conn \
+    passthrough=yes \
+    comment="Mark VoIP connections"
+
+# گام ۲: Packet Mark بر اساس Connection Mark
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=prerouting \
+    connection-mark=voip-conn \
+    action=mark-packet \
+    new-packet-mark=voip-down \
+    passthrough=no \
+    comment="VoIP download packets"
+
+[admin@MikroTik] > /ip firewall mangle add \
+    chain=postrouting \
+    connection-mark=voip-conn \
+    action=mark-packet \
+    new-packet-mark=voip-up \
+    passthrough=no \
+    comment="VoIP upload packets"
+
+# ===== ترتیب مهم است =====
+# 1. Connection Mark اول
+# 2. بعد Packet Mark
+
+# ===== مشاهده =====
+[admin@MikroTik] > /ip firewall mangle print stats
+[admin@MikroTik] > /ip firewall connection print where connection-mark=voip-conn</code></pre>
+
+    <!-- ==== ۷.۱۱ ==== -->
+    <h3>۷.۱۱ ترکیب Mangle و Queue Tree</h3>
+
+    <pre><code># ===== سناریو کامل: تفکیک ترافیک =====
+
+# ===== بخش ۱: Mangle =====
+
+# ۱. Mark Connection برای VoIP
+/ip firewall mangle
+add chain=prerouting protocol=udp dst-port=5060,10000-20000 \
+    action=mark-connection new-connection-mark=voip-conn \
+    passthrough=yes comment="VoIP connection"
+
+add chain=prerouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-down \
+    passthrough=no
+
+add chain=postrouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-up \
+    passthrough=no
+
+# ۲. Mark ترافیک HTTP/HTTPS
+add chain=prerouting protocol=tcp dst-port=80,443 \
+    action=mark-packet new-packet-mark=http-down \
+    passthrough=no
+
+add chain=postrouting protocol=tcp src-port=80,443 \
+    action=mark-packet new-packet-mark=http-up \
+    passthrough=no
+
+# ۳. Mark ترافیک Other (بقیه)
+add chain=prerouting in-interface=ether1 \
+    action=mark-packet new-packet-mark=other-down \
+    passthrough=no
+
+# ===== بخش ۲: Queue Tree =====
+
+# والد اصلی برای Download
+/queue tree add name=download-main parent=global max-limit=100M
+
+# VoIP — بالاترین اولویت
+/queue tree add name=voip-down parent=download-main \
+    packet-mark=voip-down priority=1 limit-at=5M max-limit=10M
+
+# HTTP — اولویت متوسط
+/queue tree add name=http-down parent=download-main \
+    packet-mark=http-down priority=4 limit-at=30M max-limit=80M
+
+# Other — اولویت پایین
+/queue tree add name=other-down parent=download-main \
+    packet-mark=other-down priority=6 limit-at=10M max-limit=100M
+
+# ===== نتیجه =====
+# - VoIP همیشه 5M تضمین + حداکثر 10M
+# - HTTP حداقل 30M تضمین + حداکثر 80M
+# - Other بقیه پهنای باند را می‌گیرد
+# - در صورت ازدحام، VoIP هیچ‌وقت قطع نمی‌شود</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 ساختار HTB</div>
+      Queue Tree در RouterOS از <strong>HTB (Hierarchical Token Bucket)</strong>
+      استفاده می‌کند:
+      <ul style="margin:6px 0 0">
+        <li><strong>limit-at:</strong> پهنای باند تضمینی (CIR)</li>
+        <li><strong>max-limit:</strong> پهنای باند مجاز (PIR)</li>
+        <li><strong>priority:</strong> اولویت در زمان ازدحام</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۷.۱۲ ==== -->
+    <h3>۷.۱۲ Priority و اولویت‌بندی VoIP</h3>
+
+    <p>
+      <strong>Priority</strong> تعیین می‌کند در زمان ازدحام، کدام ترافیک اول برود.
+      عدد کمتر = اولویت بالاتر (1 بهترین، 8 بدترین).
+    </p>
+
+    <pre><code># ===== سناریو: VoIP اولویت اول =====
+
+# ساختار:
+# 1. VoIP (priority 1)
+# 2. DNS (priority 2)
+# 3. HTTP/HTTPS (priority 4)
+# 4. Email (priority 5)
+# 5. FTP/P2P (priority 7)
+# 6. Other (priority 8)
+
+# ===== Mangle =====
+/ip firewall mangle
+# VoIP
+add chain=prerouting protocol=udp dst-port=5060,10000-20000 \
+    action=mark-connection new-connection-mark=voip-conn
+add chain=prerouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip
+
+# DNS
+add chain=prerouting protocol=udp dst-port=53 \
+    action=mark-packet new-packet-mark=dns
+
+# HTTP
+add chain=prerouting protocol=tcp dst-port=80,443 \
+    action=mark-packet new-packet-mark=http
+
+# Email
+add chain=prerouting protocol=tcp dst-port=25,110,143,465,587,993,995 \
+    action=mark-packet new-packet-mark=email
+
+# P2P (مثلاً با dst-port range یا با L7)
+add chain=prerouting protocol=tcp dst-port=6881-6889 \
+    action=mark-packet new-packet-mark=p2p
+
+# ===== Queue Tree =====
+/queue tree
+add name=WAN-DL parent=global max-limit=100M
+
+add name=q-voip parent=WAN-DL packet-mark=voip priority=1 limit-at=5M max-limit=10M
+add name=q-dns parent=WAN-DL packet-mark=dns priority=2 limit-at=1M max-limit=2M
+add name=q-http parent=WAN-DL packet-mark=http priority=4 limit-at=40M max-limit=100M
+add name=q-email parent=WAN-DL packet-mark=email priority=5 limit-at=5M max-limit=20M
+add name=q-p2p parent=WAN-DL packet-mark=p2p priority=7 limit-at=5M max-limit=30M
+
+# ===== نتیجه =====
+# - VoIP همیشه کار می‌کند، حتی در ازدحام شدید
+# - P2P باقی پهنای باند را می‌گیرد
+# - در ساعات شلوغ، P2P محدود می‌شود</code></pre>
+
+    <!-- ==== ۷.۱۳ ==== -->
+    <h3>۷.۱۳ Rate Limiting بر اساس Subnet</h3>
+
+    <pre><code># ===== سناریو: چند VLAN با محدودیت متفاوت =====
+
+# VLAN 10 (HR): 10M/20M
+[admin@MikroTik] > /queue simple add \
+    name=limit-vlan10 \
+    target=192.168.10.0/24 \
+    max-limit=10M/20M
+
+# VLAN 20 (IT): 20M/50M
+[admin@MikroTik] > /queue simple add \
+    name=limit-vlan20 \
+    target=192.168.20.0/24 \
+    max-limit=20M/50M
+
+# VLAN 30 (Guest): 5M/10M
+[admin@MikroTik] > /queue simple add \
+    name=limit-vlan30 \
+    target=192.168.30.0/24 \
+    max-limit=5M/10M
+
+# ===== Rate Limit برای یک Range از IPها با PCQ =====
+[admin@MikroTik] > /queue simple add \
+    name=limit-multi \
+    target=192.168.88.100-192.168.88.200 \
+    max-limit=50M/100M \
+    queue=pcq-up/pcq-down
+
+# ===== توزیع عادلانه با PCQ روی یک VLAN کامل =====
+[admin@MikroTik] > /queue simple add \
+    name=pcq-all-lan \
+    target=192.168.88.0/24 \
+    max-limit=100M/200M \
+    queue=pcq-up/pcq-down \
+    comment="Fair share for entire LAN"</code></pre>
+
+    <!-- ==== ۷.۱۴ ==== -->
+    <h3>۷.۱۴ Bandwidth Sharing بین کاربران</h3>
+
+    <p>
+      روش‌های مختلف اشتراک پهنای باند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">روش</th>
+          <th style="padding:6px;border:1px solid var(--border)">مزیت</th>
+          <th style="padding:6px;border:1px solid var(--border)">عیب</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Queue جداگانه برای هر کاربر</td>
+          <td style="padding:6px;border:1px solid var(--border)">کنترل کامل</td>
+          <td style="padding:6px;border:1px solid var(--border)">مدیریت سخت با ۱۰۰+ کاربر</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">PCQ روی یک Subnet</td>
+          <td style="padding:6px;border:1px solid var(--border)">عادلانه، مدیریت ساده</td>
+          <td style="padding:6px;border:1px solid var(--border)">کنترل کم</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Queue Tree + Mangle</td>
+          <td style="padding:6px;border:1px solid var(--border)">انعطاف بالا</td>
+          <td style="padding:6px;border:1px solid var(--border)">پیچیده</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مثال: اشتراک عادلانه بین 3 گروه =====
+
+# گروه 1: 30M (VIP)
+/queue simple add name=vip target=192.168.88.10-192.168.88.30 \
+    max-limit=30M/30M priority=1/1
+
+# گروه 2: 50M (عادی)
+/queue simple add name=normal target=192.168.88.31-192.168.88.100 \
+    max-limit=50M/100M queue=pcq-up/pcq-down priority=4/4
+
+# گروه 3: 20M (Guest)
+/queue simple add name=guest target=192.168.88.101-192.168.88.200 \
+    max-limit=20M/20M queue=pcq-up/pcq-down priority=7/7
+
+# ===== نتیجه =====
+# در زمان ازدحام:
+# - VIP اول سرویس می‌گیرد
+# - عادی بعد
+# - Guest آخر</code></pre>
+
+    <!-- ==== ۷.۱۵ ==== -->
+    <h3>۷.۱۵ Burst برای پهنای باند پویا</h3>
+
+    <pre><code># ===== سناریو: کاربر 5M/10M با Burst =====
+
+[admin@MikroTik] > /queue simple add \
+    name=user-burst \
+    target=192.168.88.10 \
+    max-limit=5M/10M \
+    burst-limit=10M/20M \
+    burst-threshold=3M/6M \
+    burst-time=8s/8s \
+    priority=4/4
+
+# ===== منطق Burst =====
+# 1. کاربر شروع می‌کند به دانلود
+# 2. اگر میانگین 8 ثانیه‌ی گذشته کمتر از 3M/6M باشد:
+#    → به جای 5M/10M، 10M/20M می‌گیرد
+# 3. اگر میانگین بالای 3M/6M رفت:
+#    → به حالت 5M/10M برمی‌گردد
+
+# ===== تنظیم دقیق =====
+# burst-time: بازه‌ی میانگین‌گیری
+#   کوتاه (3s): پاسخ سریع، ولی نوسان بیشتر
+#   بلند (30s): پایدار، ولی کندتر
+
+# burst-threshold: آستانه
+#   معمولاً 50-70% max-limit
+
+# burst-limit: پیک پهنای باند
+#   معمولاً 2 برابر max-limit
+
+# ===== غیرفعال کردن Burst =====
+[admin@MikroTik] > /queue simple set [find name=user-burst] burst-limit=0/0</code></pre>
+
+    <!-- ==== ۷.۱۶ ==== -->
+    <h3>۷.۱۶ عیب‌یابی و مانیتورینگ Queue</h3>
+
+    <pre><code># ===== دستورات عیب‌یابی =====
+
+# ۱. مشاهده وضعیت Queueها
+[admin@MikroTik] > /queue simple print stats
+[admin@MikroTik] > /queue tree print stats
+
+# ستون‌ها:
+# rate: نرخ فعلی (up/down)
+# packet-rate: نرخ بسته در ثانیه
+# queued-bytes: بایت‌های در صف
+# queued-packets: بسته‌های در صف
+# dropped: بسته‌های Drop
+# total-rate: نرخ کل
+# total-bytes: بایت کل
+
+# ۲. فیلتر کردن
+[admin@MikroTik] > /queue simple print where name~"user"
+[admin@MikroTik] > /queue simple print where rate!="0/0"
+
+# ۳. Monitor یک Queue خاص
+[admin@MikroTik] > /queue simple monitor [find name=limit-user1]
+
+# ۴. ریست Counter
+[admin@MikroTik] > /queue simple reset-counters-all
+
+# ۵. بررسی Mangle
+[admin@MikroTik] > /ip firewall mangle print stats
+# اگر Mangle Mark نمی‌کند، Queue Tree کار نمی‌کند
+
+# ۶. بررسی Queue Type
+[admin@MikroTik] > /queue type print
+[admin@MikroTik] > /queue type print where name=pcq-up
+
+# ۷. Torch روی Interface
+[admin@MikroTik] > /tool torch interface=ether1
+
+# ۸. Profiler
+[admin@MikroTik] > /tool profiler
+# ببین Queue چقدر CPU مصرف می‌کند
+
+# ===== چک‌لیست عیب‌یابی =====
+
+# اگر Queue اعمال نمی‌شود:
+# 1. Target درست است؟
+# 2. max-limit درست تنظیم شده؟
+# 3. Interface Target فعال است؟
+# 4. FastTrack فعال است؟ (با Queue تداخل دارد!)
+# 5. اگر Queue Tree: Mangle Mark می‌کند؟
+# 6. اگر Queue Tree: Packet Mark به Queue وصل است؟
+# 7. Trafic از Interface درست عبور می‌کند؟
+
+# ===== تداخل FastTrack با Queue =====
+# FastTrack ترافیک Established را دور می‌زند → Queue اعمال نمی‌شود!
+# اگر می‌خواهی QoS کار کند، FastTrack را غیرفعال کن
+# یا ترافیک حساس را قبل از FastTrack علامت‌گذاری کن
+
+[admin@MikroTik] > /ip firewall filter print where action=fasttrack-connection
+# اگر می‌خواهی QoS کار کند:
+[admin@MikroTik] > /ip firewall filter disable [find action=fasttrack-connection]</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار مهم</div>
+      <strong>FastTrack و Queue با هم کار نمی‌کنند!</strong>
+      FastTrack ترافیک Established را دور فایروال می‌زند — یعنی Queue هم دور می‌خورد.
+      اگر می‌خواهی QoS دقیق داشته باشی، FastTrack را غیرفعال کن.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      برای ۹۰٪ سناریوها، <strong>Simple Queue + PCQ</strong> کافی است —
+      ساده، سریع، عادلانه. فقط برای سناریوهای پیچیده (اولویت VoIP، تفکیک ترافیک)
+      از Queue Tree + Mangle استفاده کن.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ FastTrack vs Queue</div>
+      FastTrack را غیرفعال کن اگر QoS دقیق می‌خواهی. یا ترافیک حساس را
+      قبل از FastTrack علامت‌گذاری کن و از آن مستثنی کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      PCQ = عدالت. یک Queue با PCQ روی کل LAN، بدون نیاز به صدها Queue جداگانه،
+      پهنای باند را بین همه کاربران عادلانه تقسیم می‌کند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۸ با <span class="term" data-term="tunnel">Tunnel</span>،
+      PPP، PPTP، L2TP و OpenVPN آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCSE با <strong>HTB پیشرفته</strong>،
+      <strong>L7 Matcher</strong> و <strong>PCQ Multi-Level</strong>
+      در سطح حرفه‌ای کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — محدودیت ساده کاربر خانگی</h3>
+    <pre><code># ===== سناریو: 5 کاربر، اینترنت 20Mbps =====
+# می‌خواهی هر کاربر حداکثر 5Mbps بگیرد
+
+# ۱. Simple Queue برای هر کاربر
+/queue simple
+add name=user1 target=192.168.88.11/32 max-limit=2M/5M
+add name=user2 target=192.168.88.12/32 max-limit=2M/5M
+add name=user3 target=192.168.88.13/32 max-limit=2M/5M
+add name=user4 target=192.168.88.14/32 max-limit=2M/5M
+add name=user5 target=192.168.88.15/32 max-limit=2M/5M
+
+# ۲. یا با PCQ — یک Rule برای همه
+/queue type add name=pcq-up kind=pcq pcq-classifier=src-address
+/queue type add name=pcq-down kind=pcq pcq-classifier=dst-address
+
+/queue simple add name=all-users \
+    target=192.168.88.0/24 \
+    max-limit=20M/20M \
+    queue=pcq-up/pcq-down
+
+# ===== نتیجه =====
+# اگر همه آنلاین: هرکدام 4Mbps
+# اگر یکی آنلاین: 20Mbps می‌گیرد</code></pre>
+
+    <h3>مثال ۲ — اولویت VoIP بدون قطعی</h3>
+    <pre><code># ===== سناریو: VoIP همیشه در اولویت =====
+
+# ===== Mangle =====
+/ip firewall mangle
+add chain=prerouting protocol=udp dst-port=5060,10000-20000 \
+    action=mark-connection new-connection-mark=voip-conn passthrough=yes
+
+add chain=prerouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-down passthrough=no
+
+add chain=postrouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-up passthrough=no
+
+# ===== Queue Tree =====
+/queue tree
+# والد برای Download
+add name=download parent=global max-limit=100M
+
+# VoIP — Priority 1، 5M تضمین
+add name=voip-down parent=download \
+    packet-mark=voip-down \
+    priority=1 limit-at=5M max-limit=10M
+
+# بقیه ترافیک
+add name=other-down parent=download \
+    packet-mark=other-down \
+    priority=5 limit-at=10M max-limit=100M
+
+# Mark Other در Mangle
+/ip firewall mangle add chain=prerouting in-interface=ether1 \
+    action=mark-packet new-packet-mark=other-down passthrough=no
+
+# ===== نتیجه =====
+# VoIP همیشه کار می‌کند
+# حتی در زمان دانلود شدید، تماس VoIP قطع نمی‌شود</code></pre>
+
+    <h3>مثال ۳ — تقسیم عادلانه بین 100 کاربر</h3>
+    <pre><code># ===== سناریو: کافی‌نت با 100 کاربر و 100Mbps =====
+
+# ۱. Queue Types
+/queue type
+add name=pcq-up-fair kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=src-address \
+    pcq-total-limit=5000
+
+add name=pcq-down-fair kind=pcq \
+    pcq-rate=0 \
+    pcq-limit=50 \
+    pcq-classifier=dst-address \
+    pcq-total-limit=5000
+
+# ۲. Simple Queue
+/queue simple add name=internet-fair \
+    target=192.168.88.0/24 \
+    max-limit=100M/100M \
+    queue=pcq-up-fair/pcq-down-fair \
+    comment="100 users fair share"
+
+# ===== نتیجه =====
+# - اگر 1 کاربر: 100Mbps
+# - اگر 10 کاربر: هرکدام 10Mbps
+# - اگر 100 کاربر: هرکدام 1Mbps
+# - توزیع کاملاً عادلانه، بدون تداخل
+
+# ===== محدود کردن کل به 100M =====
+# (بالاتر نمی‌رود چون ISP فقط 100M می‌دهد)
+# اگر 200M داری و می‌خواهی هرکدام حداکثر 20M بگیرند:
+/queue type set pcq-up-fair pcq-rate=20M
+/queue type set pcq-down-fair pcq-rate=20M</code></pre>
+
+    <h3>مثال ۴ — QoS پیشرفته با تفکیک ترافیک</h3>
+    <pre><code># ===== سناریو: تفکیک ترافیک بر اساس نوع =====
+
+# ===== بخش ۱: Mangle =====
+
+# VoIP
+/ip firewall mangle
+add chain=prerouting protocol=udp dst-port=5060,10000-20000 \
+    action=mark-connection new-connection-mark=voip-conn
+add chain=prerouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-down
+add chain=postrouting connection-mark=voip-conn \
+    action=mark-packet new-packet-mark=voip-up
+
+# HTTP/HTTPS
+add chain=prerouting protocol=tcp dst-port=80,443 \
+    action=mark-packet new-packet-mark=http-down
+add chain=postrouting protocol=tcp src-port=80,443 \
+    action=mark-packet new-packet-mark=http-up
+
+# DNS
+add chain=prerouting protocol=udp dst-port=53 \
+    action=mark-packet new-packet-mark=dns-down
+
+# P2P (بر اساس Port مشترک)
+add chain=prerouting protocol=tcp dst-port=6881-6889,51413 \
+    action=mark-packet new-packet-mark=p2p-down
+
+# ===== بخش ۲: Queue Tree =====
+
+# والد Upload
+/queue tree add name=upload-root parent=ether1 max-limit=50M
+
+# والد Download
+/queue tree add name=download-root parent=global max-limit=100M
+
+# VoIP — اولویت 1
+/queue tree add name=q-voip-up parent=upload-root \
+    packet-mark=voip-up priority=1 limit-at=2M max-limit=5M
+/queue tree add name=q-voip-down parent=download-root \
+    packet-mark=voip-down priority=1 limit-at=5M max-limit=10M
+
+# DNS — اولویت 2
+/queue tree add name=q-dns-down parent=download-root \
+    packet-mark=dns-down priority=2 limit-at=1M max-limit=5M
+
+# HTTP — اولویت 4
+/queue tree add name=q-http-up parent=upload-root \
+    packet-mark=http-up priority=4 limit-at=5M max-limit=30M
+/queue tree add name=q-http-down parent=download-root \
+    packet-mark=http-down priority=4 limit-at=30M max-limit=80M
+
+# P2P — اولویت 8
+/queue tree add name=q-p2p-down parent=download-root \
+    packet-mark=p2p-down priority=8 limit-at=2M max-limit=20M
+
+# ===== نتیجه =====
+# در زمان ازدحام:
+# 1. VoIP اول می‌رود
+# 2. بعد DNS
+# 3. بعد HTTP
+# 4. P2P آخر</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی Queue</h3>
+    <pre><code># ===== مشکل: Queue اعمال نمی‌شود =====
+
+# ۱. بررسی Simple Queue
+[admin@MikroTik] > /queue simple print
+# ببین: disabled=no، target درست
+
+# ۲. بررسی Stats
+[admin@MikroTik] > /queue simple print stats
+# ببین: rate > 0 (اگر 0 است، ترافیک از این Queue عبور نمی‌کند)
+
+# ۳. بررسی Trafic از Interface
+[admin@MikroTik] > /tool torch interface=ether1
+# ببین ترافیک از کجا می‌آید
+
+# ۴. اگر Queue Tree استفاده می‌کنی:
+[admin@MikroTik] > /ip firewall mangle print stats
+# ببین: counter Mangle افزایش می‌یابد
+
+[admin@MikroTik] > /queue tree print stats
+# ببین: packet-mark درست ست شده
+
+# ۵. بررسی FastTrack
+[admin@MikroTik] > /ip firewall filter print where action=fasttrack-connection
+# اگر FastTrack فعال است، غیرفعال کن:
+[admin@MikroTik] > /ip firewall filter disable [find action=fasttrack-connection]
+
+# ۶. بررسی Direction
+# Simple Queue به‌طور پیش‌فرض دو طرفه است
+# Queue Tree نیاز به تعیین جهت دارد:
+#   - Download: parent=global
+#   - Upload: parent=<interface>
+
+# ۷. بررسی Priority
+[admin@MikroTik] > /queue tree print where priority=8
+# اگر همه priority=8 هستند، اولویت‌بندی اعمال نمی‌شود
+
+# ===== مشکل: کاربر سرعتش پایین‌تر از حد مجاز است =====
+# 1. max-limit را چک کن
+# 2. burst-limit را چک کن (ممکن است فعال نباشد)
+# 3. اگر PCQ داری، pcq-rate را چک کن
+# 4. limit-at را چک کن (ممکن است پایین باشد)
+# 5. Trafic واقعی از Interface را ببین</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>RouterOS با WAN و LAN راه‌اندازی کن</li>
+      <li>یک Simple Queue برای LAN بساز با max-limit=50M/100M</li>
+      <li>PCQ را فعال کن (queue=pcq-up/pcq-down)</li>
+      <li>Queue Typeهای PCQ را با classifier درست بساز</li>
+      <li>یک کاربر خاص را با max-limit=10M/20M محدود کن</li>
+      <li>برای این کاربر Burst فعال کن</li>
+      <li>FastTrack را غیرفعال کن (برای QoS دقیق)</li>
+      <li>Mangle برای VoIP پیاده کن (mark-connection + mark-packet)</li>
+      <li>Mangle برای HTTP پیاده کن</li>
+      <li>Queue Tree بساز با VoIP priority=1 و HTTP priority=4</li>
+      <li>یک تماس VoIP برقرار کن و در همان لحظه دانلود شدید انجام بده</li>
+      <li>ببین VoIP بدون قطعی کار می‌کند</li>
+      <li>Priority HTTP را به 6 تغییر بده و تفاوت را ببین</li>
+      <li>با Queue Stats تحلیل کن کدام Queue چه ترافیکی را عبور می‌دهد</li>
+      <li>تمام پیکربندی را Export بگیر</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Queue اعمال نمی‌شود:</strong> FastTrack فعال است یا Target اشتباه.</li>
+      <li><strong>Queue Tree کار نمی‌کند:</strong> Mangle Mark نمی‌کند یا packet-mark در Queue Tree اشتباه است.</li>
+      <li><strong>PCQ توزیع نمی‌کند:</strong> pcq-classifier اشتباه (برای Upload باید src-address باشد).</li>
+      <li><strong>Burst کار نمی‌کند:</strong> burst-limit=0/0 است یا burst-threshold اشتباه است.</li>
+      <li><strong>Priority اعمال نمی‌شود:</strong> همه Queueها priority یکسان دارند.</li>
+      <li><strong>Upload محدود نمی‌شود:</strong> Target باید کل Subnet باشد نه فقط یک IP.</li>
+      <li><strong>Limit-at باعث محدودیت می‌شود:</strong> limit-at حداکثر نیست، حداقل تضمینی است.</li>
+      <li><strong>Simple Queue با Queue Tree تداخل:</strong> هر دو را همزمان روی یک Interface نداشته باش.</li>
+      <li><strong>VoIP قطع می‌شود:</strong> priority=1 و limit-at کافی برای VoIP تنظیم نشده.</li>
+      <li><strong>Trafic P2P از Queue فرار می‌کند:</strong> P2P معمولاً از پورت‌های تصادفی استفاده می‌کند — L7 Matcher لازم است.</li>
+      <li><strong>Mangle CPU بالا:</strong> Rules زیاد و بدون ترتیب بهینه — با passthrough=no بهینه کن.</li>
+      <li><strong>Queue سریع پر می‌شود:</strong> pcq-limit و pcq-total-limit را افزایش بده.</li>
+      <li><strong>Burst باعث نوسان می‌شود:</strong> burst-time را بلندتر کن (15s به‌جای 8s).</li>
+      <li><strong>Limit-at روی LAN اعمال نمی‌شود:</strong> فقط روی WAN معنا دارد — Target را به WAN تغییر بده.</li>
+      <li><strong>بعد از تغییر Priority، ترافیک اشتباه اولویت می‌گیرد:</strong> ترتیب Mangle Rules را چک کن — ترتیب مهم است.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="qos">QoS</span> •
+      <span class="term" data-term="pcq">PCQ</span> •
+      <span class="term" data-term="mangle">Mangle</span> •
+      <span class="term" data-term="queue">Queue</span> •
+      <span class="term" data-term="htb">HTB</span> •
+      <span class="term" data-term="fasttrack">FastTrack</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-07" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) تفاوت Simple Queue و Queue Tree چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Queue Tree ساده‌تر است</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> Simple Queue نیاز به Mangle دارد</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Queue Tree پیچیده‌تر و با Mangle، Simple Queue ساده و بدون Mangle</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) فرمت max-limit در Simple Queue چگونه است؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> download/upload</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> upload/download</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> هر ترتیبی</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> بر حسب Mbps</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۳) PCQ مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Priority Connection Queue</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Public Control QoS</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Per Connection Queue</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Packet Control Queue</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۴) برای Upload، pcq-classifier چه باید باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> dst-address</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> src-address</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> dst-port</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> src-port</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۵) PCQ چه مزیتی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> رمزنگاری ترافیک</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> افزایش پهنای باند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> توزیع عادلانه پهنای باند بین کاربران</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> کاهش Latency</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) Priority در RouterOS چه محدوده‌ای دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> 0-7</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> 1-8 (1 بالاترین اولویت)</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> 1-10</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> 0-9</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۷) تفاوت limit-at و max-limit چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> limit-at حداکثر، max-limit حداقل</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> limit-at حداقل تضمینی، max-limit حداکثر مجاز</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> فقط در Simple Queue کار می‌کنند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۸) Burst چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> رمزنگاری می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> اجازه می‌دهد به‌طور موقت بیش از max-limit استفاده شود</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Priority را تغییر می‌دهد</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> Queue را غیرفعال می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۹) در Queue Tree، Parent=global برای چه چیزی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> Upload</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> خود روتر</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> Download از تمام Interfaceها</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> هر دو</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۰) Chain Mangle برای Upload کدام است؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> prerouting</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> postrouting</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> forward</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> input</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۱) تفاوت Connection Mark و Packet Mark چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> Packet Mark اول اعمال می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> Connection Mark برای کل اتصال، Packet Mark برای هر بسته</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Connection Mark فقط برای TCP است</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) FastTrack با Queue چه تداخلی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Queue را سریع‌تر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> FastTrack ترافیک Established را دور Queue می‌زند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> هر دو یکسانند</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Queue را خراب می‌کند ولی مهم نیست</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) دستور مشاهده Queue Stats چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> <code>/queue print</code></label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> <code>/queue monitor</code></label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> <code>/queue simple print stats</code></label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> <code>/queue show</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) اگر FastTrack فعال باشد و Queue کار نمی‌کند، چه باید کرد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> Queue را دوباره بساز</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> FastTrack را غیرفعال کن یا ترافیک حساس را مستثنی کن</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Restart کن</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> کاری نمی‌شود کرد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) برای VoIP، کدام Priority مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> 8 (پایین‌ترین)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> 5</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> 1 (بالاترین)</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> 3</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) پهنای باند به چه واحدی در RouterOS داده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> KB (KiloByte)</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> k/M (Kilobit/Megabit)</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Kbps فقط</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> بستگی به مدل دستگاه دارد</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) در Queue Tree، یک Queue با priority=1 و limit-at=5M و max-limit=10M چه رفتاری دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> همیشه 5M می‌گیرد</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> همیشه 10M می‌گیرد</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> حداقل 5M تضمین، حداکثر 10M مجاز، اولویت بالاترین</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> بین 5M و 10M نوسان می‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) کدام بهتر است برای توزیع عادلانه بین 100 کاربر؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> 100 Simple Queue جداگانه</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> یک Simple Queue با PCQ</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> Queue Tree بدون Mangle</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> فقط FastTrack</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک سیستم QoS کامل برای یک ISP کوچک بساز:</p>
+    <ul>
+      <li><strong>RouterOS</strong> با WAN ۱۰۰Mbps و LAN با ۵۰ کاربر</li>
+      <li><strong>PCQ</strong> برای توزیع عادلانه بین همه کاربران (Queue Type سفارشی)</li>
+      <li><strong>Simple Queue اصلی</strong> روی WAN با PCQ</li>
+      <li><strong>گروه VIP</strong> با priority=1 و max-limit=20M/20M</li>
+      <li><strong>گروه عادی</strong> با priority=4 و PCQ</li>
+      <li><strong>گروه Guest</strong> با priority=7 و max-limit=5M/10M</li>
+      <li><strong>Mangle</strong> برای VoIP (mark-connection + mark-packet)</li>
+      <li><strong>Mangle</strong> برای HTTP/HTTPS</li>
+      <li><strong>Queue Tree</strong> با VoIP priority=1، HTTP priority=4، Other priority=8</li>
+      <li><strong>FastTrack</strong> غیرفعال (چون QoS دقیق می‌خواهیم)</li>
+      <li><strong>Burst</strong> برای گروه عادی فعال</li>
+      <li>مستندسازی کامل با Export و دیاگرام QoS</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>QoS بر اساس زمان روز پیاده کن (با Time).</li>
+        <li>یک L7 Matcher برای P2P بساز.</li>
+        <li>با Queue Stats تحلیل کن کدام ترافیک بیشترین مصرف را دارد.</li>
+        <li>یک Dashboard گرافیکی با The Dude یا SNMP برای نمایش Queue بساز.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>QoS:</strong> مدیریت ترافیک در شرایط کمبود پهنای باند</li>
+      <li><strong>Simple Queue:</strong> صف ساده، بدون Mangle — برای ۹۰٪ سناریوها</li>
+      <li><strong>Queue Tree:</strong> صف درختی، نیاز به Mangle — انعطاف بالا</li>
+      <li><strong>max-limit فرمت:</strong> upload/download</li>
+      <li><strong>limit-at:</strong> حداقل تضمینی | <strong>max-limit:</strong> حداکثر مجاز</li>
+      <li><strong>Priority:</strong> 1 (بالاترین) تا 8 (پایین‌ترین)</li>
+      <li><strong>Burst:</strong> اجازه‌ی موقت پهنای باند بیشتر</li>
+      <li><strong>PCQ:</strong> توزیع عادلانه — src-address برای Upload، dst-address برای Download</li>
+      <li><strong>pcq-rate=0:</strong> نرخ خودکار بر اساس تعداد کاربران</li>
+      <li><strong>Mangle:</strong> Mark کردن ترافیک — پیش‌نیاز Queue Tree</li>
+      <li><strong>Connection Mark:</strong> برای کل اتصال — بهینه‌تر از Packet Mark</li>
+      <li><strong>Chain Mangle:</strong> prerouting (Download)، postrouting (Upload)</li>
+      <li><strong>FastTrack با Queue تداخل دارد</strong> — غیرفعال کن اگر QoS دقیق می‌خواهی</li>
+      <li><strong>Queue Types:</strong> default، pcq، fq-codel، sfq، red، codel</li>
+      <li><strong>VoIP:</strong> Priority=1، limit-at کافی</li>
+      <li><strong>P2P:</strong> Priority=8، محدودیت سختگیرانه</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_06.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-07">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_08.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۵ CCNP — VPN و MPLS (LDP، VRF-Lite، DMVPN، NHRP)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccnp" data-chapter="ccnp-05">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📙 فصل ۵ — VPN و MPLS (VPN Services)</h1>
+    <div class="meta">
+      <span>📖 ۱۱۰ دقیقه</span>
+      <span>🎯 وزن در ENARSI: بخش مهم VPN Services</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: پیشرفته</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در این فصل با <strong>تکنولوژی‌های WAN مدرن</strong> آشنا می‌شوی:
+      <span class="term" data-term="mpls">MPLS</span> و اجزای آن (LSR، LDP، LSP)،
+      <strong>MPLS L3 VPN</strong> با VRF-Lite و MP-BGP،
+      و <span class="term" data-term="dmvpn">DMVPN</span> که اجازه می‌دهد شعب
+      یک سازمان بدون لینک اختصاصی و با هزینه‌ی کم به هم متصل شوند.
+    </p>
+    <p>
+      تمرکز این فصل روی <strong>معماری و پیکربندی عملی</strong> است —
+      بعد از آن می‌توانی یک شبکه‌ی SP با MPLS L3 VPN طراحی کنی،
+      یا یک DMVPN با Spoke-to-Spoke Communication پیاده کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفاهیم پایه MPLS و چرا به آن نیاز داریم</li>
+      <li>اجزای MPLS: LSR، LER، LSP، Label</li>
+      <li>LDP — Label Distribution Protocol</li>
+      <li>Label Switching و PHP</li>
+      <li>MPLS L3 VPN — معماری و اجزا</li>
+      <li>VRF-Lite — تعریف و کاربرد</li>
+      <li>RD و RT — Route Distinguisher و Target</li>
+      <li>MP-BGP — Address Family VPNv4</li>
+      <li>DMVPN — مفاهیم و مزایا</li>
+      <li>mGRE — Multipoint GRE Tunnel</li>
+      <li>NHRP — Next Hop Resolution Protocol</li>
+      <li>DMVPN Phase 1، 2 و 3</li>
+      <li>DMVPN + IPsec — امنیت</li>
+      <li>عیب‌یابی MPLS و DMVPN</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا MPLS سریع‌تر از IP Routing معمولی است؟</li>
+      <li>تفاوت RD و RT در MPLS L3 VPN چیست؟</li>
+      <li>DMVPN چطور ارتباط Spoke-to-Spoke را بدون عبور از Hub ممکن می‌کند؟</li>
+      <li>نقش NHRP در DMVPN چیست؟</li>
+      <li>تفاوت DMVPN Phase 2 و Phase 3 در چیست؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۵.۱ ==== -->
+    <h3>۵.۱ مفاهیم پایه MPLS</h3>
+    <p>
+      <span class="term" data-term="mpls">MPLS</span> (Multiprotocol Label Switching) یک
+      تکنولوژی سوئیچینگ مبتنی بر <strong>Label</strong> است که در لایه ۲.۵ (بین Data Link و Network)
+      کار می‌کند. به‌جای Lookup در جدول مسیریابی (که کندتر است)، روترها بر اساس Label
+      تصمیم می‌گیرند — سریع، مقیاس‌پذیر و پشتیبان QoS.
+    </p>
+
+    <p><strong>چرا MPLS؟</strong></p>
+    <ul>
+      <li><strong>سرعت:</strong> Label Lookup سریع‌تر از IP Lookup در FIB</li>
+      <li><strong>Traffic Engineering:</strong> انتخاب مسیر بر اساس پهنای باند و QoS</li>
+      <li><strong>MPLS L3 VPN:</strong> ارائه‌ی VPN مقیاس‌پذیر به مشتریان ISP</li>
+      <li><strong>QoS:</strong> EXP Bits (۳ بیت) برای کلاس‌بندی سرویس</li>
+      <li><strong>Any Transport over MPLS (AToM):</strong> انتقال L2 روی MPLS</li>
+    </ul>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      MPLS فقط در دامنه‌ی ISP استفاده می‌شود — نه روی اینترنت عمومی. دستگاه‌های داخل مشتری (CE)
+      از آن بی‌خبر هستند و فقط IP معمولی می‌بینند.
+    </div>
+
+    <!-- ==== ۵.۲ ==== -->
+    <h3>۵.۲ اجزای MPLS: LSR، LER، LSP، Label</h3>
+
+    <p><strong>ساختار Label MPLS (۳۲ بیت):</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">فیلد</th>
+          <th style="padding:6px;border:1px solid var(--border)">بیت</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Label Value</td><td style="padding:6px;border:1px solid var(--border)">20</td><td style="padding:6px;border:1px solid var(--border)">شناسه Label</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">EXP</td><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">کلاس QoS (شبیه CoS/DSCP)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">S (Bottom of Stack)</td><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">1 = آخرین Label در Stack</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">TTL</td><td style="padding:6px;border:1px solid var(--border)">8</td><td style="padding:6px;border:1px solid var(--border)">مانند IP TTL</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>اجزای MPLS:</strong></p>
+    <ul>
+      <li><strong>LSR (Label Switch Router):</strong> روتر داخل دامنه MPLS که Label را Swap می‌کند</li>
+      <li><strong>LER (Label Edge Router):</strong> روتر مرزی — Push (Ingress) یا Pop (Egress) Label</li>
+      <li><strong>LSP (Label Switched Path):</strong> مسیر یک‌طرفه از Ingress LER تا Egress LER</li>
+      <li><strong>Ingress LER:</strong> Label Push می‌کند (ورود به MPLS)</li>
+      <li><strong>Egress LER:</strong> Label Pop می‌کند (خروج از MPLS)</li>
+      <li><strong>Label Stack:</strong> چند Label روی هم — Label بالا = Transport، پایین = VPN</li>
+    </ul>
+
+    <pre><code>! نمونه Topology
+[Customer A] ── CE1 ── PE1 (Ingress LER) ── P1 (LSR) ── P2 (LSR) ── PE2 (Egress LER) ── CE2 ── [Customer A]
+
+! مسیر LSP
+PE1 → Push Label L1
+P1  → Swap L1 به L2
+P2  → Swap L2 به L3
+PE2 → Pop L3 و Forward IP
+
+! Label Stack در MPLS L3 VPN
+[Transport Label | VPN Label | IP Packet]
+     ↑ LDP              ↑ MP-BGP</code></pre>
+
+    <!-- ==== ۵.۳ ==== -->
+    <h3>۵.۳ LDP — Label Distribution Protocol</h3>
+    <p>
+      LDP پروتکل توزیع Label بین LSRهاست. هر LSR برای هر Prefix در جدول مسیریابی،
+      یک Label محلی اختصاص می‌دهد و به همسایه‌ها اعلان می‌کند.
+    </p>
+
+    <p><strong>مشخصات LDP:</strong></p>
+    <ul>
+      <li>پورت UDP/646 برای Discovery و TCP/646 برای Session</li>
+      <li>Session روی Loopback می‌شود (مثل iBGP)</li>
+      <li>Label Allocation: Unsolicited Downstream (پیش‌فرض سیسکو)</li>
+      <li>Label Retention: Liberal (نگه‌داشتن همه Labelها) یا Conservative</li>
+    </ul>
+
+    <pre><code>! فعال‌سازی MPLS LDP
+Router(config)# mpls ip
+Router(config)# mpls label protocol ldp
+! حالا روی Interface
+Router(config)# interface Gi0/0
+Router(config-if)# mpls ip
+
+! (توصیه) Loopback برای LDP Router-ID
+Router(config)# mpls ldp router-id Loopback0 force
+
+! بررسی
+Router# show mpls ldp neighbor
+Router# show mpls ldp bindings
+Router# show mpls interfaces
+Router# show mpls forwarding-table
+! خروجی مثال:
+! Local   Outgoing   Prefix           Outgoing     Next Hop
+! Label   Label      or Tunnel Id     interface
+! 16      Pop Label  1.1.1.1/32       Gi0/0        10.0.0.1
+! 17      18         2.2.2.2/32       Gi0/0        10.0.0.1</code></pre>
+
+    <p><strong>PHP (Penultimate Hop Popping):</strong> روتر یکی مانده به Egress LER،
+      Label را Pop می‌کند تا Egress LER مجبور نباشد دو Lookup انجام دهد.
+      نشانه‌ی آن در Forwarding Table: <code>Pop Label</code>.</p>
+
+    <!-- ==== ۵.۴ ==== -->
+    <h3>۵.۴ Label Switching و PHP</h3>
+
+    <p>چهار عملیات Label در MPLS:</p>
+    <ul>
+      <li><strong>Push:</strong> اضافه کردن Label (Ingress LER)</li>
+      <li><strong>Swap:</strong> تعویض Label (LSR داخلی)</li>
+      <li><strong>Pop:</strong> حذف Label (Egress LER یا PHP)</li>
+      <li><strong>Untagged:</strong> بدون Label</li>
+    </ul>
+
+    <pre><code>! بررسی عملیات
+Router# show mpls forwarding-table
+Local  Outgoing  Prefix         Outgoing    Next Hop       Bytes
+Label  Label     or Tunnel Id   interface                  Switched
+16     Pop Label 1.1.1.1/32     Gi0/0       10.0.0.1       0
+17     18        2.2.2.2/32     Gi0/0       10.0.0.1       1523
+18     Aggregate 3.3.3.3/32     Gi0/0       10.0.0.1       0
+! Aggregate = چند Prefix یک Label مشترک دارند
+
+! Traceroute با MPLS (شامل Labelها)
+Router# traceroute 4.4.4.4
+! خروجی: هر Hop با Label نمایش داده می‌شود</code></pre>
+
+    <!-- ==== ۵.۵ ==== -->
+    <h3>۵.۵ MPLS L3 VPN — معماری و اجزا</h3>
+    <p>
+      MPLS L3 VPN (که در سیسکو <strong>MPLS VPN</strong> هم نامیده می‌شود)
+      محبوب‌ترین سرویس ISPهاست که به مشتریان امکان می‌دهد شبکه‌هایشان را
+      روی یک زیرساخت مشترک با <strong>کامل جداسازی</strong> اجرا کنند.
+    </p>
+
+    <p><strong>اجزای MPLS L3 VPN:</strong></p>
+    <ul>
+      <li><strong>CE (Customer Edge):</strong> روتر سمت مشتری — از MPLS بی‌خبر است</li>
+      <li><strong>PE (Provider Edge):</strong> روتر ISP که به مشتری وصل است — MPLS و VRF دارد</li>
+      <li><strong>P (Provider Core):</strong> روتر داخل ISP که فقط MPLS را Forward می‌کند</li>
+      <li><strong>VRF:</strong> روی هر PE، برای هر مشتری یک VRF مجزا</li>
+      <li><strong>MP-BGP:</strong> بین PEها برای تبادل مسیرهای VPNv4</li>
+      <li><strong>LDP:</strong> در Core ISP برای Label Switching</li>
+    </ul>
+
+    <pre><code>! Topology نمونه
+[Customer A]--CE1--PE1---P1---P2---PE2--CE2--[Customer A]
+                          │
+                          ├── P3
+                          │
+                    [Customer B]--CE3--PE3--P3</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ چرا MPLS L3 VPN؟</div>
+      <ul style="margin:6px 0 0">
+        <li>جداسازی کامل مشتریان با VRF</li>
+        <li>IP Overlapping (دو مشتری با IP یکسان مجاز است)</li>
+        <li>مقیاس‌پذیری — هزاران مشتری روی یک زیرساخت</li>
+        <li>سرویس‌های ارزش‌افزوده (QoS، Multicast VPN)</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۵.۶ ==== -->
+    <h3>۵.۶ VRF-Lite — تعریف و کاربرد</h3>
+    <p>
+      <strong>VRF-Lite</strong> استفاده از VRF بدون MPLS است. کاربردهای اصلی:
+    </p>
+    <ul>
+      <li>جداسازی مشتریان روی یک PE در شبکه‌های کوچک (بدون MPLS)</li>
+      <li>Management VRF — جداسازی ترافیک مدیریتی</li>
+      <li>Multi-Tenant در محیط‌های Campus یا Small SP</li>
+      <li>پایه‌ی MPLS L3 VPN (VRF-Lite + MP-BGP + MPLS = MPLS L3 VPN)</li>
+    </ul>
+
+    <pre><code>! VRF-Lite ساده
+Router(config)# ip vrf CUSTOMER-A
+Router(config-vrf)# rd 65000:1
+Router(config-vrf)# route-target export 65000:1
+Router(config-vrf)# route-target import 65000:1
+Router(config-vrf)# exit
+
+Router(config)# ip vrf CUSTOMER-B
+Router(config-vrf)# rd 65000:2
+Router(config-vrf)# route-target export 65000:2
+Router(config-vrf)# route-target import 65000:2
+Router(config-vrf)# exit
+
+! اختصاص Interface
+Router(config)# interface Gi0/0
+Router(config-if)# ip vrf forwarding CUSTOMER-A
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip vrf forwarding CUSTOMER-B
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+! همان Subnet — بدون تداخل
+
+! بررسی
+Router# show ip vrf
+Router# show ip route vrf CUSTOMER-A</code></pre>
+
+    <!-- ==== ۵.۷ ==== -->
+    <h3>۵.۷ RD و RT — Route Distinguisher و Route Target</h3>
+
+    <p><strong>RD (Route Distinguisher):</strong> یک شناسه‌ی ۸ بایتی که
+      پیش از IPv4 Prefix قرار می‌گیرد تا مسیر را در کل شبکه <strong>یکتا</strong> کند.
+      این باعث می‌شود دو مشتری با Subnet یکسان، در MP-BGP دو Route متفاوت داشته باشند.</p>
+
+    <p><strong>فرمت RD:</strong> ASN:NN یا IP:NN — مثلاً <code>65000:100</code> یا <code>10.0.0.1:100</code></p>
+
+    <p><strong>RT (Route Target):</strong> یک Extended Community که مشخص می‌کند
+      کدام Routeها به کدام VRF <strong>Import</strong> یا <strong>Export</strong> شوند.</p>
+
+    <p><strong>تفاوت RD و RT:</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">RD</th>
+          <th style="padding:6px;border:1px solid var(--border)">RT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نقش</td><td style="padding:6px;border:1px solid var(--border)">یکتایی Route</td><td style="padding:6px;border:1px solid var(--border)">کنترل Import/Export</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">تعداد</td><td style="padding:6px;border:1px solid var(--border)">فقط یکی برای هر VRF</td><td style="padding:6px;border:1px solid var(--border)">چندین Export/Import مجاز</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">در BGP</td><td style="padding:6px;border:1px solid var(--border)">بخشی از Prefix (VPNv4)</td><td style="padding:6px;border:1px solid var(--border)">Path Attribute (Extended Community)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">قابل تغییر بعد از Config</td><td style="padding:6px;border:1px solid var(--border)">سخت — BGP Reset لازم</td><td style="padding:6px;border:1px solid var(--border)">آسان</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      RD = <strong>R</strong>outing <strong>D</strong>istinguisher (جداسازی Routeها)<br>
+      RT = <strong>R</strong>oute <strong>T</strong>arget (تعیین اینکه Route به کدام VRF برود)
+    </div>
+
+    <!-- ==== ۵.۸ ==== -->
+    <h3>۵.۸ MP-BGP — Address Family VPNv4</h3>
+    <p>
+      BGP استاندارد فقط IPv4 Unicast را پشتیبانی می‌کند. برای MPLS L3 VPN
+      نیاز به <strong>MP-BGP</strong> (Multiprotocol BGP) با Address Family
+      <strong>VPNv4</strong> داریم که RD را هم حمل می‌کند.
+    </p>
+
+    <pre><code>! پیکربندی MP-BGP بین PEها
+! PE1
+PE1(config)# router bgp 65000
+PE1(config-router)# no bgp default ipv4-unicast
+PE1(config-router)# neighbor 2.2.2.2 remote-as 65000
+PE1(config-router)# neighbor 2.2.2.2 update-source Loopback0
+PE1(config-router)# neighbor 2.2.2.2 next-hop-self
+PE1(config-router)# address-family vpnv4
+PE1(config-router-af)# neighbor 2.2.2.2 activate
+PE1(config-router-af)# exit
+
+! PE2
+PE2(config)# router bgp 65000
+PE2(config-router)# neighbor 1.1.1.1 remote-as 65000
+PE2(config-router)# neighbor 1.1.1.1 update-source Loopback0
+PE2(config-router)# neighbor 1.1.1.1 next-hop-self
+PE2(config-router)# address-family vpnv4
+PE2(config-router-af)# neighbor 1.1.1.1 activate
+
+! بررسی
+PE1# show bgp vpnv4 unicast all
+PE1# show bgp vpnv4 unicast all summary
+PE1# show bgp vpnv4 unicast rd 65000:1</code></pre>
+
+    <!-- ==== ۵.۹ ==== -->
+    <h3>۵.۹ MPLS L3 VPN — پیکربندی کامل</h3>
+
+    <pre><code>! ===== روی PE1 =====
+! ۱. Underlay IGP (OSPF یا IS-IS)
+PE1(config)# router ospf 1
+PE1(config-router)# network 1.1.1.1 0.0.0.0 area 0
+PE1(config-router)# network 10.0.0.0 0.0.0.3 area 0
+
+! ۲. MPLS LDP در Core
+PE1(config)# mpls ldp router-id Loopback0 force
+PE1(config)# interface Gi0/0
+PE1(config-if)# mpls ip
+
+! ۳. VRF مشتری
+PE1(config)# ip vrf CUSTOMER-A
+PE1(config-vrf)# rd 65000:1
+PE1(config-vrf)# route-target both 65000:1
+PE1(config-vrf)# exit
+
+! ۴. اختصاص Interface به VRF
+PE1(config)# interface Gi0/1
+PE1(config-if)# ip vrf forwarding CUSTOMER-A
+PE1(config-if)# ip address 192.168.1.1 255.255.255.0
+
+! ۵. MP-BGP بین PEها
+PE1(config)# router bgp 65000
+PE1(config-router)# neighbor 2.2.2.2 remote-as 65000
+PE1(config-router)# neighbor 2.2.2.2 update-source Loopback0
+PE1(config-router)# address-family vpnv4
+PE1(config-router-af)# neighbor 2.2.2.2 activate
+PE1(config-router-af)# exit
+
+! ۶. Redistribute Route داخل VRF به BGP
+PE1(config)# router bgp 65000
+PE1(config-router)# address-family ipv4 vrf CUSTOMER-A
+PE1(config-router-af)# redistribute connected
+PE1(config-router-af)# redistribute static
+PE1(config-router-af)# exit
+
+! بررسی
+PE1# show ip route vrf CUSTOMER-A
+PE1# show bgp vpnv4 unicast all
+PE1# show ip bgp vpnv4 vrf CUSTOMER-A
+PE1# show mpls forwarding-table vrf CUSTOMER-A</code></pre>
+
+    <!-- ==== ۵.۱۰ ==== -->
+    <h3>۵.۱۰ DMVPN — مفاهیم و مزایا</h3>
+    <p>
+      <span class="term" data-term="dmvpn">DMVPN</span> (Dynamic Multipoint VPN)
+      یک تکنولوژی سیسکو است که اجازه می‌دهد شعب یک سازمان بدون لینک اختصاصی
+      و روی هر نوع اتصال اینترنتی (Broadband، LTE، MPLS) به هم وصل شوند.
+    </p>
+
+    <p><strong>سه تکنولوژی اصلی DMVPN:</strong></p>
+    <ol>
+      <li><strong>mGRE (Multipoint GRE):</strong> یک تونل واحد که چندین مقصد را پشتیبانی می‌کند</li>
+      <li><strong>NHRP:</strong> پروتکل حل آدرس Next Hop — اجازه می‌دهد Spokeها آدرس‌های هم را پیدا کنند</li>
+      <li><strong>IPsec:</strong> رمزنگاری تونل</li>
+    </ol>
+
+    <p><strong>مزایای DMVPN:</strong></p>
+    <ul>
+      <li>Zero Touch Provisioning — Spoke جدید فقط Hub را می‌داند</li>
+      <li>Spoke-to-Spoke Direct — ارتباط مستقیم بدون عبور از Hub (در Phase 2/3)</li>
+      <li>Scalability — Hub نیازی به Peer جداگانه برای هر Spoke ندارد</li>
+      <li>Configuration یکسان روی همه Spokeها</li>
+      <li>پشتیبانی از Routing Protocol روی تونل (OSPF، EIGRP، BGP)</li>
+    </ul>
+
+    <pre><code>! Topology نمونه DMVPN
+         [Spoke1]
+            │
+            │
+   [Spoke2]─[Hub]─[Spoke3]
+            │
+         [Spoke4]
+
+! هر Spoke فقط Hub را می‌شناسد (Static یا DNS)
+! بعد از راه‌اندازی، Spokeها می‌توانند مستقیم به هم وصل شوند</code></pre>
+
+    <!-- ==== ۵.۱۱ ==== -->
+    <h3>۵.۱۱ mGRE — Multipoint GRE Tunnel</h3>
+    <p>
+      GRE معمولی Point-to-Point است — برای هر Spoke یک Tunnel جدا لازم است.
+      mGRE یک Tunnel را برای چندین مقصد استفاده می‌کند.
+    </p>
+
+    <pre><code>! mGRE روی Hub
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip address 10.255.255.1 255.255.255.0
+Hub(config-if)# tunnel source Gi0/0
+Hub(config-if)# tunnel mode gre multipoint
+! نکته: tunnel destination وجود ندارد — چون Multi-Point است
+Hub(config-if)# ip nhrp network-id 1
+Hub(config-if)# ip nhrp map multicast dynamic
+Hub(config-if)# ip nhrp authentication NHRPpass
+Hub(config-if)# tunnel key 100
+Hub(config-if)# no shutdown
+
+! mGRE روی Spoke
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# ip address 10.255.255.2 255.255.255.0
+Spoke(config-if)# tunnel source Gi0/0
+Spoke(config-if)# tunnel mode gre multipoint
+Spoke(config-if)# ip nhrp network-id 1
+Spoke(config-if)# ip nhrp authentication NHRPpass
+Spoke(config-if)# ip nhrp map 10.255.255.1 203.0.113.1
+!                                  ↑ NBMA IP Hub
+Spoke(config-if)# ip nhrp map multicast 203.0.113.1
+Spoke(config-if)# ip nhrp nhs 10.255.255.1
+!                                  ↑ NHS = Next Hop Server
+Spoke(config-if)# tunnel key 100
+Spoke(config-if)# no shutdown
+
+! بررسی
+Hub# show dmvpn
+Hub# show ip nhrp
+Hub# show interface Tunnel0</code></pre>
+
+    <!-- ==== ۵.۱۲ ==== -->
+    <h3>۵.۱۲ NHRP — Next Hop Resolution Protocol</h3>
+    <p>
+      NHRP پروتکلی است که اجازه می‌دهد Spokeها آدرس NBMA (Public IP) همدیگر
+      را کشف کنند. بدون NHRP، همه‌ی ترافیک باید از Hub عبور کند.
+    </p>
+
+    <p><strong>مفاهیم NHRP:</strong></p>
+    <ul>
+      <li><strong>NHS (Next Hop Server):</strong> Hub — دیتابیس Mapping را نگه می‌دارد</li>
+      <li><strong>NHC (Next Hop Client):</strong> Spoke — Mapping را از NHS می‌پرسد</li>
+      <li><strong>Network-ID:</strong> شناسه DMVPN Cloud — همه‌ی اعضا یکسان</li>
+      <li><strong>NHRP Mapping:</strong> Tunnel IP ↔ NBMA IP</li>
+    </ul>
+
+    <pre><code>! بررسی Mapping
+Hub# show ip nhrp
+! خروجی:
+! 10.255.255.2/32 via 10.255.255.2
+!    NBMA address: 198.51.100.2
+! 10.255.255.3/32 via 10.255.255.3
+!    NBMA address: 198.51.100.3
+
+! روی Spoke
+Spoke1# show ip nhrp
+Spoke1# show dmvpn
+Spoke1# show dmvpn detail
+
+! Dynamic Mapping پس از یک Ping بین Spokeها
+Spoke1# ping 10.255.255.3 source Tunnel0
+Spoke1# show ip nhrp
+! ببین: Spoke3 با NBMA IP در Mapping ظاهر شده</code></pre>
+
+    <!-- ==== ۵.۱۳ ==== -->
+    <h3>۵.۱۳ DMVPN Phase 1، 2 و 3</h3>
+
+    <p><strong>تفاوت Phaseها در نحوه‌ی Forward کردن ترافیک Spoke-to-Spoke:</strong></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Phase</th>
+          <th style="padding:6px;border:1px solid var(--border)">Hub Role</th>
+          <th style="padding:6px;border:1px solid var(--border)">Spoke-to-Spoke</th>
+          <th style="padding:6px;border:1px solid var(--border)">Next Hop</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Phase 1</td>
+          <td style="padding:6px;border:1px solid var(--border)">Hub-and-Spoke</td>
+          <td style="padding:6px;border:1px solid var(--border)">❌ از طریق Hub</td>
+          <td style="padding:6px;border:1px solid var(--border)">Spoke = Hub</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Phase 2</td>
+          <td style="padding:6px;border:1px solid var(--border)">Initial فقط</td>
+          <td style="padding:6px;border:1px solid var(--border)">✅ Direct</td>
+          <td style="padding:6px;border:1px solid var(--border)">Spoke = Spoke</td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border:1px solid var(--border)">Phase 3</td>
+          <td style="padding:6px;border:1px solid var(--border)">Shortcut</td>
+          <td style="padding:6px;border:1px solid var(--border)">✅ Direct</td>
+          <td style="padding:6px;border:1px solid var(--border)">Hub → Spoke</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>تفاوت Phase 2 و 3:</strong></p>
+    <ul>
+      <li><strong>Phase 2:</strong> نیاز به <code>no ip next-hop-self</code> روی Hub — Spoke آدرس Spoke را به‌عنوان Next Hop می‌بیند و مستقیم می‌رود. مشکل: با OSPF و Split Horizon روی Hub.</li>
+      <li><strong>Phase 3:</strong> Hub Next Hop را حفظ می‌کند ولی با <strong>NHRP Shortcut</strong> به Spoke می‌گوید آدرس واقعی Spoke مقصد چیست.</li>
+    </ul>
+
+    <pre><code>! تنظیمات Hub برای Phase 2
+Hub(config)# interface Tunnel0
+Hub(config-if)# no ip next-hop-self eigrp 100
+! یا برای OSPF:
+Hub(config-if)# ip ospf network point-to-multipoint
+Hub(config-if)# no ip split-horizon
+
+! تنظیمات Hub برای Phase 3
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip nhrp redirect
+! روی Spoke:
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# ip nhrp shortcut
+
+! بررسی
+Hub# show dmvpn
+Hub# show ip nhrp
+Hub# show ip nhrp shortcut</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      Phase 3 بهترین گزینه است — هم Shortcut دارد، هم با OSPF و Split Horizon سازگار است.
+      در طراحی‌های جدید، همیشه Phase 3 انتخاب کن.
+    </div>
+
+    <!-- ==== ۵.۱۴ ==== -->
+    <h3>۵.۱۴ DMVPN + IPsec — امنیت</h3>
+    <p>
+      DMVPN به‌تنهایی رمزنگاری ندارد. با ترکیب با IPsec (به‌صورت
+      <strong>IPsec Profile</strong> روی Tunnel Protection) امن می‌شود.
+    </p>
+
+    <pre><code>! ===== روی Hub =====
+Hub(config)# crypto isakmp policy 10
+Hub(config-isakmp)# encryption aes 256
+Hub(config-isakmp)# hash sha256
+Hub(config-isakmp)# authentication pre-share
+Hub(config-isakmp)# group 14
+Hub(config-isakmp)# exit
+
+Hub(config)# crypto isakmp key StrongDMVPNKey address 0.0.0.0
+! 0.0.0.0 = Wildcard — هر Spoke
+
+Hub(config)# crypto ipsec transform-set DMVPN-SET esp-aes 256 esp-sha256-hmac
+
+Hub(config)# crypto ipsec profile DMVPN-PROFILE
+Hub(ipsec-profile)# set transform-set DMVPN-SET
+Hub(ipsec-profile)# exit
+
+Hub(config)# interface Tunnel0
+Hub(config-if)# tunnel protection ipsec profile DMVPN-PROFILE
+
+! ===== روی Spoke =====
+Spoke(config)# crypto isakmp policy 10
+Spoke(config-isakmp)# encryption aes 256
+Spoke(config-isakmp)# hash sha256
+Spoke(config-isakmp)# authentication pre-share
+Spoke(config-isakmp)# group 14
+
+Spoke(config)# crypto isakmp key StrongDMVPNKey address 203.0.113.1
+! فقط به Hub (چون Spoke فقط Hub را می‌شناسد در شروع)
+
+Spoke(config)# crypto ipsec transform-set DMVPN-SET esp-aes 256 esp-sha256-hmac
+
+Spoke(config)# crypto ipsec profile DMVPN-PROFILE
+Spoke(ipsec-profile)# set transform-set DMVPN-SET
+
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# tunnel protection ipsec profile DMVPN-PROFILE
+
+! نکته: در DMVPN، بعد از IPsec، Spokeها به‌صورت Dynamic IPsec SA با هم صحبت می‌کنند
+
+! بررسی
+Hub# show crypto isakmp sa
+Hub# show crypto ipsec sa
+Hub# show dmvpn</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته‌ی مهم</div>
+      در Spoke، PSK فقط برای Hub تعریف می‌شود. ولی بعد از راه‌اندازی،
+      DMVPN به‌صورت Dynamic SA بین Spokeها برقرار می‌کند. برای این کار،
+      PSA باید از Crypto Keyring استفاده کند یا از <code>crypto isakmp key 0.0.0.0</code>.
+    </div>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در MPLS، Loopback همیشه به‌عنوان Router-ID برای LDP و MP-BGP استفاده می‌شود
+      با <code>mpls ldp router-id Loopback0 force</code> — هم پایداری و هم Update-Source.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      در VRF، وقتی <code>ip vrf forwarding</code> روی Interface اعمال می‌کنی،
+      IP Config پاک می‌شود. حتماً قبل از اعمال، IP را یادداشت کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      RD یکتایی Route را تضمین می‌کند، ولی RT تعیین می‌کند Route به کدام VRF برود.
+      در سناریوهای Hub-and-Spoke VPN، می‌توانی با RT متفاوت،
+      Route Leak بین مشتریان بسازی.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۶ CCNP وارد <span class="term" data-term="copp">CoPP</span>،
+      <span class="term" data-term="urpf">uRPF</span> و
+      IPv6 First Hop Security می‌شویم.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      با <strong>Segment Routing (SR)</strong> به‌عنوان جایگزین مدرن MPLS LDP
+      آشنا می‌شوی — در CCIE و شبکه‌های Service Provider نسل جدید.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — LDP و MPLS در Core ISP</h3>
+    <pre><code>! ===== روی P1 (LSR داخلی) =====
+P1(config)# ip routing
+P1(config)# ip cef
+
+P1(config)# interface Loopback0
+P1(config-if)# ip address 1.1.1.1 255.255.255.255
+
+P1(config)# mpls ldp router-id Loopback0 force
+
+P1(config)# interface Gi0/0
+P1(config-if)# ip address 10.1.1.1 255.255.255.252
+P1(config-if)# mpls ip
+
+P1(config)# interface Gi0/1
+P1(config-if)# ip address 10.1.2.1 255.255.255.252
+P1(config-if)# mpls ip
+
+P1(config)# router ospf 1
+P1(config-router)# network 0.0.0.0 255.255.255.255 area 0
+
+! بررسی
+P1# show mpls ldp neighbor
+P1# show mpls forwarding-table
+P1# show mpls interfaces</code></pre>
+
+    <h3>مثال ۲ — MPLS L3 VPN کامل با MP-BGP</h3>
+    <pre><code>! ===== PE1 =====
+! VRF
+PE1(config)# ip vrf CUST-A
+PE1(config-vrf)# rd 65000:1
+PE1(config-vrf)# route-target both 65000:1
+
+! Interface به مشتری
+PE1(config)# interface Gi0/1
+PE1(config-if)# ip vrf forwarding CUST-A
+PE1(config-if)# ip address 192.168.1.1 255.255.255.0
+PE1(config-if)# no shutdown
+
+! Underlay OSPF + MPLS LDP روی Core
+PE1(config)# interface Gi0/0
+PE1(config-if)# ip address 10.1.1.1 255.255.255.252
+PE1(config-if)# mpls ip
+
+! MP-BGP
+PE1(config)# router bgp 65000
+PE1(config-router)# no bgp default ipv4-unicast
+PE1(config-router)# neighbor 2.2.2.2 remote-as 65000
+PE1(config-router)# neighbor 2.2.2.2 update-source Loopback0
+PE1(config-router)# address-family vpnv4
+PE1(config-router-af)# neighbor 2.2.2.2 activate
+PE1(config-router-af)# exit
+PE1(config-router)# address-family ipv4 vrf CUST-A
+PE1(config-router-af)# redistribute connected
+PE1(config-router-af)# exit
+
+! بررسی
+PE1# show bgp vpnv4 unicast all
+PE1# show ip route vrf CUST-A
+PE1# show mpls forwarding-table vrf CUST-A</code></pre>
+
+    <h3>مثال ۳ — DMVPN Phase 3 کامل</h3>
+    <pre><code>! ===== Hub =====
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip address 10.255.255.1 255.255.255.0
+Hub(config-if)# tunnel source Gi0/0
+Hub(config-if)# tunnel mode gre multipoint
+Hub(config-if)# tunnel key 100
+Hub(config-if)# ip nhrp network-id 1
+Hub(config-if)# ip nhrp authentication NHRP@2024
+Hub(config-if)# ip nhrp map multicast dynamic
+Hub(config-if)# ip nhrp redirect
+Hub(config-if)# ip mtu 1400
+Hub(config-if)# ip tcp adjust-mss 1360
+
+! IPsec Profile
+Hub(config)# crypto isakmp policy 10
+Hub(config-isakmp)# encryption aes 256
+Hub(config-isakmp)# hash sha256
+Hub(config-isakmp)# authentication pre-share
+Hub(config-isakmp)# group 14
+
+Hub(config)# crypto isakmp key DMVPN@Key address 0.0.0.0
+Hub(config)# crypto ipsec transform-set DMVPN-SET esp-aes 256 esp-sha256-hmac
+
+Hub(config)# crypto ipsec profile DMVPN-PROFILE
+Hub(ipsec-profile)# set transform-set DMVPN-SET
+
+Hub(config)# interface Tunnel0
+Hub(config-if)# tunnel protection ipsec profile DMVPN-PROFILE
+
+! ===== Spoke =====
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# ip address 10.255.255.2 255.255.255.0
+Spoke(config-if)# tunnel source Gi0/0
+Spoke(config-if)# tunnel mode gre multipoint
+Spoke(config-if)# tunnel key 100
+Spoke(config-if)# ip nhrp network-id 1
+Spoke(config-if)# ip nhrp authentication NHRP@2024
+Spoke(config-if)# ip nhrp map 10.255.255.1 203.0.113.1
+Spoke(config-if)# ip nhrp map multicast 203.0.113.1
+Spoke(config-if)# ip nhrp nhs 10.255.255.1
+Spoke(config-if)# ip nhrp shortcut
+Spoke(config-if)# ip mtu 1400
+Spoke(config-if)# ip tcp adjust-mss 1360
+
+! IPsec
+Spoke(config)# crypto isakmp key DMVPN@Key address 203.0.113.1
+Spoke(config)# crypto ipsec transform-set DMVPN-SET esp-aes 256 esp-sha256-hmac
+Spoke(config)# crypto ipsec profile DMVPN-PROFILE
+Spoke(ipsec-profile)# set transform-set DMVPN-SET
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# tunnel protection ipsec profile DMVPN-PROFILE</code></pre>
+
+    <h3>مثال ۴ — OSPF روی DMVPN برای Spoke-to-Spoke</h3>
+    <pre><code>! روی Hub
+Hub(config)# router ospf 1
+Hub(config-router)# network 10.255.255.0 0.0.0.255 area 0
+Hub(config-router)# network 192.168.0.0 0.0.255.255 area 0
+
+Hub(config)# interface Tunnel0
+Hub(config-if)# ip ospf network broadcast
+! یا نقطه‌به‌چندنقطه — بستگی به طراحی دارد
+Hub(config-if)# ip ospf priority 100
+! Hub را DR کن تا Spokeها با آن همسایه شوند
+
+! روی Spoke
+Spoke(config)# router ospf 1
+Spoke(config-router)# network 10.255.255.0 0.0.0.255 area 0
+Spoke(config-router)# network 192.168.1.0 0.0.255.255 area 0
+
+Spoke(config)# interface Tunnel0
+Spoke(config-if)# ip ospf network broadcast
+Spoke(config-if)# ip ospf priority 0
+! Priority 0 = هرگز DR نمی‌شود
+
+! بررسی
+Hub# show ip ospf neighbor
+Hub# show ip route ospf
+Spoke# show dmvpn
+! ببین: Spoke-to-Spoke Direct بعد از اولین ترافیک</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی MPLS L3 VPN</h3>
+    <pre><code>! چک‌لیست عیب‌یابی:
+
+! ۱. Underlay IGP
+PE1# show ip route 2.2.2.2
+PE1# show ip ospf neighbor
+
+! ۲. MPLS LDP
+PE1# show mpls ldp neighbor
+PE1# show mpls forwarding-table
+! باید Peer و Labelها را ببینی
+
+! ۳. MP-BGP Session
+PE1# show bgp vpnv4 unicast all summary
+! باید State = Established باشد
+
+! ۴. VRF Routes
+PE1# show ip route vrf CUST-A
+PE1# show bgp vpnv4 unicast vrf CUST-A
+
+! ۵. Import/Export RT
+PE1# show bgp vpnv4 unicast rd 65000:1
+! ببین: Extended Community: RT:65000:1
+
+! ۶. End-to-End
+PE1# ping vrf CUST-A 192.168.2.1
+
+! اگر پینگ نمی‌رود:
+! - Next Hop در MP-BGP حل شده؟
+! - MPLS Label صحیح?
+! - VRF Route روی PE2 هست؟</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در GNS3/EVE-NG پنج روتر بساز: CE1، PE1، P1، PE2، CE2</li>
+      <li>Underlay OSPF در Core (P1 و PE1 و PE2) در Area 0</li>
+      <li>MPLS LDP روی Interfaceهای Core فعال کن</li>
+      <li>Loopback روی هر PE/P (مثل 1.1.1.1، 2.2.2.2، 3.3.3.3)</li>
+      <li>VRF CUSTOMER-A روی PE1 و PE2 با RD یکسان بساز</li>
+      <li>Interfaceهای مشتری را به VRF اختصاص بده</li>
+      <li>MP-BGP VPNv4 بین PE1 و PE2 با Update-Source Loopback فعال کن</li>
+      <li>Redistribute Connected داخل VRF به MP-BGP</li>
+      <li>از CE1 به CE2 پینگ بزن — باید موفق باشد</li>
+      <li>یک مشتری دوم (CUSTOMER-B) با Subnet یکسان اضافه کن</li>
+      <li>با <code>show ip route vrf CUSTOMER-A</code> و <code>show ip route vrf CUSTOMER-B</code> جداسازی را تأیید کن</li>
+      <li>یک DMVPN در شبکه‌ی جداگانه بساز: ۱ Hub + ۳ Spoke در Phase 3</li>
+      <li>OSPF روی DMVPN Tunnel و تست ارتباط Spoke-to-Spoke</li>
+      <li>DMVPN را با IPsec Profile امن کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>LDP Neighbor Up نمی‌شود:</strong> OSPF Route به Loopback طرف مقابل وجود ندارد یا MPLS روی Interface فعال نیست.</li>
+      <li><strong>MP-BGP VPNv4 Neighbor Up نمی‌شود:</strong> Update-Source Loopback، Address Family Activation، یا Next-Hop-Self اشتباه.</li>
+      <li><strong>VRF Route در MP-BGP اعلان نمی‌شود:</strong> Redistribute داخل AF vrf انجام نشده یا Route-Target اشتباه.</li>
+      <li><strong>MPLS Label Pop نمی‌شود:</strong> PHP باید خودکار انجام شود — اگر نیست، ممکن است Label Mismatch باشد.</li>
+      <li><strong>DMVPN Spoke Register نمی‌شود:</strong> NHRP Network-ID، Authentication، یا NHS Mapping اشتباه.</li>
+      <li><strong>NHRP Resolution Timeout:</strong> NBMA IP در Mapping اشتباه، یا Firewall بسته‌های NHRP را بلاک می‌کند.</li>
+      <li><strong>Spoke-to-Spoke Direct نمی‌شود:</strong> Phase 2 یا 3 لازم است، به‌همراه NHRP Redirect/Shortcut.</li>
+      <li><strong>IPsec SA برقرار نمی‌شود در DMVPN:</strong> Wildcard PSK، Transform-Set ناسازگار، یا Tunnel Protection اعمال نشده.</li>
+      <li><strong>MTU problem در DMVPN:</strong> MTU 1400 و TCP Adjust-MSS 1360 بگذار.</li>
+      <li><strong>OSPF روی DMVPN کار نمی‌کند:</strong> Network Type، Priority Hub، یا Split Horizon.</li>
+      <li><strong>MPLS Blackhole:</strong> Label در FIB هست ولی Path در Label Stack خالی است — LDP Hold Time یا Loop.</li>
+      <li><strong>RD Duplicate:</strong> دو VRF با RD یکسان → Loop یا Overwrite — RD باید یکتا باشد.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="mpls">MPLS</span> •
+      <span class="term" data-term="dmvpn">DMVPN</span> •
+      <span class="term" data-term="vrf">VRF</span> •
+      <span class="term" data-term="nhrp">NHRP</span> •
+      <span class="term" data-term="gre">GRE</span> •
+      <span class="term" data-term="ipsec">IPsec</span> •
+      <span class="term" data-term="bgp">BGP</span> •
+      <span class="term" data-term="ospf">OSPF</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="ccnp-05" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) MPLS در کدام لایه OSI کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> Layer 1</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> بین Layer 2 و 3 (L2.5)</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> Layer 4</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> Layer 7</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) LSR در MPLS چه کاری انجام می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> Push Label در ورودی</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> Pop Label در خروجی</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> Swap Label در Core</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> فقط IP Routing</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) در هدر MPLS، فیلد S (Bottom of Stack) چه معنایی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> شروع Stack</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> 1 = آخرین Label در Stack</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> شماره Label</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> QoS Priority</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) LDP از چه پورت TCP استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> TCP/179</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> TCP/646 (UDP/646 برای Discovery)</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> TCP/646</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> TCP/443</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) PHP (Penultimate Hop Popping) چه می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> دو Label Push می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> روتر یکی به Egress Pop می‌کند تا Egress فقط یک Lookup انجام دهد</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> TTL را Zero می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> رمزنگاری Label</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) در MPLS L3 VPN، نقش PE چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> روتر مشتری</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> روتر داخلی ISP</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> روتر مرزی ISP با VRF و MPLS که به مشتری وصل است</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> سرور مدیریت</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) تفاوت RD و RT در MPLS L3 VPN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> RD و RT هر دو Import/Export را کنترل می‌کنند</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> RD یکتایی Route، RT کنترل Import/Export</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> RD برای IPv6، RT برای IPv4</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) MP-BGP برای MPLS L3 VPN از کدام Address Family استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> ipv4 unicast</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> ipv6 unicast</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> vpnv4 unicast</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> l2vpn evpn</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) با ip vrf forwarding روی Interface چه اتفاقی می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> VLAN عوض می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> IP Config پاک می‌شود — دوباره IP بده</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> Shutdown می‌شود</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> هیچ تغییری نمی‌کند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) DMVPN از چه تکنولوژی‌هایی تشکیل شده است؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> فقط GRE</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> فقط IPsec</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> mGRE + NHRP + IPsec</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> MPLS + BGP + LDP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) NHRP در DMVPN چه نقشی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> رمزنگاری</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> حل Mapping Tunnel IP به NBMA IP برای ارتباط Spoke-to-Spoke</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> مسیریابی داینامیک</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> Label Distribution</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) NHS در NHRP چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> Next Hop Slave</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> Next Hop Server — Hub</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> Network Hub Segment</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> Node Host Switch</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) تفاوت Phase 2 و Phase 3 در DMVPN چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> Phase 2 کندتر است</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> Phase 3 از Multicast پشتیبانی نمی‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> Phase 2 نیاز به تغییر Next-Hop دارد، Phase 3 از NHRP Shortcut استفاده می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) در DMVPN، Handshake NHRP بین کدام‌ها اتفاق می‌افتد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> Spokeها مستقیم</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> Spoke به NHS (Hub) — برای Registration اولیه</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Hub به Hub</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> از طریق DNS</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۵) در DMVPN Phase 3، دستور <code>ip nhrp redirect</code> روی کدام روتر می‌آید؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> Hub</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> Spoke</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> هر دو</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> فقط روی CE</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) رمزنگاری DMVPN با چه مکانیزمی انجام می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> HTTPS</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> IPsec Profile + Tunnel Protection</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> SSH</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> MACsec</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) MTU مناسب برای DMVPN Tunnel چقدر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> 1500</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> 9000</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> 1400 (با TCP Adjust-MSS 1360)</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> 128</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) کدام یک از موارد زیر در MPLS L3 VPN برای جداسازی مشتریان استفاده می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> VLAN</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> VRF + RD + RT + MP-BGP</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> ACL</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> NAT</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی Service Provider با MPLS L3 VPN + DMVPN بساز:</p>
+    <ul>
+      <li><strong>Core ISP:</strong> ۳ روتر (PE1، P1، PE2) با OSPF و MPLS LDP</li>
+      <li><strong>دو مشتری:</strong> CUSTOMER-A و CUSTOMER-B روی PE1 و PE2</li>
+      <li><strong>Subnet یکسان:</strong> 192.168.1.0/24 برای هر دو مشتری</li>
+      <li><strong>VRF-Lite:</strong> روی PE1 و PE2 برای جداسازی</li>
+      <li><strong>MP-BGP VPNv4:</strong> بین PE1 و PE2 برای تبادل مسیرها</li>
+      <li><strong>Route-Target:</strong> هر مشتری فقط مسیرهای خودش را ببیند</li>
+      <li><strong>DMVPN (شبکه جدا):</strong> ۱ Hub + ۳ Spoke در Phase 3 با IPsec</li>
+      <li><strong>OSPF روی DMVPN:</strong> با Hub به‌عنوان DR</li>
+      <li><strong>Spoke-to-Spoke:</strong> با NHRP Shortcut تأیید شود</li>
+      <li><strong>NAT/PAT:</strong> روی Hub برای اینترنت شبیه‌سازی‌شده</li>
+      <li>مستندسازی کامل با Diagram، IP Plan، RT Plan و Label Plan</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>Route Leak بین دو مشتری با RT — یک Subnet خاص اشتراکی بین دو VRF.</li>
+        <li>Extranet VPN با RT متفاوت — دو مشتری با Subnet یکسان به یک Subnet مشترک وصل شوند.</li>
+        <li>DMVPN با OSPF و EIGRP هر دو روی یک Tunnel — BGP به‌عنوان Backbone.</li>
+        <li>QoS روی MPLS — EXP Bits برای VoIP و Data.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>MPLS:</strong> L2.5، مبتنی بر Label، Label=۲۰ بیت، EXP=۳ بیت، S=۱ بیت، TTL=۸ بیت</li>
+      <li><strong>LSR:</strong> Swap Label — <strong>LER:</strong> Push/Pop</li>
+      <li><strong>LSP:</strong> مسیر یک‌طرفه از Ingress تا Egress</li>
+      <li><strong>LDP:</strong> TCP/646، توزیع Label بین LSRها، Router-ID Loopback</li>
+      <li><strong>PHP:</strong> روتر یکی به Egress، Label را Pop می‌کند</li>
+      <li><strong>MPLS L3 VPN:</strong> PE + P + CE + VRF + MP-BGP + LDP</li>
+      <li><strong>VRF-Lite:</strong> VRF بدون MPLS — برای Multi-Tenant ساده</li>
+      <li><strong>RD:</strong> یکتایی Route — <strong>RT:</strong> Import/Export کنترل</li>
+      <li><strong>MP-BGP:</strong> AF vpnv4 unicast برای MPLS L3 VPN</li>
+      <li><strong>DMVPN:</strong> mGRE + NHRP + IPsec</li>
+      <li><strong>NHRP:</strong> NHS (Hub) + NHC (Spoke)، Network-ID، Authentication</li>
+      <li><strong>DMVPN Phase 1:</strong> Hub-and-Spoke — <strong>Phase 2:</strong> Spoke-to-Spoke با Next-Hop Change — <strong>Phase 3:</strong> NHRP Redirect + Shortcut</li>
+      <li><strong>DMVPN + IPsec:</strong> Wildcard PSK روی Hub، Tunnel Protection IPsec Profile</li>
+      <li><strong>MTU در DMVPN:</strong> 1400 + TCP Adjust-MSS 1360</li>
+      <li><strong>OSPF روی DMVPN:</strong> Hub DR (Priority 100)، Spoke Priority 0</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccnp_Ch_04.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccnp-05">✅ پایان فصل</button>
+      <a class="btn" href="ccnp_Ch_06.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

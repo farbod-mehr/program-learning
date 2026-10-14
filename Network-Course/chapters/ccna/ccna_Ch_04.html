@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۴ CCNA — سرویس‌های IP (NAT، DHCP، NTP، QoS)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="ccna" data-chapter="ccna-04">
+
+<!-- ۲) نوار پیشرفت -->
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر فصل -->
+  <header class="chapter-header">
+    <h1>📘 فصل ۴ — سرویس‌های IP (IP Services)</h1>
+    <div class="meta">
+      <span>📖 ۷۵ دقیقه</span>
+      <span>🎯 وزن در آزمون: ۱۰٪</span>
+      <span>🧩 ۱۵ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      در فصل‌های قبل با آدرس‌دهی و مسیریابی آشنا شدی. حالا زمان آن رسیده که
+      <strong>سرویس‌های پایه‌ی شبکه</strong> را یاد بگیری: چطور با
+      <span class="term" data-term="nat">NAT</span> چند دستگاه داخلی را با یک IP عمومی
+      به اینترنت وصل کنیم، <span class="term" data-term="dhcp">DHCP</span> چطور خودکار IP
+      توزیع می‌کند، <span class="term" data-term="ntp">NTP</span> زمان را هماهنگ می‌کند،
+      و <span class="term" data-term="qos">QoS</span> چطور ترافیک حساس را اولویت‌بندی می‌کند.
+    </p>
+    <p>
+      این فصل، پل بین <strong>دانش نظری</strong> و <strong>شبکه‌های واقعی</strong> است.
+      در انتها می‌توانی یک شبکه‌ی کامل با NAT، DHCP سرور، NTP و SNMP راه‌اندازی کنی.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>مفهوم NAT و چرا به آن نیاز داریم</li>
+      <li>انواع NAT: Static، Dynamic، PAT (Overload)</li>
+      <li>پیکربندی NAT/PAT روی روتر سیسکو</li>
+      <li>بررسی و عیب‌یابی NAT</li>
+      <li>DHCP Server و Client در سیسکو</li>
+      <li>DHCP Relay (IP Helper-Address)</li>
+      <li>DNS و تنظیمات Client</li>
+      <li>NTP و همگام‌سازی زمان</li>
+      <li>TFTP/FTP/SCP برای مدیریت فایل</li>
+      <li>SNMP و Syslog</li>
+      <li>QoS — مفاهیم و ابزارهای پایه</li>
+      <li>عیب‌یابی سرویس‌های IP</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا نمی‌توانیم آدرس‌های خصوصی را مستقیم روی اینترنت استفاده کنیم؟</li>
+      <li>یک روتر چه چیزهایی را برای توزیع DHCP نیاز دارد؟</li>
+      <li>اگر زمان روترها با هم فرق داشته باشد، چه مشکلاتی پیش می‌آید؟</li>
+      <li>ترافیک VoIP و دانلود فایل روی یک لینک، چطور اولویت‌بندی می‌شوند؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه‌ی آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۴.۱ ==== -->
+    <h3>۴.۱ مفهوم NAT و چرا به آن نیاز داریم</h3>
+    <p>
+      <span class="term" data-term="nat">NAT</span> (Network Address Translation) یک تکنیک
+      است که آدرس‌های <strong>خصوصی</strong> (RFC 1918) را در مرز شبکه به آدرس
+      <strong>عمومی</strong> ترجمه می‌کند و برعکس.
+    </p>
+
+    <p><strong>دلایل نیاز به NAT:</strong></p>
+    <ul>
+      <li><strong>کمبود IPv4:</strong> 4.3 میلیارد آدرس برای ~۲۰ میلیارد دستگاه کافی نیست</li>
+      <li><strong>صرفه‌جویی:</strong> هزاران دستگاه داخلی با یک IP عمومی کار می‌کنند</li>
+      <li><strong>امنیت:</strong> آدرس‌های داخلی از دید بیرون مخفی می‌مانند</li>
+      <li><strong>انعطاف:</strong> تغییر شبکه‌ی داخلی نیازی به تغییر IP عمومی ندارد</li>
+    </ul>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ محدودیت‌های NAT</div>
+      <ul style="margin:6px 0 0">
+        <li>پروتکل‌هایی که IP را داخل Payload جا می‌دهند (مثل FTP Active و SIP) ممکن است مشکل بخورند.</li>
+        <li>End-to-End Connectivity از بین می‌رود — دستگاه بیرونی نمی‌تواند مستقیم با داخلی حرف بزند.</li>
+        <li>Overhead پردازشی روی روتر بالاتر می‌رود.</li>
+        <li>لاگ‌گیری و Trace سخت‌تر می‌شود.</li>
+      </ul>
+    </div>
+
+    <p><strong>اصطلاحات مهم NAT:</strong></p>
+    <ul>
+      <li><strong>Inside Local:</strong> آدرس واقعی دستگاه داخلی (مثلاً 192.168.1.10)</li>
+      <li><strong>Inside Global:</strong> آدرس عمومی که دستگاه داخلی به بیرون نشان داده می‌شود</li>
+      <li><strong>Outside Local:</strong> آدرس دستگاه بیرونی از دید داخل (معمولاً یکسان)</li>
+      <li><strong>Outside Global:</strong> آدرس واقعی دستگاه بیرونی روی اینترنت</li>
+    </ul>
+
+    <!-- ==== ۴.۲ ==== -->
+    <h3>۴.۲ انواع NAT</h3>
+
+    <div style="display:grid;gap:12px;margin:14px 0">
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🔒 Static NAT (1-to-1)</strong>
+        <p style="margin:6px 0">یک IP داخلی ↔ یک IP عمومی. برای سرورهای عمومی (Web، Mail) کاربرد دارد.</p>
+        <pre><code>Router(config)# ip nat inside source static 192.168.1.10 203.0.113.10</code></pre>
+      </div>
+
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>♻️ Dynamic NAT (Many-to-Many)</strong>
+        <p style="margin:6px 0">مجموعه‌ای از IPهای داخلی با مجموعه‌ای از IPهای عمومی ترجمه می‌شوند. اول Pool تمام شود، دستگاه‌های بعدی NAT نمی‌شوند.</p>
+        <pre><code>Router(config)# ip nat pool PUB 203.0.113.1 203.0.113.10 netmask 255.255.255.0
+Router(config)# access-list 1 permit 192.168.1.0 0.0.0.255
+Router(config)# ip nat inside source list 1 pool PUB</code></pre>
+      </div>
+
+      <div style="background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <strong>🏆 PAT / NAT Overload (Many-to-One)</strong>
+        <p style="margin:6px 0">همه‌ی دستگاه‌های داخلی از یک IP عمومی با پورت‌های متفاوت استفاده می‌کنند — رایج‌ترین نوع NAT.</p>
+        <pre><code>Router(config)# access-list 1 permit 192.168.1.0 0.0.0.255
+Router(config)# ip nat inside source list 1 interface Gi0/1 overload</code></pre>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">نوع</th>
+          <th style="padding:6px;border:1px solid var(--border)">نگاشت</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Static NAT</td><td style="padding:6px;border:1px solid var(--border)">1:1</td><td style="padding:6px;border:1px solid var(--border)">سرورهای عمومی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Dynamic NAT</td><td style="padding:6px;border:1px solid var(--border)">N:N</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌های متوسط</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">PAT / Overload</td><td style="padding:6px;border:1px solid var(--border)">N:1</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌های خانگی و سازمانی</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۴.۳ ==== -->
+    <h3>۴.۳ پیکربندی NAT/PAT — گام به گام</h3>
+
+    <p>هر پیکربندی NAT سه بخش دارد: <strong>مشخص کردن Inside</strong>،
+      <strong>مشخص کردن Outside</strong>، و <strong>تعریف قانون NAT</strong>.</p>
+
+    <pre><code>! ===== پیکربندی PAT (رایج‌ترین) =====
+
+! گام ۱: تعیین اینترفیس‌های داخل و خارج
+Router(config)# interface Gi0/0
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+
+Router(config)# interface Gi0/1
+Router(config-if)# ip nat outside
+Router(config-if)# exit
+
+! گام ۲: تعریف ACL برای شبکه‌ی داخلی
+Router(config)# access-list 1 permit 192.168.1.0 0.0.0.255
+
+! گام ۳: فعال‌سازی NAT با Overload
+Router(config)# ip nat inside source list 1 interface Gi0/1 overload
+
+! بررسی
+Router# show ip nat translations
+Router# show ip nat statistics
+Router# show ip nat translations verbose
+Router# clear ip nat translation *</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      کلمه‌ی <code>overload</code> در انتهای دستور، همان PAT است.
+      بدون آن، فقط Dynamic NAT ساده داری.
+    </div>
+
+    <!-- ==== ۴.۴ ==== -->
+    <h3>۴.۴ عیب‌یابی NAT</h3>
+
+    <pre><code>! مشاهده‌ی ترجمه‌های فعال
+Router# show ip nat translations
+Pro Inside global      Inside local       Outside local      Outside global
+tcp 203.0.113.1:1024   192.168.1.10:1024  8.8.8.8:443        8.8.8.8:443
+
+! آمار NAT
+Router# show ip nat statistics
+Total active translations: 42 (0 static, 42 dynamic; 42 extended)
+Outside interfaces: Gi0/1
+Inside interfaces: Gi0/0
+Hits: 15243  Misses: 12
+
+! پاک کردن جدول
+Router# clear ip nat translation *
+Router# clear ip nat translation inside 192.168.1.10</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ اشکالات رایج NAT</div>
+      <ul style="margin:6px 0 0">
+        <li>فراموش کردن <code>ip nat inside</code> یا <code>ip nat outside</code> روی اینترفیس‌ها</li>
+        <li>ACL اشتباه — هیچ ترافیکی اجازه ندارد</li>
+        <li>Interface اشتباه برای Overload — باید <strong>Outside</strong> باشد</li>
+        <li>Overlapping بین شبکه‌ی داخلی و خارجی — نیاز به NAT روی هر دو طرف</li>
+      </ul>
+    </div>
+
+    <!-- ==== ۴.۵ ==== -->
+    <h3>۴.۵ DHCP Server در سیسکو</h3>
+    <p>
+      <span class="term" data-term="dhcp">DHCP</span> به‌طور خودکار IP، Gateway،
+      DNS و سایر پارامترها را به کلاینت‌ها می‌دهد. یک سرور DHCP در سیسکو شامل:
+    </p>
+
+    <pre><code>! گام ۱: حذف پیکربندی‌های پیش‌فرض (مثلاً DHCP Pool پیش‌فرض)
+Router(config)# no ip dhcp pool LAN
+
+! گام ۲: ایجاد Pool و تعریف شبکه
+Router(config)# ip dhcp pool LAN
+Router(dhcp-config)# network 192.168.1.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.1.1
+Router(dhcp-config)# dns-server 8.8.8.8 1.1.1.1
+Router(dhcp-config)# domain-name example.local
+Router(dhcp-config)# lease 7
+Router(dhcp-config)# exit
+
+! گام ۳: حذف آدرس‌هایی که نباید توزیع شوند
+Router(config)# ip dhcp excluded-address 192.168.1.1 192.168.1.20
+Router(config)# ip dhcp excluded-address 192.168.1.254
+
+! بررسی
+Router# show ip dhcp binding
+Router# show ip dhcp pool
+Router# show ip dhcp server statistics</code></pre>
+
+    <!-- ==== ۴.۶ ==== -->
+    <h3>۴.۶ DHCP Relay (IP Helper-Address)</h3>
+    <p>
+      اگر سرور DHCP در یک Subnet دیگر باشد، روتر نمی‌تواند Broadcast کلاینت را
+      به آن برساند. راه‌حل: <strong>DHCP Relay Agent</strong>.
+    </p>
+
+    <pre><code>! روی اینترفیس نزدیک به کلاینت (Subnet کلاینت)
+Router(config)# interface Gi0/0
+Router(config-if)# ip helper-address 192.168.100.5
+! آدرس سرور DHCP در Subnet دیگر
+
+! بررسی
+Router# show ip interface Gi0/0 | include helper</code></pre>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ نکته‌ی کاربردی</div>
+      دستور <code>ip helper-address</code> به‌طور پیش‌فرض چند UDP Port را Forward می‌کند:
+      DHCP، TFTP، DNS، NetBIOS، TACACS و... فقط برای DHCP می‌خواهی؟ با
+      <code>no ip forward-protocol udp</code> سایر سرویس‌ها را حذف کن.
+    </div>
+
+    <!-- ==== ۴.۷ ==== -->
+    <h3>۴.۷ DNS و تنظیمات Client</h3>
+    <p>
+      <span class="term" data-term="dns">DNS</span> نام دامنه را به IP ترجمه می‌کند.
+      روتر سیسکو می‌تواند به‌عنوان DNS Client یا DNS Server کار کند.
+    </p>
+
+    <pre><code>! تنظیم روتر به‌عنوان DNS Client
+Router(config)# ip domain-lookup
+Router(config)# ip name-server 8.8.8.8
+Router(config)# ip name-server 1.1.1.1
+
+! تست
+Router# ping google.com
+Router# show hosts
+
+! غیرفعال کردن DNS Lookup (برای جلوگیری از تایپ اشتباه)
+Router(config)# no ip domain-lookup</code></pre>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      وقتی در CLI سیسکو یک دستور اشتباه تایپ کنی، روتر تلاش می‌کند آن را به‌عنوان نام DNS
+      ترجمه کند و چند ثانیه معطل می‌شود. با <code>no ip domain-lookup</code> این معطلی را حل کن.
+    </div>
+
+    <!-- ==== ۴.۸ ==== -->
+    <h3>۴.۸ NTP — همگام‌سازی زمان</h3>
+    <p>
+      <span class="term" data-term="ntp">NTP</span> (Network Time Protocol) زمان همه‌ی
+      دستگاه‌ها را هماهنگ می‌کند. زمان دقیق برای لاگ‌ها، گواهی‌های SSL، Kerberos و
+      پایش شبکه حیاتی است.
+    </p>
+
+    <pre><code>! روتر به‌عنوان NTP Client
+Router(config)# ntp server 216.239.35.0
+Router(config)# ntp server time.google.com
+Router(config)# ntp master 5      ! اگر خودت سرور زمانی، با Stratum 5
+
+! تعیین Timezone و Daylight Saving
+Router(config)# clock timezone IRST +3 30
+Router(config)# clock summer-time IRDT recurring
+
+! بررسی
+Router# show ntp status
+Router# show ntp associations
+Router# show clock
+Router# show clock detail</code></pre>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Stratum</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">0</td><td style="padding:6px;border:1px solid var(--border)">دستگاه مرجع مثل ساعت اتمی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">مستقیم به Stratum 0 وصل است</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">از Stratum 1 می‌گیرد</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">15</td><td style="padding:6px;border:1px solid var(--border)">حداکثر فاصله از منبع اصلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">16</td><td style="padding:6px;border:1px solid var(--border)">همگام نیست</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۴.۹ ==== -->
+    <h3>۴.۹ TFTP، FTP و SCP برای مدیریت فایل</h3>
+
+    <pre><code>! بکاپ Configuration روی TFTP
+Router# copy running-config tftp://192.168.1.100/router-backup.cfg
+
+! بازیابی از TFTP
+Router# copy tftp://192.168.1.100/router-backup.cfg running-config
+
+! آپلود IOS با FTP
+Router# copy ftp://user:pass@192.168.1.100/c2900-universalk9.bin flash:
+
+! استفاده از SCP (امن با SSH)
+Router(config)# ip scp server enable
+Router# copy running-config scp://admin@192.168.1.100/backup.cfg</code></pre>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">پروتکل</th>
+          <th style="padding:6px;border:1px solid var(--border)">پورت</th>
+          <th style="padding:6px;border:1px solid var(--border)">رمزنگاری</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">TFTP</td><td style="padding:6px;border:1px solid var(--border)">UDP/69</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">فایل‌های کوچک در شبکه‌ی داخلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">FTP</td><td style="padding:6px;border:1px solid var(--border)">TCP/21</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">فایل‌های بزرگ</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">SCP</td><td style="padding:6px;border:1px solid var(--border)">TCP/22</td><td style="padding:6px;border:1px solid var(--border)">✅ (SSH)</td><td style="padding:6px;border:1px solid var(--border)">امن، توصیه‌شده</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۴.۱۰ ==== -->
+    <h3>۴.۱۰ SNMP و Syslog</h3>
+    <p><strong>SNMP</strong> برای پایش و مدیریت متمرکز دستگاه‌های شبکه استفاده می‌شود.</p>
+
+    <pre><code>! SNMPv2c (ساده ولی ناامن)
+Router(config)# snmp-server community PUBLIC ro
+Router(config)# snmp-server community PRIVATE rw
+Router(config)# snmp-server host 192.168.1.100 version 2c PUBLIC
+Router(config)# snmp-server location Tehran-DC1
+Router(config)# snmp-server contact admin@example.com
+
+! SNMPv3 (امن - توصیه‌شده)
+Router(config)# snmp-server group ADMINS v3 priv
+Router(config)# snmp-server user admin ADMINS v3 auth sha AuthPass123 priv aes 128 PrivPass123
+
+! بررسی
+Router# show snmp
+Router# show snmp community</code></pre>
+
+    <p><strong>Syslog</strong> برای ارسال لاگ‌ها به سرور مرکزی:</p>
+
+    <pre><code>Router(config)# logging host 192.168.1.100
+Router(config)# logging trap informational
+Router(config)# logging source-interface Gi0/0
+Router(config)# service timestamps log datetime msec localtime show-timezone
+
+! بررسی
+Router# show logging</code></pre>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Level</th>
+          <th style="padding:6px;border:1px solid var(--border)">Name</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">0</td><td style="padding:6px;border:1px solid var(--border)">Emergency</td><td style="padding:6px;border:1px solid var(--border)">سیستم از کار افتاده</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">1</td><td style="padding:6px;border:1px solid var(--border)">Alert</td><td style="padding:6px;border:1px solid var(--border)">اقدام فوری لازم</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">2</td><td style="padding:6px;border:1px solid var(--border)">Critical</td><td style="padding:6px;border:1px solid var(--border)">شرایط بحرانی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">3</td><td style="padding:6px;border:1px solid var(--border)">Error</td><td style="padding:6px;border:1px solid var(--border)">خطا</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">4</td><td style="padding:6px;border:1px solid var(--border)">Warning</td><td style="padding:6px;border:1px solid var(--border)">هشدار</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">5</td><td style="padding:6px;border:1px solid var(--border)">Notification</td><td style="padding:6px;border:1px solid var(--border)">اطلاع‌رسانی عادی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">6</td><td style="padding:6px;border:1px solid var(--border)">Informational</td><td style="padding:6px;border:1px solid var(--border)">اطلاعات عمومی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">7</td><td style="padding:6px;border:1px solid var(--border)">Debugging</td><td style="padding:6px;border:1px solid var(--border)">پیام‌های Debug</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۴.۱۱ ==== -->
+    <h3>۴.۱۱ QoS — مفاهیم پایه</h3>
+    <p>
+      <span class="term" data-term="qos">QoS</span> (Quality of Service) مجموعه‌ای از
+      تکنیک‌هاست برای مدیریت ترافیک و اولویت‌بندی آن — مخصوصاً در لینک‌های اشباع.
+    </p>
+
+    <p><strong>سه مدل QoS:</strong></p>
+    <ul>
+      <li><strong>Best Effort:</strong> بدون تضمین — پیش‌فرض اینترنت</li>
+      <li><strong>Integrated Services (IntServ):</strong> رزرو منابع End-to-End — مقیاس‌ناپذیر</li>
+      <li><strong>Differentiated Services (DiffServ):</strong> دسته‌بندی ترافیک بر اساس DSCP — مقیاس‌پذیر و رایج</li>
+    </ul>
+
+    <p><strong>مفاهیم کلیدی:</strong></p>
+    <ul>
+      <li><strong>Classification:</strong> شناسایی نوع ترافیک (VoIP، Video، Data)</li>
+      <li><strong>Marking:</strong> علامت‌گذاری بسته‌ها (DSCP یا CoS)</li>
+      <li><strong>Queuing:</strong> صف‌بندی در اینترفیس خروجی</li>
+      <li><strong>Policing:</strong> محدود کردن نرخ ترافیک (Drop یا Remark)</li>
+      <li><strong>Shaping:</strong> تأخیر و صاف کردن ترافیک (Buffer)</li>
+    </ul>
+
+    <p><strong>DSCP (Differentiated Services Code Point):</strong> ۶ بیت در هدر IP که نوع سرویس را مشخص می‌کند.
+      مقادیر مهم:</p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">DSCP</th>
+          <th style="padding:6px;border:1px solid var(--border)">نام</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">46 (EF)</td><td style="padding:6px;border:1px solid var(--border)">Expedited Forwarding</td><td style="padding:6px;border:1px solid var(--border)">VoIP (بحرانی)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">34 (AF41)</td><td style="padding:6px;border:1px solid var(--border)">Assured Forwarding</td><td style="padding:6px;border:1px solid var(--border)">ویدیو کنفرانس</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">26 (AF31)</td><td style="padding:6px;border:1px solid var(--border)">Assured Forwarding</td><td style="padding:6px;border:1px solid var(--border)">Streaming ویدیو</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">0 (BE)</td><td style="padding:6px;border:1px solid var(--border)">Best Effort</td><td style="padding:6px;border:1px solid var(--border)">ترافیک عمومی</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>! نمونه: Marking VoIP روی روتر
+Router(config)# class-map match-any VOICE
+Router(config-cmap)# match protocol rtp audio
+Router(config-cmap)# match access-group name VOICE-ACL
+
+Router(config)# policy-map QoS-POLICY
+Router(config-pmap)# class VOICE
+Router(config-pmap-c)# priority percent 30
+Router(config-pmap)# class class-default
+Router(config-pmap-c)# fair-queue
+
+Router(config)# interface Gi0/1
+Router(config-if)# service-policy output QoS-POLICY</code></pre>
+
+    <!-- ==== ۴.۱۲ ==== -->
+    <h3>۴.۱۲ عیب‌یابی سرویس‌های IP</h3>
+
+    <pre><code>! NAT
+show ip nat translations
+show ip nat statistics
+debug ip nat
+
+! DHCP
+show ip dhcp binding
+show ip dhcp pool
+show ip dhcp server statistics
+debug ip dhcp server events
+
+! NTP
+show ntp status
+show ntp associations
+show clock detail
+
+! SNMP
+show snmp
+show snmp community
+
+! Syslog
+show logging
+show logging | include ERROR
+
+! DNS
+show hosts
+nslookup (از PC)</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      برای PAT، فقط کافیه یه ACL ساده بسازی. همیشه مطمئن شو
+      <code>ip nat inside</code> و <code>ip nat outside</code> روی اینترفیس‌های درست باشه.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      در SNMPv2c، Community String به‌صورت Plain-text ارسال می‌شود.
+      در محیط‌های واقعی همیشه از SNMPv3 با Authentication و Encryption استفاده کن.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای DHCP، همیشه ابتدا <code>ip dhcp excluded-address</code> تعریف کن —
+      آدرس‌های زیرساخت (Router، Switch، Server) نباید توسط DHCP توزیع شوند.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۵ با <span class="term" data-term="acl">ACL</span>،
+      Port Security و امنیت مدیریتی آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در CCNP با <span class="term" data-term="nat">NAT</span> در سناریوهای پیشرفته
+      (NAT-T، Twice NAT) و QoS حرفه‌ای (MQC، NBAR) کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — پیکربندی کامل PAT روی لبه‌ی شبکه</h3>
+    <pre><code>Router> enable
+Router# configure terminal
+Router(config)# hostname EDGE
+
+! اینترفیس داخل
+EDGE(config)# interface Gi0/0
+EDGE(config-if)# ip address 192.168.1.1 255.255.255.0
+EDGE(config-if)# ip nat inside
+EDGE(config-if)# no shutdown
+EDGE(config-if)# exit
+
+! اینترفیس خارج
+EDGE(config)# interface Gi0/1
+EDGE(config-if)# ip address 203.0.113.2 255.255.255.0
+EDGE(config-if)# ip nat outside
+EDGE(config-if)# no shutdown
+EDGE(config-if)# exit
+
+! ACL برای ترافیک داخل
+EDGE(config)# access-list 10 permit 192.168.1.0 0.0.0.255
+
+! فعال‌سازی PAT
+EDGE(config)# ip nat inside source list 10 interface Gi0/1 overload
+
+! بررسی
+EDGE# show ip nat translations
+EDGE# show ip nat statistics</code></pre>
+
+    <h3>مثال ۲ — DHCP Server روی روتر</h3>
+    <pre><code>Router(config)# ip dhcp excluded-address 192.168.10.1 192.168.10.20
+Router(config)# ip dhcp excluded-address 192.168.10.254
+
+Router(config)# ip dhcp pool LAN-10
+Router(dhcp-config)# network 192.168.10.0 255.255.255.0
+Router(dhcp-config)# default-router 192.168.10.1
+Router(dhcp-config)# dns-server 8.8.8.8 1.1.1.1
+Router(dhcp-config)# domain-name company.local
+Router(dhcp-config)# lease 0 12
+Router(dhcp-config)# exit
+
+! بررسی
+Router# show ip dhcp binding
+Router# show ip dhcp pool LAN-10</code></pre>
+
+    <h3>مثال ۳ — DHCP Relay برای Subnet دور</h3>
+    <pre><code>! سرور DHCP در Subnet 192.168.100.0/24
+! کلاینت‌ها در Subnet 192.168.10.0/24
+
+Router(config)# interface Gi0/0
+Router(config-if)# ip address 192.168.10.1 255.255.255.0
+Router(config-if)# ip helper-address 192.168.100.5
+Router(config-if)# no shutdown</code></pre>
+
+    <h3>مثال ۴ — NTP + Syslog + SNMP کامل</h3>
+    <pre><code>Router(config)# ! NTP
+Router(config)# ntp server 216.239.35.0
+Router(config)# ntp server 216.239.35.4
+Router(config)# clock timezone IRST +3 30
+
+Router(config)# ! Syslog
+Router(config)# logging host 192.168.1.100
+Router(config)# logging trap informational
+Router(config)# logging source-interface Gi0/0
+Router(config)# service timestamps log datetime msec localtime show-timezone
+
+Router(config)# ! SNMP
+Router(config)# snmp-server community PUBLIC ro
+Router(config)# snmp-server host 192.168.1.100 version 2c PUBLIC
+Router(config)# snmp-server location Tehran-DC1
+Router(config)# snmp-server contact admin@example.com
+
+! بررسی
+Router# show ntp status
+Router# show logging | include ERROR
+Router# show snmp</code></pre>
+
+    <h3>مثال ۵ — Static NAT برای سرور داخلی</h3>
+    <pre><code>! سرور داخلی 192.168.1.10 باید با IP 203.0.113.10 از اینترنت دیده شود
+Router(config)# ip nat inside source static 192.168.1.10 203.0.113.10
+
+! روی اینترفیس‌ها
+Router(config)# interface Gi0/0
+Router(config-if)# ip nat inside
+Router(config)# interface Gi0/1
+Router(config-if)# ip nat outside
+
+! بررسی
+Router# show ip nat translations
+Pro Inside global      Inside local       Outside local      Outside global
+--- 203.0.113.10       192.168.1.10       ---                ---</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>در Packet Tracer یک روتر 4331 + یک سوئیچ 2960 + ۳ PC اضافه کن</li>
+      <li>روتر به سوئیچ وصل شود (اینترفیس LAN) و به یک Cloud/Internet شبیه‌سازی (اینترفیس WAN)</li>
+      <li>روی روتر: LAN = 192.168.10.1/24، WAN = 203.0.113.2/24</li>
+      <li>روی روتر DHCP Pool بساز (شبکه 192.168.10.0/24، Gateway 192.168.10.1)</li>
+      <li>Excluded-Address برای .1 تا .20 تنظیم کن</li>
+      <li>PCها را روی DHCP تنظیم کن و IP بگیر</li>
+      <li>روی اینترفیس LAN: <code>ip nat inside</code></li>
+      <li>روی اینترفیس WAN: <code>ip nat outside</code></li>
+      <li>یک ACL ساده برای 192.168.10.0/24 بساز و PAT را فعال کن</li>
+      <li>از PC به یک IP اینترنتی (مثلاً 8.8.8.8) ping بزن</li>
+      <li>با <code>show ip nat translations</code> ترجمه‌ها را ببین</li>
+      <li>روی روتر NTP Server تنظیم کن و با <code>show clock</code> بررسی کن</li>
+      <li>Syslog را به یک سرور شبیه‌سازی‌شده در شبکه بفرست</li>
+      <li>SNMP Community برای پایشگر (مثلاً 192.168.10.100) تعریف کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>NAT کار نمی‌کند:</strong> چک کن <code>ip nat inside/outside</code> روی اینترفیس‌هاست؟ ACL درست تعریف شده؟</li>
+      <li><strong>DHCP IP نمی‌دهد:</strong> Excluded Address ممکن است کل Range را پوشش داده باشد؛ <code>show ip dhcp pool</code> و <code>show ip dhcp binding</code> را چک کن.</li>
+      <li><strong>DHCP Relay کار نمی‌کند:</strong> IP Helper Address باید روی اینترفیس نزدیک کلاینت باشد، نه سمت سرور.</li>
+      <li><strong>NTP Sync نمی‌شود:</strong> پورت UDP/123 در Firewall باز باشد، Timezone درست تنظیم شده باشد.</li>
+      <li><strong>SNMP Response نمی‌دهد:</strong> Community String مطابق باشد، ACL مانع نباشد.</li>
+      <li><strong>Syslog نمی‌رسد:</strong> <code>logging host</code> درست؟ Trap Level اجازه می‌دهد؟</li>
+      <li><strong>QoS اثر ندارد:</strong> Policy باید روی اینترفیس خروجی اعمال شود (Output)، نه ورودی.</li>
+      <li><strong>Static NAT برای سرور:</strong> مطمئن شو ACL داخل به سرور اجازه بدهد (به‌خصوص Deny any).</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="nat">NAT</span> •
+      <span class="term" data-term="pat">PAT</span> •
+      <span class="term" data-term="dhcp">DHCP</span> •
+      <span class="term" data-term="dns">DNS</span> •
+      <span class="term" data-term="ntp">NTP</span> •
+      <span class="term" data-term="qos">QoS</span> •
+      <span class="term" data-term="acl">ACL</span> •
+      <span class="term" data-term="subnetting">Subnetting</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۵ سوالی -->
+  <section class="quiz" data-quiz-id="ccna-04" data-duration="900">
+    <h2>🧠 آزمون پایان فصل (۱۵ سوال)</h2>
+    <div class="quiz-timer">۱۵:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱) تفاوت NAT و PAT چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> NAT فقط برای IPv6 است</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> PAT یک IP به چند IP ترجمه می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> NAT معمولاً 1:1 یا N:N، PAT چند داخلی را با یک IP عمومی + پورت‌های متفاوت ترجمه می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۲) در TACACS+ و RADIUS، کدام کل بسته را رمزنگاری می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> RADIUS</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> TACACS+</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> هیچ‌کدام</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> هر دو فقط Password را</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) DHCP DORA مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> Data, Open, Request, Ack</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> Discover, Offer, Request, Acknowledge</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> Detect, Offer, Reply, Accept</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> Define, Open, Resolve, Ack</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) تفاوت Standard ACL و Extended ACL چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> Standard روی Port فیلتر می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> Extended فقط Source را چک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> Standard فقط Source، Extended هم Source، Destination، Protocol و Port را چک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> هیچ تفاوتی ندارند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۵) ACLها به‌طور پیش‌فرض چه رفتاری دارند؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> Deny any (هر بسته با هیچ قانونی مطابقت نکند، مسدود می‌شود)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Permit any</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Log only</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> Drop unknown protocols</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۶) برای فعال‌سازی SSH روی روتر، کدام مراحل لازم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> فقط فعال کردن پورت ۲۲</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> تعریف Hostname، Domain Name، کاربر محلی، RSA Key، و ورژن ۲ SSH</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> فقط تعریف Password</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> اجرای <code>ssh enable</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) NTP چه کاربردی دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> ترجمه IP</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> همگام‌سازی زمان دستگاه‌های شبکه</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> مسیریابی داینامیک</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> توزیع IP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) تفاوت Static NAT و Dynamic NAT چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> Static برای VoIP بهتر است</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> Dynamic یک IP ثابت دارد</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> Static نگاشت ثابت 1:1 دارد، Dynamic از یک Pool استفاده می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) در PAT، کدام دستور درست است؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> <code>ip nat source list 1 pool PUB</code></label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> <code>ip nat inside source list 1 interface Gi0/1 overload</code></label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> <code>nat enable inside</code></label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> <code>nat overload enable</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) تفاوت <code>ip access-list standard</code> و <code>ip access-list extended</code> چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> Extended فقط Source را چک می‌کند</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> Standard جدیدتر است</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> Standard فقط فیلتر Source، Extended فیلتر کامل (Source، Dest، Protocol، Port)</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) DHCP Relay با کدام دستور فعال می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> <code>ip dhcp relay</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> <code>ip helper-address 192.168.1.5</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> <code>ip forward dhcp</code></label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> <code>dhcp relay enable</code></label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۲) کدام پروتکل انتقال فایل، امن‌تر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> TFTP</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> SCP (روی SSH)</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> FTP</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> HTTP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) در SNMP، کدام نسخه امنیت بهتری دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> SNMPv1</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> SNMPv2c</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> SNMPv3</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> همه یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۴) در QoS، منظور از Marking چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> علامت‌گذاری بسته‌ها با DSCP یا CoS برای اولویت‌بندی</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> حذف بسته‌های اضافی</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> فشرده‌سازی داده</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> رمزنگاری ترافیک</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۵) کدام یک از موارد زیر جزو سرویس‌های پایه‌ی IP نیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> DHCP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> STP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> NTP</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> NAT</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی سازمانی کوچک با سرویس‌های کامل IP راه‌اندازی کن:</p>
+    <ul>
+      <li>یک روتر Edge (اتصال به اینترنت شبیه‌سازی‌شده)</li>
+      <li>یک سوئیچ 2960 با ۴ PC در شبکه‌ی داخلی</li>
+      <li>شبکه‌ی داخلی: 192.168.10.0/24</li>
+      <li>DHCP Server روی روتر Edge با Pool مناسب</li>
+      <li>Excluded-Address برای IPهای زیرساخت</li>
+      <li>NAT/PAT روی روتر Edge</li>
+      <li>Static NAT برای یک وب‌سرور داخلی (192.168.10.100 → 203.0.113.100)</li>
+      <li>NTP Server روی روتر + تنظیم Timezone تهران</li>
+      <li>Syslog Server (192.168.10.100) + Trap Level Informational</li>
+      <li>SNMPv2c روی روتر با Community مناسب</li>
+      <li>QoS: اولویت‌بندی ترافیک RTP/صوت</li>
+      <li>Ping از PC به 8.8.8.8 و تست ترجمه‌ی NAT</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>SNMPv3 با Authentication و Encryption راه‌اندازی کن.</li>
+        <li>با <code>debug ip nat</code> ترافیک NAT را در CLI تماشا کن.</li>
+        <li>یک DHCP Pool دوم برای VLAN دیگر بساز و از Router با <code>ip helper-address</code> به آن Relay کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>NAT انواع:</strong> Static (1:1)، Dynamic (N:N)، PAT/Overload (N:1)</li>
+      <li><strong>NAT گام‌ها:</strong> inside + outside + ACL + <code>ip nat inside source</code></li>
+      <li><strong>مشاهده‌ی NAT:</strong> <code>show ip nat translations</code></li>
+      <li><strong>DHCP:</strong> Pool + Excluded-Address + <code>default-router</code></li>
+      <li><strong>DHCP Relay:</strong> <code>ip helper-address [server-ip]</code></li>
+      <li><strong>DORA:</strong> Discover → Offer → Request → Acknowledge</li>
+      <li><strong>DNS Client:</strong> <code>ip name-server</code> + <code>no ip domain-lookup</code></li>
+      <li><strong>NTP:</strong> <code>ntp server [ip]</code> + <code>clock timezone</code></li>
+      <li><strong>TFTP:</strong> UDP/69 (بدون رمزنگاری) | <strong>SCP:</strong> TCP/22 (امن)</li>
+      <li><strong>SNMP Levels:</strong> v1/v2c (Plain)، v3 (Auth+Encrypt)</li>
+      <li><strong>Syslog Levels:</strong> 0 Emergency تا 7 Debugging</li>
+      <li><strong>QoS:</strong> Classification + Marking (DSCP) + Queuing + Policing/Shaping</li>
+      <li><strong>DSCP مهم:</strong> EF=46 (VoIP)، AF41=34 (ویدیو کنفرانس)، BE=0</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="ccna_Ch_03.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="ccna-04">✅ پایان فصل</button>
+      <a class="btn" href="ccna_Ch_05.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

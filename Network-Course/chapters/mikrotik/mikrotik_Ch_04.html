@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light" data-font="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فصل ۴ MikroTik — شبکه بی‌سیم (Wireless)</title>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body data-track="mikrotik" data-chapter="mikrotik-04">
+
+<div class="progress-bar"><div class="fill"></div></div>
+
+<div class="container">
+
+  <!-- ۱) هدر -->
+  <header class="chapter-header">
+    <h1>📗 فصل ۴ — شبکه بی‌سیم (Wireless)</h1>
+    <div class="meta">
+      <span>📖 ۱۰۰ دقیقه</span>
+      <span>🎯 وزن در MTCNA: بخش مهم</span>
+      <span>🧩 ۱۸ سوال پایانی</span>
+      <span>🎓 سطح: متوسط</span>
+    </div>
+  </header>
+
+  <!-- ۳) چشم‌انداز -->
+  <section class="card">
+    <h2>🔭 چشم‌انداز فصل</h2>
+    <p>
+      Wireless قلب محصولات MikroTik است — از لینک‌های Point-to-Point طولانی تا
+      Access Pointهای سازمانی. در این فصل یاد می‌گیری چطور یک لینک بی‌سیم
+      طراحی، پیکربندی و عیب‌یابی کنی.
+    </p>
+    <p>
+      از استانداردهای <span class="term" data-term="wifi-standards">802.11</span>،
+      فرکانس‌ها و کانال‌ها، تا <span class="term" data-term="nv2">NV2</span> و
+      <span class="term" data-term="wpa2">WPA2</span>،
+      <span class="term" data-term="access-list">Access List</span> و
+      <span class="term" data-term="connect-list">Connect List</span> —
+      همه‌ی آنچه برای طراحی Wireless حرفه‌ای نیاز داری.
+    </p>
+  </section>
+
+  <!-- ۴) نقشه راه -->
+  <section class="card">
+    <h2>🗺️ نقشه‌ی راه فصل</h2>
+    <ol class="roadmap">
+      <li>استانداردهای 802.11a/b/g/n/ac/ax</li>
+      <li>باند 2.4GHz و 5GHz — تفاوت‌ها</li>
+      <li>کانال‌ها و کانال‌های غیرهمپوشان</li>
+      <li>پارامترهای RF — Power، Gain، SNR، RSSI</li>
+      <li>حالت‌های Wireless در RouterOS</li>
+      <li>پیکربندی Access Point (ap-bridge)</li>
+      <li>پیکربندی Client (station)</li>
+      <li>Station-Bridge برای Wireless Bridge</li>
+      <li>امنیت: WPA2-PSK، WPA2-EAP، WPA3</li>
+      <li>MAC Filtering با Access List</li>
+      <li>Connect List — کنترل Client</li>
+      <li>NV2 Protocol — مزایا و پیکربندی</li>
+      <li>Nstreme Protocol</li>
+      <li>Country Regulation و محدودیت‌های قانونی</li>
+      <li>ابزارهای Monitor و Snooper</li>
+      <li>عیب‌یابی Wireless</li>
+    </ol>
+  </section>
+
+  <!-- ۵) سوالات محرک -->
+  <section class="card">
+    <h2>🤔 پیش از شروع، فکر کن</h2>
+    <ul>
+      <li>چرا کانال‌های 1، 6 و 11 در باند 2.4GHz مهم هستند؟</li>
+      <li>تفاوت ap-bridge و station-bridge در چیست؟</li>
+      <li>پروتکل NV2 چه مزیتی نسبت به 802.11 استاندارد دارد؟</li>
+      <li>تفاوت Access List و Connect List در RouterOS چیست؟</li>
+      <li>چرا Country Regulation مهم است و بی‌توجهی به آن چه پیامدی دارد؟</li>
+    </ul>
+  </section>
+
+  <!-- ۶) بدنه آموزشی -->
+  <section class="card">
+    <h2>📘 بدنه‌ی آموزشی</h2>
+
+    <!-- ==== ۴.۱ ==== -->
+    <h3>۴.۱ استانداردهای 802.11</h3>
+
+    <p>
+      Wireless استانداردهای مختلفی دارد که هرکدام سرعت، فرکانس و ویژگی‌های متفاوتی دارند:
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">استاندارد</th>
+          <th style="padding:6px;border:1px solid var(--border)">باند</th>
+          <th style="padding:6px;border:1px solid var(--border)">حداکثر سرعت</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11a</td><td style="padding:6px;border:1px solid var(--border)">5GHz</td><td style="padding:6px;border:1px solid var(--border)">54 Mbps</td><td style="padding:6px;border:1px solid var(--border)">قدیمی، OFDM</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11b</td><td style="padding:6px;border:1px solid var(--border)">2.4GHz</td><td style="padding:6px;border:1px solid var(--border)">11 Mbps</td><td style="padding:6px;border:1px solid var(--border)">قدیمی، DSSS</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11g</td><td style="padding:6px;border:1px solid var(--border)">2.4GHz</td><td style="padding:6px;border:1px solid var(--border)">54 Mbps</td><td style="padding:6px;border:1px solid var(--border)">سازگار با b</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11n</td><td style="padding:6px;border:1px solid var(--border)">2.4/5GHz</td><td style="padding:6px;border:1px solid var(--border)">600 Mbps</td><td style="padding:6px;border:1px solid var(--border)">MIMO، HT</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11ac</td><td style="padding:6px;border:1px solid var(--border)">5GHz</td><td style="padding:6px;border:1px solid var(--border)">6.9 Gbps</td><td style="padding:6px;border:1px solid var(--border)">VHT، MU-MIMO</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">802.11ax</td><td style="padding:6px;border:1px solid var(--border)">2.4/5/6GHz</td><td style="padding:6px;border:1px solid var(--border)">9.6 Gbps</td><td style="padding:6px;border:1px solid var(--border)">Wi-Fi 6، OFDMA</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته</div>
+      وقتی می‌خواهی Wireless بپیکربندی کنی، همیشه سعی کن
+      <strong>بالاترین استاندارد مشترک</strong> بین دو طرف را انتخاب کنی —
+      مثلاً اگر AP از <code>802.11ac</code> پشتیبانی می‌کند و Client هم،
+      از <code>802.11ac</code> استفاده کن نه a/n.
+    </div>
+
+    <!-- ==== ۴.۲ ==== -->
+    <h3>۴.۲ باند 2.4GHz و 5GHz</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">2.4 GHz</th>
+          <th style="padding:6px;border:1px solid var(--border)">5 GHz</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">برد</td><td style="padding:6px;border:1px solid var(--border)">بیشتر</td><td style="padding:6px;border:1px solid var(--border)">کمتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">نفوذ از دیوار</td><td style="padding:6px;border:1px solid var(--border)">بهتر</td><td style="padding:6px;border:1px solid var(--border)">کمتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">تداخل</td><td style="padding:6px;border:1px solid var(--border)">زیاد (مایکروویو، Bluetooth)</td><td style="padding:6px;border:1px solid var(--border)">کم</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کانال‌های غیرهمپوشان</td><td style="padding:6px;border:1px solid var(--border)">فقط ۳ کانال (1، 6، 11)</td><td style="padding:6px;border:1px solid var(--border)">بیش از ۲۰ کانال</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">سرعت</td><td style="padding:6px;border:1px solid var(--border)">کمتر</td><td style="padding:6px;border:1px solid var(--border)">بیشتر</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کاربرد</td><td style="padding:6px;border:1px solid var(--border)">شبکه‌های خانگی، IoT</td><td style="padding:6px;border:1px solid var(--border)">سازمانی، لینک PtP</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ نکته</div>
+      باند <strong>2.4GHz</strong> در ایران بسیار شلوغ است — مایکروویو، Bluetooth،
+      بی‌سیم‌های خانگی و... همه در همین باند کار می‌کنند.
+      برای شبکه‌های جدی از <strong>5GHz</strong> استفاده کن.
+    </div>
+
+    <!-- ==== ۴.۳ ==== -->
+    <h3>۴.۳ کانال‌ها و کانال‌های غیرهمپوشان</h3>
+
+    <p>
+      در باند 2.4GHz، تنها <strong>۳ کانال غیرهمپوشان</strong> وجود دارد:
+      <strong>1، 6 و 11</strong>.
+    </p>
+
+    <pre><code># ===== نقشه‌ی کانال‌های 2.4GHz =====
+کانال:  1   2   3   4   5   6   7   8   9   10  11  12  13  14
+پهنا:  |---|
+            |---|
+                |---|
+                    |---|
+                        |---|
+                            |---|
+                                |---|
+                                    |---|
+                                        |---|
+                                            |---|
+                                                |---|
+                                                    |---|
+
+# کانال‌های غیرهمپوشان (بدون تداخل):
+# 1، 6، 11 → استاندارد جهانی
+# 1، 5، 9، 13 → در اروپا/ایران هم می‌شود (با کمی تداخل)
+
+# ===== کانال‌های 5GHz =====
+# کانال‌های غیرهمپوشان زیادی دارد — معمولاً تداخل کمتر
+# UNII-1: 36, 40, 44, 48
+# UNII-2: 52, 56, 60, 64
+# UNII-2e: 100-144
+# UNII-3: 149, 153, 157, 161, 165</code></pre>
+
+    <pre><code># ===== پیکربندی کانال در RouterOS =====
+[admin@MikroTik] > /interface wireless set wlan1 \
+    frequency=2437 \
+    channel-width=20mhz
+
+# فرکانس‌های معادل کانال‌ها:
+# کانال 1 → 2412 MHz
+# کانال 6 → 2437 MHz
+# کانال 11 → 2462 MHz
+
+# ===== کانال 5GHz =====
+[admin@MikroTik] > /interface wireless set wlan1 \
+    band=5ghz-a/n/ac \
+    frequency=5180 \
+    channel-width=20/40/80mhz-Ceee
+# 5180 MHz = کانال 36
+
+# ===== Channel Width =====
+# 20MHz  → استاندارد، تداخل کمتر
+# 40MHz  → سرعت بیشتر، 2 کانال همسایه
+# 80MHz  → سرعت خیلی بالا، 4 کانال همسایه
+# 160MHz → فقط 802.11ac Wave 2</code></pre>
+
+    <!-- ==== ۴.۴ ==== -->
+    <h3>۴.۴ پارامترهای RF — Power، Gain، SNR، RSSI</h3>
+
+    <p>درک این پارامترها برای طراحی Wireless ضروری است:</p>
+
+    <ul>
+      <li><strong>TX Power:</strong> توان ارسال (dBm یا mW)</li>
+      <li><strong>Antenna Gain:</strong> بهره‌ی آنتن (dBi)</li>
+      <li><strong>EIRP:</strong> Effective Isotropic Radiated Power = TX Power + Gain - Cable Loss</li>
+      <li><strong>RSSI:</strong> Received Signal Strength Indicator (dBm)</li>
+      <li><strong>SNR:</strong> Signal-to-Noise Ratio = Signal - Noise (dB)</li>
+      <li><strong>Noise Floor:</strong> سطح نویز محیط (dBm)</li>
+    </ul>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">کیفیت سیگنال</th>
+          <th style="padding:6px;border:1px solid var(--border)">RSSI</th>
+          <th style="padding:6px;border:1px solid var(--border)">SNR</th>
+          <th style="padding:6px;border:1px solid var(--border)">کیفیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">عالی</td><td style="padding:6px;border:1px solid var(--border)">> -50 dBm</td><td style="padding:6px;border:1px solid var(--border)">> 40 dB</td><td style="padding:6px;border:1px solid var(--border)">🚀</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">خوب</td><td style="padding:6px;border:1px solid var(--border)">-50 تا -60</td><td style="padding:6px;border:1px solid var(--border)">25-40</td><td style="padding:6px;border:1px solid var(--border)">✅</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">متوسط</td><td style="padding:6px;border:1px solid var(--border)">-60 تا -70</td><td style="padding:6px;border:1px solid var(--border)">15-25</td><td style="padding:6px;border:1px solid var(--border)">⚠️</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">ضعیف</td><td style="padding:6px;border:1px solid var(--border)">-70 تا -80</td><td style="padding:6px;border:1px solid var(--border)">10-15</td><td style="padding:6px;border:1px solid var(--border)">🐢</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">غیرقابل استفاده</td><td style="padding:6px;border:1px solid var(--border)">< -80 dBm</td><td style="padding:6px;border:1px solid var(--border)">< 10 dB</td><td style="padding:6px;border:1px solid var(--border)">❌</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== مشاهده‌ی RSSI و SNR در RouterOS =====
+[admin@MikroTik] > /interface wireless monitor wlan1
+
+# خروجی نمونه:
+# status: running-ap
+# channel: 5180/20/gn
+# wireless-protocol: 802.11
+# ...
+# registered-clients: 5
+# ...
+
+[admin@MikroTik] > /interface wireless registration-table print
+# خروجی:
+# 0 interface=wlan1 mac-address=AA:BB:CC:DD:EE:FF
+#   signal-strength=-62dBm@6Mbps
+#   tx-rate=54Mbps rx-rate=54Mbps
+#   uptime=1h30m
+
+# ===== بررسی دقیق‌تر =====
+[admin@MikroTik] > /interface wireless registration-table print detail</code></pre>
+
+    <!-- ==== ۴.۵ ==== -->
+    <h3>۴.۵ حالت‌های Wireless در RouterOS</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">Mode</th>
+          <th style="padding:6px;border:1px solid var(--border)">توضیح</th>
+          <th style="padding:6px;border:1px solid var(--border)">کاربرد</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>ap-bridge</strong></td><td style="padding:6px;border:1px solid var(--border)">AP استاندارد با پشتیبانی Bridge</td><td style="padding:6px;border:1px solid var(--border)">Access Point</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>bridge</strong></td><td style="padding:6px;border:1px solid var(--border)">مثل ap-bridge ولی محدود</td><td style="padding:6px;border:1px solid var(--border)">قدیمی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>station</strong></td><td style="padding:6px;border:1px solid var(--border)">Client ساده — فقط MAC خودش</td><td style="padding:6px;border:1px solid var(--border)">Client معمولی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>station-bridge</strong></td><td style="padding:6px;border:1px solid var(--border)">Client که MAC همه‌ی دستگاه‌های LAN را منتقل می‌کند</td><td style="padding:6px;border:1px solid var(--border)">Wireless Bridge (PtP)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>station-pseudobridge</strong></td><td style="padding:6px;border:1px solid var(--border)">Client برای APهای غیر MikroTik</td><td style="padding:6px;border:1px solid var(--border)">سازگاری با APهای سوم</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>station-wds</strong></td><td style="padding:6px;border:1px solid var(--border)">Client برای AP MikroTik با WDS</td><td style="padding:6px;border:1px solid var(--border)">سناریوهای خاص</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>ap-bridge</strong> + WDS</td><td style="padding:6px;border:1px solid var(--border)">AP با WDS Dynamic</td><td style="padding:6px;border:1px solid var(--border)">Roaming</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>alignment-only</strong></td><td style="padding:6px;border:1px solid var(--border)">فقط برای Align آنتن</td><td style="padding:6px;border:1px solid var(--border)">نصب PtP</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ==== ۴.۶ ==== -->
+    <h3>۴.۶ پیکربندی Access Point (ap-bridge)</h3>
+
+    <pre><code># ===== پیکربندی کامل Access Point =====
+
+# ۱. تنظیم Security Profile
+[admin@AP] > /interface wireless security-profiles add \
+    name=secure-wpa2 \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=StrongWPA2Pass@2024
+
+# ۲. تنظیم Wireless Interface
+[admin@AP] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=MyOffice-WiFi \
+    band=2ghz-b/g/n \
+    channel-width=20mhz \
+    frequency=2437 \
+    country=iran \
+    installation=indoor \
+    security-profile=secure-wpa2 \
+    disabled=no
+
+# ۳. اتصال به Bridge
+[admin@AP] > /interface bridge port add bridge=bridge1 interface=wlan1
+
+# ۴. بررسی
+[admin@AP] > /interface wireless monitor wlan1
+[admin@AP] > /interface wireless registration-table print
+
+# ===== SSID مخفی =====
+[admin@AP] > /interface wireless set wlan1 hide-ssid=yes
+# Client باید SSID را دستی وارد کند
+
+# ===== تنظیم Country =====
+[admin@AP] > /interface wireless set wlan1 country=iran
+# این تنظیم، فرکانس‌ها و توان مجاز را بر اساس قوانین ایران محدود می‌کند</code></pre>
+
+    <!-- ==== ۴.۷ ==== -->
+    <h3>۴.۷ پیکربندی Client (station)</h3>
+
+    <pre><code># ===== Client ساده (مثل لپ‌تاپ به AP) =====
+
+[admin@Client] > /interface wireless security-profiles add \
+    name=client-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=StrongWPA2Pass@2024
+
+[admin@Client] > /interface wireless set wlan1 \
+    mode=station \
+    ssid=MyOffice-WiFi \
+    band=2ghz-b/g/n \
+    frequency=2437 \
+    security-profile=client-secure \
+    disabled=no
+
+# ===== IP روی wlan1 =====
+[admin@Client] > /ip address add address=192.168.1.100/24 interface=wlan1
+
+# یا DHCP Client
+[admin@Client] > /ip dhcp-client add interface=wlan1 disabled=no
+
+# ===== بررسی اتصال =====
+[admin@Client] > /interface wireless monitor wlan1
+# ببین: status: connected-to-ess
+#       ssid: MyOffice-WiFi
+#       signal-strength: -55dBm
+
+[admin@Client] > /interface wireless registration-table print</code></pre>
+
+    <!-- ==== ۴.۸ ==== -->
+    <h3>۴.۸ Station-Bridge برای Wireless Bridge</h3>
+
+    <p>
+      برای اتصال دو شبکه‌ی LAN از طریق Wireless (مثل کابل به‌جای Wireless)،
+      از <strong>station-bridge</strong> استفاده می‌کنیم — که MAC تمام دستگاه‌های
+      پشت Client را نیز منتقل می‌کند.
+    </p>
+
+    <pre><code># ===== سناریو: Bridge بین دو ساختمان =====
+
+# ===== AP (Master) =====
+[admin@AP-Master] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=BuildingLink \
+    band=5ghz-a/n/ac \
+    frequency=5500 \
+    channel-width=20/40/80mhz-Ceee \
+    security-profile=link-secure \
+    disabled=no
+
+[admin@AP-Master] > /interface bridge add name=br-link protocol-mode=none
+[admin@AP-Master] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP-Master] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP-Master] > /ip address add address=10.0.0.1/30 interface=br-link
+
+# ===== Station-Bridge (Client) =====
+[admin@AP-Client] > /interface wireless set wlan1 \
+    mode=station-bridge \
+    ssid=BuildingLink \
+    band=5ghz-a/n/ac \
+    frequency=5500 \
+    security-profile=link-secure \
+    disabled=no
+
+[admin@AP-Client] > /interface bridge add name=br-link protocol-mode=none
+[admin@AP-Client] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP-Client] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP-Client] > /ip address add address=10.0.0.2/30 interface=br-link
+
+# ===== نتیجه: هر دو LAN کاملاً پل شده‌اند =====
+# هر PC پشت AP-Master می‌تواند با هر PC پشت AP-Client در L2 حرف بزند
+
+# ===== بررسی =====
+[admin@AP-Master] > /interface wireless registration-table print
+[admin@AP-Master] > /interface bridge host print</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار</div>
+      <strong>station-bridge</strong> فقط با APهای MikroTik کار می‌کند (WDS اختصاصی).
+      برای APهای غیر MikroTik، از <strong>station-pseudobridge</strong> یا
+      <strong>station-pseudobridge-clone</strong> استفاده کن.
+    </div>
+
+    <!-- ==== ۴.۹ ==== -->
+    <h3>۴.۹ امنیت Wireless — WPA2 و WPA3</h3>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">روش</th>
+          <th style="padding:6px;border:1px solid var(--border)">رمزنگاری</th>
+          <th style="padding:6px;border:1px solid var(--border)">امنیت</th>
+          <th style="padding:6px;border:1px solid var(--border)">وضعیت</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">Open</td><td style="padding:6px;border:1px solid var(--border)">❌</td><td style="padding:6px;border:1px solid var(--border)">🔴 صفر</td><td style="padding:6px;border:1px solid var(--border)">ممنوع</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">WEP</td><td style="padding:6px;border:1px solid var(--border)">RC4</td><td style="padding:6px;border:1px solid var(--border)">🔴 ضعیف</td><td style="padding:6px;border:1px solid var(--border)">منسوخ — هرگز</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">WPA (TKIP)</td><td style="padding:6px;border:1px solid var(--border)">TKIP</td><td style="padding:6px;border:1px solid var(--border)">🟠 متوسط</td><td style="padding:6px;border:1px solid var(--border)">قدیمی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>WPA2-PSK</strong></td><td style="padding:6px;border:1px solid var(--border)">AES-CCMP</td><td style="padding:6px;border:1px solid var(--border)">🟢 خوب</td><td style="padding:6px;border:1px solid var(--border)">استاندارد فعلی</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>WPA2-EAP</strong></td><td style="padding:6px;border:1px solid var(--border)">AES-CCMP</td><td style="padding:6px;border:1px solid var(--border)">🟢🟢 عالی</td><td style="padding:6px;border:1px solid var(--border)">سازمانی (RADIUS)</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)"><strong>WPA3</strong></td><td style="padding:6px;border:1px solid var(--border)">AES-GCMP</td><td style="padding:6px;border:1px solid var(--border)">🟢🟢🟢 بهترین</td><td style="padding:6px;border:1px solid var(--border)">مدرن (Wi-Fi 6)</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== WPA2-PSK (Personal) =====
+[admin@AP] > /interface wireless security-profiles add \
+    name=home-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=MyStrongPassword2024
+
+# ===== WPA2-EAP (Enterprise) با RADIUS =====
+[admin@AP] > /radius add \
+    service=wireless \
+    address=192.168.1.100 \
+    secret=RadiusSecret
+
+[admin@AP] > /interface wireless security-profiles add \
+    name=enterprise-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-eap \
+    eap-methods=peap \
+    mschapv2-username="" \
+    mschapv2-password="" \
+    radius-mac-authentication=no
+
+[admin@AP] > /interface wireless set wlan1 \
+    security-profile=enterprise-secure
+
+# ===== WPA3 (در RouterOS 7+) =====
+[admin@AP] > /interface wireless security-profiles add \
+    name=wpa3-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa3-psk \
+    wpa3-pre-shared-key=VeryStrongWPA3Pass
+
+# ===== WPA2/WPA3 Mixed =====
+[admin@AP] > /interface wireless security-profiles set wpa3-secure \
+    authentication-types=wpa2-psk,wpa3-psk</code></pre>
+
+    <!-- ==== ۴.۱۰ ==== -->
+    <h3>۴.۱۰ MAC Filtering با Access List</h3>
+
+    <p>
+      <strong>Access List</strong> کنترل می‌کند کدام MAC Addressها اجازه اتصال دارند.
+    </p>
+
+    <pre><code># ===== حالت‌های Access List =====
+# - allow: فقط MACهای لیست اجازه دارند (Whitelist)
+# - deny: فقط MACهای لیست ممنوع هستند (Blacklist)
+
+# ===== سناریو: فقط ۳ دستگاه اجازه اتصال =====
+# گام ۱: Default را Deny کن
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=00:00:00:00:00:00 \
+    authentication=no \
+    forwarding=no \
+    comment="Default deny"
+
+# گام ۲: MACهای مجاز
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=AA:BB:CC:DD:EE:01 \
+    authentication=yes \
+    forwarding=yes \
+    comment="Manager Laptop"
+
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=AA:BB:CC:DD:EE:02 \
+    authentication=yes \
+    forwarding=yes \
+    comment="Reception PC"
+
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=AA:BB:CC:DD:EE:03 \
+    authentication=yes \
+    forwarding=yes \
+    comment="Guest Phone"
+
+# ===== بررسی =====
+[admin@AP] > /interface wireless access-list print
+# خروجی: لیست MACها و وضعیت Allow/Deny
+
+# ===== نکته: ترتیب Rules مهم است =====
+# Rules از بالا به پایین چک می‌شوند
+# اولین Match اعمال می‌شود</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ محدودیت MAC Filtering</div>
+      MAC Filtering به‌تنهایی امن نیست — یک مهاجم می‌تواند MAC خود را جعل کند.
+      همیشه با WPA2 ترکیب کن.
+    </div>
+
+    <!-- ==== ۴.۱۱ ==== -->
+    <h3>۴.۱۱ Connect List — کنترل Client</h3>
+
+    <p>
+      <strong>Connect List</strong> از دید Client استفاده می‌شود — کنترل می‌کند
+      Client به کدام APها وصل شود (برعکس Access List).
+    </p>
+
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem">
+      <thead>
+        <tr style="background:var(--accent-soft);color:var(--accent-dark)">
+          <th style="padding:6px;border:1px solid var(--border)">ویژگی</th>
+          <th style="padding:6px;border:1px solid var(--border)">Access List</th>
+          <th style="padding:6px;border:1px solid var(--border)">Connect List</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:6px;border:1px solid var(--border)">روی</td><td style="padding:6px;border:1px solid var(--border)">AP</td><td style="padding:6px;border:1px solid var(--border)">Client</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">کنترل می‌کند</td><td style="padding:6px;border:1px solid var(--border)">ورود Client</td><td style="padding:6px;border:1px solid var(--border)">اتصال Client به AP</td></tr>
+        <tr><td style="padding:6px;border:1px solid var(--border)">معیار</td><td style="padding:6px;border:1px solid var(--border)">MAC Client</td><td style="padding:6px;border:1px solid var(--border)">MAC/SSID AP</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># ===== Client فقط به یک AP خاص وصل شود =====
+[admin@Client] > /interface wireless connect-list add \
+    interface=wlan1 \
+    ssid=MyOffice-WiFi \
+    mac-address=AA:BB:CC:DD:EE:FF \
+    connect=yes \
+    area-prefix=""
+
+# ===== Client فقط به SSID خاص وصل شود =====
+[admin@Client] > /interface wireless connect-list add \
+    interface=wlan1 \
+    ssid=MyOffice-WiFi \
+    connect=yes \
+    security-profile=client-secure
+
+# ===== Default Deny + Whitelist =====
+# گام ۱: Deny all
+[admin@Client] > /interface wireless connect-list add \
+    interface=wlan1 \
+    connect=no \
+    comment="Default deny"
+
+# گام ۲: فقط SSID ما
+[admin@Client] > /interface wireless connect-list add \
+    interface=wlan1 \
+    ssid=MyOffice-WiFi \
+    connect=yes
+
+# ===== بررسی =====
+[admin@Client] > /interface wireless connect-list print</code></pre>
+
+    <!-- ==== ۴.۱۲ ==== -->
+    <h3>۴.۱۲ NV2 Protocol — مزایا و پیکربندی</h3>
+
+    <p>
+      <strong>NV2</strong> یک پروتکل اختصاصی MikroTik است که روی لایه ۲ کار می‌کند
+      و برای لینک‌های Point-to-Point و Point-to-Multipoint طراحی شده.
+    </p>
+
+    <p><strong>مزایای NV2 نسبت به 802.11:</strong></p>
+    <ul>
+      <li><strong>TDMA:</strong> Time Division Multiple Access — بدون Collision</li>
+      <li><strong>Performance:</strong> تا ۲ برابر سرعت بیشتر</li>
+      <li><strong>Latency:</strong> تأخیر کمتر و پایدارتر</li>
+      <li><strong>Scalability:</strong> پشتیبانی از تعداد Client بیشتر</li>
+      <li><strong>Hidden Node:</strong> مشکل گره مخفی حل می‌شود</li>
+    </ul>
+
+    <pre><code># ===== پیکربندی NV2 روی AP =====
+[admin@AP] > /interface wireless set wlan1 \
+    wireless-protocol=nv2 \
+    nv2-security=enabled \
+    nv2-preshared-key=NV2Secret@2024 \
+    nv2-cell-radius=30 \
+    mode=ap-bridge \
+    ssid=NV2-Link
+
+# ===== روی Client =====
+[admin@Client] > /interface wireless set wlan1 \
+    wireless-protocol=nv2 \
+    nv2-security=enabled \
+    nv2-preshared-key=NV2Secret@2024 \
+    mode=station-bridge \
+    ssid=NV2-Link
+
+# ===== بررسی =====
+[admin@AP] > /interface wireless monitor wlan1
+# ببین: wireless-protocol: nv2
+
+[admin@AP] > /interface wireless registration-table print
+# Client با protocol=nv2 ثبت شده
+
+# ===== تنظیمات پیشرفته NV2 =====
+[admin@AP] > /interface wireless set wlan1 \
+    nv2-qos=default \
+    nv2-cell-radius=30 \
+    nv2-security=enabled \
+    nv2-preshared-key=NV2Secret
+
+# nv2-qos:
+# default  → برای ترافیک معمولی
+# frame-priority → برای شبکه‌های با VoIP (احترام به QoS)
+
+# nv2-cell-radius:
+# شعاع سلول (ثانیه‌ای که برای Clientهای دور در نظر می‌گیرد)
+# 10 → 10km، 30 → 30km، 60 → 60km</code></pre>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای لینک‌های Point-to-Point طولانی (بیش از ۵ کیلومتر)، حتماً از NV2 استفاده کن.
+      TDMA مشکل Hidden Node و Collision را حل می‌کند و Performance واقعی را بالا می‌برد.
+    </div>
+
+    <!-- ==== ۴.۱۳ ==== -->
+    <h3>۴.۱۳ Nstreme Protocol</h3>
+
+    <p>
+      <strong>Nstreme</strong> نسل قبلی NV2 است — هنوز در بعضی سناریوها استفاده می‌شود
+      ولی NV2 توصیه می‌شود.
+    </p>
+
+    <pre><code># ===== فعال‌سازی Nstreme =====
+[admin@AP] > /interface wireless set wlan1 \
+    wireless-protocol=nstreme \
+    nstreme=enabled
+
+# پارامترهای Nstreme:
+# - nstreme-dual-slave: برای لینک Dual-Pol
+# - nstreme-framer-limit: اندازه فریم
+# - nstreme-optimize-ack: بهینه‌سازی ACK
+
+# ===== مقایسه =====
+# NV2:
+# - جدیدتر، سریع‌تر
+# - Latency کمتر
+# - فقط MikroTik ↔ MikroTik
+#
+# Nstreme:
+# - قدیمی، سازگارتر
+# - در برخی مدل‌های قدیمی بهتر
+# - Latency بیشتر
+
+# ===== Auto (پیش‌فرض) =====
+[admin@AP] > /interface wireless set wlan1 wireless-protocol=unspecified
+# خودش تشخیص می‌دهد</code></pre>
+
+    <!-- ==== ۴.۱۴ ==== -->
+    <h3>۴.۱۴ Country Regulation</h3>
+
+    <p>
+      هر کشور مقرراتی برای استفاده از فرکانس‌های Wireless دارد.
+      <strong>Country</strong> تنظیم می‌کند RouterOS در چه فرکانس‌ها و توان‌هایی
+      می‌تواند کار کند.
+    </p>
+
+    <pre><code># ===== تنظیم Country =====
+[admin@AP] > /interface wireless set wlan1 country=iran
+
+# حالا RouterOS:
+# - فرکانس‌های مجاز ایران را فعال می‌کند
+# - توان ارسال را به حداکثر قانونی محدود می‌کند
+# - کانال‌های مجاز را محدود می‌کند
+
+# ===== بررسی فرکانس‌های مجاز =====
+[admin@AP] > /interface wireless info country-info iran
+# خروجی: لیست فرکانس‌ها و توان‌های مجاز
+
+# ===== Installation Mode =====
+[admin@AP] > /interface wireless set wlan1 installation=outdoor
+# outdoor → توان بالاتر برای لینک‌های طولانی
+
+# یا
+[admin@AP] > /interface wireless set wlan1 installation=indoor
+# indoor → توان کمتر، برای APهای داخل
+
+# ===== تنظیم توان دستی =====
+[admin@AP] > /interface wireless set wlan1 tx-power-mode=all-rates-fixed tx-power=20
+# tx-power-mode:
+# default               → خودکار
+# all-rates-fixed       → همه Rateها توان یکسان
+# all-rates-unspecified → همه Rateها توان پیش‌فرض
+# card-rates            → کارت تصمیم می‌گیرد
+
+# ===== مشاهده‌ی تنظیمات =====
+[admin@AP] > /interface wireless print detail
+[admin@AP] > /interface wireless info country-info</code></pre>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار قانونی</div>
+      استفاده از فرکانس‌های غیرمجاز یا توان بالا در ایران،
+      ممکن است پیامد قانونی داشته باشد. همیشه Country را روی
+      <strong>iran</strong> تنظیم کن.
+    </div>
+
+    <!-- ==== ۴.۱۵ ==== -->
+    <h3>۴.۱۵ ابزارهای Monitor و Snooper</h3>
+
+    <pre><code># ===== ابزارهای مهم =====
+
+# ۱. Wireless Monitor — وضعیت لحظه‌ای
+[admin@AP] > /interface wireless monitor wlan1
+
+# ۲. Registration Table — Clientهای متصل
+[admin@AP] > /interface wireless registration-table print
+[admin@AP] > /interface wireless registration-table print detail
+
+# ۳. Wireless Scan — کشف SSIDهای اطراف
+[admin@AP] > /interface wireless scan wlan1 duration=10
+# خروجی: SSID، BSSID، Channel، Signal، Security
+
+# ۴. Snooper — تحلیل ترافیک Wireless
+[admin@AP] > /interface wireless snooper
+# خروجی: دستگاه‌های مجاور، Signal
+
+# ۵. Frequency Monitor — بررسی اشغال کانال
+[admin@AP] > /interface wireless monitor wlan1
+# ببین: overall-tx-ccq (Client Connection Quality)
+
+# ۶. Sniffer — Capture بسته‌ها
+[admin@AP] > /tool sniffer quick interface=wlan1
+[admin@AP] > /tool sniffer set filter-interface=wlan1
+[admin@AP] > /tool sniffer start
+
+# ۷. Spectral Scan (در بعضی مدل‌ها)
+[admin@AP] > /interface wireless spectral-scan wlan1
+
+# ===== پارامترهای مهم در Registration Table =====
+# signal-strength    → قدرت سیگنال دریافتی
+# tx-rate / rx-rate  → نرخ ارسال/دریافت
+# uptime             → مدت اتصال
+# last-ip            → آخرین IP Client
+# bytes              → ترافیک رد و بدل شده
+# packets            → تعداد بسته
+# tx-ccq             → کیفیت ارسال</code></pre>
+
+    <!-- ==== ۴.۱۶ ==== -->
+    <h3>۴.۱۶ عیب‌یابی Wireless</h3>
+
+    <pre><code># ===== چک‌لیست عیب‌یابی =====
+
+# ۱. آیا Interface Up است؟
+[admin@AP] > /interface wireless print
+# ببین: R = Running
+
+# ۲. آیا Clientها متصل هستند؟
+[admin@AP] > /interface wireless registration-table print
+# اگر خالی است → مشکل در SSID، Security، یا فرکانس
+
+# ۳. سیگنال چقدر است؟
+[admin@AP] > /interface wireless registration-table print detail
+# ببین: signal-strength, tx-ccq
+# -60dBm خوب است، کمتر از -75dBm ضعیف
+
+# ۴. تداخل چقدر است؟
+[admin@AP] > /interface wireless monitor wlan1
+# ببین: overall-tx-ccq
+# بالای 80% خوب، زیر 50% مشکل
+
+# ۵. کانال درست انتخاب شده؟
+[admin@AP] > /interface wireless scan wlan1 duration=20
+# ببین کدام کانال‌ها اشغال شده‌اند
+
+# ۶. Security Profile درست است؟
+[admin@AP] > /interface wireless security-profiles print
+[admin@AP] > /interface wireless print where name=wlan1
+# مطمئن شو security-profile ست شده
+
+# ۷. Country Regulation؟
+[admin@AP] > /interface wireless set wlan1 country=iran
+
+# ۸. Frequency با Client یکسان است؟
+# AP و Client باید در یک Frequency کار کنند
+
+# ۹. Band و Channel Width هماهنگ است؟
+# Client باید حداقل Band و Width را پشتیبانی کند
+
+# ۱۰. NV2 فقط با MikroTik کار می‌کند؟
+# اگر Client غیر MikroTik است، 802.11 استفاده کن
+
+# ===== مثال: تشخیص مشکل Client وصل نمی‌شود =====
+# 1. Wireless Scan برای دیدن SSID
+[admin@Client] > /interface wireless scan wlan1
+# اگر SSID دیده نمی‌شود → مشکل در AP
+# اگر دیده می‌شود ولی وصل نمی‌شود → مشکل Security یا Frequency
+
+# 2. Log را ببین
+[admin@Client] > /log print where topics~"wireless"
+# پیام‌هایی مثل:
+# - "authentication failed"
+# - "no matching channel"
+# - "rejected by access-list"</code></pre>
+
+  </section>
+
+  <!-- ۷) جعبه‌های رنگی -->
+  <section class="card">
+    <h2>🎨 نکات کلیدی این فصل</h2>
+
+    <div class="box tip">
+      <div class="box-title">💡 نکته‌ی کاربردی</div>
+      در باند 2.4GHz، همیشه از کانال‌های <strong>1، 6 یا 11</strong> استفاده کن.
+      بقیه کانال‌ها با هم همپوشانی دارند و تداخل ایجاد می‌کنند.
+    </div>
+
+    <div class="box warning">
+      <div class="box-title">⚠️ هشدار امنیتی</div>
+      هرگز از WEP یا Open استفاده نکن. حتی WPA/TKIP قدیمی است.
+      حداقل <strong>WPA2-PSK با AES</strong> و ایده‌آل <strong>WPA3</strong>.
+    </div>
+
+    <div class="box gold">
+      <div class="box-title">🏆 نکته‌ی طلایی</div>
+      برای لینک‌های Point-to-Point طولانی (بیش از ۵ کیلومتر)،
+      همیشه از <strong>NV2</strong> استفاده کن — TDMA مزیت بزرگی در Latency و Performance دارد.
+    </div>
+
+    <div class="box note">
+      <div class="box-title">ℹ️ اطلاعات بیشتر</div>
+      در فصل ۵ با <span class="term" data-term="dhcp">DHCP Server</span>،
+      <span class="term" data-term="dhcp-relay">DHCP Relay</span>، ARP Modes و Netwatch آشنا می‌شوی.
+    </div>
+
+    <div class="box purple">
+      <div class="box-title">🔮 دیدگاه پیشرفته</div>
+      در MTCWE با <strong>WDS</strong>، <strong>Nstreme Dual</strong> و
+      <strong>CAPsMAN</strong> (مدیریت متمرکز APها) کار می‌کنی.
+    </div>
+  </section>
+
+  <!-- ۸) مثال‌های عملی -->
+  <section class="card">
+    <h2>💻 مثال‌های عملی</h2>
+
+    <h3>مثال ۱ — Access Point ساده برای دفتر</h3>
+    <pre><code># ===== ۱. Security Profile =====
+[admin@AP] > /interface wireless security-profiles add \
+    name=office-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=OfficeWiFi@2024
+
+# ===== ۲. Wireless Interface =====
+[admin@AP] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=MyOffice-WiFi \
+    band=2ghz-b/g/n \
+    channel-width=20mhz \
+    frequency=2437 \
+    country=iran \
+    installation=indoor \
+    security-profile=office-secure \
+    disabled=no
+
+# ===== ۳. Bridge با Ethernet =====
+[admin@AP] > /interface bridge add name=br-lan protocol-mode=none
+[admin@AP] > /interface bridge port
+add bridge=br-lan interface=ether2
+add bridge=br-lan interface=wlan1
+
+# ===== ۴. IP و DHCP =====
+[admin@AP] > /ip address add address=192.168.88.1/24 interface=br-lan
+[admin@AP] > /ip pool add name=wifi-pool ranges=192.168.88.10-192.168.88.254
+[admin@AP] > /ip dhcp-server network add \
+    address=192.168.88.0/24 \
+    gateway=192.168.88.1 \
+    dns-server=192.168.88.1
+[admin@AP] > /ip dhcp-server add \
+    name=wifi-dhcp \
+    interface=br-lan \
+    address-pool=wifi-pool \
+    disabled=no
+
+# ===== ۵. بررسی =====
+[admin@AP] > /interface wireless registration-table print
+[admin@AP] > /interface wireless monitor wlan1</code></pre>
+
+    <h3>مثال ۲ — Point-to-Point با NV2</h3>
+    <pre><code># ===== AP-Master =====
+[admin@AP-Master] > /interface wireless security-profiles add \
+    name=ptp-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=PtpLink@2024
+
+[admin@AP-Master] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=PtP-Link \
+    band=5ghz-a/n/ac \
+    frequency=5500 \
+    channel-width=20/40/80mhz-Ceee \
+    country=iran \
+    installation=outdoor \
+    wireless-protocol=nv2 \
+    nv2-security=enabled \
+    nv2-preshared-key=NV2Secret \
+    nv2-cell-radius=30 \
+    security-profile=ptp-secure \
+    disabled=no
+
+[admin@AP-Master] > /interface bridge add name=br-link protocol-mode=none
+[admin@AP-Master] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP-Master] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP-Master] > /ip address add address=10.0.0.1/30 interface=br-link
+
+# ===== AP-Client =====
+[admin@AP-Client] > /interface wireless security-profiles add \
+    name=ptp-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=PtpLink@2024
+
+[admin@AP-Client] > /interface wireless set wlan1 \
+    mode=station-bridge \
+    ssid=PtP-Link \
+    band=5ghz-a/n/ac \
+    frequency=5500 \
+    channel-width=20/40/80mhz-Ceee \
+    country=iran \
+    installation=outdoor \
+    wireless-protocol=nv2 \
+    nv2-security=enabled \
+    nv2-preshared-key=NV2Secret \
+    security-profile=ptp-secure \
+    disabled=no
+
+[admin@AP-Client] > /interface bridge add name=br-link protocol-mode=none
+[admin@AP-Client] > /interface bridge port add bridge=br-link interface=wlan1
+[admin@AP-Client] > /interface bridge port add bridge=br-link interface=ether1
+[admin@AP-Client] > /ip address add address=10.0.0.2/30 interface=br-link
+
+# ===== بررسی =====
+[admin@AP-Master] > /interface wireless registration-table print
+# ببین: signal-strength, tx-ccq, protocol=nv2
+
+[admin@AP-Master] > /ping 10.0.0.2</code></pre>
+
+    <h3>مثال ۳ — Multi-SSID روی یک Radio</h3>
+    <pre><code># ===== Virtual AP برای چند SSID =====
+# سناریو: SSID عمومی + SSID مهمان از یک Radio
+
+# ۱. Security Profile اصلی
+[admin@AP] > /interface wireless security-profiles add \
+    name=staff-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=StaffPass@2024
+
+# ۲. Security Profile مهمان
+[admin@AP] > /interface wireless security-profiles add \
+    name=guest-secure \
+    mode=dynamic-keys \
+    authentication-types=wpa2-psk \
+    wpa2-pre-shared-key=GuestPass@2024
+
+# ۳. Wireless اصلی (مهمان)
+[admin@AP] > /interface wireless set wlan1 \
+    mode=ap-bridge \
+    ssid=Guest-WiFi \
+    band=2ghz-b/g/n \
+    frequency=2437 \
+    security-profile=guest-secure \
+    disabled=no
+
+# ۴. Virtual AP (کارمندان)
+[admin@AP] > /interface wireless add \
+    name=wlan2 \
+    master-interface=wlan1 \
+    ssid=Staff-WiFi \
+    security-profile=staff-secure \
+    disabled=no
+
+# ۵. Bridge جداگانه برای هر SSID
+[admin@AP] > /interface bridge add name=br-guest
+[admin@AP] > /interface bridge add name=br-staff
+
+[admin@AP] > /interface bridge port add bridge=br-guest interface=wlan1
+[admin@AP] > /interface bridge port add bridge=br-staff interface=wlan2
+
+# ۶. IP جداگانه برای هر Bridge
+[admin@AP] > /ip address add address=192.168.100.1/24 interface=br-guest
+[admin@AP] > /ip address add address=192.168.200.1/24 interface=br-staff
+
+# ۷. DHCP Server برای هرکدام
+[admin@AP] > /ip pool add name=guest-pool ranges=192.168.100.10-192.168.100.254
+[admin@AP] > /ip pool add name=staff-pool ranges=192.168.200.10-192.168.200.254
+
+# ===== نتیجه: دو شبکه‌ی کاملاً جدا =====
+# Guest فقط به اینترنت
+# Staff به منابع داخلی
+
+# ===== Firewall بین Guest و Staff =====
+[admin@AP] > /ip firewall filter add \
+    chain=forward \
+    src-address=192.168.100.0/24 \
+    dst-address=192.168.200.0/24 \
+    action=drop \
+    comment="Block Guest → Staff"</code></pre>
+
+    <h3>مثال ۴ — MAC Filtering پیشرفته</h3>
+    <pre><code># ===== سناریو: Whitelist با محرومیت‌های خاص =====
+
+# ۱. Default: Deny
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=00:00:00:00:00:00 \
+    authentication=no \
+    forwarding=no \
+    comment="Default deny"
+
+# ۲. یک MAC خاص: رد شده (Blacklist)
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=AA:BB:CC:DD:EE:99 \
+    authentication=no \
+    forwarding=no \
+    comment="Banned MAC"
+
+# ۳. MACهای مجاز
+[admin@AP] > /interface wireless access-list add \
+    interface=wlan1 \
+    mac-address=AA:BB:CC:DD:EE:01 \
+    authentication=yes \
+    forwarding=yes \
+    comment="Allowed 1"
+
+# ادامه...
+
+# ===== بررسی =====
+[admin@AP] > /interface wireless access-list print
+# Rules از بالا به پایین چک می‌شوند
+
+# ===== Import از فایل =====
+# اگر ۱۰۰ MAC داری، می‌توانی از فایل Import کنی:
+[admin@AP] > /interface wireless access-list
+# در Winbox: دکمه Import → فایل CSV یا RSC</code></pre>
+
+    <h3>مثال ۵ — عیب‌یابی Client وصل نمی‌شود</h3>
+    <pre><code># ===== مراحل عیب‌یابی =====
+
+# ۱. Wireless Scan — آیا SSID دیده می‌شود؟
+[admin@Client] > /interface wireless scan wlan1 duration=15
+# اگر SSID نیست:
+#   - AP خاموش است؟
+#   - Frequency خارج از محدوده؟
+#   - Country Regulation مشکل دارد؟
+
+# ۲. اگر SSID دیده می‌شود ولی وصل نمی‌شود — Log
+[admin@Client] > /log print where topics~"wireless"
+# پیام‌های محتمل:
+# - authentication failed → Security Profile اشتباه
+# - rejected by access-list → MAC در لیست نیست
+# - no matching channel → Frequency/Width متفاوت
+# - connect-list reject → Connect List جلوی اتصال را گرفته
+
+# ۳. بررسی تنظیمات AP
+[admin@AP] > /interface wireless print detail where name=wlan1
+# چک کن: SSID, Band, Frequency, Security
+
+# ۴. بررسی Registration Table
+[admin@AP] > /interface wireless registration-table print
+# اگر Client نیست → جدول خالی
+
+# ۵. Packet Sniffer
+[admin@AP] > /tool sniffer quick interface=wlan1
+# ترافیک Wireless را ببین
+
+# ۶. Spectral Scan (در صورت پشتیبانی)
+[admin@AP] > /interface wireless spectral-scan wlan1 duration=30
+
+# ===== مشکلات رایج =====
+# - Signal ضعیف: -85dBm یا بدتر → آنتن یا موقعیت را تغییر بده
+# - کانال شلوغ: Wireless Scan بزن و کانال خلوت انتخاب کن
+# - Security mismatch: WPA2-PSK با پسورد یکسان
+# - Band mismatch: AP در a/n، Client فقط b/g
+# - Country mismatch: هر دو باید یکسان</code></pre>
+  </section>
+
+  <!-- ۹) کارگاه عملی -->
+  <section class="card">
+    <h2>🛠️ کارگاه عملی گام‌به‌گام</h2>
+    <ol class="roadmap">
+      <li>دو RouterOS با Wireless (یا یک روتر + یک Client سیمی)</li>
+      <li>روی RouterOS اول: Wireless را به ap-bridge تبدیل کن</li>
+      <li>SSID و Country (iran) را تنظیم کن</li>
+      <li>Security Profile با WPA2-PSK بساز و اعمال کن</li>
+      <li>Wireless را به Bridge اضافه کن</li>
+      <li>روی RouterOS دوم: Wireless را به station-bridge تبدیل کن</li>
+      <li>به همان SSID و Security وصل شو</li>
+      <li>هر دو را با یک شبکه IP تنظیم کن</li>
+      <li>از یک PC در یک سمت به PC در سمت دیگر Ping بزن</li>
+      <li>Registration Table را در AP بررسی کن</li>
+      <li>Signal Strength و CCQ را مشاهده کن</li>
+      <li>NV2 را فعال کن و Performance را مقایسه کن</li>
+      <li>Access List برای محدودسازی MAC یک Client اضافه کن</li>
+      <li>با Wireless Scan، کانال‌های اشغال اطراف را ببین</li>
+      <li>کانال را به یک کانال خلوت تغییر بده</li>
+      <li>عیب‌یابی: با Sniffer ترافیک Wireless را تحلیل کن</li>
+    </ol>
+  </section>
+
+  <!-- ۱۰) خطاهای رایج -->
+  <section class="card">
+    <h2>🚫 خطاهای رایج و رفع‌اشکال</h2>
+    <ul>
+      <li><strong>Client وصل نمی‌شود:</strong> Security Profile مطابق نیست، Frequency/Band متفاوت، یا MAC در Access List نیست.</li>
+      <li><strong>Signal ضعیف:</strong> آنتن اشتباه، جهت اشتباه، مانع فیزیکی، یا فرکانس نامناسب.</li>
+      <li><strong>CCQ پایین (زیر 50%):</strong> تداخل، Hidden Node، یا NV2 فعال نیست.</li>
+      <li><strong>Throughput پایین:</strong> Channel Width کم، Rate محدود، یا CCQ پایین.</li>
+      <li><strong>Latency بالا:</strong> NV2 فعال نیست، کانال شلوغ، یا Client دور.</li>
+      <li><strong>AP Country ندارد:</strong> بدون Country، بعضی فرکانس‌ها کار نمی‌کنند — حتماً تنظیم کن.</li>
+      <li><strong>2.4GHz خیلی شلوغ:</strong> از 5GHz استفاده کن یا کانال 1/6/11 را با Scan انتخاب کن.</li>
+      <li><strong>station-bridge با AP غیر MikroTik:</strong> استفاده کن از station-pseudobridge یا station معمولی.</li>
+      <li><strong>MAC Filtering کار نمی‌کند:</strong> Rule Default Deny اولین Rule نباشد، یا ترتیب اشتباه.</li>
+      <li><strong>Hidden SSID پیدا نمی‌شود:</strong> در Client دستی SSID را وارد کن، چون Scan نشان نمی‌دهد.</li>
+      <li><strong>بعد از آپدیت، Wireless کار نمی‌کند:</strong> Country را مجدد تنظیم کن یا Firmware را بررسی کن.</li>
+      <li><strong>Clientهای زیاد کند می‌شوند:</strong> ظرفیت Radio محدود است — به چند AP با CAPsMAN مهاجرت کن.</li>
+      <li><strong>Virtual AP کار نمی‌کند:</strong> master-interface باید ap-bridge باشد (نه station).</li>
+      <li><strong>NV2 فقط با MikroTik:</strong> برای Clientهای عمومی، 802.11 استفاده کن.</li>
+      <li><strong>Snooper کند می‌شود:</strong> فقط در لحظه نیاز، فعال کن و بعد خاموش کن.</li>
+    </ul>
+  </section>
+
+  <!-- ۱۱) واژه‌های تخصصی -->
+  <section class="card">
+    <h2>📖 واژه‌های تخصصی این فصل</h2>
+    <p>
+      <span class="term" data-term="wireless">Wireless</span> •
+      <span class="term" data-term="nv2">NV2</span> •
+      <span class="term" data-term="wpa2">WPA2</span> •
+      <span class="term" data-term="access-list">Access List</span> •
+      <span class="term" data-term="connect-list">Connect List</span> •
+      <span class="term" data-term="rssi">RSSI</span> •
+      <span class="term" data-term="snr">SNR</span>
+    </p>
+  </section>
+
+  <!-- ۱۲) آزمون ۱۸ سوالی -->
+  <section class="quiz" data-quiz-id="mikrotik-04" data-duration="1080">
+    <h2>🧠 آزمون پایان فصل (۱۸ سوال)</h2>
+    <div class="quiz-timer">۱۸:۰۰</div>
+
+    <div class="quiz-body">
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱) کانال‌های غیرهمپوشان در باند 2.4GHz کدامند؟</div>
+        <label class="quiz-option"><input type="radio" name="q1" value="0"> 1، 2، 3</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="1"> 1، 6، 11</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="2"> 1، 5، 10</label>
+        <label class="quiz-option"><input type="radio" name="q1" value="3"> همه کانال‌ها</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۲) کدام استاندارد فقط در باند 5GHz کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q2" value="0"> 802.11b</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="1"> 802.11g</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="2"> 802.11ac</label>
+        <label class="quiz-option"><input type="radio" name="q2" value="3"> 802.11n</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۳) کدام Mode در RouterOS برای Wireless Bridge مناسب است؟</div>
+        <label class="quiz-option"><input type="radio" name="q3" value="0"> station</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="1"> station-bridge</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="2"> ap فقط</label>
+        <label class="quiz-option"><input type="radio" name="q3" value="3"> client</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۴) پروتکل NV2 از چه تکنیکی استفاده می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q4" value="0"> CSMA/CA</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="1"> OFDM</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="2"> TDMA (Time Division Multiple Access)</label>
+        <label class="quiz-option"><input type="radio" name="q4" value="3"> FDMA</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۵) تفاوت Access List و Connect List چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q5" value="0"> هر دو روی AP کار می‌کنند</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="1"> Access List روی AP (کنترل ورود Client)، Connect List روی Client (کنترل اتصال به AP)</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="2"> Connect List فقط برای Bridge</label>
+        <label class="quiz-option"><input type="radio" name="q5" value="3"> هر دو یکسانند</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۶) کدام روش امنیتی Wireless ضعیف است و باید استفاده نشود؟</div>
+        <label class="quiz-option"><input type="radio" name="q6" value="0"> WPA2</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="1"> WPA3</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="2"> WEP</label>
+        <label class="quiz-option"><input type="radio" name="q6" value="3"> WPA2-EAP</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۷) RSSI مخفف چیست؟</div>
+        <label class="quiz-option"><input type="radio" name="q7" value="0"> Radio Signal Strength Input</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="1"> Received Signal Strength Indicator</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="2"> Real Signal Strength Index</label>
+        <label class="quiz-option"><input type="radio" name="q7" value="3"> Relative Signal Indicator</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۸) کدام تنظیم برای مجاز بودن فرکانس‌ها در ایران لازم است؟</div>
+        <label class="quiz-option"><input type="radio" name="q8" value="0"> country=none</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="1"> country=usa</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="2"> country=iran</label>
+        <label class="quiz-option"><input type="radio" name="q8" value="3"> country=eu</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۹) Signal Strength -55dBm چگونه است؟</div>
+        <label class="quiz-option"><input type="radio" name="q9" value="0"> ضعیف</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="1"> عالی</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="2"> غیرقابل استفاده</label>
+        <label class="quiz-option"><input type="radio" name="q9" value="3"> متوسط</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۰) برای Virtual AP، master-interface باید چه Mode داشته باشد؟</div>
+        <label class="quiz-option"><input type="radio" name="q10" value="0"> station</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="1"> station-bridge</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="2"> ap-bridge</label>
+        <label class="quiz-option"><input type="radio" name="q10" value="3"> client</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۱) NV2 با کدام Clientها کار می‌کند؟</div>
+        <label class="quiz-option"><input type="radio" name="q11" value="0"> همه Clientها</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="1"> فقط MikroTik</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="2"> فقط Cisco</label>
+        <label class="quiz-option"><input type="radio" name="q11" value="3"> فقط Windows</label>
+      </div>
+
+      <div class="quiz-question" data-answer="0">
+        <div class="q-text">۱۲) کدام ابزار Clientهای متصل به AP را نشان می‌دهد؟</div>
+        <label class="quiz-option"><input type="radio" name="q12" value="0"> /interface wireless registration-table print</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="1"> /interface wireless print</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="2"> /ip arp print</label>
+        <label class="quiz-option"><input type="radio" name="q12" value="3"> /log print</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۳) برای دیدن SSIDهای اطراف از چه دستوری استفاده می‌کنیم؟</div>
+        <label class="quiz-option"><input type="radio" name="q13" value="0"> /interface wireless monitor</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="1"> /interface wireless print</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="2"> /interface wireless scan wlan1</label>
+        <label class="quiz-option"><input type="radio" name="q13" value="3"> /interface wireless snooper</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۴) WPA2-EAP چه چیزی لازم دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q14" value="0"> فقط پسورد</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="1"> RADIUS Server</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="2"> Certificate فقط</label>
+        <label class="quiz-option"><input type="radio" name="q14" value="3"> فایل Config</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۵) کانال 6 در باند 2.4GHz چه فرکانسی است؟</div>
+        <label class="quiz-option"><input type="radio" name="q15" value="0"> 2412 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="1"> 2422 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="2"> 2437 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q15" value="3"> 2462 MHz</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۶) TX Power در RouterOS با چه واحدی تنظیم می‌شود؟</div>
+        <label class="quiz-option"><input type="radio" name="q16" value="0"> Watts</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="1"> dBm</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="2"> Volt</label>
+        <label class="quiz-option"><input type="radio" name="q16" value="3"> Ampere</label>
+      </div>
+
+      <div class="quiz-question" data-answer="2">
+        <div class="q-text">۱۷) کدام Channel Width سرعت بالاتری می‌دهد ولی تداخل بیشتری دارد؟</div>
+        <label class="quiz-option"><input type="radio" name="q17" value="0"> 5 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="1"> 10 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="2"> 80 MHz</label>
+        <label class="quiz-option"><input type="radio" name="q17" value="3"> 20 MHz</label>
+      </div>
+
+      <div class="quiz-question" data-answer="1">
+        <div class="q-text">۱۸) کدام مدل Wireless برای Point-to-Point طولانی مناسب‌تر است؟</div>
+        <label class="quiz-option"><input type="radio" name="q18" value="0"> ap-bridge ساده</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="1"> ap-bridge با NV2 و آنتن Directional</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="2"> station معمولی</label>
+        <label class="quiz-option"><input type="radio" name="q18" value="3"> Snooper</label>
+      </div>
+
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn" data-submit>ثبت پاسخ‌ها</button>
+      <button class="btn ghost" data-retry>تلاش دوباره</button>
+    </div>
+
+    <div class="quiz-result"></div>
+  </section>
+
+  <!-- ۱۳) پروژه -->
+  <section class="card">
+    <h2>🎯 پروژه‌ی پایانی فصل</h2>
+    <p>یک شبکه‌ی Wireless کامل بساز:</p>
+    <ul>
+      <li><strong>سخت‌افزار:</strong> دو RouterOS با Wireless (یک AP، یک Client)</li>
+      <li><strong>SSID و Country:</strong> نام مناسب + country=iran</li>
+      <li><strong>Security:</strong> WPA2-PSK با پسورد قوی</li>
+      <li><strong>Mode:</strong> AP به ap-bridge، Client به station-bridge</li>
+      <li><strong>Bridge:</strong> Wireless + Ethernet در Bridge</li>
+      <li><strong>IP:</strong> هر طرف در یک Subnet جداگانه</li>
+      <li><strong>NV2:</strong> فعال روی هر دو طرف</li>
+      <li><strong>Access List:</strong> MAC Client را Whitelist کن</li>
+      <li><strong>Hidden SSID:</strong> فعال کن (اختیاری)</li>
+      <li><strong>Monitor:</strong> Registration Table، Signal، CCQ را بررسی کن</li>
+      <li><strong>عیب‌یابی:</strong> با Sniffer یک Capture بگیر</li>
+      <li>مستندسازی کامل با دیاگرام، تنظیمات و Script</li>
+    </ul>
+    <div class="box gold">
+      <div class="box-title">🏆 چالش اضافه</div>
+      <ul style="margin:6px 0 0">
+        <li>با CAPsMAN، مدیریت متمرکز ۲ AP را راه‌اندازی کن.</li>
+        <li>یک Virtual AP روی همان Radio بساز برای Guest Network.</li>
+        <li>با Spectral Scan (در صورت پشتیبانی)، کانال‌های شلوغ را تحلیل کن.</li>
+        <li>با Wireless Sniffer ترافیک را Capture و در Wireshark تحلیل کن.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ۱۴) جمع‌بندی -->
+  <section class="card">
+    <h2>📋 جمع‌بندی و برگه‌تقب</h2>
+    <ul>
+      <li><strong>استانداردها:</strong> 802.11a/b/g/n/ac/ax</li>
+      <li><strong>2.4GHz:</strong> برد بیشتر، تداخل بیشتر، فقط ۳ کانال غیرهمپوشان (1،6،11)</li>
+      <li><strong>5GHz:</strong> سرعت بیشتر، تداخل کمتر، کانال‌های بیشتر</li>
+      <li><strong>حالت‌ها:</strong> ap-bridge، station، station-bridge، station-pseudobridge</li>
+      <li><strong>Security:</strong> حداقل WPA2-PSK، ایده‌آل WPA3 یا WPA2-EAP</li>
+      <li><strong>NV2:</strong> TDMA، فقط MikroTik↔MikroTik، سریع‌تر و پایدارتر</li>
+      <li><strong>Access List:</strong> روی AP — کنترل ورود Client</li>
+      <li><strong>Connect List:</strong> روی Client — کنترل اتصال به AP</li>
+      <li><strong>Country:</strong> همیشه iran — تنظیم فرکانس و توان مجاز</li>
+      <li><strong>Installation:</strong> indoor یا outdoor — تأثیر روی توان</li>
+      <li><strong>Signal:</strong> بیش از -60dBm خوب، کمتر از -75dBm ضعیف</li>
+      <li><strong>CCQ:</strong> بیش از 80% خوب، کمتر از 50% مشکل</li>
+      <li><strong>Virtual AP:</strong> master-interface باید ap-bridge باشد</li>
+      <li><strong>Scan:</strong> برای کشف SSIDهای اطراف</li>
+      <li><strong>Snooper:</strong> برای تحلیل ترافیک Wireless اطراف</li>
+    </ul>
+  </section>
+
+  <!-- ۱۵) یادداشت‌ها -->
+  <section class="card notes">
+    <h2>📝 یادداشت‌های من</h2>
+    <textarea data-notes placeholder="یادداشت‌های خودت رو اینجا بنویس…"></textarea>
+    <div class="saved-hint"></div>
+  </section>
+
+  <!-- ۱۶) ناوبری -->
+  <nav class="chapter-nav">
+    <a class="btn ghost" href="../../index.html">🏠 بازگشت به داشبورد</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn ghost" href="mikrotik_Ch_03.html" data-nav-prev>⬅️ فصل قبلی</a>
+      <button class="btn" data-finish-chapter="mikrotik-04">✅ پایان فصل</button>
+      <a class="btn" href="mikrotik_Ch_05.html" data-nav-next>فصل بعدی ➡️</a>
+    </div>
+  </nav>
+
+</div>
+
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/glossary.js"></script>
+<script src="../../assets/js/quiz.js"></script>
+<script src="../../assets/js/app.js"></script>
+
+</body>
+</html>

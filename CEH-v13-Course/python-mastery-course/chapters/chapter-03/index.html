@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 03: عملگرها و عبارات</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input,
+        .live-demo select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 120px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .operator-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .operator-card .symbol {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .operator-card .name {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .operator-card .example {
+            font-size: 0.8rem;
+            color: #475569;
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>دوره جامع Python</h1>
+            <p>فصل 03: عملگرها و عبارات</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-02/index.html">قبلی</a>
+            <a href="../chapter-04/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۳: عملگرها و عبارات</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۳: عملگرها و عبارات</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی کامل با فصل‌های ۱ و ۲)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مباحث متغیرها و انواع داده (فصل ۲)</li>
+                <li>✅ آشنایی کامل با <code dir='ltr'>print()</code> و <code dir='ltr'>input()</code> و نحوه تبدیل نوع داده</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون (REPL)</li>
+                <li>✅ درک اولیه از جعبه‌های <code dir='ltr'>note</code>، <code dir='ltr'>pro-tip</code> و <code dir='ltr'>task</code> در این دوره</li>
+            </ul>
+            <p>اگر هنوز با مفاهیم فصل‌های قبل راحت نیستید، حتماً قبل از شروع این فصل آنها را مرور کنید، زیرا عملگرها بر روی همان متغیرها و انواع داده کار می‌کنند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ از <strong>عملگرهای حسابی</strong> (+, -, *, /, //, %, **) برای انجام محاسبات ریاضی در سناریوهای واقعی استفاده کنید.</li>
+                <li>✔️ با <strong>عملگرهای مقایسه‌ای</strong> (==, !=, >, <, >=, <=) شرایط مختلف را بررسی و مقادیر بولی تولید کنید.</li>
+                <li>✔️ با استفاده از <strong>عملگرهای منطقی</strong> (and, or, not) شرط‌های پیچیده و چندگانه بسازید و منطق برنامه را کنترل کنید.</li>
+                <li>✔️ از <strong>عملگرهای انتساب</strong> (=, +=, -=, *=, /= و ...) برای به‌روزرسانی کارآمد متغیرها استفاده کنید.</li>
+                <li>✔️ تفاوت بین <strong>عملگرهای هویتی</strong> (is, is not) و مقایسه‌ای (==) را درک کنید و در جای مناسب از آنها استفاده کنید.</li>
+                <li>✔️ با <strong>عملگرهای عضویت</strong> (in, not in) وجود یک عنصر را در مجموعه‌ها (لیست، رشته، دیکشنری) بررسی کنید.</li>
+                <li>✔️ <strong>اولویت عملگرها</strong> را در عبارات پیچیده به‌درستی مدیریت کنید و با استفاده از پرانتز، کد خوانا و بدون ابهام بنویسید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با متغیرها و انواع داده آشنا شدید – یعنی <strong>ذخیره‌سازی</strong> داده‌ها. حالا وقت آن است که با <strong>عملگرها</strong> آشنا شوید که به شما امکان <strong>دستکاری</strong> و <strong>پردازش</strong> این داده‌ها را می‌دهند. عملگرها قلب تپنده‌ی هر برنامه هستند؛ بدون آنها نمی‌توانید محاسبه کنید، مقایسه کنید، تصمیم بگیرید یا داده‌ها را تغییر دهید.</p>
+            <p>در این فصل با <strong>همه‌ی عملگرهای اصلی پایتون</strong> آشنا می‌شوید: عملگرهای حسابی برای محاسبات ریاضی (از جمع ساده تا توان)، عملگرهای مقایسه‌ای برای بررسی روابط بین مقادیر، عملگرهای منطقی برای ترکیب چند شرط، عملگرهای انتساب برای تغییر مقدار متغیرها، عملگرهای هویتی برای مقایسه‌ی هویت اشیاء در حافظه و عملگرهای عضویت برای بررسی وجود یک عنصر در یک مجموعه.</p>
+            <p>تسلط بر عملگرها، <strong>کلید اصلی نوشتن برنامه‌های کاربردی و هوشمند</strong> است. با این فصل، می‌توانید برنامه‌هایی بنویسید که محاسبات پیچیده، مقایسه‌های دقیق و تصمیم‌گیری‌های هوشمندانه انجام دهند. این مهارت‌ها پایه‌ی تمام مباحث بعدی مانند شرط‌ها، حلقه‌ها و توابع هستند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۳.۱ -->
+            <div class="sub-section">
+                <h4>۳.۱ عملگرهای حسابی (Arithmetic Operators)</h4>
+                <p>عملگرهای حسابی برای انجام عملیات ریاضی روی اعداد (صحیح و اعشاری) استفاده می‌شوند. این عملگرها پایه‌ی تمام محاسبات در برنامه‌نویسی هستند.</p>
+                <div class="operator-grid">
+                    <div class="operator-card">
+                        <span class="symbol">+</span>
+                        <span class="name">جمع</span>
+                        <span class="example">5 + 3 = 8</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">-</span>
+                        <span class="name">تفریق</span>
+                        <span class="example">5 - 3 = 2</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">*</span>
+                        <span class="name">ضرب</span>
+                        <span class="example">5 * 3 = 15</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">/</span>
+                        <span class="name">تقسیم اعشاری</span>
+                        <span class="example">10 / 3 = 3.333...</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">//</span>
+                        <span class="name">تقسیم صحیح</span>
+                        <span class="example">10 // 3 = 3</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">%</span>
+                        <span class="name">باقیمانده (مدول)</span>
+                        <span class="example">10 % 3 = 1</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">**</span>
+                        <span class="name">توان</span>
+                        <span class="example">2 ** 3 = 8</span>
+                    </div>
+                </div>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>عملگر <code dir='ltr'>/</code> همیشه یک عدد اعشاری (<code dir='ltr'>float</code>) برمی‌گرداند، حتی اگر حاصل تقسیم دقیق باشد (مثل <code dir='ltr'>4 / 2</code> که <code dir='ltr'>2.0</code> می‌شود).</li>
+                    <li>عملگر <code dir='ltr'>//</code> (تقسیم صحیح) قسمت صحیح حاصل تقسیم را برمی‌گرداند و اعشار را حذف می‌کند (مثبت یا منفی بودن عدد در نحوه‌ی گرد کردن تأثیر دارد).</li>
+                    <li>عملگر <code dir='ltr'>%</code> (مدول) باقیمانده‌ی تقسیم را برمی‌گرداند و برای کارهایی مثل تشخیص زوج/فرد، چرخش‌های دوره‌ای و محاسبات ماژولار بسیار مفید است.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== عملیات پایه ==========
+print(5 + 3)      # 8
+print(10 - 4)     # 6
+print(6 * 7)      # 42
+print(15 / 4)     # 3.75
+print(15 // 4)    # 3 (تقسیم صحیح)
+print(15 % 4)     # 3 (باقیمانده)
+print(2 ** 5)     # 32 (توان)
+
+# ========== ترکیب عملگرها با پرانتز ==========
+result = (10 + 5) * 2 - 4
+print(result)     # 26
+
+# ========== کاربرد عملی: محاسبه‌ی مساحت و محیط ==========
+radius = 5
+pi = 3.14159
+area = pi * (radius ** 2)      # مساحت دایره: πr²
+circumference = 2 * pi * radius  # محیط دایره: 2πr
+print(f"مساحت: {area:.2f}, محیط: {circumference:.2f}")
+
+# ========== کاربرد عملی: تبدیل دما ==========
+celsius = 25
+fahrenheit = (celsius * 9/5) + 32
+print(f"{celsius}°C = {fahrenheit:.1f}°F")
+
+# ========== کاربرد عملی: محاسبه‌ی معدل ==========
+scores = [18, 15, 19, 14, 17]
+average = sum(scores) / len(scores)
+print(f"میانگین نمرات: {average:.2f}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">8</span><br>
+                    <span class="highlight">➜</span> <span class="result">6</span><br>
+                    <span class="highlight">➜</span> <span class="result">42</span><br>
+                    <span class="highlight">➜</span> <span class="result">3.75</span><br>
+                    <span class="highlight">➜</span> <span class="result">3</span><br>
+                    <span class="highlight">➜</span> <span class="result">3</span><br>
+                    <span class="highlight">➜</span> <span class="result">32</span><br>
+                    <span class="highlight">➜</span> <span class="result">26</span><br>
+                    <span class="highlight">➜</span> <span class="result">مساحت: 78.54, محیط: 31.42</span><br>
+                    <span class="highlight">➜</span> <span class="result">25°C = 77.0°F</span><br>
+                    <span class="highlight">➜</span> <span class="result">میانگین نمرات: 16.60</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> در پایتون، عملگر <code dir='ltr'>/</code> همیشه یک عدد اعشاری برمی‌گرداند. اگر به تقسیم صحیح نیاز دارید، از <code dir='ltr'>//</code> استفاده کنید. همچنین عملگر <code dir='ltr'>%</code> برای تشخیص زوج بودن عدد (عدد % 2 == 0) بسیار کاربرد دارد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که شعاع یک دایره را از کاربر دریافت کند و محیط و مساحت آن را محاسبه کند. (از <code dir='ltr'>pi = 3.14159</code> استفاده کنید و نتایج را با ۲ رقم اعشار نمایش دهید.)
+                </div>
+            </div>
+
+            <!-- ۳.۲ -->
+            <div class="sub-section">
+                <h4>۳.۲ عملگرهای مقایسه‌ای (Comparison Operators)</h4>
+                <p>عملگرهای مقایسه‌ای دو مقدار را با هم مقایسه می‌کنند و یک مقدار <strong>بولی (Boolean)</strong> یعنی <code dir='ltr'>True</code> یا <code dir='ltr'>False</code> برمی‌گردانند. این عملگرها پایه‌ی تصمیم‌گیری در برنامه هستند (در فصل بعد با <code dir='ltr'>if</code> از آنها استفاده خواهید کرد).</p>
+                <div class="operator-grid">
+                    <div class="operator-card">
+                        <span class="symbol">==</span>
+                        <span class="name">برابری</span>
+                        <span class="example">5 == 5 → True</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">!=</span>
+                        <span class="name">نابرابری</span>
+                        <span class="example">5 != 3 → True</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">></span>
+                        <span class="name">بزرگ‌تر</span>
+                        <span class="example">5 > 3 → True</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol"><</span>
+                        <span class="name">کوچک‌تر</span>
+                        <span class="example">3 < 5 → True</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">>=</span>
+                        <span class="name">بزرگ‌تر یا مساوی</span>
+                        <span class="example">5 >= 5 → True</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol"><=</span>
+                        <span class="name">کوچک‌تر یا مساوی</span>
+                        <span class="example">3 <= 5 → True</span>
+                    </div>
+                </div>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>عملگر <code dir='ltr'>==</code> برای مقایسه‌ی مقدار است، در حالی که <code dir='ltr'>=</code> برای انتساب (مقداردهی) استفاده می‌شود. اشتباه گرفتن این دو یکی از رایج‌ترین خطاها در برنامه‌نویسی است.</li>
+                    <li>رشته‌ها نیز با عملگرهای مقایسه‌ای قابل مقایسه هستند. مقایسه بر اساس <strong>ترتیب لغوی (Lexicographic)</strong> انجام می‌شود (بر اساس کد ASCII کاراکترها).</li>
+                    <li>در مقایسه‌ی رشته‌ها، حروف بزرگ از حروف کوچک کوچک‌تر هستند (چون کد ASCII آنها کمتر است). برای مقایسه‌ی بدون حساسیت به بزرگی/کوچکی، ابتدا رشته‌ها را با <code dir='ltr'>lower()</code> یا <code dir='ltr'>upper()</code> یکسان کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== مقایسه اعداد ==========
+x = 10
+y = 20
+
+print(x == y)      # False
+print(x != y)      # True
+print(x > y)       # False
+print(x < y)       # True
+print(x >= 10)     # True
+print(y <= 20)     # True
+
+# ========== مقایسه رشته‌ها ==========
+print("apple" == "apple")      # True
+print("apple" != "orange")     # True
+print("banana" > "apple")      # True ('b' > 'a')
+print("Apple" > "apple")       # False ('A' < 'a' در ASCII)
+print("apple".lower() == "APPLE".lower())  # True (نادیده گرفتن حساسیت)
+
+# ========== ترکیب با متغیرها ==========
+age = 18
+is_adult = age >= 18
+print(is_adult)    # True
+
+# ========== کاربرد عملی: بررسی محدوده سنی ==========
+age = int(input("سن خود را وارد کنید: "))
+is_child = age < 13
+is_teen = 13 <= age < 18
+is_adult = age >= 18
+print(f"کودک: {is_child}, نوجوان: {is_teen}, بزرگسال: {is_adult}")
+
+# ========== مقایسه اعداد اعشاری (دقت) ==========
+# توجه: به دلیل نمایش ممیز شناور، مقایسه مستقیم اعداد اعشاری ممکن است دقیق نباشد
+print(0.1 + 0.2 == 0.3)   # False (به دلیل خطای گرد کردن)
+print(abs((0.1 + 0.2) - 0.3) < 1e-9)  # True (مقایسه با تلورانس)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>==</code> برای مقایسه‌ی برابری <strong>مقدار</strong> استفاده کنید. <code dir='ltr'>=</code> عملگر انتساب است و برای مقداردهی استفاده می‌شود. اشتباه گرفتن این دو یکی از رایج‌ترین خطاهاست که منجر به <code dir='ltr'>SyntaxError</code> (در صورت استفاده در شرط) یا رفتار نادرست برنامه می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که دو عدد از کاربر دریافت کند و با عملگرهای مقایسه‌ای مشخص کند که آیا عدد اول بزرگ‌تر، کوچک‌تر یا مساوی عدد دوم است. نتیجه را با پیام مناسب نمایش دهید.
+                </div>
+            </div>
+
+            <!-- ۳.۳ -->
+            <div class="sub-section">
+                <h4>۳.۳ عملگرهای منطقی (Logical Operators)</h4>
+                <p>عملگرهای منطقی برای <strong>ترکیب</strong> چند شرط بولی و ایجاد منطق پیچیده‌تر استفاده می‌شوند. این عملگرها به شما امکان می‌دهند شرایط چندگانه را در یک عبارت بررسی کنید.</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>عملگر</th>
+                            <th>توضیح</th>
+                            <th>مثال</th>
+                            <th>نتیجه</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code dir='ltr'>and</code></td>
+                            <td><strong>و</strong> – True اگر <strong>همه</strong> شرط‌ها True باشند</td>
+                            <td>True and True → True<br>True and False → False</td>
+                            <td>True / False</td>
+                        </tr>
+                        <tr>
+                            <td><code dir='ltr'>or</code></td>
+                            <td><strong>یا</strong> – True اگر <strong>حداقل یکی</strong> از شرط‌ها True باشد</td>
+                            <td>True or False → True<br>False or False → False</td>
+                            <td>True / False</td>
+                        </tr>
+                        <tr>
+                            <td><code dir='ltr'>not</code></td>
+                            <td><strong>نقیض</strong> – برعکس کردن مقدار بولی</td>
+                            <td>not True → False<br>not False → True</td>
+                            <td>False / True</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>نکته مهم – Short-circuit (ارزیابی کوتاه‌مدت):</strong></p>
+                <ul>
+                    <li>در عملگر <code dir='ltr'>and</code>، اگر شرط اول <code dir='ltr'>False</code> باشد، بقیه‌ی شرط‌ها اصلاً بررسی نمی‌شوند (چون نتیجه قطعاً False است).</li>
+                    <li>در عملگر <code dir='ltr'>or</code>، اگر شرط اول <code dir='ltr'>True</code> باشد، بقیه‌ی شرط‌ها بررسی نمی‌شوند (چون نتیجه قطعاً True است).</li>
+                    <li>این ویژگی می‌تواند برای <strong>بهینه‌سازی عملکرد</strong> و <strong>جلوگیری از خطا</strong> (مثلاً بررسی وجود یک متغیر قبل از دسترسی به آن) استفاده شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== and - هر دو شرط باید True باشند ==========
+age = 25
+has_license = True
+can_drive = age >= 18 and has_license
+print(can_drive)   # True
+
+# ========== or - حداقل یکی از شرط‌ها True باشد ==========
+is_weekend = True
+is_holiday = False
+can_rest = is_weekend or is_holiday
+print(can_rest)    # True
+
+# ========== not - برعکس کردن ==========
+is_raining = False
+is_sunny = not is_raining
+print(is_sunny)    # True
+
+# ========== ترکیب چند عملگر منطقی ==========
+score = 85
+is_passed = score >= 60 and score <= 100
+print(is_passed)   # True
+
+# ========== کاربرد عملی: بررسی شرایط پیچیده ==========
+age = 22
+has_permission = True
+is_active = False
+
+# کاربر می‌تواند وارد شود اگر سن ≥ ۱۸ و (دسترسی داشته باشد یا فعال باشد)
+can_login = (age >= 18) and (has_permission or is_active)
+print(f"مجاز به ورود: {can_login}")  # True
+
+# ========== استفاده از Truthy/Falsy در عملگرهای منطقی ==========
+name = "Ali"
+if name:  # رشته غیرخالی → Truthy
+    print("نام وجود دارد")  # این خط اجرا می‌شود
+
+user_input = ""
+if not user_input:
+    print("ورودی خالی است")  # این خط اجرا می‌شود
+
+# ========== Short-circuit در عملگرهای منطقی ==========
+def expensive_check():
+    print("بررسی گران‌قیمت انجام شد")
+    return True
+
+# شرط دوم بررسی نمی‌شود (چون شرط اول True است و or با True قطعی است)
+result = True or expensive_check()  # expensive_check() اجرا نمی‌شود
+print(result)  # True
+
+# ========== استفاده از عملگرهای منطقی در شرط‌های لایه‌ای ==========
+age = 30
+income = 6000000
+credit_score = 750
+
+# وام تأیید می‌شود اگر: سن ≥ 18 و درآمد ≥ 5M و امتیاز اعتباری ≥ 700
+loan_approved = (age >= 18) and (income >= 5000000) and (credit_score >= 700)
+print(f"وام تأیید شد: {loan_approved}")  # True</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">مجاز به ورود: True</span><br>
+                    <span class="highlight">➜</span> <span class="result">نام وجود دارد</span><br>
+                    <span class="highlight">➜</span> <span class="result">ورودی خالی است</span><br>
+                    <span class="highlight">➜</span> <span class="result">وام تأیید شد: True</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> عملگرهای منطقی در پایتون <strong>Short-circuit</strong> هستند. یعنی اگر نتیجه‌ی عبارت از اول مشخص باشد، بقیه‌ی عبارت ارزیابی نمی‌شود. این ویژگی می‌تواند در جلوگیری از خطاهای <code dir='ltr'>AttributeError</code> یا <code dir='ltr'>IndexError</code> مفید باشد (مثلاً بررسی وجود یک کلید در دیکشنری قبل از دسترسی به آن).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که سن و وضعیت تحصیلی کاربر (دانشجو بودن یا نبودن) را دریافت کند و مشخص کند که آیا او واجد شرایط دریافت وام تحصیلی است یا نه. شرایط: سن بین ۱۸ تا ۳۰ سال (شامل) و دانشجو بودن.
+                </div>
+            </div>
+
+            <!-- ۳.۴ -->
+            <div class="sub-section">
+                <h4>۳.۴ عملگرهای انتساب (Assignment Operators)</h4>
+                <p>عملگرهای انتساب برای <strong>مقداردهی</strong> و <strong>به‌روزرسانی</strong> متغیرها استفاده می‌شوند. عملگر پایه <code dir='ltr'>=</code> است و عملگرهای ترکیبی (مثل <code dir='ltr'>+=</code>) یک عملیات حسابی و انتساب را همزمان انجام می‌دهند.</p>
+                <div class="operator-grid">
+                    <div class="operator-card">
+                        <span class="symbol">=</span>
+                        <span class="name">مقداردهی ساده</span>
+                        <span class="example">x = 10</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">+=</span>
+                        <span class="name">افزایش</span>
+                        <span class="example">x += 5 → x = x + 5</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">-=</span>
+                        <span class="name">کاهش</span>
+                        <span class="example">x -= 3 → x = x - 3</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">*=</span>
+                        <span class="name">ضرب</span>
+                        <span class="example">x *= 2 → x = x * 2</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">/=</span>
+                        <span class="name">تقسیم اعشاری</span>
+                        <span class="example">x /= 4 → x = x / 4</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">//=</span>
+                        <span class="name">تقسیم صحیح</span>
+                        <span class="example">x //= 3 → x = x // 3</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">%=</span>
+                        <span class="name">باقیمانده</span>
+                        <span class="example">x %= 5 → x = x % 5</span>
+                    </div>
+                    <div class="operator-card">
+                        <span class="symbol">**=</span>
+                        <span class="name">توان</span>
+                        <span class="example">x **= 2 → x = x ** 2</span>
+                    </div>
+                </div>
+                <p><strong>مزایای استفاده از عملگرهای ترکیبی:</strong></p>
+                <ul>
+                    <li>کد <strong>کوتاه‌تر</strong> و <strong>خواناتر</strong> می‌شود.</li>
+                    <li>از تکرار نام متغیر جلوگیری می‌کند و احتمال خطای تایپی را کاهش می‌دهد.</li>
+                    <li>در برخی موارد، عملکرد (Performance) بهتری نسبت به نوشتن کامل دارند (اگرچه در پایتون این تفاوت ناچیز است).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== عملگرهای ترکیبی ==========
+x = 10
+x += 5      # x = 15
+x -= 3      # x = 12
+x *= 2      # x = 24
+x /= 4      # x = 6.0 (تقسیم اعشاری)
+x //= 2     # x = 3.0 (تقسیم صحیح)
+x %= 2      # x = 1.0
+x **= 3     # x = 1.0
+
+print(x)    # 1.0
+
+# ========== کاربرد عملی: شمارنده ==========
+counter = 0
+counter += 1   # 1
+counter += 1   # 2
+counter += 1   # 3
+print(f"شمارنده: {counter}")  # 3
+
+# ========== کاربرد عملی: محاسبه مجموع ==========
+total = 0
+for i in range(1, 6):
+    total += i  # جمع ۱ تا ۵
+print(f"مجموع: {total}")  # 15
+
+# ========== کاربرد عملی: به‌روزرسانی قیمت ==========
+price = 100
+discount = 20
+price -= discount  # قیمت جدید: 80
+tax = price * 0.1
+price += tax       # قیمت با مالیات: 88
+print(f"قیمت نهایی: {price}")  # 88.0
+
+# ========== استفاده از عملگرهای ترکیبی با رشته‌ها ==========
+text = "Hello"
+text += " World"    # "Hello World"
+print(text)         # "Hello World"
+
+# ========== استفاده از عملگرهای ترکیبی با لیست‌ها ==========
+my_list = [1, 2, 3]
+my_list += [4, 5]   # [1, 2, 3, 4, 5]
+print(my_list)      # [1, 2, 3, 4, 5]</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">1.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">شمارنده: 3</span><br>
+                    <span class="highlight">➜</span> <span class="result">مجموع: 15</span><br>
+                    <span class="highlight">➜</span> <span class="result">قیمت نهایی: 88.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">Hello World</span><br>
+                    <span class="highlight">➜</span> <span class="result">[1, 2, 3, 4, 5]</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> عملگرهای انتساب ترکیبی کد را <strong>کوتاه‌تر</strong> و <strong>خواناتر</strong> می‌کنند. به‌جای <code dir='ltr'>x = x + 1</code> از <code dir='ltr'>x += 1</code> و به‌جای <code dir='ltr'>x = x * 2</code> از <code dir='ltr'>x *= 2</code> استفاده کنید. این کار به‌ویژه در حلقه‌ها و محاسبات تکراری بسیار مفید است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که یک متغیر <code dir='ltr'>total</code> با مقدار ۰ داشته باشد. سپس از کاربر ۵ عدد دریافت کند و با استفاده از عملگر <code dir='ltr'>+=</code> آنها را به <code dir='ltr'>total</code> اضافه کند. در نهایت مجموع و میانگین اعداد را چاپ کند.
+                </div>
+            </div>
+
+            <!-- ۳.۵ -->
+            <div class="sub-section">
+                <h4>۳.۵ عملگرهای هویتی (Identity Operators)</h4>
+                <p>عملگرهای هویتی برای بررسی اینکه آیا دو متغیر به <strong>همان شیء (Object)</strong> در حافظه اشاره می‌کنند یا نه، استفاده می‌شوند. این عملگرها با عملگر <code dir='ltr'>==</code> تفاوت دارند: <code dir='ltr'>==</code> برابری <strong>مقدار</strong> را بررسی می‌کند، در حالی که <code dir='ltr'>is</code> برابری <strong>هویت</strong> (آدرس حافظه) را بررسی می‌کند.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>is</code></strong>: <code dir='ltr'>True</code> اگر دو متغیر به یک شیء اشاره کنند.</li>
+                    <li><strong><code dir='ltr'>is not</code></strong>: <code dir='ltr'>True</code> اگر دو متغیر به اشیاء متفاوتی اشاره کنند.</li>
+                </ul>
+                <p><strong>چه زمانی از <code dir='ltr'>is</code> استفاده کنیم؟</strong></p>
+                <ul>
+                    <li>برای بررسی <code dir='ltr'>None</code>: <code dir='ltr'>if x is None:</code> (روش استاندارد و توصیه‌شده)</li>
+                    <li>برای مقایسه با Singletonها (مانند <code dir='ltr'>True</code>، <code dir='ltr'>False</code> و <code dir='ltr'>None</code>)</li>
+                    <li>در مواقعی که نیاز به بررسی هویت شیء دارید (مثلاً در دیباگ)</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== اعداد صحیح کوچک (cached) ==========
+a = 10
+b = 10
+print(a is b)        # True (هر دو به یک شیء در حافظه اشاره می‌کنند)
+
+# ========== رشته‌ها (cached) ==========
+x = "hello"
+y = "hello"
+print(x is y)        # True (رشته‌های کوچک در حافظه کش می‌شوند)
+
+# ========== لیست‌ها (هر بار شیء جدید) ==========
+list1 = [1, 2, 3]
+list2 = [1, 2, 3]
+print(list1 is list2)   # False (اشاره به اشیاء متفاوت)
+print(list1 == list2)   # True (مقادیر برابر هستند)
+
+# ========== is not ==========
+print(list1 is not list2)  # True
+
+# ========== بررسی None (استاندارد) ==========
+value = None
+if value is None:
+    print("مقدار None است")
+
+# ========== مقایسه با True/False ==========
+is_active = True
+if is_active is True:  # این کار معمولاً لازم نیست، چون خود is_active بولی است
+    print("فعال است")
+
+# بهتر است اینطور بنویسید:
+if is_active:
+    print("فعال است")
+
+# ========== اعداد بزرگ (cached نیستند) ==========
+c = 1000
+d = 1000
+print(c is d)        # False (اعداد بزرگ کش نمی‌شوند)
+print(c == d)        # True (مقادیر برابر هستند)
+
+# ========== کاربرد عملی: استفاده از is برای Singleton ==========
+# در طراحی الگوهای Singleton یا مقایسه با مقادیر خاص
+status = "pending"
+if status is not None:
+    print(f"وضعیت: {status}")</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">مقدار None است</span><br>
+                    <span class="highlight">➜</span> <span class="result">فعال است</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> برای مقایسه‌ی <strong>مقادیر</strong> از <code dir='ltr'>==</code> استفاده کنید. برای بررسی اینکه آیا دو متغیر به <strong>یک شیء</strong> اشاره می‌کنند، از <code dir='ltr'>is</code> استفاده کنید. معمولاً برای بررسی <code dir='ltr'>None</code> از <code dir='ltr'>is None</code> استفاده می‌شود که روش استاندارد و توصیه‌شده است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست بسازید و آن را به یک متغیر دیگر اختصاص دهید. با <code dir='ltr'>is</code> بررسی کنید که آیا هر دو به یک شیء اشاره می‌کنند یا خیر. سپس با <code dir='ltr'>==</code> مقادیر را مقایسه کنید. تفاوت را توضیح دهید.
+                </div>
+            </div>
+
+            <!-- ۳.۶ -->
+            <div class="sub-section">
+                <h4>۳.۶ عملگرهای عضویت (Membership Operators)</h4>
+                <p>عملگرهای عضویت برای بررسی وجود یک عنصر در یک <strong>مجموعه</strong> (لیست، رشته، تاپل، دیکشنری، مجموعه و ...) استفاده می‌شوند. این عملگرها در برنامه‌نویسی روزمره بسیار کاربرد دارند، مخصوصاً برای اعتبارسنجی و جستجو.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>in</code></strong>: <code dir='ltr'>True</code> اگر عنصر در مجموعه وجود داشته باشد.</li>
+                    <li><strong><code dir='ltr'>not in</code></strong>: <code dir='ltr'>True</code> اگر عنصر در مجموعه وجود نداشته باشد.</li>
+                </ul>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>در دیکشنری‌ها، عملگر <code dir='ltr'>in</code> <strong>کلیدها</strong> را بررسی می‌کند، نه مقادیر را. برای بررسی مقادیر از <code dir='ltr'>in dict.values()</code> استفاده کنید.</li>
+                    <li>عملگرهای عضویت با <strong>حساسیت به بزرگی/کوچکی</strong> حروف کار می‌کنند. برای جستجوی بدون حساسیت، هر دو طرف را به یک حالت (کوچک یا بزرگ) تبدیل کنید.</li>
+                    <li>عملگرهای عضویت در حلقه‌های <code dir='ltr'>for</code> نیز برای پیمایش عناصر استفاده می‌شوند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== لیست ==========
+fruits = ["apple", "banana", "orange"]
+print("banana" in fruits)        # True
+print("grape" in fruits)         # False
+print("grape" not in fruits)     # True
+
+# ========== رشته ==========
+text = "Hello, World!"
+print("World" in text)           # True
+print("Python" in text)          # False
+print("world" in text)           # False (حساس به بزرگی/کوچکی)
+
+# جستجوی بدون حساسیت
+print("world".lower() in text.lower())  # True
+
+# ========== دیکشنری (بررسی کلیدها) ==========
+person = {"name": "Ali", "age": 25}
+print("name" in person)          # True (کلید وجود دارد)
+print("Ali" in person)           # False (مقدار بررسی نمی‌شود)
+print("Ali" in person.values())  # True (بررسی مقادیر)
+
+# ========== تاپل ==========
+colors = ("red", "green", "blue")
+print("green" in colors)         # True
+
+# ========== مجموعه (Set) ==========
+numbers = {1, 2, 3, 4, 5}
+print(3 in numbers)              # True
+
+# ========== کاربرد عملی: اعتبارسنجی ورودی ==========
+allowed_operators = ["+", "-", "*", "/"]
+operator = input("عملگر را وارد کنید: ")
+if operator in allowed_operators:
+    print("عملگر مجاز است")
+else:
+    print("عملگر نامعتبر است")
+
+# ========== کاربرد عملی: جستجو در لیست ==========
+students = ["علی", "سارا", "رضا", "مریم"]
+search = input("نام دانش‌آموز را وارد کنید: ")
+if search in students:
+    print(f"{search} در لیست وجود دارد")
+else:
+    print(f"{search} در لیست وجود ندارد")
+
+# ========== حلقه با in ==========
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    print(num, end=" ")           # 1 2 3 4 5</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">False</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> عملگرهای عضویت برای بررسی وجود یک عنصر در لیست‌ها، رشته‌ها و دیکشنری‌ها بسیار مفید هستند. در دیکشنری‌ها، <code dir='ltr'>in</code> کلیدها را بررسی می‌کند؛ برای بررسی مقادیر از <code dir='ltr'>in dict.values()</code> استفاده کنید. همچنین در حلقه‌های <code dir='ltr'>for</code>، <code dir='ltr'>in</code> برای پیمایش عناصر استفاده می‌شود.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک برنامه بنویسید که از کاربر یک حرف دریافت کند و با عملگر <code dir='ltr'>in</code> بررسی کند که آیا آن حرف در یک رشته‌ی از پیش تعریف‌شده (مثل "python programming") وجود دارد یا نه. جستجو بدون حساسیت به بزرگی/کوچکی انجام شود.
+                </div>
+            </div>
+
+            <!-- ۳.۷ -->
+            <div class="sub-section">
+                <h4>۳.۷ اولویت عملگرها (Operator Precedence)</h4>
+                <p>در عبارات پیچیده که شامل چندین عملگر هستند، ترتیب اجرای عملگرها بر اساس <strong>اولویت (Precedence)</strong> تعیین می‌شود. درک اولویت عملگرها برای نوشتن عبارات صحیح و خوانا ضروری است.</p>
+                <p><strong>ترتیب اولویت از بالا به پایین (بالاترین اولویت در بالا):</strong></p>
+                <ol>
+                    <li><strong>پرانتز</strong> <code dir='ltr'>()</code> – بالاترین اولویت، همیشه ابتدا محاسبه می‌شود.</li>
+                    <li><strong>توان</strong> <code dir='ltr'>**</code> – از راست به چپ ارزیابی می‌شود.</li>
+                    <li><strong>منفی یکانی (Unary)</strong> <code dir='ltr'>-x</code> و <strong>not</strong> – عملگرهای یک‌عملوندی.</li>
+                    <li><strong>ضرب، تقسیم، تقسیم صحیح، باقیمانده</strong> <code dir='ltr'>*, /, //, %</code> – از چپ به راست.</li>
+                    <li><strong>جمع و تفریق</strong> <code dir='ltr'>+, -</code> – از چپ به راست.</li>
+                    <li><strong>عملگرهای مقایسه‌ای</strong> <code dir='ltr'>&lt;, &lt;=, &gt;, &gt;=, ==, !=</code> – غیرانجمنی (چپ به راست).</li>
+                    <li><strong>عملگرهای هویتی</strong> <code dir='ltr'>is, is not</code>.</li>
+                    <li><strong>عملگرهای عضویت</strong> <code dir='ltr'>in, not in</code>.</li>
+                    <li><strong>عملگرهای منطقی</strong> <code dir='ltr'>not, and, or</code> – به‌ترتیب از بالاترین به پایین‌ترین اولویت.</li>
+                </ol>
+                <p><strong>قانون طلایی:</strong> اگر از اولویت عملگرها مطمئن نیستید، از <strong>پرانتز</strong> استفاده کنید. پرانتز هم خوانایی کد را افزایش می‌دهد و هم از بروز خطاهای محاسباتی جلوگیری می‌کند.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== مثال‌های اولویت ==========
+# ضرب اولویت بیشتری نسبت به جمع دارد
+result = 10 + 5 * 2
+print(result)      # 20 (ابتدا 5*2 = 10، سپس 10+10 = 20)
+
+# با پرانتز اولویت را تغییر می‌دهیم
+result = (10 + 5) * 2
+print(result)      # 30
+
+# ========== ترکیب چند عملگر ==========
+a = 5
+b = 10
+c = 3
+result = a + b * c - 2 ** 3
+# 1. توان: 2**3 = 8
+# 2. ضرب: b * c = 30
+# 3. جمع و تفریق (چپ به راست): 5 + 30 - 8 = 27
+print(result)      # 27
+
+# ========== منطقی با مقایسه‌ای ==========
+x = 10
+y = 20
+z = 30
+is_true = x < y and y < z   # True and True = True
+print(is_true)               # True
+
+# ========== استفاده از پرانتز برای خوانایی ==========
+age = 25
+has_license = True
+is_learner = False
+
+# بدون پرانتز (خود پایتون اولویت را می‌داند، اما خوانایی کم است)
+is_valid1 = age >= 18 and has_license or is_learner
+
+# با پرانتز (خوانا و واضح)
+is_valid2 = (age >= 18) and (has_license or is_learner)
+print(is_valid2)   # True
+
+# ========== مثال از چپ‌به‌راست بودن عملگرهای حسابی ==========
+# 8 / 4 / 2 به صورت (8/4)/2 = 1.0
+print(8 / 4 / 2)   # 1.0
+
+# ========== مثال از راست‌به‌چپ بودن توان ==========
+# 2 ** 3 ** 2 به صورت 2 ** (3 ** 2) = 2 ** 9 = 512
+print(2 ** 3 ** 2)  # 512</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">20</span><br>
+                    <span class="highlight">➜</span> <span class="result">30</span><br>
+                    <span class="highlight">➜</span> <span class="result">27</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span><br>
+                    <span class="highlight">➜</span> <span class="result">1.0</span><br>
+                    <span class="highlight">➜</span> <span class="result">512</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> برای خوانایی بیشتر و جلوگیری از اشتباه، همیشه از <strong>پرانتز</strong> برای مشخص کردن اولویت در عبارات پیچیده استفاده کنید. کد خوانا به‌اندازه‌ی کد درست کار کردن اهمیت دارد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> عبارت زیر را بدون اجرا، مقدار آن را حدس بزنید: <br>
+                    <code dir='ltr'>result = 8 + 2 * 3 ** 2 - 4 / 2</code> <br>
+                    سپس با پایتون محاسبه کنید و نتیجه را بررسی کنید. مراحل محاسبه را توضیح دهید.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک ماشین‌حساب پیشرفته با عملگرها</h4>
+            <p>در این کارگاه، یک ماشین‌حساب کامل می‌سازیم که از همه‌ی عملگرهای این فصل استفاده می‌کند. این برنامه به کاربر اجازه می‌دهد دو عدد و یک عملگر وارد کند و نتیجه را با تحلیل‌های تکمیلی مشاهده کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>calculator_advanced.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>دریافت ورودی:</strong> از کاربر دو عدد و یک عملگر (+, -, *, /, //, %, **) با <code dir='ltr'>input()</code> دریافت کنید. اعداد را به <code dir='ltr'>float</code> تبدیل کنید (برای پشتیبانی از اعداد اعشاری).</li>
+                <li><strong>اعتبارسنجی:</strong> با استفاده از عملگر <code dir='ltr'>in</code> بررسی کنید که عملگر واردشده در لیست عملگرهای مجاز وجود داشته باشد. اگر نه، پیام خطا نمایش دهید.</li>
+                <li><strong>محاسبه:</strong> با استفاده از یک سری <code dir='ltr'>if/elif/else</code> (فصل بعد) یا ساختار <code dir='ltr'>match-case</code>، عملیات مربوطه را انجام دهید. برای تقسیم، با <code dir='ltr'>if</code> بررسی کنید که مخرج صفر نباشد.</li>
+                <li><strong>تحلیل نتیجه:</strong>
+                    <ul>
+                        <li>با عملگرهای مقایسه‌ای: مشخص کنید که نتیجه مثبت است، منفی است یا صفر.</li>
+                        <li>با عملگرهای منطقی: بررسی کنید که آیا هر دو عدد زوج هستند یا خیر (با استفاده از <code dir='ltr'>%</code>).</li>
+                        <li>با عملگرهای عضویت: بررسی کنید که آیا عدد اول در یک بازه (مثلاً ۱ تا ۱۰۰) قرار دارد.</li>
+                        <li>با عملگرهای هویتی: بررسی کنید که آیا دو عدد به یک شیء اشاره می‌کنند (برای اعداد صحیح کوچک).</li>
+                    </ul>
+                </li>
+                <li><strong>نمایش خروجی:</strong> با استفاده از f-string، یک گزارش کامل شامل: اعداد ورودی، عملگر، نتیجه، وضعیت نتیجه (مثبت/منفی/صفر)، وضعیت زوج بودن و نتیجه‌ی بررسی عضویت و هویت نمایش دهید.</li>
+            </ol>
+            <p><strong>کد نمونه (بخش اصلی):</strong></p>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># دریافت ورودی
+num1 = float(input("عدد اول: "))
+num2 = float(input("عدد دوم: "))
+op = input("عملگر (+, -, *, /, //, %, **): ")
+
+# لیست عملگرهای مجاز
+allowed_ops = ["+", "-", "*", "/", "//", "%", "**"]
+
+# بررسی عضویت
+if op not in allowed_ops:
+    print("❌ عملگر نامعتبر!")
+else:
+    # محاسبه (با شرط‌های ساده)
+    if op == "+":
+        result = num1 + num2
+    elif op == "-":
+        result = num1 - num2
+    elif op == "*":
+        result = num1 * num2
+    elif op == "/":
+        if num2 == 0:
+            print("❌ تقسیم بر صفر مجاز نیست!")
+            exit()
+        result = num1 / num2
+    # ... ادامه برای سایر عملگرها
+
+    # تحلیل نتیجه
+    is_positive = result > 0
+    is_negative = result < 0
+    is_zero = result == 0
+    both_even = (num1 % 2 == 0) and (num2 % 2 == 0)
+    is_in_range = 1 <= num1 <= 100
+    same_object = (num1 is num2)  # فقط برای اعداد صحیح کوچک
+
+    # نمایش گزارش
+    print(f"\n📊 گزارش محاسبه:")
+    print(f"{num1} {op} {num2} = {result}")
+    print(f"وضعیت نتیجه: {'مثبت' if is_positive else 'منفی' if is_negative else 'صفر'}")
+    print(f"هر دو عدد زوج هستند: {'✅' if both_even else '❌'}")
+    print(f"عدد اول در بازه ۱-۱۰۰: {'✅' if is_in_range else '❌'}")
+    print(f"عدد اول و دوم یک شیء هستند: {'✅' if same_object else '❌'}")</code></pre>
+            </div>
+            <div class="live-demo">
+                <h4>🧮 ماشین‌حساب با عملگرها</h4>
+                <input type="number" id="calcNum1" placeholder="عدد اول" step="any">
+                <select id="calcOp">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">*</option>
+                    <option value="/">/</option>
+                    <option value="//">//</option>
+                    <option value="%">%</option>
+                    <option value="**">**</option>
+                </select>
+                <input type="number" id="calcNum2" placeholder="عدد دوم" step="any">
+                <button onclick="calculateOp()">محاسبه</button>
+                <div class="result-box" id="calcOpResult">منتظر ورود داده...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>سه عدد از کاربر دریافت کند.</li>
+                <li>با عملگرهای مقایسه‌ای بزرگ‌ترین عدد را پیدا کند (بدون استفاده از تابع <code dir='ltr'>max()</code>).</li>
+                <li>با عملگرهای منطقی بررسی کند که آیا سه عدد می‌توانند اضلاع یک مثلث باشند یا نه (شرط مثلث: مجموع هر دو ضلع بزرگ‌تر از ضلع سوم باشد).</li>
+                <li>با عملگرهای هویتی بررسی کند که آیا دو عدد اول به یک شیء اشاره می‌کنند (با استفاده از اعداد صحیح کوچک، مثلاً ۵ و ۵).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین عملگرهای <code dir='ltr'>/</code> و <code dir='ltr'>//</code> چیست؟ در چه شرایطی از هرکدام استفاده می‌کنیم؟</li>
+                <li>تفاوت بین عملگرهای <code dir='ltr'>==</code> و <code dir='ltr'>is</code> چیست؟ مثال بزنید.</li>
+                <li>عملگرهای <code dir='ltr'>and</code> و <code dir='ltr'>or</code> چگونه کار می‌کنند؟ مفهوم Short-circuit را توضیح دهید.</li>
+                <li>چرا باید از عملگرهای انتساب ترکیبی (مثل <code dir='ltr'>+=</code>) استفاده کنیم؟ چه مزایایی دارند؟</li>
+                <li>عملگرهای عضویت چه کاربردی دارند؟ در دیکشنری‌ها، <code dir='ltr'>in</code> چه چیزی را بررسی می‌کند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>خروجی <code dir='ltr'>15 // 4</code> چیست؟<br>
+                    أ) 3.75  ب) 3  ج) 4  د) 3.0</li>
+                <li>خروجی <code dir='ltr'>10 % 6</code> چیست؟<br>
+                    أ) 4  ب) 1.66  ج) 1  د) 6</li>
+                <li>کدام یک از موارد زیر برای بررسی برابری دو مقدار استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>=</code>  ب) <code dir='ltr'>==</code>  ج) <code dir='ltr'>is</code>  د) <code dir='ltr'>!=</code></li>
+                <li>خروجی عبارت <code dir='ltr'>2 + 3 * 4 ** 2</code> چیست؟<br>
+                    أ) 80  ب) 50  ج) 26  د) 100</li>
+                <li>کدام یک از موارد زیر <code dir='ltr'>True</code> است اگر مقدار <code dir='ltr'>x</code> بین ۱۰ و ۲۰ باشد (شامل ۱۰ و ۲۰)؟<br>
+                    أ) <code dir='ltr'>x >= 10 and x <= 20</code>  ب) <code dir='ltr'>10 < x < 20</code>  ج) <code dir='ltr'>x >= 10 or x <= 20</code>  د) <code dir='ltr'>10 <= x <= 20</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>از کاربر دو عدد دریافت کند.</li>
+                <li>با عملگرهای حسابی همه‌ی عملیات زیر را محاسبه و نمایش دهد:
+                    <ul>
+                        <li>جمع، تفریق، ضرب</li>
+                        <li>تقسیم اعشاری، تقسیم صحیح، باقیمانده</li>
+                        <li>توان (عدد اول به توان عدد دوم)</li>
+                    </ul>
+                </li>
+                <li>با عملگرهای مقایسه‌ای مشخص کند که آیا دو عدد با هم برابرند، اولی بزرگ‌تر است یا دومی.</li>
+                <li>با عملگرهای منطقی بررسی کند که آیا هر دو عدد مثبت هستند یا خیر.</li>
+                <li>با عملگرهای عضویت بررسی کند که آیا عدد اول در یک بازه (مثلاً ۱ تا ۱۰۰) قرار دارد.</li>
+                <li>همه‌ی نتایج را با f-string به‌صورت زیبا و خوانا نمایش دهد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>عملگرهای حسابی</strong>: +, -, *, /, //, %, ** – برای محاسبات ریاضی.</li>
+                <li>🔹 <strong>عملگرهای مقایسه‌ای</strong>: ==, !=, >, <, >=, <= – برای مقایسه مقادیر و تولید True/False.</li>
+                <li>🔹 <strong>عملگرهای منطقی</strong>: and, or, not – برای ترکیب شرط‌ها و ایجاد منطق پیچیده (با Short-circuit).</li>
+                <li>🔹 <strong>عملگرهای انتساب</strong>: =, +=, -=, *=, /=, //=, %=, **= – برای به‌روزرسانی کارآمد متغیرها.</li>
+                <li>🔹 <strong>عملگرهای هویتی</strong>: is, is not – برای مقایسه‌ی هویت اشیاء در حافظه (متفاوت از ==).</li>
+                <li>🔹 <strong>عملگرهای عضویت</strong>: in, not in – برای بررسی وجود عنصر در مجموعه‌ها (لیست، رشته، دیکشنری).</li>
+                <li>🔹 <strong>اولویت عملگرها</strong>: با استفاده از پرانتز، اولویت را کنترل و کد را خوانا کنید.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># ========== حسابی ==========
+5 + 3   # 8
+5 - 3   # 2
+5 * 3   # 15
+5 / 3   # 1.666
+5 // 3  # 1
+5 % 3   # 2
+5 ** 3  # 125
+
+# ========== مقایسه‌ای ==========
+5 == 5  # True
+5 != 3  # True
+5 > 3   # True
+5 < 8   # True
+
+# ========== منطقی ==========
+True and True   # True
+True or False   # True
+not True        # False
+
+# ========== انتساب ==========
+x = 10
+x += 5  # x = 15
+
+# ========== هویتی ==========
+x is y
+x is not y
+
+# ========== عضویت ==========
+"a" in "apple"        # True
+"x" not in "apple"    # True
+"name" in {"name": "Ali"}  # True (بررسی کلید)
+
+# ========== اولویت (به‌ترتیب) ==========
+# () → ** → -x, not → *, /, //, % → +, - → مقایسه‌ای → is → in → not, and, or</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Operator (عملگر):</strong> نماد یا کلمه‌ای که یک عملیات را روی یک یا چند مقدار (عملوند) انجام می‌دهد.</li>
+                <li><strong>Arithmetic Operator (عملگر حسابی):</strong> عملگرهای ریاضی برای محاسبات پایه و پیشرفته.</li>
+                <li><strong>Comparison Operator (عملگر مقایسه‌ای):</strong> عملگر برای مقایسه‌ی دو مقدار و تولید نتیجه‌ی بولی.</li>
+                <li><strong>Logical Operator (عملگر منطقی):</strong> عملگر برای ترکیب چند شرط بولی (and, or, not).</li>
+                <li><strong>Assignment Operator (عملگر انتساب):</strong> عملگر برای مقداردهی و به‌روزرسانی متغیرها.</li>
+                <li><strong>Identity Operator (عملگر هویتی):</strong> عملگر برای مقایسه‌ی هویت اشیاء (is, is not).</li>
+                <li><strong>Membership Operator (عملگر عضویت):</strong> عملگر برای بررسی وجود یک عنصر در مجموعه (in, not in).</li>
+                <li><strong>Precedence (اولویت):</strong> ترتیب اجرای عملگرها در یک عبارت.</li>
+                <li><strong>Short-circuit (ارزیابی کوتاه‌مدت):</strong> توقف ارزیابی عبارت در زمانی که نتیجه از قبل مشخص است (در and و or).</li>
+                <li><strong>Operand (عملوند):</strong> مقداری که عملگر روی آن اعمال می‌شود (مثلاً در <code dir='ltr'>5 + 3</code>، ۵ و ۳ عملوند هستند).</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/reference/expressions.html#operator-precedence" target="_blank" rel="noopener noreferrer">Python: Operator Precedence (مرجع رسمی)</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#comparisons" target="_blank" rel="noopener noreferrer">Python: Comparisons</a></li>
+                <li><a href="https://realpython.com/python-operators-expressions/" target="_blank" rel="noopener noreferrer">Real Python: Operators and Expressions</a></li>
+                <li><a href="https://www.w3schools.com/python/python_operators.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Operators</a></li>
+                <li><a href="https://docs.python.org/3/reference/expressions.html#not" target="_blank" rel="noopener noreferrer">Python: Boolean Operations — and, or, not</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> عملگرهای حسابی – ۱۵ دقیقه (با مثال‌های عملی)</li>
+                <li><strong>گام ۲:</strong> عملگرهای مقایسه‌ای – ۱۵ دقیقه (با تاکید بر تفاوت با انتساب)</li>
+                <li><strong>گام ۳:</strong> عملگرهای منطقی – ۱۵ دقیقه (با توضیح Short-circuit)</li>
+                <li><strong>گام ۴:</strong> عملگرهای انتساب – ۱۰ دقیقه (ترکیبی و کاربردها)</li>
+                <li><strong>گام ۵:</strong> عملگرهای هویتی – ۱۰ دقیقه (تفاوت با ==)</li>
+                <li><strong>گام ۶:</strong> عملگرهای عضویت – ۱۰ دقیقه (کاربرد در مجموعه‌ها)</li>
+                <li><strong>گام ۷:</strong> اولویت عملگرها – ۱۵ دقیقه (با مثال‌های متنوع)</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه (ماشین‌حساب پیشرفته)</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۲۰ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا <code dir='ltr'>0.1 + 0.2</code> در پایتون دقیقاً برابر <code dir='ltr'>0.3</code> نیست؟ چگونه می‌توان این مشکل را در مقایسه‌ی اعداد اعشاری حل کرد؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>is</code> و <code dir='ltr'>==</code> در مقایسه‌ی اعداد صحیح کوچک و بزرگ وجود دارد؟ چرا این تفاوت وجود دارد؟</li>
+                <li>❓ عملگرهای منطقی چگونه از Short-circuit استفاده می‌کنند و این ویژگی چه کاربردهایی در بهینه‌سازی کد و جلوگیری از خطا دارد؟</li>
+                <li>❓ چرا استفاده از پرانتز در عبارات پیچیده توصیه می‌شود، حتی اگر از اولویت عملگرها مطمئن باشید؟</li>
+                <li>❓ آیا می‌توان از عملگرهای عضویت روی دیکشنری‌ها استفاده کرد؟ چگونه می‌توان وجود یک <strong>مقدار</strong> را در دیکشنری بررسی کرد؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>=</code> به‌جای <code dir='ltr'>==</code> در شرط‌ها (انتساب به‌جای مقایسه) که باعث می‌شود مقداردهی انجام شود و شرط همیشه True باشد (یا در برخی موارد SyntaxError).<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه از <code dir='ltr'>==</code> استفاده کنید. <code dir='ltr'>if x = 5</code> در پایتون خطای <code dir='ltr'>SyntaxError</code> می‌دهد، اما در زبان‌های دیگر ممکن است اشتباه باشد.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن اولویت عملگرها و عدم استفاده از پرانتز که منجر به محاسبه‌ی اشتباه می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> همیشه با پرانتز، اولویت را به‌صورت واضح مشخص کنید. به‌ویژه در عبارات با ترکیب <code dir='ltr'>and</code> و <code dir='ltr'>or</code>، از پرانتز استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> انتظار اینکه <code dir='ltr'>is</code> برای مقایسه‌ی مقادیر (مانند اعداد بزرگ) کار کند، در حالی که <code dir='ltr'>is</code> هویت شیء را بررسی می‌کند.<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه‌ی مقدار از <code dir='ltr'>==</code> و برای هویت از <code dir='ltr'>is</code> استفاده کنید. برای بررسی <code dir='ltr'>None</code>، <code dir='ltr'>is None</code> استاندارد است.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>in</code> روی دیکشنری بدون در نظر گرفتن اینکه فقط کلیدها را بررسی می‌کند، در حالی که انتظار بررسی مقادیر را دارید.<br>
+                    <strong>🔧 راه حل:</strong> برای بررسی مقادیر در دیکشنری از <code dir='ltr'>in dict.values()</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن اینکه عملگرهای مقایسه‌ای رشته‌ها به بزرگی/کوچکی حروف حساس هستند.<br>
+                    <strong>🔧 راه حل:</strong> برای مقایسه‌ی بدون حساسیت، هر دو طرف را با <code dir='ltr'>lower()</code> یا <code dir='ltr'>upper()</code> یکسان کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>and</code> و <code dir='ltr'>or</code> به‌جای عملگرهای بیتی (<code dir='ltr'>&</code> و <code dir='ltr'>|</code>) در عملیات‌های بیتی.<br>
+                    <strong>🔧 راه حل:</strong> عملگرهای <code dir='ltr'>and</code>، <code dir='ltr'>or</code>، <code dir='ltr'>not</code> برای مقادیر بولی هستند. برای عملیات بیتی از <code dir='ltr'>&</code>، <code dir='ltr'>|</code> و <code dir='ltr'>~</code> استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی فصل ۳</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک تحلیل‌گر عددی پیشرفته با عملگرها</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) کامل بسازید که یک عدد از کاربر دریافت کند و تحلیل‌های متنوعی روی آن انجام دهد. این پروژه شما را با تمام عملگرهای این فصل در یک سناریوی واقعی آشنا می‌کند.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ورودی):</strong> یک عدد صحیح از کاربر با <code dir='ltr'>input()</code> دریافت کنید و به <code dir='ltr'>int</code> تبدیل کنید (با مدیریت خطا).</li>
+                <li><strong>مرحله ۲ (تحلیل حسابی):</strong>
+                    <ul>
+                        <li>مربع، مکعب و توان چهارم عدد را محاسبه کنید (با <code dir='ltr'>**</code>).</li>
+                        <li>جذر عدد را با <code dir='ltr'>math.sqrt()</code> محاسبه کنید (نیاز به import math).</li>
+                        <li>فاکتوریل عدد را با یک حلقه محاسبه کنید (می‌توانید از <code dir='ltr'>math.factorial</code> نیز استفاده کنید).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۳ (تحلیل مقایسه‌ای و منطقی):</strong>
+                    <ul>
+                        <li>با عملگرهای مقایسه‌ای مشخص کنید که عدد مثبت است، منفی است یا صفر.</li>
+                        <li>بررسی کنید که آیا عدد زوج است یا فرد (با <code dir='ltr'>%</code>).</li>
+                        <li>بررسی کنید که آیا عدد بین ۰ تا ۱۰۰ است (با <code dir='ltr'>and</code>).</li>
+                        <li>بررسی کنید که آیا عدد بخش‌پذیر بر ۳ و ۵ است (با <code dir='ltr'>%</code> و <code dir='ltr'>and</code>).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۴ (عضویت و هویت):</strong>
+                    <ul>
+                        <li>یک لیست از اعداد اول کوچک تعریف کنید: <code dir='ltr'>[2, 3, 5, 7, 11, 13, 17, 19]</code>.</li>
+                        <li>با <code dir='ltr'>in</code> بررسی کنید که آیا عدد در این لیست وجود دارد.</li>
+                        <li>یک متغیر دیگر با همان مقدار تعریف کنید و با <code dir='ltr'>is</code> بررسی کنید که آیا به یک شیء اشاره می‌کنند (برای اعداد کوچک).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۵ (انتساب):</strong>
+                    <ul>
+                        <li>عدد را به یک متغیر موقت اختصاص دهید و با عملگرهای <code dir='ltr'>+=</code>، <code dir='ltr'>-=</code>، <code dir='ltr'>*=</code> و <code dir='ltr'>**=</code> آن را تغییر دهید و هر مرحله را نمایش دهید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۶ (خروجی):</strong> همه‌ی نتایج را با f-string به‌صورت یک گزارش کامل و زیبا (با خطوط جداکننده و توضیحات) نمایش دهید.</li>
+            </ul>
+            <p><strong>چالش‌های بیشتر (اختیاری):</strong></p>
+            <ul>
+                <li>قابلیت دریافت چندین عدد و مقایسه‌ی آنها با هم (بزرگ‌ترین، کوچک‌ترین، میانگین) را اضافه کنید.</li>
+                <li>با عملگرهای منطقی، یک سیستم امتیازدهی ساده بر اساس عدد ورودی (مثلاً بین ۰-۲۰: ضعیف، ۲۰-۵۰: متوسط، ۵۰-۸۰: خوب، ۸۰-۱۰۰: عالی) بسازید.</li>
+                <li>با عملگرهای عضویت، یک جستجوگر کلمات در یک جمله‌ی بلند پیاده‌سازی کنید (از کاربر کلمه و جمله بگیرید و بررسی کنید که آیا کلمه در جمله وجود دارد).</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 analyzer.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را با کاربرد عملی همه‌ی عملگرها در یک برنامه‌ی واقعی آشنا می‌کند. سعی کنید کد را ماژولار و خوانا بنویسید و از کامنت‌های مناسب استفاده کنید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-02/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-04/index.html" class="btn-demo">رفتن به فصل ۴ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // ماشین‌حساب با عملگرها
+        function calculateOp() {
+            const num1 = parseFloat(document.getElementById('calcNum1').value);
+            const num2 = parseFloat(document.getElementById('calcNum2').value);
+            const op = document.getElementById('calcOp').value;
+            const resultBox = document.getElementById('calcOpResult');
+
+            if (isNaN(num1) || isNaN(num2)) {
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً اعداد معتبر وارد کنید!';
+                return;
+            }
+
+            let result;
+            let symbol = op;
+
+            switch (op) {
+                case '+': result = num1 + num2; break;
+                case '-': result = num1 - num2; break;
+                case '*': result = num1 * num2; break;
+                case '/':
+                    if (num2 === 0) {
+                        resultBox.className = 'result-box error';
+                        resultBox.textContent = '⚠️ تقسیم بر صفر مجاز نیست!';
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                case '//':
+                    if (num2 === 0) {
+                        resultBox.className = 'result-box error';
+                        resultBox.textContent = '⚠️ تقسیم بر صفر مجاز نیست!';
+                        return;
+                    }
+                    result = Math.floor(num1 / num2);
+                    break;
+                case '%':
+                    if (num2 === 0) {
+                        resultBox.className = 'result-box error';
+                        resultBox.textContent = '⚠️ تقسیم بر صفر مجاز نیست!';
+                        return;
+                    }
+                    result = num1 % num2;
+                    break;
+                case '**': result = Math.pow(num1, num2); break;
+                default: result = 'عملگر نامعتبر';
+            }
+
+            const isPositive = result > 0;
+            const isEven = Number.isInteger(result) && result % 2 === 0;
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = `
+                <strong>${num1} ${symbol} ${num2} = ${result}</strong><br>
+                نتیجه: ${isPositive ? '✅ مثبت' : '❌ منفی یا صفر'} |
+                ${isEven ? '✅ زوج' : '❌ فرد یا اعشاری'}
+            `;
+        }
+    </script>
+</body>
+</html>

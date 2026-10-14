@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 06: لیست‌ها و تاپل‌ها</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo input,
+        .live-demo select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin: 5px;
+            width: 150px;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 06: لیست‌ها و تاپل‌ها</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-05/index.html">قبلی</a>
+            <a href="../chapter-07/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۶: لیست‌ها و تاپل‌ها</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۰۰ دقیقه | سطح: مبتدی | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۶: لیست‌ها و تاپل‌ها</p>
+            <p><strong>زمان مطالعه:</strong> ۱۰۰ تا ۱۳۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> مبتدی (نیازمند آشنایی کامل با حلقه‌ها و متغیرها از فصل‌های قبل)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر متغیرها و انواع داده (فصل ۲) – درک تفاوت int، float، str و bool</li>
+                <li>✅ آشنایی کامل با حلقه‌ها (فصل ۵) – به‌ویژه <code dir='ltr'>for</code> و <code dir='ltr'>while</code></li>
+                <li>✅ درک عملگرهای عضویت (<code dir='ltr'>in</code>، <code dir='ltr'>not in</code>) از فصل ۳</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون (REPL)</li>
+            </ul>
+            <p>اگر با حلقه‌ها و عملگرها راحت نیستید، قبل از شروع این فصل، فصل‌های ۳ و ۵ را مرور کنید، زیرا لیست‌ها و تاپل‌ها اغلب با حلقه‌ها ترکیب می‌شوند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ <strong>لیست‌ها</strong> را با <code dir='ltr'>[]</code> ایجاد و مقداردهی کنید و عناصر را با اندیس‌های مثبت و منفی دسترسی پیدا کنید.</li>
+                <li>✔️ از <strong>متدهای اصلی لیست</strong> مانند <code dir='ltr'>append()</code>، <code dir='ltr'>insert()</code>، <code dir='ltr'>pop()</code>، <code dir='ltr'>remove()</code>، <code dir='ltr'>index()</code>، <code dir='ltr'>count()</code>، <code dir='ltr'>sort()</code>، <code dir='ltr'>reverse()</code> و <code dir='ltr'>copy()</code> در سناریوهای واقعی استفاده کنید.</li>
+                <li>✔️ <strong>تاپل‌ها</strong> را با <code dir='ltr'>()</code> ایجاد کنید و تفاوت آنها با لیست‌ها را از نظر تغییرپذیری، سرعت و کاربرد توضیح دهید.</li>
+                <li>✔️ از <strong>Slicing</strong> (برش) برای استخراج زیرمجموعه‌هایی از لیست‌ها و تاپل‌ها با سینتکس <code dir='ltr'>[start:stop:step]</code> استفاده کنید.</li>
+                <li>✔️ با <strong>List Comprehension</strong> لیست‌های فشرده، سریع و خوانا با شرط‌های مختلف ایجاد کنید.</li>
+                <li>✔️ از <strong>Unpacking</strong> برای استخراج مقادیر یک لیست یا تاپل به متغیرهای جداگانه (با و بدون <code dir='ltr'>*</code>) استفاده کنید.</li>
+                <li>✔️ تفاوت بین <strong>Mutable</strong> و <strong>Immutable</strong> را در لیست‌ها و تاپل‌ها درک کنید و بدانید هرکدام چه زمانی مناسب هستند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در دنیای برنامه‌نویسی، به‌ندرت پیش می‌آید که با یک داده‌ی منفرد کار کنید. اغلب با <strong>مجموعه‌ای از داده‌ها</strong> سر و کار داریم: لیست کاربران یک سایت، محصولات یک فروشگاه، نمرات دانش‌آموزان، مختصات جغرافیایی، و غیره. پایتون دو ساختار داده‌ی اصلی و پرکاربرد برای ذخیره‌سازی و مدیریت مجموعه‌ها ارائه می‌دهد: <strong>لیست‌ها (Lists)</strong> و <strong>تاپل‌ها (Tuples)</strong>.</p>
+            <p>لیست‌ها ساختارهای <strong>قابل تغییر (Mutable)</strong> و پویا هستند – می‌توانید عناصر را به آنها اضافه کنید، حذف کنید یا تغییر دهید. به‌همین دلیل، لیست‌ها برای داده‌هایی که در طول برنامه تغییر می‌کنند، ایده‌آل هستند. تاپل‌ها اما <strong>غیرقابل تغییر (Immutable)</strong> هستند – پس از ایجاد، نمی‌توان آنها را تغییر داد. این ویژگی تاپل‌ها را برای داده‌های ثابت (مانند ثابت‌های ریاضی، مختصات، تنظیمات) و همچنین برای کلیدهای دیکشنری مناسب می‌سازد.</p>
+            <p>در این فصل با <strong>همه‌ی مبانی لیست‌ها و تاپل‌ها</strong> آشنا می‌شوید: ایجاد، دسترسی، متدها، برش (Slicing)، List Comprehension، Unpacking و تفاوت‌های کلیدی. این ساختارها در <strong>تمام برنامه‌های پایتون</strong> – از اسکریپت‌های ساده تا پروژه‌های بزرگ – کاربرد دارند و تسلط بر آنها برای هر توسعه‌دهنده‌ای ضروری است.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۶.۱ -->
+            <div class="sub-section">
+                <h4>۶.۱ ایجاد لیست و دسترسی به عناصر</h4>
+                <p>لیست‌ها با <strong>کروشه (<code dir='ltr'>[]</code>)</strong> ایجاد می‌شوند و می‌توانند عناصر با <strong>انواع مختلف</strong> (اعداد، رشته‌ها، بولی، حتی لیست‌های دیگر) را در خود ذخیره کنند. دسترسی به عناصر با <strong>اندیس (Index)</strong> از <code dir='ltr'>0</code> شروع می‌شود. اندیس‌های منفی از انتهای لیست شمارش می‌شوند (<code dir='ltr'>-1</code> آخرین عنصر).</p>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>لیست‌ها <strong>ترتیب</strong> عناصر را حفظ می‌کنند.</li>
+                    <li>می‌توانند عناصر <strong>تکراری</strong> داشته باشند.</li>
+                    <li>با استفاده از <code dir='ltr'>len(list)</code> می‌توانید طول لیست را بدست آورید.</li>
+                    <li>دسترسی به اندیس خارج از محدوده باعث خطای <code dir='ltr'>IndexError</code> می‌شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== ایجاد لیست ==========
+fruits = ["سیب", "موز", "پرتقال", "انگور", "هندوانه"]
+numbers = [1, 2, 3, 4, 5]
+mixed = [1, "سلام", True, 3.14, [1, 2, 3]]  # لیست تو در تو
+
+# ========== دسترسی به عناصر با اندیس مثبت ==========
+print(fruits[0])      # "سیب" (اولین عنصر)
+print(fruits[2])      # "پرتقال" (سومین عنصر)
+print(fruits[4])      # "هندوانه" (آخرین عنصر)
+
+# ========== دسترسی با اندیس منفی ==========
+print(fruits[-1])     # "هندوانه" (آخرین عنصر)
+print(fruits[-3])     # "پرتقال" (سومین عنصر از آخر)
+
+# ========== تغییر عنصر ==========
+fruits[1] = "کیوی"
+print(fruits)         # ['سیب', 'کیوی', 'پرتقال', 'انگور', 'هندوانه']
+
+# ========== طول لیست ==========
+print(len(fruits))    # 5
+
+# ========== بررسی وجود عنصر با in ==========
+print("سیب" in fruits)   # True
+print("گلابی" in fruits) # False
+
+# ========== اندیس نامعتبر → IndexError ==========
+# print(fruits[10])    # ❌ IndexError: list index out of range
+
+# ========== لیست‌های تو در تو ==========
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+print(matrix[0][1])   # 2 (سطر اول، ستون دوم)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">سیب</span><br>
+                    <span class="highlight">➜</span> <span class="result">پرتقال</span><br>
+                    <span class="highlight">➜</span> <span class="result">هندوانه</span><br>
+                    <span class="highlight">➜</span> <span class="result">['سیب', 'کیوی', 'پرتقال', 'انگور', 'هندوانه']</span><br>
+                    <span class="highlight">➜</span> <span class="result">5</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> اندیس‌های منفی در پایتون بسیار کاربردی هستند – به‌ویژه وقتی می‌خواهید به آخرین عناصر یک لیست بدون دانستن طول آن دسترسی داشته باشید. <code dir='ltr'>list[-1]</code> همیشه آخرین عنصر را برمی‌گرداند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از ۵ شهر (تهران، اصفهان، شیراز، مشهد، تبریز) ایجاد کنید. اولین، سومین و آخرین شهر را با اندیس‌های مثبت و سپس با اندیس‌های منفی چاپ کنید. سپس شهر دوم (اصفهان) را به "کرج" تغییر دهید و لیست نهایی را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۶.۲ -->
+            <div class="sub-section">
+                <h4>۶.۲ متدهای اصلی لیست‌ها</h4>
+                <p>لیست‌ها در پایتون دارای <strong>متدهای متعددی</strong> برای مدیریت عناصر هستند. در این بخش با پرکاربردترین آنها آشنا می‌شوید:</p>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">➕</span>
+                        <span class="name">append()</span>
+                        <span class="desc">افزودن یک عنصر به انتها</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📌</span>
+                        <span class="name">insert()</span>
+                        <span class="desc">افزودن در جایگاه مشخص</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">extend()</span>
+                        <span class="desc">افزودن چند عنصر به انتها</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">➖</span>
+                        <span class="name">pop()</span>
+                        <span class="desc">حذف از انتها (یا اندیس)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🗑️</span>
+                        <span class="name">remove()</span>
+                        <span class="desc">حذف اولین مقدار مشخص</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔍</span>
+                        <span class="name">index()</span>
+                        <span class="desc">یافتن اندیس یک مقدار</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📊</span>
+                        <span class="name">count()</span>
+                        <span class="desc">تعداد تکرار یک مقدار</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔄</span>
+                        <span class="name">reverse()</span>
+                        <span class="desc">معکوس کردن ترتیب</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">copy()</span>
+                        <span class="desc">کپی کردن لیست</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🔀</span>
+                        <span class="name">sort()</span>
+                        <span class="desc">مرتب‌سازی (صعودی/نزولی)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">🧹</span>
+                        <span class="name">clear()</span>
+                        <span class="desc">پاک کردن همه‌ی عناصر</span>
+                    </div>
+                </div>
+                <p><strong>تفاوت append و extend:</strong></p>
+                <ul>
+                    <li><code dir='ltr'>append(x)</code>: یک عنصر <code dir='ltr'>x</code> را به انتها اضافه می‌کند (حتی اگر <code dir='ltr'>x</code> خود یک لیست باشد، کل لیست به‌عنوان یک عنصر اضافه می‌شود).</li>
+                    <li><code dir='ltr'>extend(iterable)</code>: همه‌ی عناصر یک iterable (مثل لیست) را به انتها اضافه می‌کند.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'>numbers = [1, 2, 3]
+
+# ========== append - افزودن یک عنصر به انتها ==========
+numbers.append(4)        # [1, 2, 3, 4]
+
+# ========== insert - افزودن در جایگاه خاص ==========
+numbers.insert(1, 99)    # [1, 99, 2, 3, 4] (اندیس 1)
+
+# ========== extend - افزودن چند عنصر ==========
+numbers.extend([5, 6])   # [1, 99, 2, 3, 4, 5, 6]
+
+# ========== pop - حذف از انتها (و بازگرداندن) ==========
+last = numbers.pop()     # last = 6, numbers = [1, 99, 2, 3, 4, 5]
+
+# ========== pop با اندیس ==========
+second = numbers.pop(1)  # second = 99, numbers = [1, 2, 3, 4, 5]
+
+# ========== remove - حذف اولین مقدار مشخص ==========
+numbers.remove(2)        # [1, 3, 4, 5]
+
+# ========== index - پیدا کردن اندیس ==========
+print(numbers.index(3))  # 1
+
+# ========== count - تعداد تکرار ==========
+print([1, 2, 2, 3, 2].count(2))  # 3
+
+# ========== reverse - معکوس کردن ==========
+numbers.reverse()        # [5, 4, 3, 1]
+
+# ========== sort - مرتب‌سازی (پیش‌فرض صعودی) ==========
+numbers.sort()           # [1, 3, 4, 5]
+numbers.sort(reverse=True)  # [5, 4, 3, 1] (نزولی)
+
+# ========== copy - کپی کردن ==========
+new_list = numbers.copy()  # یک کپی مستقل
+
+# ========== clear - پاک کردن همه ==========
+numbers.clear()          # []
+
+# ========== تفاوت append و extend ==========
+lst = [1, 2]
+lst.append([3, 4])       # [1, 2, [3, 4]]  ← لیست به‌عنوان یک عنصر
+lst2 = [1, 2]
+lst2.extend([3, 4])      # [1, 2, 3, 4]    ← عناصر جداگانه</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">1</span><br>
+                    <span class="highlight">➜</span> <span class="result">3</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>append()</code> یک عنصر به انتها اضافه می‌کند، اما <code dir='ltr'>extend()</code> چندین عنصر را از یک iterable (لیست، تاپل، رشته) به انتها اضافه می‌کند. برای ترکیب دو لیست، <code dir='ltr'>list1.extend(list2)</code> یا <code dir='ltr'>list1 + list2</code> را به‌خاطر بسپارید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست خالی به نام <code dir='ltr'>my_list</code> ایجاد کنید. سپس:
+                    <ul>
+                        <li>با <code dir='ltr'>append()</code> سه عدد (۱۰، ۲۰، ۳۰) اضافه کنید.</li>
+                        <li>با <code dir='ltr'>insert()</code> عدد ۹۹ را در جایگاه دوم (اندیس ۱) قرار دهید.</li>
+                        <li>با <code dir='ltr'>pop()</code> آخرین عنصر را حذف کرده و چاپ کنید.</li>
+                        <li>با <code dir='ltr'>extend()</code> لیست <code dir='ltr'>[40, 50]</code> را اضافه کنید.</li>
+                        <li>لیست نهایی را با <code dir='ltr'>sort()</code> مرتب کرده و چاپ کنید.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۶.۳ -->
+            <div class="sub-section">
+                <h4>۶.۳ Slicing (برش) در لیست‌ها</h4>
+                <p><strong>Slicing (برش)</strong> یکی از قدرتمندترین ویژگی‌های پایتون است که به شما اجازه می‌دهد <strong>بخشی از یک لیست</strong> را استخراج کنید. سینتکس: <code dir='ltr'>list[start:stop:step]</code></p>
+                <ul>
+                    <li><strong>start</strong>: اندیس شروع (شامل) – پیش‌فرض ۰</li>
+                    <li><strong>stop</strong>: اندیس پایان (غیرشامل) – پیش‌فرض len(list)</li>
+                    <li><strong>step</strong>: گام (پرش) – پیش‌فرض ۱ (می‌تواند منفی باشد)</li>
+                </ul>
+                <p><strong>نکات مهم:</strong></p>
+                <ul>
+                    <li>Slicing یک <strong>لیست جدید</strong> برمی‌گرداند و لیست اصلی را تغییر نمی‌دهد.</li>
+                    <li>با <code dir='ltr'>list[:]</code> یا <code dir='ltr'>list.copy()</code> می‌توانید یک کپی کامل از لیست بگیرید.</li>
+                    <li>اگر start یا stop خارج از محدوده باشند، پایتون آنها را به محدوده‌ی معتبر اصلاح می‌کند (بدون خطا).</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'>numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# ========== برش پایه ==========
+print(numbers[2:5])     # [2, 3, 4]  (از اندیس ۲ تا قبل از ۵)
+print(numbers[:5])      # [0, 1, 2, 3, 4] (از ابتدا تا قبل از ۵)
+print(numbers[5:])      # [5, 6, 7, 8, 9] (از ۵ تا انتها)
+print(numbers[:])       # کل لیست (کپی)
+
+# ========== برش با گام (step) ==========
+print(numbers[::2])     # [0, 2, 4, 6, 8] (اعداد زوج)
+print(numbers[1::2])    # [1, 3, 5, 7, 9] (اعداد فرد)
+print(numbers[2:8:2])   # [2, 4, 6] (از ۲ تا ۸ با گام ۲)
+
+# ========== برش با گام منفی (معکوس) ==========
+print(numbers[::-1])    # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0] (معکوس کامل)
+print(numbers[8:2:-1])  # [8, 7, 6, 5, 4, 3] (از ۸ تا ۲ با گام -۱)
+
+# ========== کپی کردن لیست ==========
+copy1 = numbers[:]      # روش ۱
+copy2 = numbers.copy()  # روش ۲
+print(copy1 == copy2)   # True
+
+# ========== تغییر بخشی از لیست با Slicing ==========
+numbers[2:5] = [100, 200, 300]  # جایگزینی
+print(numbers)  # [0, 1, 100, 200, 300, 5, 6, 7, 8, 9]
+
+# ========== حذف بخشی از لیست با Slicing ==========
+numbers[3:6] = []       # حذف عناصر
+print(numbers)          # [0, 1, 100, 6, 7, 8, 9]
+
+# ========== استخراج سه عنصر آخر ==========
+last_three = numbers[-3:]
+print(last_three)       # [7, 8, 9]</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">[2, 3, 4]</span><br>
+                    <span class="highlight">➜</span> <span class="result">[0, 1, 2, 3, 4]</span><br>
+                    <span class="highlight">➜</span> <span class="result">[5, 6, 7, 8, 9]</span><br>
+                    <span class="highlight">➜</span> <span class="result">[0, 2, 4, 6, 8]</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> Slicing همیشه یک <strong>لیست جدید</strong> برمی‌گرداند. اگر می‌خواهید لیست اصلی را تغییر دهید (مثلاً جایگزینی یا حذف)، می‌توانید از Slicing در سمت چپ انتساب استفاده کنید: <code dir='ltr'>list[1:3] = [10, 20]</code>.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از اعداد ۱ تا ۲۰ (با <code dir='ltr'>list(range(1, 21))</code>) ایجاد کنید. با استفاده از Slicing:
+                    <ul>
+                        <li>اعداد زوج (گام ۲ از ابتدا) را استخراج کنید.</li>
+                        <li>اعداد فرد (گام ۲ از اندیس ۱) را استخراج کنید.</li>
+                        <li>سه عنصر آخر لیست را استخراج کنید.</li>
+                        <li>لیست را به‌صورت معکوس (از آخر به اول) چاپ کنید.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۶.۴ -->
+            <div class="sub-section">
+                <h4>۶.۴ List Comprehension (درک لیست)</h4>
+                <p><strong>List Comprehension</strong> یکی از <strong>قدرتمندترین و پایتونیک‌ترین</strong> ویژگی‌های زبان پایتون است. این روش به شما اجازه می‌دهد با استفاده از یک حلقه‌ی <code dir='ltr'>for</code> فشرده و یک شرط اختیاری، لیست‌های جدید بسازید. ساختار کلی: <code dir='ltr'>[expression for item in iterable if condition]</code></p>
+                <p><strong>مزایا:</strong></p>
+                <ul>
+                    <li><strong>کوتاه‌تر</strong> و <strong>خواناتر</strong> از حلقه‌های معمولی.</li>
+                    <li>در بسیاری موارد <strong>سریع‌تر</strong> از حلقه‌های <code dir='ltr'>for</code> سنتی.</li>
+                    <li>قابل ترکیب با شرط‌های متعدد و حلقه‌های تو در تو.</li>
+                </ul>
+                <p><strong>چه زمانی از آن استفاده نکنیم؟</strong> وقتی منطق پیچیده است (بیش از یک شرط تو در تو) یا نیاز به تغییر لیست در حین پیمایش دارید، از حلقه‌های معمولی استفاده کنید.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== مثال پایه: مربع اعداد ==========
+squares = [x**2 for x in range(1, 6)]
+print(squares)   # [1, 4, 9, 16, 25]
+
+# معادل با حلقه‌ی معمولی:
+squares2 = []
+for x in range(1, 6):
+    squares2.append(x**2)
+print(squares2)  # [1, 4, 9, 16, 25]
+
+# ========== فیلتر کردن با شرط ==========
+evens = [x for x in range(1, 11) if x % 2 == 0]
+print(evens)     # [2, 4, 6, 8, 10]
+
+# ========== تبدیل رشته‌ها به بزرگ ==========
+words = ["hello", "world", "python", "programming"]
+upper_words = [word.upper() for word in words]
+print(upper_words)   # ['HELLO', 'WORLD', 'PYTHON', 'PROGRAMMING']
+
+# ========== ترکیب چند حلقه (حاصلضرب دکارتی) ==========
+pairs = [(x, y) for x in range(3) for y in range(3)]
+print(pairs)   # [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)]
+
+# ========== شرط‌های پیچیده ==========
+numbers = [x for x in range(30) if x % 2 == 0 and x % 3 == 0]
+print(numbers)   # [0, 6, 12, 18, 24]
+
+# ========== استفاده از if/else در عبارت ==========
+results = ["زوج" if x % 2 == 0 else "فرد" for x in range(6)]
+print(results)   # ['زوج', 'فرد', 'زوج', 'فرد', 'زوج', 'فرد']
+
+# ========== استخراج حروف اول کلمات ==========
+words = ["Python", "is", "awesome"]
+first_letters = [word[0] for word in words]
+print(first_letters)   # ['P', 'i', 'a']
+
+# ========== تبدیل رشته‌ها به عدد ==========
+strings = ["1", "2", "3", "4", "5"]
+integers = [int(s) for s in strings]
+print(integers)   # [1, 2, 3, 4, 5]
+
+# ========== List Comprehension با شرط on value ==========
+scores = [85, 92, 78, 90, 65, 88]
+passed = [score for score in scores if score >= 70]
+print(passed)   # [85, 92, 78, 90, 88]</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">[1, 4, 9, 16, 25]</span><br>
+                    <span class="highlight">➜</span> <span class="result">[2, 4, 6, 8, 10]</span><br>
+                    <span class="highlight">➜</span> <span class="result">['HELLO', 'WORLD', 'PYTHON', 'PROGRAMMING']</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> List Comprehension کد را <strong>کوتاه‌تر، سریع‌تر و خواناتر</strong> می‌کند – اما برای حلقه‌های بسیار پیچیده (با چندین شرط تو در تو) از حلقه‌های معمولی استفاده کنید تا خوانایی حفظ شود. همچنین می‌توانید از <strong>Dictionary Comprehension</strong> (<code dir='ltr'>{}</code>) و <strong>Set Comprehension</strong> (<code dir='ltr'>{}</code> بدون کلید) نیز استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> با استفاده از List Comprehension:
+                    <ul>
+                        <li>یک لیست از اعداد ۱ تا ۲۰ که بر ۳ بخش‌پذیر هستند ایجاد کنید.</li>
+                        <li>یک لیست از طول رشته‌های یک لیست از کلمات (مثل ["apple", "banana", "cherry", "date"]) ایجاد کنید.</li>
+                        <li>یک لیست از مربع اعداد زوج بین ۱ تا ۲۰ ایجاد کنید (فقط زوج‌ها، مربع‌شده).</li>
+                        <li>یک لیست از کلماتی که طول آنها بیشتر از ۴ است و با حرف بزرگ شروع می‌شوند (از یک لیست ورودی).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۶.۵ -->
+            <div class="sub-section">
+                <h4>۶.۵ تاپل‌ها (Tuples) – ایجاد و دسترسی</h4>
+                <p><strong>تاپل‌ها (Tuples)</strong> مشابه لیست‌ها هستند، اما یک تفاوت اساسی دارند: <strong>غیرقابل تغییر (Immutable)</strong>. یعنی پس از ایجاد، نمی‌توانید عناصر را اضافه، حذف یا تغییر دهید. تاپل‌ها با <strong>پرانتز (<code dir='ltr'>()</code>)</strong> ایجاد می‌شوند.</p>
+                <p><strong>چه زمانی از تاپل استفاده کنیم؟</strong></p>
+                <ul>
+                    <li>داده‌های <strong>ثابت</strong> و <strong>غیرقابل تغییر</strong> (مثل مختصات، تنظیمات، ثابت‌های ریاضی).</li>
+                    <li>به‌عنوان <strong>کلید در دیکشنری</strong> (چون immutable هستند).</li>
+                    <li>وقتی <strong>سرعت</strong> و <strong>مصرف حافظه</strong> مهم است (تاپل‌ها سبک‌تر و سریع‌تر از لیست‌ها هستند).</li>
+                    <li>برای <strong>بازگرداندن چند مقدار</strong> از یک تابع.</li>
+                </ul>
+                <p><strong>نکته مهم:</strong> تاپل با یک عنصر باید با <strong>کاما (<code dir='ltr'>,</code>)</strong> نوشته شود تا از پرانتز ریاضی تشخیص داده شود: <code dir='ltr'>(5,)</code>.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== ایجاد تاپل ==========
+colors = ("قرمز", "سبز", "آبی", "زرد")
+numbers = (1, 2, 3, 4, 5)
+single = ("سلام",)  # تاپل با یک عنصر (کاما الزامی است!)
+empty = ()          # تاپل خالی
+
+# ========== دسترسی به عناصر (مشابه لیست) ==========
+print(colors[0])     # "قرمز"
+print(colors[-1])    # "زرد" (آخرین عنصر)
+
+# ========== تاپل‌ها غیرقابل تغییر هستند ==========
+# colors[1] = "بنفش"  # ❌ TypeError: 'tuple' object does not support item assignment
+
+# ========== تبدیل لیست به تاپل ==========
+my_list = [1, 2, 3]
+my_tuple = tuple(my_list)
+print(my_tuple)      # (1, 2, 3)
+
+# ========== تبدیل تاپل به لیست ==========
+my_list2 = list(my_tuple)
+print(my_list2)      # [1, 2, 3]
+
+# ========== تاپل با داده‌های مختلط ==========
+person = ("علی", 25, "تهران", True)
+
+# ========== پیمایش تاپل با for ==========
+for item in person:
+    print(item)
+
+# ========== بررسی وجود عنصر با in ==========
+print("علی" in person)   # True
+print("سارا" in person)  # False
+
+# ========== تاپل‌های تو در تو ==========
+nested = (1, (2, 3), (4, 5, 6))
+print(nested[1][0])   # 2
+
+# ========== کاربرد تاپل در توابع (بازگرداندن چند مقدار) ==========
+def get_min_max(numbers):
+    return min(numbers), max(numbers)  # بازگشت به‌صورت تاپل
+
+min_val, max_val = get_min_max([1, 5, 2, 8, 3])
+print(min_val, max_val)  # 1 8</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">قرمز</span><br>
+                    <span class="highlight">➜</span> <span class="result">زرد</span><br>
+                    <span class="highlight">➜</span> <span class="result">(1, 2, 3)</span><br>
+                    <span class="highlight">➜</span> <span class="result">[1, 2, 3]</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> تاپل‌ها برای داده‌هایی که نباید تغییر کنند (مانند ثابت‌ها، مختصات جغرافیایی، تاریخ تولد، تنظیمات) بسیار مناسب هستند. همچنین به‌دلیل غیرقابل تغییر بودن، می‌توانند <strong>کلید دیکشنری</strong> باشند (بر خلاف لیست‌ها).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تاپل از سه عدد (۱۰، ۲۰، ۳۰) ایجاد کنید و سعی کنید یکی از عناصر آن را تغییر دهید تا خطای <code dir='ltr'>TypeError</code> را ببینید. سپس تاپل را به لیست تبدیل کنید، عنصر دوم را به ۲۵ تغییر دهید و دوباره به تاپل تبدیل کنید. نتیجه‌ی نهایی را چاپ کنید.
+                </div>
+            </div>
+
+            <!-- ۶.۶ -->
+            <div class="sub-section">
+                <h4>۶.۶ Unpacking (باز کردن) در لیست‌ها و تاپل‌ها</h4>
+                <p><strong>Unpacking</strong> یک ویژگی زیبا و کاربردی در پایتون است که به شما اجازه می‌دهد مقادیر یک لیست یا تاپل را به‌صورت <strong>جداگانه</strong> به متغیرها اختصاص دهید. این کار کد را خواناتر و کوتاه‌تر می‌کند.</p>
+                <p><strong>انواع Unpacking:</strong></p>
+                <ul>
+                    <li><strong>Unpacking ساده:</strong> زمانی که تعداد متغیرها با تعداد عناصر برابر است.</li>
+                    <li><strong>Unpacking با <code dir='ltr'>*</code> (ستاره):</strong> بقیه‌ی عناصر را به‌صورت لیست می‌گیرد (باقیمانده).</li>
+                    <li><strong>Unpacking در حلقه‌ها:</strong> برای پیمایش لیست‌های شامل تاپل.</li>
+                    <li><strong>تبادل مقادیر:</strong> با Unpacking می‌توانید مقادیر دو متغیر را به‌سادگی جابه‌جا کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== Unpacking در تاپل ==========
+coordinates = (10, 20)
+x, y = coordinates
+print(f"x: {x}, y: {y}")  # x: 10, y: 20
+
+# ========== Unpacking در لیست ==========
+colors = ["قرمز", "سبز", "آبی", "زرد"]
+first, second, third, fourth = colors
+print(first)   # "قرمز"
+print(fourth)  # "زرد"
+
+# ========== Unpacking با * (باقیمانده) ==========
+numbers = [1, 2, 3, 4, 5, 6, 7]
+first, *middle, last = numbers
+print(first)    # 1
+print(middle)   # [2, 3, 4, 5, 6]
+print(last)     # 7
+
+# ========== Unpacking با * برای گرفتن وسط ==========
+first, second, *rest = numbers
+print(first, second, rest)  # 1 2 [3, 4, 5, 6, 7]
+
+# ========== Unpacking در حلقه‌ها ==========
+pairs = [(1, 2), (3, 4), (5, 6)]
+for a, b in pairs:
+    print(f"a: {a}, b: {b}")
+# a: 1, b: 2
+# a: 3, b: 4
+# a: 5, b: 6
+
+# ========== تبادل مقادیر با unpacking ==========
+a, b = 5, 10
+print(f"قبل: a={a}, b={b}")  # قبل: a=5, b=10
+a, b = b, a
+print(f"بعد: a={a}, b={b}")  # بعد: a=10, b=5
+
+# ========== Unpacking با تاپل‌های تو در تو ==========
+data = ("علی", 25, ("تهران", "ایران"))
+name, age, (city, country) = data
+print(f"{name} - {age} - {city}, {country}")  # علی - 25 - تهران, ایران
+
+# ========== نادیده گرفتن برخی مقادیر با _ ==========
+person = ("سارا", 30, "برنامه‌نویس", "اصفهان")
+name, _, job, city = person  # _ برای مقادیر نادیده‌گرفته‌شده
+print(f"{name} - {job} - {city}")  # سارا - برنامه‌نویس - اصفهان</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">x: 10, y: 20</span><br>
+                    <span class="highlight">➜</span> <span class="result">قرمز</span><br>
+                    <span class="highlight">➜</span> <span class="result">1</span><br>
+                    <span class="highlight">➜</span> <span class="result">[2, 3, 4, 5, 6]</span><br>
+                    <span class="highlight">➜</span> <span class="result">7</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> Unpacking با <code dir='ltr'>*</code> (ستاره) بسیار قدرتمند است و به شما اجازه می‌دهد بخش‌های مختلف یک مجموعه را به‌راحتی استخراج کنید. در توابع نیز از <code dir='ltr'>*args</code> و <code dir='ltr'>**kwargs</code> برای آرگومان‌های متغیر استفاده می‌شود که در فصل ۱۰ با آنها آشنا خواهید شد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست از ۶ عدد (مثلاً [1, 2, 3, 4, 5, 6]) ایجاد کنید. با استفاده از Unpacking:
+                    <ul>
+                        <li>دو عدد اول را به دو متغیر <code dir='ltr'>first</code> و <code dir='ltr'>second</code> اختصاص دهید.</li>
+                        <li>دو عدد آخر را به دو متغیر <code dir='ltr'>penultimate</code> و <code dir='ltr'>last</code> اختصاص دهید.</li>
+                        <li>بقیه‌ی اعداد (وسط) را به یک لیست <code dir='ltr'>middle</code> اختصاص دهید.</li>
+                        <li>همه‌ی متغیرها را چاپ کنید.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ۶.۷ -->
+            <div class="sub-section">
+                <h4>۶.۷ تفاوت لیست و تاپل – Mutable vs Immutable</h4>
+                <p>مهم‌ترین و اساسی‌ترین تفاوت بین لیست‌ها و تاپل‌ها در <strong>قابل تغییر بودن (Mutability)</strong> است:</p>
+                <ul>
+                    <li><strong>لیست (List):</strong> <span style="color:#10b981;font-weight:bold;">✅ قابل تغییر (Mutable)</span> – می‌توانید عناصر را اضافه، حذف یا تغییر دهید.</li>
+                    <li><strong>تاپل (Tuple):</strong> <span style="color:#ef4444;font-weight:bold;">❌ غیرقابل تغییر (Immutable)</span> – پس از ایجاد، نمی‌توانید آن را تغییر دهید.</li>
+                </ul>
+                <p>این تفاوت پیامدهای مهمی در عملکرد، کاربرد و امنیت داده‌ها دارد:</p>
+                <div class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>ویژگی</th>
+                            <th>لیست (List)</th>
+                            <th>تاپل (Tuple)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>قابلیت تغییر</strong></td>
+                            <td>✅ قابل تغییر</td>
+                            <td>❌ غیرقابل تغییر</td>
+                        </tr>
+                        <tr>
+                            <td><strong>سینتکس</strong></td>
+                            <td><code dir='ltr'>[]</code></td>
+                            <td><code dir='ltr'>()</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>سرعت</strong></td>
+                            <td>کم‌تر (به‌دلیل انعطاف‌پذیری)</td>
+                            <td>بیشتر (به‌دلیل سادگی)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>مصرف حافظه</strong></td>
+                            <td>بیشتر</td>
+                            <td>کمتر</td>
+                        </tr>
+                        <tr>
+                            <td><strong>کاربرد اصلی</strong></td>
+                            <td>داده‌های پویا و متغیر</td>
+                            <td>داده‌های ثابت و غیرقابل تغییر</td>
+                        </tr>
+                        <tr>
+                            <td><strong>متدها</strong></td>
+                            <td>زیاد (append, remove, sort, ...)</td>
+                            <td>کم (count, index)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>قابل استفاده به‌عنوان کلید دیکشنری</strong></td>
+                            <td>❌ خیر</td>
+                            <td>✅ بله</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ایمنی در برابر تغییرات ناخواسته</strong></td>
+                            <td>کم (ممکن است تغییر کند)</td>
+                            <td>بالا (تغییر نمی‌کند)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="example-box" dir="ltr">
+                    <pre dir="ltr"><code dir='ltr'># ========== لیست – قابل تغییر ==========
+my_list = [1, 2, 3]
+my_list.append(4)      # ✅ مجاز است
+my_list[0] = 99        # ✅ مجاز است
+print(my_list)         # [99, 2, 3, 4]
+
+# ========== تاپل – غیرقابل تغییر ==========
+my_tuple = (1, 2, 3)
+# my_tuple.append(4)   # ❌ AttributeError: 'tuple' object has no attribute 'append'
+# my_tuple[0] = 99     # ❌ TypeError: 'tuple' object does not support item assignment
+
+# ========== تاپل می‌تواند شامل لیست باشد ==========
+nested = (1, [2, 3], 4)
+nested[1].append(5)    # ✅ مجاز است (لیست داخل تاپل تغییر می‌کند)
+print(nested)          # (1, [2, 3, 5], 4)  ← خود تاپل تغییر نکرده، بلکه لیست داخل آن تغییر کرده است
+
+# ========== کاربرد عملی: انتخاب ساختار مناسب ==========
+# داده‌های ثابت (مختصات، تنظیمات، تاریخ)
+CONFIG = ("localhost", 8080, "admin")  # تاپل برای داده‌های ثابت
+
+# داده‌های پویا (لیست کاربران، محصولات، نمرات)
+users = ["علی", "سارا", "رضا"]  # لیست برای داده‌های متغیر
+
+# ========== تاپل به‌عنوان کلید دیکشنری ==========
+locations = {
+    (35.6892, 51.3890): "تهران",
+    (32.6539, 51.6660): "اصفهان",
+    (29.5918, 52.5837): "شیراز"
+}
+print(locations[(35.6892, 51.3890)])  # "تهران"
+
+# ========== لیست نمی‌تواند کلید دیکشنری باشد ==========
+# invalid = {[1, 2]: "value"}  # ❌ TypeError: unhashable type: 'list'</code></pre>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته مهم:</strong> اگر داده‌های شما در طول برنامه تغییر می‌کنند، از <strong>لیست</strong> استفاده کنید. اگر داده‌ها ثابت هستند و نباید تغییر کنند، از <strong>تاپل</strong> استفاده کنید. تاپل‌ها همچنین به‌عنوان کلید در دیکشنری‌ها قابل استفاده هستند (چون immutable هستند) – این ویژگی در بسیاری از برنامه‌ها بسیار کاربردی است.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک لیست و یک تاپل با داده‌های مشابه (مثلاً [1, 2, 3] و (1, 2, 3)) ایجاد کنید. سعی کنید هر دو را تغییر دهید (افزودن عنصر، تغییر عنصر) و تفاوت رفتار را مشاهده کنید. سپس توضیح دهید که برای ذخیره‌سازی تاریخ تولد کاربران در یک سیستم، کدام یک مناسب‌تر است و چرا.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک مدیریت لیست خرید با لیست‌ها</h4>
+            <p>در این کارگاه، یک برنامه‌ی تعاملی برای مدیریت لیست خرید می‌سازیم که از تمام مفاهیم این فصل (لیست، متدها، Slicing، List Comprehension، Unpacking) استفاده می‌کند.</p>
+            <ol>
+                <li><strong>ایجاد فایل:</strong> یک فایل جدید به نام <code dir='ltr'>shopping_list.py</code> در VS Code ایجاد کنید.</li>
+                <li><strong>لیست اصلی:</strong> یک لیست خالی به نام <code dir='ltr'>shopping_list</code> برای ذخیره‌ی اقلام خرید ایجاد کنید.</li>
+                <li><strong>توابع مدیریت:</strong> توابع زیر را پیاده‌سازی کنید:
+                    <ul>
+                        <li><code dir='ltr'>add_item(item)</code> – افزودن قلم با <code dir='ltr'>append()</code>.</li>
+                        <li><code dir='ltr'>remove_item(item)</code> – حذف قلم با <code dir='ltr'>remove()</code> (اگر وجود نداشت پیام خطا).</li>
+                        <li><code dir='ltr'>show_list()</code> – نمایش لیست با شماره‌گذاری (با <code dir='ltr'>enumerate()</code>).</li>
+                        <li><code dir='ltr'>clear_list()</code> – پاک کردن لیست با <code dir='ltr'>clear()</code>.</li>
+                        <li><code dir='ltr'>sort_list()</code> – مرتب‌سازی لیست با <code dir='ltr'>sort()</code>.</li>
+                        <li><code dir='ltr'>show_top3()</code> – نمایش سه قلم اول با Slicing و Unpacking.</li>
+                    </ul>
+                </li>
+                <li><strong>منوی تعاملی:</strong> با یک حلقه‌ی <code dir='ltr'>while</code> یک منو برای کاربر ایجاد کنید که گزینه‌های بالا را نمایش دهد.</li>
+                <li><strong>List Comprehension:</strong> یک لیست از قیمت‌های پیش‌فرض برای اقلام ایجاد کنید و با List Comprehension یک لیست تخفیف‌خورده (۱۰٪ تخفیف) تولید کنید.</li>
+                <li><strong>Unpacking:</strong> از Unpacking برای نمایش سه قلم اول لیست به‌صورت جداگانه استفاده کنید.</li>
+                <li><strong>خروجی:</strong> همه‌ی نتایج را در کنسول به‌صورت زیبا چاپ کنید.</li>
+            </ol>
+            <div class="live-demo" id="list-demo">
+                <h4>🧾 مدیریت لیست خرید</h4>
+                <input type="text" id="itemInput" placeholder="نام قلم">
+                <button onclick="addItem()">➕ افزودن</button>
+                <button onclick="removeItem()">🗑️ حذف</button>
+                <button onclick="clearList()">🧹 پاک کردن</button>
+                <button onclick="sortList()">🔀 مرتب‌سازی</button>
+                <div class="result-box" id="listResult">لیست خرید خالی است</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک لیست از ۱۰ عدد تصادفی (با <code dir='ltr'>random.randint(1, 100)</code>) تولید کند.</li>
+                <li>با List Comprehension، اعداد زوج را فیلتر کرده و یک لیست جدید بسازد.</li>
+                <li>با Slicing، سه عدد اول و سه عدد آخر لیست اصلی را استخراج کند.</li>
+                <li>با Unpacking، دو عدد اول را به متغیرهای <code dir='ltr'>a</code> و <code dir='ltr'>b</code> اختصاص دهد.</li>
+                <li>یک تاپل از مختصات یک نقطه (x, y) ایجاد کرده و با Unpacking مقادیر آن را استخراج کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین لیست و تاپل چیست؟ هرکدام چه زمانی مناسب هستند؟</li>
+                <li><code dir='ltr'>append()</code> و <code dir='ltr'>extend()</code> چه تفاوتی دارند؟ با یک مثال توضیح دهید.</li>
+                <li>List Comprehension چیست و چه مزیتی نسبت به حلقه‌های معمولی دارد؟ چه زمانی نباید از آن استفاده کرد؟</li>
+                <li>Unpacking چگونه کار می‌کند و چه کاربردی دارد؟ تفاوت بین <code dir='ltr'>a, b = [1, 2]</code> و <code dir='ltr'>a, *b = [1, 2, 3]</code> چیست؟</li>
+                <li>چرا تاپل‌ها سریع‌تر از لیست‌ها هستند و حافظه‌ی کمتری مصرف می‌کنند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر یک لیست با ۳ عنصر ایجاد می‌کند؟<br>
+                    أ) <code dir='ltr'>list(1, 2, 3)</code>  ب) <code dir='ltr'>[1, 2, 3]</code>  ج) <code dir='ltr'>(1, 2, 3)</code>  د) <code dir='ltr'>{1, 2, 3}</code></li>
+                <li>خروجی <code dir='ltr'>[1, 2, 3, 4, 5][1:4]</code> چیست؟<br>
+                    أ) <code dir='ltr'>[1, 2, 3]</code>  ب) <code dir='ltr'>[2, 3, 4]</code>  ج) <code dir='ltr'>[2, 3, 4, 5]</code>  د) <code dir='ltr'>[1, 2, 3, 4]</code></li>
+                <li>کدام یک از موارد زیر یک تاپل با یک عنصر ایجاد می‌کند؟<br>
+                    أ) <code dir='ltr'>(5)</code>  ب) <code dir='ltr'>(5,)</code>  ج) <code dir='ltr'>[5]</code>  د) <code dir='ltr'>{5}</code></li>
+                <li>خروجی کد <code dir='ltr'>[x**2 for x in range(4) if x % 2 == 0]</code> چیست؟<br>
+                    أ) <code dir='ltr'>[0, 1, 4]</code>  ب) <code dir='ltr'>[0, 4]</code>  ج) <code dir='ltr'>[0, 4, 16]</code>  د) <code dir='ltr'>[1, 9]</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک برنامه بنویسید که:</p>
+            <ul>
+                <li>یک لیست از ۵ نام کاربر (به‌صورت دستی) ایجاد کند.</li>
+                <li>با <code dir='ltr'>append()</code> یک نام جدید به انتها اضافه کند.</li>
+                <li>با <code dir='ltr'>insert()</code> یک نام در جایگاه دوم (اندیس ۱) قرار دهد.</li>
+                <li>با <code dir='ltr'>remove()</code> یک نام خاص را از لیست حذف کند.</li>
+                <li>با <code dir='ltr'>sort()</code> لیست را به‌صورت الفبایی مرتب کند.</li>
+                <li>با Slicing، سه نام اول را استخراج کرده و چاپ کند.</li>
+                <li>با List Comprehension، نام‌هایی که با حرف "الف" شروع می‌شوند را فیلتر کرده و یک لیست جدید بسازد.</li>
+                <li>با Unpacking، دو نام اول را به متغیرهای جداگانه اختصاص دهد و چاپ کند.</li>
+                <li>در نهایت، لیست اصلی و لیست‌های جدید را با توضیحات مناسب چاپ کند.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>لیست‌ها</strong> با <code dir='ltr'>[]</code> ایجاد می‌شوند و <strong>قابل تغییر (Mutable)</strong> هستند – مناسب برای داده‌های پویا.</li>
+                <li>🔹 <strong>تاپل‌ها</strong> با <code dir='ltr'>()</code> ایجاد می‌شوند و <strong>غیرقابل تغییر (Immutable)</strong> هستند – مناسب برای داده‌های ثابت و کلیدهای دیکشنری.</li>
+                <li>🔹 متدهای اصلی لیست: <code dir='ltr'>append()</code>، <code dir='ltr'>insert()</code>، <code dir='ltr'>pop()</code>، <code dir='ltr'>remove()</code>، <code dir='ltr'>index()</code>، <code dir='ltr'>count()</code>، <code dir='ltr'>reverse()</code>، <code dir='ltr'>sort()</code>، <code dir='ltr'>copy()</code>، <code dir='ltr'>clear()</code>، <code dir='ltr'>extend()</code>.</li>
+                <li>🔹 <strong>Slicing</strong> با <code dir='ltr'>list[start:stop:step]</code> بخشی از لیست را استخراج می‌کند و یک لیست جدید برمی‌گرداند.</li>
+                <li>🔹 <strong>List Comprehension</strong> روشی فشرده، سریع و خوانا برای ایجاد لیست‌ها با استفاده از حلقه و شرط.</li>
+                <li>🔹 <strong>Unpacking</strong> به شما اجازه می‌دهد مقادیر یک لیست یا تاپل را به متغیرهای جداگانه اختصاص دهید (با یا بدون <code dir='ltr'>*</code>).</li>
+                <li>🔹 تاپل‌ها برای داده‌های ثابت و غیرقابل تغییر مناسب‌تر هستند و <strong>سرعت و حافظه</strong> بهتری نسبت به لیست‌ها دارند.</li>
+            </ul>
+            <h4>برگه تقلب (Cheat Sheet)</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir="ltr"><code dir='ltr'># ========== لیست ==========
+my_list = [1, 2, 3]
+my_list.append(4)      # [1, 2, 3, 4]
+my_list.insert(1, 99)  # [1, 99, 2, 3, 4]
+my_list.extend([5, 6]) # [1, 99, 2, 3, 4, 5, 6]
+my_list.pop()          # 6, [1, 99, 2, 3, 4, 5]
+my_list.remove(99)     # [1, 2, 3, 4, 5]
+my_list.sort()         # [1, 2, 3, 4, 5]
+my_list.reverse()      # [5, 4, 3, 2, 1]
+
+# ========== تاپل ==========
+my_tuple = (1, 2, 3)
+# غیرقابل تغییر
+
+# ========== Slicing ==========
+numbers[2:5]           # [2, 3, 4]
+numbers[::-1]          # معکوس
+
+# ========== List Comprehension ==========
+[x**2 for x in range(5)]          # [0, 1, 4, 9, 16]
+[x for x in range(10) if x % 2 == 0]  # [0, 2, 4, 6, 8]
+
+# ========== Unpacking ==========
+a, b, c = [1, 2, 3]    # a=1, b=2, c=3
+first, *rest = [1,2,3,4]  # first=1, rest=[2,3,4]</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>List (لیست):</strong> ساختار داده‌ی قابل تغییر با <code dir='ltr'>[]</code> که می‌تواند عناصر با انواع مختلف را ذخیره کند.</li>
+                <li><strong>Tuple (تاپل):</strong> ساختار داده‌ی غیرقابل تغییر با <code dir='ltr'>()</code> که برای داده‌های ثابت استفاده می‌شود.</li>
+                <li><strong>Index (اندیس):</strong> شماره‌ی موقعیت یک عنصر در لیست یا تاپل (از ۰ شروع می‌شود).</li>
+                <li><strong>Slicing (برش):</strong> استخراج بخشی از یک لیست یا تاپل با سینتکس <code dir='ltr'>[start:stop:step]</code>.</li>
+                <li><strong>List Comprehension:</strong> روشی فشرده و کارآمد برای ایجاد لیست‌ها با استفاده از حلقه و شرط.</li>
+                <li><strong>Unpacking (باز کردن):</strong> اختصاص مقادیر یک مجموعه به متغیرهای جداگانه.</li>
+                <li><strong>Mutable (قابل تغییر):</strong> ساختاری که می‌توان محتوای آن را پس از ایجاد تغییر داد (لیست‌ها، دیکشنری‌ها).</li>
+                <li><strong>Immutable (غیرقابل تغییر):</strong> ساختاری که پس از ایجاد قابل تغییر نیست (تاپل‌ها، رشته‌ها، اعداد).</li>
+                <li><strong>append():</strong> متد لیست برای افزودن یک عنصر به انتها.</li>
+                <li><strong>extend():</strong> متد لیست برای افزودن چندین عنصر از یک iterable به انتها.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/datastructures.html" target="_blank" rel="noopener noreferrer">Python: Data Structures (مرجع رسمی)</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#list" target="_blank" rel="noopener noreferrer">Python: List</a></li>
+                <li><a href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank" rel="noopener noreferrer">Python: Tuple</a></li>
+                <li><a href="https://realpython.com/python-lists-tuples/" target="_blank" rel="noopener noreferrer">Real Python: Lists and Tuples</a></li>
+                <li><a href="https://realpython.com/list-comprehension-python/" target="_blank" rel="noopener noreferrer">Real Python: List Comprehension</a></li>
+                <li><a href="https://www.w3schools.com/python/python_lists.asp" target="_blank" rel="noopener noreferrer">W3Schools: Python Lists</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> ایجاد لیست و دسترسی به عناصر – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> متدهای اصلی لیست – ۲۰ دقیقه (با تمرین)</li>
+                <li><strong>گام ۳:</strong> Slicing (برش) – ۱۰ دقیقه</li>
+                <li><strong>گام ۴:</strong> List Comprehension – ۱۵ دقیقه (با مثال‌های متنوع)</li>
+                <li><strong>گام ۵:</strong> تاپل‌ها – ۱۵ دقیقه (با مقایسه با لیست)</li>
+                <li><strong>گام ۶:</strong> Unpacking – ۱۰ دقیقه (با کاربردهای عملی)</li>
+                <li><strong>گام ۷:</strong> Mutable vs Immutable – ۱۰ دقیقه (مفهوم کلیدی)</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه (مدیریت لیست خرید)</li>
+            </ul>
+            <p><strong>زمان کل پیشنهادی:</strong> حدود ۱۲۵ دقیقه (با تمرین‌ها).</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چرا تاپل‌ها غیرقابل تغییر هستند و این ویژگی چه مزایایی در برنامه‌نویسی دارد (مثلاً در دیکشنری‌ها)؟</li>
+                <li>❓ چه زمانی استفاده از List Comprehension بهتر از حلقه‌های معمولی است و چه زمانی برعکس؟</li>
+                <li>❓ چگونه می‌توان با Unpacking کد را خواناتر و کمتر مستعد خطا کرد؟</li>
+                <li>❓ اگر یک تاپل شامل یک لیست باشد، آیا تاپل همچنان غیرقابل تغییر است؟ چرا؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>list.copy()</code> و <code dir='ltr'>list[:]</code> وجود دارد؟ آیا هردو یک کپی مستقل ایجاد می‌کنند؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>,</code> در تاپل با یک عنصر که باعث می‌شود به‌عنوان عدد (یا نوع دیگر) در نظر گرفته شود.<br>
+                    <strong>🔧 راه حل:</strong> برای تاپل با یک عنصر، همیشه <code dir='ltr'>,</code> اضافه کنید: <code dir='ltr'>(5,)</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>remove()</code> برای عنصری که در لیست وجود ندارد – باعث <code dir='ltr'>ValueError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> قبل از حذف، با <code dir='ltr'>in</code> بررسی کنید که عنصر در لیست وجود دارد: <code dir='ltr'>if item in my_list: my_list.remove(item)</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> تغییر یک تاپل (افزودن، حذف، تغییر عنصر) که باعث <code dir='ltr'>TypeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> اگر نیاز به تغییر دارید، تاپل را به لیست تبدیل کنید: <code dir='ltr'>lst = list(my_tuple)</code>، تغییر دهید و دوباره به تاپل تبدیل کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>append()</code> به‌جای <code dir='ltr'>extend()</code> برای افزودن چند عنصر که باعث می‌شود لیست به‌عنوان یک عنصر اضافه شود.<br>
+                    <strong>🔧 راه حل:</strong> <code dir='ltr'>append()</code> یک عنصر اضافه می‌کند، <code dir='ltr'>extend()</code> چندین عنصر را اضافه می‌کند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن اینکه Slicing یک <strong>لیست جدید</strong> برمی‌گرداند و لیست اصلی را تغییر نمی‌دهد – در نتیجه تغییرات روی کپی اعمال می‌شود و لیست اصلی unchanged می‌ماند.<br>
+                    <strong>🔧 راه حل:</strong> اگر می‌خواهید لیست اصلی را تغییر دهید، از انتساب با Slicing استفاده کنید: <code dir='ltr'>list[1:3] = [99, 98]</code>.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>sort()</code> روی لیستی که شامل انواع داده‌های غیرقابل مقایسه است (مثلاً لیست با اعداد و رشته‌ها) که باعث <code dir='ltr'>TypeError</code> می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> مطمئن شوید که همه‌ی عناصر لیست قابل مقایسه هستند یا از پارامتر <code dir='ltr'>key</code> استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت لیست کارها (To-Do List) با لیست‌ها و تاپل‌ها</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان (CLI) کامل برای مدیریت لیست کارها بسازید که از لیست‌ها، تاپل‌ها، متدها، Slicing، List Comprehension و Unpacking استفاده کند.</p>
+            <p><strong>مراحل پیاده‌سازی:</strong></p>
+            <ul>
+                <li><strong>مرحله ۱ (ساختار داده‌ها):</strong>
+                    <ul>
+                        <li>یک لیست <code dir='ltr'>tasks</code> برای ذخیره‌ی وظایف (هر وظیفه یک رشته) ایجاد کنید.</li>
+                        <li>یک لیست <code dir='ltr'>priorities</code> برای ذخیره‌ی اولویت هر وظیفه (عدد ۱ تا ۵، با اندیس متناظر با <code dir='ltr'>tasks</code>) ایجاد کنید.</li>
+                        <li>یک تاپل <code dir='ltr'>STATUS_OPTIONS</code> برای وضعیت‌های ممکن ("انجام‌نشده"، "در حال انجام"، "انجام‌شده") ایجاد کنید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۲ (توابع اصلی):</strong>
+                    <ul>
+                        <li><code dir='ltr'>add_task(task, priority)</code> – افزودن وظیفه با اولویت (با اعتبارسنجی ۱-۵).</li>
+                        <li><code dir='ltr'>remove_task(index)</code> – حذف وظیفه بر اساس اندیس (با بررسی وجود اندیس).</li>
+                        <li><code dir='ltr'>show_tasks()</code> – نمایش همه‌ی وظایف با شماره، اولویت و وضعیت (با <code dir='ltr'>enumerate()</code>).</li>
+                        <li><code dir='ltr'>sort_by_priority()</code> – مرتب‌سازی وظایف بر اساس اولویت (با <code dir='ltr'>zip()</code> و <code dir='ltr'>sort()</code>).</li>
+                        <li><code dir='ltr'>get_high_priority()</code> – استخراج وظایف با اولویت ۱ و ۲ با استفاده از List Comprehension.</li>
+                        <li><code dir='ltr'>mark_done(index)</code> – تغییر وضعیت یک وظیفه به "انجام‌شده" (با استفاده از تاپل).</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۳ (قابلیت‌های پیشرفته):</strong>
+                    <ul>
+                        <li>از <strong>Unpacking</strong> برای نمایش سه وظیفه‌ی اول لیست استفاده کنید.</li>
+                        <li>از <strong>Slicing</strong> برای نمایش وظایف بین دو اندیس مشخص (مثلاً ۳ تا ۶) استفاده کنید.</li>
+                        <li>از <strong>List Comprehension</strong> برای ایجاد یک لیست از وظایف با اولویت بالا و وضعیت "انجام‌نشده" استفاده کنید.</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۴ (منوی تعاملی):</strong> با یک حلقه‌ی <code dir='ltr'>while</code> یک منوی کاربری ایجاد کنید که گزینه‌های زیر را پشتیبانی کند:
+                    <ul>
+                        <li>۱. افزودن وظیفه</li>
+                        <li>۲. حذف وظیفه</li>
+                        <li>۳. نمایش همه‌ی وظایف</li>
+                        <li>۴. مرتب‌سازی بر اساس اولویت</li>
+                        <li>۵. نمایش وظایف با اولویت بالا</li>
+                        <li>۶. علامت‌گذاری انجام‌شده</li>
+                        <li>۷. خروج</li>
+                    </ul>
+                </li>
+                <li><strong>مرحله ۵ (ذخیره‌سازی):</strong> در پایان برنامه، لیست وظایف را در یک فایل ذخیره کنید (با <code dir='ltr'>open()</code> و <code dir='ltr'>json</code> که در فصل‌های بعدی یاد می‌گیرید، اما فعلاً با یک فایل متنی ساده).</li>
+            </ul>
+            <p><strong>چالش‌های بیشتر (اختیاری):</strong></p>
+            <ul>
+                <li>با استفاده از تاپل، تاریخ و زمان افزودن هر وظیفه را ذخیره کنید و در نمایش وظایف نشان دهید.</li>
+                <li>با <code dir='ltr'>zip()</code> و List Comprehension، یک گزارش از وظایف و اولویت‌ها به‌صورت یک دیکشنری تهیه کنید.</li>
+                <li>قابلیت جستجوی وظایف بر اساس کلمه‌ی کلیدی را اضافه کنید (با List Comprehension و <code dir='ltr'>in</code>).</li>
+                <li>با استفاده از <code dir='ltr'>statistics</code> یا محاسبات دستی، آمار وظایف (تعداد کل، تعداد انجام‌شده، میانگین اولویت) را محاسبه کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 todo_list.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 نکته:</strong> این پروژه شما را با کاربرد عملی لیست‌ها، تاپل‌ها و ابزارهای مرتبط در یک برنامه‌ی واقعی آشنا می‌کند. سعی کنید کد را ماژولار (تابع‌محور) و با کامنت‌های مناسب بنویسید.
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-05/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-07/index.html" class="btn-demo">رفتن به فصل ۷ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی لیست خرید
+        let shoppingItems = [];
+
+        function renderList() {
+            const resultBox = document.getElementById('listResult');
+            if (shoppingItems.length === 0) {
+                resultBox.className = 'result-box info';
+                resultBox.textContent = '📭 لیست خرید خالی است';
+                return;
+            }
+            let html = '<ul style="text-align:right;list-style:none;padding:0;">';
+            shoppingItems.forEach((item, index) => {
+                html += `<li style="padding:4px 0;border-bottom:1px solid #e2e8f0;">${index + 1}. ${item}</li>`;
+            });
+            html += '</ul>';
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = html;
+        }
+
+        function addItem() {
+            const input = document.getElementById('itemInput');
+            const item = input.value.trim();
+            if (!item) {
+                const resultBox = document.getElementById('listResult');
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً یک قلم وارد کنید!';
+                return;
+            }
+            shoppingItems.push(item);
+            input.value = '';
+            renderList();
+        }
+
+        function removeItem() {
+            const input = document.getElementById('itemInput');
+            const item = input.value.trim();
+            if (!item) {
+                const resultBox = document.getElementById('listResult');
+                resultBox.className = 'result-box error';
+                resultBox.textContent = '⚠️ لطفاً نام قلم را برای حذف وارد کنید!';
+                return;
+            }
+            const index = shoppingItems.indexOf(item);
+            if (index === -1) {
+                const resultBox = document.getElementById('listResult');
+                resultBox.className = 'result-box error';
+                resultBox.textContent = `❌ "${item}" در لیست وجود ندارد!`;
+                return;
+            }
+            shoppingItems.splice(index, 1);
+            input.value = '';
+            renderList();
+        }
+
+        function clearList() {
+            shoppingItems = [];
+            renderList();
+        }
+
+        function sortList() {
+            shoppingItems.sort();
+            renderList();
+        }
+
+        // نمونه اولیه
+        shoppingItems = ['نان', 'شیر', 'پنیر', 'تخم‌مرغ'];
+        renderList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فصل 18: برنامه‌نویسی شی‌گرا - بخش دوم: وراثت و چندریختی</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .sub-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 6px solid #ffd43b;
+        }
+        .sub-section h4 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+        .example-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .example-box code {
+            color: #ffffff;
+        }
+        .note {
+            background: #fef9c3;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #ffd43b;
+            margin: 15px 0;
+        }
+        .task {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #64748b;
+        }
+        .task strong {
+            color: #b91c1c;
+        }
+        .btn-demo {
+            display: inline-block;
+            background: #ffd43b;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-demo:hover {
+            background: #facc15;
+        }
+        .pro-tip {
+            background: #ecfdf5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-right: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .pro-tip strong {
+            color: #065f46;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #94a3b8;
+            padding: 10px;
+            text-align: right;
+        }
+        .comparison-table th {
+            background: #1e293b;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f1f5f9;
+        }
+        .output-demo {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+        }
+        .output-demo .highlight {
+            color: #ffd43b;
+        }
+        .output-demo .result {
+            color: #34d399;
+        }
+        .live-demo {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .live-demo button {
+            background: #ffd43b;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .live-demo button:hover {
+            background: #facc15;
+        }
+        .live-demo .result-box {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-weight: bold;
+            min-height: 30px;
+            text-align: right;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .live-demo .result-box.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .live-demo .result-box.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .live-demo .result-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .method-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .method-card .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .method-card .name {
+            font-weight: bold;
+            color: #0f172a;
+            font-family: 'Courier New', monospace;
+        }
+        .method-card .desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .class-diagram {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            direction: ltr;
+            text-align: left;
+            border: 1px solid #2d2d44;
+        }
+        .class-diagram .keyword {
+            color: #ffd43b;
+        }
+        .class-diagram .class-name {
+            color: #34d399;
+        }
+        .class-diagram .method {
+            color: #60a5fa;
+        }
+        .class-diagram .attribute {
+            color: #f472b6;
+        }
+        .class-diagram .arrow {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐍 دوره جامع Python</h1>
+            <p>فصل 18: برنامه‌نویسی شی‌گرا - بخش دوم: وراثت و چندریختی</p>
+        </div>
+    </header>
+    <nav>
+        <div class="container">
+            <a href="../../index.html">🏠 صفحه اصلی</a>
+            <a href="../chapter-17/index.html">قبلی</a>
+            <a href="../chapter-19/index.html">بعدی ➜</a>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- عنوان کلی فصل -->
+        <section class="section" style="background:linear-gradient(135deg,#0f172a,#1a365d);color:white;">
+            <h2 style="margin:0;font-size:2rem;">🐍 فصل ۱۸: برنامه‌نویسی شی‌گرا - بخش دوم: وراثت و چندریختی</h2>
+            <p style="opacity:0.9;font-size:1.1rem;">زمان مطالعه: حدود ۱۱۰ دقیقه | سطح: متوسط | شامل ۷ درس + تمرین عملی</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱. جعبه عنوان و هویت                         -->
+        <!-- ============================================ -->
+        <section class="section" id="chapter_header">
+            <h3>📌 جعبه عنوان و هویت</h3>
+            <p><strong>شماره و عنوان فصل:</strong> فصل ۱۸: برنامه‌نویسی شی‌گرا - بخش دوم: وراثت و چندریختی</p>
+            <p><strong>زمان مطالعه:</strong> ۱۱۰ تا ۱۴۰ دقیقه (با تمرین‌ها)</p>
+            <p><strong>سطح دشواری:</strong> متوسط (نیازمند آشنایی با مبانی OOP از فصل ۱۷)</p>
+            <p><strong>نویسنده:</strong> تیم معماری وب - ویرایش ۲۰۲۶</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۲. پیش‌نیازها                                -->
+        <!-- ============================================ -->
+        <section class="section" id="prerequisites">
+            <h3>📋 پیش‌نیازها</h3>
+            <ul>
+                <li>✅ تسلط بر مبانی OOP (فصل ۱۷)</li>
+                <li>✅ آشنایی با کلاس‌ها، شیءها، `self` و `__init__`</li>
+                <li>✅ توانایی کار با VS Code یا محیط تعاملی پایتون</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۳. اهداف آموزشی                              -->
+        <!-- ============================================ -->
+        <section class="section" id="learning_objectives">
+            <h3>🎯 اهداف آموزشی</h3>
+            <p>پس از پایان این فصل، شما قادر خواهید بود:</p>
+            <ul>
+                <li>✔️ از <strong>وراثت (Inheritance)</strong> برای ایجاد کلاس‌های مشتق‌شده استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>super()</code></strong> متدهای کلاس والد را فراخوانی کنید.</li>
+                <li>✔️ <strong>چندریختی (Polymorphism)</strong> را پیاده‌سازی کنید.</li>
+                <li>✔️ از <strong><code dir='ltr'>@classmethod</code></strong> و <strong><code dir='ltr'>@staticmethod</code></strong> استفاده کنید.</li>
+                <li>✔️ با <strong><code dir='ltr'>@property</code></strong> ویژگی‌های محاسباتی و کنترل‌شده ایجاد کنید.</li>
+                <li>✔️ <strong>کپسوله‌سازی (Encapsulation)</strong> را با استفاده از `_` و `__` پیاده‌سازی کنید.</li>
+                <li>✔️ با <strong>ارث‌بری چندگانه (Multiple Inheritance)</strong> و MRO آشنا شوید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۴. مقدمه و انگیزه‌بخشی                       -->
+        <!-- ============================================ -->
+        <section class="section" id="introduction">
+            <h3>🚀 مقدمه و انگیزه‌بخشی</h3>
+            <p>در فصل قبل با مفاهیم پایه‌ی برنامه‌نویسی شی‌گرا آشنا شدید. اما قدرت واقعی OOP در <strong>ارث‌بری (Inheritance)</strong> و <strong>چندریختی (Polymorphism)</strong> نهفته است. این دو مفهوم به شما اجازه می‌دهند کدهایی بنویسید که <strong>قابل استفاده‌ی مجدد</strong>، <strong>سازمان‌یافته</strong> و <strong>انعطاف‌پذیر</strong> باشند.</p>
+            <p>ارث‌بری به شما امکان می‌دهد یک کلاس جدید بر اساس کلاس موجود بسازید و ویژگی‌ها و متدهای آن را به‌ارث ببرید. چندریختی به شما اجازه می‌دهد با اشیاء از کلاس‌های مختلف به‌صورت یکسان رفتار کنید. همچنین با مفاهیمی مانند <code dir='ltr'>@property</code>، <code dir='ltr'>@classmethod</code>، <code dir='ltr'>@staticmethod</code> و کپسوله‌سازی آشنا می‌شوید که کد شما را حرفه‌ای‌تر می‌کنند.</p>
+            <p>در این فصل با <strong>همه‌ی مباحث پیشرفته‌ی OOP</strong> در پایتون آشنا می‌شوید: وراثت، چندریختی، متدهای کلاس و استاتیک، پراپرتی‌ها، کپسوله‌سازی و ارث‌بری چندگانه. این مباحث شما را به یک توسعه‌دهنده‌ی حرفه‌ای پایتون تبدیل می‌کنند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۵. بدنه اصلی آموزش (Core Content)            -->
+        <!-- ============================================ -->
+        <section class="section" id="core_content">
+            <h3>🧠 بدنه اصلی آموزش</h3>
+
+            <!-- ۱۸.۱ -->
+            <div class="sub-section">
+                <h4>۱۸.۱ وراثت (Inheritance) – ایجاد کلاس‌های مشتق‌شده</h4>
+                <p><strong>وراثت</strong> به شما اجازه می‌دهد یک کلاس جدید (فرزند) بر اساس یک کلاس موجود (والد) ایجاد کنید. کلاس فرزند تمام ویژگی‌ها و متدهای کلاس والد را به‌ارث می‌برد و می‌تواند آنها را گسترش دهد یا تغییر دهد.</p>
+                <ul>
+                    <li><strong>والد (Parent / Base Class):</strong> کلاسی که از آن ارث‌بری می‌شود.</li>
+                    <li><strong>فرزند (Child / Derived Class):</strong> کلاسی که از والد ارث‌بری می‌کند.</li>
+                    <li><strong>سینتکس:</strong> <code dir='ltr'>class Child(Parent):</code></li>
+                </ul>
+                <div class="class-diagram">
+                    <span class="keyword">class</span> <span class="class-name">Animal</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;- name: str<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;- age: int<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ speak(): str<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ move(): str<br>
+                    }<br>
+                    <span class="arrow">↑</span> (ارث‌بری)<br>
+                    <span class="keyword">class</span> <span class="class-name">Dog</span> <span class="keyword">extends</span> <span class="class-name">Animal</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;- breed: str<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ speak(): str (override)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ fetch(): str<br>
+                    }<br>
+                    <span class="arrow">↑</span><br>
+                    <span class="keyword">class</span> <span class="class-name">Cat</span> <span class="keyword">extends</span> <span class="class-name">Animal</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;- color: str<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ speak(): str (override)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;+ climb(): str<br>
+                    }
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># کلاس والد
+class Animal:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def speak(self):
+        return "حیوان صدا می‌دهد"
+    
+    def move(self):
+        return f"{self.name} حرکت می‌کند"
+
+# کلاس فرزند (Dog) که از Animal ارث‌بری می‌کند
+class Dog(Animal):
+    def __init__(self, name, age, breed):
+        super().__init__(name, age)  # فراخوانی سازنده‌ی والد
+        self.breed = breed
+    
+    def speak(self):  # override
+        return "ووف ووف!"
+    
+    def fetch(self):
+        return f"{self.name} توپ را می‌آورد"
+
+# کلاس فرزند (Cat) که از Animal ارث‌بری می‌کند
+class Cat(Animal):
+    def __init__(self, name, age, color):
+        super().__init__(name, age)
+        self.color = color
+    
+    def speak(self):  # override
+        return "میو میو!"
+    
+    def climb(self):
+        return f"{self.name} از درخت بالا می‌رود"
+
+# استفاده
+dog = Dog("هاپو", 3, "ژرمن شپرد")
+cat = Cat("پیشی", 2, "سفید")
+
+print(dog.name)       # "هاپو" (از والد)
+print(dog.breed)      # "ژرمن شپرد" (ویژه‌ی Dog)
+print(dog.speak())    # "ووف ووف!" (override)
+print(dog.fetch())    # "هاپو توپ را می‌آورد"
+
+print(cat.speak())    # "میو میو!"
+print(cat.climb())    # "پیشی از درخت بالا می‌رود"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">هاپو</span><br>
+                    <span class="highlight">➜</span> <span class="result">ووف ووف!</span><br>
+                    <span class="highlight">➜</span> <span class="result">میو میو!</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> <code dir='ltr'>super()</code> به شما اجازه می‌دهد به متدهای کلاس والد دسترسی داشته باشید. در <code dir='ltr'>__init__</code>، از <code dir='ltr'>super().__init__(...)</code> برای مقداردهی ویژگی‌های والد استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>Vehicle</code> با ویژگی‌های <code dir='ltr'>brand</code> و <code dir='ltr'>year</code> و متد <code dir='ltr'>info()</code> ایجاد کنید. سپس کلاس‌های <code dir='ltr'>Car</code> و <code dir='ltr'>Motorcycle</code> را با ویژگی‌های اضافی از آن ارث‌بری کنید.
+                </div>
+            </div>
+
+            <!-- ۱۸.۲ -->
+            <div class="sub-section">
+                <h4>۱۸.۲ <code dir='ltr'>super()</code> و فراخوانی متدهای والد</h4>
+                <p><strong><code dir='ltr'>super()</code></strong> یک تابع داخلی است که به شما اجازه می‌دهد متدهای کلاس والد را فراخوانی کنید. این کار برای <strong>گسترش</strong> عملکرد متدهای والد (نه جایگزینی کامل) بسیار مفید است.</p>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Employee:
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+    
+    def get_info(self):
+        return f"نام: {self.name}, حقوق: {self.salary}"
+
+class Manager(Employee):
+    def __init__(self, name, salary, department):
+        super().__init__(name, salary)  # مقداردهی ویژگی‌های والد
+        self.department = department
+    
+    def get_info(self):
+        # گسترش متد والد
+        base_info = super().get_info()
+        return f"{base_info}, دپارتمان: {self.department}"
+    
+    def manage(self):
+        return f"{self.name} تیم را مدیریت می‌کند"
+
+class Developer(Employee):
+    def __init__(self, name, salary, programming_languages):
+        super().__init__(name, salary)
+        self.programming_languages = programming_languages
+    
+    def get_info(self):
+        base_info = super().get_info()
+        languages = ", ".join(self.programming_languages)
+        return f"{base_info}, زبان‌ها: {languages}"
+    
+    def code(self):
+        return f"{self.name} کدنویسی می‌کند"
+
+# استفاده
+manager = Manager("علی", 8000000, "فناوری اطلاعات")
+developer = Developer("سارا", 7000000, ["Python", "JavaScript", "SQL"])
+
+print(manager.get_info())  # "نام: علی, حقوق: 8000000, دپارتمان: فناوری اطلاعات"
+print(developer.get_info())  # "نام: سارا, حقوق: 7000000, زبان‌ها: Python, JavaScript, SQL"
+
+# زنجیره‌ی super در ارث‌بری چندسطحی
+class A:
+    def show(self):
+        print("A")
+
+class B(A):
+    def show(self):
+        super().show()
+        print("B")
+
+class C(B):
+    def show(self):
+        super().show()
+        print("C")
+
+c = C()
+c.show()
+# خروجی:
+# A
+# B
+# C</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">نام: علی, حقوق: 8000000, دپارتمان: فناوری اطلاعات</span><br>
+                    <span class="highlight">➜</span> <span class="result">A B C</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> <code dir='ltr'>super()</code> برای <strong>گسترش</strong> عملکرد متدهای والد استفاده می‌شود، نه جایگزینی کامل. این کار باعث می‌شود کد شما قابل‌نگهداری‌تر باشد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> کلاس <code dir='ltr'>Student</code> را با ویژگی‌های <code dir='ltr'>name</code> و <code dir='ltr'>grade</code> ایجاد کنید. سپس کلاس <code dir='ltr'>CollegeStudent</code> را با ویژگی‌های <code dir='ltr'>major</code> و <code dir='ltr'>year</code> از آن ارث‌بری کنید. متد <code dir='ltr'>__str__</code> را در هر دو با <code dir='ltr'>super()</code> گسترش دهید.
+                </div>
+            </div>
+
+            <!-- ۱۸.۳ -->
+            <div class="sub-section">
+                <h4>۱۸.۳ چندریختی (Polymorphism)</h4>
+                <p><strong>چندریختی (Polymorphism)</strong> به معنای "چند شکلی" است. در OOP، یعنی یک متد با یک نام می‌تواند در کلاس‌های مختلف رفتارهای متفاوتی داشته باشد.</p>
+                <ul>
+                    <li><strong>چندریختی با override:</strong> کلاس‌های فرزند متدهای والد را بازنویسی می‌کنند.</li>
+                    <li><strong>چندریختی با Duck Typing:</strong> "اگر مثل اردک راه می‌رود و مثل اردک صدا می‌دهد، پس اردک است".</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'># چندریختی با override
+class Shape:
+    def area(self):
+        return 0
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+    
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+class Triangle(Shape):
+    def __init__(self, base, height):
+        self.base = base
+        self.height = height
+    
+    def area(self):
+        return 0.5 * self.base * self.height
+
+# استفاده از چندریختی
+shapes = [
+    Rectangle(5, 10),
+    Circle(7),
+    Triangle(6, 8)
+]
+
+for shape in shapes:
+    print(f"مساحت: {shape.area()}")
+
+# چندریختی با Duck Typing
+def describe(animal):
+    print(animal.speak())
+    print(animal.move())
+
+class Duck:
+    def speak(self):
+        return "کواک کواک!"
+    def move(self):
+        return "شنا می‌کند"
+
+class Robot:
+    def speak(self):
+        return "بوق بوق!"
+    def move(self):
+        return "راه می‌رود"
+
+describe(Duck())   # Duck
+describe(Robot())  # Robot (Duck Typing)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">مساحت: 50</span><br>
+                    <span class="highlight">➜</span> <span class="result">مساحت: 153.938</span><br>
+                    <span class="highlight">➜</span> <span class="result">مساحت: 24.0</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> Duck Typing به این معنی است که "نوع" یک شیء مهم نیست، بلکه "رفتار" آن مهم است. اگر یک شیء متدهای مورد انتظار را داشته باشد، می‌توان از آن استفاده کرد.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک تابع <code dir='ltr'>play_sound(animal)</code> بنویسید که متد <code dir='ltr'>make_sound()</code> را روی هر شیء فراخوانی کند. کلاس‌های <code dir='ltr'>Dog</code>، <code dir='ltr'>Cat</code> و <code dir='ltr'>Duck</code> را با پیاده‌سازی‌های مختلف از <code dir='ltr'>make_sound()</code> ایجاد کنید.
+                </div>
+            </div>
+
+            <!-- ۱۸.۴ -->
+            <div class="sub-section">
+                <h4>۱۸.۴ <code dir='ltr'>@classmethod</code> و <code dir='ltr'>@staticmethod</code></h4>
+                <ul>
+                    <li><strong><code dir='ltr'>@classmethod</code></strong>: متدی که به کلاس تعلق دارد، نه به یک نمونه. اولین پارامتر آن <code dir='ltr'>cls</code> (کلاس) است. برای ایجاد سازنده‌های جایگزین استفاده می‌شود.</li>
+                    <li><strong><code dir='ltr'>@staticmethod</code></strong>: متدی که به کلاس تعلق دارد، اما به نمونه یا کلاس دسترسی ندارد. مانند یک تابع معمولی است که در کلاس قرار گرفته.</li>
+                </ul>
+                <div class="method-grid">
+                    <div class="method-card">
+                        <span class="icon">📋</span>
+                        <span class="name">@classmethod</span>
+                        <span class="desc">دسترسی به کلاس (cls)</span>
+                    </div>
+                    <div class="method-card">
+                        <span class="icon">⚡</span>
+                        <span class="name">@staticmethod</span>
+                        <span class="desc">بدون دسترسی به self/cls</span>
+                    </div>
+                </div>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    @classmethod
+    def from_birth_year(cls, name, birth_year):
+        """سازنده‌ی جایگزین بر اساس سال تولد"""
+        current_year = 2026
+        age = current_year - birth_year
+        return cls(name, age)
+    
+    @classmethod
+    def from_dict(cls, data):
+        """سازنده از دیکشنری"""
+        return cls(data["name"], data["age"])
+    
+    @staticmethod
+    def is_adult(age):
+        """بررسی بزرگسالی (وابسته به نمونه نیست)"""
+        return age >= 18
+    
+    def get_info(self):
+        return f"{self.name} ({self.age} سال)"
+
+# استفاده از classmethod
+person1 = Person("علی", 25)
+person2 = Person.from_birth_year("سارا", 1995)  # 2026 - 1995 = 31
+person3 = Person.from_dict({"name": "رضا", "age": 28})
+
+print(person1.get_info())  # "علی (25 سال)"
+print(person2.get_info())  # "سارا (31 سال)"
+print(person3.get_info())  # "رضا (28 سال)"
+
+# استفاده از staticmethod
+print(Person.is_adult(20))  # True
+print(Person.is_adult(15))  # False
+
+# classmethod برای ارث‌بری
+class Student(Person):
+    def __init__(self, name, age, student_id):
+        super().__init__(name, age)
+        self.student_id = student_id
+    
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["name"], data["age"], data["student_id"])
+
+student = Student.from_dict({"name": "علی", "age": 20, "student_id": "S001"})
+print(student.get_info())  # "علی (20 سال)"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">علی (25 سال)</span><br>
+                    <span class="highlight">➜</span> <span class="result">سارا (31 سال)</span><br>
+                    <span class="highlight">➜</span> <span class="result">True</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> از <code dir='ltr'>@classmethod</code> برای ایجاد <strong>سازنده‌های جایگزین</strong> (Alternative Constructors) استفاده کنید. از <code dir='ltr'>@staticmethod</code> برای توابع کمکی که به داده‌های نمونه نیاز ندارند، استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>Date</code> با ویژگی‌های <code dir='ltr'>year</code>، <code dir='ltr'>month</code> و <code dir='ltr'>day</code> ایجاد کنید. یک <code dir='ltr'>@classmethod</code> به نام <code dir='ltr'>from_string</code> برای ایجاد از رشته‌ای مثل "2026-01-15" و یک <code dir='ltr'>@staticmethod</code> به نام <code dir='ltr'>is_leap_year</code> برای بررسی سال کبیسه اضافه کنید.
+                </div>
+            </div>
+
+            <!-- ۱۸.۵ -->
+            <div class="sub-section">
+                <h4>۱۸.۵ <code dir='ltr'>@property</code> و ویژگی‌های محاسباتی</h4>
+                <p><strong><code dir='ltr'>@property</code></strong> به شما اجازه می‌دهد متدها را به‌عنوان ویژگی (Attribute) تعریف کنید. این کار برای ویژگی‌های محاسباتی و کنترل دسترسی به ویژگی‌ها بسیار مفید است.</p>
+                <ul>
+                    <li><strong>Getter:</strong> با <code dir='ltr'>@property</code> تعریف می‌شود.</li>
+                    <li><strong>Setter:</strong> با <code dir='ltr'>@property.setter</code> تعریف می‌شود.</li>
+                    <li><strong>Deleter:</strong> با <code dir='ltr'>@property.deleter</code> تعریف می‌شود.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+    
+    @property
+    def radius(self):
+        """دریافت شعاع"""
+        return self._radius
+    
+    @radius.setter
+    def radius(self, value):
+        """تنظیم شعاع با اعتبارسنجی"""
+        if value < 0:
+            raise ValueError("شعاع نمی‌تواند منفی باشد!")
+        self._radius = value
+    
+    @property
+    def area(self):
+        """مساحت (محاسباتی)"""
+        return 3.14159 * self._radius ** 2
+    
+    @property
+    def diameter(self):
+        """قطر (محاسباتی)"""
+        return 2 * self._radius
+
+# استفاده
+c = Circle(5)
+print(c.radius)     # 5 (مثل ویژگی)
+print(c.area)       # 78.53975 (محاسبه می‌شود)
+print(c.diameter)   # 10
+
+c.radius = 10       # از setter استفاده می‌شود
+print(c.area)       # 314.159
+
+# c.radius = -5     # ❌ ValueError
+
+class Person:
+    def __init__(self, first_name, last_name):
+        self.first_name = first_name
+        self.last_name = last_name
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+    
+    @full_name.setter
+    def full_name(self, name):
+        parts = name.split()
+        if len(parts) != 2:
+            raise ValueError("نام و نام‌خانوادگی باید وارد شود")
+        self.first_name = parts[0]
+        self.last_name = parts[1]
+
+p = Person("علی", "رضایی")
+print(p.full_name)        # "علی رضایی"
+p.full_name = "سارا محمدی"
+print(p.first_name)       # "سارا"
+print(p.last_name)        # "محمدی"</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">5</span><br>
+                    <span class="highlight">➜</span> <span class="result">78.53975</span><br>
+                    <span class="highlight">➜</span> <span class="result">علی رضایی</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> از <code dir='ltr'>@property</code> برای <strong>اعتبارسنجی</strong> ورودی‌ها، <strong>محاسبه‌ی مقادیر</strong> و <strong>ایجاد API پاک</strong> استفاده کنید. ویژگی‌های محاسباتی مانند یک ویژگی معمولی خوانده می‌شوند (بدون پرانتز).
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>BankAccount</code> با ویژگی‌های <code dir='ltr'>balance</code> (با <code dir='ltr'>@property</code>) ایجاد کنید. برای balance یک setter با اعتبارسنجی (مثبت بودن) و یک getter ساده اضافه کنید. همچنین یک ویژگی محاسباتی <code dir='ltr'>is_overdrawn</code> اضافه کنید که اگر موجودی منفی بود True برگرداند.
+                </div>
+            </div>
+
+            <!-- ۱۸.۶ -->
+            <div class="sub-section">
+                <h4>۱۸.۶ کپسوله‌سازی (Encapsulation) و کنترل دسترسی</h4>
+                <p><strong>کپسوله‌سازی</strong> به معنی پنهان کردن جزئیات داخلی یک کلاس و ارائه‌ی یک رابط عمومی (public interface) است. در پایتون، با استفاده از <code dir='ltr'>_</code> و <code dir='ltr'>__</code> کنترل دسترسی پیاده‌سازی می‌شود.</p>
+                <ul>
+                    <li><strong><code dir='ltr'>_attribute</code></strong>: نشان‌دهنده‌ی ویژگی محافظت‌شده (Protected) – قرارداد، نه اجباری.</li>
+                    <li><strong><code dir='ltr'>__attribute</code></strong>: نام‌گذاری (Name Mangling) – دسترسی سخت‌تر از خارج کلاس.</li>
+                    <li><strong>Getter/Setter با <code dir='ltr'>@property</code></strong>: کنترل دسترسی و اعتبارسنجی.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.__balance = balance  # ویژگی خصوصی
+        self._transactions = []   # ویژگی محافظت‌شده
+    
+    @property
+    def balance(self):
+        """دسترسی به موجودی (فقط خواندنی)"""
+        return self.__balance
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            self._transactions.append(f"+{amount}")
+            return True
+        return False
+    
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            self._transactions.append(f"-{amount}")
+            return True
+        return False
+    
+    def get_history(self):
+        """دسترسی به تاریخچه (فقط خواندنی)"""
+        return self._transactions.copy()  # کپی برای جلوگیری از تغییر
+
+# استفاده
+acc = BankAccount("علی", 1000)
+print(acc.balance)       # 1000
+acc.deposit(500)
+print(acc.balance)       # 1500
+
+# دسترسی مستقیم به ویژگی‌های خصوصی امکان‌پذیر نیست
+# print(acc.__balance)   # ❌ AttributeError
+
+# اما از طریق name mangling می‌توان (توصیه نمی‌شود)
+print(acc._BankAccount__balance)  # 1500 (اما نباید استفاده شود)
+
+# ویژگی محافظت‌شده قابل دسترسی است (اما نباید مستقیماً تغییر داده شود)
+print(acc._transactions)  # ['+500']
+
+# استفاده از property برای کنترل دسترسی
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.__password = password  # رمز عبور خصوصی
+    
+    @property
+    def password(self):
+        """فقط خواندنی"""
+        return "***"  # هرگز رمز واقعی را برنگردانید
+    
+    def check_password(self, password):
+        return self.__password == password
+
+user = User("ali", "12345")
+print(user.password)        # "***"
+print(user.check_password("12345"))  # True</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">1000</span><br>
+                    <span class="highlight">➜</span> <span class="result">1500</span><br>
+                    <span class="highlight">➜</span> <span class="result">***</span>
+                </div>
+                <div class="pro-tip">
+                    💎 <strong>نکته طلایی:</strong> کپسوله‌سازی از تغییر ناخواسته‌ی داده‌ها جلوگیری می‌کند. از <code dir='ltr'>__attribute</code> برای داده‌های حساس و <code dir='ltr'>_attribute</code> برای داده‌های داخلی استفاده کنید. اما به‌خاطر داشته باشید که پایتون یک زبان بزرگ‌سال است و همه‌ی ویژگی‌ها قابل دسترسی هستند.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> یک کلاس <code dir='ltr'>Product</code> با ویژگی‌های <code dir='ltr'>_price</code> (محافظت‌شده) و <code dir='ltr'>_discount</code> (خصوصی) ایجاد کنید. با <code dir='ltr'>@property</code> دسترسی به قیمت با اعمال تخفیف را فراهم کنید. یک متد برای اعمال تخفیف با اعتبارسنجی اضافه کنید.
+                </div>
+            </div>
+
+            <!-- ۱۸.۷ -->
+            <div class="sub-section">
+                <h4>۱۸.۷ ارث‌بری چندگانه (Multiple Inheritance) و MRO</h4>
+                <p><strong>ارث‌بری چندگانه</strong> به کلاس اجازه می‌دهد از چندین کلاس والد ارث‌بری کند. <strong>MRO (Method Resolution Order)</strong> ترتیبی است که پایتون برای یافتن متدها در ارث‌بری چندگانه استفاده می‌کند.</p>
+                <ul>
+                    <li><strong>MRO</strong> با الگوریتم C3 محاسبه می‌شود.</li>
+                    <li>از <code dir='ltr'>ClassName.__mro__</code> یا <code dir='ltr'>ClassName.mro()</code> برای مشاهده‌ی ترتیب استفاده کنید.</li>
+                </ul>
+                <div class="example-box" dir="ltr">
+                    <pre dir='ltr'><code dir='ltr'>class A:
+    def method(self):
+        print("A")
+
+class B:
+    def method(self):
+        print("B")
+
+class C(A, B):
+    pass
+
+class D(B, A):
+    pass
+
+class E(A):
+    def method(self):
+        print("E")
+
+class F(B):
+    def method(self):
+        print("F")
+
+class G(E, F):
+    pass
+
+class H(D, G):
+    pass
+
+# بررسی MRO
+print(C.__mro__)  # (C, A, B, object)
+print(D.__mro__)  # (D, B, A, object)
+print(G.__mro__)  # (G, E, F, B, object)
+print(H.__mro__)  # (H, D, B, A, G, E, F, object)
+
+c = C()
+c.method()  # A (از A ارث برده، چون اول در MRO است)
+
+d = D()
+d.method()  # B (از B ارث برده)
+
+g = G()
+g.method()  # E (از E ارث برده)
+
+h = H()
+h.method()  # D? (از D ارث برده)
+
+# Diamond Problem
+class X:
+    def method(self):
+        print("X")
+
+class Y(X):
+    def method(self):
+        print("Y")
+
+class Z(X):
+    def method(self):
+        print("Z")
+
+class W(Y, Z):
+    pass
+
+w = W()
+w.method()  # Y (بر اساس MRO: W → Y → Z → X)
+
+print(W.__mro__)  # (W, Y, Z, X, object)</code></pre>
+                </div>
+                <div class="output-demo">
+                    <span class="highlight">➜</span> <span class="result">A</span><br>
+                    <span class="highlight">➜</span> <span class="result">B</span><br>
+                    <span class="highlight">➜</span> <span class="result">Y</span>
+                </div>
+                <div class="note">
+                    💡 <strong>نکته:</strong> ارث‌بری چندگانه می‌تواند پیچیده باشد. از آن با احتیاط استفاده کنید و در صورت امکان از ترکیب (Composition) به‌جای آن استفاده کنید. برای مشاهده‌ی MRO از <code dir='ltr'>ClassName.__mro__</code> استفاده کنید.
+                </div>
+                <div class="task">
+                    <strong>🧪 تمرین:</strong> کلاس‌های زیر را ایجاد کنید و MRO آنها را بررسی کنید: <code dir='ltr'>class A: pass</code>، <code dir='ltr'>class B(A): pass</code>، <code dir='ltr'>class C(A): pass</code>، <code dir='ltr'>class D(B, C): pass</code>. متد <code dir='ltr'>method()</code> را در هر کلاس با <code dir='ltr'>print</code> متفاوت اضافه کنید و ببینید کدام یک اجرا می‌شود.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۶. کارگاه عملی (Workshop)                    -->
+        <!-- ============================================ -->
+        <section class="section" id="workshop">
+            <h3>🛠️ کارگاه عملی</h3>
+            <h4>گام‌به‌گام: ساخت یک سیستم مدیریت حیوانات با وراثت و چندریختی</h4>
+            <ol>
+                <li>یک فایل <code dir='ltr'>animal_system.py</code> ایجاد کنید.</li>
+                <li>یک کلاس پایه <code dir='ltr'>Animal</code> با ویژگی‌های <code dir='ltr'>name</code>، <code dir='ltr'>age</code> و متدهای <code dir='ltr'>speak()</code> و <code dir='ltr'>move()</code> ایجاد کنید.</li>
+                <li>کلاس‌های <code dir='ltr'>Dog</code>، <code dir='ltr'>Cat</code> و <code dir='ltr'>Bird</code> را با ویژگی‌های اضافی و متدهای override ایجاد کنید.</li>
+                <li>از <code dir='ltr'>@property</code> برای ویژگی‌های محاسباتی (مثلاً <code dir='ltr'>age_in_human_years</code>) استفاده کنید.</li>
+                <li>یک <code dir='ltr'>@classmethod</code> برای ایجاد حیوان از دیکشنری اضافه کنید.</li>
+                <li>یک <code dir='ltr'>@staticmethod</code> برای بررسی اعتبار سن اضافه کنید.</li>
+                <li>یک کلاس <code dir='ltr'>Zoo</code> با لیست حیوانات و متدهای <code dir='ltr'>add_animal()</code>، <code dir='ltr'>list_animals()</code> و <code dir='ltr'>make_all_speak()</code> ایجاد کنید.</li>
+                <li>ارث‌بری چندگانه را با یک کلاس <code dir='ltr'>FlyingAnimal</code> ترکیب کنید که به <code dir='ltr'>Bird</code> اضافه می‌شود.</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> ایجاد کنید.</li>
+            </ol>
+            <div class="live-demo" id="oop2-demo">
+                <h4>🐾 شبیه‌ساز سیستم حیوانات</h4>
+                <button onclick="runOOP2Demo()">▶️ اجرای دمو</button>
+                <div class="result-box" id="oop2Result">منتظر اجرا...</div>
+            </div>
+            <h4>چالش کدنویسی</h4>
+            <p>یک سیستم مدیریت کتابخانه با وراثت و چندریختی بسازید:</p>
+            <ul>
+                <li>کلاس پایه <code dir='ltr'>Item</code> با ویژگی‌های <code dir='ltr'>title</code>، <code dir='ltr'>id</code> و متد <code dir='ltr'>get_info()</code>.</li>
+                <li>کلاس‌های <code dir='ltr'>Book</code>، <code dir='ltr'>DVD</code> و <code dir='ltr'>Magazine</code> با ویژگی‌های اضافی و override <code dir='ltr'>get_info()</code>.</li>
+                <li>از <code dir='ltr'>@property</code> برای محاسبه‌ی <code dir='ltr'>borrow_days</code> (تعداد روزهای امانت) استفاده کنید.</li>
+                <li>یک <code dir='ltr'>@classmethod</code> برای ایجاد آیتم از دیکشنری اضافه کنید.</li>
+                <li>یک کلاس <code dir='ltr'>Library</code> با متدهای مدیریت آیتم‌ها ایجاد کنید.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۷. پرسش‌ها و تمرینات (Assessments)           -->
+        <!-- ============================================ -->
+        <section class="section" id="assessments">
+            <h3>📝 پرسش‌ها و تمرینات</h3>
+            <h4>سوالات تشریحی</h4>
+            <ol>
+                <li>تفاوت بین وراثت (Inheritance) و ترکیب (Composition) چیست؟</li>
+                <li><code dir='ltr'>super()</code> چه کاربردی دارد و چرا باید از آن استفاده کنیم؟</li>
+                <li>تفاوت بین <code dir='ltr'>@classmethod</code> و <code dir='ltr'>@staticmethod</code> چیست؟</li>
+                <li><code dir='ltr'>@property</code> چه مزیتی نسبت به دسترسی مستقیم به ویژگی‌ها دارد؟</li>
+                <li>MRO چیست و چگونه کار می‌کند؟</li>
+            </ol>
+            <h4>سوالات چهارگزینه‌ای</h4>
+            <ol>
+                <li>کدام یک از موارد زیر برای ارث‌بری از یک کلاس استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>class Child extends Parent</code>  ب) <code dir='ltr'>class Child(Parent)</code>  ج) <code dir='ltr'>class Child inherits Parent</code>  د) <code dir='ltr'>class Child : Parent</code></li>
+                <li>خروجی کد زیر چیست؟ <br>
+                    <code dir='ltr'>class A: def method(self): print("A"); class B(A): def method(self): super().method(); print("B"); b = B(); b.method()</code><br>
+                    أ) "A"  ب) "B"  ج) "A B"  د) "B A"</li>
+                <li>برای تعریف یک ویژگی محاسباتی از کدام دکوریتور استفاده می‌شود؟<br>
+                    أ) <code dir='ltr'>@classmethod</code>  ب) <code dir='ltr'>@staticmethod</code>  ج) <code dir='ltr'>@property</code>  د) <code dir='ltr'>@abstractmethod</code></li>
+            </ol>
+            <h4>تمرین عملی</h4>
+            <p>یک کلاس <code dir='ltr'>Shape</code> با متد <code dir='ltr'>area()</code> ایجاد کنید. سپس کلاس‌های <code dir='ltr'>Rectangle</code>، <code dir='ltr'>Circle</code> و <code dir='ltr'>Triangle</code> را با وراثت ایجاد کنید. از <code dir='ltr'>@property</code> برای محاسبه‌ی محیط (perimeter) استفاده کنید. یک تابع <code dir='ltr'>print_area(shape)</code> بنویسید که از چندریختی استفاده کند.</p>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۸. جمع‌بندی و خلاصه (Summary)                 -->
+        <!-- ============================================ -->
+        <section class="section" id="summary">
+            <h3>📌 جمع‌بندی و خلاصه</h3>
+            <h4>نکات طلایی</h4>
+            <ul>
+                <li>🔹 <strong>وراثت (Inheritance)</strong>: ایجاد کلاس‌های جدید بر اساس کلاس‌های موجود با <code dir='ltr'>class Child(Parent)</code>.</li>
+                <li>🔹 <strong><code dir='ltr'>super()</code></strong>: فراخوانی متدهای والد برای گسترش عملکرد.</li>
+                <li>🔹 <strong>چندریختی (Polymorphism)</strong>: متدهای یکسان با رفتارهای متفاوت در کلاس‌های مختلف.</li>
+                <li>🔹 <strong><code dir='ltr'>@classmethod</code></strong>: متد کلاس با دسترسی به <code dir='ltr'>cls</code> – برای سازنده‌های جایگزین.</li>
+                <li>🔹 <strong><code dir='ltr'>@staticmethod</code></strong>: متد استاتیک بدون دسترسی به <code dir='ltr'>self</code> یا <code dir='ltr'>cls</code>.</li>
+                <li>🔹 <strong><code dir='ltr'>@property</code></strong>: ویژگی‌های محاسباتی و کنترل‌شده با getter/setter.</li>
+                <li>🔹 <strong>کپسوله‌سازی</strong>: با <code dir='ltr'>_</code> و <code dir='ltr'>__</code> برای محافظت از داده‌ها.</li>
+                <li>🔹 <strong>ارث‌بری چندگانه</strong>: ارث‌بری از چند کلاس با MRO (Method Resolution Order).</li>
+            </ul>
+            <h4>برگه تقلب</h4>
+            <div class="example-box" dir="ltr">
+                <pre dir='ltr'><code dir='ltr'># وراثت
+class Child(Parent):
+    def __init__(self, args):
+        super().__init__(args)
+        self.new_attr = value
+
+# super()
+super().method()
+
+# classmethod
+@classmethod
+def from_dict(cls, data):
+    return cls(data["key"])
+
+# staticmethod
+@staticmethod
+def helper():
+    return "helper"
+
+# property
+@property
+def attr(self):
+    return self._attr
+
+@attr.setter
+def attr(self, value):
+    self._attr = value
+
+# ارث‌بری چندگانه
+class Child(Parent1, Parent2):
+    pass</code></pre>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۹. واژه‌نامه تخصصی (Glossary)                -->
+        <!-- ============================================ -->
+        <section class="section" id="glossary">
+            <h3>📖 واژه‌نامه تخصصی</h3>
+            <ul>
+                <li><strong>Inheritance (وراثت):</strong> ایجاد کلاس جدید بر اساس کلاس موجود.</li>
+                <li><strong>Parent Class (کلاس والد):</strong> کلاسی که از آن ارث‌بری می‌شود.</li>
+                <li><strong>Child Class (کلاس فرزند):</strong> کلاسی که از والد ارث‌بری می‌کند.</li>
+                <li><strong>super():</strong> تابع برای دسترسی به متدهای والد.</li>
+                <li><strong>Polymorphism (چندریختی):</strong> رفتارهای متفاوت برای یک متد در کلاس‌های مختلف.</li>
+                <li><strong>Duck Typing:</strong> "اگر مثل اردک راه می‌رود و صدا می‌دهد، پس اردک است".</li>
+                <li><strong>classmethod:</strong> متدی که به کلاس تعلق دارد (cls).</li>
+                <li><strong>staticmethod:</strong> متدی که به کلاس تعلق دارد اما به self یا cls دسترسی ندارد.</li>
+                <li><strong>property:</strong> دکوریتور برای ویژگی‌های محاسباتی و کنترل‌شده.</li>
+                <li><strong>Encapsulation (کپسوله‌سازی):</strong> پنهان کردن جزئیات داخلی.</li>
+                <li><strong>MRO (Method Resolution Order):</strong> ترتیب جستجوی متدها در ارث‌بری چندگانه.</li>
+                <li><strong>Multiple Inheritance (ارث‌بری چندگانه):</strong> ارث‌بری از چند کلاس والد.</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۰. منابع و ارجاعات (References)             -->
+        <!-- ============================================ -->
+        <section class="section" id="references">
+            <h3>🔗 منابع و ارجاعات</h3>
+            <ul>
+                <li><a href="https://docs.python.org/3/tutorial/classes.html#inheritance" target="_blank" rel="noopener noreferrer">Python: Inheritance</a></li>
+                <li><a href="https://docs.python.org/3/library/functions.html#super" target="_blank" rel="noopener noreferrer">Python: super()</a></li>
+                <li><a href="https://docs.python.org/3/library/functions.html#property" target="_blank" rel="noopener noreferrer">Python: property</a></li>
+                <li><a href="https://realpython.com/python-super/" target="_blank" rel="noopener noreferrer">Real Python: super()</a></li>
+                <li><a href="https://realpython.com/python-property/" target="_blank" rel="noopener noreferrer">Real Python: property</a></li>
+                <li><a href="https://realpython.com/lessons/multiple-inheritance-python/" target="_blank" rel="noopener noreferrer">Real Python: Multiple Inheritance</a></li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۱. نقشه راه و نمای کلی (Roadmap)            -->
+        <!-- ============================================ -->
+        <section class="section" id="roadmap">
+            <h3>🗺️ نقشه راه و نمای کلی فصل</h3>
+            <ul>
+                <li><strong>گام ۱:</strong> وراثت و ایجاد کلاس‌های فرزند – ۱۵ دقیقه</li>
+                <li><strong>گام ۲:</strong> super() و فراخوانی والد – ۱۵ دقیقه</li>
+                <li><strong>گام ۳:</strong> چندریختی و Duck Typing – ۱۵ دقیقه</li>
+                <li><strong>گام ۴:</strong> @classmethod و @staticmethod – ۱۵ دقیقه</li>
+                <li><strong>گام ۵:</strong> @property و ویژگی‌های محاسباتی – ۱۵ دقیقه</li>
+                <li><strong>گام ۶:</strong> کپسوله‌سازی و کنترل دسترسی – ۱۵ دقیقه</li>
+                <li><strong>گام ۷:</strong> ارث‌بری چندگانه و MRO – ۱۵ دقیقه</li>
+                <li><strong>گام ۸:</strong> کارگاه عملی – ۳۰ دقیقه</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۲. سوالات محرک و کاوشگر (Guiding Questions) -->
+        <!-- ============================================ -->
+        <section class="section" id="guiding_questions">
+            <h3>❓ سوالات محرک (برای درگیری ذهن)</h3>
+            <ul>
+                <li>❓ چه زمانی باید از وراثت استفاده کنیم و چه زمانی ترکیب (Composition) بهتر است؟</li>
+                <li>❓ چرا <code dir='ltr'>super()</code> در ارث‌بری چندگانه پیچیده می‌شود؟</li>
+                <li>❓ اگر یک متد را در کلاس فرزند override کنیم، آیا همچنان می‌توانیم به متد والد دسترسی داشته باشیم؟ چگونه؟</li>
+                <li>❓ چه تفاوتی بین <code dir='ltr'>@classmethod</code> و <code dir='ltr'>@staticmethod</code> در ارث‌بری وجود دارد؟</li>
+                <li>❓ چرا باید از <code dir='ltr'>@property</code> به‌جای دسترسی مستقیم به ویژگی‌ها استفاده کنیم؟</li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۳. خطاهای رایج و رفع آن‌ها (Common Mistakes) -->
+        <!-- ============================================ -->
+        <section class="section" id="common_mistakes">
+            <h3>⚠️ خطاهای رایج و عیب‌یابی</h3>
+            <ul>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>super().__init__()</code> در کلاس فرزند که باعث می‌شود ویژگی‌های والد مقداردهی نشوند.<br>
+                    <strong>🔧 راه حل:</strong> همیشه <code dir='ltr'>super().__init__(...)</code> را در <code dir='ltr'>__init__</code> کلاس فرزند فراخوانی کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>classmethod</code> به‌جای <code dir='ltr'>staticmethod</code> در جایی که به کلاس نیاز نیست، که باعث می‌شود کد غیرضروری پیچیده شود.<br>
+                    <strong>🔧 راه حل:</strong> اگر به کلاس یا نمونه دسترسی ندارید، از <code dir='ltr'>@staticmethod</code> استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> فراموش کردن <code dir='ltr'>@property</code> در getter که باعث می‌شود متد به‌عنوان تابع فراخوانی شود (با پرانتز).<br>
+                    <strong>🔧 راه حل:</strong> برای ویژگی‌های محاسباتی، از <code dir='ltr'>@property</code> استفاده کنید تا مانند ویژگی رفتار کنند.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> ایجاد وابستگی‌های پیچیده با ارث‌بری چندگانه که باعث سردرگمی در MRO می‌شود.<br>
+                    <strong>🔧 راه حل:</strong> از ارث‌بری چندگانه با احتیاط استفاده کنید و در صورت امکان، از ترکیب (Composition) استفاده کنید.
+                </li>
+                <li>
+                    <strong>🔴 اشتباه:</strong> استفاده از <code dir='ltr'>__attribute</code> بدون آگاهی از Name Mangling که باعث می‌شود دسترسی از خارج کلاس سخت شود.<br>
+                    <strong>🔧 راه حل:</strong> برای ویژگی‌های خصوصی از <code dir='ltr'>__attribute</code> و برای محافظت‌شده از <code dir='ltr'>_attribute</code> استفاده کنید.
+                </li>
+            </ul>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ۱۴. پروژه نهایی (Capstone Project)            -->
+        <!-- ============================================ -->
+        <section class="section" id="capstone_project">
+            <h3>🏆 پروژه نهایی این فصل</h3>
+            <p><strong>عنوان پروژه:</strong> ساخت یک سیستم مدیریت فروشگاه با وراثت و چندریختی</p>
+            <p><strong>شرح:</strong> یک برنامه‌ی خط فرمان برای مدیریت محصولات یک فروشگاه با استفاده از OOP پیشرفته بسازید:</p>
+            <ul>
+                <li>یک کلاس پایه <code dir='ltr'>Product</code> با ویژگی‌های:
+                    <ul>
+                        <li><code dir='ltr'>name</code> – نام محصول</li>
+                        <li><code dir='ltr'>price</code> – قیمت (با <code dir='ltr'>@property</code> و اعتبارسنجی)</li>
+                        <li><code dir='ltr'>stock</code> – موجودی (با <code dir='ltr'>@property</code> و setter)</li>
+                        <li><code dir='ltr'>_discount</code> – تخفیف (ویژگی خصوصی)</li>
+                    </ul>
+                </li>
+                <li>متدهای <code dir='ltr'>Product</code>:
+                    <ul>
+                        <li><code dir='ltr'>get_info()</code> – اطلاعات محصول</li>
+                        <li><code dir='ltr'>apply_discount(percent)</code> – اعمال تخفیف</li>
+                        <li><code dir='ltr'>__str__</code> و <code dir='ltr'>__repr__</code></li>
+                    </ul>
+                </li>
+                <li>کلاس‌های فرزند:
+                    <ul>
+                        <li><code dir='ltr'>Electronics</code> – ویژگی‌های <code dir='ltr'>warranty</code> (گارانتی) و <code dir='ltr'>brand</code></li>
+                        <li><code dir='ltr'>Clothing</code> – ویژگی‌های <code dir='ltr'>size</code> (سایز) و <code dir='ltr'>material</code></li>
+                        <li><code dir='ltr'>Food</code> – ویژگی‌های <code dir='ltr'>expiration_date</code> (تاریخ انقضا) و <code dir='ltr'>is_organic</code></li>
+                    </ul>
+                </li>
+                <li>یک کلاس <code dir='ltr'>Store</code> با ویژگی‌های <code dir='ltr'>products</code> (لیست محصولات) و متدهای:
+                    <ul>
+                        <li><code dir='ltr'>add_product(product)</code> – افزودن محصول</li>
+                        <li><code dir='ltr'>remove_product(name)</code> – حذف محصول</li>
+                        <li><code dir='ltr'>search_by_name(query)</code> – جستجوی محصول</li>
+                        <li><code dir='ltr'>get_total_value()</code> – محاسبه‌ی ارزش کل موجودی</li>
+                        <li><code dir='ltr'>apply_discount_to_all(percent)</code> – تخفیف به همه‌ی محصولات</li>
+                        <li><code dir='ltr'>save_to_file(filename)</code> – ذخیره‌سازی در فایل JSON</li>
+                        <li><code dir='ltr'>load_from_file(filename)</code> – بارگذاری از فایل JSON</li>
+                    </ul>
+                </li>
+                <li>از <code dir='ltr'>@classmethod</code> برای ایجاد محصولات از دیکشنری استفاده کنید.</li>
+                <li>از <code dir='ltr'>@staticmethod</code> برای بررسی اعتبار قیمت استفاده کنید.</li>
+                <li>از <code dir='ltr'>@property</code> برای ویژگی‌های محاسباتی مانند <code dir='ltr'>discounted_price</code> استفاده کنید.</li>
+                <li>مدیریت خطاها (قیمت منفی، موجودی نامعتبر و ...).</li>
+                <li>یک منوی تعاملی با <code dir='ltr'>while</code> برای کاربر ایجاد کنید.</li>
+            </ul>
+            <p>کد خود را در VS Code بنویسید و با <code dir='ltr'>python3 main.py</code> اجرا کنید.</p>
+            <div class="pro-tip">
+                <strong>💡 چالش بیشتر:</strong>
+                <ul>
+                    <li>یک ارث‌بری چندگانه با کلاس <code dir='ltr'>Perishable</code> (فاسدشدنی) برای محصولات غذایی با تاریخ انقضا ایجاد کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>@property</code>، یک ویژگی محاسباتی <code dir='ltr'>is_expired</code> برای محصولات غذایی اضافه کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>__lt__</code>، محصولات را بر اساس قیمت قابل مقایسه کنید.</li>
+                    <li>با استفاده از <code dir='ltr'>__iter__</code>، پیمایش محصولات در فروشگاه را ممکن کنید.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- دکمه‌های ناوبری -->
+        <div style="display:flex;justify-content:space-between;margin-top:30px;">
+            <a href="../chapter-17/index.html" class="btn-demo">➜ فصل قبل</a>
+            <a href="../chapter-19/index.html" class="btn-demo">رفتن به فصل ۱۹ ➜</a>
+        </div>
+
+    </div>
+    <footer>
+        <div class="container">
+            <p>© ۲۰۲۶ - دوره جامع Python - تمامی حقوق محفوظ است</p>
+        </div>
+    </footer>
+    <script src="../../assets/js/script.js"></script>
+    <script>
+        // دموی سیستم حیوانات
+        function runOOP2Demo() {
+            const resultBox = document.getElementById('oop2Result');
+
+            // شبیه‌سازی کلاس‌ها با وراثت
+            class Animal {
+                constructor(name, age) {
+                    this.name = name;
+                    this.age = age;
+                }
+                speak() {
+                    return "حیوان صدا می‌دهد";
+                }
+                move() {
+                    return `${this.name} حرکت می‌کند`;
+                }
+            }
+
+            class Dog extends Animal {
+                constructor(name, age, breed) {
+                    super(name, age);
+                    this.breed = breed;
+                }
+                speak() {
+                    return "ووف ووف!";
+                }
+                fetch() {
+                    return `${this.name} توپ را می‌آورد`;
+                }
+            }
+
+            class Cat extends Animal {
+                constructor(name, age, color) {
+                    super(name, age);
+                    this.color = color;
+                }
+                speak() {
+                    return "میو میو!";
+                }
+                climb() {
+                    return `${this.name} از درخت بالا می‌رود`;
+                }
+            }
+
+            class Bird extends Animal {
+                constructor(name, age, canFly = true) {
+                    super(name, age);
+                    this.canFly = canFly;
+                }
+                speak() {
+                    return "جیک جیک!";
+                }
+                fly() {
+                    return this.canFly ? `${this.name} پرواز می‌کند` : `${this.name} نمی‌تواند پرواز کند`;
+                }
+            }
+
+            // ایجاد حیوانات
+            const animals = [
+                new Dog("هاپو", 3, "ژرمن شپرد"),
+                new Cat("پیشی", 2, "سفید"),
+                new Bird("چیچی", 1, true)
+            ];
+
+            let html = '<strong>🐾 سیستم حیوانات (شبیه‌سازی)</strong><br><br>';
+            html += `تعداد حیوانات: ${animals.length}<br><br>`;
+
+            animals.forEach((animal, i) => {
+                html += `${i+1}. 🐕 ${animal.constructor.name}: ${animal.name} (${animal.age} سال)<br>`;
+                html += `   🔹 صدا: ${animal.speak()}<br>`;
+                html += `   🔹 حرکت: ${animal.move()}<br>`;
+                if (animal.fetch) html += `   🔹 ویژه: ${animal.fetch()}<br>`;
+                if (animal.climb) html += `   🔹 ویژه: ${animal.climb()}<br>`;
+                if (animal.fly) html += `   🔹 ویژه: ${animal.fly()}<br>`;
+                html += `<br>`;
+            });
+
+            html += `✅ چندریختی: همه‌ی حیوانات متد speak() را با رفتارهای مختلف دارند.`;
+
+            resultBox.className = 'result-box success';
+            resultBox.innerHTML = html.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>
