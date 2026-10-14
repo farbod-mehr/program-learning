@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۸ - Sniffing - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۸ – Sniffing</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – Sniffing چیست؟</a></li>
+            <li><a href="#types">📌 انواع Sniffing</a></li>
+            <li><a href="#vulnerable-protocols">🛡️ پروتکل‌های آسیب‌پذیر</a></li>
+            <li><a href="#sniffing-techniques">🎯 تکنیک‌های Sniffing</a></li>
+            <li><a href="#arp-spoofing">🔴 ARP Spoofing</a></li>
+            <li><a href="#mac-flooding">🔵 MAC Flooding</a></li>
+            <li><a href="#dhcp-starvation">🟡 DHCP Starvation</a></li>
+            <li><a href="#mitm">👤 حملات Man-in-the-Middle</a></li>
+            <li><a href="#tools">🛠️ ابزارهای Sniffing</a></li>
+            <li><a href="#wireshark">📡 آموزش جامع Wireshark</a></li>
+            <li><a href="#tcpdump">📟 آموزش Tcpdump</a></li>
+            <li><a href="#ettercap">🎭 آموزش Ettercap</a></li>
+            <li><a href="#detection">🔍 تشخیص Sniffing</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با Sniffing</a></li>
+            <li><a href="#ai-sniffing">🤖 Sniffing با هوش مصنوعی</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – Sniffing چیست؟</h2>
+        <p>
+            <b>Sniffing (استنشاق یا شنود)</b> یکی از قدیمی‌ترین و مؤثرترین تکنیک‌های هک شبکه است که در آن مهاجم با استفاده از ابزارهای خاص، ترافیک شبکه را ضبط و تحلیل می‌کند تا اطلاعات حساسی مانند رمزهای عبور، اطلاعات کارت اعتباری، ایمیل‌ها و مکالمات را استخراج کند.
+        </p>
+        <p>
+            در یک شبکه محلی (LAN)، داده‌ها به صورت بسته (Packet) بین دستگاه‌ها جابه‌جا می‌شوند. در حالت عادی، یک دستگاه فقط بسته‌هایی را که برای آن ارسال شده‌اند دریافت می‌کند. اما با استفاده از تکنیک‌های Sniffing، مهاجم می‌تواند کارت شبکه خود را در حالت <b>Promiscuous Mode</b> قرار دهد تا تمام بسته‌های عبوری از شبکه را دریافت کند.
+        </p>
+        <p>
+            Sniffing به دو دسته کلی تقسیم می‌شود:
+        </p>
+        <ul>
+            <li><b>غیرفعال (Passive):</b> فقط ترافیک را ضبط می‌کند بدون ایجاد تغییر (تشخیص آن دشوار است).</li>
+            <li><b>فعال (Active):</b> با ارسال بسته‌های خاص، ترافیک را به سمت خود هدایت می‌کند (قابل تشخیص‌تر).</li>
+        </ul>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> Sniffing بدون مجوز، جرم محسوب می‌شود و حریم خصوصی افراد را نقض می‌کند. در هک قانونمند، این تکنیک فقط با مجوز و در محیط‌های کنترل‌شده استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: انواع Sniffing -->
+    <!-- ============================================================ -->
+    <div class="card" id="types">
+        <h2>📌 انواع Sniffing</h2>
+        <p>
+            Sniffing بر اساس روش و محل انجام به دو دسته اصلی تقسیم می‌شود:
+        </p>
+
+        <h3>🔍 ۱. Sniffing غیرفعال (Passive Sniffing)</h3>
+        <ul>
+            <li><b>تعریف:</b> مهاجم فقط ترافیک شبکه را ضبط می‌کند و هیچ بسته‌ای به شبکه ارسال نمی‌کند.</li>
+            <li><b>محل اجرا:</b> معمولاً در شبکه‌های مبتنی بر هاب (Hub) که تمام ترافیک به همه پورت‌ها ارسال می‌شود.</li>
+            <li><b>مزایا:</b> کاملاً مخفیانه است و قابل تشخیص نیست.</li>
+            <li><b>معایب:</b> فقط در شبکه‌های کوچک و با هاب کار می‌کند.</li>
+            <li><b>مثال:</b> استفاده از Wireshark در یک شبکه قدیمی با هاب.</li>
+        </ul>
+
+        <h3>📡 ۲. Sniffing فعال (Active Sniffing)</h3>
+        <ul>
+            <li><b>تعریف:</b> مهاجم با ارسال بسته‌های خاص، ترافیک را به سمت خود هدایت می‌کند.</li>
+            <li><b>محل اجرا:</b> در شبکه‌های مبتنی بر سوئیچ (Switch).</li>
+            <li><b>مزایا:</b> در شبکه‌های بزرگ و مدرن قابل اجرا است.</li>
+            <li><b>معایب:</b> قابل تشخیص است و ممکن است باعث اختلال در شبکه شود.</li>
+            <li><b>مثال:</b> ARP Spoofing، MAC Flooding، DHCP Starvation.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> امروزه اکثر شبکه‌ها از سوئیچ استفاده می‌کنند، بنابراین Sniffing فعال رایج‌تر است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: پروتکل‌های آسیب‌پذیر -->
+    <!-- ============================================================ -->
+    <div class="card" id="vulnerable-protocols">
+        <h2>🛡️ پروتکل‌های آسیب‌پذیر در برابر Sniffing</h2>
+        <p>
+            پروتکل‌هایی که داده‌ها را به صورت <b>متن واضح (Plain Text)</b> ارسال می‌کنند، به شدت در برابر Sniffing آسیب‌پذیر هستند. در ادامه، مهم‌ترین این پروتکل‌ها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>پروتکل</th><th>پورت</th><th>اطلاعات قابل شنود</th><th>جایگزین امن</th></tr>
+                <tr>
+                    <td><b>HTTP</b></td>
+                    <td>۸۰</td>
+                    <td>تمام داده‌های وب (رمزها، کوکی‌ها، محتوا)</td>
+                    <td>HTTPS</td>
+                </tr>
+                <tr>
+                    <td><b>FTP</b></td>
+                    <td>۲۱</td>
+                    <td>نام کاربری، رمز عبور، فایل‌ها</td>
+                    <td>SFTP, FTPS</td>
+                </tr>
+                <tr>
+                    <td><b>Telnet</b></td>
+                    <td>۲۳</td>
+                    <td>نام کاربری، رمز عبور، دستورات</td>
+                    <td>SSH</td>
+                </tr>
+                <tr>
+                    <td><b>SMTP</b></td>
+                    <td>۲۵</td>
+                    <td>محتوای ایمیل‌ها، اطلاعات فرستنده/گیرنده</td>
+                    <td>SMTPS</td>
+                </tr>
+                <tr>
+                    <td><b>POP3</b></td>
+                    <td>۱۱۰</td>
+                    <td>ایمیل‌ها و رمزهای عبور</td>
+                    <td>POP3S</td>
+                </tr>
+                <tr>
+                    <td><b>IMAP</b></td>
+                    <td>۱۴۳</td>
+                    <td>ایمیل‌ها و رمزهای عبور</td>
+                    <td>IMAPS</td>
+                </tr>
+                <tr>
+                    <td><b>SNMP (v1/v2)</b></td>
+                    <td>۱۶۱</td>
+                    <td>اطلاعات مدیریت شبکه</td>
+                    <td>SNMPv3</td>
+                </tr>
+                <tr>
+                    <td><b>DNS</b></td>
+                    <td>۵۳</td>
+                    <td>درخواست‌های DNS (اطلاعات دامنه‌ها)</td>
+                    <td>DNSSEC, DoH, DoT</td>
+                </tr>
+                <tr>
+                    <td><b>NFS</b></td>
+                    <td>۲۰۴۹</td>
+                    <td>داده‌های اشتراک‌گذاری فایل</td>
+                    <td>NFSv4 با رمزنگاری</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> هرگز از پروتکل‌های غیرامن در شبکه‌های عمومی استفاده نکنید. همیشه از نسخه‌های امن (با رمزنگاری) استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: تکنیک‌های Sniffing -->
+    <!-- ============================================================ -->
+    <div class="card" id="sniffing-techniques">
+        <h2>🎯 تکنیک‌های Sniffing</h2>
+        <p>
+            برای اجرای Sniffing در شبکه‌های مختلف، تکنیک‌های متعددی وجود دارد که در ادامه مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>تکنیک</th><th>توضیح</th><th>نوع</th></tr>
+                <tr>
+                    <td><b>ARP Spoofing</b></td>
+                    <td>ارسال بسته‌های ARP جعلی برای ارتباط دادن IP مهاجم به MAC</td>
+                    <td>فعال</td>
+                </tr>
+                <tr>
+                    <td><b>MAC Flooding</b></td>
+                    <td>پر کردن جدول MAC سوئیچ برای تبدیل آن به هاب</td>
+                    <td>فعال</td>
+                </tr>
+                <tr>
+                    <td><b>DHCP Starvation</b></td>
+                    <td>اشغال تمام آدرس‌های IP موجود در DHCP</td>
+                    <td>فعال</td>
+                </tr>
+                <tr>
+                    <td><b>Port Mirroring (SPAN)</b></td>
+                    <td>کپی کردن ترافیک یک پورت به پورت دیگر</td>
+                    <td>مدیریتی</td>
+                </tr>
+                <tr>
+                    <td><b>Promiscuous Mode</b></td>
+                    <td>قرار دادن کارت شبکه در حالت دریافت تمام بسته‌ها</td>
+                    <td>غیرفعال</td>
+                </tr>
+                <tr>
+                    <td><b>ICMP Redirect</b></td>
+                    <td>تغییر مسیر ترافیک با ارسال بسته‌های ICMP</td>
+                    <td>فعال</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ARP Spoofing و MAC Flooding دو تکنیک رایج Sniffing فعال هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: ARP Spoofing -->
+    <!-- ============================================================ -->
+    <div class="card" id="arp-spoofing">
+        <h2>🔴 ARP Spoofing (ARP Poisoning)</h2>
+        <p>
+            <b>ARP Spoofing</b> یکی از معروف‌ترین و خطرناک‌ترین تکنیک‌های Sniffing است که در آن مهاجم با ارسال بسته‌های ARP جعلی، جدول ARP دستگاه‌های شبکه را مسموم می‌کند. این کار باعث می‌شود که ترافیک به جای مقصد اصلی، به سمت مهاجم هدایت شود.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>مهاجم یک بسته ARP Reply جعلی به دستگاه‌های شبکه ارسال می‌کند.</li>
+            <li>در این بسته، آدرس IP دستگاه هدف با آدرس MAC مهاجم جفت می‌شود.</li>
+            <li>دستگاه‌ها جدول ARP خود را به‌روزرسانی کرده و ترافیک را به مهاجم ارسال می‌کنند.</li>
+            <li>مهاجم ترافیک را دریافت کرده، ضبط می‌کند و سپس به مقصد اصلی ارسال می‌کند (حمله MITM).</li>
+        </ol>
+
+        <h3>📌 ابزارهای ARP Spoofing:</h3>
+        <ul>
+            <li><b>Ettercap:</b> ابزار قدرتمند برای ARP Spoofing و MITM.</li>
+            <li><b>arpspoof:</b> ابزار خط فرمان ساده.</li>
+            <li><b>BetterCAP:</b> ابزار مدرن و پیشرفته.</li>
+            <li><b>dsniff:</b> مجموعه ابزارهای Sniffing.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از arpspoof برای فریب دستگاه 192.168.1.101
+arpspoof -i eth0 -t 192.168.1.101 192.168.1.1
+
+# استفاده از Ettercap برای ARP Spoofing
+ettercap -T -M arp:remote /192.168.1.101// /192.168.1.1//
+
+# استفاده از BetterCAP برای MITM
+bettercap -eval "set arp.spoof.targets 192.168.1.101; arp.spoof on"</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> ARP Spoofing می‌تواند باعث اختلال در شبکه و قطع ارتباط دستگاه‌ها شود. این حمله فقط در محیط‌های آزمایشگاهی و با مجوز انجام شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: MAC Flooding -->
+    <!-- ============================================================ -->
+    <div class="card" id="mac-flooding">
+        <h2>🔵 MAC Flooding</h2>
+        <p>
+            <b>MAC Flooding</b> یک حمله به سوئیچ‌های شبکه است که در آن مهاجم با ارسال تعداد زیادی بسته با آدرس‌های MAC جعلی، جدول CAM (Content Addressable Memory) سوئیچ را پر می‌کند. این کار باعث می‌شود که سوئیچ نتواند آدرس‌های MAC جدید را ذخیره کند و در نتیجه مانند یک هاب عمل کند و تمام ترافیک را به همه پورت‌ها ارسال کند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>مهاجم تعداد زیادی بسته با آدرس‌های MAC جعلی و متفاوت به سوئیچ ارسال می‌کند.</li>
+            <li>جدول CAM سوئیچ پر می‌شود و دیگر نمی‌تواند آدرس‌های جدید را ذخیره کند.</li>
+            <li>سوئیچ وارد حالت <b>Fail-Open</b> می‌شود و تمام ترافیک را به همه پورت‌ها ارسال می‌کند.</li>
+            <li>مهاجم می‌تواند تمام ترافیک شبکه را ضبط کند.</li>
+        </ol>
+
+        <h3>📌 ابزارهای MAC Flooding:</h3>
+        <ul>
+            <li><b>macof:</b> ابزار خط فرمان برای تولید بسته‌های MAC جعلی.</li>
+            <li><b>dsniff:</b> شامل ابزار macof.</li>
+            <li><b>Ettercap:</b> با گزینه‌های پیشرفته.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از macof برای MAC Flooding
+macof -i eth0 -s 192.168.1.100
+
+# استفاده از Ettercap برای MAC Flooding
+ettercap -T -M mac:remote /192.168.1.101//</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> سوئیچ‌های مدرن دارای مکانیزم‌های محافظتی در برابر MAC Flooding هستند، اما بسیاری از سوئیچ‌های قدیمی همچنان آسیب‌پذیرند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: DHCP Starvation -->
+    <!-- ============================================================ -->
+    <div class="card" id="dhcp-starvation">
+        <h2>🟡 DHCP Starvation</h2>
+        <p>
+            <b>DHCP Starvation</b> یک حمله به سرور DHCP است که در آن مهاجم با ارسال تعداد زیادی درخواست DHCP Discover با آدرس‌های MAC جعلی، تمام آدرس‌های IP موجود در محدوده DHCP را اشغال می‌کند. این کار باعث می‌شود که دستگاه‌های جدید نتوانند IP دریافت کنند و از شبکه قطع شوند.
+        </p>
+
+        <h3>📌 نحوه عملکرد:</h3>
+        <ol>
+            <li>مهاجم تعداد زیادی درخواست DHCP Discover با آدرس‌های MAC جعلی ارسال می‌کند.</li>
+            <li>سرور DHCP تمام آدرس‌های IP موجود را به این دستگاه‌های جعلی تخصیص می‌دهد.</li>
+            <li>هنگامی که یک دستگاه واقعی به شبکه متصل می‌شود، هیچ IP آزادی وجود ندارد.</li>
+            <li>مهاجم سپس می‌تواند یک سرور DHCP جعلی راه‌اندازی کرده و IPهای جعلی توزیع کند (حمله DHCP Spoofing).</li>
+        </ol>
+
+        <h3>📌 ابزارهای DHCP Starvation:</h3>
+        <ul>
+            <li><b>Yersinia:</b> ابزار تست نفوذ DHCP.</li>
+            <li><b>Ettercap:</b> با گزینه DHCP.</li>
+            <li><b>dhcpig:</b> ابزار تخصصی DHCP Starvation.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Yersinia برای DHCP Starvation
+yersinia -I -i eth0 -s
+
+# استفاده از dhcpig برای حمله DHCP Starvation
+dhcpig -i eth0</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> DHCP Starvation می‌تواند باعث قطعی شبکه شود و بسیار مخرب است. فقط در محیط‌های آزمایشگاهی استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: حملات MITM -->
+    <!-- ============================================================ -->
+    <div class="card" id="mitm">
+        <h2>👤 حملات Man-in-the-Middle (MITM)</h2>
+        <p>
+            <b>حمله MITM</b> زمانی رخ می‌دهد که مهاجم بین دو طرف ارتباط قرار می‌گیرد و ترافیک را شنود، تغییر یا مسدود می‌کند. Sniffing یکی از روش‌های اصلی پیاده‌سازی حملات MITM است.
+        </p>
+
+        <h3>📌 مراحل یک حمله MITM:</h3>
+        <ol>
+            <li><b>شناسایی:</b> شناسایی دو طرف ارتباط و مسیر ترافیک.</li>
+            <li><b>مسمومیت:</b> استفاده از ARP Spoofing یا DNS Spoofing برای هدایت ترافیک به مهاجم.</li>
+            <li><b>شنود و تغییر:</b> شنود ترافیک و در صورت نیاز تغییر داده‌ها.</li>
+            <li><b>ارسال:</b> ارسال ترافیک به مقصد اصلی.</li>
+        </ol>
+
+        <h3>📌 انواع حملات MITM:</h3>
+        <ul>
+            <li><b>Session Hijacking:</b> ربودن جلسه کاربر.</li>
+            <li><b>SSL Stripping:</b> کاهش امنیت HTTPS به HTTP.</li>
+            <li><b>DNS Spoofing:</b> هدایت کاربران به سایت‌های جعلی.</li>
+            <li><b>Eavesdropping:</b> شنود مکالمات و داده‌ها.</li>
+            <li><b>Data Injection:</b> تزریق داده‌های مخرب.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> حملات MITM یکی از خطرناک‌ترین حملات شبکه هستند و می‌توانند اطلاعات بسیار حساسی را به سرقت ببرند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: ابزارهای Sniffing -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای Sniffing</h2>
+        <p>
+            ابزارهای متعددی برای Sniffing وجود دارند که هر کدام ویژگی‌ها و کاربردهای خاص خود را دارند. در این بخش، مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>نوع</th><th>کاربرد اصلی</th><th>ویژگی‌ها</th></tr>
+                <tr>
+                    <td><b>Wireshark</b></td>
+                    <td>GUI</td>
+                    <td>تحلیل ترافیک شبکه</td>
+                    <td>قدرتمندترین، پشتیبانی از فیلترها، تحلیل عمیق</td>
+                </tr>
+                <tr>
+                    <td><b>Tcpdump</b></td>
+                    <td>CLI</td>
+                    <td>ضبط و تحلیل ترافیک</td>
+                    <td>سبک، سریع، مناسب برای سرورها</td>
+                </tr>
+                <tr>
+                    <td><b>Ettercap</b></td>
+                    <td>GUI/CLI</td>
+                    <td>ARP Spoofing و MITM</td>
+                    <td>قدرتمند برای حملات MITM</td>
+                </tr>
+                <tr>
+                    <td><b>BetterCAP</b></td>
+                    <td>CLI</td>
+                    <td>ARP Spoofing و MITM</td>
+                    <td>مدرن، پیشرفته، ماژولار</td>
+                </tr>
+                <tr>
+                    <td><b>dsniff</b></td>
+                    <td>CLI</td>
+                    <td>مجموعه ابزارهای Sniffing</td>
+                    <td>شامل arpspoof, macof, dnsspoof و …</td>
+                </tr>
+                <tr>
+                    <td><b>tcpflow</b></td>
+                    <td>CLI</td>
+                    <td>بازسازی جریان‌های TCP</td>
+                    <td>مناسب برای بازسازی داده‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>ngrep</b></td>
+                    <td>CLI</td>
+                    <td>جستجوی الگو در ترافیک</td>
+                    <td>مشابه grep برای بسته‌های شبکه</td>
+                </tr>
+                <tr>
+                    <td><b>Yersinia</b></td>
+                    <td>GUI/CLI</td>
+                    <td>تست پروتکل‌های شبکه</td>
+                    <td>پشتیبانی از DHCP, STP, CDP و …</td>
+                </tr>
+                <tr>
+                    <td><b>Wireless Sniffers</b></td>
+                    <td>GUI/CLI</td>
+                    <td>شنود شبکه‌های بی‌سیم</td>
+                    <td>Aircrack-ng, Kismet</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Wireshark و Tcpdump دو ابزار پایه و ضروری برای هر هکر قانونمند هستند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: آموزش جامع Wireshark -->
+    <!-- ============================================================ -->
+    <div class="card" id="wireshark">
+        <h2>📡 آموزش جامع Wireshark</h2>
+        <p>
+            <b>Wireshark</b> یکی از قدرتمندترین ابزارهای تحلیل شبکه است که برای ضبط، نمایش و تحلیل بسته‌های شبکه استفاده می‌شود. این ابزار در Kali Linux به صورت پیش‌فرض نصب است و یکی از ابزارهای اصلی هر هکر قانونمند است.
+        </p>
+
+        <h3>📌 نصب Wireshark:</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب Wireshark در Kali Linux (به صورت پیش‌فرض نصب است)
+sudo apt update
+sudo apt install wireshark -y</code></pre>
+        </div>
+
+        <h3>📌 فیلترهای پرکاربرد Wireshark:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>فیلتر</th><th>توضیح</th></tr>
+                <tr><td><code dir='ltr'>http</code></td><td>نمایش فقط ترافیک HTTP</td></tr>
+                <tr><td><code dir='ltr'>https</code></td><td>نمایش فقط ترافیک HTTPS</td></tr>
+                <tr><td><code dir='ltr'>tcp.port == 80</code></td><td>ترافیک TCP روی پورت ۸۰</td></tr>
+                <tr><td><code dir='ltr'>udp.port == 53</code></td><td>ترافیک UDP روی پورت ۵۳ (DNS)</td></tr>
+                <tr><td><code dir='ltr'>arp</code></td><td>نمایش بسته‌های ARP</td></tr>
+                <tr><td><code dir='ltr'>icmp</code></td><td>نمایش بسته‌های ICMP (پینگ)</td></tr>
+                <tr><td><code dir='ltr'>ip.src == 192.168.1.100</code></td><td>بسته‌هایی با IP مبدأ مشخص</td></tr>
+                <tr><td><code dir='ltr'>ip.dst == 192.168.1.1</code></td><td>بسته‌هایی با IP مقصد مشخص</td></tr>
+                <tr><td><code dir='ltr'>http.request.method == "GET"</code></td><td>درخواست‌های GET HTTP</td></tr>
+                <tr><td><code dir='ltr'>http.request.method == "POST"</code></td><td>درخواست‌های POST HTTP</td></tr>
+                <tr><td><code dir='ltr'>tcp.flags.syn == 1</code></td><td>بسته‌های SYN</td></tr>
+                <tr><td><code dir='ltr'>tcp.flags.reset == 1</code></td><td>بسته‌های RST</td></tr>
+                <tr><td><code dir='ltr'>http contains "password"</code></td><td>درخواست‌های HTTP حاوی کلمه password</td></tr>
+                <tr><td><code dir='ltr'>dns</code></td><td>ترافیک DNS</td></tr>
+            </table>
+        </div>
+
+        <h3>📌 مراحل اساسی کار با Wireshark:</h3>
+        <ol>
+            <li><b>انتخاب رابط شبکه:</b> انتخاب رابطی که می‌خواهید ترافیک آن را ضبط کنید (مثل eth0).</li>
+            <li><b>شروع ضبط:</b> کلیک روی دکمه Start یا استفاده از <code dir='ltr'>Ctrl+E</code>.</li>
+            <li><b>اعمال فیلتر:</b> استفاده از فیلترها برای نمایش فقط ترافیک مورد نظر.</li>
+            <li><b>تحلیل بسته‌ها:</b> انتخاب یک بسته و بررسی جزئیات آن در پایین صفحه.</li>
+            <li><b>ذخیره ضبط:</b> ذخیره فایل ضبط شده برای تحلیل بعدی (.pcap).</li>
+        </ol>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ذخیره ضبط در فایل
+فایل → Save As → انتخاب نام و مکان
+
+# باز کردن فایل ضبط شده
+فایل → Open → انتخاب فایل .pcap</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Wireshark می‌تواند بیش از ۱۰۰۰ پروتکل مختلف را تحلیل کند و یکی از کامل‌ترین ابزارهای تحلیل شبکه است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: آموزش Tcpdump -->
+    <!-- ============================================================ -->
+    <div class="card" id="tcpdump">
+        <h2>📟 آموزش Tcpdump</h2>
+        <p>
+            <b>Tcpdump</b> یک ابزار خط فرمان قدرتمند برای ضبط و تحلیل بسته‌های شبکه است که در تمام توزیع‌های لینوکس به صورت پیش‌فرض نصب است. این ابزار برای سرورها و سیستم‌های بدون رابط گرافیکی بسیار مناسب است.
+        </p>
+
+        <h3>📌 دستورات پرکاربرد Tcpdump:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>دستور</th><th>توضیح</th></tr>
+                <tr><td><code dir='ltr'>tcpdump -i eth0</code></td><td>ضبط ترافیک روی رابط eth0</td></tr>
+                <tr><td><code dir='ltr'>tcpdump -c 10</code></td><td>ضبط فقط ۱۰ بسته</td></tr>
+                <tr><td><code dir='ltr'>tcpdump port 80</code></td><td>ضبط فقط ترافیک پورت ۸۰</td></tr>
+                <tr><td><code dir='ltr'>tcpdump host 192.168.1.101</code></td><td>ضبط فقط ترافیک یک IP خاص</td></tr>
+                <tr><td><code dir='ltr'>tcpdump src 192.168.1.100</code></td><td>ضبط فقط بسته‌های با IP مبدأ مشخص</td></tr>
+                <tr><td><code dir='ltr'>tcpdump dst 192.168.1.1</code></td><td>ضبط فقط بسته‌های با IP مقصد مشخص</td></tr>
+                <tr><td><code dir='ltr'>tcpdump -w capture.pcap</code></td><td>ذخیره ضبط در فایل</td></tr>
+                <tr><td><code dir='ltr'>tcpdump -r capture.pcap</code></td><td>خواندن فایل ضبط شده</td></tr>
+                <tr><td><code dir='ltr'>tcpdump -i eth0 -n</code></td><td>ضبط بدون حل نام (سرعت بیشتر)</td></tr>
+                <tr><td><code dir='ltr'>tcpdump -i eth0 -v</code></td><td>ضبط با جزئیات بیشتر</td></tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ضبط ترافیک HTTP روی پورت ۸۰
+tcpdump -i eth0 port 80 -n
+
+# ضبط ترافیک یک IP خاص و ذخیره در فایل
+tcpdump -i eth0 host 192.168.1.101 -w target.pcap
+
+# ضبط ترافیک ARP
+tcpdump -i eth0 arp -n
+
+# ضبط ترافیک با فیلترهای ترکیبی
+tcpdump -i eth0 src 192.168.1.100 and dst port 443</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> Tcpdump بسیار سبک است و برای سرورها و سیستم‌های با منابع محدود بسیار مناسب است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: آموزش Ettercap -->
+    <!-- ============================================================ -->
+    <div class="card" id="ettercap">
+        <h2>🎭 آموزش Ettercap</h2>
+        <p>
+            <b>Ettercap</b> یکی از قدرتمندترین ابزارهای Sniffing و MITM است که از پروتکل‌های مختلفی مانند ARP, ICMP, DHCP و DNS پشتیبانی می‌کند. این ابزار هم به صورت خط فرمان و هم به صورت گرافیکی قابل استفاده است.
+        </p>
+
+        <h3>📌 نحوه استفاده از Ettercap:</h3>
+        <ul>
+            <li><b>حالت خط فرمان:</b> برای اجرای سریع و خودکار.</li>
+            <li><b>حالت گرافیکی:</b> برای تحلیل بصری و راحت‌تر.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اجرای Ettercap در حالت گرافیکی
+ettercap -G
+
+# ARP Spoofing با Ettercap (خط فرمان)
+ettercap -T -M arp:remote /192.168.1.101// /192.168.1.1//
+
+# DNS Spoofing با Ettercap
+ettercap -T -M arp:remote -P dns_spoof // //
+
+# ICMP Redirect با Ettercap
+ettercap -T -M icmp:remote // //</code></pre>
+        </div>
+
+        <h3>📌 پلاگین‌های مفید Ettercap:</h3>
+        <ul>
+            <li><b>dns_spoof:</b> جعل پاسخ‌های DNS.</li>
+            <li><b>arp_cop:</b> تشخیص ARP Spoofing.</li>
+            <li><b>stp_mangler:</b> دستکاری STP.</li>
+            <li><b>chk_poison:</b> بررسی مسمومیت ARP.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Ettercap یک ابزار قدرتمند است و باید فقط در محیط‌های کنترل‌شده و با مجوز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: تشخیص Sniffing -->
+    <!-- ============================================================ -->
+    <div class="card" id="detection">
+        <h2>🔍 تشخیص Sniffing</h2>
+        <p>
+            تشخیص Sniffing یکی از وظایف مهم مدیران شبکه است. در ادامه، روش‌های تشخیص Sniffing را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 روش‌های تشخیص:</h3>
+        <ul>
+            <li><b>بررسی جدول ARP:</b> وجود آدرس‌های MAC تکراری یا غیرمعمول.</li>
+            <li><b>بررسی ترافیک شبکه:</b> افزایش غیرعادی ترافیک ARP.</li>
+            <li><b>استفاده از ابزارهای تشخیص:</b>
+                <ul>
+                    <li><b>arpwatch:</b> مانیتورینگ تغییرات ARP.</li>
+                    <li><b>XArp:</b> تشخیص ARP Spoofing.</li>
+                    <li><b>Snort:</b> سیستم تشخیص نفوذ.</li>
+                    <li><b>Wireshark:</b> تحلیل دستی ترافیک.</li>
+                </ul>
+            </li>
+            <li><b>بررسی حالت Promiscuous Mode:</b> تشخیص دستگاه‌هایی که در حالت Promiscuous هستند.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از arpwatch برای مانیتورینگ ARP
+sudo arpwatch -i eth0
+
+# بررسی حالت Promiscuous با ifconfig
+ifconfig eth0 | grep PROMISC
+
+# استفاده از Snort برای تشخیص ARP Spoofing
+snort -i eth0 -c /etc/snort/snort.conf -A console</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> تشخیص Sniffing نیاز به مانیتورینگ مستمر شبکه دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: راه‌های مقابله با Sniffing -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با Sniffing (Countermeasures)</h2>
+        <p>
+            برای جلوگیری از Sniffing، سازمان‌ها و کاربران باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از رمزنگاری:</b> استفاده از HTTPS, SSH, SFTP, VPN و …</li>
+            <li><b>استفاده از VLAN:</b> جداسازی شبکه‌های حساس.</li>
+            <li><b>استفاده از سوئیچ‌های امن:</b> غیرفعال کردن Port Mirroring غیرضروری.</li>
+            <li><b>استفاده از IDS/IPS:</b> تشخیص و جلوگیری از حملات.</li>
+            <li><b>آموزش کاربران:</b> آگاهی‌بخشی درباره خطرات Sniffing.</li>
+            <li><b>استفاده از DNSSEC:</b> جلوگیری از DNS Spoofing.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص:</h3>
+        <ul>
+            <li><b>در برابر ARP Spoofing:</b> استفاده از ARP Spoofing Detection، Static ARP، استفاده از Switch با امنیت پورت.</li>
+            <li><b>در برابر MAC Flooding:</b> محدود کردن تعداد MAC در هر پورت (Port Security).</li>
+            <li><b>در برابر DHCP Starvation:</b> محدود کردن تعداد درخواست‌های DHCP در هر پورت.</li>
+            <li><b>در برابر Sniffing عمومی:</b> استفاده از VPN برای ارتباطات از راه دور.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر Sniffing، استفاده از رمزنگاری قوی برای تمام ارتباطات شبکه است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: Sniffing با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-sniffing">
+        <h2>🤖 Sniffing با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در Sniffing نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در Sniffing:</h3>
+        <ul>
+            <li><b>تشخیص خودکار Sniffing:</b> AI می‌تواند الگوهای غیرعادی در ترافیک شبکه را شناسایی کند.</li>
+            <li><b>تحلیل هوشمند ترافیک:</b> AI می‌تواند داده‌های Sniffing شده را تحلیل کند و اطلاعات مفید را استخراج کند.</li>
+            <li><b>پیش‌بینی حملات:</b> AI می‌تواند حملات Sniffing آینده را پیش‌بینی کند.</li>
+            <li><b>کاهش مثبت کاذب:</b> AI می‌تواند هشدارهای اشتباه را کاهش دهد.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Sniffing:</h3>
+        <ul>
+            <li><b>AI-Powered Network Analyzers:</b> ابزارهایی که از AI برای تحلیل ترافیک استفاده می‌کنند.</li>
+            <li><b>AI-Based Anomaly Detection:</b> تشخیص ناهنجاری‌های شبکه با AI.</li>
+            <li><b>AI-Driven Intrusion Detection:</b> سیستم‌های تشخیص نفوذ مبتنی بر AI.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در Sniffing مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند به سرعت و دقت بالا حملات Sniffing را شناسایی کرده و از خسارت‌های بزرگ جلوگیری کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – Sniffing</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای Sniffing آشنا خواهید شد و یک سناریوی کامل از شنود شبکه را پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>ضبط ترافیک شبکه با Wireshark.</li>
+            <li>فیلتر کردن و تحلیل ترافیک.</li>
+            <li>اجرای ARP Spoofing با Ettercap.</li>
+            <li>شنود ترافیک HTTP و استخراج اطلاعات.</li>
+            <li>تشخیص حمله Sniffing.</li>
+            <li>پاک‌سازی و بازگردانی شبکه به حالت عادی.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux (IP: 192.168.1.100)</li>
+            <li><b>هدف:</b> Metasploitable 2 یا یک سیستم ویندوز (IP: 192.168.1.101)</li>
+            <li><b>دروازه:</b> روتر یا سرور (IP: 192.168.1.1)</li>
+            <li><b>ابزارها:</b> Wireshark, Ettercap, arpspoof, dsniff</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: ضبط ترافیک با Wireshark</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اجرای Wireshark
+wireshark
+
+# انتخاب رابط eth0 و شروع ضبط
+# اعمال فیلتر http برای مشاهده ترافیک HTTP</code></pre>
+        </div>
+        <p><b>تحلیل:</b> ترافیک شبکه را در حال عادی مشاهده کنید.</p>
+
+        <h4>مرحله ۲: اجرای ARP Spoofing با Ettercap</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اجرای Ettercap برای ARP Spoofing
+ettercap -T -M arp:remote /192.168.1.101// /192.168.1.1//</code></pre>
+        </div>
+        <p><b>تحلیل:</b> ترافیک بین دستگاه ۱۰۱ و دروازه به مهاجم هدایت می‌شود.</p>
+
+        <h4>مرحله ۳: شنود ترافیک HTTP</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># در Wireshark، فیلتر http را اعمال کنید
+# به دنبال درخواست‌های HTTP با اطلاعات حساس (مثل رمز عبور) بگردید
+
+# یا استفاده از dsniff برای استخراج رمزهای عبور
+dsniff -i eth0</code></pre>
+        </div>
+        <p><b>تحلیل:</b> اطلاعات حساس مانند رمزهای عبور و نام کاربری را مشاهده کنید.</p>
+
+        <h4>مرحله ۴: تشخیص حمله ARP Spoofing</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از arpwatch برای تشخیص
+sudo arpwatch -i eth0
+
+# بررسی دستی جدول ARP
+arp -a</code></pre>
+        </div>
+        <p><b>تحلیل:</b> آدرس‌های MAC تکراری یا غیرمعمول را مشاهده کنید.</p>
+
+        <h4>مرحله ۵: پاک‌سازی و بازگردانی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># توقف Ettercap (Ctrl+C)
+# بازگردانی جدول ARP
+arp -d 192.168.1.101
+arp -d 192.168.1.1</code></pre>
+        </div>
+        <p><b>تحلیل:</b> شبکه به حالت عادی بازمی‌گردد.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند Sniffing، تشخیص و پاک‌سازی تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۷: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های Sniffing خود را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – Wireshark:</b>
+                <br>با استفاده از Wireshark، ترافیک HTTP یک وب‌سایت را ضبط کنید و فیلترهای مختلف را اعمال کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – Tcpdump:</b>
+                <br>با استفاده از Tcpdump، ترافیک یک IP خاص را در یک فایل ذخیره کنید و سپس با Wireshark تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – ARP Spoofing:</b>
+                <br>با استفاده از arpspoof، یک حمله ARP Spoofing روی یک دستگاه هدف اجرا کنید و ترافیک را با Wireshark مشاهده کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – تشخیص Sniffing:</b>
+                <br>با استفاده از arpwatch، تغییرات ARP را مانیتور کنید و حمله ARP Spoofing را تشخیص دهید.
+            </li>
+            <li>
+                <b>تمرین ۵ – Ettercap:</b>
+                <br>با استفاده از Ettercap، یک حمله MITM روی یک وب‌سایت HTTP اجرا کنید و اطلاعات را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۶ – ترکیبی:</b>
+                <br>یک سناریوی کامل Sniffing (شامل ARP Spoofing، شنود ترافیک، تشخیص و پاک‌سازی) را روی Metasploitable 2 پیاده‌سازی کنید و گزارش تهیه کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۸: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Sniffing</span></td>
+                    <td>—</td>
+                    <td>شنود و ضبط ترافیک شبکه.</td>
+                    <td>استخراج اطلاعات حساس از شبکه.</td>
+                    <td>استفاده از Wireshark برای شنود رمز عبور.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Promiscuous Mode</span></td>
+                    <td>—</td>
+                    <td>حالتی که کارت شبکه تمام بسته‌ها را دریافت می‌کند.</td>
+                    <td>ضبط تمام ترافیک شبکه.</td>
+                    <td><code dir='ltr'>ifconfig eth0 promisc</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ARP Spoofing</span></td>
+                    <td>—</td>
+                    <td>مسموم کردن جدول ARP با آدرس‌های جعلی.</td>
+                    <td>هدایت ترافیک به سمت مهاجم.</td>
+                    <td>حمله MITM با Ettercap.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MAC Flooding</span></td>
+                    <td>—</td>
+                    <td>پر کردن جدول MAC سوئیچ با آدرس‌های جعلی.</td>
+                    <td>تبدیل سوئیچ به هاب.</td>
+                    <td>استفاده از macof.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DHCP Starvation</span></td>
+                    <td>—</td>
+                    <td>اشغال تمام آدرس‌های IP موجود در DHCP.</td>
+                    <td>قطع اتصال دستگاه‌های جدید.</td>
+                    <td>استفاده از Yersinia.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">MITM</span></td>
+                    <td><b>M</b>an-<b>i</b>n-<b>t</b>he-<b>M</b>iddle</td>
+                    <td>حمله مرد میانی.</td>
+                    <td>شنود و تغییر ترافیک بین دو طرف.</td>
+                    <td>شنود مکالمات وای‌فای عمومی.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Wireshark</span></td>
+                    <td>—</td>
+                    <td>ابزار تحلیل شبکه و Sniffing.</td>
+                    <td>ضبط و تحلیل بسته‌های شبکه.</td>
+                    <td>تحلیل ترافیک HTTP.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Tcpdump</span></td>
+                    <td>—</td>
+                    <td>ابزار خط فرمان برای Sniffing.</td>
+                    <td>ضبط و تحلیل ترافیک در سرورها.</td>
+                    <td><code dir='ltr'>tcpdump -i eth0</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Ettercap</span></td>
+                    <td>—</td>
+                    <td>ابزار قدرتمند برای MITM و Sniffing.</td>
+                    <td>ARP Spoofing, DNS Spoofing.</td>
+                    <td><code dir='ltr'>ettercap -T -M arp:remote</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">BetterCAP</span></td>
+                    <td>—</td>
+                    <td>نسخه مدرن Ettercap.</td>
+                    <td>ARP Spoofing, MITM.</td>
+                    <td><code dir='ltr'>bettercap</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">dsniff</span></td>
+                    <td>—</td>
+                    <td>مجموعه ابزارهای Sniffing.</td>
+                    <td>استخراج رمزهای عبور از ترافیک.</td>
+                    <td><code dir='ltr'>dsniff -i eth0</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">arpwatch</span></td>
+                    <td>—</td>
+                    <td>ابزار تشخیص ARP Spoofing.</td>
+                    <td>مانیتورینگ تغییرات ARP.</td>
+                    <td><code dir='ltr'>sudo arpwatch -i eth0</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Port Mirroring</span></td>
+                    <td>SPAN</td>
+                    <td>کپی کردن ترافیک یک پورت به پورت دیگر.</td>
+                    <td>Sniffing رسمی در سوئیچ‌ها.</td>
+                    <td>تنظیمات SPAN در سوئیچ.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SSL Stripping</span></td>
+                    <td>—</td>
+                    <td>کاهش امنیت HTTPS به HTTP.</td>
+                    <td>شنود ترافیک وب.</td>
+                    <td>استفاده از sslstrip.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۸ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۸:</b>
+        <p>
+            در این ماژول با یکی از تکنیک‌های قدیمی و مؤثر هک شبکه، یعنی <b>Sniffing</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>تعریف و اهمیت</b> Sniffing در هک شبکه.</li>
+            <li><b>انواع Sniffing</b> (غیرفعال و فعال).</li>
+            <li><b>پروتکل‌های آسیب‌پذیر</b> در برابر Sniffing.</li>
+            <li><b>تکنیک‌های Sniffing:</b> ARP Spoofing, MAC Flooding, DHCP Starvation.</li>
+            <li><b>حملات MITM</b> و انواع آن.</li>
+            <li><b>ابزارهای Sniffing:</b> Wireshark, Tcpdump, Ettercap, BetterCAP, dsniff.</li>
+            <li><b>تشخیص Sniffing</b> با ابزارهایی مانند arpwatch.</li>
+            <li><b>راه‌های مقابله</b> با Sniffing (رمزنگاری، VLAN، IDS/IPS).</li>
+            <li><b>نقش هوش مصنوعی</b> در Sniffing و تشخیص آن.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_09_Social_Engineering/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۹ – Social Engineering</a> با تکنیک‌های مهندسی اجتماعی و روش‌های مقابله با آن آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۸ – Sniffing | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
