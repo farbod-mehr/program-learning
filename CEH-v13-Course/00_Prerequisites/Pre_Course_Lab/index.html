@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایشگاه جامع Ping و Traceroute - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../index.html">🏠 خانه</a> |
+            <a href="../index.html">🔙 بازگشت</a>
+        </span>
+    </div>
+
+    <h1>📡 آزمایشگاه جامع Ping و Traceroute</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc" style="background:#e8f0fe; padding:20px 28px; border-radius:14px; margin-bottom:30px; border-right:6px solid #2a7de1;">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:6px 20px; list-style:none; padding:0; margin:8px 0 0 0;">
+            <li><a href="#intro">🔰 معرفی</a></li>
+            <li><a href="#prereq">📥 پیش‌نیازها</a></li>
+            <li><a href="#setup">🖥️ تنظیم شبکه</a></li>
+            <li><a href="#ping">📡 تست Ping</a></li>
+            <li><a href="#traceroute">🗺️ تست Traceroute</a></li>
+            <li><a href="#analysis">🔍 آنالیز</a></li>
+            <li><a href="#troubleshoot">🛠️ عیب‌یابی</a></li>
+            <li><a href="#security">🛡️ نکات امنیتی</a></li>
+            <li><a href="#practice">🧪 تمرینات</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: معرفی -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 معرفی آزمایشگاه Ping و Traceroute</h2>
+        <p>
+            <b>Ping</b> و <b>Traceroute</b> دو ابزار اساسی و حیاتی در عیب‌یابی شبکه و تست نفوذ هستند. این ابزارها از پروتکل <b>ICMP (Internet Control Message Protocol)</b> برای بررسی اتصال و مسیریابی بسته‌ها استفاده می‌کنند.
+        </p>
+        <p>
+            <b>چرا این آزمایشگاه برای CEH مهم است؟</b>
+        </p>
+        <ul>
+            <li><b>شناسایی میزبان‌های زنده:</b> با Ping می‌توانید تشخیص دهید کدام دستگاه‌ها در شبکه فعال هستند.</li>
+            <li><b>تشخیص قطعی:</b> اگر پینگ پاسخ ندهد، یعنی مسیر یا دستگاه مقصد مشکل دارد.</li>
+            <li><b>مسیریابی:</b> Traceroute به شما نشان می‌دهد که بسته‌ها از چه مسیری به مقصد می‌رسند.</li>
+            <li><b>تحلیل تأخیر:</b> با اندازه‌گیری زمان پاسخ (RTT) می‌توانید کیفیت شبکه را ارزیابی کنید.</li>
+            <li><b>پایهٔ حملات:</b> بسیاری از حملات مانند <b>Ping of Death</b> و <b>Smurf Attack</b> از ICMP سوءاستفاده می‌کنند.</li>
+        </ul>
+        <div class="highlight-box">
+            <b>💡 هدف این آزمایشگاه:</b>
+            <ul>
+                <li>راه‌اندازی دو ماشین مجازی در یک شبکه داخلی</li>
+                <li>تست اتصال با <code dir='ltr'>ping</code> و تحلیل پاسخ‌ها</li>
+                <li>مشاهدهٔ مسیر بسته‌ها با <code dir='ltr'>traceroute</code></li>
+                <li>آنالیز ترافیک ICMP با <b>Wireshark</b></li>
+                <li>عیب‌یابی سناریوهای رایج قطعی شبکه</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: پیش‌نیازها -->
+    <!-- ============================================================ -->
+    <div class="card" id="prereq">
+        <h2>📥 پیش‌نیازهای آزمایشگاه</h2>
+        <p>
+            برای انجام این آزمایشگاه به موارد زیر نیاز دارید:
+        </p>
+        <ul>
+            <li><b>دو ماشین مجازی:</b>
+                <ul>
+                    <li>یک ماشین <b>Kali Linux</b> (به‌عنوان مهاجم/تستر)</li>
+                    <li>یک ماشین <b>Ubuntu</b> یا <b>Windows</b> (به‌عنوان هدف)</li>
+                </ul>
+            </li>
+            <li><b>نرم‌افزار VirtualBox:</b> با قابلیت تنظیم شبکه‌های داخلی (Internal Network).</li>
+            <li><b>ابزارهای شبکه:</b>
+                <ul>
+                    <li><code dir='ltr'>ping</code> (در تمام سیستمعامل‌ها موجود است)</li>
+                    <li><code dir='ltr'>traceroute</code> (در لینوکس) یا <code dir='ltr'>tracert</code> (در ویندوز)</li>
+                    <li><b>Wireshark</b> (برای آنالیز بسته‌ها)</li>
+                </ul>
+            </li>
+            <li><b>دسترسی به اینترنت:</b> برای تست Traceroute به بیرون.</li>
+        </ul>
+        <div class="warning-box">
+            <b>⚠️ توجه:</b> اگر از ویندوز به‌عنوان هدف استفاده می‌کنید، ممکن است فایروال داخلی ویندوز پاسخ‌های ICMP را بلاک کند. برای تست، فایروال را به‌طور موقت غیرفعال کنید یا قانون ورودی برای ICMP اضافه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: تنظیم شبکه داخلی -->
+    <!-- ============================================================ -->
+    <div class="card" id="setup">
+        <h2>🖥️ مرحله ۱: تنظیم شبکه داخلی در VirtualBox</h2>
+        <p>
+            برای اینکه دو ماشین مجازی بتوانند با هم ارتباط برقرار کنند، باید آنها را در یک شبکه داخلی (Internal Network) قرار دهیم.
+        </p>
+
+        <div class="step-card">
+            <span dir='ltr' class="step-number">۱</span>
+            <b>هر دو ماشین را خاموش کنید</b>
+            <ul>
+                <li>در VirtualBox، ماشین‌های Kali و Ubuntu را انتخاب کرده و از منوی <b>Machine → Close → Power Off</b> خاموش کنید.</li>
+                <li><b>چرا؟</b> تنظیمات شبکه فقط در حالت خاموش قابل تغییر هستند.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="step-number">۲</span>
+            <b>تنظیم آداپتور شبکه روی Internal Network</b>
+            <ul>
+                <li>روی هر ماشین، <b>Settings → Network</b> را باز کنید.</li>
+                <li>تب <b>Adapter 1</b> را انتخاب کنید.</li>
+                <li>گزینهٔ <b>Enable Network Adapter</b> را فعال کنید.</li>
+                <li>در بخش <b>Attached to:</b> گزینهٔ <b>Internal Network</b> را انتخاب کنید.</li>
+                <li>در بخش <b>Name:</b> نام شبکه را <code dir='ltr'>intnet</code> (یا هر نام دلخواه) وارد کنید.</li>
+                <li>این کار را برای هر دو ماشین انجام دهید.</li>
+                <li><b>چرا؟</b> Internal Network یک شبکهٔ مجازی کاملاً ایزوله است که فقط ماشین‌های داخل آن می‌توانند با هم ارتباط برقرار کنند. این محیط امن‌ترین گزینه برای تمرین تست نفوذ است.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <span dir='ltr' class="step-number">۳</span>
+            <b>بررسی آداپتورهای شبکه در سیستمعامل مهمان</b>
+            <ul>
+                <li>هر دو ماشین را روشن کنید.</li>
+                <li>در ترمینال هر دو، دستور <code dir='ltr'>ip a</code> (لینوکس) یا <code dir='ltr'>ipconfig</code> (ویندوز) را اجرا کنید.</li>
+                <li>آداپتور <code dir='ltr'>eth0</code> (در لینوکس) یا <code dir='ltr'>Ethernet</code> (در ویندوز) را پیدا کنید.</li>
+                <li>اگر آدرسی دریافت نکرده است، نگران نباشید – در مرحلهٔ بعد به‌صورت دستی تنظیم می‌کنیم.</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> اگر از VMware استفاده می‌کنید، به‌جای Internal Network از حالت <b>Host‑Only</b> یا <b>Custom Network</b> با محدودهٔ IP دلخواه استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: اختصاص IP ثابت -->
+    <!-- ============================================================ -->
+    <div class="card" id="ping">
+        <h2>🔢 مرحله ۲: اختصاص IP ثابت به ماشین‌ها</h2>
+        <p>
+            در شبکه‌های داخلی، معمولاً سرور DHCP وجود ندارد. بنابراین باید IP را به‌صورت دستی (Static) تنظیم کنیم.
+        </p>
+
+        <h3>📌 تنظیم IP در Kali (ماشین اول)</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اضافه کردن آدرس IP به رابط eth0
+sudo ip addr add 192.168.100.10/24 dev eth0
+
+# فعال کردن رابط شبکه
+sudo ip link set eth0 up
+
+# بررسی تنظیمات
+ip a show eth0</code></pre>
+        </div>
+
+        <h3>📌 تنظیم IP در Ubuntu (ماشین دوم)</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اضافه کردن آدرس IP به رابط eth0
+sudo ip addr add 192.168.100.20/24 dev eth0
+
+# فعال کردن رابط شبکه
+sudo ip link set eth0 up
+
+# بررسی تنظیمات
+ip a show eth0</code></pre>
+        </div>
+
+        <p>
+            <b>چرا این IPها را انتخاب کردیم؟</b>
+        </p>
+        <ul>
+            <li><b>رنج ۱۹۲.۱۶۸.۱۰۰.۰/24</b> یک محدودهٔ خصوصی است که برای شبکه‌های داخلی استفاده می‌شود.</li>
+            <li><b>.۱۰</b> برای Kali و <b>.۲۰</b> برای Ubuntu – این اختلاف باعث می‌شود به‌راحتی تشخیص داده شوند.</li>
+            <li><b>ماسک /24</b> یعنی ۲۵۶ آدرس در این شبکه وجود دارد که برای آزمایشگاه کافی است.</li>
+        </ul>
+
+        <div class="analysis-box">
+            <b>✅ تست اولیه:</b> از Kali، دستور <code dir='ltr'>ping -c 2 192.168.100.20</code> را اجرا کنید. اگر پاسخ دریافت کردید، یعنی شبکه به‌درستی تنظیم شده است.
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ اگر پینگ پاسخ نداد:</b>
+            <ul>
+                <li>مطمئن شوید که هر دو ماشین روشن هستند.</li>
+                <li>آدرس IP را دوباره بررسی کنید.</li>
+                <li>فایروال Ubuntu را با <code dir='ltr'>sudo ufw disable</code> غیرفعال کنید.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: تست Ping -->
+    <!-- ============================================================ -->
+    <div class="card" id="traceroute">
+        <h2>📡 مرحله ۳: تست اتصال با Ping</h2>
+        <p>
+            حالا که شبکه برقرار است، می‌توانیم از Ping برای تست اتصال استفاده کنیم.
+        </p>
+
+        <h3>📌 پینگ به Ubuntu از Kali</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>ping -c 4 192.168.100.20</code></pre>
+        </div>
+
+        <p>
+            <b>خروجی نمونه:</b>
+        </p>
+        <pre dir='ltr'><code dir='ltr'>PING 192.168.100.20 (192.168.100.20) 56(84) bytes of data.
+64 bytes from 192.168.100.20: icmp_seq=1 ttl=64 time=0.456 ms
+64 bytes from 192.168.100.20: icmp_seq=2 ttl=64 time=0.389 ms
+64 bytes from 192.168.100.20: icmp_seq=3 ttl=64 time=0.412 ms
+64 bytes from 192.168.100.20: icmp_seq=4 ttl=64 time=0.401 ms
+
+--- 192.168.100.20 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3055ms
+rtt min/avg/max/mdev = 0.389/0.414/0.456/0.030 ms</code></pre>
+
+        <div class="analysis-box">
+            <b>🔍 تفسیر خروجی:</b>
+            <ul>
+                <li><b>icmp_seq:</b> شماره دنبالهٔ بسته – نشان می‌دهد چندمین بسته ارسال شده است.</li>
+                <li><b>ttl (Time To Live):</b> تعداد هاپ‌های باقی‌مانده – در شبکه محلی معمولاً ۶۴ است.</li>
+                <li><b>time:</b> زمان رفت و برگشت (RTT) به میلی‌ثانیه – هرچه کمتر باشد، شبکه بهتر است.</li>
+                <li><b>packet loss:</b> درصد بسته‌های از دست‌رفته – اگر بالای ۱٪ باشد، نشانهٔ مشکل است.</li>
+                <li><b>min/avg/max/mdev:</b> آمار دقیق تأخیر – mdev نشان‌دهندهٔ نوسان است.</li>
+            </ul>
+        </div>
+
+        <h3>📌 پینگ به سرور خارجی (مثل Google)</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>ping -c 4 8.8.8.8</code></pre>
+        </div>
+        <p>
+            <b>توجه:</b> اگر Kali به اینترنت دسترسی ندارد (زیرا Internal Network ایزوله است)، این دستور جواب نمی‌دهد. برای تست به بیرون، باید آداپتور دوم را روی NAT تنظیم کنید.
+        </p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: تست Traceroute -->
+    <!-- ============================================================ -->
+    <div class="card" id="analysis">
+        <h2>🗺️ مرحله ۴: مشاهده مسیر با Traceroute</h2>
+        <p>
+            Traceroute نشان می‌دهد که بسته‌ها از چه مسیری به مقصد می‌رسند و هر هاپ چقدر تأخیر دارد.
+        </p>
+
+        <h3>📌 Traceroute به یک سرور خارجی</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>traceroute -n 8.8.8.8</code></pre>
+        </div>
+
+        <p>
+            <b>خروجی نمونه:</b>
+        </p>
+        <pre dir='ltr'><code dir='ltr'>traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  192.168.1.1  1.234 ms  1.189 ms  1.155 ms
+ 2  10.0.0.1  5.678 ms  5.634 ms  5.601 ms
+ 3  172.16.0.1  10.234 ms  10.189 ms  10.155 ms
+ 4  8.8.8.8  15.678 ms  15.634 ms  15.601 ms</code></pre>
+
+        <div class="analysis-box">
+            <b>🔍 تفسیر خروجی:</b>
+            <ul>
+                <li>هر سطر یک <b>هاپ (Hop)</b> یا روتر در مسیر را نشان می‌دهد.</li>
+                <li>ستون اول: IP روتر.</li>
+                <li>سه ستون بعدی: زمان رفت و برگشت (RTT) برای هر یک از سه بستهٔ ارسال‌شده.</li>
+                <li>اگر یک هاپ با <code dir='ltr'>* * *</code> نمایش داده شود، یعنی آن روتر به بسته‌های ICMP پاسخ نمی‌دهد (ممکن است فایروال آن را بلاک کرده باشد).</li>
+                <li><b>گزینهٔ -n:</b> از حل معکوس DNS جلوگیری می‌کند و سرعت را افزایش می‌دهد.</li>
+            </ul>
+        </div>
+
+        <h3>📌 Traceroute در ویندوز (tracert)</h3>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'>tracert -d 8.8.8.8</code></pre>
+        </div>
+        <p>
+            گزینهٔ <code dir='ltr'>-d</code> در ویندوز معادل <code dir='ltr'>-n</code> در لینوکس است (عدم حل DNS).
+        </p>
+
+        <div class="tip-box">
+            <b>💡 کاربرد در هک:</b>
+            <ul>
+                <li>با Traceroute می‌توانید تعداد روترهای بین شما و هدف را بشمارید.</li>
+                <li>هاپ‌های با تأخیر بالا نشانهٔ گلوگاه (Bottleneck) در شبکه هستند.</li>
+                <li>اگر Traceroute در یک هاپ خاص متوقف شود، یعنی مسیر در آن نقطه قطع است.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: آنالیز با Wireshark -->
+    <!-- ============================================================ -->
+    <div class="card" id="analysis">
+        <h2>🔍 مرحله ۵: آنالیز ترافیک ICMP با Wireshark</h2>
+        <p>
+            Wireshark به شما اجازه می‌دهد بسته‌های ICMP را در لحظه ببینید و ساختار آنها را تحلیل کنید.
+        </p>
+
+        <h3>📌 مراحل:</h3>
+        <ol>
+            <li>Wireshark را در Kali باز کنید.</li>
+            <li>رابط <code dir='ltr'>eth0</code> را انتخاب کرده و ضبط را شروع کنید.</li>
+            <li>فیلتر <code dir='ltr'>icmp</code> را در نوار فیلتر وارد کنید.</li>
+            <li>از ترمینال، یک پینگ به Ubuntu بفرستید: <code dir='ltr'>ping -c 4 192.168.100.20</code>.</li>
+            <li>بسته‌های <b>Echo Request</b> (ارسال) و <b>Echo Reply</b> (دریافت) را در Wireshark مشاهده کنید.</li>
+        </ol>
+
+        <div class="analysis-box">
+            <b>🔍 جزئیات بسته‌های ICMP در Wireshark:</b>
+            <ul>
+                <li><b>Type:</b> 8 برای Echo Request، 0 برای Echo Reply.</li>
+                <li><b>Code:</b> معمولاً ۰ است.</li>
+                <li><b>Identifier:</b> یک شمارهٔ منحصربه‌فرد برای تشخیص پینگ‌های مختلف.</li>
+                <li><b>Sequence Number:</b> شماره دنباله (همان icmp_seq در خروجی پینگ).</li>
+                <li><b>Data:</b> محتوای بسته (معمولاً شامل حروف و اعداد تصادفی).</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 تمرین:</b> یک پینگ با اندازهٔ ۱۰۰۰ بایت ارسال کنید: <code dir='ltr'>ping -s 1000 -c 2 192.168.100.20</code>. در Wireshark مشاهده کنید که بسته به دو بخش (Fragment) تقسیم می‌شود. این همان مفهوم <b>MTU</b> است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: عیب‌یابی مشکلات رایج -->
+    <!-- ============================================================ -->
+    <div class="card" id="troubleshoot">
+        <h2>🛠️ عیب‌یابی مشکلات رایج در Ping و Traceroute</h2>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۱: پینگ پاسخ نمی‌دهد (Request timed out)</b>
+            <ul>
+                <li><b>دلیل:</b> مقصد خاموش است، فایروال بسته‌ها را بلاک می‌کند، یا شبکه قطع است.</li>
+                <li><b>راه‌حل:</b>
+                    <ul>
+                        <li>با <code dir='ltr'>ping 127.0.0.1</code> (لوپ‌بک) تست کنید که خود سیستم کار می‌کند.</li>
+                        <li>با <code dir='ltr'>traceroute</code> ببینید بسته در کدام هاپ متوقف می‌شود.</li>
+                        <li>فایروال مقصد را غیرفعال کنید (در Ubuntu: <code dir='ltr'>sudo ufw disable</code>).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۲: Traceroute فقط <code dir='ltr'>* * *</code> نشان می‌دهد</b>
+            <ul>
+                <li><b>دلیل:</b> روترها پاسخ ICMP Time Exceeded را بلاک می‌کنند.</li>
+                <li><b>راه‌حل:</b>
+                    <ul>
+                        <li>از گزینهٔ <code dir='ltr'>-T</code> (TCP) یا <code dir='ltr'>-U</code> (UDP) در لینوکس استفاده کنید: <code dir='ltr'>traceroute -T -p 80 8.8.8.8</code>.</li>
+                        <li>در ویندوز، <code dir='ltr'>tracert -d</code> امتحان کنید.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۳: پینگ به بیرون (اینترنت) کار نمی‌کند</b>
+            <ul>
+                <li><b>دلیل:</b> ماشین مجازی به اینترنت دسترسی ندارد (Internal Network ایزوله است).</li>
+                <li><b>راه‌حل:</b>
+                    <ul>
+                        <li>در VirtualBox، یک آداپتور دوم روی <b>NAT</b> اضافه کنید.</li>
+                        <li>در Kali، <code dir='ltr'>sudo dhclient eth1</code> را اجرا کنید تا IP دریافت کند.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۴: تأخیر (RTT) خیلی بالاست</b>
+            <ul>
+                <li><b>دلیل:</b> شبکه شلوغ است، مسیر طولانی است، یا مشکل سخت‌افزاری وجود دارد.</li>
+                <li><b>راه‌حل:</b>
+                    <ul>
+                        <li>با <code dir='ltr'>traceroute</code> شناسایی کنید کدام هاپ تأخیر دارد.</li>
+                        <li>در VirtualBox، منابع (RAM و CPU) ماشین را افزایش دهید.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۵: پینگ با خطای «Network is unreachable» مواجه می‌شود</b>
+            <ul>
+                <li><b>دلیل:</b> رابط شبکه بالا نیامده یا IP به‌درستی تنظیم نشده است.</li>
+                <li><b>راه‌حل:</b>
+                    <ul>
+                        <li><code dir='ltr'>ip a</code> را اجرا کنید و وضعیت <code dir='ltr'>eth0</code> را ببینید.</li>
+                        <li>اگر <code dir='ltr'>state DOWN</code> بود، <code dir='ltr'>sudo ip link set eth0 up</code> را اجرا کنید.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="troubleshoot-item">
+            <b>❌ مشکل ۶: پینگ پاسخ می‌دهد اما Traceroute کار نمی‌کند</b>
+            <ul>
+                <li><b>دلیل:</b> ممکن است پروتکل UDP (پیش‌فرض traceroute) توسط فایروال بلاک شود.</li>
+                <li><b>راه‌حل:</b> از گزینهٔ <code dir='ltr'>-I</code> (ICMP) استفاده کنید: <code dir='ltr'>traceroute -I 8.8.8.8</code>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: نکات امنیتی -->
+    <!-- ============================================================ -->
+    <div class="card" id="security">
+        <h2>🛡️ نکات امنیتی – استفاده از Ping و Traceroute در تست نفوذ</h2>
+
+        <div class="security-tip">
+            <b>🔐 ۱. محدود کردن ICMP در فایروال</b>
+            <p>
+                در شبکه‌های سازمانی، معمولاً ICMP را محدود می‌کنند تا از حملات شناسایی (Reconnaissance) جلوگیری شود. به‌عنوان یک هکر قانونمند، باید بدانید که اگر پینگ جواب نداد، ممکن است هدف هنوز زنده باشد اما ICMP را بلاک کرده باشد.
+            </p>
+        </div>
+
+        <div class="security-tip">
+            <b>🔐 ۲. استفاده از Ping Sweep برای شناسایی میزبان‌های زنده</b>
+            <p>
+                با اسکن کردن کل یک زیرشبکه با پینگ، می‌توانید دستگاه‌های فعال را پیدا کنید:
+            </p>
+            <pre dir='ltr'><code dir='ltr'>for i in {1..254}; do ping -c 1 -W 1 192.168.1.$i | grep "64 bytes" & done</code></pre>
+            <p>
+                در Nmap، این کار با <code dir='ltr'>nmap -sn 192.168.1.0/24</code> انجام می‌شود.
+            </p>
+        </div>
+
+        <div class="security-tip">
+            <b>🔐 ۳. حملات مبتنی بر ICMP</b>
+            <ul>
+                <li><b>Ping of Death:</b> ارسال بسته‌های ICMP بزرگتر از ۶۵۵۳۵ بایت که باعث سرریز شدن بافر می‌شود.</li>
+                <li><b>Smurf Attack:</b> ارسال پینگ به آدرس Broadcast با IP مبدأ جعلی که باعث می‌شود همه دستگاه‌های شبکه به هدف پاسخ دهند (DDoS).</li>
+                <li><b>ICMP Tunneling:</b> استفاده از ICMP برای انتقال داده‌های مخفی در شبکه.</li>
+            </ul>
+            <p>
+                <b>توصیه:</b> همیشه ICMP را در شبکه‌های تولیدی محدود کنید و فقط از آن برای عیب‌یابی استفاده کنید.
+            </p>
+        </div>
+
+        <div class="security-tip">
+            <b>🔐 ۴. استفاده از Traceroute برای نقشه‌برداری شبکه</b>
+            <p>
+                Traceroute به شما کمک می‌کند توپولوژی شبکه را شناسایی کنید. در تست نفوذ، این اطلاعات برای برنامه‌ریزی حملات بعدی بسیار ارزشمند است.
+            </p>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> اسکن شبکه و استفاده از ابزارهای ICMP بدون مجوز، در بسیاری از کشورها جرم محسوب می‌شود. فقط در محیط‌های آزمایشگاهی یا با مجوز کتبی از مالک شبکه استفاده کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: تمرینات پیشرفته -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice">
+        <h2>🧪 تمرینات عملی پیشرفته</h2>
+        <p>
+            برای تسلط کامل بر Ping و Traceroute، این تمرینات را در محیط آزمایشگاهی خود انجام دهید:
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – پینگ با اندازه‌های مختلف:</b>
+                بسته‌هایی با اندازه‌های ۶۴، ۵۱۲، ۱۴۷۲ و ۲۰۰۰ بایت ارسال کنید و رفتار آنها را در Wireshark مشاهده کنید.
+                <pre dir='ltr'><code dir='ltr'>ping -s 1472 -c 2 192.168.100.20</code></pre>
+                <small>نکته: ۱۴۷۲ بایت حداکثر اندازه‌ای است که بدون Fragment در شبکه‌های Ethernet (MTU=1500) ارسال می‌شود.</small>
+            </li>
+            <li>
+                <b>تمرین ۲ – تنظیم TTL در پینگ:</b>
+                با تغییر TTL، ببینید چه اتفاقی می‌افتد.
+                <pre dir='ltr'><code dir='ltr'>ping -t 1 8.8.8.8   # TTL=1 → بسته در اولین روتر متوقف می‌شود</code></pre>
+            </li>
+            <li>
+                <b>تمرین ۳ – Traceroute با پروتکل‌های مختلف:</b>
+                سه نوع Traceroute را امتحان کنید و تفاوت خروجی را مشاهده کنید:
+                <pre dir='ltr'><code dir='ltr'>traceroute -I 8.8.8.8   # ICMP
+traceroute -T -p 80 8.8.8.8  # TCP به پورت ۸۰
+traceroute -U -p 53 8.8.8.8  # UDP به پورت ۵۳</code></pre>
+            </li>
+            <li>
+                <b>تمرین ۴ – اسکن Ping Sweep با Bash:</b>
+                یک اسکریپت بنویسید که تمام IPهای شبکه ۱۹۲.۱۶۸.۱۰۰.۰/24 را پینگ کند و IPهای زنده را گزارش دهد.
+                <pre dir='ltr'><code dir='ltr'>#!/bin/bash
+for i in {1..254}; do
+    ping -c 1 -W 1 192.168.100.$i &> /dev/null
+    if [ $? -eq 0 ]; then
+        echo "192.168.100.$i is alive"
+    fi
+done</code></pre>
+            </li>
+            <li>
+                <b>تمرین ۵ – آنالیز ترافیک ICMP در Wireshark:</b>
+                یک پینگ با ۱۰۰ بسته ارسال کنید و در Wireshark آمار (Statistics) مربوط به ICMP را بررسی کنید.
+            </li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 پاسخ سوال مطرح‌شده در ابتدای صفحه:</b>
+            «اگر مقصد خاموش باشد، پیغام خطای پینگ چیست؟»
+            <br>
+            پاسخ: پیغام <b>«Destination Host Unreachable»</b> یا <b>«Request timed out»</b> نمایش داده می‌شود. در لینوکس، اگر مقصد در شبکه محلی نباشد، خطای <b>«Network is unreachable»</b> نیز ممکن است ظاهر شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی مرتبط با Ping و Traceroute</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>واژه</th><th>توضیح کامل (معنی، کاربرد، مثال، کارکرد، عملکرد)</th></tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">ICMP</span></td>
+                    <td>
+                        <b>معنی:</b> Internet Control Message Protocol – پروتکل پیام‌های کنترلی اینترنت.
+                        <br><b>کاربرد:</b> ارسال پیام‌های خطا و اطلاعات عملیاتی در شبکه (مثل پینگ و Traceroute).
+                        <br><b>مثال:</b> بسته‌های Echo Request و Echo Reply برای تست اتصال.
+                        <br><b>کارکرد:</b> در لایه شبکه (Internet Layer) قرار دارد و برای گزارش خطاها و تست اتصال استفاده می‌شود.
+                        <br><b>عملکرد:</b> بسته‌های ICMP شامل نوع، کد و داده هستند و توسط روترها و میزبان‌ها پردازش می‌شوند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Ping</span></td>
+                    <td>
+                        <b>معنی:</b> یک دستور شبکه برای تست اتصال بین دو دستگاه با استفاده از ICMP.
+                        <br><b>کاربرد:</b> بررسی زنده بودن یک میزبان، اندازه‌گیری تأخیر (RTT) و تشخیص قطعی.
+                        <br><b>مثال:</b> <code dir='ltr'>ping 8.8.8.8</code> برای تست اتصال به اینترنت.
+                        <br><b>کارکرد:</b> ارسال بسته‌های Echo Request و دریافت Echo Reply.
+                        <br><b>عملکرد:</b> اگر پاسخ دریافت نشود، یعنی دستگاه مقصد غیرفعال است یا فایروال آن را بلاک کرده است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Traceroute</span></td>
+                    <td>
+                        <b>معنی:</b> یک دستور شبکه برای نمایش مسیر بسته‌ها از مبدأ به مقصد.
+                        <br><b>کاربرد:</b> شناسایی روترهای بین مبدأ و مقصد، تشخیص قطعی و اندازه‌گیری تأخیر در هر هاپ.
+                        <br><b>مثال:</b> <code dir='ltr'>traceroute 8.8.8.8</code> برای مشاهده مسیر به سرور گوگل.
+                        <br><b>کارکرد:</b> ارسال بسته‌هایی با TTL افزایشی و دریافت خطای Time Exceeded از روترها.
+                        <br><b>عملکرد:</b> هر روتر TTL را ۱ کم می‌کند؛ وقتی به صفر برسد، خطا را به مبدأ برمی‌گرداند و آدرس خود را نشان می‌دهد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">TTL (Time To Live)</span></td>
+                    <td>
+                        <b>معنی:</b> یک فیلد در هدر IP که تعداد هاپ‌های مجاز برای یک بسته را مشخص می‌کند.
+                        <br><b>کاربرد:</b> جلوگیری از چرخش بی‌نهایت بسته‌ها در شبکه.
+                        <br><b>مثال:</b> TTL=64 در شبکه محلی، TTL=128 در ویندوز.
+                        <br><b>کارکرد:</b> هر روتر که بسته را عبور می‌دهد، TTL را ۱ کاهش می‌دهد.
+                        <br><b>عملکرد:</b> وقتی TTL به صفر می‌رسد، روتر بسته را دور می‌اندازد و خطای ICMP Time Exceeded را به مبدأ برمی‌گرداند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">RTT (Round-Trip Time)</span></td>
+                    <td>
+                        <b>معنی:</b> زمان رفت و برگشت – مدت زمان لازم برای ارسال یک بسته به مقصد و دریافت پاسخ آن.
+                        <br><b>کاربرد:</b> اندازه‌گیری کیفیت شبکه و تشخیص تأخیر.
+                        <br><b>مثال:</b> در خروجی پینگ، <code dir='ltr'>time=0.456 ms</code> نشان‌دهندهٔ RTT است.
+                        <br><b>کارکرد:</b> زمان بر حسب میلی‌ثانیه (ms) اندازه‌گیری می‌شود.
+                        <br><b>عملکرد:</b> RTT کمتر = شبکه بهتر و پاسخ‌دهی سریع‌تر.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Packet Loss</span></td>
+                    <td>
+                        <b>معنی:</b> درصد بسته‌هایی که به مقصد نمی‌رسند.
+                        <br><b>کاربرد:</b> تشخیص مشکلات شبکه مانند ترافیک بالا، خرابی کابل یا تنظیمات اشتباه.
+                        <br><b>مثال:</b> «0% packet loss» یعنی همه بسته‌ها به‌درستی رسیده‌اند.
+                        <br><b>کارکرد:</b> در خروجی پینگ در انتها نمایش داده می‌شود.
+                        <br><b>عملکرد:</b> اگر Packet Loss بالای ۱٪ باشد، شبکه نیاز به بررسی دارد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Internal Network</span></td>
+                    <td>
+                        <b>معنی:</b> یک شبکه مجازی ایزوله در VirtualBox که فقط ماشین‌های داخل آن به هم متصل هستند.
+                        <br><b>کاربرد:</b> ایجاد محیط آزمایشگاهی امن برای تست نفوذ.
+                        <br><b>مثال:</b> نام شبکه‌های داخلی مثل <code dir='ltr'>intnet</code>.
+                        <br><b>کارکرد:</b> ماشین‌ها فقط با هم ارتباط دارند و به اینترنت یا میزبان دسترسی ندارند.
+                        <br><b>عملکرد:</b> مناسب برای شبیه‌سازی شبکه‌های محلی بدون خطر تداخل با شبکهٔ واقعی.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Hop</span></td>
+                    <td>
+                        <b>معنی:</b> یک گام یا پرش در مسیر یک بسته از مبدأ به مقصد – معمولاً هر روتر یک هاپ محسوب می‌شود.
+                        <br><b>کاربرد:</b> شمارش تعداد روترهای بین دو دستگاه.
+                        <br><b>مثال:</b> در خروجی Traceroute، هر سطر یک هاپ را نشان می‌دهد.
+                        <br><b>کارکرد:</b> هر چه تعداد هاپ بیشتر باشد، مسیر طولانی‌تر است.
+                        <br><b>عملکرد:</b> در شبکه‌های IPv4، حداکثر TTL ۲۵۵ است که یعنی حداکثر ۲۵۵ هاپ مجاز است.
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع سریع برای اصطلاحات کلیدی این آزمایشگاه است. توصیه می‌شود قبل از شروع آزمایشگاه، آنها را مرور کنید.
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی نهایی با لینک‌های جامع ===== -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>در این آزمایشگاه، با مفاهیم پایه‌ای Ping و Traceroute آشنا شدید.</li>
+            <li>یاد گرفتید چگونه یک شبکه داخلی در VirtualBox تنظیم کنید و IP ثابت اختصاص دهید.</li>
+            <li>با ابزار Wireshark ترافیک ICMP را تحلیل کردید.</li>
+            <li>با مشکلات رایج و راه‌حل‌های آنها آشنا شدید.</li>
+            <li>تمرینات پیشرفته را انجام دهید تا مهارت خود را تثبیت کنید.</li>
+            <li>
+                <b>دسترسی سریع به بخش‌های دوره:</b>
+                <ul style="margin-top: 6px;">
+                    <li><a href="../00_Prerequisites/index.html" style="color:#2a7de1;font-weight:500;">🔰 پیش‌نیازها (شبکه و لینوکس)</a></li>
+                    <li><a href="../Cheatsheets/index.html" style="color:#2a7de1;font-weight:500;">🌐 چیت‌شیت شبکه</a></li>
+                    <li><a href="../Cheatsheets/linux_commands.html" style="color:#2a7de1;font-weight:500;">🐧 چیت‌شیت لینوکس</a></li>
+                    <li><a href="../02_Labs/index.html" style="color:#2a7de1;font-weight:500;">🧪 آزمایشگاه‌های عملی</a></li>
+                    <li><a href="../03_Tools/index.html" style="color:#2a7de1;font-weight:500;">🛠️ چیت‌شیت ابزارها</a></li>
+                    <li><a href="../04_Resources/index.html" style="color:#2a7de1;font-weight:500;">📚 منابع و لینک‌های مفید</a></li>
+                    <li><a href="../05_Assessments/index.html" style="color:#2a7de1;font-weight:500;">📝 آزمون‌ها و پروژه نهایی</a></li>
+                </ul>
+            </li>
+        </ul>
+        <p style="margin-top: 12px;">
+            <b>🚀 گام بعدی:</b> حالا که با Ping و Traceroute کار کردید، به سراغ <a href="../Cheatsheets/networking_review.html" style="color:#2a7de1;font-weight:bold;">چیت‌شیت شبکه</a> بروید و با ابزارهای پیشرفته‌تر مثل Nmap آشنا شوید.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">نسخهٔ بازنویسی‌شده با عیب‌یابی، تمرینات پیشرفته، واژه‌نامهٔ کامل و لینک‌های جامع | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block') || btn.parentElement;
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('pre code') || codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
