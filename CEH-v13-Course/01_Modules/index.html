@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>۲۰ ماژول اصلی CEH V13 - مرجع کامل</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* ==============================================
+           استایل‌های اختصاصی صفحه‌ی ماژول‌ها
+           (هماهنگ با استایل جدید پروژه)
+           ============================================== */
+
+        /* ----- گرید کارت‌های ماژول ----- */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        /* ----- کارت هر ماژول (هماهنگ با استایل جدید) ----- */
+        .module-card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.75));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-sm, 14px);
+            padding: 20px 22px;
+            border-right: 5px solid var(--primary, #4f46e5);
+            box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.04));
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-md, 0 12px 40px -8px rgba(0, 0, 0, 0.08));
+            background: rgba(255, 255, 255, 0.92);
+        }
+        /* حالت دارک (اگر body کلاس dark-mode داشته باشد) */
+        body.dark-mode .module-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        body.dark-mode .module-card:hover {
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        /* ----- شماره ماژول (بج رنگی) ----- */
+        .module-card .module-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary, #4f46e5), var(--secondary, #7c3aed));
+            color: white;
+            padding: 3px 14px;
+            border-radius: var(--radius-full, 9999px);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        /* ----- عنوان ماژول ----- */
+        .module-card h3 {
+            margin: 10px 0 6px 0;
+            font-size: 1.15rem;
+            color: var(--text-primary, #0f172a);
+            font-weight: 700;
+        }
+        body.dark-mode .module-card h3 {
+            color: #f1f5f9;
+        }
+
+        /* ----- توضیحات ماژول ----- */
+        .module-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary, #334155);
+            margin: 6px 0 12px 0;
+            line-height: 1.7;
+        }
+        body.dark-mode .module-card p {
+            color: #cbd5e1;
+        }
+
+        /* ----- گروه برچسب‌ها (badge) ----- */
+        .module-card .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .module-card .badge-group .badge {
+            font-size: 0.65rem;
+            padding: 3px 12px;
+            border-radius: var(--radius-full, 9999px);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+        body.dark-mode .module-card .badge-group .badge {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .module-card .badge-group .badge.tool {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .module-card .badge-group .badge.tool {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .module-card .badge-group .badge.attack {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        body.dark-mode .module-card .badge-group .badge.attack {
+            background: #2d0a0a;
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.15);
+        }
+        .module-card .badge-group .badge.defense {
+            background: #e0f2f1;
+            color: #004d40;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .module-card .badge-group .badge.defense {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+
+        /* ----- لینک مشاهده ماژول ----- */
+        .module-card a {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--primary, #4f46e5);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition, all 0.35s cubic-bezier(0.4, 0, 0.2, 1));
+            font-size: 0.95rem;
+        }
+        .module-card a:hover {
+            color: var(--secondary, #7c3aed);
+            text-decoration: underline;
+            transform: translateX(-4px);
+        }
+        [dir="rtl"] .module-card a:hover {
+            transform: translateX(4px);
+        }
+
+        /* ----- برچسب‌های دسته‌بندی (category-label) ----- */
+        .category-label {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 20px;
+            border-radius: var(--radius-full, 9999px);
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+        }
+        .category-base {
+            background: var(--primary-light, #eef2ff);
+            color: var(--primary-dark, #1e1b4b);
+            border-color: rgba(79, 70, 229, 0.15);
+        }
+        body.dark-mode .category-base {
+            background: #1e293b;
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.15);
+        }
+        .category-network {
+            background: #fce4ec;
+            color: #b71c1c;
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        body.dark-mode .category-network {
+            background: #2d0a0a;
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.15);
+        }
+        .category-web {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        body.dark-mode .category-web {
+            background: #2d1f00;
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.15);
+        }
+        .category-advanced {
+            background: #e0f2f1;
+            color: #004d40;
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        body.dark-mode .category-advanced {
+            background: #0a1f12;
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.15);
+        }
+
+        /* ----- رنگ‌های اختصاصی کارت‌ها (بر اساس دسته) ----- */
+        .module-card[data-category="base"] {
+            border-right-color: var(--primary, #4f46e5);
+        }
+        .module-card[data-category="network"] {
+            border-right-color: var(--accent-red, #ef4444);
+        }
+        .module-card[data-category="web"] {
+            border-right-color: var(--accent-orange, #f59e0b);
+        }
+        .module-card[data-category="advanced"] {
+            border-right-color: var(--accent-green, #10b981);
+        }
+
+        /* ==============================================
+           انیمیشن‌های ورود برای کارت‌ها (هماهنگ با استایل جدید)
+           ============================================== */
+        @media (prefers-reduced-motion: no-preference) {
+            .module-card {
+                animation: fadeUp 0.6s ease forwards;
+                opacity: 0;
+            }
+            .module-card:nth-child(1) {
+                animation-delay: 0.04s;
+            }
+            .module-card:nth-child(2) {
+                animation-delay: 0.08s;
+            }
+            .module-card:nth-child(3) {
+                animation-delay: 0.12s;
+            }
+            .module-card:nth-child(4) {
+                animation-delay: 0.16s;
+            }
+            .module-card:nth-child(5) {
+                animation-delay: 0.20s;
+            }
+            .module-card:nth-child(6) {
+                animation-delay: 0.24s;
+            }
+            .module-card:nth-child(7) {
+                animation-delay: 0.28s;
+            }
+            .module-card:nth-child(8) {
+                animation-delay: 0.32s;
+            }
+            .module-card:nth-child(9) {
+                animation-delay: 0.36s;
+            }
+            .module-card:nth-child(10) {
+                animation-delay: 0.40s;
+            }
+            .module-card:nth-child(11) {
+                animation-delay: 0.44s;
+            }
+            .module-card:nth-child(12) {
+                animation-delay: 0.48s;
+            }
+            .module-card:nth-child(13) {
+                animation-delay: 0.52s;
+            }
+            .module-card:nth-child(14) {
+                animation-delay: 0.56s;
+            }
+            .module-card:nth-child(15) {
+                animation-delay: 0.60s;
+            }
+            .module-card:nth-child(16) {
+                animation-delay: 0.64s;
+            }
+            .module-card:nth-child(17) {
+                animation-delay: 0.68s;
+            }
+            .module-card:nth-child(18) {
+                animation-delay: 0.72s;
+            }
+            .module-card:nth-child(19) {
+                animation-delay: 0.76s;
+            }
+            .module-card:nth-child(20) {
+                animation-delay: 0.80s;
+            }
+        }
+
+        /* ==============================================
+           تنظیمات ریسپانسیو برای کارت‌های ماژول
+           ============================================== */
+        @media (max-width: 768px) {
+            .module-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            .module-card {
+                padding: 16px 18px;
+            }
+            .module-card h3 {
+                font-size: 1rem;
+            }
+            .module-card p {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .module-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .module-card {
+                padding: 14px 16px;
+            }
+            .module-card h3 {
+                font-size: 0.95rem;
+            }
+            .module-card p {
+                font-size: 0.82rem;
+            }
+            .category-label {
+                font-size: 0.75rem;
+                padding: 4px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../index.html">🏠 خانه</a> |
+            <a href="../index.html">🔙 بازگشت</a>
+        </span>
+    </div>
+
+    <h1>📘 ۲۰ ماژول اصلی دوره CEH V13</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 معرفی دوره</a></li>
+            <li><a href="#modules">📚 لیست ماژول‌ها</a></li>
+            <li><a href="#roadmap">🗺️ نقشه راه</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: معرفی دوره -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 معرفی دوره CEH V13 و ساختار ۲۰ ماژوله</h2>
+        <p>
+            <b>CEH (Certified Ethical Hacker)</b> یکی از معتبرترین گواهینامه‌های حوزه امنیت سایبری است که توسط <b>EC-Council</b> ارائه می‌شود. این دوره شامل <b>۲۰ ماژول</b> است که هر کدام به یکی از جنبه‌های تست نفوذ و امنیت شبکه می‌پردازد.
+        </p>
+        <p>
+            <b>ساختار دوره:</b>
+        </p>
+        <ul>
+            <li><b>ماژول‌های ۱ تا ۵:</b> مبانی و شناسایی (Foundation & Reconnaissance)</li>
+            <li><b>ماژول‌های ۶ تا ۱۲:</b> حملات شبکه و سیستم (Network & System Attacks)</li>
+            <li><b>ماژول‌های ۱۳ تا ۱۵:</b> حملات وب اپلیکیشن (Web Application Attacks)</li>
+            <li><b>ماژول‌های ۱۶ تا ۲۰:</b> امنیت پیشرفته (Advanced Security)</li>
+        </ul>
+        <div class="highlight-box">
+            <b>💡 نکته:</b> هر ماژول شامل <b>تئوری، سناریوهای عملی، ابزارهای مرتبط و تمرینات</b> است. برای موفقیت در آزمون CEH، تسلط بر تمام ماژول‌ها ضروری است.
+        </div>
+        <div class="warning-box">
+            <b>⚠️ توجه:</b> آزمون CEH شامل <b>۱۲۵ سوال تستی</b> (۴ ساعته) و یک <b>آزمون عملی (CEH Practical)</b> با سناریوهای واقعی است. ماژول‌های ۶، ۸، ۱۴، ۱۵ و ۱۶ بیشترین سهم را در آزمون دارند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: لیست کامل ماژول‌ها -->
+    <!-- ============================================================ -->
+    <div class="card" id="modules">
+        <h2>📚 لیست کامل ۲۰ ماژول CEH V13</h2>
+        <p>
+            در این بخش، هر ماژول به‌صورت جداگانه با <b>عنوان، هدف، سرفصل‌های اصلی، ابزارهای کلیدی و اهمیت آن در آزمون</b> معرفی شده است. روی هر ماژول کلیک کنید تا به صفحهٔ مربوطه بروید.
+        </p>
+
+        <!-- ======== دسته‌بندی ۱: مبانی و شناسایی (ماژول‌های ۱-۵) ======== -->
+        <div style="margin-top: 30px;">
+            <span dir='ltr' class="category-label category-base">📖 مبانی و شناسایی (ماژول‌های ۱-۵)</span>
+            <div class="module-grid">
+
+                <!-- ماژول ۱ -->
+                <div class="module-card" data-category="base">
+                    <span dir='ltr' class="module-number">ماژول ۱</span>
+                    <h3>Introduction to Ethical Hacking</h3>
+                    <p>آشنایی با مفاهیم هک قانونمند، انواع هکرها، مراحل تست نفوذ (PTES)، قوانین و مقررات.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge">مبانی</span>
+                        <span dir='ltr' class="badge tool">پیش‌نیاز</span>
+                    </div>
+                    <a href="Module_01_Introduction_to_Ethical_Hacking/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۲ -->
+                <div class="module-card" data-category="base">
+                    <span dir='ltr' class="module-number">ماژول ۲</span>
+                    <h3>Footprinting and Reconnaissance</h3>
+                    <p>جمع‌آوری اطلاعات از هدف با استفاده از منابع عمومی، جستجو در اینترنت، DNS، WHOIS و شبکه‌های اجتماعی.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge">شناسایی</span>
+                        <span dir='ltr' class="badge tool">OSINT</span>
+                        <span dir='ltr' class="badge tool">theHarvester</span>
+                    </div>
+                    <a href="Module_02_Footprinting_and_Reconnaissance/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۳ -->
+                <div class="module-card" data-category="base">
+                    <span dir='ltr' class="module-number">ماژول ۳</span>
+                    <h3>Scanning Networks</h3>
+                    <p>اسکن شبکه، شناسایی میزبان‌های زنده، پورت‌های باز، سرویس‌ها و سیستم‌عامل با ابزارهایی مثل Nmap و Hping3.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge">شناسایی</span>
+                        <span dir='ltr' class="badge tool">Nmap</span>
+                        <span dir='ltr' class="badge tool">Hping3</span>
+                    </div>
+                    <a href="Module_03_Scanning_Networks/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۴ -->
+                <div class="module-card" data-category="base">
+                    <span dir='ltr' class="module-number">ماژول ۴</span>
+                    <h3>Enumeration</h3>
+                    <p>استخراج اطلاعات دقیق‌تر از سرویس‌های کشف‌شده شامل نام‌کاربری، اشتراک‌ها، گروه‌ها و تنظیمات.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge">شناسایی</span>
+                        <span dir='ltr' class="badge tool">enum4linux</span>
+                        <span dir='ltr' class="badge tool">SNMP</span>
+                    </div>
+                    <a href="Module_04_Enumeration/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۵ -->
+                <div class="module-card" data-category="base">
+                    <span dir='ltr' class="module-number">ماژول ۵</span>
+                    <h3>Vulnerability Analysis</h3>
+                    <p>شناسایی و ارزیابی آسیب‌پذیری‌های سیستم‌ها با استفاده از اسکنرهای آسیب‌پذیری مانند Nessus و OpenVAS.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge">ارزیابی</span>
+                        <span dir='ltr' class="badge tool">Nessus</span>
+                        <span dir='ltr' class="badge tool">OpenVAS</span>
+                    </div>
+                    <a href="Module_05_Vulnerability_Analysis/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ======== دسته‌بندی ۲: حملات شبکه و سیستم (ماژول‌های ۶-۱۲) ======== -->
+        <div style="margin-top: 40px;">
+            <span dir='ltr' class="category-label category-network">⚔️ حملات شبکه و سیستم (ماژول‌های ۶-۱۲)</span>
+            <div class="module-grid">
+
+                <!-- ماژول ۶ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۶</span>
+                    <h3>System Hacking</h3>
+                    <p>نفوذ به سیستم‌ها شامل کرک رمز عبور، سرقت اطلاعات، ارتقاء دسترسی و پاک‌سازی ردپا.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">John the Ripper</span>
+                        <span dir='ltr' class="badge tool">Metasploit</span>
+                    </div>
+                    <a href="Module_06_System_Hacking/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۷ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۷</span>
+                    <h3>Malware Threats</h3>
+                    <p>شناخت بدافزارها، ویروس‌ها، کرم‌ها، تروجان‌ها، باج‌افزارها و روش‌های انتشار و تشخیص آنها.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">MSF Venom</span>
+                        <span dir='ltr' class="badge tool">VirusTotal</span>
+                    </div>
+                    <a href="Module_07_Malware_Threats/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۸ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۸</span>
+                    <h3>Sniffing</h3>
+                    <p>شنود ترافیک شبکه، حملات ARP Spoofing, MAC Flooding و ابزارهایی مثل Wireshark و Ettercap.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Wireshark</span>
+                        <span dir='ltr' class="badge tool">Ettercap</span>
+                    </div>
+                    <a href="Module_08_Sniffing/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۹ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۹</span>
+                    <h3>Social Engineering</h3>
+                    <p>مهندسی اجتماعی، فیشینگ، حملات مبتنی بر اعتماد و روش‌های فریب کاربران برای افشای اطلاعات.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">SET</span>
+                        <span dir='ltr' class="badge tool">BeEF</span>
+                    </div>
+                    <a href="Module_09_Social_Engineering/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۰ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۱۰</span>
+                    <h3>Denial of Service</h3>
+                    <p>حملات محروم‌سازی از سرویس (DoS/DDoS)، SYN Flood, UDP Flood و ابزارهای Hping3, LOIC.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Hping3</span>
+                        <span dir='ltr' class="badge tool">LOIC</span>
+                    </div>
+                    <a href="Module_10_Denial_of_Service/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۱ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۱۱</span>
+                    <h3>Session Hijacking</h3>
+                    <p>ربودن جلسات کاربران، حملات Man-in-the-Middle (MITM) و ابزارهایی مثل Burp Suite و Ettercap.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Burp Suite</span>
+                        <span dir='ltr' class="badge tool">Ettercap</span>
+                    </div>
+                    <a href="Module_11_Session_Hijacking/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۲ -->
+                <div class="module-card" data-category="network">
+                    <span dir='ltr' class="module-number">ماژول ۱۲</span>
+                    <h3>Evading IDS, Firewalls & Honeypots</h3>
+                    <p>دور زدن سیستم‌های تشخیص نفوذ (IDS)، فایروال‌ها و تله‌های شبکه با تکنیک‌های پیشرفته.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge defense">دفاع</span>
+                        <span dir='ltr' class="badge tool">Nmap</span>
+                        <span dir='ltr' class="badge tool">Fragmentation</span>
+                    </div>
+                    <a href="Module_12_Evading_IDS_Firewalls_Honeypots/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ======== دسته‌بندی ۳: حملات وب اپلیکیشن (ماژول‌های ۱۳-۱۵) ======== -->
+        <div style="margin-top: 40px;">
+            <span dir='ltr' class="category-label category-web">🌐 حملات وب اپلیکیشن (ماژول‌های ۱۳-۱۵)</span>
+            <div class="module-grid">
+
+                <!-- ماژول ۱۳ -->
+                <div class="module-card" data-category="web">
+                    <span dir='ltr' class="module-number">ماژول ۱۳</span>
+                    <h3>Hacking Web Servers</h3>
+                    <p>نفوذ به وب‌سرورها، شناسایی آسیب‌پذیری‌های Apache, IIS, Nginx و حملات علیه سرور.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Nikto</span>
+                        <span dir='ltr' class="badge tool">Dirb</span>
+                    </div>
+                    <a href="Module_13_Hacking_Web_Servers/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۴ -->
+                <div class="module-card" data-category="web">
+                    <span dir='ltr' class="module-number">ماژول ۱۴</span>
+                    <h3>Hacking Web Applications</h3>
+                    <p>آسیب‌پذیری‌های وب اپلیکیشن‌ها شامل OWASP Top 10، XSS، CSRF، File Inclusion و ...</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Burp Suite</span>
+                        <span dir='ltr' class="badge tool">OWASP ZAP</span>
+                    </div>
+                    <a href="Module_14_Hacking_Web_Applications/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۵ -->
+                <div class="module-card" data-category="web">
+                    <span dir='ltr' class="module-number">ماژول ۱۵</span>
+                    <h3>SQL Injection</h3>
+                    <p>تزریق SQL به پایگاه‌های داده، استخراج اطلاعات، دور زدن احراز هویت و ابزارهایی مثل SQLmap.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">SQLmap</span>
+                        <span dir='ltr' class="badge tool">Havij</span>
+                    </div>
+                    <a href="Module_15_SQL_Injection/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ======== دسته‌بندی ۴: امنیت پیشرفته (ماژول‌های ۱۶-۲۰) ======== -->
+        <div style="margin-top: 40px;">
+            <span dir='ltr' class="category-label category-advanced">🛡️ امنیت پیشرفته (ماژول‌های ۱۶-۲۰)</span>
+            <div class="module-grid">
+
+                <!-- ماژول ۱۶ -->
+                <div class="module-card" data-category="advanced">
+                    <span dir='ltr' class="module-number">ماژول ۱۶</span>
+                    <h3>Hacking Wireless Networks</h3>
+                    <p>حملات به شبکه‌های بی‌سیم، شکستن WEP/WPA/WPA2، حمله Deauthentication و ابزارهای Aircrack-ng.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Aircrack-ng</span>
+                        <span dir='ltr' class="badge tool">Reaver</span>
+                    </div>
+                    <a href="Module_16_Hacking_Wireless_Networks/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۷ -->
+                <div class="module-card" data-category="advanced">
+                    <span dir='ltr' class="module-number">ماژول ۱۷</span>
+                    <h3>Hacking Mobile Platforms</h3>
+                    <p>نفوذ به پلتفرم‌های موبایل (Android/iOS)، آنالیز بدافزارها و ابزارهای MobSF, Frida.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">MobSF</span>
+                        <span dir='ltr' class="badge tool">Frida</span>
+                    </div>
+                    <a href="Module_17_Hacking_Mobile_Platforms/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۸ -->
+                <div class="module-card" data-category="advanced">
+                    <span dir='ltr' class="module-number">ماژول ۱۸</span>
+                    <h3>IoT and OT Hacking</h3>
+                    <p>حملات به اینترنت اشیاء (IoT) و سیستم‌های عملیاتی (OT)، ابزارهای Shodan, Firmware Analysis.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge attack">حمله</span>
+                        <span dir='ltr' class="badge tool">Shodan</span>
+                        <span dir='ltr' class="badge tool">Firmware ModKit</span>
+                    </div>
+                    <a href="Module_18_IoT_and_OT_Hacking/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۱۹ -->
+                <div class="module-card" data-category="advanced">
+                    <span dir='ltr' class="module-number">ماژول ۱۹</span>
+                    <h3>Cloud Computing</h3>
+                    <p>امنیت در فضای ابری (AWS, Azure, GCP)، حملات به سرویس‌های ابری و ابزارهای ScoutSuite.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge defense">دفاع</span>
+                        <span dir='ltr' class="badge tool">ScoutSuite</span>
+                        <span dir='ltr' class="badge tool">Prowler</span>
+                    </div>
+                    <a href="Module_19_Cloud_Computing/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+                <!-- ماژول ۲۰ -->
+                <div class="module-card" data-category="advanced">
+                    <span dir='ltr' class="module-number">ماژول ۲۰</span>
+                    <h3>Cryptography</h3>
+                    <p>رمزنگاری، الگوریتم‌های متقارن و نامتقارن، هش، امضای دیجیتال، حملات به رمزنگاری و ابزارهای OpenSSL.</p>
+                    <div class="badge-group">
+                        <span dir='ltr' class="badge defense">دفاع</span>
+                        <span dir='ltr' class="badge tool">OpenSSL</span>
+                        <span dir='ltr' class="badge tool">Hashcat</span>
+                    </div>
+                    <a href="Module_20_Cryptography/index.html">➡️ مشاهده ماژول</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: نقشه راه یادگیری -->
+    <!-- ============================================================ -->
+    <div class="card" id="roadmap">
+        <h2>🗺️ نقشه راه یادگیری – چگونه ماژول‌ها را مطالعه کنیم؟</h2>
+        <p>
+            برای موفقیت در دوره CEH، مطالعهٔ ماژول‌ها به‌صورت گام‌به‌گام و با تمرین عملی ضروری است. مسیر پیشنهادی به این صورت است:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 20px;">
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 16px 20px; border-right: 4px solid #2563eb;">
+                <b style="font-size: 1.05rem;">مرحله ۱: مبانی (ماژول‌های ۱-۵)</b>
+                <p style="margin: 4px 0 0 0; font-size: 0.95rem;">
+                    با ماژول ۱ شروع کنید تا با مفاهیم پایه آشنا شوید. سپس ماژول‌های ۲ تا ۵ را به‌ترتیب مطالعه کنید. این ماژول‌ها پایهٔ تمام حملات بعدی هستند.
+                </p>
+            </div>
+
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 16px 20px; border-right: 4px solid #ef4444;">
+                <b style="font-size: 1.05rem;">مرحله ۲: حملات شبکه و سیستم (ماژول‌های ۶-۱۲)</b>
+                <p style="margin: 4px 0 0 0; font-size: 0.95rem;">
+                    ماژول‌های ۶ تا ۱۲ هستهٔ اصلی دوره هستند. روی ماژول‌های ۶ (System Hacking) و ۸ (Sniffing) و ۱۱ (Session Hijacking) تمرکز ویژه داشته باشید.
+                </p>
+            </div>
+
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 16px 20px; border-right: 4px solid #f59e0b;">
+                <b style="font-size: 1.05rem;">مرحله ۳: حملات وب اپلیکیشن (ماژول‌های ۱۳-۱۵)</b>
+                <p style="margin: 4px 0 0 0; font-size: 0.95rem;">
+                    ماژول ۱۵ (SQL Injection) یکی از مهم‌ترین مباحث آزمون است. حتماً تمرینات عملی آن را با SQLmap انجام دهید.
+                </p>
+            </div>
+
+            <div style="background: #f0f7ff; border-radius: 12px; padding: 16px 20px; border-right: 4px solid #10b981;">
+                <b style="font-size: 1.05rem;">مرحله ۴: امنیت پیشرفته (ماژول‌های ۱۶-۲۰)</b>
+                <p style="margin: 4px 0 0 0; font-size: 0.95rem;">
+                    ماژول‌های ۱۶ (Wireless) و ۲۰ (Cryptography) در آزمون عملی بسیار پرتکرار هستند. حتماً با ابزارهای Aircrack-ng و OpenSSL کار کنید.
+                </p>
+            </div>
+        </div>
+
+        <div class="tip-box" style="margin-top: 20px;">
+            <b>💡 نکته طلایی:</b>
+            <ul>
+                <li>بعد از هر ماژول، حتماً <b>آزمایشگاه عملی</b> مرتبط را انجام دهید.</li>
+                <li>از <b>چیت‌شیت ابزارها</b> برای مرور سریع دستورات استفاده کنید.</li>
+                <li>ماژول‌های ۶، ۸، ۱۴، ۱۵ و ۱۶ بیشترین سهم را در آزمون دارند – روی آنها وقت بیشتری بگذارید.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی مرتبط با ماژول‌های CEH</h2>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>واژه</th><th>توضیح کامل (معنی، کاربرد، مثال، کارکرد، عملکرد)</th></tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Footprinting</span></td>
+                    <td>
+                        <b>معنی:</b> اولین مرحله از تست نفوذ که شامل جمع‌آوری اطلاعات عمومی دربارهٔ هدف است.
+                        <br><b>کاربرد:</b> شناسایی دامنه‌ها، IPها، اطلاعات WHOIS، DNS و شبکه‌های اجتماعی.
+                        <br><b>مثال:</b> با <code dir='ltr'>nslookup</code> و <code dir='ltr'>dig</code> اطلاعات DNS یک شرکت را جمع‌آوری کنید.
+                        <br><b>کارکرد:</b> ایجاد یک نمای کلی از سطح حمله (Attack Surface).
+                        <br><b>عملکرد:</b> اطلاعات جمع‌آوری‌شده در این مرحله، پایهٔ حملات بعدی را تشکیل می‌دهد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Scanning</span></td>
+                    <td>
+                        <b>معنی:</b> مرحلهٔ دوم تست نفوذ که شامل اسکن شبکه، پورت‌ها و سرویس‌های فعال است.
+                        <br><b>کاربرد:</b> شناسایی دستگاه‌های زنده، پورت‌های باز، سیستم‌عامل و نسخهٔ سرویس‌ها.
+                        <br><b>مثال:</b> <code dir='ltr'>nmap -sS 192.168.1.0/24</code> برای اسکن SYN شبکه.
+                        <br><b>کارکرد:</b> کشف نقاط ورود بالقوه به سیستم هدف.
+                        <br><b>عملکرد:</b> نتایج اسکن مشخص می‌کند که کدام سرویس‌ها آسیب‌پذیر هستند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Enumeration</span></td>
+                    <td>
+                        <b>معنی:</b> مرحلهٔ سوم تست نفوذ که شامل استخراج اطلاعات دقیق‌تر از سرویس‌های کشف‌شده است.
+                        <br><b>کاربرد:</b> دریافت نام‌کاربری، اشتراک‌ها، گروه‌ها، پوشه‌ها و تنظیمات سرویس‌ها.
+                        <br><b>مثال:</b> با <code dir='ltr'>enum4linux</code> می‌توان اطلاعات SMB را استخراج کرد.
+                        <br><b>کارکرد:</b> شناسایی اطلاعات حساس که برای بهره‌برداری نیاز است.
+                        <br><b>عملکرد:</b> این مرحله، پل ارتباطی بین شناسایی و حمله است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Sniffing</span></td>
+                    <td>
+                        <b>معنی:</b> شنود و ضبط بسته‌های شبکه برای استخراج اطلاعات حساس.
+                        <br><b>کاربرد:</b> شناسایی رمز عبور، اطلاعات محرمانه یا تحلیل ترافیک برای عیب‌یابی.
+                        <br><b>مثال:</b> با Wireshark ترافیک HTTP را ضبط کرده و کوکی‌های جلسه را استخراج کنید.
+                        <br><b>کارکرد:</b> در شبکه‌های محلی با ARP Spoofing یا قرار گرفتن در مسیر ترافیک انجام می‌شود.
+                        <br><b>عملکرد:</b> استفاده از رمزنگاری (HTTPS, VPN) از راه‌های مقابله با Sniffing است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Social Engineering</span></td>
+                    <td>
+                        <b>معنی:</b> حمله با استفاده از فریب و اعتماد کاربران برای افشای اطلاعات یا انجام عملیات مخرب.
+                        <br><b>کاربرد:</b> فیشینگ، تماس تلفنی، جعل هویت و دستکاری روانی کاربران.
+                        <br><b>مثال:</b> ارسال ایمیل جعلی با موضوع «بروزرسانی رمز عبور» برای دریافت اطلاعات کاربران.
+                        <br><b>کارکرد:</b> دور زدن لایه‌های امنیتی فنی با هدف قرار دادن حلقهٔ ضعیف (انسان).
+                        <br><b>عملکرد:</b> آموزش کاربران و احراز هویت دو عاملی از راه‌های مقابله است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">SQL Injection</span></td>
+                    <td>
+                        <b>معنی:</b> تزریق کد SQL مخرب به ورودی‌های برنامه برای دستکاری پایگاه داده.
+                        <br><b>کاربرد:</b> استخراج اطلاعات، دور زدن احراز هویت، حذف یا تغییر داده‌ها.
+                        <br><b>مثال:</b> ورودی <code dir='ltr'>' OR '1'='1</code> در فرم لاگین برای دور زدن رمز عبور.
+                        <br><b>کارکرد:</b> سوءاستفاده از عدم اعتبارسنجی ورودی در برنامه‌های وب.
+                        <br><b>عملکرد:</b> با استفاده از پارامترهای آماده (Prepared Statements) می‌توان از آن جلوگیری کرد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">DoS / DDoS</span></td>
+                    <td>
+                        <b>معنی:</b> حملات محروم‌سازی از سرویس (DoS) و توزیع‌شده (DDoS) که هدف آنها غیرقابل دسترس کردن سرویس است.
+                        <br><b>کاربرد:</b> ایجاد اختلال در سرویس‌دهی وب‌سایت‌ها، سرورها و شبکه‌ها.
+                        <br><b>مثال:</b> SYN Flood با ارسال هزاران درخواست اتصال ناقص به یک سرور.
+                        <br><b>کارکرد:</b> مصرف منابع هدف (پهنای باند، CPU، حافظه) تا سرویس از کار بیفتد.
+                        <br><b>عملکرد:</b> تشخیص و مقابله با DDoS نیاز به فیلتر کردن ترافیک مخرب و استفاده از CDN دارد.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Cryptography</span></td>
+                    <td>
+                        <b>معنی:</b> رمزنگاری – علم محافظت از اطلاعات با استفاده از الگوریتم‌های ریاضی.
+                        <br><b>کاربرد:</b> رمزنگاری داده‌ها، احراز هویت، امضای دیجیتال و تأمین یکپارچگی.
+                        <br><b>مثال:</b> استفاده از الگوریتم AES برای رمزنگاری فایل‌های حساس.
+                        <br><b>کارکرد:</b> تبدیل داده قابل‌خواندن به داده غیرقابل‌خواندن با استفاده از کلید.
+                        <br><b>عملکرد:</b> حملات به رمزنگاری شامل Brute-Force, Birthday Attack, Side-Channel است.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Vulnerability Assessment</span></td>
+                    <td>
+                        <b>معنی:</b> فرآیند شناسایی، طبقه‌بندی و اولویت‌بندی آسیب‌پذیری‌های یک سیستم.
+                        <br><b>کاربرد:</b> ارزیابی امنیتی سیستم‌ها برای شناسایی نقاط ضعف قبل از بهره‌برداری.
+                        <br><b>مثال:</b> اسکن شبکه با Nessus برای پیدا کردن آسیب‌پذیری‌های شناخته‌شده.
+                        <br><b>کارکرد:</b> ارائهٔ گزارش از آسیب‌پذیری‌ها با درجه‌بندی خطر (Critical, High, Medium, Low).
+                        <br><b>عملکرد:</b> این فرآیند به سازمان‌ها کمک می‌کند تا قبل از حمله، آسیب‌پذیری‌ها را رفع کنند.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Penetration Testing</span></td>
+                    <td>
+                        <b>معنی:</b> تست نفوذ – شبیه‌سازی حمله سایبری برای ارزیابی امنیت یک سیستم.
+                        <br><b>کاربرد:</b> شناسایی آسیب‌پذیری‌ها، ارزیابی ریسک و ارائهٔ راهکارهای رفع.
+                        <br><b>مثال:</b> یک تست نفوذ شامل مراحل Footprinting, Scanning, Exploitation و Reporting است.
+                        <br><b>کارکرد:</b> شبیه‌سازی حملات واقعی برای اندازه‌گیری سطح امنیت.
+                        <br><b>عملکرد:</b> تست نفوذ با مجوز کتبی انجام می‌شود و تفاوت آن با هک غیرقانونی در مجوز است.
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع سریع برای اصطلاحات کلیدی ۲۰ ماژول CEH است. توصیه می‌شود هر ماژول را با مرور این واژه‌نامه شروع کنید.
+        </div>
+    </div>
+
+    <!-- ===== جمع‌بندی نهایی با لینک‌های جامع ===== -->
+    <div class="highlight-box">
+        <b>📌 جمع‌بندی و گام بعدی:</b>
+        <ul>
+            <li>۲۰ ماژول CEH V13 را به‌ترتیب مطالعه کنید و پس از هر ماژول، تمرینات عملی را انجام دهید.</li>
+            <li>ماژول‌های کلیدی (۶، ۸، ۱۴، ۱۵ و ۱۶) را با دقت بیشتری مرور کنید.</li>
+            <li>از <b>چیت‌شیت ابزارها</b> برای مرور سریع دستورات استفاده کنید.</li>
+            <li>
+                <b>دسترسی سریع به بخش‌های دوره:</b>
+                <ul style="margin-top: 6px;">
+                    <li><a href="../00_Prerequisites/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">🔰 پیش‌نیازها (شبکه و لینوکس)</a></li>
+                    <li><a href="../Cheatsheets/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">🌐 چیت‌شیت شبکه</a></li>
+                    <li><a href="../Cheatsheets/linux_commands.html" style="color: var(--primary, #4f46e5); font-weight: 500;">🐧 چیت‌شیت لینوکس</a></li>
+                    <li><a href="../02_Labs/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">🧪 آزمایشگاه‌های عملی</a></li>
+                    <li><a href="../03_Tools/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">🛠️ چیت‌شیت ابزارها</a></li>
+                    <li><a href="../04_Resources/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">📚 منابع و لینک‌های مفید</a></li>
+                    <li><a href="../05_Assessments/index.html" style="color: var(--primary, #4f46e5); font-weight: 500;">📝 آزمون‌ها و پروژه نهایی</a></li>
+                </ul>
+            </li>
+        </ul>
+        <p style="margin-top: 12px;">
+            <b>🚀 با مطالعهٔ منظم و تمرین عملی، موفقیت در CEH V13 قطعی است!</b>
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">نسخهٔ بازنویسی‌شده با توضیحات کامل هر ماژول، نقشه راه، واژه‌نامه و لینک‌های جامع | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+</body>
+</html>
