@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۱۲ - Evading IDS, Firewalls, and Honeypots - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۱۲ – Evading IDS, Firewalls, and Honeypots</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – سیستم‌های امنیتی و روش‌های دور زدن</a></li>
+            <li><a href="#ids">🛡️ سیستم‌های تشخیص نفوذ (IDS)</a></li>
+            <li><a href="#firewalls">🔥 فایروال‌ها (Firewalls)</a></li>
+            <li><a href="#honeypots">🍯 Honeypot</a></li>
+            <li><a href="#detection-techniques">🔍 تکنیک‌های تشخیص</a></li>
+            <li><a href="#evasion-techniques">🎯 تکنیک‌های دور زدن</a></li>
+            <li><a href="#nmap-evasion">🔎 دور زدن با Nmap</a></li>
+            <li><a href="#firewall-evasion">🔥 دور زدن فایروال</a></li>
+            <li><a href="#ids-evasion">🛡️ دور زدن IDS</a></li>
+            <li><a href="#honeypot-detection">🍯 تشخیص Honeypot</a></li>
+            <li><a href="#tools">🛠️ ابزارهای دور زدن</a></li>
+            <li><a href="#ai-evasion">🤖 دور زدن با هوش مصنوعی</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – سیستم‌های امنیتی و روش‌های دور زدن</h2>
+        <p>
+            در دنیای امروز، سازمان‌ها از ابزارهای امنیتی متعددی برای محافظت از شبکه و داده‌های خود استفاده می‌کنند. از جمله مهم‌ترین این ابزارها می‌توان به <b>سیستم‌های تشخیص نفوذ (IDS)</b>، <b>فایروال‌ها (Firewalls)</b> و <b>دام‌های امنیتی (Honeypots)</b> اشاره کرد.
+        </p>
+        <p>
+            با این حال، هکرهای حرفه‌ای با استفاده از تکنیک‌های پیشرفته، سعی می‌کنند این سیستم‌های دفاعی را دور بزنند و به اهداف خود برسند. <b>دور زدن سیستم‌های امنیتی (Evasion)</b> یکی از مهم‌ترین مهارت‌هایی است که یک هکر قانونمند باید داشته باشد.
+        </p>
+        <p>
+            در این ماژول، شما با انواع سیستم‌های امنیتی، تکنیک‌های تشخیص و مهم‌تر از همه، <b>روش‌های دور زدن</b> این سیستم‌ها آشنا خواهید شد. همچنین خواهید آموخت که چگونه می‌توان از ابزارهایی مانند Nmap، Metasploit و سایر ابزارهای Kali Linux برای عبور از موانع امنیتی استفاده کرد.
+        </p>
+        <div class="warning-box">
+            <b>⚠️ هشدار اخلاقی:</b> تکنیک‌های دور زدن سیستم‌های امنیتی بسیار قدرتمند هستند و فقط باید در محیط‌های کنترل‌شده و با مجوز استفاده شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: سیستم‌های تشخیص نفوذ (IDS) -->
+    <!-- ============================================================ -->
+    <div class="card" id="ids">
+        <h2>🛡️ سیستم‌های تشخیص نفوذ (Intrusion Detection Systems - IDS)</h2>
+        <p>
+            <b>سیستم تشخیص نفوذ (IDS)</b> ابزاری است که ترافیک شبکه یا فعالیت‌های سیستم را برای شناسایی حملات و فعالیت‌های مشکوک مانیتور می‌کند. IDS معمولاً هشدارهایی را به مدیران سیستم ارسال می‌کند و گزارش‌هایی از فعالیت‌های مشکوک تهیه می‌کند.
+        </p>
+
+        <h3>📌 انواع IDS:</h3>
+        <ul>
+            <li><b>NIDS (Network-based IDS):</b> ترافیک شبکه را در نقاط کلیدی شبکه مانیتور می‌کند. مثال: Snort, Suricata.</li>
+            <li><b>HIDS (Host-based IDS):</b> فعالیت‌های یک میزبان خاص (سیستم‌عامل، برنامه‌ها، لاگ‌ها) را بررسی می‌کند. مثال: OSSEC.</li>
+            <li><b>Protocol-based IDS:</b> ترافیک پروتکل‌های خاص را بررسی می‌کند.</li>
+            <li><b>Application-based IDS:</b> ترافیک برنامه‌های خاص را بررسی می‌کند.</li>
+        </ul>
+
+        <h3>📌 روش‌های تشخیص IDS:</h3>
+        <ul>
+            <li><b>تشخیص مبتنی بر امضا (Signature-based):</b> مقایسه ترافیک با پایگاه داده امضاهای حملات. مانند آنتی‌ویروس‌ها.</li>
+            <li><b>تشخیص مبتنی بر ناهنجاری (Anomaly-based):</b> شناسایی رفتارهای غیرعادی با استفاده از یادگیری ماشین.</li>
+            <li><b>تشخیص مبتنی بر حالت (Stateful):</b> تحلیل وضعیت اتصالات شبکه.</li>
+            <li><b>تشخیص مبتنی بر پروتکل (Protocol-based):</b> تحلیل انطباق با استانداردهای پروتکل.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> IDS فقط هشدار می‌دهد و هیچ اقدامی برای جلوگیری از حمله انجام نمی‌دهد (برخلاف IPS).
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: فایروال‌ها -->
+    <!-- ============================================================ -->
+    <div class="card" id="firewalls">
+        <h2>🔥 فایروال‌ها (Firewalls)</h2>
+        <p>
+            <b>فایروال</b> سیستمی است که ترافیک شبکه را بر اساس قوانین تعریف‌شده کنترل می‌کند. فایروال‌ها به عنوان اولین خط دفاعی در شبکه عمل می‌کنند و ترافیک ورودی و خروجی را بررسی و فیلتر می‌کنند.
+        </p>
+
+        <h3>📌 انواع فایروال:</h3>
+        <ul>
+            <li><b>فایروال بسته‌ای (Packet Filtering Firewall):</b> بسته‌ها را بر اساس هدرهای IP و TCP/UDP فیلتر می‌کند.</li>
+            <li><b>فایروال حالت‌دار (Stateful Firewall):</b> وضعیت اتصالات را پیگیری می‌کند و تصمیمات هوشمندانه‌تری می‌گیرد.</li>
+            <li><b>فایروال لایه برنامه (Application Firewall):</b> ترافیک لایه کاربرد (HTTP, FTP) را بررسی می‌کند. مانند WAF.</li>
+            <li><b>فایروال نسل بعدی (Next-Gen Firewall):</b> ترکیبی از قابلیت‌های فایروال، IDS/IPS و QoS.</li>
+        </ul>
+
+        <h3>📌 قوانین فایروال:</h3>
+        <ul>
+            <li><b>قوانین ورودی (Inbound Rules):</b> کنترل ترافیک ورودی به شبکه.</li>
+            <li><b>قوانین خروجی (Outbound Rules):</b> کنترل ترافیک خروجی از شبکه.</li>
+            <li><b>قوانین انتقال (Forward Rules):</b> کنترل ترافیک عبوری از شبکه.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> فایروال‌ها می‌توانند سخت‌افزاری یا نرم‌افزاری باشند. فایروال‌های سخت‌افزاری در روترها و تجهیزات شبکه قرار دارند و فایروال‌های نرم‌افزاری روی سیستم‌عامل نصب می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: Honeypot -->
+    <!-- ============================================================ -->
+    <div class="card" id="honeypots">
+        <h2>🍯 Honeypot (دام امنیتی)</h2>
+        <p>
+            <b>Honeypot</b> یک سیستم یا سرویس جعلی است که به منظور جذب، شناسایی و تحلیل حملات سایبری طراحی شده است. Honeypot به نظر یک سیستم واقعی می‌رسد اما در واقع برای شناسایی هکرها و بررسی روش‌های حمله آنها استفاده می‌شود.
+        </p>
+
+        <h3>📌 انواع Honeypot:</h3>
+        <ul>
+            <li><b>Honeypot سطح پایین (Low-Interaction):</b> سرویس‌های محدودی را شبیه‌سازی می‌کند (خطر کم).</li>
+            <li><b>Honeypot سطح بالا (High-Interaction):</b> سیستم کامل را شبیه‌سازی می‌کند (خطر بیشتر اما اطلاعات دقیق‌تر).</li>
+            <li><b>Honeypot واقعی (Production):</b> برای شناسایی حملات در سازمان‌ها استفاده می‌شود.</li>
+            <li><b>Honeypot تحقیقاتی (Research):</b> برای تحلیل و مطالعه حملات استفاده می‌شود.</li>
+        </ul>
+
+        <h3>📌 ابزارهای Honeypot:</h3>
+        <ul>
+            <li><b>Honeyd:</b> ابزار متن‌باز برای ایجاد Honeypot.</li>
+            <li><b>Dionaea:</b> Honeypot برای شناسایی بدافزارها.</li>
+            <li><b>Kippo:</b> Honeypot SSH برای جذب هکرها.</li>
+            <li><b>Cowrie:</b> نسخه پیشرفته‌تر Kippo.</li>
+            <li><b>Modern Honey Network:</b> شبکه‌ای از Honeypotها.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> Honeypotها می‌توانند بسیار خطرناک باشند زیرا هکرها ممکن است از آنها برای حمله به سیستم‌های دیگر استفاده کنند. پیکربندی صحیح Honeypot بسیار مهم است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: تکنیک‌های تشخیص -->
+    <!-- ============================================================ -->
+    <div class="card" id="detection-techniques">
+        <h2>🔍 تکنیک‌های تشخیص سیستم‌های امنیتی</h2>
+        <p>
+            قبل از اینکه بتوانید سیستم‌های امنیتی را دور بزنید، باید آنها را شناسایی کنید. در ادامه، تکنیک‌های تشخیص IDS، فایروال و Honeypot را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 تشخیص فایروال:</h3>
+        <ul>
+            <li><b>اسکن ACK:</b> استفاده از بسته‌های ACK برای تشخیص فیلتر کردن پورت.</li>
+            <li><b>اسکن FIN/Null/Xmas:</b> استفاده از بسته‌های با فلگ‌های غیرعادی.</li>
+            <li><b>تغییر اندازه TTL:</b> ارسال بسته‌ها با TTL متفاوت برای تشخیص فایروال.</li>
+            <li><b>تکنیک های تکه‌تکه‌سازی (Fragmentation):</b> ارسال بسته‌های تکه‌تکه شده برای عبور از فایروال.</li>
+        </ul>
+
+        <h3>📌 تشخیص IDS:</h3>
+        <ul>
+            <li><b>تکنیک های تاخیر (Timing Attacks):</b> ارسال بسته‌ها با فاصله زمانی متفاوت.</li>
+            <li><b>تکنیک های جعل (Spoofing):</b> جعل آدرس IP مبدأ.</li>
+            <li><b>تکنیک های Polymorphic:</b> تغییر الگوی حمله برای تشخیص‌ناپذیری.</li>
+        </ul>
+
+        <h3>📌 تشخیص Honeypot:</h3>
+        <ul>
+            <li><b>بررسی پاسخ‌ها:</b> Honeypotها معمولاً پاسخ‌های غیرعادی دارند.</li>
+            <li><b>بررسی تأخیر:</b> Honeypotها ممکن است تأخیر بیشتری داشته باشند.</li>
+            <li><b>بررسی داده‌های جعلی:</b> Honeypotها حاوی داده‌های جعلی هستند.</li>
+            <li><b>بررسی تنظیمات شبکه:</b> Honeypotها معمولاً در یک VLAN خاص قرار دارند.</li>
+        </ul>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند تکنیک تشخیص، دقت را به شدت افزایش می‌دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: تکنیک‌های دور زدن -->
+    <!-- ============================================================ -->
+    <div class="card" id="evasion-techniques">
+        <h2>🎯 تکنیک‌های دور زدن سیستم‌های امنیتی</h2>
+        <p>
+            دور زدن سیستم‌های امنیتی شامل مجموعه‌ای از تکنیک‌هاست که به هکر اجازه می‌دهد بدون شناسایی، به شبکه یا سیستم هدف نفوذ کند.
+        </p>
+
+        <h3>📌 تکنیک‌های رایج دور زدن:</h3>
+        <ul>
+            <li><b>تکه‌تکه‌سازی بسته‌ها (Fragmentation):</b> تقسیم بسته‌ها به قطعات کوچک برای عبور از فایروال و IDS.</li>
+            <li><b>تغییر اندازه MTU:</b> تنظیم حداکثر اندازه بسته برای دور زدن فایروال‌های مبتنی بر اندازه.</li>
+            <li><b>استفاده از پروکسی و تونل:</b> ارسال ترافیک از طریق پروکسی یا تونل‌های رمزنگاری‌شده (VPN).</li>
+            <li><b>جعل آدرس IP (IP Spoofing):</b> جعل آدرس IP مبدأ برای فریب فایروال.</li>
+            <li><b>جعل آدرس MAC:</b> تغییر آدرس MAC برای دور زدن کنترل‌های دسترسی.</li>
+            <li><b>ارسال بسته‌های با فلگ‌های غیرعادی:</b> مانند FIN, NULL, XMAS.</li>
+            <li><b>استفاده از Decoy IP:</b> ارسال بسته‌ها با چندین آدرس مبدأ جعلی.</li>
+            <li><b>اسکن با تأخیر (Slow Scan):</b> کاهش سرعت اسکن برای جلوگیری از تشخیص IDS.</li>
+            <li><b>تغییر پورت‌ها:</b> استفاده از پورت‌های غیراستاندارد برای دور زدن قوانین فایروال.</li>
+            <li><b>استفاده از رمزنگاری:</b> رمزنگاری ترافیک برای جلوگیری از Sniffing و تحلیل IDS.</li>
+            <li><b>تکنیک‌های Polymorphic:</b> تغییر الگوی حمله برای تشخیص‌ناپذیری.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># Fragmentation با Nmap
+sudo nmap -f 192.168.1.101
+
+# تنظیم MTU با Nmap
+sudo nmap --mtu 16 192.168.1.101
+
+# استفاده از Decoy IP با Nmap
+sudo nmap -D 10.0.0.1,10.0.0.2,192.168.1.101 192.168.1.101
+
+# Slow Scan با Nmap
+sudo nmap -T0 192.168.1.101    # بسیار آهسته
+sudo nmap -T1 192.168.1.101    # آهسته</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> استفاده از این تکنیک‌ها بدون مجوز جرم است. فقط در محیط‌های آزمایشگاهی با مجوز استفاده شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: دور زدن با Nmap -->
+    <!-- ============================================================ -->
+    <div class="card" id="nmap-evasion">
+        <h2>🔎 دور زدن سیستم‌های امنیتی با Nmap</h2>
+        <p>
+            Nmap یکی از قدرتمندترین ابزارها برای اسکن شبکه و دور زدن سیستم‌های امنیتی است. در این بخش، مهم‌ترین گزینه‌های Nmap برای دور زدن را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 گزینه‌های دور زدن در Nmap:</h3>
+        <div class="table-responsive">
+            <table>
+                <tr><th>گزینه</th><th>توضیح</th><th>مثال</th></tr>
+                <tr><td><code dir='ltr'>-f</code></td><td>تکه‌تکه‌سازی بسته‌ها</td><td><code dir='ltr'>sudo nmap -f 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>--mtu</code></td><td>تنظیم MTU</td><td><code dir='ltr'>sudo nmap --mtu 16 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>-D</code></td><td>استفاده از Decoy IP</td><td><code dir='ltr'>sudo nmap -D 10.0.0.1,10.0.0.2 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>-T0</code> تا <code dir='ltr'>-T2</code></td><td>اسکن با تأخیر</td><td><code dir='ltr'>sudo nmap -T0 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>--scan-delay</code></td><td>فاصله زمانی بین بسته‌ها</td><td><code dir='ltr'>sudo nmap --scan-delay 5s 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>--spoof-mac</code></td><td>جعل آدرس MAC</td><td><code dir='ltr'>sudo nmap --spoof-mac 00:11:22:33:44:55 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>-sS</code></td><td>اسکن SYN (نیمه‌باز) برای مخفی‌کاری</td><td><code dir='ltr'>sudo nmap -sS 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>-sF/-sN/-sX</code></td><td>اسکن FIN, Null, Xmas</td><td><code dir='ltr'>sudo nmap -sF 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>-g</code></td><td>استفاده از پورت منبع خاص</td><td><code dir='ltr'>sudo nmap -g 53 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>--data-length</code></td><td>افزودن داده تصادفی به بسته</td><td><code dir='ltr'>sudo nmap --data-length 200 192.168.1.1</code></td></tr>
+                <tr><td><code dir='ltr'>--badsum</code></td><td>ارسال بسته با Checksum اشتباه</td><td><code dir='ltr'>sudo nmap --badsum 192.168.1.1</code></td></tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># مثال ترکیبی برای دور زدن فایروال
+sudo nmap -f -D 10.0.0.1,10.0.0.2 -T2 --scan-delay 1s --spoof-mac 00:11:22:33:44:55 -p 22,80,443 192.168.1.101</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند گزینه می‌تواند شانس عبور از فایروال و IDS را به شدت افزایش دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: دور زدن فایروال -->
+    <!-- ============================================================ -->
+    <div class="card" id="firewall-evasion">
+        <h2>🔥 تکنیک‌های دور زدن فایروال</h2>
+        <p>
+            فایروال‌ها به عنوان اولین خط دفاعی، ترافیک ورودی و خروجی را کنترل می‌کنند. در ادامه، تکنیک‌های دور زدن فایروال را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 تکنیک‌های دور زدن فایروال:</h3>
+        <ul>
+            <li><b>استفاده از پورت‌های مجاز:</b> ارسال ترافیک از طریق پورت‌هایی که فایروال اجازه عبور می‌دهد (مثل ۸۰، ۴۴۳).</li>
+            <li><b>استفاده از تونل‌های رمزنگاری‌شده:</b> استفاده از VPN یا SSH Tunneling برای عبور از فایروال.</li>
+            <li><b>استفاده از پروکسی:</b> ارسال ترافیک از طریق پروکسی‌های عمومی یا خصوصی.</li>
+            <li><b>استفاده از تکنیک‌های HTTP Tunneling:</b> کپسوله کردن ترافیک غیرHTTP درون بسته‌های HTTP.</li>
+            <li><b>استفاده از تکنیک‌های ICMP Tunneling:</b> کپسوله کردن داده درون بسته‌های ICMP.</li>
+            <li><b>استفاده از تکنیک‌های DNS Tunneling:</b> کپسوله کردن داده درون بسته‌های DNS.</li>
+            <li><b>استفاده از اسکن با پورت منبع خاص (Source Port):</b> شبیه‌سازی ترافیک مجاز (مثل استفاده از پورت ۵۳ برای DNS).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># SSH Tunneling برای عبور از فایروال
+ssh -D 1080 user@vps-server.com
+
+# استفاده از nc برای ایجاد تونل
+nc -l -p 8080 | nc target.com 80
+
+# HTTP Tunneling با استفاده از httptunnel
+hts -F localhost:80 8080
+htc -F 8080 target.com:80</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> تونل‌های رمزنگاری‌شده می‌توانند ترافیک مخرب را پنهان کنند، اما استفاده از آنها بدون مجوز غیرقانونی است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: دور زدن IDS -->
+    <!-- ============================================================ -->
+    <div class="card" id="ids-evasion">
+        <h2>🛡️ تکنیک‌های دور زدن IDS</h2>
+        <p>
+            IDSها با تحلیل ترافیک و الگوهای حمله، سعی در شناسایی حملات دارند. در ادامه، تکنیک‌های دور زدن IDS را معرفی می‌کنیم:
+        </p>
+
+        <h3>📌 تکنیک‌های دور زدن IDS:</h3>
+        <ul>
+            <li><b>تکه‌تکه‌سازی بسته‌ها (Fragmentation):</b> تقسیم بسته‌ها به قطعات کوچک برای جلوگیری از بازسازی توسط IDS.</li>
+            <li><b>استفاده از بسته‌های با Checksum اشتباه:</b> ارسال بسته‌هایی که توسط IDS دور ریخته می‌شوند.</li>
+            <li><b>استفاده از تأخیر (Timing Attacks):</b> ارسال بسته‌ها با فاصله زمانی طولانی برای جلوگیری از تشخیص IDS.</li>
+            <li><b>استفاده از کدگذاری (Encoding):</b> کدگذاری payload برای جلوگیری از تشخیص امضاها.</li>
+            <li><b>استفاده از تکنیک‌های Polymorphic:</b> تغییر الگوی حمله برای هر بار اجرا.</li>
+            <li><b>استفاده از Session Splitting:</b> تقسیم یک حمله به چند جلسه کوچک.</li>
+            <li><b>استفاده از تکنیک‌های Obfuscation:</b> مبهم‌سازی کد برای جلوگیری از تشخیص.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Fragmentation با Nmap
+sudo nmap -f 192.168.1.101
+
+# استفاده از Session Splitting با Metasploit
+msfconsole
+use auxiliary/scanner/http/http_verb_tampering</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> IDSهای مدرن از تکنیک‌های پیشرفته‌تری مانند تحلیل پروتکل و تشخیص ناهنجاری استفاده می‌کنند که دور زدن آنها را دشوارتر می‌کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: تشخیص Honeypot -->
+    <!-- ============================================================ -->
+    <div class="card" id="honeypot-detection">
+        <h2>🍯 تشخیص Honeypot</h2>
+        <p>
+            تشخیص Honeypot یکی از مهارت‌های مهم هکرهاست. اگر هکر بتواند Honeypot را تشخیص دهد، از حمله به آن اجتناب می‌کند و از شناسایی شدن جلوگیری می‌کند.
+        </p>
+
+        <h3>📌 روش‌های تشخیص Honeypot:</h3>
+        <ul>
+            <li><b>بررسی تأخیر پاسخ (Latency):</b> Honeypotها ممکن است تأخیر بیشتری داشته باشند.</li>
+            <li><b>بررسی تنظیمات شبکه:</b> Honeypotها معمولاً در یک VLAN یا زیرشبکه جداگانه قرار دارند.</li>
+            <li><b>بررسی داده‌های جعلی:</b> Honeypotها معمولاً داده‌های جعلی یا قدیمی دارند.</li>
+            <li><b>بررسی رفتار سرویس:</b> Honeypotها ممکن است رفتار غیرعادی داشته باشند.</li>
+            <li><b>استفاده از ابزارهای تشخیص:</b> ابزارهایی مانند Honeydetect و Nepenthes برای تشخیص Honeypot.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># بررسی پاسخ سرویس با netcat
+nc -nv 192.168.1.101 80
+
+# بررسی تنظیمات شبکه با traceroute
+traceroute -n 192.168.1.101</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> تشخیص Honeypot ممکن است زمان‌بر باشد و نیاز به دقت بالا دارد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: ابزارهای دور زدن -->
+    <!-- ============================================================ -->
+    <div class="card" id="tools">
+        <h2>🛠️ ابزارهای دور زدن سیستم‌های امنیتی</h2>
+        <p>
+            ابزارهای متعددی برای دور زدن سیستم‌های امنیتی وجود دارند که در این بخش مهم‌ترین آنها را معرفی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>کاربرد اصلی</th><th>توضیح</th></tr>
+                <tr>
+                    <td><b>Nmap</b></td>
+                    <td>اسکن و دور زدن</td>
+                    <td>پشتیبانی از Fragmentation, Decoy, MTU, Timing</td>
+                </tr>
+                <tr>
+                    <td><b>Metasploit</b></td>
+                    <td>بهره‌برداری و دور زدن</td>
+                    <td>ماژول‌های مختلف برای دور زدن IDS و فایروال</td>
+                </tr>
+                <tr>
+                    <td><b>Hping3</b></td>
+                    <td>تولید بسته‌های سفارشی</td>
+                    <td>ارسال بسته‌های TCP/UDP/ICMP سفارشی برای تست فایروال</td>
+                </tr>
+                <tr>
+                    <td><b>Fragroute</b></td>
+                    <td>دستکاری بسته‌ها</td>
+                    <td>تغییر، تکه‌تکه‌سازی و تغییر مسیر بسته‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>Scapy</b></td>
+                    <td>تولید و دستکاری بسته</td>
+                    <td>ابزار قدرتمند برای تولید بسته‌های سفارشی</td>
+                </tr>
+                <tr>
+                    <td><b>ProxyChains</b></td>
+                    <td>ارسال ترافیک از طریق پروکسی</td>
+                    <td>ارسال ترافیک از طریق چندین پروکسی</td>
+                </tr>
+                <tr>
+                    <td><b>Tor</b></td>
+                    <td>ناشناسی و دور زدن</td>
+                    <td>شبکه ناشناس برای دور زدن محدودیت‌ها</td>
+                </tr>
+                <tr>
+                    <td><b>BetterCAP</b></td>
+                    <td>MITM و دور زدن</td>
+                    <td>ابزار مدرن برای حملات MITM و دور زدن</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از ProxyChains با Nmap
+proxychains nmap -sS 192.168.1.101
+
+# استفاده از Scapy برای تولید بسته سفارشی
+from scapy.all import *
+send(IP(dst="192.168.1.101")/TCP(dport=80, flags="S"))</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> ترکیب چند ابزار می‌تواند قدرت دور زدن را افزایش دهد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: دور زدن با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-evasion">
+        <h2>🤖 دور زدن سیستم‌های امنیتی با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، به نقش هوش مصنوعی در دور زدن سیستم‌های امنیتی نیز می‌پردازد.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در دور زدن:</h3>
+        <ul>
+            <li><b>تولید ترافیک شبیه‌سازی‌شده:</b> AI می‌تواند ترافیک شبیه‌به‌ترافیک عادی تولید کند.</li>
+            <li><b>تشخیص خودکار قوانین فایروال:</b> AI می‌تواند قوانین فایروال را یاد بگیرد و راه‌های دور زدن را پیدا کند.</li>
+            <li><b>بهینه‌سازی تکنیک‌های دور زدن:</b> AI می‌تواند بهترین ترکیب تکنیک‌ها را انتخاب کند.</li>
+            <li><b>تولید Payloadهای Polymorphic:</b> AI می‌تواند payloadهایی تولید کند که هر بار تغییر کنند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered Evasion:</h3>
+        <ul>
+            <li><b>AI-Powered Payload Generators:</b> تولید payloadهای هوشمند.</li>
+            <li><b>AI-Based Traffic Generators:</b> تولید ترافیک شبیه‌سازی‌شده.</li>
+            <li><b>AI-Driven Evasion Tools:</b> ابزارهایی که از AI برای انتخاب بهترین تکنیک استفاده می‌کنند.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در دور زدن مهم است؟</b>
+            <p>
+                هوش مصنوعی می‌تواند تکنیک‌های دور زدن را بسیار پیشرفته‌تر و غیرقابل تشخیص‌تر کند و از تشخیص توسط سیستم‌های امنیتی جلوگیری کند.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: راه‌های مقابله -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با تکنیک‌های دور زدن</h2>
+        <p>
+            برای جلوگیری از دور زدن سیستم‌های امنیتی، سازمان‌ها و مدیران شبکه باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از سیستم‌های امنیتی چندلایه (Defense in Depth):</b> ترکیب فایروال، IDS/IPS، و WAF.</li>
+            <li><b>به‌روزرسانی منظم امضاها و قوانین:</b> به‌روزرسانی پایگاه داده امضاهای IDS و قوانین فایروال.</li>
+            <li><b>استفاده از Next-Generation Firewall (NGFW):</b> فایروال‌های نسل جدید با قابلیت‌های پیشرفته.</li>
+            <li><b>استفاده از AI-Based IDS/IPS:</b> سیستم‌های تشخیص نفوذ مبتنی بر هوش مصنوعی.</li>
+            <li><b>استفاده از آنالیز رفتار (Behavioral Analysis):</b> تحلیل رفتار کاربران و ترافیک برای تشخیص ناهنجاری‌ها.</li>
+            <li><b>استفاده از Honeypot هوشمند:</b> Honeypotهایی که هکرها را فریب داده و تحلیل می‌کنند.</li>
+            <li><b>آموزش کارکنان:</b> آگاهی‌بخشی درباره تکنیک‌های دور زدن و حملات مهندسی اجتماعی.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص برای هر نوع سیستم:</h3>
+        <ul>
+            <li><b>در برابر Fragmentation:</b> فعال‌سازی reassembly در IDS.</li>
+            <li><b>در برابر Decoy IP:</b> استفاده از قوانین فایروال برای شناسایی Decoy.</li>
+            <li><b>در برابر Spoofing:</b> استفاده از فیلترهای anti-spoofing در فایروال.</li>
+            <li><b>در برابر Tunneling:</b> تحلیل عمیق بسته‌ها (Deep Packet Inspection).</li>
+            <li><b>در برابر تکنیک‌های Polymorphic:</b> استفاده از تشخیص مبتنی بر رفتار (Behavior-based).</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر دور زدن، ترکیبی از فناوری‌های پیشرفته، به‌روزرسانی مداوم و آموزش کارکنان است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – دور زدن سیستم‌های امنیتی</h2>
+        <p>
+            در این کارگاه، شما با تکنیک‌ها و ابزارهای دور زدن سیستم‌های امنیتی آشنا خواهید شد و یک سناریوی کامل از دور زدن فایروال و IDS را در محیط آزمایشگاهی پیاده‌سازی می‌کنید.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>آشنایی با ابزارهای دور زدن مانند Nmap و Hping3.</li>
+            <li>اجرای تکنیک‌های Fragmentation, Decoy IP, و Timing Attacks.</li>
+            <li>دور زدن قوانین فایروال با استفاده از پورت‌های مجاز.</li>
+            <li>تشخیص و مقابله با تکنیک‌های دور زدن.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> Metasploitable 2 یا یک سیستم لینوکس/ویندوز</li>
+            <li><b>فایروال:</b> یک فایروال ساده (مانند iptables) روی سیستم هدف</li>
+            <li><b>ابزارها:</b> Nmap, Hping3, Scapy, Wireshark</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: تنظیم فایروال روی هدف</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سیستم هدف (Metasploitable 2)
+sudo iptables -A INPUT -p tcp --dport 22 -j DROP
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT</code></pre>
+        </div>
+        <p><b>تحلیل:</b> پورت ۲۲ (SSH) بسته شده و پورت ۸۰ (HTTP) باز است.</p>
+
+        <h4>مرحله ۲: اسکن معمولی با Nmap</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># از Kali Linux
+nmap -p 22,80 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> پورت ۲۲ نشان‌داده نمی‌شود و پورت ۸۰ قابل مشاهده است.</p>
+
+        <h4>مرحله ۳: اسکن با تکنیک‌های دور زدن</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Fragmentation
+sudo nmap -f -p 22 192.168.1.101
+
+# استفاده از Decoy IP
+sudo nmap -D 10.0.0.1,10.0.0.2 -p 22 192.168.1.101
+
+# استفاده از Source Port Manipulation
+sudo nmap -g 80 -p 22 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> ممکن است یکی از تکنیک‌ها موفق شود و پورت ۲۲ را نشان دهد.</p>
+
+        <h4>مرحله ۴: استفاده از Hping3 برای دور زدن</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Hping3 برای تست فایروال
+hping3 -S -p 22 192.168.1.101
+hping3 -S -p 80 192.168.1.101
+
+# استفاده از FIN Scan
+hping3 -F -p 22 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> نتایج Hping3 را با Nmap مقایسه کنید.</p>
+
+        <h4>مرحله ۵: تشخیص و مقابله</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># روی سیستم هدف، استفاده از Wireshark برای تشخیص
+sudo tcpdump -i eth0 -n port 22
+
+# فعال‌سازی قوانین ضد Fragmentation
+sudo iptables -A INPUT -f -j DROP</code></pre>
+        </div>
+        <p><b>تحلیل:</b> با فعال‌سازی قوانین ضد Fragmentation، حمله خنثی می‌شود.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند دور زدن، تشخیص و مقابله تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۵: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های خود در زمینه دور زدن سیستم‌های امنیتی را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – Fragmentation:</b>
+                <br>با استفاده از Nmap، یک اسکن با Fragmentation روی یک دستگاه هدف اجرا کنید و نتایج را با اسکن معمولی مقایسه کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – Decoy IP:</b>
+                <br>با استفاده از Nmap، یک اسکن با Decoy IP روی یک دستگاه هدف اجرا کنید و ترافیک را با Wireshark تحلیل کنید.
+            </li>
+            <li>
+                <b>تمرین ۳ – Source Port Manipulation:</b>
+                <br>با استفاده از Nmap، با تغییر پورت منبع (Source Port) به ۸۰، یک اسکن روی پورت ۲۲ اجرا کنید.
+            </li>
+            <li>
+                <b>تمرین ۴ – تشخیص دور زدن:</b>
+                <br>با استفاده از Wireshark، ترافیک یک حمله Fragmentation را تشخیص دهید.
+            </li>
+            <li>
+                <b>تمرین ۵ – مقابله با دور زدن:</b>
+                <br>با استفاده از iptables، قوانینی برای جلوگیری از Fragmentation و Decoy IP تنظیم کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۶: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IDS</span></td>
+                    <td><b>I</b>ntrusion <b>D</b>etection <b>S</b>ystem</td>
+                    <td>سیستم تشخیص نفوذ.</td>
+                    <td>شناسایی حملات و هشدار.</td>
+                    <td>Snort, Suricata.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">IPS</span></td>
+                    <td><b>I</b>ntrusion <b>P</b>revention <b>S</b>ystem</td>
+                    <td>سیستم جلوگیری از نفوذ.</td>
+                    <td>شناسایی و جلوگیری از حملات.</td>
+                    <td>فایروال‌های نسل بعدی.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Firewall</span></td>
+                    <td>—</td>
+                    <td>سیستم کنترل ترافیک شبکه.</td>
+                    <td>فیلتر کردن ترافیک ورودی و خروجی.</td>
+                    <td>فایروال ویندوز، iptables.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Honeypot</span></td>
+                    <td>—</td>
+                    <td>سیستم جعلی برای جذب هکرها.</td>
+                    <td>شناسایی و تحلیل حملات.</td>
+                    <td>Honeyd, Dionaea.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Evasion</span></td>
+                    <td>—</td>
+                    <td>دور زدن سیستم‌های امنیتی.</td>
+                    <td>عبور از فایروال و IDS.</td>
+                    <td>Fragmentation, Spoofing.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Fragmentation</span></td>
+                    <td>—</td>
+                    <td>تکه‌تکه‌سازی بسته‌ها.</td>
+                    <td>عبور از فایروال و IDS.</td>
+                    <td><code dir='ltr'>nmap -f</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Decoy IP</span></td>
+                    <td>—</td>
+                    <td>آدرس‌های IP جعلی.</td>
+                    <td>مخفی کردن منبع حمله.</td>
+                    <td><code dir='ltr'>nmap -D 10.0.0.1,10.0.0.2</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Spoofing</span></td>
+                    <td>—</td>
+                    <td>جعل آدرس IP یا MAC.</td>
+                    <td>فریب فایروال و IDS.</td>
+                    <td>IP Spoofing, MAC Spoofing.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Tunneling</span></td>
+                    <td>—</td>
+                    <td>ایجاد تونل برای عبور از فایروال.</td>
+                    <td>ارسال ترافیک مخرب درون ترافیک مجاز.</td>
+                    <td>SSH Tunneling, DNS Tunneling.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Polymorphic</span></td>
+                    <td>—</td>
+                    <td>تغییر الگوی حمله برای هر بار اجرا.</td>
+                    <td>دور زدن تشخیص مبتنی بر امضا.</td>
+                    <td>ویروس‌های پلی‌مورفیک.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">NGFW</span></td>
+                    <td><b>N</b>ext-<b>G</b>eneration <b>F</b>ire<b>w</b>all</td>
+                    <td>فایروال نسل جدید.</td>
+                    <td>ترکیب فایروال، IDS/IPS و QoS.</td>
+                    <td>فایروال‌های Palo Alto, Fortinet.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">WAF</span></td>
+                    <td><b>W</b>eb <b>A</b>pplication <b>F</b>irewall</td>
+                    <td>فایروال برنامه‌های وب.</td>
+                    <td>محافظت از وب‌سایت‌ها.</td>
+                    <td>Cloudflare WAF, ModSecurity.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Deep Packet Inspection</span></td>
+                    <td>DPI</td>
+                    <td>بررسی عمیق بسته‌ها.</td>
+                    <td>تشخیص ترافیک مخرب.</td>
+                    <td>تحلیل لایه کاربرد در فایروال.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۱۲ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۱۲:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین مهارت‌های هک قانونمند، یعنی <b>دور زدن سیستم‌های امنیتی</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>سیستم‌های امنیتی:</b> IDS، فایروال، Honeypot.</li>
+            <li><b>تکنیک‌های تشخیص:</b> اسکن ACK، FIN/Null/Xmas، بررسی تنظیمات.</li>
+            <li><b>تکنیک‌های دور زدن:</b> Fragmentation, Decoy IP, Spoofing, Tunneling, Polymorphic.</li>
+            <li><b>دور زدن با Nmap:</b> گزینه‌های -f, -D, -g, --mtu, --scan-delay.</li>
+            <li><b>دور زدن فایروال:</b> پورت‌های مجاز، تونل‌های رمزنگاری، HTTP Tunneling.</li>
+            <li><b>دور زدن IDS:</b> Fragmentation, Timing Attacks, Obfuscation.</li>
+            <li><b>تشخیص Honeypot:</b> بررسی تأخیر، داده‌های جعلی، رفتار سرویس.</li>
+            <li><b>ابزارهای دور زدن:</b> Nmap, Hping3, Scapy, ProxyChains, Tor.</li>
+            <li><b>نقش هوش مصنوعی:</b> تولید ترافیک شبیه‌سازی‌شده، بهینه‌سازی تکنیک‌ها.</li>
+            <li><b>راه‌های مقابله:</b> Defense in Depth, NGFW, AI-Based IDS, Deep Packet Inspection.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_13_Hacking_Web_Servers/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۱۳ – Hacking Web Servers</a> با تکنیک‌های نفوذ به وب‌سرورها و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۱۲ – Evading IDS, Firewalls, and Honeypots | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
